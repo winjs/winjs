@@ -1,10 +1,17 @@
 module.exports = function(grunt) {
-
-    var targetName = "WinJSGruntTest";
+    var version = "2.1";
+    var targetName = "WinJS." + version;
     var buildDate = new Date();
     var month = buildDate.getMonth() + 1;
     var buildDateString = buildDate.getFullYear() + "." + month + "." + buildDate.getDate();
     var localeFolder = "en-US";
+    var outputFolder = "bin/";
+
+    if (process.env._NTTREE)
+        outputFolder = process.env._NTTREE + "/Corsica/";
+
+    var desktopOutput = outputFolder + "Microsoft." + targetName;
+    var phoneOutput = outputFolder + "Microsoft.Phone." + targetName;
 
     var baseJSFiles = [
         "src/js/build/Copyright.js",
@@ -217,58 +224,47 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON("package.json"),
 
         clean: {
-            base: [
-                "bin/WinJS.Desktop/js/base.js",
-                "bin/WinJS.Desktop/js/" + localeFolder + "/base.strings.js",
-                "bin/WinJS.Phone/js/base.js",
-                "bin/WinJS.Phone/js/" + localeFolder + "/base.strings.js",
-            ],
-            ui: [
-                "bin/WinJS.Desktop/js/ui.js",
-                "bin/WinJS.Desktop/js/" + localeFolder + "/ui.strings.js",
-                "bin/WinJS.Phone/js/ui.js",
-                "bin/WinJS.Phone/js/" + localeFolder + "/ui.strings.js"
-            ],
-            css: [
-                "bin/WinJS.Desktop/css/ui-dark.css",
-                "bin/WinJS.Desktop/css/ui-light.css",
-                "bin/WinJS.Phone/css/ui-dark.css",
-                "bin/WinJS.Phone/css/ui-light.css"
+            options: {
+                force: true
+            },
+            all: [
+                desktopOutput,
+                phoneOutput,
             ]
         },
 
         concat: {
             baseDesktop: {
                 src: baseJSFiles,
-                dest: "bin/WinJS.Desktop/js/base.js"
+                dest: desktopOutput + "js/base.js"
             },
             basePhone: {
                 src: baseJSFilesPhone,
-                dest: "bin/WinJS.Phone/js/base.js"
+                dest: phoneOutput + "js/base.js"
             },
             baseStringsDesktop: {
                 src: baseStringsFiles,
-                dest: "bin/WinJS.Desktop/js/" + localeFolder + "/base.strings.js"
+                dest: desktopOutput + "js/" + localeFolder + "/base.strings.js"
             },
             baseStringsPhone: {
                 src: baseStringsFiles,
-                dest: "bin/WinJS.Phone/js/" + localeFolder + "/base.strings.js"
+                dest: phoneOutput + "js/" + localeFolder + "/base.strings.js"
             },
             uiDesktop: {
                 src: uiJSFiles,
-                dest: "bin/WinJS.Desktop/js/ui.js"
+                dest: desktopOutput + "js/ui.js"
             },
             uiPhone: {
                 src: uiJSFilesPhone,
-                dest: "bin/WinJS.Phone/js/ui.js"
+                dest: phoneOutput + "js/ui.js"
             },
             uiStringsDesktop: {
                 src: uiStringsFiles,
-                dest: "bin/WinJS.Desktop/js/" + localeFolder + "/ui.strings.js"
+                dest: desktopOutput + "js/" + localeFolder + "/ui.strings.js"
             },
             uiStringsPhone: {
                 src: uiStringsFiles,
-                dest: "bin/WinJS.Phone/js/" + localeFolder + "/ui.strings.js"
+                dest: phoneOutput + "js/" + localeFolder + "/ui.strings.js"
             }
         },
 
@@ -299,10 +295,10 @@ module.exports = function(grunt) {
                     ]
                 },
                 files: [
-                  {expand: true, flatten: true, src: ["bin/WinJS.Desktop/js/*.js"], dest: "bin/WinJS.Desktop/js/"},
-                  {expand: true, flatten: true, src: ["bin/WinJS.Desktop/js/" + localeFolder + "/*.js"], dest: "bin/WinJS.Desktop/js/" + localeFolder + "/"},
-                  {expand: true, flatten: true, src: ["bin/WinJS.Phone/js/*.js"], dest: "bin/WinJS.Phone/js/"},
-                  {expand: true, flatten: true, src: ["bin/WinJS.Phone/js/" + localeFolder + "/*.js"], dest: "bin/WinJS.Phone/js/" + localeFolder + "/"}
+                  {expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/"},
+                  {expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/"},
+                  {expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/"},
+                  {expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/"}
                 ]
             }
         },
@@ -310,19 +306,19 @@ module.exports = function(grunt) {
         less: {
             desktopDark: {
                 src: ["src/less/desktop-dark.less"],
-                dest: "bin/WinJS.Desktop/css/ui-dark.css"
+                dest: desktopOutput + "css/ui-dark.css"
             },
             desktopLight: {
                 src: ["src/less/desktop-light.less"],
-                dest: "bin/WinJS.Desktop/css/ui-light.css"
+                dest: desktopOutput + "css/ui-light.css"
             },
             phoneDark: {
                 src: ["src/less/phone-dark.less"],
-                dest: "bin/WinJS.Phone/css/ui-dark.css"
+                dest: phoneOutput + "css/ui-dark.css"
             },
             phoneLight: {
                 src: ["src/less/phone-light.less"],
-                dest: "bin/WinJS.Phone/css/ui-light.css"
+                dest: phoneOutput + "css/ui-light.css"
             },
         }
     });
