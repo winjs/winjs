@@ -447,15 +447,18 @@
 }
 .win-listview.win-dragover .win-itembox {
     transform: scale(0.86);
+    -webkit-transform: scale(0.86);
 }
 .win-listview .win-itembox.win-dragsource,
 .win-itemcontainer .win-itembox.win-dragsource {
     opacity: 0.5;
     transition: opacity cubic-bezier(0.1, 0.9, 0.2, 1) 167ms, transform cubic-bezier(0.1, 0.9, 0.2, 1) 220ms;
+    -webkit-transition: opacity cubic-bezier(0.1, 0.9, 0.2, 1) 167ms, transform cubic-bezier(0.1, 0.9, 0.2, 1) 220ms;
 }
 .win-listview.win-dragover .win-itembox.win-dragsource {
     opacity: 0;
     transition: none;
+    -webkit-transition: none;
 }
 .win-listview.win-dragover .win-container:hover {
     outline: none;
