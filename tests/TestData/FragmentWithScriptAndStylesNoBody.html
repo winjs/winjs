@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Test Control</title>
+    <style data-magic="testFragmentWithScriptAndStylesNoBody" >
+    .findme 
+    {
+        background: red;
+    }
+    </style>
+    <script>
+        function fragmentWithScriptAndStylesLoadNoBody(elements, options) {
+            elements.querySelector(".findme").innerHTML = options.text;
+            
+            fragmentWithScriptAndStylesInlineNoBody(elements);
+        }
+    </script>
+</head>
+<div data-win-fragmentLoad="fragmentWithScriptAndStylesLoadNoBody" class="findme">This is just a test.</div>
+<div id="inlined">Another test.</div>
+<script type="text/javascript">
+	function fragmentWithScriptAndStylesInlineNoBody(elements) {
+		elements.querySelector("#inlined").innerHTML = "woot!";
+	}
+</script>
+</html>

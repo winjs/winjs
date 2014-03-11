@@ -1,0 +1,474 @@
+.win-listview .win-viewport {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.win-listview .win-viewport.win-horizontal .win-container {
+    margin: 0;
+}
+
+.win-listview > .win-viewport.win-vertical .win-surface {
+    margin-top: 0;
+}
+.win-listview > .win-viewport.win-vertical .win-container {
+    margin: 0;
+}
+.win-listview.win-rtl > .win-viewport.win-vertical .win-container {
+    margin: 0;
+}
+
+#ApiStress .win-groupheader
+{
+    margin-left: 0px;
+    padding: 0px;
+}
+
+#ApiStress .win-itemscontainer
+{
+    margin-left: 0px;
+}
+
+#ApiStress .win-surface {
+    margin-left: 0px;
+}
+
+#GroupsTests .win-listview .win-groupheader
+{
+    padding: 0px;
+}
+#GroupsTests .win-listview.win-groups .win-gridlayout .win-groupheadercontainer,
+#GroupsTests .win-listview.win-groups .win-gridlayout .win-itemscontainer
+{
+    margin-left: 50px;
+    margin-right: 0px;
+}
+
+#GroupsTests .win-listview.win-groups.win-rtl .win-gridlayout .win-groupheadercontainer,
+#GroupsTests .win-listview.win-groups.win-rtl .win-gridlayout .win-itemscontainer
+{
+    margin-left: 0px;
+    margin-right: 50px; 
+}
+
+#GroupsTests .win-listview.win-groups .win-gridlayout.win-headerpositionleft .win-itemscontainer
+{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#GroupsTests .win-surface {
+    margin-left: -50px;
+}
+#GroupsTests .win-listview.win-rtl .win-surface {
+    margin-left: 0;
+    margin-right: -50px;
+}
+#GroupsTests .win-listview.win-groups.noGroupMargins .win-gridlayout .win-groupleader {
+    margin: 0;
+}
+#GroupsTests .win-listview.noGroupMargins .win-container {
+    margin: 5px;
+}
+
+#layoutTestPlaceholder
+{
+    width: 300px;
+    height: 300px;
+    background: gray;
+}
+
+#layoutTestPlaceholder.bigMargins .win-container {
+    margin: 50px 25px 0px 25px;
+}
+
+.layoutTestTile
+{
+    width: 100px;
+    height: 100px;
+    background-color: blueviolet;
+}
+
+#metricsPlaceholder
+{
+    width: 300px;
+    height: 300px;
+    background: gray;
+}
+
+#metricsPlaceholder .win-item
+{
+    margin: 9px 9px 4px 4px;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.leadingMarginTile
+{
+    width: 100px;
+    height: 100px;
+    margin: 0;
+}
+
+#leadingMarginPlaceholder
+{
+    width: 300px;
+    height: 300px;
+    background: gray;
+}
+
+#asymmetricalMarginsPlaceholder {
+    width: 300px;
+    height: 300px;
+}
+
+#asymmetricalMarginsPlaceholder.bigMargins .win-container {
+    margin: 0 50px 50px 0;
+}
+
+.asymmetricalMarginsTile {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+}
+
+#leadingMarginPlaceholder .win-item
+{
+    margin-left: 10px;
+}
+
+#leadingMarginPlaceholder .win-surface {
+    margin-left: 50px;
+}
+
+#multisizeTestPlaceholder
+{
+    width: 1000px;
+    height: 680px;
+    background: gray;
+}
+
+.multisizeSmallTile
+{
+    width: 300px;
+    height: 100px;
+}
+
+.multisizeMediumTile
+{
+    width: 200px;
+    height: 200px;
+}
+
+.multisizeBigTile
+{
+    width: 400px;
+    height: 200px;
+}
+
+#multisizeTestPlaceholder .multisizeBigTile
+{
+    height: 600px;
+}
+
+
+#multisizeMarginTestPlaceholder
+{
+    width: 1000px;
+    height: 1000px;
+    background: gray;
+}
+
+#multisizeMarginTestPlaceholder .win-container 
+{
+    margin: 25px;
+}
+
+#multisizeMarginTestPlaceholder .multisizeSmallTile
+{
+    width: 400px;
+    height: 100px;
+}
+
+#multisizeMarginTestPlaceholder .multisizeMediumTile
+{
+    width: 250px;
+    height: 250px;
+}
+
+#multisizeMarginTestPlaceholder .multisizeBigTile
+{
+    width: 550px;
+    height: 700px;
+}
+
+.multisizeHeaderTemplateClass
+{
+    width: 50px;
+    height: 50px;
+}
+
+#reuseTestPlaceholder
+{
+    width: 300px;
+    height: 300px;
+}
+
+.reuseTemplateClass
+{
+    width: 100px;
+    height: 100px;
+}
+
+.reuseGroupTemplateClass
+{
+    width: 100px;
+    height: 100px;
+}
+
+#scrollViewTest
+{
+    overflow: scroll;
+    width: 300px;
+    height: 300px;
+    background: gray;
+}
+
+#scrollViewTest > div
+{
+    position: relative;
+    height: 2000px;
+}
+
+#testPurge
+{
+    overflow: scroll;
+    width: 300px;
+    height: 300px;
+    background: gray;
+}
+
+#testPurge > div
+{
+    position: relative;
+    height: 2000px;
+}
+
+.scrollViewTile
+{
+    width: 100px;
+    height: 100px;
+    background-color: yellow;
+}
+
+.cssChangeItem
+{
+    width: 100px;
+    height: 100px;
+}
+
+.cssChangeBigger .cssChangeItem
+{
+    width: 200px;
+    height: 200px;
+}
+
+/* ListLayout */
+
+#ListLayoutListView .win-surface
+{
+    margin-top: 20px;
+}
+
+#ListLayoutListView .win-container
+{
+    margin: 5px;
+}
+
+#ListLayoutListView .template
+{
+    height: 10px;
+    width: 100px;
+}
+
+/* Uniform GridLayout */
+
+#UniformGridLayoutListView
+{
+    width: 300px;
+    height: 350px;
+}
+
+#UniformGridLayoutListView .win-surface
+{
+    margin: 20px 25px 10px 15px;
+}
+
+#UniformGridLayoutListView .win-horizontal .win-itemscontainer
+{
+    margin-left: 6px;
+}
+
+#UniformGridLayoutListView .win-vertical .win-itemscontainer
+{
+    margin-top: 6px;
+}
+
+#UniformGridLayoutListView .win-container
+{
+    margin: 10px 3px 7px 8px;
+}
+
+#UniformGridLayoutListView .template
+{
+    width: 55px;
+    height: 23px;
+}
+
+#UniformGridLayoutListView .win-groupheadercontainer
+{
+    margin: 6px 8px 4px 3px;
+}
+
+#UniformGridLayoutListView .headerTemplate
+{
+    width: 15px;
+    height: 12px;
+}
+
+/* CellSpanning GridLayout */
+
+#CellSpanningGridLayoutListView
+{
+    width: 1000px;
+    height: 680px;
+}
+
+#CellSpanningGridLayoutListView.cellSpanningMargins
+{
+    width: 1000px;
+    height: 1000px;
+}
+
+#CellSpanningGridLayoutListView.cellSpanningMargins .win-container
+{
+    margin: 5px 10px 45px 40px;
+}
+
+/* Grouped GridLayout */
+
+#GroupedGridLayoutListView
+{
+    width: 1000px;
+    height: 680px;
+}
+
+#GroupedGridLayoutListView .win-groupheadercontainer {
+    margin-left: 10px;
+}
+
+#GroupedGridLayoutListView .headerTemplate {
+    margin: 0;
+    padding: 0;
+    width: 90px;
+    height: 20px;
+}
+
+#GroupedGridLayoutListView .win-itemscontainer {
+    margin-left: 10px;
+}
+
+#GroupedGridLayoutListView .win-container {
+    margin: 0;
+}
+
+#GroupedGridLayoutListView.containerMargins .win-container {
+    margin: 0 15px 0 5px;
+}
+
+#GroupedGridLayoutListView.cellSpanningMargins
+{
+    width: 1000px;
+    height: 1000px;
+}
+
+#GroupedGridLayoutListView.cellSpanningMargins .win-container
+{
+    width: 100px;
+    height: 110px;
+    margin: 5px 10px 45px 40px;
+}
+
+#Animations2TestListView.margins .win-surface {
+    margin: 5px 2px 9px 11px;
+}
+
+#Animations2TestListView.margins .win-surface.win-listlayout {
+    margin-top: 12px;
+}
+
+#Animations2TestListView.margins .win-gridlayout .win-itemscontainer {
+    margin: 2px 0 12px 14px;
+}
+
+#Animations2TestListView.margins.win-rtl .win-gridlayout .win-itemscontainer {
+    margin-left: 0;
+    margin-right: 14px;
+}
+
+#Animations2TestListView.margins .win-gridlayout .win-groupheadercontainer {
+    margin: 6px 0 5px 9px;
+}
+
+#Animations2TestListView.margins.win-rtl .win-gridlayout .win-groupheadercontainer {
+    margin-left: 0;
+    margin-right: 9px;
+}
+
+#Animations2TestListView.margins .win-container {
+    margin: 12px 3px 8px 4px;
+}
+
+#LayoutTest {
+    width: 500px;
+    height: 500px;
+}
+
+#Animations2TestListView.margins .win-listlayout .win-container {
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+#SimpleFlexBasedLayout .win-surface {
+    margin: 0;
+}
+.SimpleFlexBasedLayoutSurface {
+    display: -ms-flexbox;
+    -ms-flex-direction: column;
+    -ms-flex-wrap: wrap;
+}
+
+.SimpleFlexBasedLayout {
+    background-color: pink;
+    display: -ms-flexbox;
+    -ms-flex-direction: column;
+    -ms-flex-wrap: wrap;
+    height: 100%;
+}
+
+#GridLayoutHitTest.win-listview {
+    width: 800px;
+    height: 1000px;
+}
+#GridLayoutHitTest.win-listview .win-surface {
+    margin-top: 400px;
+    margin-bottom: 400px;
+    margin-left: 400px;
+}
+
+#multisizeSmallMarginTestPlaceholder .win-container {
+    margin: 10px;
+}
+
+#DomTrimTest .win-container {
+    margin: 0;
+    height: 50px;
+}

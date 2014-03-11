@@ -1,0 +1,55 @@
+﻿div 
+{
+    background-color: Yellow;
+}
+#defaults
+{
+    width: 10px;
+    height: 20px;
+}
+#one 
+{
+    padding: 0;
+    border: 0 none red;
+    margin: 0;
+    width: 10px;
+    height: 20px;
+}
+#two
+{
+    padding: 1px 2px 3px 4px;
+    border: 0 none red;
+    margin: 0;
+    width: 10px;
+    height: 20px;
+}
+#three
+{
+    padding: 1px 2px 3px 4px;
+    border-top: 1px solid red;
+    border-right: 2px solid red;
+    border-bottom: 3px solid red;
+    border-left: 4px solid red;
+    margin: 0;
+    width: 10px;
+    height: 20px;
+}
+#four
+{
+    padding: 1px 2px 3px 4px;
+    border-top: 1px solid red;
+    border-right: 2px solid red;
+    border-bottom: 3px solid red;
+    border-left: 4px solid red;
+    margin: 5px 10px 15px 20px;
+    width: 10px;
+    height: 20px;
+}
+#five
+{
+    padding: 1in;
+    border: 0.5in solid red;
+    margin: 0.5in;
+    width: 10px;
+    height: 20px;
+}

@@ -1,0 +1,32 @@
+/* Most of these values should NOT be same as the values in the controls.css style sheet, because
+** we want to verify the different styles cascade through */
+
+/*
+Tooltip control styling coming from dark/light css.
+
+.win-tooltip {
+    display: block;
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    max-width: 30em;
+    margin: 0;
+    padding: 7px 12px 8px 12px;
+    border-style: solid;
+    border-width: 2px;
+    z-index: 9999;
+    word-wrap: break-word;
+    -ms-animation-fill-mode: both;
+    WIN_TYPE_XX_SMALL
+}
+*/
+
+.tooltip-test-css 
+{
+    font-family: Courier New;
+    z-index: 9998;
+}
+
+
+
+
