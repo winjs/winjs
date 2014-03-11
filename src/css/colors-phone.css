@@ -1,0 +1,360 @@
+﻿/*
+Phone specific color styles
+*/
+
+/* 
+Opt out of high contrast colors for supported controls
+We must do this on the body because otherwise trident will set
+the background to white in Light theme and black in Dark theme, 
+which will conflict with apps that don't respect user theme settings
+(the vast majority of them). Since we want to have custom colors in 
+high contrast, we can't let trident change the whole page background
+color as most text will be rendered invisible.
+*/
+body {
+    -ms-high-contrast-adjust: none;
+}
+
+/*
+Panning indicator
+*/
+DARK(*) {
+    -ms-scrollbar-shadow-color: rgb(0, 0, 0);
+    -ms-scrollbar-face-color: rgb(255, 255, 255);
+}
+LIGHT(*) {
+    -ms-scrollbar-shadow-color: rgb(255, 255, 255);
+    -ms-scrollbar-face-color: rgb(0, 0, 0);
+}
+
+/*
+ListView control colors.
+*/
+DARK(.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container::before) {
+    border-color: rgb(255, 255, 255);
+}
+
+LIGHT(.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container::before) {
+    border-color: rgb(0, 0, 0);
+}
+
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container:active::before {
+    background-color: Highlight;
+}
+
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container.win-selected:active::before {
+    background-color: Highlight;
+}
+
+.win-listview .win-horizontal .win-surface.win-selectionmode.win-listlayout .win-itembox:not(.win-nonselectable)::after,
+.win-listview .win-surface.win-selectionmode:not(.win-listlayout) .win-itembox:not(.win-nonselectable)::after,
+.win-itemcontainer.win-selectionmode .win-itembox::after,
+.win-selectionmode .win-itemcontainer .win-itembox::after {
+    border-color: Highlight;
+}
+
+.win-listview .win-container.win-selected .win-selectionborder,
+.win-itemcontainer.win-container.win-selected .win-selectionborder {
+    border-color: Highlight;
+}
+
+.win-listview .win-container.win-selected:hover .win-selectionborder,
+.win-itemcontainer.win-container.win-selected:hover .win-selectionborder {
+    border-color: Highlight;
+}
+
+.win-listview .win-selectioncheckmarkbackground,
+.win-itemcontainer .win-selectioncheckmarkbackground {
+    border-top-color: Highlight;
+    border-right-color: Highlight;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+}
+
+.win-listview .win-container.win-selected:hover .win-selectioncheckmarkbackground,
+.win-itemcontainer.win-container.win-selected:hover .win-selectioncheckmarkbackground {
+    border-top-color: Highlight;
+    border-right-color: Highlight;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+}
+
+.win-listview.win-rtl .win-selectioncheckmarkbackground,
+.win-itemcontainer.win-rtl .win-selectioncheckmarkbackground {
+    border-left-color: Highlight;
+    border-right-color: transparent;
+}
+
+.win-listview.win-rtl .win-container.win-selected:hover .win-selectioncheckmarkbackground,
+.win-itemcontainer.win-rtl.win-container.win-selected:hover .win-selectioncheckmarkbackground {
+    border-left-color: Highlight;
+    border-right-color: transparent;
+}
+
+/*
+Semantic Zoom
+*/
+DARK(.win-semanticzoom .win-semanticzoom-zoomedoutview) {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+LIGHT(.win-semanticzoom .win-semanticzoom-zoomedoutview) {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/*
+Toggle switch
+*/
+DARK(.win-toggleswitch .win-switch::-ms-thumb) {
+    border-color: rgb(0, 0, 0);
+}
+LIGHT(.win-toggleswitch .win-switch::-ms-thumb) {
+    border-color: rgb(255, 255, 255);
+}
+DARK(.win-toggleswitch .win-switch:disabled::-ms-fill-upper) {
+    background-color: transparent;
+}
+LIGHT(.win-toggleswitch .win-switch:disabled::-ms-fill-upper) {
+    background-color: transparent;
+}
+
+
+@media (-ms-high-contrast) {
+
+    /*
+    Select box high contrast 
+    */
+    DARK(select:disabled) {
+        color: WIN_LIGHT_TEXT_LOW;
+    }
+
+    LIGHT(select:disabled) {
+        color: WIN_DARK_TEXT_LOW;
+    }
+
+    /*
+    Text selection color
+    */
+    DARK(::selection) {
+        background-color: rgb(255, 255, 255);
+        color: rgb(0, 0, 0);
+    }
+
+    LIGHT(::selection) {
+        background-color: rgb(0, 0, 0);
+        color: rgb(255, 255, 255);
+    }
+
+    /* 
+    Radio and check button 
+    */
+    DARK(input::-ms-check:hover:active), DARK(input::-ms-check:active) {
+        background-color: rgb(255, 255, 255);
+        color: rgb(0, 0, 0);
+    }
+
+    LIGHT(input::-ms-check:hover:active), LIGHT(input::-ms-check:active) {
+        background-color: rgb(0, 0, 0);
+        color: rgb(255, 255, 255);
+    }
+
+    /* Button */
+    DARK(button:hover:active), DARK(input[type=button]:hover:active), DARK(input[type=submit]:hover:active) {
+        background-color: rgb(255, 255, 255);
+        color: rgb(0, 0, 0);
+    }
+
+    LIGHT(button:hover:active), LIGHT(input[type=button]:hover:active), LIGHT(input[type=submit]:hover:active) {
+        background-color: rgb(0, 0, 0);
+        color: rgb(255, 255, 255);
+    }
+
+    /* 
+    Text input 
+    */
+    DARK(input:not([type=button]):not([type=submit])), DARK(textarea), DARK(.win-textarea) {
+        background-color: transparent;
+        border-color: rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
+    }
+
+    DARK(textarea:-ms-input-placeholder) {
+        color: rgb(255, 255, 255);
+    }
+
+    LIGHT(input:not([type=button]):not([type=submit])), LIGHT(textarea), LIGHT(.win-textarea) {
+        background-color: transparent;
+        border-color: rgb(0, 0, 0);
+        color: rgb(0, 0, 0);
+    }
+
+    LIGHT(textarea:-ms-input-placeholder) {
+        color: rgb(0, 0, 0);
+    }
+
+    DARK(input:not([type=button]):not([type=submit]):focus), DARK(textarea:focus), DARK(.win-textarea:focus) {
+        background-color: transparent;
+        border-color: rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
+    }
+
+    LIGHT(input:not([type=button]):not([type=submit]):focus), LIGHT(textarea:focus), LIGHT(.win-textarea:focus) {
+        background-color: transparent;
+        border-color: rgb(0, 0, 0);
+        color: rgb(0, 0, 0);
+    }
+
+    DARK(input:not([type=button]):not([type=submit]):disabled), DARK(textarea:disabled), DARK(.win-textarea:disabled) {
+        border-color: WIN_LIGHT_TEXT_LOW;
+        color: WIN_LIGHT_TEXT_LOW;
+    }
+
+    LIGHT(input:not([type=button]):not([type=submit]):disabled), LIGHT(textarea:disabled), LIGHT(.win-textarea:disabled) {
+        border-color: WIN_DARK_TEXT_LOW;
+        color: WIN_DARK_TEXT_LOW;
+    }
+
+    /* 
+    Progress bar
+    */
+    DARK(progress) {
+        background-color: transparent;
+        color: rgb(255, 255, 255);
+        border-width: 0px 1px 1px 1px;
+        border-color: rgb(255, 255, 255);
+        border-style: solid;
+    }
+
+    LIGHT(progress) {
+        background-color: transparent;
+        color: rgba(0, 0, 0, 0.87);
+        border-width: 0px 1px 1px 1px;
+        border-color: rgb(0, 0, 0);
+        border-style: solid;
+    }
+
+    DARK(progress:indeterminate) {
+        color: rgb(255, 255, 255);
+        border-style: none;
+    }
+
+    LIGHT(progress:indeterminate) {
+        color: rgba(0, 0, 0, 0.87);
+        border-style: none;
+    }
+
+    /* 
+    Slider
+    */
+    DARK(input[type=range]::-ms-track), DARK(input[type=range]:active::-ms-track) {
+        background-color: transparent;
+        border-color: rgb(255, 255, 255);
+        border-style: solid;
+    }
+
+    DARK(input[type=range]:disabled::-ms-track), DARK(input[type=range]:disabled::-ms-track) {
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    DARK(input[type=range]::-ms-fill-lower), DARK(input[type=range]:active::-ms-fill-lower) {
+        background-color: rgb(255, 255, 255);
+    }
+
+    DARK(input[type=range]:disabled::-ms-fill-lower), DARK(input[type=range]:disabled::-ms-fill-lower) {
+        background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    DARK(input[type=range]::-ms-thumb) {
+        background-color: rgb(0, 0, 0);
+        border-width: 1px;
+        border-color: rgb(255, 255, 255);
+        border-style: solid;
+    }
+
+    DARK(input[type=range]:disabled::-ms-thumb) {
+        background-color: rgb(0, 0, 0);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    LIGHT(input[type=range]::-ms-track), LIGHT(input[type=range]:active::-ms-track) {
+        background-color: transparent;
+        border-color: rgb(0, 0, 0);
+        border-style: solid;
+    }
+
+    LIGHT(input[type=range]:disabled::-ms-track), LIGHT(input[type=range]:disabled::-ms-track) {
+        border-color: rgba(0, 0, 0, 0.3);
+    }
+
+    LIGHT(input[type=range]::-ms-fill-lower), LIGHT(input[type=range]:active::-ms-fill-lower) {
+        background-color: rgb(0, 0, 0);
+    }
+
+    LIGHT(input[type=range]:disabled::-ms-fill-lower), LIGHT(input[type=range]:disabled::-ms-fill-lower) {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    LIGHT(input[type=range]::-ms-thumb) {
+        background-color: rgb(255, 255, 255);
+        border-width: 1px;
+        border-color: rgb(0, 0, 0);
+        border-style: solid;
+    }
+
+    LIGHT(input[type=range]:disabled::-ms-thumb) {
+        background-color: rgb(255, 255, 255);
+        border-color: rgba(0, 0, 0, 0.3);
+    }
+
+    input[type=range]::-ms-fill-upper, input[type=range]:active::-ms-fill-upper, 
+    input[type=range]:disabled::-ms-fill-upper {
+        background-color: transparent;
+    }
+
+    input[type=range] {
+        background-color: transparent;
+    }
+
+    /*
+    Toggle control high contrast colors.
+    */
+    DARK(.win-toggleswitch .win-switch::-ms-thumb) {
+        background-color: rgb(255, 255, 255);
+    }
+    LIGHT(.win-toggleswitch .win-switch::-ms-thumb) {
+        background-color: rgb(0, 0, 0);
+    }
+
+    /* 
+    Anchor 
+    */
+    DARK(a), DARK(a:hover), DARK(a:hover:active), DARK(a:visited) {
+        color: rgb(255, 255, 255);
+        text-decoration: underline;   
+    }
+
+    LIGHT(a), LIGHT(a:hover), LIGHT(a:hover:active), LIGHT(a:visited) {
+        color: rgb(0, 0, 0);
+        text-decoration: underline;   
+    }
+
+    .win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container:active::before {
+        background-color: transparent;
+    }
+
+    .win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container.win-selected:active::before {
+        background-color: transparent;
+    }
+}
+
+/*
+AppBar control colors.
+*/
+DARK_ALL(.win-appbar) {
+    background-color: rgb(31,31,31);
+    color: rgb(255,255,255);
+}
+LIGHT_ALL(.win-appbar) {
+    background-color: rgb(221,221,221);
+    color: rgb(0, 0, 0);
+}

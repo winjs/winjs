@@ -1,0 +1,163 @@
+.win-navbar {
+    min-height: 60px;
+}
+
+.win-navbarcontainer {
+    width: 100%;
+    position: relative;
+}
+.win-navbarcontainer-pageindicator-box {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+}
+.win-navbarcontainer-vertical .win-navbarcontainer-pageindicator-box {
+    display: none;
+}
+.win-navbarcontainer-pageindicator {
+    display: inline-block;
+    width: 40px;
+    height: 4px;
+    margin: 5px 2.5px 11px 2.5px;
+}
+.win-navbarcontainer-horizontal .win-navbarcontainer-viewport {
+    padding: 15px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -ms-scroll-snap-type: mandatory;
+    -ms-scroll-snap-points-x: snapInterval(0%, 100%);
+    -ms-overflow-style: none;
+    touch-action: pan-x;
+}
+.win-navbarcontainer-vertical .win-navbarcontainer-viewport {
+    padding: 10px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 250px;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    touch-action: pan-y;
+}
+.win-navbarcontainer-horizontal .win-navbarcontainer-surface {
+    display: -ms-grid;
+    -ms-grid-columns: auto;
+    -ms-grid-rows: auto;
+}
+.win-navbarcontainer-navarrow {
+    position: absolute;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    height: ~"calc(100% - 40px)";
+    width: 17px;
+    margin: 20px 0;
+    font-size: 16pt;
+    overflow: hidden;
+}
+.win-navbarcontainer-vertical .win-navbarcontainer-navarrow {
+    display: none;
+}
+.win-navbarcontainer-navleft {
+    left: 0;
+    margin-right: 8px;
+}
+.win-navbarcontainer-navleft::before {
+    content: '\E0E2';
+}
+.win-navbarcontainer-navright {
+    right: 0;
+    margin-left: 8px;
+}
+.win-navbarcontainer-navright::before {
+    content: '\E0E3';
+}
+
+/*
+    NavBarCommand
+*/
+.win-navbarcommand {
+    display: -ms-grid;
+    -ms-grid-columns: 1fr auto;
+    -ms-grid-rows: 1fr;
+}
+.win-navbarcontainer-horizontal .win-navbarcommand {
+    margin: 5px;
+    width: 210px;
+}
+.win-navbarcontainer-vertical .win-navbarcommand {
+    margin: 10px 30px;
+}
+.win-navbarcommand-button {
+    -ms-grid-column: 1;
+    -ms-grid-row: 1;
+    width: 100%;
+    position: relative;
+}
+.win-navbarcommand-button-content {
+    position: relative;
+    padding: 5px 10px;
+    display: -ms-grid;
+    -ms-grid-columns: auto 1fr;
+    -ms-grid-rows: auto;
+}
+.win-navbarcommand-button:focus {
+    z-index: 1;
+    outline: none;
+}
+.win-navbarcommand-icon {
+    -ms-grid-column: 1;
+    -ms-grid-row: 1;
+    font-family: "Segoe UI Symbol";
+    height: 40px;
+    width: 40px;
+    font-size: 20pt;
+    margin-left: 0;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.win-navbarcommand-icon:-ms-lang(@{rtl}) {
+    margin-right: 0;
+    margin-left: 10px;
+}
+.win-navbarcommand-label {
+    -ms-grid-column: 2;
+    -ms-grid-row: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11pt;
+    margin: 10px 0;
+}
+.win-navbarcommand-splitbutton {
+    -ms-grid-column: 2;
+    -ms-grid-row: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 40px;
+    font-family: 'Segoe UI Symbol';
+    font-size: 11pt;
+    margin-right: 0;
+    margin-left: 2px;
+    position: relative;
+}
+.win-navbarcommand-splitbutton:-ms-lang(@{rtl}) {
+    margin-left: 0;
+    margin-right: 2px;
+}
+.win-navbarcommand-splitbutton::before {
+    content: '\E019';
+}
+.win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened::before {
+    content: '\E018';
+}
+.win-navbarcommand-splitbutton:focus {
+    outline: none;
+}

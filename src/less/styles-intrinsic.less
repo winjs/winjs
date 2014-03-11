@@ -1,0 +1,422 @@
+//
+// Main body and html styles
+//
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    cursor: default;
+    -ms-user-select: none;
+    -ms-scroll-translation: vertical-to-horizontal;
+}
+
+html {
+    overflow: hidden;
+}
+html:-ms-lang(@{rtl}) {
+    direction: rtl;
+}
+
+body {
+    -ms-content-zooming: none;
+    .win-type-small-internal();
+}
+
+iframe {
+    border: 0;
+}
+
+body,
+button, input,
+textarea, .win-textarea,
+select, option {
+    letter-spacing: 0.02em;
+}
+
+//
+// Text input
+//
+input[type=text], input[type=password], input[type=email], input[type=number],
+input[type=tel], input[type=url], input[type=search] {
+    -ms-user-select: element;
+    border-style: solid;
+    border-width: 2px;
+    margin: 4px 0px;
+    width: 276px;
+    min-width: 64px;
+    min-height: 28px;
+    background-clip: border-box;
+    padding: 0px;
+    .win-type-medium-internal();
+}
+
+input::-ms-value {
+    margin-right: 8px;
+    margin-top: 4px;
+    margin-bottom: 0px;
+    margin-left: 8px;
+}
+
+//
+// Radio and check
+//
+input[type=radio] {
+    width: 23px;
+    height: 23px;
+    margin-left: -1px;
+    margin-right: 4px;
+    margin-bottom: -2px;
+
+    &:-ms-lang(@{rtl}) {
+        margin-left: 4px;
+        margin-right: -1px;
+    }
+}
+input[type=checkbox] {
+    width: 21px;
+    height: 21px;
+    margin-right: 5px;
+
+    &:-ms-lang(@{rtl}) {
+        margin-left: 5px;
+        margin-right: 0px;
+    }
+}
+input::-ms-check {
+    border-style: solid;
+    display: inline-block;
+    border-width: 2px;
+    background-clip: border-box;
+}
+
+//
+// Text area
+//
+textarea, .win-textarea {
+    -ms-user-select: element;
+    border-style: solid;
+    border-width: 2px;
+    margin: 4px 0px;
+    padding: 4px 8px;
+    padding-right: 17px;
+    min-width: 64px;
+    min-height: 39px;
+    background-clip: border-box;
+    overflow-y: scroll;
+    word-wrap: break-word;
+    .win-type-medium-internal();
+
+    &:-ms-lang(@{rtl}) {
+        // Flip sides for autohiding scrollbar padding on RTL layouts
+        padding-right: 8px;
+        padding-left: 17px;
+    }
+}
+
+//
+// Button
+//
+button, input[type=button], input[type=reset], input[type=submit] {
+    border-style: solid;
+    background-clip: padding-box;
+    min-height: 32px;
+    min-width: 90px;
+    padding: 4px 8px;
+    border-width: 2px;
+    .win-type-large-internal();
+}
+
+input[type=submit] {
+    background-clip: border-box;
+}
+
+input::-ms-clear, input::-ms-reveal {
+    margin-left: 2px;
+}
+input:-ms-lang(@{rtl})::-ms-clear,
+input:-ms-lang(@{rtl})::-ms-reveal {
+    margin-left: 0;
+    margin-right: 2px;
+}
+
+//
+// File upload control.
+//
+input[type=file] {
+    border: none;
+    min-width: 100px;
+    min-height: 20px;
+    width: 340px;
+    height: 32px;
+    padding: 0px;
+    margin: 7px 8px 21px 8px;
+    background-clip: padding-box;
+
+    &::-ms-value {
+        margin: 0;
+        border-width: 2px;
+        border-style: solid;
+        border-right-style: none;
+        border-radius: 0;
+        background-clip: border-box;
+        .win-type-medium-internal();
+    }
+
+    &:-ms-lang(@{rtl})::-ms-value {
+        border-left-style: none;
+        border-right-style: none;
+    }
+
+    &::-ms-browse {
+        margin: 0;
+        padding: 0 18px;
+        border-width: 2px;
+        border-style: solid;
+        background-clip: padding-box;
+        .win-type-large-internal();
+    }
+}
+
+//
+// Dropdown
+//
+select {
+    min-width: 80px;
+    min-height: 32px;
+    border-width: 2px;
+    border-style: solid;
+    background-clip: border-box;
+    margin: 4px 0px;
+    .win-type-medium-internal();
+
+    &::-ms-value {
+        padding: 4px 8px;
+        margin: 0px;
+    }
+
+    &::-ms-expand {
+        border: 0px;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+
+option {
+    .win-type-medium-internal();
+}
+
+//
+// Progress
+//
+progress {
+    width: 180px;
+    height: 6px;
+    border-style: none;
+
+    &.win-medium {
+        width: 280px;
+    }
+
+    &.win-large {
+        width: 100%;
+    }
+
+    &::-ms-fill {
+        border-style: none;
+    }
+
+    &:indeterminate {
+        height: 4px;
+        padding: 1px 0px;
+    }
+
+    &.win-paused:not(:indeterminate) {
+        animation-name: win-progress-fade-out;
+        animation-duration: 3s;
+        animation-timing-function: cubic-bezier(0.03, 0.76, 0.31, 1.0);
+        opacity: 0.5;
+    }
+
+    &.win-error::-ms-fill {
+        opacity: 0;
+    }
+
+    &.win-ring:indeterminate::-ms-fill {
+        animation-name: -ms-ring;
+    }
+
+    &.win-ring {
+        width: 20px;
+        height: 20px;
+    }
+
+    &.win-medium.win-ring {
+        width: 40px;
+        height: 40px;
+    }
+
+    &.win-large.win-ring {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@keyframes win-progress-fade-out {
+    from {
+        opacity: 1.0;
+    }
+    to {
+        opacity: 0.5;
+    }
+}
+
+//
+// Horizontal slider
+//
+input[type=range] {
+    width: 280px;
+    height: auto;
+    padding: 17px 0px 32px 0px;
+
+    &::-ms-track {
+        padding: 0px;
+        width: auto;
+        height: 11px;
+        border-style: none;
+    }
+
+    &::-ms-thumb {
+        width: 11px;
+        height: 11px;
+        border-style: none;
+    }
+
+    &::-ms-ticks-before, &::-ms-ticks-after {
+        width: 100%;
+        height: 5px;
+        display: none;
+    }
+
+    &:disabled::-ms-fill-lower {
+        margin-right: 5px;
+    }
+
+    &:disabled::-ms-fill-upper {
+        margin-left: 6px;
+    }
+
+    &:disabled:-ms-lang(@{rtl})::-ms-fill-lower {
+        margin-right: 0;
+        margin-left: 5px;
+    }
+
+    &:disabled:-ms-lang(@{rtl})::-ms-fill-upper {
+        margin-left: 0;
+        margin-right: 6px;
+    }
+}
+
+//
+// Vertical slider
+//
+input[type=range].win-vertical {
+    width: auto;
+    height: 191px;
+    padding: 0px 17px;
+    writing-mode: bt-lr;
+
+    &::-ms-track {
+        width: 11px;
+        height: auto;
+    }
+
+    &:disabled::-ms-fill-lower {
+        margin-right: 0;
+        margin-top: 6px;
+    }
+
+    &:disabled::-ms-fill-upper {
+        margin-left: 0;
+        margin-bottom: 5px;
+    }
+
+    &::-ms-ticks-before, &::-ms-ticks-after {
+        width: 5px;
+        height: 100%;
+        display: none;
+    }
+
+    &:disabled:-ms-lang(@{rtl})::-ms-fill-lower {
+        margin-left: 0;
+    }
+
+    &:disabled:-ms-lang(@{rtl})::-ms-fill-upper {
+        margin-right: 0;
+    }
+
+    &:-ms-lang(@{rtl}) {
+        writing-mode: bt-rl;
+    }
+}
+
+//
+// Link
+//
+a {
+    text-decoration: none;
+    cursor: default;
+}
+
+//
+// Image
+//
+img {
+    border-style: none;
+}
+
+//
+// Form
+//
+form {
+    margin: 0px;
+    padding: 0px;
+}
+
+//
+// Legend
+//
+legend {
+    margin: 0px 0px 10px 0px;
+    padding: 0px;
+    color: inherit;
+}
+
+code, pre, samp {
+    font-family: "Consolas";
+}
+
+//
+// Headers
+//
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+h1 {
+    .win-type-xx-large-internal();
+}
+h2 {
+    .win-type-x-large-internal();
+}
+h3 {
+    .win-type-large-internal();
+}
+h4 {
+    .win-type-medium-internal();
+}
+h5 {
+    .win-type-small-internal();
+}
+h6 {
+    .win-type-xx-small-internal();
+}

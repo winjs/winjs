@@ -1,0 +1,140 @@
+.win-hub {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+.win-hub-progress {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    z-index: 1;
+}
+.win-hub-viewport {
+    height: 100%;
+    width: 100%;
+    /* Allow win-hub-surface margin/padding right to work */
+    display: flex;
+    flex-shrink: 0;
+    -ms-scroll-snap-type: proximity;
+}
+.win-hub-horizontal .win-hub-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.win-hub-vertical .win-hub-viewport {
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-direction: column;
+}
+.win-hub-surface {
+    display: flex;
+    flex-shrink: 0;
+}
+.win-hub-vertical .win-hub-surface {
+    width: 100%;
+    padding: 15px 0;
+    flex-direction: column;
+}
+.win-hub-horizontal .win-hub-surface {
+    height: 100%;
+    padding: 0 80px;
+}
+
+
+.win-hub-section {
+    display: -ms-grid;
+    -ms-grid-columns: 1fr;
+    -ms-grid-rows: auto 1fr;
+    padding: 0 40px;
+}
+.win-hub-horizontal {
+    .win-hub-section {
+        height: 100%;
+    }
+
+    .win-hub-section-header {
+        margin-top: 129px;
+    }
+}
+.win-hub-vertical {
+    .win-hub-section {
+        width: ~"calc(100% - 80px)";
+        padding: 14px 40px;
+    }
+
+    .win-hub-section-header {
+        margin-top: 1px;
+    }
+}
+.win-hub-section-header {
+    -ms-grid-column: 1;
+    -ms-grid-row: 1;
+    margin: 4px 0;
+    font-size: 20pt;
+    text-align: left;
+
+    &:-ms-lang(@{rtl}) {
+        text-align: right;
+    }
+}
+
+// Override default button styles
+// Button is used so that both piece of UI change color. button:active becomes active if the children are pressed.
+button.win-hub-section-header-tabstop,
+button.win-hub-section-header-tabstop:hover,
+button.win-hub-section-header-tabstop:hover:active {
+    display: -ms-inline-grid;
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    min-height: 0;
+    min-width: 0;
+    font-size: 20pt;
+    -ms-grid-columns: minmax(0, max-content) 3px;
+    -ms-grid-rows: max-content;
+}
+button.win-hub-section-header-tabstop:focus {
+    outline: none;
+}
+
+// The "-ms-keyboard-active" pseudo is not always supported. When it is not supported
+// it will be treated as a CSS parse error and will throw out all rules in the current
+// CSS rule group. For this reason, never group it with other rules.
+button.win-hub-section-header-tabstop:-ms-keyboard-active {
+    background-color: transparent;
+}
+// Use grid and top level layout for truncation
+button.win-hub-section-header-tabstop.win-hub-section-header-interactive,
+button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover,
+button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover:active {
+    -ms-grid-columns: minmax(0, max-content) 7px max-content 3px;
+}
+.win-hub-section-header-content {
+    display: inline-block;
+}
+.win-hub-section-header-chevron {
+    display: none;
+}
+.win-hub-section-header-interactive .win-hub-section-header-chevron {
+    -ms-grid-column: 3;
+    display: inline-block;
+}
+.win-hub-section-header-chevron::before {
+    font-family: 'Segoe UI Symbol';
+    content: "\E26B";
+}
+.win-hub-section-header-chevron:-ms-lang(ar, dv, fa, he, ku-Arab, pa-Arab, prs, ps, sd-Arab, syr, ug, ur, qps-plocm)::before {
+    font-family: 'Segoe UI Symbol';
+    content: "\E26C";
+}
+.win-hub-section-content {
+    -ms-grid-column: 1;
+    -ms-grid-row: 2;
+}
+.win-hub-horizontal .win-hub-section-content {
+    height: ~"calc(100% - 44px)";
+}
+.win-hub-vertical .win-hub-section-content {
+    width: 100%;
+}

@@ -1,0 +1,37 @@
+.win-rating {
+    display: inline-flex;
+    height: auto;
+    width: auto;
+    white-space: normal;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.win-rating .win-star {
+    flex: auto;
+    height:28px;
+    width: 28px;
+    padding: 0 6px;
+    font-family: "Segoe UI Symbol";
+    font-size: 28px;
+    overflow: hidden;
+    text-indent: 0;
+    line-height: 1;
+    cursor: default;
+    position: relative;
+    letter-spacing: 0; // Use letter-spacing: 0 to make average star look like one glyph.
+    touch-action: none;
+}
+.win-rating.win-small .win-star {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    padding: 0 3px;
+}
+.win-rating .win-star:before {
+    content: "\E082";
+}
+.win-rating .win-star.win-disabled {
+    cursor: default;
+    touch-action: auto;
+}

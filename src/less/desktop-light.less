@@ -1,0 +1,15 @@
+@platform: desktop;
+@theme: light;
+@inverseTheme: dark;
+
+// Import files
+@import "styles.less";
+@import "colors.less";
+
+/* Light theme */
+.Colors(@theme);
+
+/* Inverse theme colors */
+.win-ui-dark {
+    .Colors(@inverseTheme);
+}

@@ -1,0 +1,95 @@
+/*
+    Desktop specific control styles
+*/
+
+
+/*
+Text input controls.
+*/
+
+input[type=text], input[type=password], input[type=email], input[type=number],
+input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
+    margin: 4px 0px;
+    min-width: 64px;
+    WIN_TYPE_MEDIUM
+}
+
+input[type=text], input[type=password], input[type=email], input[type=number],
+input[type=tel], input[type=url], input[type=search] {
+    width: 276px;
+    padding: 0;
+}
+
+
+/*
+Button control.
+*/
+
+button, input[type=button], input[type=reset], input[type=submit] {
+    WIN_TYPE_LARGE
+}
+
+
+/*
+Select control.
+*/
+
+select {
+    min-width: 80px;
+    margin: 4px 0;
+    WIN_TYPE_MEDIUM
+}
+
+/*
+Anchor control
+*/
+a {
+    cursor: default;
+}
+
+
+/*
+Radio Control
+*/
+input[type=radio] {
+    margin-left: -1px;
+    margin-right: 4px;
+    margin-bottom: -2px;
+}
+
+RTL(input[type=radio]) {
+    margin-left: 4px;
+    margin-right: -1px;
+}
+
+input[type=checkbox] {
+    margin-right: 5px;
+}
+
+RTL(input[type=checkbox]) {
+    margin-right: 0;
+    margin-left: 5px;
+}
+
+/*
+Clear and reveal button styles.
+*/
+
+input::-ms-clear, input::-ms-reveal {
+    margin-left: 2px;
+}
+RTL_2PART(input, ::-ms-clear),
+RTL_2PART(input, ::-ms-reveal) {
+    margin-left: 0;
+    margin-right: 2px;
+}
+
+/* 
+Additional letter-spacing for the document and its controls.
+*/
+body, 
+button, input,
+textarea, .win-textarea, 
+select, option {
+    letter-spacing: 0.02em;
+}

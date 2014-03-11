@@ -1,0 +1,69 @@
+.Colors(@theme) {
+
+    .mixin(dark) {
+        button.win-hub-section-header-tabstop,
+        button.win-hub-section-header-tabstop:hover,
+        button.win-hub-section-header-tabstop:hover:active {
+            color: rgb(255, 255, 255);
+        }
+        button.win-hub-section-header-tabstop.win-keyboard:focus {
+            outline: 1px dotted rgb(255, 255, 255);
+        }
+        button.win-hub-section-header-tabstop:-ms-keyboard-active {
+            color: rgb(255, 255, 255);
+        }
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover:active {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:-ms-keyboard-active {
+            color: rgba(255, 255, 255, 0.4);
+        }
+    }
+
+    .mixin(light) {
+        button.win-hub-section-header-tabstop,
+        button.win-hub-section-header-tabstop:hover,
+        button.win-hub-section-header-tabstop:hover:active {
+            color: rgb(0, 0, 0);
+        }
+        button.win-hub-section-header-tabstop.win-keyboard:focus {
+            outline: 1px dotted rgb(0, 0, 0);
+        }
+        button.win-hub-section-header-tabstop:-ms-keyboard-active {
+            color: rgb(0, 0, 0);
+        }
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover {
+            color: rgba(0, 0, 0, 0.8);
+        }
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover:active {
+            color: rgba(0, 0, 0, 0.4);
+        }
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:-ms-keyboard-active {
+            color: rgba(0, 0, 0, 0.4);
+        }
+    }
+
+    .mixin(@theme);
+
+    @media (-ms-high-contrast) {
+        button.win-hub-section-header-tabstop,
+        button.win-hub-section-header-tabstop:hover,
+        button.win-hub-section-header-tabstop:hover:active {
+            background-color: transparent;
+            color: WindowText;
+        }
+        button.win-hub-section-header-tabstop:-ms-keyboard-active {
+            color: WindowText;
+        }
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover,
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover:active {
+            color: -ms-hotlight;
+        }
+        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:-ms-keyboard-active {
+            color: -ms-hotlight;
+        }
+    }
+}

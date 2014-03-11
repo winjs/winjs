@@ -1,0 +1,15 @@
+@platform: phone;
+@theme: dark;
+@inverseTheme: light;
+
+// Import files
+@import "styles-phone.less";
+@import "colors-phone.less";
+
+/* Dark theme */
+.Colors(@theme);
+
+/* Inverse theme colors */
+.win-ui-light {
+    .Colors(@inverseTheme);
+}

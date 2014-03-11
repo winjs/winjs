@@ -1,0 +1,484 @@
+﻿// Menu Command
+/// <dictionary>appbar,appbars,Flyout,Flyouts,onclick,Statics</dictionary>
+(function menuCommandInit(WinJS) {
+    "use strict";
+
+    WinJS.Namespace.define("WinJS.UI", {
+        /// <field>
+        /// <summary locid="WinJS.UI.MenuCommand">
+        /// Represents a command to be displayed in a Menu. MenuCommand objects provide button, toggle button, flyout button, 
+        /// or separator functionality for Menu controls.
+        /// </summary>
+        /// <compatibleWith platform="Windows" minVersion="8.0"/>
+        /// </field>
+        /// <icon src="ui_winjs.ui.menucommand.12x12.png" width="12" height="12" />
+        /// <icon src="ui_winjs.ui.menucommand.16x16.png" width="16" height="16" />
+        /// <htmlSnippet><![CDATA[<button data-win-control="WinJS.UI.MenuCommand" data-win-options="{type:'button',label:'Button'}"></button>]]></htmlSnippet>
+        /// <part name="MenuCommand" class="win-command" locid="WinJS.UI.MenuCommand_name">The MenuCommand control itself</part>
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
+        MenuCommand: WinJS.Namespace._lazy(function () {
+            var thisWinUI = WinJS.UI;
+
+            // Class Names
+            var menuCommandClass = "win-command";
+            var typeSeparator = "separator";
+            var typeButton = "button";
+            var typeToggle = "toggle";
+            var typeFlyout = "flyout";
+
+            function _handleMenuClick(event) {
+                var command = this.winControl;
+                if (command) {
+                    var hideParent = true;
+                    if (command._type === typeToggle) {
+                        command.selected = !command.selected;
+                    } else if (command._type === typeFlyout && command._flyout) {
+                        var flyout = command._flyout;
+                        // Flyout may not have processAll'd, so this may be a DOM object
+                        if (typeof flyout === "string") {
+                            flyout = document.getElementById(flyout);
+                        }
+                        if (!flyout.show) {
+                            flyout = flyout.winControl;
+                        }
+                        if (flyout && flyout.show) {
+                            if (command._parentFlyout) {
+                                hideParent = false;
+                                flyout.show(command._parentFlyout._currentAnchor, command._parentFlyout._currentPlacement, command._parentFlyout._currentAlignment);
+                            } else {
+                                flyout.show(this);
+                            }
+                        }
+                    }
+                    if (command.onclick) {
+                        command.onclick(event);
+                    }
+                    // Dismiss parent flyout
+                    if (hideParent && command._parentFlyout) {
+                        command._parentFlyout.hide();
+                    }
+                }
+            }
+
+            function _handleMouseOver(event) {
+                if (this && this.focus) {
+                    this.focus();
+
+                    this.addEventListener("mousemove", _handleMouseMove, false);
+                }
+            }
+
+            function _handleMouseMove(event) {
+                if (this && this.focus && this !== document.activeElement) {
+                    this.focus();
+                }
+            }
+
+            function _handleMouseOut(event) {
+                var that = this;
+                var parentFlyout = _getParentFlyout(that);
+                if (parentFlyout
+                 && this === document.activeElement
+                 && WinJS.Utilities.hasClass(parentFlyout, "win-menu")
+                 && parentFlyout.focus) {
+                    // Menu gives focus to the menu itself
+                    parentFlyout.focus();
+                } else if (parentFlyout
+                        && this === document.activeElement
+                        && parentFlyout.children
+                        && parentFlyout.children.length > 0
+                        && parentFlyout.children[0]
+                        && WinJS.Utilities.hasClass(parentFlyout.children[0], "win-firstdiv")
+                        && parentFlyout.children[0].focus) {
+                    // Flyout gives focus to firstDiv
+                    parentFlyout.children[0].focus();
+                }
+
+                this.removeEventListener("mousemove", _handleMouseMove, false);
+            }
+
+            function _getParentFlyout(element) {
+                while (element && !WinJS.Utilities.hasClass(element, "win-flyout")) {
+                    element = element.parentElement;
+                }
+
+                return element;
+            }
+
+            var strings = {
+                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/menuCommandAriaLabel").value; },
+                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
+                get badClick() { return WinJS.Resources._getWinJSString("ui/badClick").value; },
+                get badHrElement() { return WinJS.Resources._getWinJSString("ui/badHrElement").value; },
+                get badButtonElement() { return WinJS.Resources._getWinJSString("ui/badButtonElement").value; }
+            };
+
+            return WinJS.Class.define(function MenuCommand_ctor(element, options) {
+                /// <signature helpKeyword="WinJS.UI.AppBarCommand.MenuCommand">
+                /// <summary locid="WinJS.UI.MenuCommand.constructor">
+                /// Creates a new MenuCommand object.
+                /// </summary>
+                /// <param name="element" domElement="true" locid="WinJS.UI.MenuCommand.constructor_p:element">
+                /// The DOM element that will host the control.
+                /// </param>
+                /// <param name="options" type="Object" locid="WinJS.UI.MenuCommand.constructor_p:options">
+                /// The set of properties and values to apply to the new MenuCommand.
+                /// </param>
+                /// <returns type="WinJS.UI.MenuCommand" locid="WinJS.UI.MenuCommand.constructor_returnValue">
+                /// A MenuCommand control.
+                /// </returns>
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </signature>
+
+                // Check to make sure we weren't duplicated
+                if (element && element.winControl) {
+                    throw new WinJS.ErrorFromName("WinJS.UI.MenuCommand.DuplicateConstruction", strings.duplicateConstruction);
+                }
+
+                this._disposed = false;
+
+                // Don't blow up if they didn't pass options
+                if (!options) {
+                    options = {};
+                }
+
+                // Need a type before we can create our element
+                if (!options.type) {
+                    this._type = typeButton;
+                }
+
+                // Go ahead and create it, separator types look different than buttons
+                // Don't forget to use passed in element if one was provided.
+                this._element = element;
+                if (options.type === typeSeparator) {
+                    this._createSeparator();
+                } else {
+                    // This will also set the icon & label
+                    this._createButton();
+                }
+                WinJS.Utilities.addClass(this._element, "win-disposable");
+
+                // Remember ourselves
+                this._element.winControl = this;
+
+                // Attach our css class
+                WinJS.Utilities.addClass(this._element, menuCommandClass);
+
+                if (!options.selected && options.type === typeToggle) {
+                    // Make sure toggle's have selected false for CSS
+                    this.selected = false;
+                }
+                if (options.onclick) {
+                    this.onclick = options.onclick;
+                }
+                options.onclick = _handleMenuClick;
+
+                WinJS.UI.setOptions(this, options);
+
+                // Set our options
+                if (this._type !== typeSeparator) {
+                    // Make sure we have an ARIA role
+                    var role = this._element.getAttribute("role");
+                    if (role === null || role === "" || role === undefined) {
+                        role = "menuitem";
+                        if (this._type === typeToggle) {
+                            role = "menuitemcheckbox";
+                        }
+                        this._element.setAttribute("role", role);
+                        if (this._type === typeFlyout) {
+                            this._element.setAttribute("aria-haspopup", true);
+                        }
+                    }
+                    var label = this._element.getAttribute("aria-label");
+                    if (label === null || label === "" || label === undefined) {
+                        this._element.setAttribute("aria-label", strings.ariaLabel);
+                    }
+                }
+
+                this._element.addEventListener("mouseover", _handleMouseOver, false);
+                this._element.addEventListener("mouseout", _handleMouseOut, false);
+            }, {
+                /// <field type="String" locid="WinJS.UI.MenuCommand.id" helpKeyword="WinJS.UI.MenuCommand.id" isAdvanced="true">
+                /// Gets the  ID of the MenuCommand.
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                id: {
+                    get: function () {
+                        return this._element.id;
+                    },
+                    set: function (value) {
+                        // we allow setting first time only. otherwise we ignore it.
+                        if (!this._element.id) {
+                            this._element.id = value;
+                        }
+                    }
+                },
+
+                /// <field type="String" readonly="true" defaultValue="button" oamOptionsDatatype="WinJS.UI.MenuCommand.type" locid="WinJS.UI.MenuCommand.type" helpKeyword="WinJS.UI.MenuCommand.type" isAdvanced="true">
+                /// Gets the type of the MenuCommand. Possible values are "button", "toggle", "flyout", or "separator".
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                type: {
+                    get: function () {
+                        return this._type;
+                    },
+                    set: function (value) {
+                        // we allow setting first time only. otherwise we ignore it.
+                        if (!this._type) {
+                            if (value !== typeButton && value !== typeFlyout && value !== typeToggle && value !== typeSeparator) {
+                                this._type = typeButton;
+                            } else {
+                                this._type = value;
+                            }
+                        }
+                    }
+                },
+
+                /// <field type="String" locid="WinJS.UI.MenuCommand.label" helpKeyword="WinJS.UI.MenuCommand.label">
+                /// The label of the MenuCommand
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                label: {
+                    get: function () {
+                        return this._label;
+                    },
+                    set: function (value) {
+                        this._label = value;
+                        this._element.textContent = this.label;
+
+                        // Update aria-label
+                        this._element.setAttribute("aria-label", this.label);
+                    }
+                },
+
+                /// <field type="Function" locid="WinJS.UI.MenuCommand.onclick" helpKeyword="WinJS.UI.MenuCommand.onclick">
+                /// Gets or sets the function to invoke when the command is clicked.
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                onclick: {
+                    get: function () {
+                        return this._onclick;
+                    },
+                    set: function (value) {
+                        if (value && typeof value !== "function") {
+                            throw new WinJS.ErrorFromName("WinJS.UI.MenuCommand.BadClick", WinJS.Resources._formatString(strings.badClick, "MenuCommand"));
+                        }
+                        this._onclick = value;
+                    }
+                },
+
+                /// <field type="Object" locid="WinJS.UI.MenuCommand.flyout" helpKeyword="WinJS.UI.MenuCommand.flyout">
+                /// For flyout type MenuCommands, this property  returns the WinJS.UI.Flyout that this command invokes. When setting this property, you can set 
+                /// it to the string ID of the Flyout, the DOM object that hosts the Flyout, or the Flyout object itself.
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                flyout: {
+                    get: function () {
+                        // Resolve it to the flyout
+                        var flyout = this._flyout;
+                        if (typeof flyout === "string") {
+                            flyout = document.getElementById(flyout);
+                        }
+                        // If it doesn't have a .element, then we need to getControl on it
+                        if (flyout && !flyout.element) {
+                            flyout = flyout.winControl;
+                        }
+
+                        return flyout;
+                    },
+                    set: function (value) {
+                        // Need to update aria-owns with the new ID.
+                        var id = value;
+                        if (id && typeof id !== "string") {
+                            // Our controls have .element properties
+                            if (id.element) {
+                                id = id.element;
+                            }
+                            // Hope it's a DOM element, get ID from DOM element
+                            if (id) {
+                                if (id.id) {
+                                    id = id.id;
+                                } else {
+                                    // No id, have to fake one
+                                    id.id = WinJS.Utilities._uniqueID(id);
+                                    id = id.id;
+                                }
+                            }
+                        }
+                        if (typeof id === "string") {
+                            this._element.setAttribute("aria-owns", id);
+                        }
+
+                        // Remember it
+                        this._flyout = value;
+                    }
+                },
+
+                /// <field type="Boolean" locid="WinJS.UI.MenuCommand.selected" helpKeyword="WinJS.UI.MenuCommand.selected">
+                /// Gets or sets the selected state of a toggle button. This property is true if the toggle button is selected; otherwise, it's false.
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                selected: {
+                    get: function () {
+                        // Ensure it's a boolean because we're using the DOM element to keep in-sync
+                        return this._element.getAttribute("aria-checked") === "true";
+                    },
+                    set: function (value) {
+                        this._element.setAttribute("aria-checked", !!value);
+                    }
+                },
+
+                /// <field type="HTMLElement" domElement="true" readonly="true" hidden="true" locid="WinJS.UI.MenuCommand.element" helpKeyword="WinJS.UI.MenuCommand.element">
+                /// Gets the DOM element that hosts this MenuCommand.
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                element: {
+                    get: function () {
+                        return this._element;
+                    }
+                },
+
+                /// <field type="Boolean" locid="WinJS.UI.MenuCommand.disabled" helpKeyword="WinJS.UI.MenuCommand.disabled">
+                /// Gets or sets a value that indicates whether the MenuCommand is disabled. This value is true if the MenuCommand is disabled; otherwise, false.
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                disabled: {
+                    get: function () {
+                        // Ensure it's a boolean because we're using the DOM element to keep in-sync
+                        return !!this._element.disabled;
+                    },
+                    set: function (value) {
+                        this._element.disabled = !!value;
+                    }
+                },
+
+                /// <field type="Boolean" hidden="true" locid="WinJS.UI.MenuCommand.hidden" helpKeyword="WinJS.UI.MenuCommand.hidden">
+                /// Determine if a command is currently hidden.
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                hidden: {
+                    get: function () {
+                        // Ensure it's a boolean because we're using the DOM element to keep in-sync
+                        return this._element.style.visibility === "hidden";
+                    },
+                    set: function (value) {
+                        var menuControl = thisWinUI._Overlay._getParentControlUsingClassName(this._element, "win-menu");
+                        if (menuControl && !menuControl.hidden) {
+                            throw new WinJS.ErrorFromName("WinJS.UI.MenuCommand.CannotChangeHiddenProperty", WinJS.Resources._formatString(thisWinUI._Overlay.commonstrings.cannotChangeHiddenProperty, "Menu"));
+                        }
+
+                        var style = this._element.style;
+                        if (value) {
+                            style.visibility = "hidden";
+                            style.display = "none";
+                        } else {
+                            style.visibility = "";
+                            style.display = "block";
+                        }
+                    }
+                },
+
+                /// <field type="String" locid="WinJS.UI.MenuCommand.extraClass" isAdvanced="true" helpKeyword="WinJS.UI.MenuCommand.extraClass">
+                /// Gets or sets the extra CSS class that is applied to the host DOM element.
+                /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// </field>
+                extraClass: {
+                    get: function () {
+                        return this._extraClass;
+                    },
+                    set: function (value) {
+                        if (this._extraClass) {
+                            WinJS.Utilities.removeClass(this._element, this._extraClass);
+                        }
+                        this._extraClass = value;
+                        WinJS.Utilities.addClass(this._element, this._extraClass);
+                    }
+                },
+
+
+                dispose: function () {
+                    /// <signature helpKeyword="WinJS.UI.MenuCommand.dispose">
+                    /// <summary locid="WinJS.UI.MenuCommand.dispose">
+                    /// Disposes this control.
+                    /// </summary>
+                    /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                    /// </signature>
+                    if (this._disposed) {
+                        return;
+                    }
+                    this._disposed = true;
+
+                    if (this._flyout) {
+                        this._flyout.dispose();
+                    }
+                },
+
+                addEventListener: function (type, listener, useCapture) {
+                    /// <signature helpKeyword="WinJS.UI.MenuCommand.addEventListener">
+                    /// <summary locid="WinJS.UI.MenuCommand.addEventListener">
+                    /// Registers an event handler for the specified event. 
+                    /// </summary>
+                    /// <param name="type" type="String" locid="WinJS.UI.MenuCommand.addEventListener_p:type">The name of the event to register.</param>
+                    /// <param name="listener" type="Function" locid="WinJS.UI.MenuCommand.addEventListener_p:listener">The function that handles the event.</param>
+                    /// <param name="useCapture" type="Boolean" locid="WinJS.UI.MenuCommand.addEventListener_p:useCapture">
+                    /// Set to true to register the event handler for the capturing phase; otherwise, set to false to register the  event handler for the bubbling phase.
+                    /// </param>
+                    /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                    /// </signature>
+                    return this._element.addEventListener(type, listener, useCapture);
+                },
+
+                removeEventListener: function (type, listener, useCapture) {
+                    /// <signature helpKeyword="WinJS.UI.MenuCommand.removeEventListener">
+                    /// <summary locid="WinJS.UI.MenuCommand.removeEventListener">
+                    /// Removes the specified event handler that the addEventListener method registered. 
+                    /// </summary>
+                    /// <param name="type" type="String" locid="WinJS.UI.MenuCommand.removeEventListener_p:type">The name of the event to remove.</param>
+                    /// <param name="listener" type="Function" locid="WinJS.UI.MenuCommand.removeEventListener_p:listener">The event handler function to remove.</param>
+                    /// <param name="useCapture" type="Boolean" locid="WinJS.UI.MenuCommand.removeEventListener_p:useCapture">
+                    /// Set to true to remove the capturing phase event handler; set to false to remove the bubbling phase event handler.
+                    /// </param>
+                    /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                    /// </signature>
+                    return this._element.removeEventListener(type, listener, useCapture);
+                },
+
+                // Private properties
+                _createSeparator: function MenuCommand_createSeparator() {
+                    // Make sure there's an input element
+                    if (!this._element) {
+                        this._element = document.createElement("hr");
+                    } else {
+                        // Verify the input was an hr
+                        if (this._element.tagName !== "HR") {
+                            throw new WinJS.ErrorFromName("WinJS.UI.MenuCommand.BadHrElement", strings.badHrElement);
+                        }
+                    }
+                },
+
+                _createButton: function MenuCommand_createButton() {
+                    // Make sure there's an input element
+                    if (!this._element) {
+                        this._element = document.createElement("button");
+                    } else {
+                        // Verify the input was a button
+                        if (this._element.tagName !== "BUTTON") {
+                            throw new WinJS.ErrorFromName("WinJS.UI.MenuCommand.BadButtonElement", strings.badButtonElement);
+                        }
+                        this._element.innerHTML = "";
+                    }
+
+                    // MenuCommand buttons need to look like this:
+                    //// <button type="button" onclick="" class="win-command">Command 1</button>
+                    this._element.type = "button";
+
+                    // 'textContent' label is added later by caller
+                }
+            });
+        })
+    });
+
+})(WinJS);
+

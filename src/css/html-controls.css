@@ -1,0 +1,290 @@
+﻿/*
+Shared control styles
+*/
+
+/*
+Text input controls.
+*/
+
+input[type=text], input[type=password], input[type=email], input[type=number],
+input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
+    -ms-user-select: element;
+    min-height: DESKTOP(28px) PHONE(38px); /* Total phone size is 48px with border */
+    border-width: DESKTOP(2px) PHONE(3px);
+    border-style: solid;
+}
+
+input::-ms-value {
+    /* Margins are needed for all platforms here to put text in proper place */
+    margin-top: DESKTOP(4px) PHONE(-11px);
+    margin-bottom: DESKTOP(0px) PHONE(-5px);
+    margin-left: DESKTOP(8px) PHONE(4px);
+    margin-right: 8px;
+}
+
+textarea, .win-textarea {
+    min-width: DESKTOP(260px) PHONE(100%);
+    min-height: DESKTOP(39px) PHONE(53px);
+    overflow-y: scroll;
+    word-wrap: break-word;
+    padding: 4px 8px;
+    /* Leave space for autohiding scrollbar on elements that enable text selection. */
+    padding-right: 17px;
+}
+RTL(textarea), RTL(.win-textarea) {
+    /* Flip sides for autohiding scrollbar padding on RTL layouts. */
+    padding-right: 8px;
+    padding-left: 17px;
+}
+
+/*
+Button control.
+*/
+button, input[type=button], input[type=reset], input[type=submit] {
+    min-height: DESKTOP(32px) PHONE(39px); /* content (20px) + padding + border */
+    min-width: DESKTOP(90px) PHONE(108px);
+    padding: DESKTOP(4px 8px) PHONE(0px 6px);
+    border-width: DESKTOP(2px) PHONE(2.25px);
+    border-style: solid;
+    background-clip: padding-box;
+}
+
+/*
+File upload control.
+*/
+input[type=file] {
+    border: none;
+    min-width: 100px;
+    min-height: 20px;
+    width: 340px;
+    height: 32px;
+    padding: 0;
+    margin: 7px 8px 21px 8px;
+    background-clip: padding-box;
+}
+input[type=file]::-ms-value {
+    margin: 0;
+    border-width: 2px;
+    border-style: solid;
+    border-right-style: none;
+    border-radius: 0;
+    background-clip: padding-box;
+    WIN_TYPE_MEDIUM
+}
+RTL_2PART(input[type=file], ::-ms-value) {
+    border-left-style: none;
+    border-right-style: solid;
+}
+input[type=file]::-ms-browse {
+    margin: 0;
+    padding: 0 18px;
+    border-width: 2px;
+    border-style: solid;
+    background-clip: padding-box;
+    WIN_TYPE_LARGE
+}
+
+/*
+No underline or special cursor on links.
+*/
+a {
+    text-decoration: DESKTOP(none) PHONE(underline);
+}
+
+/*
+No border on images when in a link.
+*/
+img {
+    border-style: none;
+}
+
+/*
+Select control.
+*/
+select {
+    min-height: DESKTOP(32px) PHONE(38px);
+    border-width: DESKTOP(2px) PHONE(2.25px);
+    border-style: solid;
+}
+select::-ms-value {
+    padding: DESKTOP(4px 8px) PHONE(0px 8px);
+    margin: 0;
+}
+select::-ms-expand {
+    border: 0;
+    padding-left: 6px;
+    padding-right: 6px;
+    background-color: transparent;
+}
+
+/*
+Radio button and checkbox shared styles.
+*/
+input::-ms-check {
+    border-style: solid;
+    display: inline-block;
+    border-width: DESKTOP(2px) PHONE(2.25px);
+}
+
+/*
+Radio button.
+*/
+input[type=radio] {
+    width: DESKTOP(23px) PHONE(26px);
+    height: DESKTOP(23px) PHONE(26px);
+}
+
+/*
+Checkbox.
+*/
+input[type=checkbox] {
+    width: DESKTOP(21px) PHONE(26px);
+    height: DESKTOP(21px) PHONE(26px);
+}
+
+/*
+Range control.
+*/
+input[type=range] {
+    width: DESKTOP(280px) PHONE(100%);
+    height: DESKTOP(auto) PHONE(19px);
+    padding: 17px 0 32px 0;
+}
+input[type=range]::-ms-track {
+    padding: 0;
+    width: auto;
+    height: DESKTOP(11px) PHONE(10px);
+    border-style: none;
+    color: transparent;  /* ticks hidden by default */
+}
+input[type=range]::-ms-thumb {
+    width: 11px;
+    height: DESKTOP(11px) PHONE(18px);
+    border-style: none;
+}
+input[type=range]::-ms-ticks-before, input[type=range]::-ms-ticks-after {
+    width: 100%;
+    height: 5px;
+    display: none;
+}
+input[type=range]:disabled::-ms-fill-lower {
+    margin-right: 5px;
+}
+input[type=range]:disabled::-ms-fill-upper {
+    margin-left: 6px;
+}
+RTL_2PART(input[type=range]:disabled, ::-ms-fill-lower) {
+    margin-right: 0;
+    margin-left: 5px;
+}
+RTL_2PART(input[type=range]:disabled, ::-ms-fill-upper) {
+    margin-left: 0;
+    margin-right: 6px;
+}
+
+/*
+Vertical range control.
+*/
+input[type=range].win-vertical {
+    width: DESKTOP(auto) PHONE(26px);
+    height: DESKTOP(191px) PHONE(272px);
+    padding: 0 17px;
+    writing-mode: bt-lr; 
+}
+RTL(input[type=range].win-vertical) {
+    writing-mode: bt-rl;
+}
+input[type=range].win-vertical::-ms-thumb {
+    width: DESKTOP(11px) PHONE(24px);
+    height: DESKTOP(11px) PHONE(12px);
+}
+input[type=range].win-vertical::-ms-track {
+    width: DESKTOP(11px) PHONE(12px);
+    height: auto;
+}
+input[type=range].win-vertical:disabled::-ms-fill-lower {
+    margin-right: 0;
+    margin-top: 6px;
+}
+input[type=range].win-vertical:disabled::-ms-fill-upper {
+    margin-left: 0;
+    margin-bottom: 5px;
+}
+RTL_2PART(input[type=range].win-vertical:disabled, ::-ms-fill-lower) {
+    margin-left: 0;
+}
+RTL_2PART(input[type=range].win-vertical:disabled, ::-ms-fill-upper) {
+    margin-right: 0;
+}
+
+input[type=range].win-vertical::-ms-ticks-before,
+input[type=range].win-vertical::-ms-ticks-after {
+    width: 5px;
+    height: 100%;
+    display: none;
+}
+
+/*
+Progress control.
+*/
+progress {
+    width: DESKTOP(180px) PHONE(207px);
+    height: 6px;
+    border-style: none;
+}
+progress.win-medium {
+    width: DESKTOP(280px) PHONE(207px);
+}
+progress.win-large {
+    width: 100%;
+}
+progress::-ms-fill {
+    border-style: none;
+}
+progress:indeterminate {
+    height: 4px;
+    padding: 1px 0; /* Indeterminate dots should be 4px tall, but overall control stays 6px. */
+}
+@keyframes win-progress-fade-out {
+    from {
+        opacity: 1.0;
+    }
+    to {
+        opacity: 0.5;
+    }
+}
+progress.win-paused:not(:indeterminate) {
+    animation-name: win-progress-fade-out;
+    animation-duration: 3s;
+    animation-timing-function: cubic-bezier(0.03, 0.76, 0.31, 1.0);
+    opacity: 0.5;
+}
+progress.win-error::-ms-fill {
+    opacity: 0;
+}
+progress.win-ring:indeterminate::-ms-fill {
+    animation-name: -ms-ring;
+}
+progress.win-ring {
+    width: 20px;
+    height: 20px;
+}
+progress.win-medium.win-ring {
+    width: 40px;
+    height: 40px;
+}
+progress.win-large.win-ring {
+    width: 60px;
+    height: 60px;
+}
+
+form {
+    margin: 0;
+    padding: 0;
+}
+legend {
+    margin: 0 0 10px 0;
+    padding: 0;
+    color: inherit;
+}
+

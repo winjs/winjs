@@ -1,0 +1,4915 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Documentation and design notes for the ListView's occupancyMap object</title>
+        <style type="text/css">
+            body
+            {
+                font-family: Calibri, sans-serif;
+                font-size: 11pt;
+            }
+            
+            h1, h2, h3, h4, h5, h6
+            {
+                font-family: Cambria, serif;
+            }
+            
+            h1
+            {
+                font-size: 26pt;
+                font-weight: normal;
+                color: #17365D;
+                padding-bottom: 4pt;
+            }
+            
+            h2
+            {
+                border-top: solid #4F81BD 1pt;
+                border-left: solid #4F81BD 1pt;
+                margin-top: 2em;
+                padding-left: 1ex;
+                font-size: 14pt;
+                color: #365F91;
+            }
+            
+            h3
+            {
+                border-top: solid #4F81BD 1pt;
+                font-size: 13pt;
+                color: #4F81BD;
+            }
+            
+            h4
+            {
+                font-size: 12pt;
+                color: #4F81BD;
+            }
+            
+            .bug
+            {
+                color: red;
+            }
+            
+            .fix
+            {
+                background-color: yellow;
+            }
+            
+            var, pre
+            {
+                font-family: Consolas, Lucida Console, monospace;
+                font-style: normal;
+            }
+            
+            code, pre
+            {
+                background-color: #E8E8E8;
+            }
+            
+            blockquote
+            {
+                border: solid 1px black;
+                padding-left: 1ex;
+                padding-right: 1ex;
+                background: #F0F0F0;
+            }
+            
+            blockquote var
+            {
+                text-decoration: underline;
+                font-style: normal;
+                quotes: "&lsquo;" "&rsquo;";
+            }
+            
+            .term, .ref
+            {
+                font-style: italic;
+            }
+            
+            .keyword
+            {
+                color: Blue;
+            }
+            
+            .comment
+            {
+                color: Green;
+            }
+            
+            table
+            {
+                margin-bottom: 1em;
+            }
+            
+            table td 
+            {
+                padding: 4pt;
+            }
+            
+            #sampleMap
+            {
+                border-bottom: 1px solid #000000;
+                border-right: 1px solid #000000;
+                border-collapse: collapse;
+            }
+            
+            #sampleMap td
+            {
+                border-left: 1px solid #000000;
+                border-top: 1px solid #000000;
+                height: 60px;
+                width: 60px;
+                position: relative;
+                text-align: center;
+                vertical-align: middle;
+            }
+            
+            #sampleMap td div
+            {
+                color: #000000;
+                font-size: small;
+                left: 3px;
+                opacity: 0.5;
+                position: absolute;
+                top: 0px;
+            }
+            
+            #sampleMap .itemA
+            {
+                background-color: #DF0024;
+                color: #FFFFFF;
+            }
+            
+            #sampleMap .itemB
+            {
+                background-color: Blue;
+                color: #FFFFFF;
+            }
+            
+            #sampleMap .itemC
+            {
+                background-color: Yellow;
+            }
+            
+            #sampleMap .itemA div, #sampleMap .itemB div
+            {
+                color: #FFFFFF;
+            }
+        </style>
+    </head>
+
+<!--
+<span class="keyword"></span>
+<span class="comment"></span>
+-->
+
+
+    <body>
+        <h1>
+            Documentation and design notes for the ListView's occupancyMap object
+        </h1>
+        <h2>
+            Introduction
+        </h2>
+        <p>
+            The ListView control's <var>GridLayout</var> (Layouts.js) supports the
+            concept of items, laid out together, that are of different sizes. This is known as
+            <strong>variable-size layout</strong> and is implemented in the
+            <var>VariableSizeDecorator</var> class. This type of layout is accomplished by defining a
+            grid of slots that are of a fixed size. This dimension is specified by the
+            application in the <var>groupInfo</var> property that it provides to the
+            ListView constructor. For example:
+        </p>
+        <pre>
+
+    <span class="keyword">var</span> listView = <span class="keyword">new</span> WinJS.UI.ListView(element, {
+        layout: { <span class="fix">groupInfo: getGroupInfo</span>, ... },
+        ...
+    });
+
+    <span class="keyword">function</span> getGroupInfo(groupItem) {
+        <span class="comment">// cellWidth and cellHeight only honored in groups where enableCellSpanning: true</span>
+        <span class="keyword">return</span> {
+            enableCellSpanning: !groupItem || groupItem.data.enableCellSpanning,
+            cellWidth: 88,
+            cellHeight: 88
+        };
+    }
+        </pre>
+        <p>
+            When the <var>groupInfo.enableCellSpanning</var> property has a value of <var class="keyword">true</var>, the group is
+            capable of displaying variable-size items. It is at this point that an
+            <strong>occupancy map</strong> is created for the group. The occupancy map's purpose
+            is to track the allocation of slots to items -- that is, to map which items are
+            displayed where on the slot grid. The occupancy map is also used to determine where
+            the next item can be placed during the layout rendering process.
+        </p>
+
+        <h2>
+            Population of the occupancy map
+        </h2>
+        <h3>Callstack</h3>
+        <p style="margin-left: 15px;">
+            <var>
+                VariableSizeDecorator.markSlotAsFull<br />
+                VariableSizeDecorator.addItemToMap<br />
+                VariableSizeDecorator.ensureInMap<br />
+                VariableSizeDecorator.calcItemPosition<br />
+                GridLayout._calcItemPosition<br />
+                GridLayout._layoutItem
+            </var>
+        </p>
+        <p>
+            When the <var>GridLayout</var> executes its <var>_layoutItem</var> function, it asks the group
+            decorator to calculate the item's position via the <var>calcItemPosition</var> interface
+            function. In the case of the <var>VariableSizeDecorator</var>, this code path leads to the
+            <var>markSlotAsFull</var> function. This function contains the only line of code
+            that actually modifies the <var>occupancyMap</var> object:
+        </p>
+        <pre>
+
+    markSlotAsFull: <span class="keyword">function</span> (layout, index, itemEntry) {
+        <span class="keyword">var</span> coordinates = layout._indexToCoordinate(index, <span class="keyword">this</span>.slotsPerColumn);
+        <span class="keyword">for</span> (<span class="keyword">var</span> r = coordinates.row, toRow = coordinates.row + itemEntry.rows; r < toRow; r++) {
+            <span class="keyword">for</span> (<span class="keyword">var</span> c = coordinates.column, toColumn = coordinates.column + itemEntry.columns; c < toColumn; c++) {
+                <span class="fix"><span class="keyword">this</span>.occupancyMap[<span class="keyword">this</span>.coordinateToIndex(layout, c, r)] = itemEntry;</span>
+            }
+        }
+    }
+        </pre>
+        <p>
+            The <var>markSlotAsFull</var> function obtains the slot grid coordinates of the
+            specified item's upper left corner, then iterates over each slot occupied by the
+            item and writes a data object to the corresponding occupancyMap array entry. The
+            occupancy map reads top-down, left-to-right.
+        </p>
+        
+        <h3>Layout Example</h3>
+        <p>
+            The example below shows the variable-size slot grid with items of two different
+            sizes laid out within it. The cellHeight and cellWidth in this example are 60px.
+            The small items, A and C, are defined as 60x60 pixels, the same size as the
+            slots. The large item, B, is 180x120 pixels. Note that there is just one item B,
+            and it occupies six slots. The superscript values indicate the array index that
+            corresponds to each slot. 
+        </p>
+        
+        <table id="sampleMap">
+            <tr>
+                <td class="itemA">Item A<div>0</div></td>
+                <td>&nbsp;<div>4</div></td>
+                <td>&nbsp;<div>8</div></td>
+            </tr>
+            <tr>
+                <td class="itemB">Item B<div>1</div></td>
+                <td class="itemB">Item B<div>5</div></td>
+                <td class="itemB">Item B<div>9</div></td>
+            </tr>
+            <tr>
+                <td class="itemB">Item B<div>2</div></td>
+                <td class="itemB">Item B<div>6</div></td>
+                <td class="itemB">Item B<div>10</div></td>
+            </tr>
+            <tr>
+                <td class="itemC">Item C<div>3</div></td>
+                <td>&nbsp;<div>7</div></td>
+                <td>&nbsp;<div>11</div></td>
+            </tr>
+        </table>
+
+        <p>
+            And here is the corresponding occupancy map array. Notice that there are four
+            undefined array indexes &minus; [4], [7], [8], [11] &minus; because no item currently occupies those slots:
+        </p>
+        <p style="margin-left: 15px;">
+            <var>
+                [0] = { "Item A", index = 0, columns = 1, rows = 1 }<br />
+                [1] = { "Item B", index = 1, columns = 3, rows = 2 }<br />
+                [2] = { "Item B", index = 1, columns = 3, rows = 2 }<br />
+                [3] = { "Item C", index = 2, columns = 1, rows = 1 }<br />
+                [5] = { "Item B", index = 1, columns = 3, rows = 2 }<br />
+                [6] = { "Item B", index = 1, columns = 3, rows = 2 }<br />
+                [9] = { "Item B", index = 1, columns = 3, rows = 2 }<br />
+                [10] = { "Item B", index = 1, columns = 3, rows = 2 }<br />
+            </var>
+        </p>
+
+
+    <!--
+    <p>
+        Animations temporarily alter an object's current properties, and eventually return
+        them to their original values. For example, an
+        <var>
+            enterPage</var>
+        animation takes an element on the screen, temporarily offsets its position, then
+        gradually animates the element back to its original position.
+    </p>
+    <p>
+        The distinction between animations and transition is that animations could in theory
+        all be removed from the application without any change to the logical behavior of
+        the program. (The object still appears; it just doesn't look as pretty.) On the
+        other hand, transitions represent state changes and would have to be replaced with
+        some other way of changing the visual state. (The object needs to move from one
+        place to another regardless.)
+    </p>
+    <p>
+        From a programmatic standpoint, transitions and animations are very similar. For
+        the purpose of this document, we will use the word <span class="term">action</span>
+        to mean "transition or animation".
+    </p>
+    <table class="grid">
+        <tr class="header">
+            <td>
+                Characteristic
+            </td>
+            <td>
+                Transition
+            </td>
+            <td>
+                Animation
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Lifetime
+            </td>
+            <td>
+                <var>
+                    -ms-transition-property</var>
+            </td>
+            <td>
+                <var>
+                    -ms-animation-name</var>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Target property
+            </td>
+            <td>
+                <var>
+                    -ms-transition-property</var>
+            </td>
+            <td>
+                <var>
+                    @keyframe</var>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Target values
+            </td>
+            <td>
+                implied
+            </td>
+            <td>
+                <var>
+                    @keyframe</var>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Initial delay
+            </td>
+            <td>
+                <var>
+                    -ms-transition-delay</var>
+            </td>
+            <td>
+                <var>
+                    -ms-animation-delay</var>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Duration
+            </td>
+            <td>
+                <var>
+                    -ms-transition-duration</var>
+            </td>
+            <td>
+                <var>
+                    -ms-animation-duration</var>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Curve
+            </td>
+            <td>
+                <var>
+                    -ms-transition-timing-function</var>
+            </td>
+            <td>
+                <var>
+                    -ms-animation-timing-function</var>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Direction
+            </td>
+            <td>
+                always animates forward
+            </td>
+            <td>
+                <var>
+                    -ms-animation-direction</var>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Iteration
+            </td>
+            <td>
+                Executes only once
+            </td>
+            <td>
+                <var>
+                    -ms-animation-iteration-count</var>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Persistence
+            </td>
+            <td>
+                always persistent
+            </td>
+            <td>
+                <var>
+                    -ms-animation-fill-mode</var>
+                (sort-of)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Completion event
+            </td>
+            <td>
+                <var>
+                    MSTransitionEnd</var>
+            </td>
+            <td>
+                <var>
+                    MSAnimationEnd</var>
+            </td>
+        </tr>
+    </table>
+    <p>
+        All of the properties are comma-separated lists, corresponding to respective actions.
+        For example, to apply three actions to an element, set each of the properties to
+        three values, separated by commas. Rules exist if one list is shorter than another;
+        we will not take advantage of those rules, although we need to guard against the
+        possibility that the host application may have.
+    </p>
+    <p>
+        (Note that the items in the list are reported by Internet Explorer as separated
+        by a comma <em>and a space</em>. This is important to bear in mind when trying to
+        parse the list back out.)
+    </p>
+    <p>
+        For both transitions and animations, the properties other than the lifetime property
+        are <em>captured</em> at the moment the action becomes active. After the action
+        becomes active, changes to properties other than the lifetime property are ignored.
+        <em>This capture behavior is essential to our design.</em>
+    </p>
+    <p>
+        The W3C specifies that script-applied actions become active when the style is resolved.
+        (Earlier versions of the specification were unclear.) See <span class="ref">Resolving
+            styles</span> for further discussion of style resolution.
+    </p>
+    <p>
+        Our overall algorithm for applying actions is as follows. Detailed discussion of
+        each step follows the outline.
+    </p>
+    <ul>
+        <li>Remember the pre-existing values of the action properties set by the application.
+            <li>Set the shorthand action property to a comma-separated list of values for that action.
+                If there are existing actions, the new actions are <em>appended</em> to the existing
+                lifetime property.
+                <li>Restore all the properties to their original values, except for the lifetime property.
+                    <li>As each action completes, remove it from the comma-separated list in the lifetime
+                        property and clean up.
+                        <li>
+        If the completion event has not fired by the time it was expected, a watchdog timeout
+        ensures that we do not leave the Promise in a permanently-pending state.
+    </ul>
+    <p>
+        It is important to append the new values to the existing properties, because the
+        W3C says that in case of conflict, the last one wins. We set the new values via
+        the shorthand property, because that solves multiple problems:
+    </p>
+    <ul>
+        <li>We avoid the need to count commas in the non-lifetime action properties. (If the
+            individual action properties don't have the same number of commas as the action-lifetime
+            property, then updating the existing values becomes trickier.)
+            <li>
+        We can set multiple properties with a single DOM call.
+    </ul>
+    <p>
+        Note that you <em>cannot read the action shorthand property</em>: In the case where
+        the non-lifetime action properties have the wrong number of commas, the shorthand
+        property reads back as an empty string. (This behavior is required by the CSS specification.)
+        Instead, we read the action-lifetime property and use just the names without any
+        of the additional properties. This works because of the capture behavior described
+        above: The parameters of the existing actions were already captured, so the values
+        we provide here are irrelevant.
+    </p>
+    <p>
+        For example, consider the following properties. Observe that although there are
+        two elements in the lifetime property, there are three in the duration (too many),
+        only one in the timing-function (too few), and two in the delay property (just right).
+    </p>
+    <table class="grid">
+        <tr class="header">
+            <td>
+                Property
+            </td>
+            <td>
+                Value
+            </td>
+        </tr>
+        <tr>
+            <td>
+                lifetime
+            </td>
+            <td>
+                <tt>"a, b"</tt>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                duration
+            </td>
+            <td>
+                <tt>"0ms, 300ms, 500ms"</tt>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                timing-function
+            </td>
+            <td>
+                <tt>"ease-in"</tt>
+            </td>
+            <tr>
+                <td>
+                    delay
+                </td>
+                <td>
+                    <tt>"0ms, 0ms"</tt>
+                </td>
+            </tr>
+    </table>
+    <p>
+        The CSS specification describes what happens when there are missing or extra parameters.
+        The details do not affect us.
+    </p>
+    <p>
+        Suppose we want to start a <tt>"c"</tt> action with 100ms duration, linear timing,
+        and 50ms delay. We first read the lifetime property, then append the shorthand description
+        of the new action:
+    </p>
+    <pre>
+style.lifetime = "a, b, c 100ms linear 50ms"
+</pre>
+    <p>
+        The browser parses this and sets multiple properties based on the shorthand:
+        <table class="grid">
+            <tr class="header">
+                <td>
+                    Property
+                </td>
+                <td>
+                    Value
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    lifetime
+                </td>
+                <td>
+                    <tt>"a, b, c"</tt>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    duration
+                </td>
+                <td>
+                    <tt>"0ms, 0ms, 100ms"</tt>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    timing-function
+                </td>
+                <td>
+                    <tt>"ease, ease, linear"</tt>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    delay
+                </td>
+                <td>
+                    <tt>"0ms, 0ms, 50ms"</tt>
+                </td>
+            </tr>
+        </table>
+        <p>
+            Providing a name with no auxiliary properties is legal shorthand; it means that
+            all other properties receive default values. (Which are ignored, since the action
+            is proceeding with the captured values.)
+        </p>
+        <p>
+            When we restore the non-lifetime properties to their original values after triggering
+            the action, the result is
+        </p>
+        <table class="grid">
+            <tr class="header">
+                <td>
+                    Property
+                </td>
+                <td>
+                    Value
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    lifetime
+                </td>
+                <td>
+                    <tt>"a, b, c"</tt>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    duration
+                </td>
+                <td>
+                    <tt>"0ms, 300ms 500ms"</tt>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    timing-function
+                </td>
+                <td>
+                    <tt>"ease-in"</tt>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    delay
+                </td>
+                <td>
+                    <tt>"0ms, 0ms"</tt>
+                </td>
+            </tr>
+        </table>
+        <p>
+            This actually does not cause a problem, because, as we noted, the action parameters
+            are captured when the action is triggered, so the inconsistent values are of no
+            consequence. As long as the names remain in the lifetime property, the original
+            captured values will apply to the element.
+        </p>
+        <p>
+            We restore the properties immediately after triggering the action to minimize disruption
+            to the application.
+        </p>
+        <p>
+            When removing transitions, we remove the <em>last matching item</em>, so that we
+            do not accidentally damage any values set by the application, because we always
+            append our values.
+        </p>
+        <p>
+            For all actions, we listen on the completion event to know when that action has
+            completed, and also create a watchdog timer to fire shortly after the expected completion
+            of the action to handle the case where the action is abandoned without firing a
+            completion. See <span class="ref">Watchdog timeouts</span> for further discussion.
+        </p>
+        <p>
+            All actions register their presence in the
+            <var>
+                activeActions</var>
+            array, which is an array indexed by the combination of the element's
+            <var>
+                uniqueID</var>
+            and the the name of the property being animated. (Separated by a <code>|</code>,
+            because that character is illegal in both IDs and property names, so it can safely
+            be used as a separator.)
+        </p>
+        <p>
+            An action registers with a callback function to call to cancel the action. This
+            is done when a conflicting action is scheduled, so that the previous action can
+            clean up and get out of the way before the new action starts modifying element properties.
+            (Two actions are said to conflict if they attempt to animate the same property on
+            the same element.) if the action is interrupted. See <span class="ref">Cancellation
+                due to interruption</span> for further discussion.
+        </p>
+        <p>
+            If an array of actions or an array of elements is passed, then each combination
+            of action+element gets its own listener and watchdog. All the corresponding Promises
+            are joined together to become the final Promise of the combined action. Using the
+            <var>
+                Promise.join</var>
+            method allows us to simplify our logic by allowing us to focus on the one action
+            + one element scenario.
+        </p>
+        <h2>
+            Forcing layout
+        </h2>
+        <p>
+            In Internet Explorer, <span class="term">layout</span> is the act of applying the
+            effects of all changes to the DOM that have taken place.
+        </p>
+        <p>
+            When you change the DOM, such as inserting or deleting an element or changing an
+            element property, Internet Explorer flags the DOM as "dirty". When control returns
+            to the Internet Explorer event loop, Internet Explorer checks if the DOM is dirty,
+            and if so, it performs a <span class="term">layout pass</span>, which takes all
+            the changes and makes them take effect.
+        </p>
+        <p>
+            <span class="term">Forcing layout</span> means forcing Internet Explorer to perform
+            a layout pass outside of the event loop.
+        </p>
+        <p>
+            The PVL needs a layout pass to take place after the DOM has been edited by the application
+            so that the objects move to their final positions, at which point it can accurately
+            calculate the distance the elements have moved.
+        </p>
+        <p>
+            It turns out that Internet Explorer automatically forces layout if you try to read
+            the
+            <var>
+                offsetTop</var>
+            or
+            <var>
+                offsetLeft</var>
+            properties when the layout is dirty. Therefore, we do not need to force layout explicitly;
+            merely reading
+            <var>
+                offsetTop</var>
+            and
+            <var>
+                offsetLeft</var>
+            is enough to trigger layout.
+        </p>
+        <h2>
+            Resolving styles
+        </h2>
+        <p>
+            In Internet Explorer, styles are <span class="term">resolved</span> when the browser
+            recognizes the value and takes action on it. Styles are resolved as part of the
+            layout process, but you can also force styles to resolve outside of layout.
+        </p>
+        <p>
+            Since action is taken only when styles are resolved, if you change a property multiple
+            times in a row without an intervening style resolution, then only the final value
+            will have any effect.
+        </p>
+        <p>
+            The "intermediate writes are ignored" optimization does not cause a problem with
+            most properties, but it affects transitions and animations because transitions and
+            animations capture the values of properties at the point they are triggered, so
+            we have to make sure the properties have the desired values at the point of triggering.
+            If we update a property, then return without resolving styles, then it's possible
+            that the property will change again before the next time styles are resolved (say,
+            by another call to the PVL), resulting in the desired changes from the first animation
+            not taking effect.
+        </p>
+        <p>
+            Note that the concept of style resolution is not part of the W3C CSS3 specification,
+            which merely leaves to implementation free to decide what the requirements are for
+            a change to a property to be counted as having taken place before, after, or simultaneous
+            to another property change.
+        </p>
+        <p>
+            In Internet Explorer, resolving any style on an element resolves all styles for
+            that element, so we can combine multiple style-resolve operations into one if all
+            of the modified styles apply to the same element.
+        </p>
+        <h2>
+            Event handler gotchas</h2>
+        <p>
+            All event handlers are registered on the
+            <var>
+                document</var>
+            rather than on the element itself, because an element whose
+            <var>
+                disabled</var>
+            property is set to
+            <var>
+                true</var>
+            does not receive events. Instead, the event bypasses the event and immediately bubbles
+            to the parent.
+        </p>
+        <p>
+            This quirk is not documented anywhere that I can find.
+        </p>
+        <h2>
+            Watchdog timeouts</h2>
+        <p>
+            Both transitions and animations use watchdog timeouts to catch abandonment scenarios.
+            The watchdog timeout is set to the expected end of the action, plus a little extra
+            time to ensure that when the action completes normally, the completion event fires
+            ahead of the watchdog.
+        </p>
+        <p>
+            Scheduling the watchdog timeout is tricky because <code>setTimeout</code> starts
+            the timer immediately, even though the animation timer doesn't start until the next
+            render pass. (This is technically a violation of the CSS specification, which says
+            that the timer begins at the time the style is changed.) If we had scheduled the
+            watchdog timer with a normal <code>setTimeout</code>, then a long render pass (which
+            can happen for complex animations) can result in the watchdog timer firing prematurely.
+        </p>
+        <p>
+            Therefore, we schedule the watchdog timer as a series of timeouts. The first timeout
+            is for a fixed small amount of time. This guarantees that the first timeout will
+            not expire until the first render pass is complete and the animation has started.
+            At that point, we can schedule the real timeout, and this one will not fire prematurely.
+        </p>
+        <h2>
+            Completion</h2>
+        <p>
+            Since we will sometimes cancel old actions while setting up new ones, we are careful
+            to fulfill Promises asynchronously by calling <code>setImmediate(c)</code> rather
+            than <code>c()</code>. Otherwise, the application's completion handler might try
+            to schedule a third action while we are still trying to set up the second one, resulting
+            in reentrancy and confusion.
+        </p>
+        <p>
+            The exception to this rule is in the case where the Promise is being canceled (see
+            below). In that case, we complete the Promise synchronously. This will not create
+            reentrancy because the cancellation was initiated by the application in the first
+            place. Any cancellations performed by the Animation Engine are done via internal
+            mechanisms and are still completed asynchronously.
+        </p>
+        <h2>
+            Cancellation</h2>
+        <p>
+            When you create a Promise, you can optionally pass a cancellation callback function
+            which is invoked when the application invokes the
+            <var>
+                cancel</var>
+            method on the Promise. Upon cancellation, the Promise enters the error state, and
+            the error handler is called.
+        </p>
+        <p>
+            Animations don't want to work that way. When the application invokes
+            <var>
+                Promise.cancel</var>, the animation should jump to its end state and complete
+            immediately with success.
+        </p>
+        <p>
+            We have confirmed with the base team that it is supported and designed behavior
+            that if a cancellation function calls the completion callback before returning,
+            then the Promise will enter the fulfilled state rather than the error state.
+        </p>
+        <p>
+            Therefore, whenever we create a Promise, we register a cancellation callback which
+            cleans up the animation (thereby jumping to the end state) and <i>synchronously</i>
+            invokes the cancellation function.
+        </p>
+        <h2>
+            Optimization notes</h2>
+        <h3>
+            Programmatic access to CSS styles</h3>
+        <p>
+            Styles on an element are stored in the <code>element.style</code> object, and calculated
+            styles are obtained by calling <code>window.getComputedStyle</code>. There are three
+            ways of accessing styles from these objects. Here they are with their relative cost,
+            where indexing is normalized to have a cost of 1.
+        </p>
+        <table class="grid enum">
+            <tr class="header">
+                <td>
+                    Technique
+                </td>
+                <td>
+                    <tt>x = element.style</tt>
+                </td>
+                <td>
+                    <tt>x = getComputedStyle(element)</tt>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <tt>x.getAttribute(propName)</tt>
+                </td>
+                <td align="right">
+                    10.82
+                </td>
+                <td align="right">
+                    6.97
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <tt>x[propName]</tt>
+                </td>
+                <td align="right">
+                    1.00
+                </td>
+                <td align="right">
+                    1.00
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <tt>x.opacity</tt>
+                </td>
+                <td align="right">
+                    0.95
+                </td>
+                <td align="right">
+                    1.00
+                </td>
+            </tr>
+        </table>
+        <p>
+            One theory is that calling <code>getAttribute</code> is slow because we end up making
+            two calls into the DOM. First, we have to ask the DOM for the function pointer for
+            the <code>getAttribute</code> method. Then we have to take that raw function pointer
+            and convert it to a JavaScript function object. Those two steps together are already
+            2&frac12; to 3&times; slower than indexing. Next, we have to call the JavaScript
+            function object with the two parameters, which means unwrapping the object back
+            into the raw function pointer. That last step takes 4&frac12; to 7&times; as long
+            as indexing.
+        </p>
+        <p>
+            At any rate, it's clear that indexing is the way to access attributes from style
+            objects. Switching from
+            <var>
+                getAttribute</var>/<var>setAttribute</var>
+            to indexing improved time-to-first-frame by 5%.
+        </p>
+        <p>
+            If you're going to be manipulating styles a lot, you should cache the <code>style</code>
+            object in a local variable to avoid having to hit the DOM each time you type <code>element.style</code>.
+        </p>
+        <h3>
+            Parsing transitions</h3>
+        <p>
+            The translation portion of a CSS transform matrix is in positions <code>e</code>
+            and <code>f</code> in the <code>"matrix(a, b, c, d, e, f)"</code> value. (If there
+            is no transform, then the string returned for
+            <var>
+                msTransform</var>
+            is <code>"none"</code>.)
+        </p>
+        <p>
+            The algorithm for extracting the <code>e</code> and <code>f</code> from the matrix
+            string splits the string on commas, and if six fields are produced, it extracts
+            fields 4 and 5 (counting from zero). There will not be six fields if the string
+            is <code>"none"</code>, but in that case, the effective transform is the identity,
+            so there is no translation. Note that we take advantage of the fact that
+            <var>
+                parseFloat</var>
+            ignores trailing garbage, because field 5 will have a trailing close-parenthesis.
+        </p>
+        <p>
+            You might think that a more efficient algorithm would be
+        </p>
+        <pre>
+var matrix = new MSCSSMatrix(window.getComputedStyle(e).msTransform);
+left += matrix.e;
+top += matrix.f;
+</pre>
+        <p>
+            It turns out that it's three times faster to do the parsing entirely in native JavaScript
+            (which can be optimized) rather than calling into the DOM four times (once to construct
+            the
+            <var>
+                MSCSSMatrix</var>, once to retrieve
+            <var>
+                e</var>, once to retrieve
+            <var>
+                f</var>, and once to destruct the matrix).
+        </p>
+        <h3>
+            Bulk style updates</h3>
+        <p>
+            Multiple styles can be updated at once by appending to the <code>cssText</code>
+            property:
+        </p>
+        <pre>
+element.style.opacity = 1;
+element.style.backgroundColor = "red";
+
+// versus
+
+element.style.cssText += "; opacity: 1; background-color: red";
+</pre>
+        <p>
+            The leading semicolon is important so that the new CSS attributes are properly separated
+            from the previous ones.
+        </p>
+        <p>
+            Although this would appear to be an improvement since it reduces the number of round-trips
+            to the DOM, no measureable improvement was observed in practice because of the cost
+            of generating the original value of
+            <var>
+                cssText</var>. The benefit appears to be dependent on the complexity of the
+            existing styles on the object.
+        </p>
+        <p>
+            At any rate, we cannot use this technique even if it did provide an improvement
+            because the Internet Explorer implementation of
+            <var>
+                cssText</var>
+            does not properly return properties whose values contain an at-sign, semicolon,
+            or quotation-mark. (The at-sign is used in font names to indicate that <a href="http://blogs.msdn.com/b/michkap/archive/2005/08/04/447759.aspx">
+                the font is vertically-oriented</a>.) This bug in Internet Explorer is marked
+            Won't Fix. Since we allow animations to be triggered on arbitrary application-provided
+            elements, we cannot guarantee that the application's styles avoid the dangerous
+            characters.
+        </p>
+        <h3>
+            Shorthand properties</h3>
+        <p>
+            As noted in the opening discussion, shorthand properties are not reliable for reading,
+            but they work just fine for writing. (Though there are problems if a name contains
+            an escaped reserved character, but those problems existed even in the lifetime-property
+            itself, so we're not introducing any new issues here.)
+        </p>
+        <p>
+            Using shorthand properties for writing saves a number of round trips into the DOM.
+        </p>
+        <h3>
+            Disabled elements</h3>
+        <p>
+            DOM events do not propagate to disabled elements. The AppBar control will sometimes
+            animate disabled elements (for example, disabled buttons will animate into view).
+        </p>
+        <p>
+            The workaround is to register the listener on the document root, which remains enabled.
+            However, doing this unconditionally is expensive because it generates a lot of listener
+            traffic which we end up just ignoring. Therefore, we move the registration to the
+            document root only if the element is disabled.
+        </p>
+        <p>
+            If the element is enabled at the time the action begins, but becomes disabled during
+            the course of the action, then the DOM completion event will not be delivered to
+            the listener. The watchdog timer catches this case and ensurse that the Promise
+            completes eventually.
+        </p>
+        <h3>
+            Cancellation due to interruption</h3>
+        <p>
+            It turns out that DOM events are expensive. Therefore, we avoid them whenever possible.
+        </p>
+        <p>
+            We use the
+            <var>
+                activeActions</var>
+            array to keep track of all the actions that we have scheduled which are still active.
+            When an actions begins, it registers with the array, and when it completes, it unregisters.
+            This is a native JavaScript object and therefore can be manipulated without going
+            through the DOM.
+        </p>
+        <p>
+            If during registration we see that there is already an active actions on the same
+            element and property, we fire the completion of the old action before replacing
+            its registration with the new action.
+        </p>
+        <p>
+            By having our own table of active actions, we don't need to listen to the
+            <var>
+                MSTransitionStart</var>
+            event to detect cancellation due to interruption: We fire the cancellation explicitly
+            when the interrupting action is scheduled, rather than relying on the DOM event
+            to notify us. (It also is important in the case of an interrupted Animation, because
+            an interrupted animation does not fire an
+            <var>
+                animationend</var>
+            event at all.)
+        </p>
+        <p>
+            It also allows us to cancel actions on disabled elements. As noted above, native
+            DOM events do not propagate to disabled elements.
+        </p>
+        <h3>
+            Bottleneck</h3>
+        <p>
+            The bottleneck in the entire operation is the
+            <var>
+                setTemporaryStyles</var>
+            function, which takes 46% of the total time. (20% of it is in the calculation of
+            <var>
+                prevStyles</var>
+            and 20% is in the cleanup function. No other function comes anywhere close.) This
+            makes sense since that function is where the bulk of the DOM manipulation takes
+            place.
+        </p>
+        <h4>
+            Miscellaneous failed optimizations</h4>
+        <p>
+            None of these optimizations led to measurable improvements.
+        </p>
+        <ul>
+            <li>Declare all properties in the same order. This means including dummy values for
+                "keyframe", "property", "from" and "to" in the defValue. This is one of the JS perf
+                recommendations on MSDN to improve hash table lookups, but the effect was not measurable.
+                <li>Use countdown loop instead of count-up loop to avoid retrieving length repeatedly.
+                    <li>Avoid unnecessary string concatenation. Change <code>(a ? a : "") + b</code> to
+                        <code>(a ? (b ? a + b : a) : b)</code> which avoids the concatenation if a is null
+                        or or b is <code>""</code>.
+                        <li>Avoid map and build array directly.
+                            <li>
+            Set all properties for all elements, then resolve all styles, then restore all properties.
+            This merely shifted costs; Internet Explorer did not observe any consolidation opportunities.
+        </ul>
+        <h3>
+            Future optimization: The style cache</h3>
+        <p>
+            To avoid accessing the DOM, we can retain a private cache of what we think the DOM
+            styles are and use that cache instead of accessing the DOM directly. The cache is
+            obviously write-through, because we want our changes to take effect. A version of
+            the library with this optimization is attached as "v1" to Windows 8 bug 820186.
+            It appears to shave another frame off our time-to-first-frame, but the change was
+            too risky to take at the point in the product cycle.
+        </p>
+        <h1>
+            Transitions
+        </h1>
+        <p>
+            The responsibility for managing transitions is broken into two portions. The high-level
+            <var>
+                animations.js</var>
+            file (the <span class="term">animation library</span>) deals with calculating the
+            necessary transforms, and the low-level
+            <var>
+                transitionAnimation.js</var>
+            file (the <span class="term">animation engine</span>) deals with actually applying
+            them.
+        </p>
+        <p>
+            The first part is an interaction between the application and the animation library.
+        </p>
+        <ul>
+            <li>The application calls
+                <var>
+                    create&shy;Xxx&shy;Animation</var>.
+                <li>The animation library captures the current position of the element, then returns
+                    to the application.
+                    <li>The application alters the element position.
+                        <li>The application calls
+                            <var>
+                                execute</var>.
+                            <li>The animation library calculates the distance the element has moved. (This implicitly
+                                forces layout.)
+                                <li>The animation library applies a transform to the element which negates the position
+                                    change performed by the application. (It does not need to resolve the style for
+                                    reasons described in the section <span class="ref">Resolving the current style before
+                                        animating</span>.)
+                                    <li>
+            The animation library instructs the animation engine to animate the removal of the
+            transform.
+        </ul>
+        <p>
+            The second part is handled by the low-level animation engine.
+        </p>
+        <ul>
+            <li>The animation engine resolves styles on the element for reasons described in the
+                section <span class="ref">Resolving the current style before animating</span>.
+                <li>The animation engine updates the transition-related properties on the element to
+                    specify that changes to the transform should be applied smoothly rather than instantaneously.
+                    <li>The animation engine removes the transform.
+                        <li>The animation engine resolves styles on the element, so that the browser observes
+                            the removal of the transform and begins the transition.
+                            <li>The animation engine restores the transition properties now that they are no longer
+                                needed.
+                                <li>When any of the following events occurs:
+                                    <ul>
+                                        <li>The cleanup callback is fired by a conflicting action.
+                                            <li>The
+                                                <var>
+                                                    transitionend</var>
+                                                event fires.
+                                                <li>
+                                        The timeout elapses, indicating that abandonment has occurred.
+                                    </ul>
+            we clean up and complete the Promise.
+        </ul>
+        <p>
+            Let's walk through the above steps with an example. consider an object that starts
+            out at position
+            <var>
+                left</var>
+            = 100.
+        </p>
+        <ul>
+            <li>The application calls
+                <var>
+                    create&shy;Xxx&shy;Animation</var>.
+                <li>The animation library captures the current position of the element (100), then returns
+                    to the application.
+                    <li>The application moves the element to position
+                        <var>
+                            left</var>
+                        = 300.
+                        <li>The application calls
+                            <var>
+                                execute</var>.
+                            <li>The animation library observes that the element moved 200 pixels to the right, and
+                                applies a counteracting translation of
+                                <var>
+                                    translateX(-200px)</var>. This causes the object's visual to appear at position
+                                100 (i.e., unchanged from where it was prior to the transition), even though its
+                                position in the layout is 300.
+                                <li>The animation engine adds a transition to the element specifying how the transform
+                                    should be animated.
+                                    <li>The animation engine removes the transform. Since a transition is active on the
+                                        element, the transform animates smoothly from
+                                        <var>
+                                            translateX(-200px)</var>
+                                        to
+                                        <var>
+                                            translateX(0)</var>. To the user, it appears as
+            if the object moves smoothly from its old position to its new position.
+        </ul>
+        <p>
+            The remainder of this section discusses the details of the algorithm.
+        </p>
+        <h2>
+            Capturing the current position of the element
+        </h2>
+        <p>
+            The position of an element may be animating at the time the transition is applied.
+            We must capture the in-flight value of the position.
+        </p>
+        <p>
+            The current layout position can be obtained from the
+            <var>
+                offsetLeft</var>
+            and
+            <var>
+                offsetTop</var>
+            properties.
+        </p>
+        <p>
+            The tricky part is that we also want to incorporate any translation transform that
+            may be active on the element. To do this, we use
+            <var>
+                window.getComputedStyle(element).msTransform</var>
+            and extract the x- and y- coordinates from the transformation matrix. Note that
+            the in-flight position is relevant only when capturing the original positions. Final
+            positions need to capture only the layout position, since we are going to be changing
+            the transform ourselves.
+        </p>
+        <h2>
+            Resolving the current style before animating
+        </h2>
+        <p>
+            It is not well-known that the browser does not respond to a change in a CSS value
+            until the style is resolved. (See <span class="ref">Resolving styles</span> above.)
+            As a result, many developers will write code like this
+        </p>
+        <pre>
+// incoming's initial opacity is 1.
+// Set it to 0 so it will fade in.
+incoming.style.opacity = 0;
+WinJS.Animations.crossFade(incoming, outgoing);
+</pre>
+        <p>
+            Unless special action is taken, this code will not actually animate from opacity
+            0 to 1, because the starting opacity of 0 was never resolved before the animation
+            engine changed it to 1. As a result, the browser will see that the opacity changed
+            from 1 to 1 and perform no animation.
+        </p>
+        <p>
+            To cover for this type of mistake, the animation library will automatically resolve
+            the initial CSS property values so that the above code will work.
+        </p>
+        <p>
+            Since this workaround already is present, we may as well take advantage of it in
+            the animation library: After applying the counteracting transform to each element
+            that moved, we would normally resolve the style so that the initial transform is
+            not animated, and so that it will be taken as the starting point of the animation.
+            But we can skip that step and let the animation engine do the resolve.
+        </p>
+        <h2>
+            Applying the initial transform without animation
+        </h2>
+        <p>
+            When the animation library applies the initial counteracting transform, it does
+            so without animation because our overall design removes the transition properties
+            as soon as the transition begins. Therefore, there are no leftover transition properties
+            that would cause the initial transform to be animated.
+        </p>
+        <p>
+            After setting the initial transforms, we resolve the transform style so that the
+            browser observes the initial value before we start enabling transitions.
+        </p>
+        <h2>
+            Edge case for transitions
+        </h2>
+        <p>
+            Transitions are triggered by <em>changes to</em> element properties. If the target
+            element's property has a value equal to our desired transition target, then no transition
+            takes place, and consequently, transition events do not fire.
+        </p>
+        <p>
+            To protect against this case, we filter out transitions that have no effect and
+            do not bother trying to apply them. That way, we don't register for events that
+            will never fire.
+        </p>
+        <p>
+            Note that Internet Explorer returns values that may be different from the value
+            used to set the property. Examples:
+        </p>
+        <ul>
+            <li>Setting the
+                <var>
+                    -ms-transform</var>
+                to <tt>"translate(0.00,0)"</tt> reads back as <tt>"translate(0, 0)"</tt>. The trailing
+                decimal places were removed, and a space was inserted after the comma.
+                <li>Setting the
+                    <var>
+                        -ms-transform</var>
+                    to <tt>"scale(.50,.50)"</tt> reads back as <tt>"scale(0.5)"</tt>. A leading zero
+                    was inserted, the trailing decimal places were removed, and since the X-scale and
+                    Y-scale are the same, they were collapsed into the shorthand notation.
+                    <li>Setting the
+                        <var>
+                            opacity</var>
+                        to <tt>"0.999999999999999999999999"</tt> reads back as <tt>"1"</tt>.
+        </ul>
+        <p>
+            Internet Explorer is inconsistent as to whether changes to equivalent values are
+            considered changes for the purpose of triggering transitions. In the above examples,
+            changing the
+            <var>
+                -ms-transform</var>
+            to an equivalent translation <em>does</em> trigger a transition, whereas the change
+            the equivalent
+            <var>
+                opacity</var>
+            does <em>not</em> trigger a transition.
+        </p>
+        <p>
+            To avoid surprises, we ask Internet Explorer to munge the value so we can see how
+            it looks after it has been internalized and spit back out. To do this, we create
+            a temporary element (never added to the document, so it does not trigger layout)
+            and set the property on the temporary element, then read it back, and use that result
+            as the "canonical form" for the property value. (If for some reason, Internet Explorer
+            is inconsistent with its canonical forms, the watchdog timeout will save us.)
+        </p>
+        <h2>
+            Interrupted transitions
+        </h2>
+        <p>
+            If the animating property is modified, either by the application directly, or because
+            the application requested a conflicting transition, no
+            <var>
+                transitionend</var>
+            event is fired. From the browser's point of view, the transition is still in progress;
+            it merely got redirected. The
+            <var>
+                transitionend</var>
+            event fires only when the new transition completes.
+        </p>
+        <p>
+            For the case where a conflicting action is requested by the application, we manually
+            fire the cleanup callback so that the previous transition will clean up and get
+            out of the way.
+        </p>
+        <p>
+            Note that if an application attempts to apply a transition to an element without
+            using the animation engine, the animation engine will not detect the interruption.
+            We do not consider this a primary scenario, since applications should be using the
+            animation library for all animations. This will instead be treated as an Abandonment
+            scenario.
+        </p>
+        <h2>
+            Abandonment
+        </h2>
+        <p>
+            For the purpose of this document, we shall use the term <span class="term">abandonment</span>
+            to refer to situations in which the final
+            <var>
+                transitionend</var>
+            event does not fire, and the interruption was not detected when the animation engine
+            scheduled a conflicting action.
+        </p>
+        <h3>
+            Transition redirection
+        </h3>
+        <p>
+            As we noted above, if a new value is set for the property undergoing transition,
+            the existing transition is considered to have been <span class="term">redirected</span>.
+        </p>
+        <h3>
+            Transition removal
+        </h3>
+        <p>
+            According to the CSS3 Transition spec, section 5:
+        </p>
+        <blockquote>
+            <p>
+                In the case where a transition is removed before completion, such as if the transition-property
+                is removed, then the [transitionend] event will not fire.
+            </p>
+        </blockquote>
+        <p>
+            The example given refers to this scenario:
+        </p>
+        <ul>
+            <li>Set
+                <var>
+                    -ms-transition-property</var>
+                to <tt>"-ms-transform"</tt>.
+                <li>Modify the
+                    <var>
+                        -ms-transform</var>
+                    property, thereby triggering the transition.
+                    <li>Set
+                        <var>
+                            -ms-transition-property</var>
+                        to <tt>"opacity"</tt>.
+        </ul>
+        <p>
+            The act of setting
+            <var>
+                -ms-transition-property</var>
+            to <tt>"opacity"</tt> causes the transform transition to become abandoned, since
+            <tt>"-ms-transform"</tt> is no longer set.
+        </p>
+        <p>
+            We are careful never to remove properties from the
+            <var>
+                -ms-transition-property</var>
+            that we did not put there ourselves. If there are multiple transitions on the same
+            property, the property name appears twice in the list, so that removal of the old
+            transition will still leave the property name in the list and not result in abandonment
+            of the new transition. The only time this problem will occur is the application
+            removed the transition.
+        </p>
+        <p>
+            One way of detecting abandonment is to register a listener on all attribute changes,
+            and detect that somebody has deleted <tt>"-ms-transform"</tt> from the
+            <var>
+                -ms-transition-property</var>
+            attribute. We will not do this, however, because the problem is fixed by the more
+            general solution below.
+        </p>
+        <h3>
+            Element removal
+        </h3>
+        <p>
+            Another case where transitions can become abandoned is if the element is removed
+            from the document. There is a W3C DOM event
+            <var>
+                DOMNodeRemovedFromDocument</var>
+            which fires when this occurs, but Internet Explorer does not support this event.
+        </p>
+        <h3>
+            The watchdog timer
+        </h3>
+        <p>
+            We handle transition abandonment generally by scheduling a timeout on the element
+            which fires slightly after the anticipated completion of the transition. The timeout
+            function completes the transition promise if it has not yet completed.
+        </p>
+        <p>
+            The timeout is canceled as part of completion.
+        </p>
+        <p>
+            See <span class="ref">Watchdog timeouts</span> for further discussion.
+        </p>
+        <h1>
+            Animations
+        </h1>
+        <ul>
+            <li>The application calls an animation function in the animation library.
+                <li>The animation library calls
+                    <var>
+                        executeAnimation</var>
+                    in the animation engine.
+                    <li>The animation engine creates a temporary
+                        <var>
+                            STYLE</var>
+                        element and inserts it into the document.
+                        <li>For each animation, the animation engine creates a keyframe in the temporary style
+                            sheet of the form
+                            <pre>
+@-ms-keyframes uniquename {
+  from { property: initialValue; }
+  to { property: finalValue; }
+}
+</pre>
+                            <li>The animation engine updates the animation properties on the element to include
+                                the newly-added keyframes. (We retain the existing animations so that it is possible
+                                for an element to have multiple independent animations.)
+                                <li>The animation engine resolves the animation lifetime style, triggering the animation.
+                                    <li>The animation engine removes the temporary style sheet and returns the animation
+                                        properties to their original values, except for the
+                                        <var>
+                                            -ms-animation-name</var>.
+                                        <li>When any of the following events occurs:
+                                            <ul>
+                                                <li>The
+                                                    <var>
+                                                        animationend</var>
+                                                    event fires.
+                                                    <li>
+                                                The timeout elapses, indicating that abandonment has occurred.
+                                            </ul>
+            we clean up and complete the Promise.
+        </ul>
+        <h2>
+            Interrupted animations
+        </h2>
+        <p>
+            Animations behave better with respect to interruptions than transitions. If an animation
+            is interrupted, its
+            <var>
+                animationend</var>
+            event still fires.
+        </p>
+        <h2>
+            Abandoned animations
+        </h2>
+        <p>
+            Animations can become abandoned if the keyframe is deleted from the
+            <var>
+                -ms-animation-name</var>
+            property by the application, or if the element is destroyed. In these cases case,
+            no
+            <var>
+                animationend</var>
+            event is fired.
+        </p>
+        <p>
+            We protect against this the same way we protected against abandoned transitions:
+            By creating a watchdog timeout that fires if the
+            <var>
+                animationend</var>
+            event did not fire as expected. When the watchdog timeout fires, we assume that
+            the animation was abandoned and perform our cleanup. See <span class="ref">Watchdog
+                timeouts</span> for further discussion.
+        </p>
+        <h2>
+            Animation fill
+        </h2>
+        <p>
+            During the delay before the start of the animation, and after the animation completes,
+            the element's properties are controlled by their actual styles rather than the keyframe.
+            This behavior can be altered by the standard-proposed
+            <var>
+                animation-fill-mode</var>
+            property.
+        </p>
+        <table class="grid enum">
+            <tr class="header">
+                <td>
+                    Fill mode
+                </td>
+                <td>
+                    Description
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    none (default)
+                </td>
+                <td>
+                    properties are not affected outside the animation timeline
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    backwards
+                </td>
+                <td>
+                    after the animation is applied and before the animation starts, the properties have
+                    the value of the keyframe's initial value
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    forwards
+                </td>
+                <td>
+                    after the animation ends and until the animation is removed, the properties have
+                    the value of the keyframe's final value
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    both
+                </td>
+                <td>
+                    combine backwards and forwards
+                </td>
+            </tr>
+        </table>
+        <p>
+            The
+            <var>
+                animation-fill-mode</var>
+            is a comma-separated list of values, each one applying respectively to the corresponding
+            comma-separated keyframe name. Like the other animation properties, it is captured
+            when the animation begins.
+        </p>
+        <p>
+            This property permits us to let the animation "hold" the initial and final values
+            outside of the keyframe.
+        </p>
+        <p>
+            Note, however, that the effect of the
+            <var>
+                animation-fill-mode</var>
+            extends only as long as the animation remains applied to the element. This creates
+            a problem for staggered animations, because each individual participant in the animation
+            will complete at a different time, but the promise returned by the animation library
+            does not fire until <em>all</em> participating elements have finished animating.
+            Each individual participant does not know when the other participants will complete,
+            so it will not know how long to delay clearing the keyframe. This gets particularly
+            complicated when multiple animations are combined, since there is no way for a Promise
+            to know that it has been joined or chained to another Promise.
+        </p>
+        <p>
+            Solving this problem would require applications who compose animations (via chaining
+            or joining) to communicate the "final completion" back into the animation engine
+            so it can perform final cleanup. This is problematic, so we solve the problem by
+            punting: If the application wants the object to retain its final property, it needs
+            to set that property prior to triggering the animation.
+        </p>
+        <pre>
+e.style.opacity = 0; // NEW
+WinJS.UI.Animation.fadeOut(e).then(function() { e.parentNode.removeChild(e); });
+</pre>
+        <p>
+            Although cumbersome, this approach does have the following advantages:
+        </p>
+        <ul>
+            <li>It is consistent with the general principle that non-layout animations do not make
+                permanent changes to element properties. (If you want a permanent change, you must
+                make it yourself.)
+                <li>It makes it possible to compose animations into a single storyboard.
+                    <li>
+            It avoids a breaking change from the animation library shipped at the 2011 //build/
+            conference.
+        </ul>
+        <p>
+            <span class="bug">We may want to change
+                <var>
+                    fadeIn</var>
+                and friends from animations to transitions, so that the final opacity sticks at
+                the end rather than reverting. This does introduce a breaking change, but perhaps
+                the scope of the break is not significant, since people are likely to expect the
+                opacity to be updated anyway. </span>
+        </p>
+        <h1>
+            Globally enabling and disabling the PVL
+        </h1>
+        <p>
+            The
+            <var>
+                enableAnimations</var>
+            and
+            <var>
+                disableAnimations</var>
+            methods allow an application to influence whether the PVL performs animations. The
+            <var>
+                isAnimationEnabled</var>
+            method allows an application to query whether the PVL will perform an animation.
+            This allows an application to enable or disable its manual animations in sync with
+            the PVL.
+        </p>
+        <p>
+            The animation
+            <var>
+                enableCount</var>
+            starts at zero.
+        </p>
+        <p>
+            Calling
+            <var>
+                enableAnimations</var>
+            increments the
+            <var>
+                enableCount</var>, and calling
+            <var>
+                disableAnimations</var>
+            decrements it.
+        </p>
+        <p>
+            The PVL uses this algorithm to determine whether animations are performed:
+        </p>
+        <ul>
+            <li>Start with the
+                <var>
+                    enableCount</var>.
+                <li>If animations are enabled by policy, then add 1. Otherwise, do not add 1.
+                    <li>
+            If the result is greater than zero, then animations are performed.
+        </ul>
+        <p>
+            This model permits the following usage patterns:
+        </p>
+        <ul>
+            <li><code>doStuff();</code><br>
+                If the application never disables or enables animations, then animations occur based
+                on policy.
+                <li><code>enableAnimations(); alwaysAnimates(); disableAnimations();</code><br>
+                    If the application explicitly enables animations, then animations are enabled regardless
+                    of policy.
+                    <li><code>disableAnimations(); neverAnimates(); enableAnimations();</code><br>
+            If the application explicitly disables animations, then animations are disabled
+            regardless of policy.
+        </ul>
+        <p>
+            Useful helper functions would be
+        </p>
+        <pre>
+function withoutAnimation(f) {
+ try {
+   WinJS.UI.disableAnimations();
+   return f();
+ } finally {
+   WinJS.UI.enableAnimations();
+ }
+}
+
+function forceAnimation(f) {
+ try {
+   WinJS.UI.enableAnimations();
+   return f();
+ } finally {
+   WinJS.UI.disableAnimations();
+ }
+}
+
+withoutAnimation(function() { neverAnimates(); });
+forceAnimation(function() { alwaysAnimates(); });
+</pre>
+        <h1>
+            Animation engine API
+        </h1>
+        <h2>
+            Dynamic action properties
+        </h2>
+        <p>
+            <p>
+                Any member of the Animation or Transition object can be set to a function rather
+                than a fixed value. In that case, the function is called for each element, and its
+                return value is used as the corresponding value of the Animation or Transition for
+                that element. Using a function allows a caller to provide a different action for
+                each element. For example, this technique is used to implement stagger animations,
+                and to allow animating objects to move to different final positions.
+            </p>
+            <p>
+                If you provide a function, it is called with the following parameters:
+            </p>
+            <table class="grid args">
+                <tr class="header">
+                    <td>
+                        Parameter
+                    </td>
+                    <td>
+                        Type
+                    </td>
+                    <td>
+                        Description
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        i
+                    </td>
+                    <td>
+                        number
+                    </td>
+                    <td>
+                        zero-based index of the animating element's group
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        e
+                    </td>
+                    <td>
+                        DOM element
+                    </td>
+                    <td>
+                        the element being animated
+                    </td>
+                </tr>
+            </table>
+            <p>
+                For example, if the target elements for an animation or transition are passed as
+                <code>[a, [b, c], d]</code>, then the callback function will be called four times:
+            </p>
+            <ul>
+                <li><code>f(0, a);</code>
+                    <li><code>f(1, b);</code>
+                        <li><code>f(1, c);</code>
+                            <li><code>f(2, d);</code>
+            </ul>
+            <p>
+                The first parameter to the callback is 1 for both
+                <var>
+                    b</var>
+                and
+                <var>
+                    c</var>
+                since they belong to the same animating group.
+            </p>
+            <h2>
+                Animation object
+            </h2>
+            <p>
+                An Animation object describes the properties of an animation.
+            </p>
+            <table class="grid members">
+                <tr class="header">
+                    <td>
+                        Member
+                    </td>
+                    <td>
+                        Type
+                    </td>
+                    <td>
+                        Description
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        keyframe
+                    </td>
+                    <td>
+                        string (optional)
+                    </td>
+                    <td>
+                        the predefined keyframe to use for this animation.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        property
+                    </td>
+                    <td>
+                        string
+                    </td>
+                    <td>
+                        the property to animate. <tt>"-ms-transform"</tt> and <tt>"opacity"</tt> are the
+                        only ones used by the PVL.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        delay
+                    </td>
+                    <td>
+                        number
+                    </td>
+                    <td>
+                        delay before the animation begins, in milliseconds
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        duration
+                    </td>
+                    <td>
+                        number
+                    </td>
+                    <td>
+                        animation duration, in milliseconds
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        timing
+                    </td>
+                    <td>
+                        string
+                    </td>
+                    <td>
+                        CSS timing function
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        from
+                    </td>
+                    <td>
+                        value (optional if
+                        <var>
+                            keyframe</var>
+                        is provided)
+                    </td>
+                    <td>
+                        starting value for property specified by
+                        <var>
+                            property</var>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        to
+                    </td>
+                    <td>
+                        value (optional if
+                        <var>
+                            keyframe</var>
+                        is provided)
+                    </td>
+                    <td>
+                        ending value for property specified by
+                        <var>
+                            property</var>
+                    </td>
+                </tr>
+            </table>
+            <p>
+                All members are required except where noted.
+            </p>
+            <p>
+                If required, the type of the
+                <var>
+                    from</var>
+                and
+                <var>
+                    to</var>
+                members must be compatible with the property specified by the
+                <var>
+                    property</var>
+                member. In other words, if
+                <var>
+                    property</var>
+                is <tt>"-ms-transform"</tt>, then
+                <var>
+                    from</var>
+                and
+                <var>
+                    to</var>
+                must be strings which are valid transforms. If
+                <var>
+                    property</var>
+                is <tt>"opacity"</tt>, then
+                <var>
+                    from</var>
+                and
+                <var>
+                    to</var>
+                must be numbers between 0 to 1.
+            </p>
+            <p>
+                (Note that the empty string is not a valid transform. To animate to a null transform,
+                you must specify an explicit null transform: <tt>"none"</tt>.)
+            </p>
+            <p>
+                If a keyframe is provided, then the animation will be performed according to the
+                sequence described by the keyframe. In that case, the
+                <var>
+                    from</var>
+                and
+                <var>
+                    to</var>
+                in the
+                <var>
+                    Animation</var>
+                object are ignored. Note, however, that you must still pass a
+                <var>
+                    property</var>
+                which matches the keyframe, so that action conflicts can be detected and dealt with.
+            </p>
+            <p>
+                Any member of the Animation object can be set to a function that returns the desired
+                value. See <span class="ref">Dynamic action properties</span> for more information.
+            </p>
+            <h3>
+                Internals
+            </h3>
+            <p>
+                The animation engine creates copies of the Animation object for capture purposes,
+                so that changes made by the calling application to the Animation object do not interfere
+                with our callbacks, and so that we can attach private information to the copy. (Earlier
+                versions of the animation engine modified the Animation object, which caused problems
+                if the application re-used the Animation object for multiple animations.)
+            </p>
+            <p>
+                After copying the Animation object (evaluating functions as necessary for dynamically
+                properties), we add the following internal properties to our copy:
+            </p>
+            <table class="grid members">
+                <tr class="header">
+                    <td>
+                        Member
+                    </td>
+                    <td>
+                        Type
+                    </td>
+                    <td>
+                        Description
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        keyframe
+                    </td>
+                    <td>
+                        string
+                    </td>
+                    <td>
+                        the auto-generated unique keyframe name
+                    </td>
+                </tr>
+            </table>
+            <h2>
+                Transition object
+            </h2>
+            <p>
+                A Transition object describes the properties of a transition.
+            </p>
+            <table class="grid members">
+                <tr class="header">
+                    <td>
+                        Member
+                    </td>
+                    <td>
+                        Type
+                    </td>
+                    <td>
+                        Description
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        property
+                    </td>
+                    <td>
+                        string
+                    </td>
+                    <td>
+                        the property to animate. <tt>"-ms-transform"</tt> and <tt>"opacity"</tt> are the
+                        only ones used by the PVL.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        delay
+                    </td>
+                    <td>
+                        number
+                    </td>
+                    <td>
+                        delay before the animation begins, in milliseconds
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        duration
+                    </td>
+                    <td>
+                        number
+                    </td>
+                    <td>
+                        transition duration, in milliseconds
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        timing
+                    </td>
+                    <td>
+                        string
+                    </td>
+                    <td>
+                        CSS timing function
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        from
+                    </td>
+                    <td>
+                        value (optional)
+                    </td>
+                    <td>
+                        starting value for property specified by
+                        <var>
+                            property</var>. If not specified, then property begins animating from its current
+                        value.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        to
+                    </td>
+                    <td>
+                        value
+                    </td>
+                    <td>
+                        target value for property specified by
+                        <var>
+                            property</var>
+                    </td>
+                </tr>
+            </table>
+            <p>
+                All members are required except where noted.
+            </p>
+            <p>
+                The type of the
+                <var>
+                    to</var>
+                member must be compatible with the property specified by
+                <var>
+                    property</var>. In other words, if
+                <var>
+                    property</var>
+                is <tt>"-ms-transform"</tt>, then
+                <var>
+                    to</var>
+                must be a string. If
+                <var>
+                    property</var>
+                is <tt>"opacity"</tt>, then
+                <var>
+                    to</var>
+                must be a number between 0 and 1.
+            </p>
+            <p>
+                (Note that unlike animations, for Transitions, you pass the empty string <tt>""</tt>
+                as the
+                <var>
+                    to</var>
+                value if the
+                <var>
+                    property</var>
+                is <tt>"-ms-transform"</tt>.)
+            </p>
+            <h3>
+                Internals
+            </h3>
+            <p>
+                As with Animation objects, the animation engine creates copies of the Transition
+                object for capture purposes as part of the evaluation. Otherwise, if the application
+                modified the
+                <var>
+                    property</var>
+                member after the call to
+                <var>
+                    executeTransition</var>
+                returned, our event handlers would be looking at the wrong property.
+            </p>
+            <h1>
+                Animation Engine function notes </H2>
+                <h2>
+                    Action descriptor object
+                </h2>
+                <p>
+                    An action descriptor object provides the traits of an action.
+                </p>
+                <table class="grid members">
+                    <tr class="header">
+                        <td>
+                            Member
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            shorthandProp
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            CSS name of the shorthand property that sets all the action properties at once
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            nameProp
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            CSS name of property that controls action lifetime
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            nameField
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            name of member of the Action/Transition object to set into the lifetime property
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            props
+                        </td>
+                        <td>
+                            array
+                        </td>
+                        <td>
+                            an array of arrays, each one describing one CSS property and how it should be initialized
+                            from the Transition or Animation object. The properties are listed <em>in the order
+                                they appear in the shorthand property</em>.
+                            <table class="grid members" style="margin-top: 1em">
+                                <tr class="header">
+                                    <td>
+                                        Index
+                                    </td>
+                                    <td>
+                                        Type
+                                    </td>
+                                    <td>
+                                        Description
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        0
+                                    </td>
+                                    <td>
+                                        string
+                                    </td>
+                                    <td>
+                                        CSS name of property to update
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        1
+                                    </td>
+                                    <td>
+                                        string
+                                    </td>
+                                    <td>
+                                        name of member of the Action/Transition object to use
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        2
+                                    </td>
+                                    <td>
+                                        string
+                                    </td>
+                                    <td>
+                                        string to append to the corresponding member value. For time values, this is "ms";
+                                        for other values, this is the null string.
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    There is no good reason why the
+                    <var>
+                        props</var>
+                    is an array of arrays rather than an array of records. It just ended up that way
+                    for historical reasons, and there was no justification for changing it. (It didn't
+                    affect performance either way.)
+                </p>
+                <h2>
+                    makeArray
+                </h2>
+                <p>
+                    Takes an object and converts it into something that supports indexing and has a
+                    length property.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            elements
+                        </td>
+                        <td>
+                            object (optional)
+                        </td>
+                        <td>
+                            collection or single element
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            object
+                        </td>
+                        <td>
+                            an object which supports indexing and has a
+                            <var>
+                                length</var>
+                            property
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    If a single object is passed, then we turn it into a one-element array.
+                </p>
+                <p>
+                    If
+                    <var>
+                        undefined</var>
+                    is passed, then we turn it into a zero-element array.
+                </p>
+                <h2>
+                    getUniqueKeyframeName
+                </h2>
+                <p>
+                    Returns a unique string to use as a keyframe name.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            none
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            a unique string to use as a keyframe name
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    JavaScript integers overflow at 2<sup>52</sup>. Even if running a million animations
+                    per second, overflow will not occur for over 140 years. I like those odds.
+                </p>
+                <h2>
+                    copyWithEvaluation
+                </h2>
+                <p>
+                    Creates a callback function which creates a shallow copy of a JavaScript object.
+                    If any member is a function, then the function is called to resolve it to a scalar.
+                    This function is used to capture Animation and Transition objects.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            iElem
+                        </td>
+                        <td>
+                            zero-based index of the animating element's group
+                        </td>
+                        <td>
+                            See below
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            elem
+                        </td>
+                        <td>
+                            DOM element
+                        </td>
+                        <td>
+                            the element being animated
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            function
+                        </td>
+                        <td>
+                            function which creates a shallow copy with function evaluation
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    The return value is a function suitable for use as a callback for
+                    <var>
+                        Array.map</var>. The function creates a shallow copy of the object and returns
+                    the copy. If any member of the source object is a function, then the function is
+                    called with the
+                    <var>
+                        iElem</var>
+                    and
+                    <var>
+                        elem</var>
+                    parameters.
+                </p>
+                <h2>
+                    cancelExistingAction
+                </h2>
+                <p>
+                    Cancels any active animation on an element for a particular property. This is done
+                    by calling the registered cancellation function, if any. The cancellation function
+                    is expected to call
+                    <var>
+                        unregisterAction</var>.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            id
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            <var>
+                                uniqueID</var>
+                            of the element
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            prop
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            CSS name of property whose animation is to be canceled
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            keyframe (optional)
+                        </td>
+                        <td>
+                            keyframe name if a keyframe animation was canceled. If there was no existing action
+                            or the existing action was not a keyframe animation, then returns
+                            <var>
+                                undefined</var>.
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    The function returns the name of the canceled keyframe so that callers can force
+                    a style resolution if that same keyframe animation is about to be restarted.
+                </p>
+                <h2>
+                    registerAction
+                </h2>
+                <p>
+                    Registers a function to be called if an action needs to be canceled.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            id
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            <var>
+                                uniqueID</var>
+                            of the element
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            prop
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            CSS name of property being animated
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            finish
+                        </td>
+                        <td>
+                            function
+                        </td>
+                        <td>
+                            function to call on cancelation. If the action is a keyframe animation, then the
+                            function must have a
+                            <var>
+                                keyframe</var>
+                            property which is the name of the keyframe.
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            none
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    Callers are expected to have called
+                    <var>
+                        cancelExistingAnimation</var>
+                    at some earlier point.
+                </p>
+                <h2>
+                    unregisterAction
+                </h2>
+                <p>
+                    Unregisters the function registered by a previous call to
+                    <var>
+                        registerAction</var>.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            id
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            <var>
+                                uniqueID</var>
+                            of the element
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            prop
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            CSS name of property whose animation or transition has completed
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            none
+                        </td>
+                    </tr>
+                </table>
+                <h2>
+                    removeName
+                </h2>
+                <p>
+                    Helper function to remove a single name from a comma-separated list of names.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            style
+                        </td>
+                        <td>
+                            StyleCSSProperties
+                        </td>
+                        <td>
+                            <var>
+                                style</var>
+                            object of the target element
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            prop
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            CSS name of property to edit
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            name
+                        </td>
+                        <td>
+                            string
+                        </td>
+                        <td>
+                            name to remove from comma-separated list
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            none
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    Suppose the element's
+                    <var>
+                        elem.style.lifetime</var>
+                    property has the value <tt>"a, b, c, d"</tt>. Calling <code>removeName(elem.style, "something-list",
+                        "b")</code> would result in the property changing to <tt>"a, c, d"</tt>. The
+                    <tt>"b"</tt> was removed from the list.
+                </p>
+                <p>
+                    Note that we passed the CSS property name
+                    <var>
+                        something-list</var>
+                    rather than the JavaScript property name
+                    <var>
+                        somethingList</var>.
+                </p>
+                <p>
+                    Remember that Internet Explorer actually separates items with a comma <em>and space</em>,
+                    so we need to include the space in our parsing algorithm.
+                </p>
+                <h2>
+                    setTemporaryStyles
+                </h2>
+                <p>
+                    Changes the styles of an element to add new actions, and returns a function which
+                    will trigger the action and restore the styles.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            style
+                        </td>
+                        <td>
+                            StyleCSSProperties
+                        </td>
+                        <td>
+                            <var>
+                                style</var>
+                            object of the target element
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            actions
+                        </td>
+                        <td>
+                            array
+                        </td>
+                        <td>
+                            array of Transition or Animation objects
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            desc
+                        </td>
+                        <td>
+                            action descriptor
+                        </td>
+                        <td>
+                            traits of the action to be applied
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            function ()
+                        </td>
+                        <td>
+                            function to call to clean up temporary changes
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    The function proceeeds in the following steps:
+                </p>
+                <ul>
+                    <li>Capture the old values of the styles are about to update.
+                        <li>Build the new shorthand string from the action properties. This is done by joining
+                            the individual properties for each action (with spaces), and then joining all the
+                            actions (with commas). Prepend the existing names, if any.
+                            <li>Set the action properties via the shorthand property.
+                                <li>Resolve styles to trigger the action.
+                                    <li>
+                    Return a cleanup function.
+                </ul>
+                <p>
+                    The cleanup function resolves styles and then restores the original styles (except
+                    for the lifetime property). Its parameter is the original element.
+                </p>
+                <h2>
+                    executeElementTransition
+                </h2>
+                <p>
+                    Apply an array of transitions to a single element.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            elem
+                        </td>
+                        <td>
+                            DOM element
+                        </td>
+                        <td>
+                            target element
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            index
+                        </td>
+                        <td>
+                            number
+                        </td>
+                        <td>
+                            zero-based index of the animating element's group
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            transitions
+                        </td>
+                        <td>
+                            array of Transition objects
+                        </td>
+                        <td>
+                            transitions to apply to the element
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            promises
+                        </td>
+                        <td>
+                            array of Promise objects
+                        </td>
+                        <td>
+                            any Promises created by the function are appended to this array
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            animate
+                        </td>
+                        <td>
+                            boolean
+                        </td>
+                        <td>
+                            <var>
+                                true</var>
+                            if animations should be performed
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            none
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    As we saw in the introduction, the property mapping for transitions is as follows:
+                </p>
+                <table class="grid">
+                    <tr class="header">
+                        <td>
+                            Characteristic
+                        </td>
+                        <td>
+                            Property
+                        </td>
+                        <td>
+                            Notes
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Lifetime
+                        </td>
+                        <td>
+                            <var>
+                                -ms-transition-property</var>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Initial delay
+                        </td>
+                        <td>
+                            <var>
+                                -ms-transition-delay</var>
+                        </td>
+                        <td>
+                            append "ms" since the value is in milliseconds
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Duration
+                        </td>
+                        <td>
+                            <var>
+                                -ms-transition-duration</var>
+                        </td>
+                        <td>
+                            append "ms" since the value is in milliseconds
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Curve
+                        </td>
+                        <td>
+                            <var>
+                                -ms-transition-timing-function</var>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    We create private copies of the Transition objects so that we are insulated from
+                    changes made by the application, and so that we can evaluate any callback functions.
+                </p>
+                <p>
+                    If the transition has an explicit
+                    <var>
+                        from</var>, then set it.
+                </p>
+                <p>
+                    If the element is already at the target value, then there is no transition, and
+                    the corresponding Transition object is filtered out.
+                </p>
+                <p>
+                    <em>Subtlety</em>: We filter the
+                    <var>
+                        to</var>
+                    through the
+                    <var>
+                        uniformizeStyle</var>
+                    element to account for equivalent properties. See <span class="ref">Edge case for transitions</span>
+                    for further discussion.
+                </p>
+                <p>
+                    For each transition that has not been filtered out, we hook up these callback functions:
+                </p>
+                <table class="grid list">
+                    <tr class="header">
+                        <td>
+                            Callback
+                        </td>
+                        <td>
+                            Fired by
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            finish
+                        </td>
+                        <td>
+                            setTimeout
+                        </td>
+                        <td>
+                            Unregisters all callbacks and completes the promise.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            onTransitionEnd
+                        </td>
+                        <td>
+                            MSTransitionEnd
+                        </td>
+                        <td>
+                            If the transition being ended is for the property we are animating, then our transition
+                            ran to completion, and we call the
+                            <var>
+                                finish</var>
+                            callback to complete our promise and clean up.
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    Note that event handlers are registered on the
+                    <var>
+                        document</var>
+                    if the element is disabled, for reasons described in <span class="ref">Event handler
+                        gotchas</span>.
+                </p>
+                <p>
+                    The timeout associated with the
+                    <var>
+                        finish</var>
+                    callback is set in two steps to ensure that the time-to-first-frame does not count
+                    toward the timeout. We set the watchdog timeout to the expected completion time
+                    <em>after</em> the first frame has completed.
+                </p>
+                <p>
+                    The final step is to update the value of the animating property to trigger the transition.
+                    We do not resolve the style yet; we'll do that at the end.
+                </p>
+                <p>
+                    Note that the loop over the transitions must be performed via
+                    <var>
+                        forEach</var>
+                    rather than a
+                    <var>
+                        for</var>
+                    loop, because we need each iteration to capture a different
+                    <var>
+                        transition</var>
+                    local variable.
+                </p>
+                <p>
+                    After the final properties are set, we resolve one of the animating properties to
+                    trigger them all. (The IE folks recommended this instead of triggering each transition
+                    separately.)
+                </p>
+                <p>
+                    After all transitions have been triggered, we can clean up the temporary styles,
+                    since their values were captured at the time the transition was triggered.
+                </p>
+                <p>
+                    If animations are disabled (<var>animate</var>
+                    is
+                    <var>
+                        false</var>), then all we do is set the final values of the transitions into
+                    the element. No promise is generated since the operation completed synchronously.
+                    To maintain semantic equivalence with the case where animations are enabled, we
+                    also resolve the style after setting the final values, just like we would have if
+                    animating.
+                </p>
+                <h2>
+                    executeTransition
+                </h2>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            elem
+                        </td>
+                        <td>
+                            see
+                            <var>
+                                applyAction</var>
+                        </td>
+                        <td>
+                            target elements
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            transitions
+                        </td>
+                        <td>
+                            array of Transition objects
+                        </td>
+                        <td>
+                            transitions to apply to the elements
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Promise
+                        </td>
+                        <td>
+                            The promise completes when all transitions complete
+                        </td>
+                        </TD>
+                    </tr>
+                </table>
+                <p>
+                    The
+                    <var>
+                        executeTransition</var>
+                    function uses the
+                    <var>
+                        applyAction</var>
+                    function to do the heavy lifting.
+                </p>
+                <h2>
+                    executeElementAnimation
+                </h2>
+                <p>
+                    Apply an array of animations to a single element.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            elem
+                        </td>
+                        <td>
+                            DOM element
+                        </td>
+                        <td>
+                            target element
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            index
+                        </td>
+                        <td>
+                            number
+                        </td>
+                        <td>
+                            zero-based index of the animating element's group
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            anims
+                        </td>
+                        <td>
+                            array of Animation objects
+                        </td>
+                        <td>
+                            animations to apply to the element. Assumes that
+                            <var>
+                                calcAnimationProperties</var>
+                            has already been called to reinitialize each Animation object.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            promises
+                        </td>
+                        <td>
+                            array of Promise objects
+                        </td>
+                        <td>
+                            any Promises created by the function are appended to this array
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            animate
+                        </td>
+                        <td>
+                            boolean
+                        </td>
+                        <td>
+                            <var>
+                                true</var>
+                            if animations should be performed
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            none
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    As we saw in the introduction, the property mapping for animations is as follows:
+                </p>
+                <table class="grid">
+                    <tr class="header">
+                        <td>
+                            Characteristic
+                        </td>
+                        <td>
+                            Property
+                        </td>
+                        <td>
+                            Notes
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Lifetime
+                        </td>
+                        <td>
+                            <var>
+                                -ms-animation-name</var>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Initial delay
+                        </td>
+                        <td>
+                            <var>
+                                -ms-animation-delay</var>
+                        </td>
+                        <td>
+                            append "ms" since the value is in milliseconds
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Duration
+                        </td>
+                        <td>
+                            <var>
+                                -ms-animation-duration</var>
+                        </td>
+                        <td>
+                            append "ms" since the value is in milliseconds
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Curve
+                        </td>
+                        <td>
+                            <var>
+                                -ms-animation-timing-function</var>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Direction
+                        </td>
+                        <td>
+                            <var>
+                                -ms-animation-direction</var>
+                        </td>
+                        <td>
+                            hard-coded to <tt>"normal"</tt>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Iteration
+                        </td>
+                        <td>
+                            <var>
+                                -ms-animation-iteration-count</var>
+                        </td>
+                        <td>
+                            hard-coded to <tt>"1"</tt>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Persistence
+                        </td>
+                        <td>
+                            <var>
+                                -ms-animation-fill-mode</var>
+                        </td>
+                        <td>
+                            hard-coded to <tt>"both"</tt>
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    We hook up the following callback functions for each animation:
+                </p>
+                <table class="grid list">
+                    <tr class="header">
+                        <td>
+                            Callback
+                        </td>
+                        <td>
+                            Fired by
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            finish
+                        </td>
+                        <td>
+                            setTimeout
+                        </td>
+                        <td>
+                            Unregisters all callbacks and completes the promise.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            onAnimationEnd
+                        </td>
+                        <td>
+                            MSAnimationEnd
+                        </td>
+                        <td>
+                            If the animation being ended is for our keyframe, then our animation ran to completion,
+                            and we call the
+                            <var>
+                                finish</var>
+                            callback to complete our promise and clean up.
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    Note that event handlers are registered on the
+                    <var>
+                        document</var>
+                    if the element is disabled, for reasons described in <span class="ref">Event handler
+                        gotchas</span>.
+                </p>
+                <p>
+                    The timeout associated with the
+                    <var>
+                        finish</var>
+                    callback is set in two steps to ensure that the time-to-first-frame does not count
+                    toward the timeout. We set the watchdog timeout to the expected completion time
+                    <em>after</em> the first frame has completed.
+                </p>
+                <p>
+                    Note that the loop over the animations must be performed via
+                    <var>
+                        forEach</var>
+                    rather than a
+                    <var>
+                        for</var>
+                    loop, because we need each iteration to capture a different
+                    <var>
+                        anim</var>
+                    local variable.
+                </p>
+                <p>
+                    After all the keyframes and events are hooked up, we see if any of the keyframes
+                    being scheduled match a keyframe that we canceled. If so, then the application is
+                    restarting a keyframe animation, so we must force a style resolution so that the
+                    browser will stop the previous keyframe animation. (If we did not do this, then
+                    the browser would not notice that we deleted and re-added the same keyframe animation;
+                    it would see that nothing changed, and the effect would be that the new keyframe
+                    animation just continues where the previous keyframe animation left off.)
+                </p>
+                <p>
+                    Note that the restart detection code assumes that the array of animations passed
+                    by the application does not attempt to animate the same property multiple times.
+                    (Our restart detector merely compares the previous against the next, rather than
+                    previous against all subsequent.) This is a reasonable assumption because attempting
+                    to animate the same property multiple times is pointless, since only the last animation
+                    will survive. Since applications are not expected to generate the animation descriptors
+                    at runtime, the duplicates would be removed at authoring time.
+                </p>
+                <p>
+                    Next, we apply the animation styles (which resolves the
+                    <var>
+                        -ms-animation-name</var>, thereby triggering the animations) and immediately
+                    clean up the temporary styles.
+                </p>
+                <p>
+                    If animations are disabled (<var>animate</var>
+                    is
+                    <var>
+                        false</var>), then we do nothing, since animations have no lasting effect. No
+                    promise is generated since the operation completed synchronously.
+                </p>
+                <h2>
+                    executeAnimation
+                </h2>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            elem
+                        </td>
+                        <td>
+                            see
+                            <var>
+                                applyAction</var>
+                        </td>
+                        <td>
+                            target elements
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            anims
+                        </td>
+                        <td>
+                            array of Animation objects
+                        </td>
+                        <td>
+                            animations to apply to the elements
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Promise
+                        </td>
+                        <td>
+                            The promise completes when all animations complete
+                        </td>
+                        </TD>
+                    </tr>
+                </table>
+                <p>
+                    The
+                    <var>
+                        executeAnimation</var>
+                    function uses the
+                    <var>
+                        applyAction</var>
+                    function to do the heavy lifting.
+                </p>
+                <h2>
+                    animationSettings object
+                </h2>
+                <p>
+                    This is either a <code>Windows.UI.ViewManagement.UISettings</code> object, or a
+                    dummy object which reports that animations are always enabled.
+                </p>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Property
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            animationsEnabled
+                        </td>
+                        <td>
+                            boolean
+                        </td>
+                        <td>
+                            <var>
+                                true</var>
+                            is animations are enabled in the system, or
+                            <var>
+                                false</var>
+                            if disabled
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    If we can create the
+                    <var>
+                        Windows.UI.ViewManagement.UISettings</var>
+                    object, then we detect whether animations are enabled by checking the
+                    <var>
+                        animationsEnabled</var>
+                    property, which corresponds to the <code>SPI_<wbr>GET&shy;CLIENT&shy;AREA&shy;ANIMATIONS</code>
+                    system parameter.
+                </p>
+                <p>
+                    If we are unable to create the object, then we substitute a dummy object whose hard-coded
+                    <var>
+                        animationsEnabled</var>
+                    property is
+                    <var>
+                        true</var>.
+                </p>
+                <p>
+                    The <code>try...catch</code> around the probe for WinRT is to protect against problems
+                    that may occur if the Web page happens to have a global object named
+                    <var>
+                        Windows</var>. (Perfectly legal and not entirely unreasonable.) If that's the
+                    case, we will take an exception when we try to invoke WinRT methods on it, since
+                    it's not actually WinRT. If that happens, then we just say, "Forget it, we don't
+                    have WinRT here." We perform early tests against
+                    <var>
+                        window.Windows</var>
+                    and
+                    <var>
+                        Windows.UI</var>
+                    to avoid raising exceptions in the common case, thereby avoiding exception noise
+                    when the application developer goes to debug their page. (Otherwise, they will see
+                    this exception and think, "Maybe that's why my page isn't working.")
+                </p>
+                <h2>
+                    applyAction
+                </h2>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            elem
+                        </td>
+                        <td>
+                            see below
+                        </td>
+                        <td>
+                            target elements
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            action
+                        </td>
+                        <td>
+                            array of Transition or Animation objects
+                        </td>
+                        <td>
+                            target actions
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            execAction
+                        </td>
+                        <td>
+                            function (elem, index, actions, promises)
+                        </td>
+                        <td>
+                            callback to apply the actions to the element. Any Promises are appended to the
+                            <var>
+                                promises</var>
+                            array.
+                        </td>
+                    </tr>
+                </table>
+                <table class="grid returns">
+                    <tr class="header">
+                        <td>
+                            Returns
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Promise
+                        </td>
+                        <td>
+                            The promise completes when all actions have completed.
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    The
+                    <var>
+                        elem</var>
+                    parameter can be any of the following:
+                </p>
+                <ul>
+                    <li>
+                        <var>
+                            undefined</var>, in which case nothing animates.
+                        <li>A single DOM element.
+                            <li>An array of DOM elements.
+                                <li>An array of arrays of DOM elements. (In this case, each sub-array is treated as
+                                    a single unit for the purposes of stagger.)
+                                    <li>
+                    An HTMLCollection or NodeList.
+                </ul>
+                <p>
+                    To elaborate on the array of arrays: Suppose the parameter is <tt>[a, [b, c], d]</tt>.
+                    This represents a transition involving four elements.
+                </p>
+                <table class="grid">
+                    <tr class="header">
+                        <td>
+                            Element
+                        </td>
+                        <td>
+                            Stagger position
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            a
+                        </td>
+                        <td>
+                            0
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            b
+                        </td>
+                        <td>
+                            1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            c
+                        </td>
+                        <td>
+                            1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            d
+                        </td>
+                        <td>
+                            2
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    In other words, elements
+                    <var>
+                        b</var>
+                    and
+                    <var>
+                        c</var>
+                    animate together.
+                </p>
+                <p>
+                    We use the algorithm described in <span class="ref">Globally enabling and disabling
+                        the PVL</span> to determine whether animations are enabled. Note that we take
+                    advantage of the fact that boolean
+                    <var>
+                        true</var>
+                    has numeric value 1, whereas boolean
+                    <var>
+                        false</var>
+                    has numeric value 0.
+                </p>
+                <p>
+                    After the
+                    <var>
+                        execAction</var>
+                    has been called on each animating element, we join together all the
+                    <var>
+                        Promise</var>s, forming the final
+                    <var>
+                        Promise</var>
+                    for the action. If there are no promises to join (all operations completed synchronously),
+                    we return a zero-duration timeout promise so that the promise completes asynchronously.
+                    This preserves event-ordering behavior when animations are disabled.
+                </p>
+                <h1>
+                    Animation Engine events
+                </h1>
+                <h1>
+                    Animation Library objects
+                </h1>
+                <h2>
+                    offset object
+                </h2>
+                <p>
+                    Application use an
+                    <var>
+                        offset</var>
+                    object to provide animation offsets.
+                </p>
+                <table class="grid members">
+                    <tr class="header">
+                        <td>
+                            Member
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            top
+                        </td>
+                        <td>
+                            string: CSS [LENGTH]
+                        </td>
+                        <td>
+                            the vertical displacement
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            left
+                        </td>
+                        <td>
+                            string: CSS [LENGTH]
+                        </td>
+                        <td>
+                            the horizontal displacement
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            rtlflip
+                        </td>
+                        <td>
+                            boolean (optional)
+                        </td>
+                        <td>
+                            if
+                            <var>
+                                true</var>, change direction of
+                            <var>
+                                left</var>
+                            if applied to an element whose
+                            <var>
+                                direction</var>
+                            is <tt>"rtl"</tt>
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    The
+                    <var>
+                        top</var>
+                    and
+                    <var>
+                        left</var>
+                    are CSS [LENGTH] values, usually pixels. For example, <tt>"10px"</tt>.
+                </p>
+                <p>
+                    If the
+                    <var>
+                        rtlflip</var>
+                    property is
+                    <var>
+                        true</var>, and the offset is being applied to an element whose CSS
+                    <var>
+                        direction</var>
+                    property resolves to <tt>"rtl"</tt>, then the sign of the
+                    <var>
+                        left</var>
+                    property is reversed.
+                </p>
+                <h2>
+                    OffsetArray class
+                </h2>
+                <p>
+                    The
+                    <var>
+                        OffsetArray</var>
+                    class captures the offsets provided by the application.
+                </p>
+                <h3>
+                    OffsetArray constructor
+                </h3>
+                <table class="grid args">
+                    <tr class="header">
+                        <td>
+                            Parameter
+                        </td>
+                        <td>
+                            Type
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            offset
+                        </td>
+                        <td>
+                            object
+                        </td>
+                        <td>
+                            offsets (see discussion below)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            keyframe
+                        </td>
+                        <td>
+                            string (optional)
+                        </td>
+                        <td>
+                            keyframe name if default used (see discussion below)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            defOffset
+                        </td>
+                        <td>
+                            object (optional)
+                        </td>
+                        <td>
+                            default offset to use if application did not provide one. If provided, this object
+                            must have
+                            <var>
+                                top</var>
+                            and
+                            <var>
+                                left</var>
+                            property.
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    The
+                    <var>
+                        OffsetArray</var>
+                    constructor accepts an object in the following forms:
+                </p>
+                <ul>
+                    <li>
+                        <var>
+                            Array</var>
+                        of
+                        <var>
+                            offset</var>
+                        objects.
+                        <li>Single
+                            <var>
+                                offset</var>
+                            object, equivalent to a single-element array containing that object.
+                            <li>
+                                <var>
+                                    undefined</var>, equivalent to an empty array.
+                </ul>
+                <p>
+                    See the
+                    <var>
+                        getOffset</var>
+                    member function for a description of how these parameters are interpreted to determine
+                    the offset to apply to each element.
+                </p>
+                <p>
+                    If the
+                    <var>
+                        offset</var>
+                    is empty or undefined, then the default offset
+                    <var>
+                        defOffset</var>
+                    is used.
+                </p>
+                <p>
+                    If the
+                    <var>
+                        offset</var>
+                    is a single offset object or an array with one offset, we use the
+                    <var>
+                        checkKeyframe</var>
+                    method to see whether that offset happens to match the default offset for this animation.
+                    If so, we will use the keyframe. See
+                    <var>
+                        checkKeyframe</var>
+                    for further discussion.
+                </p>
+                <p>
+                    See the
+                    <var>
+                        chooseKeyframe</var>
+                    property for a discussion of how we choose the keyframe in the case where the application
+                    asks for the default offsets.
+                </p>
+                <h3>
+                    keyframe property
+                </h3>
+                <p>
+                    The
+                    <var>
+                        keyframe</var>
+                    property specifies the predefined CSS animation keyframe to use, if any.
+                </p>
+                <p>
+                    If the
+                    <var>
+                        OffsetArray</var>
+                    was constructed with an explicit application-provided offset, then there is no predefined
+                    keyframe.
+                </p>
+                <p>
+                    If the
+                    <var>
+                        OffsetArray</var>
+                    was constructed with a default offset, then the
+                    <var>
+                        chooseKeyframe</var>
+                    function is used to determine what keyframe to return.
+                </p>
+                <p>
+                    In all cases, the
+                    <var>
+                        keyframe</var>
+                    property is a value suitable for passing as the
+                    <var>
+                        keyframe</var>
+                    property of an
+                    <var>
+                        Animation</var>
+                    object.
+                    <h3>
+                        checkKeyframe function
+                    </h3>
+                    <p>
+                        Determines whether the application-provided offsets match the predefined keyframe
+                        offsets. If so, then proceeds as if the predefined offsets were used.
+                    </p>
+                    <table class="grid args">
+                        <tr class="header">
+                            <td>
+                                Parameter
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                offset
+                            </td>
+                            <td>
+                                offset
+                            </td>
+                            <td>
+                                Application-provided offset
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                defOffset
+                            </td>
+                            <td>
+                                offsets
+                            </td>
+                            <td>
+                                Predefined offset
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                keyframe
+                            </td>
+                            <td>
+                                string (optional)
+                            </td>
+                            <td>
+                                keyframe name
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="grid returns">
+                        <tr class="header">
+                            <td>
+                                Returns
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                static keyframe to apply to all elements
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                function
+                            </td>
+                            <td>
+                                function to calculate keyframe for each element
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                null
+                            </td>
+                            <td>
+                                no keyframe applies to this offset
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        If there is no keyframe provided, then the function returns null, indicating that
+                        there is no optimized keyframe for this collection of offsets.
+                    </p>
+                    <p>
+                        If the application-provided offset does not match the default offset's
+                        <var>
+                            top</var>
+                        and
+                        <var>
+                            left</var>, then we cannot use the predefined keyframe. Return
+                        <var>
+                            null</var>.
+                    </p>
+                    <p>
+                        If the application-provided offset flips in RTL, but we have only an LTR keyframe,
+                        then we cannot use the predefined keyframes. Return
+                        <var>
+                            null</var>. (We cannot return a function that sometimes returns a keyframe and
+                        sometimes returns
+                        <var>
+                            null</var>, because we need to know up front whether to pass a callback as the
+                        <var>
+                            from</var>
+                        and
+                        <var>
+                            to</var>
+                        members of the Animation or Transition object.)
+                    </p>
+                    <p>
+                        If the application-provided offset does not flip in RTL, then we can apply the LTR
+                        keyframe statically to all elements.
+                    </p>
+                    <p>
+                        Otherwise, the application-provided offset flips in RTL (and therefore the default
+                        offset also flips in RTL), so we can use
+                        <var>
+                            keyframeCallback</var>
+                        as our callback function.
+                    </p>
+                    <p>
+                        Here's a table of the possibilities when a keyframe is available and the offsets
+                        match.
+                    </p>
+                    <table class="grid other">
+                        <tr class="header">
+                            <td>
+                            </td>
+                            <td colspan="2">
+                                offset.rtlflip
+                            </td>
+                        </tr>
+                        <tr class="header">
+                            <td>
+                            </td>
+                            <td>
+                                true
+                            </td>
+                            <td>
+                                false
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="header">
+                                defOffset.rtlflip = true
+                            </td>
+                            <td>
+                                <var>
+                                    keyframeCallback</var>
+                            </td>
+                            <td rowspan="2" valign="center">
+                                <var>
+                                    keyframe</var>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="header">
+                                defOffset.rtlflip = false
+                            </td>
+                            <td>
+                                <var>
+                                    null</var>
+                            </td>
+                        </tr>
+                    </table>
+                    <h3>
+                        chooseKeyframe function
+                    </h3>
+                    <p>
+                        Calculates the static keyframe name or keyframe callback function to use for a collection
+                        of animation offsets.
+                    </p>
+                    <table class="grid args">
+                        <tr class="header">
+                            <td>
+                                Parameter
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                defOffset
+                            </td>
+                            <td>
+                                offset
+                            </td>
+                            <td>
+                                Default offset to apply
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                keyframe
+                            </td>
+                            <td>
+                                string (optional)
+                            </td>
+                            <td>
+                                keyframe name
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="grid returns">
+                        <tr class="header">
+                            <td>
+                                Returns
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                static keyframe to apply to all elements
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                function
+                            </td>
+                            <td>
+                                function to calculate keyframe for each element
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                null
+                            </td>
+                            <td>
+                                no keyframe applies to this offset
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        If there is no keyframe provided, then the function returns null, indicating that
+                        there is no optimized keyframe for this collection of offsets.
+                    </p>
+                    <p>
+                        If the
+                        <var>
+                            defOffset</var>
+                        defines a keyframe which does not need to flip in RTL, then the static keyframe
+                        is returned. This causes all animations to use the same keyframe.
+                    </p>
+                    <p>
+                        If the
+                        <var>
+                            defOffset</var>
+                        defines a keyframe which must flip depending on the element's direction, then a
+                        function is returned which returns either the keyframe name or the keyframe name
+                        with <code>-rtl</code> appended, depending on whether the element is LTR or RTL.
+                    </p>
+                    <h3>
+                        keyframeCallback
+                    </h3>
+                    <p>
+                        Callback function that decides whether to use the LTR or RTL keyframe for an element.
+                    </p>
+                    <table class="grid args">
+                        <tr class="header">
+                            <td>
+                                Parameter
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                keyframe
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                keyframe name. The keyframe must be available in both LTR and RTL versions.
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="grid returns">
+                        <tr class="header">
+                            <td>
+                                Returns
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                function
+                            </td>
+                            <td>
+                                function to calculate keyframe for each element
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        The callback function returns the appropriate keyframe name based on the element's
+                        direction.
+                    </p>
+                    <h3>
+                        getOffset member
+                    </h3>
+                    <table class="grid args">
+                        <tr class="header">
+                            <td>
+                                Parameter
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                i
+                            </td>
+                            <td>
+                                integer
+                            </td>
+                            <td>
+                                Index of object from which to obtain offset
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="grid returns">
+                        <tr class="header">
+                            <td>
+                                Returns
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                object
+                            </td>
+                            <td>
+                                an
+                                <var>
+                                    offset</var>
+                                object
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        If the
+                        <var>
+                            OffsetArray</var>
+                        was constructed with
+                        <var>
+                            undefined</var>
+                        or an empty array, then the
+                        <var>
+                            i</var>
+                        parameter is ignored, and the function returns the
+                        <var>
+                            defOffset</var>
+                        passed to the constructor. If no
+                        <var>
+                            defOffset</var>
+                        was passed to the constructor, then a default offset of <code>{ top: "0px", left: "11px",
+                            rtlflip: true }</code> is returned.
+                    </p>
+                    <p>
+                        If the
+                        <var>
+                            OffsetArray</var>
+                        was constructed with a single object, then the
+                        <var>
+                            i</var>
+                        parameter is ignored, and the single object passed to the constructor is returned.
+                    </p>
+                    <p>
+                        Otherwise, the
+                        <var>
+                            OffsetArray</var>
+                        was constructed with an array. The
+                        <var>
+                            i</var>'th element of the array is returned (zero-based index). If fewer than
+                        <code>i + 1</code> elements are present in the array, then the last element in the
+                        array is returned. (Effectively, the last element repeats indefinitely.)
+                    </p>
+                    <h1>
+                        Animation Library function notes
+                    </h1>
+                    <h2>
+                        makeArray
+                    </h2>
+                    <p>
+                        Identical to
+                        <var>
+                            makeArray</var>
+                        in the animation engine.
+                    </p>
+                    <h2>
+                        collectOffsetArray
+                    </h2>
+                    <table class="grid args">
+                        <tr class="header">
+                            <td>
+                                Parameter
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                element
+                            </td>
+                            <td>
+                                collection
+                            </td>
+                            <td>
+                                target elements
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                dynamic
+                            </td>
+                            <td>
+                                bool (optional)
+                            </td>
+                            <td>
+                                if non-<code>false</code>, then the translation transform is included
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="grid returns">
+                        <tr class="header">
+                            <td>
+                                Returns
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Array
+                            </td>
+                            <td>
+                                Array of <code>{ top: value, left: value }</code> objects describing the current
+                                positions of the elements in the collection.
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        The current position of the element is its current
+                        <var>
+                            offsetTop</var>
+                        and
+                        <var>
+                            offsetLeft</var>, optionally combined with any active translation transform.
+                    </p>
+                    <p>
+                        See <span class="ref">Optimization notes: Parsing transitions</span> for a discussion
+                        of the best way to parse the transform property.
+                    </p>
+                    <p>
+                        <em>Note</em> that the returned array is <em>not</em> an array of
+                        <var>
+                            offset</var>
+                        objects. The
+                        <var>
+                            top</var>
+                        and
+                        <var>
+                            left</var>
+                        properties of the objects returned by
+                        <var>
+                            collectOffsetArray</var>
+                        are simple integers (representing pixels), not CSS lengths.
+                    </p>
+                    <h2>
+                        staggerDelay
+                    </h2>
+                    <p>
+                        Creates the callback function for the
+                        <var>
+                            delay</var>
+                        member of the Animation and Transition objects used by the Animation Engine.
+                    </p>
+                    <table class="grid args">
+                        <tr class="header">
+                            <td>
+                                Parameter
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                initialDelay
+                            </td>
+                            <td>
+                                number
+                            </td>
+                            <td>
+                                millisecond delay for first item
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                extraDelay
+                            </td>
+                            <td>
+                                number
+                            </td>
+                            <td>
+                                additional millisecond delay to be added for subsequent items
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                delayFactor
+                            </td>
+                            <td>
+                                number
+                            </td>
+                            <td>
+                                factor to apply to the
+                                <var>
+                                    extraDelay</var>
+                                each time it is applied
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                delayCap
+                            </td>
+                            <td>
+                                number (optional)
+                            </td>
+                            <td>
+                                maximum millisecond delay
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="grid returns">
+                        <tr class="header">
+                            <td>
+                                Returns
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                function (i)
+                            </td>
+                            <td>
+                                Delay computation function which returns delay in milliseconds
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        The returned function takes a zero-based item number and calculates the delay for
+                        that item based on the parameters passed to
+                        <var>
+                            staggerDelay</var>.
+                    </p>
+                    <p>
+                        The nominal delay for item 0 is <code>initialDelay</code>.
+                    </p>
+                    <p>
+                        The nominal delay for item 1 is <code>initialDelay + extraDelay * delayFactor</code>.
+                    </p>
+                    <p>
+                        The nominal delay for item 2 is <code>initialDelay + extraDelay * delayFactor + extraDelay
+                            * delayFactor * delayFactor</code>.
+                    </p>
+                    <p>
+                        In general, the nominal delay for item <i>n</i> is
+                    </p>
+                    <table style="text-align: center">
+                        <tr>
+                            <td>
+                                <code>nominalDelay</code>
+                            </td>
+                            <td>
+                                =
+                            </td>
+                            <td align="left">
+                                <code>initialDelay</code> &nbsp; +
+                                <table style="display: inline-table">
+                                    <tr valign="baseline">
+                                        <td style="font-size: 300%; font-family: Cambria, serif">
+                                            &#x2211;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            1 &le; <i style="font-family: Cambria, serif">i</i> &le; <i style="font-family: Cambria, serif">
+                                                n</i>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <code>extraDelay</code> &times; <code>delayFactor</code><sup><i style="font-family: Cambria, serif">i</i></sup>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                =
+                            </td>
+                            <td align="left">
+                                <code>initialDelay</code> &nbsp; + <code>extraDelay</code> &times; <code>delayFactor</code>
+                                &times;
+                                <table style="display: inline-table">
+                                    <tr valign="baseline">
+                                        <td style="font-size: 300%; font-family: Cambria, serif">
+                                            &#x2211;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            1 &le; <i style="font-family: Cambria, serif">i</i> &le; <i style="font-family: Cambria, serif">
+                                                n</i>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <code>extraDelay</code> &times; <code>delayFactor</code><sup><i style="font-family: Cambria, serif">i&minus;1</i></sup>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                =
+                            </td>
+                            <td align="left">
+                                <code>initialDelay</code> &nbsp; + <code>extraDelay</code> &times; <code>delayFactor</code>
+                                &times;
+                                <table style="display: inline-table">
+                                    <tr valign="baseline">
+                                        <td style="font-size: 300%; font-family: Cambria, serif">
+                                            &#x2211;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            0 &le; <i style="font-family: Cambria, serif">i</i> &lt; <i style="font-family: Cambria, serif">
+                                                n</i>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <code>extraDelay</code> &times; <code>delayFactor</code><sup><i style="font-family: Cambria, serif">i</i></sup>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                =
+                            </td>
+                            <td align="left">
+                                <code>initialDelay</code> &nbsp; + <code>extraDelay</code> &times; <code>delayFactor</code>
+                                &times;
+                                <table style="display: inline-table; vertical-align: middle">
+                                    <tr>
+                                        <td>
+                                            1 &minus; <code>delayFactor</code><sup><i>n</i></sup>
+                                        </td>
+                                    </tr>
+                                    <tr valign="baseline">
+                                        <td>
+                                            <hr>
+                                        </td>
+                                        <tr>
+                                            <td>
+                                                1 &minus; <code>delayFactor</code>
+                                            </td>
+                                        </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        If a
+                        <var>
+                            delayCap</var>
+                        is specified, then the calculated delay is <code>min(nominalDelay, delayCap)</code>.
+                        Otherwise, the nominal delay is the calculated delay.
+                    </p>
+                    <h2>
+                        getRelativeOffset
+                    </h2>
+                    <table class="grid args">
+                        <tr class="header">
+                            <td>
+                                Parameter
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                offsetArray1
+                            </td>
+                            <td>
+                                array
+                            </td>
+                            <td>
+                                original positions
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                offsetArray2
+                            </td>
+                            <td>
+                                array
+                            </td>
+                            <td>
+                                final positions
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="grid returns">
+                        <tr class="header">
+                            <td>
+                                Returns
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                none
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        Updates
+                        <var>
+                            offsetArray1</var>
+                        in place by subtracting the corresponding coordinates of
+                        <var>
+                            offsetArray2</var>.
+                    </p>
+                    <h2>
+                        translateCallback
+                    </h2>
+                    <p>
+                        Creates the callback function for the
+                        <var>
+                            to</var>
+                        amd
+                        <var>
+                            from</var>
+                        members of the Animation and Transition objects used by the Animation Engine.
+                    </p>
+                    <table class="grid args">
+                        <tr class="header">
+                            <td>
+                                Parameter
+                            </td>
+                            <td>
+                                Type
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                offsetArray
+                            </td>
+                            <td>
+                                OffsetArray
+                            </td>
+                            <td>
+                                array of offsets
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                prefix (optional)
+                            </td>
+                            <td>
+                                string
+                            </td>
+                            <td>
+                                optional string to prefix to the translation string
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="grid returns">
+                        <tr class="header">
+                            <td>
+                                Returns
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                function (i, e)
+                            </td>
+                            <td>
+                                function which returns translation to apply to element number
+                                <var>
+                                    i</var>, which is
+                                <var>
+                                    e</var>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>
+                        The returned function takes a zero-based item number and calculates the translation
+                        for that item based on the
+                        <var>
+                            offsetArray</var>. If the offset is marked
+                        <var>
+                            rtlflip</var>
+                        and the target element's resolved
+                        <var>
+                            direction</var>
+                        style is
+                        <var>
+                            "rtl"</var>, then the value is negated. (Note that our negation algorithm is
+                        purely textual, and it ends up negating <tt>"0pt"</tt> to <tt>"-0pt"</tt>. Fortunately,
+                        <tt>"-0pt"</tt> is still a legal CSS dimension, and it will be simplified to <tt>"0pt"</tt>
+                        by the animation engine.
+                    </p>
+                    <p>
+                        If the
+                        <var>
+                            prefix</var>
+                        is present, then it is prepended to the calculated translation.
+                    </p>
+                    -->
+    </body>
+</html>

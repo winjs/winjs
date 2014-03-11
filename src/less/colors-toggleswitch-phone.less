@@ -1,0 +1,100 @@
+.Colors(@theme) {
+    .win-toggleswitch {
+        background-color: transparent;
+
+        .mixin(dark) {
+            .win-switch {
+                background-color: transparent;
+
+                &:disabled::-ms-track {
+                    border-color: rgba(255, 255, 255, 0.4);
+                }
+                &:disabled::-ms-fill-lower {
+                    background-color: rgba(255, 255, 255, 0.4);
+                }
+                &:enabled:active::-ms-fill-upper {
+                    background-color: rgba(255, 255, 255, 0.35);
+                }
+            }
+
+            .win-switch::-ms-track {
+                background-color: transparent;
+                border-color: rgb(255, 255, 255);
+            }
+
+            .win-switch::-ms-thumb {
+                border-color: rgb(0, 0, 0);
+            }
+
+            .win-title {
+                color: rgb(255, 255, 255);
+            }
+
+            .win-title.win-disabled {
+                color: rgba(255, 255, 255, 0.4);
+            }
+
+            .win-label {
+                color: rgb(255, 255, 255);
+
+                &.win-disabled {
+                    color: rgba(255, 255, 255, 0.4);
+                }
+            }
+        }
+
+        .mixin(light) {
+            .win-switch {
+                background-color: transparent;
+
+                &:disabled::-ms-track {
+                    border-color: rgba(0, 0, 0, 0.3);
+                }
+                &:disabled::-ms-fill-lower {
+                    background-color: rgba(0, 0, 0, 0.3);
+                }
+                &:enabled:active::-ms-fill-upper {
+                    background-color: rgba(0, 0, 0, 0.35);
+                }
+            }
+
+            .win-switch::-ms-track {
+                background-color: transparent;
+                border-color: rgb(0, 0, 0);
+            }
+
+            .win-switch::-ms-thumb {
+                border-color: rgb(255, 255, 255);
+            }
+
+            .win-title {
+                color: rgb(0, 0, 0);
+            }
+
+            .win-title.win-disabled {
+                color: rgba(0, 0, 0, 0.4);
+            }
+
+            .win-label {
+                color: rgb(0, 0, 0);
+
+                &.win-disabled {
+                    color: rgba(0, 0, 0, 0.4);
+                }
+            }
+        }
+
+        .mixin(@theme);
+
+        .win-switch::-ms-fill-upper, .win-switch:enabled:hover::-ms-fill-upper,
+        .win-switch:disabled::-ms-fill-upper {
+            background-color: transparent;
+        }
+
+        @media (-ms-high-contrast) {
+            .win-switch:disabled::-ms-fill-lower {
+                background-color: GrayText;
+            }
+        }
+    }
+}

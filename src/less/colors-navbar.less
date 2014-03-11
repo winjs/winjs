@@ -1,0 +1,181 @@
+.Colors(@theme) {
+    .mixin(dark) {
+        .win-navbarcontainer-pageindicator {
+            background-color: rgba(255,255,255,0.4);
+        }
+        .win-navbarcontainer-pageindicator-current {
+            background-color: rgba(255,255,255,0.8);
+        }
+        .win-navbarcontainer-pageindicator:hover {
+            background-color: rgba(255,255,255,0.6);
+        }
+        .win-navbarcontainer-pageindicator:hover:active {
+            background-color: rgba(255,255,255,0.7);
+        }
+        .win-navbarcontainer-navarrow {
+            background-color: rgb(74,74,74);
+            color: rgb(30,30,30)
+        }
+        .win-navbarcontainer-navarrow:hover {
+            background-color: rgb(202,202,202);
+            color: rgb(0,0,0)
+        }
+        .win-navbarcontainer-navarrow:hover:active {
+            background-color: rgb(30,30,30);
+            color: rgb(255,255,255);
+        }
+
+        .win-navbarcommand-button,
+        .win-navbarcommand-splitbutton {
+            background-color: rgba(255,255,255,0.11);
+            color: rgb(255,255,255);
+        }
+        .win-navbarcommand-button:hover,
+        .win-navbarcommand-splitbutton:hover {
+            background-color: rgba(255,255,255,0.22);
+        }
+        .win-navbarcommand-button.win-keyboard:focus,
+        .win-navbarcommand-splitbutton.win-keyboard:focus {
+            outline: 2px solid rgb(255,255,255);
+        }
+        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
+        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
+        .win-navbarcommand-button.win-pressed,
+        .win-navbarcommand-button.win-pressed:hover,
+        .win-navbarcommand-splitbutton.win-pressed,
+        .win-navbarcommand-splitbutton.win-pressed:hover {
+            background-color: rgb(255,255,255);
+            color: rgb(0,0,0);
+        }
+    }
+    .mixin(light) {
+        .win-navbarcontainer-pageindicator {
+            background-color: rgba(0,0,0,0.3);
+        }
+        .win-navbarcontainer-pageindicator-current {
+            background-color: rgba(0,0,0,0.66);
+        }
+        .win-navbarcontainer-pageindicator:hover {
+            background-color: rgba(0,0,0,0.44);
+        }
+        .win-navbarcontainer-pageindicator:hover:active {
+            background-color: rgba(0,0,0,0.58);
+        }
+        .win-navbarcontainer-navarrow {
+            background-color: rgb(231,231,231);
+            color: rgb(92,92,92)
+        }
+        .win-navbarcontainer-navarrow:hover {
+            background-color: rgb(218,218,218);
+            color: rgb(0,0,0)
+        }
+        .win-navbarcontainer-navarrow:hover:active {
+            background-color: rgb(93,93,93);
+            color: rgb(255,255,255);
+        }
+
+        .win-navbarcommand-button,
+        .win-navbarcommand-splitbutton {
+            background-color: rgba(0,0,0,0.09);
+            color: rgb(0,0,0);
+        }
+        .win-navbarcommand-button:hover,
+        .win-navbarcommand-splitbutton:hover {
+            background-color: rgba(199,199,199,0.31);
+        }
+        .win-navbarcommand-button.win-keyboard:focus,
+        .win-navbarcommand-splitbutton.win-keyboard:focus {
+            outline: 2px solid rgb(0,0,0);
+        }
+        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
+        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
+        .win-navbarcommand-button.win-pressed,
+        .win-navbarcommand-button.win-pressed:hover,
+        .win-navbarcommand-splitbutton.win-pressed,
+        .win-navbarcommand-splitbutton.win-pressed:hover {
+            background-color: rgb(0,0,0);
+            color: rgb(255,255,255);
+        }
+    }
+    .mixin(@theme);
+
+    @media (-ms-high-contrast) {
+        .win-navbarcontainer-pageindicator {
+            background-color: ButtonFace;
+        }
+        .win-navbarcontainer-pageindicator:after {
+            display: block;
+            border: 1px solid ButtonText;
+            content: "";
+            width: ~"calc(100% - 2px)";
+            height: ~"calc(100% - 2px)";
+        }
+        .win-navbarcontainer-pageindicator-current {
+            background-color: ButtonText;
+        }
+        .win-navbarcontainer-pageindicator:hover {
+            background-color: Highlight;
+        }
+        .win-navbarcontainer-pageindicator-current:hover {
+            background-color: ButtonText;
+        }
+        .win-navbarcontainer-pageindicator:hover:active {
+            background-color: ButtonText;
+        }
+        .win-navbarcontainer-navarrow {
+            background-color: ButtonFace;
+            color: ButtonText;
+        }
+        .win-navbarcontainer-navarrow:after {
+            position: absolute;
+            top: 0;
+            left:0;
+            border: 2px solid ButtonText;
+            content: "";
+            width: ~"calc(100% - 3px)";
+            height: ~"calc(100% - 3px)";
+        }
+        .win-navbarcontainer-navarrow:hover {
+            background-color: Highlight;
+            color: HighlightText;
+        }
+        .win-navbarcontainer-navarrow:hover:active {
+            background-color: ButtonText;
+            color: ButtonFace;
+        }
+
+        /*
+            NavBarCommand colors.
+        */
+        .win-navbarcommand-button,
+        .win-navbarcommand-splitbutton {
+            background-color: ButtonFace;
+            color: ButtonText;
+        }
+        .win-navbarcommand-button:after,
+        .win-navbarcommand-splitbutton:after {
+            position: absolute;
+            top: 0;
+            left:0;
+            border: 2px solid ButtonText;
+            content: "";
+            width: ~"calc(100% - 3px)";
+            height: ~"calc(100% - 3px)";
+            pointer-events: none;
+        }
+        .win-navbarcommand-button:hover,
+        .win-navbarcommand-splitbutton:hover {
+            background-color: Highlight;
+            color: HighlightText;
+        }
+        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
+        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
+        .win-navbarcommand-button.win-pressed,
+        .win-navbarcommand-button.win-pressed:hover,
+        .win-navbarcommand-splitbutton.win-pressed,
+        .win-navbarcommand-splitbutton.win-pressed:hover {
+            background-color: ButtonText;
+            color: ButtonFace;
+        }
+    }
+}

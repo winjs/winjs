@@ -1,0 +1,11 @@
+bin/
+node_modules/
+
+*.suo
+*.user
+*.sln.docstates
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store

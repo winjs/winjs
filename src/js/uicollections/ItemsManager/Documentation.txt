@@ -1,0 +1,776 @@
+// Copyright (c) Microsoft Corporation
+// All rights reserved
+
+// IListDataSource functions and objects that are declared only for documentation purposes
+
+(function () {
+
+// Items
+
+/// <summary>
+/// Object representing an item.  Note that additional domain-specific properties may be present in addition to the
+/// ones listed here.
+/// </summary>
+var IItem = WinJS.Class.define(function () {
+    }, {
+        // Public properties
+
+        /// <field type="String">
+        /// The item's unique and invariant key
+        /// </field>
+        key: {
+            get: function () { }
+        },
+
+        /// <field>
+        /// The item's data
+        /// </field>
+        data: {
+            get: function () { }
+        },
+
+        /// <field type="String">
+        /// The unique handle assigned to the item
+        /// </field>
+        handle: {
+            get: function () { }
+        },
+
+        /// <field optional="true" type="Number" integer="true">
+        /// The item's index, if known
+        /// </field>
+        index: {
+            get: function () { }
+        }
+    }
+);
+
+// List Binding
+
+/// <summary>
+/// A Promise for an Item.  In addition to the normal Promise properties, has the Item-specific properties listed here.
+/// </summary>
+var IItemPromise = WinJS.Class.derive(Promise, function () {
+    }, {
+        // Public properties
+
+        /// <field type="String">
+        /// The unique handle assigned to the item
+        /// </field>
+        handle: {
+            get: function () { }
+        },
+
+        /// <field optional="true" type="Number" integer="true">
+        /// The item's index, if known
+        /// </field>
+        index: {
+            get: function () { }
+        },
+
+        retain: function () {
+            /// <summary>
+            /// Requests that notifications be sent for the item until it is released.  The item is only released when
+            /// the number of release calls matches the number of retain calls.  This method is only present if an
+            /// IListNotificationHandler was passed to IListDataSource.createListBinding when the IListBinding that
+            /// returned this IItemPromise was created.
+            /// </summary>
+        },
+
+        release: function () {
+            /// <summary>
+            /// Requests that notifications no longer be sent for the item.  The item is only released when the number 
+            /// of release calls matches the number of retain calls.  The number of release calls must not exceed the
+            /// number of retain calls.  This method is only present if an IListNotificationHandler was passed to
+            /// IListDataSource.createListBinding when the IListBinding that returned this IItemPromise was created.
+            /// </summary>
+        }
+    }
+);
+
+/// <summary>
+/// Interface to be implemented by client of IListBinding, to receive change notifications
+/// </summary>
+var IListNotificationHandler = WinJS.Class.define(function () {
+    }, {
+        // Public properties
+
+        reload: function () {
+            /// <summary>
+            /// Called when the list data has changed so much that individual notifications will not be sent.  The
+            /// client must abandon its current items (they do not need to be released) and re-request the items it
+            /// needs.
+            /// </summary>
+        },
+
+        beginNotifications: function () {
+            /// <summary>
+            /// Notification that a sequence of other notification calls is about to begin.  The sequence will be
+            /// concluded with a call to endNotifications, and such pairs of calls will not be nested.
+            /// </summary>
+        },
+
+        inserted: function (itemPromise, previousHandle, nextHandle) {
+            /// <summary>
+            /// Called when an item has been inserted
+            /// </summary>
+            /// <param name="itemPromise" type="IItemPromise">
+            /// An object that implements the IItemPromise interface, serving as a promise for the inserted item
+            /// </param>
+            /// <param name="previousHandle" mayBeNull="true" type="String">
+            /// The handle of the item before the insertion point, or null if the item was inserted at the start of the
+            /// list
+            /// </param>
+            /// <param name="nextHandle" mayBeNull="true" type="String">
+            /// The handle of the item after the insertion point, null if the item was inserted at the end of the list
+            /// </param>
+        },
+
+        changed: function (newItem, oldItem) {
+            /// <summary>
+            /// Called when an item has changed
+            /// </summary>
+            /// <param name="newItem" type="IItem">
+            /// The new version of the item
+            /// </param>
+            /// <param name="oldItem" type="IItem">
+            /// The old version of the item - with some data adapters, this may be the same object as newItem
+            /// </param>
+        },
+
+        moved: function (itemPromise, previousHandle, nextHandle) {
+            /// <summary>
+            /// Called when an item has been moved to a new position
+            /// </summary>
+            /// <param name="itemPromise" type="IItemPromise">
+            /// An object that implements the IItemPromise interface, serving as a promise for the item that has moved
+            /// </param>
+            /// <param name="previousHandle" mayBeNull="true" type="String">
+            /// The handle of the item before the insertion point, or null if the item was moved to the start of the
+            /// list
+            /// </param>
+            /// <param name="nextHandle" mayBeNull="true" type="String">
+            /// The handle of the item after the insertion point, null if the item was moved to the end of the list
+            /// </param>
+        },
+
+        removed: function (handle, mirage, existingHandle) {
+            /// <summary>
+            /// Called when an item has been removed
+            /// </summary>
+            /// <param name="handle" type="String">
+            /// The handle of the item that has been removed
+            /// </param>
+            /// <param name="mirage" type="Boolean">
+            /// Whether the item was a mirage, i.e. never existed in the first place.  This can only happen if an item
+            /// promise has not yet completed, and may be due to the item not existing in the list, or two item
+            /// requests resolving to the same underlying item in the data, in which case one of the requested "items"
+            /// is deleted as a mirage.
+            /// </param>
+            /// <param name="existingHandle" optional="true" type="String">
+            /// If the item was a mirage due to the request resolving to an item that has already been obtained by
+            /// other means, the handle of the latter item. 
+            /// </param>
+        },
+
+        countChanged: function (newCount, oldCount) {
+            /// <summary>
+            /// Called when the total count of items has changed
+            /// </summary>
+            /// <param name="newCount">
+            /// The new count of items.  May be CountResult.unknown.
+            /// </param>
+            /// <param name="oldCount">
+            /// The old count of items.  May be CountResult.unknown.
+            /// </param>
+        },
+
+        indexChanged: function (handle, newIndex, oldIndex) {
+            /// <summary>
+            /// Called when the index of an item has changed
+            /// </summary>
+            /// <param name="handle" type="String">
+            /// The handle of the item of which the index has changed.
+            /// </param>
+            /// <param name="newIndex" optional="true" type="Number" integer="true">
+            /// The new index of the item
+            /// </param>
+            /// <param name="oldCount" optional="true" type="Number" integer="true">
+            /// The old index of the item
+            /// </param>
+        },
+
+        /// <summary>
+        /// Notification that a sequence of other notification calls has concluded.
+        /// </summary>
+        endNotifications: function () {
+        }
+    }
+);
+
+// List Data
+
+/// <summary>
+/// Expected properties on fetch result object returned from ListDataAdapter fetch methods
+/// </summary>
+var IFetchResult = WinJS.Class.define(function () {
+    }, {
+        // Public properties
+
+        /// <field type="Array">
+        /// An array of items, each having at least key and data properties
+        /// </field>
+        items: {
+            get: function () { }
+        },
+
+        /// <field type="Number" integer="true">
+        /// The local index of the requested item within the items array
+        /// </field>
+        offset: {
+            get: function () { }
+        },
+
+        /// <field optional="true" type="Number" integer="true">
+        /// The total number of items in the list, if known
+        /// </field>
+        totalCount: {
+            get: function () { }
+        },
+
+        /// <field optional="true" type="Number" integer="true">
+        /// The absolute index of the requested item, if known
+        /// </field>
+        absoluteIndex: {
+            get: function () { }
+        },
+
+        /// <field optional="true" type="Boolean">
+        /// If absoluteIndex is not supplied, this must be true when the first item in the items array is the first item
+        /// in the list.
+        /// </field>
+        atStart: {
+            get: function () { }
+        },
+
+        /// <field optional="true" type="Boolean">
+        /// If absoluteIndex and totalCount are not both supplied, this must be true when the last item in the items \
+        /// is the last item in the list.
+        /// </field>
+        atEnd: {
+            get: function () { }
+        }
+    }
+);
+
+/// <summary>
+/// Interface to be implemented by a data adapter object, to enable access to a custom data source via an object
+/// derived from VirtualizedDataSource.  Many properties in IListDataAdapter are optional, but some of
+/// VirtualizedDataSource's functionality may be disabled, depending on what is implemented.
+/// </summary>
+var IListDataAdapter = WinJS.Class.define(function () {
+    }, {
+        // Public properties
+
+        setNotificationHandler: function (notificationHandler) {
+            /// <summary>
+            /// OPTIONAL
+            /// Sets the data notification handler object to call when data has changed
+            /// </summary>
+            /// <param name="notificationHandler" type="IListDataNotificationHandler">
+            /// A data notification handler object that the data adapter can call to notify the VirtualizedDataSource
+            /// when the list data has changed.  Data adapters may provide precise notifications for all changes to the
+            /// data, coarse notifications to inform the VirtualizedDataSource only that something has changed, or no
+            /// notifications at all.  In the latter case, the application should periodically call invalidateAll on
+            /// the VirtualizedDataSource to refresh the data.
+            /// </param>
+        },
+
+        /// <field optional="true" type="Boolean">
+        /// If true, indicates to the VirtualizedDataSource that only the identity of the data properties should be
+        /// compared.  By default, data properties are stringified to JSON and compared by value.
+        /// </field>
+        compareByIdentity: {
+            get: function () { }
+        },
+
+        itemSignature: function (data) {
+            /// <summary>
+            /// OPTIONAL
+            /// Generates a signature for an item's data that is guaranteed to change if the data changes in any way
+            /// </summary>
+            /// <param name="data" mayBeNull="true">
+            /// The data property of the item
+            /// </param>
+            /// <returns type="String">
+            /// A signature for the item's data that is guaranteed to change if the data changes in any way
+            /// </returns>
+        },
+
+        itemsFromStart: function (count) {
+            /// <summary>
+            /// OPTIONAL
+            /// Fetches the first items in the list
+            /// </summary>
+            /// <param name="count" type="Number" integer="true">
+            /// The requested number of items.  It is acceptable to return less or more than this number, but at least
+            /// one item should be returned, unless the list is empty.
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an IFetchResult value.  Otherwise, it should fail with
+            /// a FetchError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        itemsFromEnd: function (count) {
+            /// <summary>
+            /// OPTIONAL
+            /// Fetches the last items in the list
+            /// </summary>
+            /// <param name="count" type="Number" integer="true">
+            /// The requested number of items.  It is acceptable to return less or more than this number, but at least
+            /// one item should be returned, unless the list is empty.
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an IFetchResult value.  Otherwise, it should fail with
+            /// a FetchError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        itemsFromKey: function (key, countBefore, countAfter) {
+            /// <summary>
+            /// OPTIONAL
+            /// At least one of itemsFromKey and itemsFromIndex must be implemented.
+            ///     
+            /// Fetches the item with the given key, and surrounding items in the list
+            /// </summary>
+            /// <param name="key" type="String">
+            /// The key of the requested item
+            /// </param>
+            /// <param name="countBefore" type="Number" integer="true">
+            /// The requested number of additional items before the item with the given key.  It is acceptable to
+            /// return less or more than this number, but if countBefore is non-zero, at least one item before the
+            /// requested item should be returned, if such an item exists.
+            /// </param>
+            /// <param name="countAfter" type="Number" integer="true">
+            /// The requested number of additional items after the item with the given key.  It is acceptable to return
+            /// less or more than this number, but if countAfter is non-zero, at least one item after the requested
+            /// item should be returned, if such an item exists.
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an IFetchResult value.  Otherwise, it should fail with
+            /// a FetchError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        itemsFromIndex: function (index, countBefore, countAfter) {
+            /// <summary>
+            /// OPTIONAL
+            /// At least one of itemsFromKey and itemsFromIndex must be implemented.
+            ///     
+            /// Fetches the item with the given index, and surrounding items in the list
+            /// </summary>
+            /// <param name="index" type="Number" integer="true">
+            /// The index of the requested item
+            /// </param>
+            /// <param name="countBefore" type="Number" integer="true">
+            /// The requested number of additional items before the item with the given index.  It is acceptable to
+            /// return less or more than this number.
+            /// </param>
+            /// <param name="countAfter" type="Number" integer="true">
+            /// The requested number of additional items after the item with the given index.  It is acceptable to
+            /// return less or more than this number.
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an IFetchResult value.  Otherwise, it should fail with
+            /// a FetchError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        itemsFromDescription: function (description, countBefore, countAfter) {
+            /// <summary>
+            /// OPTIONAL
+            /// Fetches the first item with a description matching or after the given one, as interpreted by the data
+            /// adapter, and surrounding items in the list
+            /// </summary>
+            /// <param name="description">
+            /// The description of the requested item, to be interpreted by the data adapter
+            /// </param>
+            /// <param name="countBefore" type="Number" integer="true">
+            /// The requested number of additional items before the requested item.  It is acceptable to return less or
+            /// more than this number.
+            /// </param>
+            /// <param name="countAfter" type="Number" integer="true">
+            /// The requested number of additional items after the requested item.  It is acceptable to return less or
+            /// more than this number.
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an IFetchResult value.  Otherwise, it should fail with
+            /// a FetchError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        getCount: function () {
+            /// <summary>
+            /// OPTIONAL
+            /// Fetches the total number of items
+            /// </summary>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an integer value or CountResult.unknown.  Otherwise, it
+            /// should fail with a CountError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        beginEdits: function () {
+            /// <summary>
+            /// OPTIONAL
+            /// Notifies the data adapter that a sequence of edits is about to begin.  The VirtualizedDataSource will
+            /// call beginEdits and beginEdits once each for a sequence of edits.
+            /// </summary>
+        },
+
+        insertAtStart: function (key, data) {
+            /// <summary>
+            /// OPTIONAL
+            /// Inserts an item at the start of the list
+            /// </summary>
+            /// <param name="key" mayBeNull="true" type="String">
+            /// The key of the item to insert, if known
+            /// </param>
+            /// <param name="data">
+            /// The data of the item to insert
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if the inserted item's only properties are the key and data passed in.
+            /// Otherwise, it should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        insertBefore: function (key, data, nextKey, nextIndexHint) {
+            /// <summary>
+            /// OPTIONAL
+            /// Inserts an item before a given item in the list
+            /// </summary>
+            /// <param name="key" mayBeNull="true" type="String">
+            /// The key of the item to insert, if known
+            /// </param>
+            /// <param name="data">
+            /// The data of the item to insert
+            /// </param>
+            /// <param name="nextKey" type="String">
+            /// The key of the item immediately after the insertion point
+            /// </param>
+            /// <param name="nextIndexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by nextKey
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if the inserted item's only properties are the key and data passed in.
+            /// Otherwise, it should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        insertAfter: function (key, data, previousKey, previousIndexHint) {
+            /// <summary>
+            /// OPTIONAL
+            /// Inserts an item after a given item in the list
+            /// </summary>
+            /// <param name="key" mayBeNull="true" type="String">
+            /// The key of the item to insert, if known
+            /// </param>
+            /// <param name="data">
+            /// The data of the item to insert
+            /// </param>
+            /// <param name="previousKey" type="String">
+            /// The key of the item immediately before the insertion point
+            /// </param>
+            /// <param name="previousIndexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by
+            /// previousKey
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if the inserted item's only properties are the key and data passed in.
+            /// Otherwise, it should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        insertAtEnd: function (key, data) {
+            /// <summary>
+            /// OPTIONAL
+            /// Inserts an item at the end of the list
+            /// </summary>
+            /// <param name="key" mayBeNull="true" type="String">
+            /// The key of the item to insert, if known
+            /// </param>
+            /// <param name="data">
+            /// The data of the item to insert
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if the inserted item's only properties are the key and data passed in.
+            /// Otherwise, it should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        change: function (key, newData, indexHint) {
+            /// <summary>
+            /// OPTIONAL
+            /// Changes the data of an item
+            /// </summary>
+            /// <param name="key" mayBeNull="true" type="String">
+            /// The item's key
+            /// </param>
+            /// <param name="data">
+            /// The item's new data
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if the only property that has changed on the item is its data.  Otherwise, it
+            /// should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        moveToStart: function (key, indexHint) {
+            /// <summary>
+            /// OPTIONAL
+            /// Moves an item to the start of the list
+            /// </summary>
+            /// <param name="key" type="String">
+            /// The key of the item to move
+            /// </param>
+            /// <param name="indexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by key
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if no properties on the item have changed as a result of the move.  Otherwise,
+            /// it should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        moveBefore: function (key, nextKey, indexHint, nextIndexHint) {
+            /// <summary>
+            /// OPTIONAL
+            /// Moves an item before a given item
+            /// </summary>
+            /// <param name="key" type="String">
+            /// The key of the item to move
+            /// </param>
+            /// <param name="nextKey" type="String">
+            /// The key of the item immediately after the insertion point
+            /// </param>
+            /// <param name="indexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by key
+            /// </param>
+            /// <param name="nextIndexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by nextKey
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if no properties on the item have changed as a result of the move.  Otherwise,
+            /// it should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        moveAfter: function (key, previousKey, indexHint, previousIndexHint) {
+            /// <summary>
+            /// OPTIONAL
+            /// Moves an item after a given item
+            /// </summary>
+            /// <param name="key" type="String">
+            /// The key of the item to move
+            /// </param>
+            /// <param name="nextKey" type="String">
+            /// The key of the item immediately after the insertion point
+            /// </param>
+            /// <param name="indexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by key
+            /// </param>
+            /// <param name="previousIndexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by
+            /// previousKey
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if no properties on the item have changed as a result of the move.  Otherwise,
+            /// it should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        moveToEnd: function (key, indexHint) {
+            /// <summary>
+            /// OPTIONAL
+            /// Moves an item to the end of the list
+            /// </summary>
+            /// <param name="key" type="String">
+            /// The key of the item to move
+            /// </param>
+            /// <param name="indexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by key
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete with an item object, having at least key and data
+            /// properties, or no value if no properties on the item have changed as a result of the move.  Otherwise,
+            /// it should fail with an EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        remove: function (key, indexHint) {
+            /// <summary>
+            /// OPTIONAL
+            /// Removes an item
+            /// </summary>
+            /// <param name="key" type="String">
+            /// The item's key
+            /// </param>
+            /// <param name="indexHint" optional="true" type="Number" integer="true">
+            /// The most recent index, if any, observed by the VirtualizedDataSource of the item identified by key
+            /// </param>
+            /// <returns type="Promise">
+            /// If successful, the promise should complete without a value.  Otherwise, it should fail with an
+            /// EditError error result, in a reasonable amount of time.
+            /// </returns>
+        },
+
+        endEdits: function () {
+            /// <summary>
+            /// OPTIONAL
+            /// Notifies the data adapter that a sequence of edits has ended.  The VirtualizedDataSource will call
+            /// beginEdits and beginEdits once each for a sequence of edits.
+            /// </summary>
+        }
+    }
+);
+
+// Grouping
+
+function groupKeyCallback(item) {
+    /// <summary>
+    /// Expected function signature of the groupKey parameter passed to WinJS.UI.computeDataSourceGroups
+    /// </summary>
+    /// <param name="item" type="IItem">
+    /// Individual item to be assigned to a group
+    /// </param>
+    /// <returns type="String">
+    /// The key of the group to which the item belongs
+    /// </returns>
+}
+
+function groupDataCallback(item) {
+    /// <summary>
+    /// Expected function signature of the groupData parameter passed to WinJS.UI.computeDataSourceGroups
+    /// </summary>
+    /// <param name="item" type="IItem">
+    /// Individual item to be assigned to a group
+    /// </param>
+    /// <returns mayBeNull="true">
+    /// The data of the group to which the item belongs
+    /// </returns>
+}
+
+// Templates
+
+function itemTemplateCallback(itemPromise, recycledElement) {
+    /// <summary>
+    /// Expected function signature of an item template
+    /// </summary>
+    /// <param name="itemPromise" type="IItemPromise">
+    /// Promise for the item for which a DOM tree is to be generated
+    /// </param>
+    /// <param name="recycledElement" mayBeNull="true" type="Object" domElement="true">
+    /// Output, that is no longer needed, of an earlier call to the template that is no longer needed.  May be used as
+    /// a starting point for this template's output.
+    /// </param>
+    /// <returns type="Object">
+    /// An object with two properties, "element" and "renderComplete".  "element" may be a DOM element or a Promise for
+    /// a DOM element. "renderComplete", if present must be a Promise that completes when the template has finished its
+    /// work.  Alternately, a DOM element may be returned.
+    /// </returns>
+}
+
+/// <summary>
+/// Object passed to itemTemplateCallback (i.e. as the result when the given itemPromise completes) representing the
+/// item for which a DOM tree should be generated.  Note that additional domain-specific properties may be present in
+/// addition to the ones listed here.
+/// </summary>
+var ITemplateItem = WinJS.Class.define(function () {
+    }, {
+        // Public properties
+
+        /// <field type="String">
+        /// The item's unique and invariant key
+        /// </field>
+        key: {
+            get: function () { }
+        },
+
+        /// <field>
+        /// The item's data
+        /// </field>
+        data: {
+            get: function () { }
+        },
+
+        /// <field type="String">
+        /// The unique handle assigned to the item
+        /// </field>
+        handle: {
+            get: function () { }
+        },
+
+        /// <field optional="true" type="Number" integer="true">
+        /// The item's index, if known
+        /// </field>
+        index: {
+            get: function () { }
+        },
+
+        /// <field type="Promise">
+        /// A promise that completes when the control is ready for the renderer to do any more-time-consuming work (for
+        /// example, instantiating child controls)
+        /// </field>
+        ready: {
+            get: function () { }
+        },
+
+        isOnScreen: function () {
+            /// <summary>
+            /// Determines whether this item is currently visible in the control viewport
+            /// </summary>
+            /// <returns type="Promise">
+            /// A promise for a Boolean specifying whether this item is currently visible in the control viewport
+            /// </returns>
+        },
+
+        loadImage: function (srcUrl, image) {
+            /// <summary>
+            /// Sets the src attribute of an img tag when the control deems it appropriate
+            /// </summary>
+            /// <param name="srcUrl" type="String">
+            /// The URL to use for the img src attribute
+            /// </param>
+            /// <param name="image" optional="true" type="Object" domElement="true">
+            /// The img element; if absent, one will be created
+            /// </param>
+            /// <returns type="Promise">
+            /// A promise that completes when the image data has been loaded
+            /// </returns>
+        },
+
+        isImageCached: function (srcUrl) {
+            /// <summary>
+            /// Determines whether a given image is locally cached
+            /// </summary>
+            /// <param>
+            /// The URL of the image
+            /// </param>
+            /// <returns type="Boolean">
+            /// Whether the image data for the given URL is locally cached
+            /// </returns>
+        }
+    }
+);
+
+}); // Don't run this

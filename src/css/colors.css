@@ -1,0 +1,550 @@
+﻿/*
+Shared color styles
+*/
+
+/*
+Typographic color definitions.
+*/
+#ifdef DARK_THEME
+body {
+    color: DESKTOP(rgb(255, 255, 255)) PHONE(WIN_LIGHT_TEXT_HIGH);
+    background-color: DESKTOP(rgb(29, 29, 29)) PHONE(rgb(0, 0, 0));
+}
+#endif
+#ifdef LIGHT_THEME
+body {
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+    background-color: rgb(255, 255, 255);
+}
+#endif
+
+
+/*
+    Style for link class
+*/
+DARK(.win-type-interactive:hover:active) {
+    color: rgba(255, 255, 255, 0.4);
+}
+LIGHT(.win-type-interactive:hover:active) {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+
+/*
+These classes reverse the colors on the subtree to which they are applied.
+*/
+#ifdef PRIVATE_COMMENTS
+/*  Ensure that the opposite color scheme always comes after the rule that is for the current color scheme.
+    This ensures that an author using <div class="win-ui-dark win-ui-light"> will always get the rule for the
+    inverted scheme to match last and win. */
+#endif
+#ifdef DARK_THEME
+.win-ui-dark {
+    color: DESKTOP(rgb(255, 255, 255)) PHONE(WIN_LIGHT_TEXT_HIGH);
+    background-color: DESKTOP(rgb(29, 29, 29)) PHONE(rgb(0, 0, 0));
+}
+.win-ui-light {
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+    background-color: rgb(255, 255, 255);
+}
+#endif
+#ifdef LIGHT_THEME
+.win-ui-light {
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+    background-color: rgb(255, 255, 255);
+}
+.win-ui-dark {
+    color: DESKTOP(rgb(255, 255, 255)) PHONE(WIN_LIGHT_TEXT_HIGH);
+    background-color: DESKTOP(rgb(29, 29, 29)) PHONE(rgb(0, 0, 0));
+}
+#endif
+
+/*
+Text selection color
+*/
+::selection {
+    background-color: DESKTOP(rgb(87, 41, 193)) PHONE(Highlight);
+    color: rgb(255, 255, 255);
+}
+
+/*
+Text input, checkbox, radio, and select control colors.
+*/
+DARK(select) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgba(255, 255, 255, 0.8)) PHONE(transparent);
+    border-color: DESKTOP(transparent) PHONE(rgb(255, 255, 255));
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_LIGHT_TEXT_HIGH);
+}
+
+DARK(select:focus), DARK(select:active) {
+    background-clip: border-box;
+    background-color: rgb(255, 255, 255);
+    border-color: DESKTOP(transparent) PHONE(Highlight);
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+DARK(input[type=text]), DARK(input[type=password]),
+DARK(input[type=email]), DARK(input[type=number]),
+DARK(input[type=tel]), DARK(input[type=url]),
+DARK(input[type=search]), DARK(textarea), DARK(.win-textarea) {
+    background-clip: border-box;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-color: transparent;
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+DARK(input::-ms-check) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgba(255, 255, 255, 0.8)) PHONE(transparent);
+    border-color: DESKTOP(transparent) PHONE(rgb(255, 255, 255));
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(rgb(255, 255, 255));
+}
+
+DARK(input:hover:active::-ms-check) { /* only checkbox and radio have press state */
+    border-color: DESKTOP(transparent) PHONE(rgb(255, 255, 255));
+    background-color: DESKTOP(rgb(255, 255, 255)) PHONE(Highlight);
+}
+
+DARK(input[type=text]:focus), DARK(input[type=text]:active),
+DARK(input[type=password]:focus), DARK(input[type=password]:active),
+DARK(input[type=email]:focus), DARK(input[type=email]:active),
+DARK(input[type=number]:focus), DARK(input[type=number]:active),
+DARK(input[type=tel]:focus), DARK(input[type=tel]:active),
+DARK(input[type=url]:focus), DARK(input[type=url]:active),
+DARK(input[type=search]:focus), DARK(input[type=search]:active),
+DARK(textarea:focus), DARK(textarea:active),
+DARK(.win-textarea:focus), DARK(.win-textarea:active) {
+    background-clip: border-box;
+    background-color: rgb(255, 255, 255);
+    border-color: DESKTOP(transparent) PHONE(Highlight);
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+DARK(input[type=text]:disabled), DARK(input[type=password]:disabled),
+DARK(input[type=email]:disabled), DARK(input[type=number]:disabled),
+DARK(input[type=tel]:disabled), DARK(input[type=url]:disabled), 
+DARK(input[type=search]:disabled), DARK(input[type=file]::-ms-value),
+DARK(textarea:disabled), DARK(.win-textarea:disabled), DARK(select:disabled) {
+    background-clip: border-box;
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.4);
+    color: DESKTOP(rgba(255, 255, 255, 0.4)) PHONE(WIN_LIGHT_TEXT_LOW);
+}
+DARK(input:disabled::-ms-check), DARK(input:disabled:active::-ms-check) { /* checkbox and radio have filled disabled state in dark */
+    background-clip: border-box;
+    background-color: DESKTOP(rgba(255, 255, 255, 0.4)) PHONE(transparent);
+    border-color: DESKTOP(transparent) PHONE(rgba(255, 255, 255, 0.4));
+    color: DESKTOP(rgba(0, 0, 0, 0.4)) PHONE(rgba(255, 255, 255, 0.4));
+}
+LIGHT(select) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgba(255, 255, 255, 0.8)) PHONE(transparent);
+    border-color: DESKTOP(rgba(0, 0, 0, 0.27)) PHONE(rgb(0, 0, 0));
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+LIGHT(select:focus), LIGHT(select:active) {
+    background-clip: border-box;
+    background-color: rgb(255, 255, 255);
+    border-color: DESKTOP(rgba(0, 0, 0, 0.6)) PHONE(Highlight);
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+LIGHT(input[type=text]), LIGHT(input[type=password]),
+LIGHT(input[type=email]), LIGHT(input[type=number]),
+LIGHT(input[type=tel]), LIGHT(input[type=url]),
+LIGHT(input[type=search]), LIGHT(textarea),
+LIGHT(.win-textarea) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgba(255, 255, 255, 0.8)) PHONE(rgba(0, 0, 0, 0.2));
+    border-color: DESKTOP(rgba(0, 0, 0, 0.27)) PHONE(transparent);
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+LIGHT(input::-ms-check) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgba(255, 255, 255, 0.8)) PHONE(transparent);
+    border-color: DESKTOP(rgba(0, 0, 0, 0.27)) PHONE(rgb(0, 0, 0));
+    color: rgb(0, 0, 0);
+}
+LIGHT(input[type=text]:focus), LIGHT(input[type=text]:active),
+LIGHT(input[type=password]:focus), LIGHT(input[type=password]:active),
+LIGHT(input[type=email]:focus), LIGHT(input[type=email]:active),
+LIGHT(input[type=number]:focus), LIGHT(input[type=number]:active),
+LIGHT(input[type=tel]:focus), LIGHT(input[type=tel]:active),
+LIGHT(input[type=url]:focus), LIGHT(input[type=url]:active),
+LIGHT(input[type=search]:focus), LIGHT(input[type=search]:active),
+LIGHT(textarea:focus), LIGHT(textarea:active),
+LIGHT(.win-textarea:focus), LIGHT(.win-textarea:active) {
+    background-color: rgb(255, 255, 255);
+    border-color: DESKTOP(rgba(0, 0, 0, 0.6)) PHONE(Highlight);
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+LIGHT(input:hover:active::-ms-check) { /* only checkbox and radio have press state */
+    background-clip: border-box;
+    background-color: DESKTOP(rgb(0, 0, 0)) PHONE(Highlight);
+    border-color: DESKTOP(transparent) PHONE(rgb(0, 0, 0));
+    color: rgb(255, 255, 255);
+}
+
+LIGHT(input[type=text]:disabled), LIGHT(input[type=password]:disabled),
+LIGHT(input[type=email]:disabled), LIGHT(input[type=number]:disabled),
+LIGHT(input[type=tel]:disabled), LIGHT(input[type=url]:disabled), 
+LIGHT(input[type=search]:disabled), LIGHT(input[type=file]::-ms-value),
+LIGHT(textarea:disabled), LIGHT(.win-textarea:disabled), LIGHT(select:disabled),
+LIGHT(input:disabled::-ms-check), LIGHT(input:disabled:active::-ms-check) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgba(202, 202, 202, 0.4)) PHONE(transparent);
+    border-color: rgba(0, 0, 0, 0.15);
+    color: DESKTOP(rgba(0, 0, 0, 0.4)) PHONE(WIN_DARK_TEXT_LOW);
+}
+
+/*
+Placeholder text style.
+*/
+DARK(input[type]:-ms-input-placeholder), LIGHT(input[type]:-ms-input-placeholder),
+DARK(textarea:-ms-input-placeholder), LIGHT(textarea:-ms-input-placeholder) {
+    color: DESKTOP(rgba(0, 0, 0, 0.6)) PHONE(rgba(0, 0, 0, 0.25)); /* same in dark and light */
+}
+DARK(input[type]:disabled:-ms-input-placeholder), DARK(textarea:disabled:-ms-input-placeholder) {
+    color: DESKTOP(rgba(255, 255, 255, 0.22)) PHONE(WIN_LIGHT_TEXT_LOW);
+}
+LIGHT(input[type]:disabled:-ms-input-placeholder), LIGHT(textarea:disabled:-ms-input-placeholder) {
+    color: DESKTOP(rgba(0, 0, 0, 0.22)) PHONE(WIN_DARK_TEXT_LOW);
+}
+
+/*
+Invalid style.
+*/
+input[type]:invalid {
+    outline-color: rgb(255, 128, 51);
+    outline-width: 2px;
+}
+
+/*
+Option for select control (all colors are same for both light and dark).
+*/
+option:hover {
+    DESKTOP(color: rgb(0, 0, 0);)
+    background-color: DESKTOP(rgb(197, 197, 197)) PHONE(transparent);
+}
+select:focus option:hover {
+    DESKTOP(color: rgb(0, 0, 0);)
+    background-color: DESKTOP(rgb(222, 222, 222)) PHONE(transparent);
+}
+option:checked:hover, select:focus option:checked:hover {
+    DESKTOP(color: rgb(255, 255, 255);)
+    background-color: DESKTOP(rgb(95, 55, 190)) PHONE(transparent);
+}
+option:checked, select:focus::-ms-value {
+    color: DESKTOP(rgb(255, 255, 255)) PHONE(Highlight);
+    background-color: DESKTOP(rgb(70, 23, 180)) PHONE(transparent);
+}
+option:hover:active, select:focus option:hover:active{
+    DESKTOP(color: rgb(0, 0, 0);)
+    background-color: DESKTOP(rgb(211, 211, 211)) PHONE(rgb(255, 255, 255));
+}
+DARK(option:checked:disabled), DARK(option:checked:disabled:active),
+DARK(optgroup:disabled option:checked), DARK(optgroup:disabled option:checked:active),
+DARK(select:disabled option:checked), DARK(select:disabled option:checked:active),
+DARK(select:disabled:focus::-ms-value) {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: DESKTOP(rgba(0, 0, 0, 0.6)) PHONE(WIN_DARK_TEXT_LOW);
+}
+LIGHT(option:checked:disabled), LIGHT(option:checked:disabled:active),
+LIGHT(optgroup:disabled option:checked), LIGHT(optgroup:disabled option:checked:active),
+LIGHT(select:disabled option:checked), LIGHT(select:disabled option:checked:active),
+LIGHT(select:disabled:focus::-ms-value) {
+    background-color: rgba(0, 0, 0, 0.55);
+    color: DESKTOP(rgba(255, 255, 255, 0.6)) PHONE(WIN_DARK_TEXT_LOW);
+}
+
+/*
+Button control colors.
+*/
+DARK(button), DARK(input[type=button]), DARK(input[type=submit]),
+DARK(input[type=reset]), DARK(input[type=file]::-ms-browse) {
+    background-color: transparent;
+    border-color: rgb(255, 255, 255);
+    color: DESKTOP(rgb(255, 255, 255)) PHONE(WIN_LIGHT_TEXT_HIGH);
+}
+DARK(button[type=submit]), DARK(input[type=submit]) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgb(70, 23, 180)) PHONE(transparent);
+    border-color: DESKTOP(transparent) PHONE(rgb(255, 255, 255));
+}
+
+DARK(button:hover:active), DARK(button[type=submit]:hover:active),
+DARK(input[type=button]:hover:active), DARK(input[type=reset]:hover:active),
+DARK(input[type=submit]:hover:active), DARK(input[type=file]::-ms-browse:hover:active) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgb(255, 255, 255)) PHONE(Highlight);
+    border-color: DESKTOP(transparent) PHONE(rgb(255, 255, 255));
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_LIGHT_TEXT_HIGH);
+}
+DARK(button:disabled), DARK(button[type=submit]:disabled),
+DARK(input[type=button]:disabled), DARK(input[type=reset]:disabled),
+DARK(input[type=submit]:disabled), DARK(input[type=file]:disabled::-ms-browse),
+DARK(button:disabled:active), DARK(button[type=submit]:disabled:active),
+DARK(input[type=button]:disabled:active), DARK(input[type=reset]:disabled:active),
+DARK(input[type=submit]:disabled:active), DARK(input[type=file]:disabled::-ms-browse:active) {
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.4);
+    color: DESKTOP(rgba(255, 255, 255, 0.4)) PHONE(WIN_LIGHT_TEXT_LOW);
+}
+LIGHT(button), LIGHT(input[type=button]), LIGHT(input[type=submit]),
+LIGHT(input[type=reset]), LIGHT(input[type=file]::-ms-browse) {
+    background-color: DESKTOP(rgba(182, 182, 182, 0.7)) PHONE(transparent);
+    border-color: DESKTOP(rgba(0, 0, 0, 0.2)) PHONE(rgb(0, 0, 0));
+    color: DESKTOP(rgb(0, 0, 0)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+LIGHT(button[type=submit]), LIGHT(input[type=submit]){
+    background-clip: border-box;
+    background-color: DESKTOP(rgb(70, 23, 180)) PHONE(transparent);
+    border-color: DESKTOP(transparent) PHONE(rgb(0, 0, 0));
+    color: DESKTOP(rgb(255, 255, 255)) PHONE(WIN_DARK_TEXT_HIGH);
+}
+
+LIGHT(button:hover:active), LIGHT(button[type=submit]:hover:active),
+LIGHT(input[type=button]:hover:active), LIGHT(input[type=reset]:hover:active),
+LIGHT(input[type=submit]:hover:active), LIGHT(input[type=file]::-ms-browse:hover:active) {
+    background-clip: border-box;
+    background-color: DESKTOP(rgb(0, 0, 0)) PHONE(Highlight);
+    border-color: DESKTOP(transparent) PHONE(rgb(0, 0, 0));
+    color: DESKTOP(rgb(255, 255, 255)) PHONE(WIN_LIGHT_TEXT_HIGH);
+}
+LIGHT(button:disabled), LIGHT(button[type=submit]:disabled),
+LIGHT(input[type=button]:disabled), LIGHT(input[type=reset]:disabled),
+LIGHT(input[type=submit]:disabled), LIGHT(input[type=file]:disabled::-ms-browse),
+LIGHT(button:disabled:active), LIGHT(button[type=submit]:disabled:active),
+LIGHT(input[type=button]:disabled:active), LIGHT(input[type=reset]:disabled:active),
+LIGHT(input[type=submit]:disabled:active), LIGHT(input[type=file]:disabled::-ms-browse:active) {
+    background-color: DESKTOP(rgba(202, 202, 202, 0.4)) PHONE(transparent);
+    border-color: DESKTOP(rgba(0, 0, 0, 0.08)) PHONE(rgba(0, 0, 0, 0.4));
+    color: DESKTOP(rgba(0, 0, 0, 0.4)) PHONE(WIN_DARK_TEXT_LOW);
+}
+LIGHT(input[type=file]:disabled::-ms-browse), LIGHT(input[type=file]:disabled::-ms-browse:active) {
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+/*
+File upload control colors.
+*/
+input[type=file] {
+    background-color: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+/*
+Link colors.
+*/
+DARK(a) {
+    color: DESKTOP(rgb(156, 114, 255)) PHONE(Highlight);
+}
+DARK(a:hover:active) {
+    color: DESKTOP(rgba(156, 114, 255, 0.6)) PHONE(Highlight);
+}
+DARK(a:hover) {
+    color: DESKTOP(rgba(156, 114, 255, 0.8)) PHONE(Highlight);
+}
+DARK(a[disabled]), DARK(a[disabled]:active) { /* :disabled pseudo-class doesn't apply to a, even though disabled attribute stops navigation */
+    color: rgba(255, 255, 255, 0.4);
+}
+LIGHT(a) {
+    color: DESKTOP(rgb(79, 26, 203)) PHONE(Highlight);
+}
+LIGHT(a:hover:active) {
+    color: DESKTOP(rgba(79, 26, 203, 0.6)) PHONE(Highlight);
+}
+LIGHT(a:hover) {
+    color: DESKTOP(rgba(79, 26, 203, 0.8)) PHONE(Highlight);
+}
+LIGHT(a[disabled]), LIGHT(a[disabled]:active) { /* :disabled pseudo-class doesn't apply to a, even though disabled attribute stops navigation */
+    color: rgba(0, 0, 0, 0.4);
+}
+
+/*
+Range control colors.
+*/
+input[type=range], input[type=range]::-ms-track {
+    background-color: transparent;
+}
+
+DARK(input[type=range]::-ms-fill-lower) {
+    background-color: DESKTOP(rgb(91, 46, 197)) PHONE(Highlight);
+}
+DARK(input[type=range]:disabled::-ms-fill-lower) {
+    background-color: rgba(255, 255, 255, 0.23);
+}
+LIGHT(input[type=range]::-ms-fill-lower) {
+    background-color: DESKTOP(rgb(70, 23, 180)) PHONE(Highlight);
+}
+LIGHT(input[type=range]:disabled::-ms-fill-lower) {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+DARK(input[type=range]::-ms-fill-upper) {
+    background-color: rgba(255, 255, 255, 0.16);
+}
+DARK(input[type=range]:disabled::-ms-fill-upper) {
+    background-color: rgba(255, 255, 255, 0.16);
+}
+LIGHT(input[type=range]::-ms-fill-upper) {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+LIGHT(input[type=range]:disabled::-ms-fill-upper) {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+DARK(input[type=range]::-ms-thumb) {
+    background-color: rgb(255, 255, 255);
+}
+DARK(input[type=range]:disabled::-ms-thumb) {
+    background-color: rgb(126, 126, 126);
+}
+LIGHT(input[type=range]::-ms-thumb) {
+    background-color: rgb(0, 0, 0);
+}
+LIGHT(input[type=range]:disabled::-ms-thumb) {
+    background-color: rgb(146, 146, 146);
+}
+
+DARK(input[type=range]::-ms-ticks-before),
+DARK(input[type=range]::-ms-ticks-after) {
+    color: rgba(255, 255, 255, 0.5);
+}
+LIGHT(input[type=range]::-ms-ticks-before),
+LIGHT(input[type=range]::-ms-ticks-after) {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+/*
+Progress control colors.
+*/
+DARK(progress) {
+    background-color: DESKTOP(rgba(255,255,255,0.35)) PHONE(rgba(255, 255, 255, 0.1));
+    color: DESKTOP(rgb(91, 46, 197)) PHONE(Highlight);
+}
+LIGHT(progress) {
+    background-color: DESKTOP(rgba(0, 0, 0, 0.2)) PHONE(rgba(0, 0, 0, 0.095));
+    color: DESKTOP(rgb(70, 23, 180)) PHONE(Highlight);
+}
+DARK(progress:indeterminate) {
+    color: DESKTOP(rgb(138, 87, 255)) PHONE(Highlight);
+}
+LIGHT(progress:indeterminate) {
+    color: DESKTOP(rgb(70, 23, 180)) PHONE(Highlight);
+}
+progress::-ms-fill {
+    background-color: currentColor;
+}
+/* 
+Explicitly define indeterminate background transparent for dark and light 
+because ".win-ui-light progress" has higher specificity than "progress:indeterminate".
+*/
+DARK(progress:indeterminate), LIGHT(progress:indeterminate) {
+    background-color: transparent;
+}
+
+
+/*
+ListView control colors.
+*/
+DARK(.win-listview .win-itembox),
+DARK(.win-itemcontainer .win-itembox) {
+    background-color: DESKTOP(rgb(29, 29, 29)) PHONE(rgb(0, 0, 0));
+}
+LIGHT(.win-listview .win-itembox),
+LIGHT(.win-itemcontainer .win-itembox) {
+    background-color: rgb(255, 255, 255);
+}
+DARK(.win-listview .win-container.win-backdrop) {
+    background-color: rgba(155,155,155,0.23);
+}
+LIGHT(.win-listview .win-container.win-backdrop) {
+    background-color: rgba(155,155,155,0.23);
+}
+.win-selectioncheckmark {
+    color: rgb(255, 255, 255);
+}
+DARK(.win-selectionhint) {
+    color: rgb(255, 255, 255);
+}
+LIGHT(.win-selectionhint) {
+    color: rgb(70, 23, 180);
+}
+
+/*
+Toggleswitch control colors.
+*/
+
+DARK(.win-toggleswitch .win-title) {
+    color: rgb(255, 255, 255);
+}
+DARK(.win-toggleswitch .win-title.win-disabled) {
+    color: rgba(255, 255, 255, 0.4);
+}
+LIGHT(.win-toggleswitch .win-title) {
+    color: rgb(0, 0, 0);
+}
+LIGHT(.win-toggleswitch .win-title.win-disabled) {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+DARK(.win-toggleswitch .win-label) {
+    color: rgb(255, 255, 255);
+}
+DARK(.win-toggleswitch .win-label.win-disabled) {
+    color: rgba(255, 255, 255, 0.4);
+}
+LIGHT(.win-toggleswitch .win-label) {
+    color: rgb(0, 0, 0);
+}
+LIGHT(.win-toggleswitch .win-label.win-disabled) {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.win-toggleswitch .win-switch::-ms-track {
+    background-color: transparent;
+}
+DARK(.win-toggleswitch .win-switch::-ms-track) {
+    border-color: DESKTOP(rgba(255, 255, 255, 0.35)) PHONE(rgb(255, 255, 255));
+}
+DARK(.win-toggleswitch .win-switch::-ms-fill-upper) {
+    background-color: DESKTOP(rgba(255, 255, 255, 0.26)) PHONE(transparent);
+}
+DARK(.win-toggleswitch .win-switch:disabled::-ms-track) {
+    border-color: DESKTOP(rgba(255, 255, 255, 0.2)) PHONE(rgba(255, 255, 255, 0.4));
+}
+DARK(.win-toggleswitch .win-switch:disabled::-ms-fill-lower),
+DARK(.win-toggleswitch .win-switch:disabled::-ms-fill-upper) {
+    background-color: DESKTOP(rgba(255, 255, 255, 0.12)) PHONE(rgba(255, 255, 255, 0.4));
+}
+LIGHT(.win-toggleswitch .win-switch::-ms-track) {
+    border-color: DESKTOP(rgba(0, 0, 0, 0.35)) PHONE(rgb(0, 0, 0));
+}
+LIGHT(.win-toggleswitch .win-switch::-ms-fill-upper) {
+    background-color: DESKTOP(rgba(0, 0, 0, 0.26)) PHONE(transparent);
+}
+LIGHT(.win-toggleswitch .win-switch:disabled::-ms-track) {
+    border-color: DESKTOP(rgba(0, 0, 0, 0.2)) PHONE(rgba(0, 0, 0, 0.3));
+}
+LIGHT(.win-toggleswitch .win-switch:disabled::-ms-fill-lower),
+LIGHT(.win-toggleswitch .win-switch:disabled::-ms-fill-upper) {
+    background-color: DESKTOP(rgba(0, 0, 0, 0.12)) PHONE(rgba(0, 0, 0, 0.3));
+}
+
+/*
+High contrast colors.
+*/
+@media (-ms-high-contrast) {
+    /*
+    ListView/ ItemContainer high contrast colors
+    */
+    .win-listview .win-groupheader {
+        color: WindowText;
+    } 
+    .win-selectioncheckmark {
+        color: HighlightText;
+    }
+    .win-listview .win-selectionhint,
+    .win-itemcontainer .win-selectionhint {
+        color: WindowText;
+    }
+}

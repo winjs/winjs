@@ -1,0 +1,83 @@
+.win-listview .win-vertical .win-surface.win-listlayout .win-itemscontainer {
+    transition: transform linear 100ms;
+}
+
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-itemscontainer {
+    transform: translateX(15px);
+}
+
+.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout .win-itemscontainer {
+    transform: translateX(-15px);
+}
+
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container {
+    display: -ms-flexbox;
+}
+
+.win-listview .win-vertical .win-surface.win-listlayout .win-selected.win-container .win-selectionborder,
+.win-listview .win-vertical .win-surface.win-listlayout .win-selected.win-container .win-selectioncheckmarkbackground,
+.win-listview .win-vertical .win-surface.win-listlayout .win-selected.win-container .win-selectioncheckmark,
+.win-listview .win-surface:not(.win-selectionmode) .win-selected.win-container .win-selectionborder,
+.win-listview .win-surface:not(.win-selectionmode) .win-selected.win-container .win-selectioncheckmarkbackground,
+.win-listview .win-surface:not(.win-selectionmode) .win-selected.win-container .win-selectioncheckmark,
+.win-itemcontainer.win-selected.win-container .win-selectionborder,
+.win-itemcontainer.win-selected.win-container .win-selectioncheckmarkbackground,
+.win-itemcontainer.win-selected.win-container .win-selectioncheckmark {
+    display: none;
+}
+
+.win-selectionmode .win-itemcontainer.win-selected.win-container .win-selectionborder,
+.win-selectionmode .win-itemcontainer.win-selected.win-container .win-selectioncheckmarkbackground,
+.win-selectionmode .win-itemcontainer.win-selected.win-container .win-selectioncheckmark,
+.win-itemcontainer.win-selected.win-container.win-selectionmode .win-selectionborder,
+.win-itemcontainer.win-selected.win-container.win-selectionmode .win-selectioncheckmarkbackground,
+.win-itemcontainer.win-selected.win-container.win-selectionmode .win-selectioncheckmark
+{
+    display: block;
+}
+
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container::before {
+    content: "";
+    font-family: 'Segoe UI Symbol';
+    font-size: 18px;
+    display: block;
+    margin-top: 12px;
+    height: 21px;
+    width: 23px;
+    padding: 0;
+    border-width:2.5px;
+    border-style:solid;
+    z-index: 5;
+    line-height: 1;
+    text-indent: -2px;
+}
+
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container:active::before {
+    transform: scale(0.95);
+    transition: transform 0.2s;
+}
+
+
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container.win-selected::before {
+    content: "\E081";
+}
+
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-container.win-selected:active::before {
+    content: "\E081";
+}
+
+.win-selectionmode .win-itemcontainer.win-container .win-itembox::after,
+.win-itemcontainer.win-selectionmode.win-container .win-itembox::after,
+.win-listview .win-horizontal .win-surface.win-listlayout.win-selectionmode .win-itembox:not(.win-nonselectable)::after,
+.win-listview .win-surface.win-selectionmode:not(.win-listlayout) .win-itembox:not(.win-nonselectable)::after {
+    content: "";
+    position: absolute;
+    width: ~"calc(100% - 8px)";
+    height: ~"calc(100% - 8px)";
+    pointer-events: none;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    border-width:4px;
+    border-style:solid;
+}

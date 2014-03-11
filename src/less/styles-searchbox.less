@@ -1,0 +1,178 @@
+.win-searchbox {
+    white-space: normal;
+    position: relative;
+    width: 265px;
+    height: 28px;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.win-searchbox-flyout {
+    position: absolute;
+    min-width: 265px;
+    border-style: solid;
+    border-width: 2px 2px 2px 2px;
+    z-index: 100;
+    padding: 5px 0 10px 0;
+    top: 30px;
+    left: -2px;
+    right: -2px;
+    max-height: 272px;
+    overflow: auto;
+    -ms-scroll-chaining:none;
+    touch-action:none;
+}
+
+.win-searchbox input {
+    height: 100%;
+    border-style: none;
+    margin: 0px;
+    padding-right: 28px;
+    width: ~"calc(100% - 28px)";
+    font-size: 11pt;
+    -ms-ime-align: after;
+    line-height: 20px;
+}
+
+.win-searchbox input:-ms-lang(@{rtl}) {
+    padding-right: 0;
+    padding-left: 28px;
+}
+
+/*
+Hide clear button in search box control.
+*/
+
+.win-searchbox input[type=search]::-ms-clear {
+    display: none;
+}
+
+.win-searchbox-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 28px;
+    font-family: "Segoe UI Symbol";
+    font-size: 15pt;
+    border-style: none;
+    height: 100%;
+    text-align:center;
+}
+
+.win-searchbox-button:-ms-lang(@{rtl}) {
+    right: auto;
+    left: 0;
+}
+
+.win-searchbox-button.win-searchbox-button:before {
+    content: "\E094";
+}
+
+.win-searchbox-suggestion-result {
+    padding: 0 18px;
+    display: flex;
+    height: 60px;
+    font-family: "Segoe UI";
+    font-size: 11pt;
+    outline: none;
+}
+
+.win-searchbox-suggestion-result div {
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.win-searchbox-suggestion-result-text {
+    padding-top: 9px;
+    padding-bottom: 11px;
+    height: 60px;
+    width: 179px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 20px;
+}
+
+.win-searchbox-suggestion-result-detailed-text {
+    display: inline-block;
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    line-height: 22px; /* Some characters get clipped if line height is < 22px. Work around by setting -2 margin. */
+    margin-top: -1px;
+    width: 100%;
+}
+
+.win-searchbox-suggestion-result img {
+    width: 40px;
+    height: 40px;
+    margin-left: 0;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.win-searchbox-suggestion-result img:-ms-lang(@{rtl}) {
+    margin-right: 0;
+    margin-left: auto;
+    padding-left: 10px;
+    padding-right: 0;
+}
+
+.win-searchbox-suggestion-query {
+    padding: 9px 18px 11px 18px;
+    font-family: "Segoe UI";
+    font-weight: normal;
+    outline: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 11pt;
+    line-height: 20px;
+}
+
+.win-searchbox-suggestion-separator {
+    display: -ms-grid;
+    -ms-grid-columns: auto 1fr;
+    padding: 0 18px;
+    height: 40px;
+    font-family: "Segoe UI";
+    font-size: 11pt;
+}
+
+.win-searchbox-suggestion-separator hr {
+    -ms-grid-column: 2;
+    -ms-grid-row: 1;
+    margin-top: 18px;
+    border-style: solid;
+    border-width: 1px 0px 0px 0px;
+}
+
+.win-searchbox-suggestion-separator hr:-ms-lang(@{rtl}) {
+    margin-right: 10px;
+    margin-left: auto;
+}
+
+.win-searchbox-suggestion-separator div {
+    -ms-grid-column: 1;
+    -ms-grid-row: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-top: 9px;
+    padding-bottom: 11px;
+    line-height: 20px;
+    margin-right: 10px;
+}
+
+.win-searchbox-suggestion-separator div:-ms-lang(@{rtl}) {
+    margin-left: 10px;
+    margin-right: auto;
+}
+
+/*
+Search box control animations
+*/
+@keyframes WinJS-flyoutBelowSearchBox-showPopup { from { transform: translateY(0px); } to { transform: none; } }
+@keyframes WinJS-flyoutAboveSearchBox-showPopup { from { transform: translateY(0px); } to { transform: none; } }

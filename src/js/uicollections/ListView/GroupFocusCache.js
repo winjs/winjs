@@ -1,0 +1,93 @@
+(function GroupFocusCacheInit() {
+    "use strict";
+
+    WinJS.Namespace.define("WinJS.UI", {
+        _GroupFocusCache: WinJS.Namespace._lazy(function () {
+            return WinJS.Class.define(function GroupFocusCache_ctor(listView) {
+                this._listView = listView;
+                this.clear();
+            }, {
+                // We store indices as strings in the cache so index=0 does not evaluate to false as
+                // when we check for the existance of an index in the cache. The index is converted
+                // back into a number when calling getIndexForGroup
+        
+                updateCache: function (groupKey, itemKey, itemIndex) {
+                    itemIndex = "" + itemIndex;
+                    this._itemToIndex[itemKey] = itemIndex;
+                    this._groupToItem[groupKey] = itemKey;
+                },
+
+                deleteItem: function (itemKey) {
+                    if (!this._itemToIndex[itemKey]) {
+                        return;
+                    }
+
+                    var that = this;
+                    var keys = Object.keys(this._groupToItem);
+                    for (var i = 0, len = keys.length; i < len; i++) {
+                        var key = keys[i];
+                        if (that._groupToItem[key] === itemKey) {
+                            that.deleteGroup(key);
+                            break;
+                        }
+                    }
+                },
+
+                deleteGroup: function (groupKey) {
+                    var itemKey = this._groupToItem[groupKey];
+                    if (itemKey) {
+                        delete this._itemToIndex[itemKey];
+                    }
+                    delete this._groupToItem[groupKey];
+                },
+
+                updateItemIndex: function (itemKey, itemIndex) {
+                    if (!this._itemToIndex[itemKey]) {
+                        return;
+                    }
+                    this._itemToIndex[itemKey] = "" + itemIndex;
+                },
+
+                getIndexForGroup: function (groupIndex) {
+                    var groupKey = this._listView._groups.group(groupIndex).key;
+
+                    var itemKey = this._groupToItem[groupKey];
+                    if (itemKey && this._itemToIndex[itemKey]) {
+                        return +this._itemToIndex[itemKey];
+                    } else {
+                        return this._listView._groups.fromKey(groupKey).group.startIndex;
+                    }
+                },
+
+                clear: function () {
+                    this._groupToItem = {};
+                    this._itemToIndex = {};
+                }
+            });
+        }),
+
+        _UnsupportedGroupFocusCache: WinJS.Namespace._lazy(function () {
+            return WinJS.Class.define(null, {
+                updateCache: function (groupKey, itemKey, itemIndex) {
+                },
+
+                deleteItem: function (itemKey) {
+                },
+
+                deleteGroup: function (groupKey) {
+                },
+
+                updateItemIndex: function (itemKey, itemIndex) {
+                },
+
+                getIndexForGroup: function (groupIndex) {
+                    return 0;
+                },
+
+                clear: function () {
+                }
+            });
+        })
+    });
+
+})();

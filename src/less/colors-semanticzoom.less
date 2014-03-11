@@ -1,0 +1,39 @@
+.Colors(@theme) {
+
+    .platform(desktop) {
+        .win-semanticzoom-button {
+            background-color: rgba(216, 216, 216, 0.33);
+            border-color: transparent;
+        }
+
+        button:hover.win-semanticzoom-button {
+            background-color: rgba(216, 216, 216, 1.0);
+        }
+
+        button.win-semanticzoom-button:active {
+            .mixin(dark) {
+                background-color: rgb(255, 255, 255);
+            }
+            .mixin(light) {
+                background-color: rgb(0, 0, 0);
+            }
+            .mixin(@theme);
+        }
+    }
+
+    .platform(phone) {
+        .mixin(dark) {
+            .win-semanticzoom .win-semanticzoom-zoomedoutview {
+                background-color: rgba(0, 0, 0, 0.67);
+            }
+        }
+        .mixin(light) {
+            .win-semanticzoom .win-semanticzoom-zoomedoutview {
+                background-color: rgba(255, 255, 255, 0.67);
+            }
+        }
+        .mixin(@theme);
+    }
+
+    .platform(@platform);
+}

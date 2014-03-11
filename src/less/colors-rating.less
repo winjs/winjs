@@ -1,0 +1,57 @@
+.Colors(@theme) {
+    .mixin(dark) {
+        .win-rating .win-star.win-user.win-full,
+        .win-rating .win-star.win-user.win-full.win-disabled {
+            color: rgb(91, 46, 197);
+        }
+        .win-rating .win-star.win-tentative.win-full {
+            color: rgb(129, 82, 239);
+        }
+        .win-rating .win-star.win-average.win-full,
+        .win-rating .win-star.win-average.win-full.win-disabled {
+            color: rgb(255, 255, 255);
+        }
+        .win-rating .win-star.win-empty {
+            color: rgba(255, 255, 255, 0.35);
+        }
+    }
+    .mixin(light) {
+        .win-rating .win-star.win-user.win-full,
+        .win-rating .win-star.win-user.win-full.win-disabled {
+            color: rgb(70, 23, 180);
+        }
+        .win-rating .win-star.win-tentative.win-full {
+            color: rgb(114, 65, 228);
+        }
+        .win-rating .win-star.win-average.win-full,
+        .win-rating .win-star.win-average.win-full.win-disabled {
+            color: rgb(0, 0, 0);
+        }
+        .win-rating .win-star.win-empty {
+            color: rgba(0, 0, 0, 0.35);
+        }
+    }
+
+    .mixin(@theme);
+
+    @media (-ms-high-contrast) {
+        .win-rating .win-star:before {
+            content: "\E082" !important;
+        }
+        .win-rating .win-star.win-full {
+            color: HighLight;
+        }
+        .win-rating .win-star.win-tentative.win-full {
+            color: ButtonText;
+        }
+        .win-rating .win-star.win-empty {
+            color: ButtonFace;
+        }
+        .win-rating .win-star:after {
+            content: "\E224" !important;
+            position: relative;
+            top: -100%;
+            color: ButtonText;
+        }
+    }
+}
