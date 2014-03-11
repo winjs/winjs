@@ -10,8 +10,8 @@ module.exports = function(grunt) {
     if (process.env._NTTREE)
         outputFolder = process.env._NTTREE + "/Corsica/";
 
-    var desktopOutput = outputFolder + "Microsoft." + targetName;
-    var phoneOutput = outputFolder + "Microsoft.Phone." + targetName;
+    var desktopOutput = outputFolder + "Microsoft." + targetName + "/";
+    var phoneOutput = outputFolder + "Microsoft.Phone." + targetName + "/";
 
     var baseJSFiles = [
         "src/js/build/Copyright.js",
@@ -219,116 +219,141 @@ module.exports = function(grunt) {
         "src/js/library/stringsFooter.js"
     ];
 
-    // Project config
-    grunt.initConfig({
-        pkg: grunt.file.readJSON("package.json"),
+    var gruntConfig = {};
 
-        clean: {
+    // Package data
+    gruntConfig.pkg = grunt.file.readJSON("package.json");
+
+    // Clean task
+    gruntConfig.clean = {
+        options: {
+            force: true
+        },
+        all: [
+            desktopOutput,
+            phoneOutput,
+        ]
+    };
+
+    // Less build task
+    gruntConfig.less = {
+        desktopDark: {
+            src: ["src/less/desktop-dark.less"],
+            dest: desktopOutput + "css/ui-dark.css"
+        },
+        desktopLight: {
+            src: ["src/less/desktop-light.less"],
+            dest: desktopOutput + "css/ui-light.css"
+        },
+        phoneDark: {
+            src: ["src/less/phone-dark.less"],
+            dest: phoneOutput + "css/ui-dark.css"
+        },
+        phoneLight: {
+            src: ["src/less/phone-light.less"],
+            dest: phoneOutput + "css/ui-light.css"
+        },
+    };
+
+    // Javascript concat task
+    gruntConfig.concat = {
+        baseDesktop: {
+            src: baseJSFiles,
+            dest: desktopOutput + "js/base.js"
+        },
+        basePhone: {
+            src: baseJSFilesPhone,
+            dest: phoneOutput + "js/base.js"
+        },
+        baseStringsDesktop: {
+            src: baseStringsFiles,
+            dest: desktopOutput + "js/" + localeFolder + "/base.strings.js"
+        },
+        baseStringsPhone: {
+            src: baseStringsFiles,
+            dest: phoneOutput + "js/" + localeFolder + "/base.strings.js"
+        },
+        uiDesktop: {
+            src: uiJSFiles,
+            dest: desktopOutput + "js/ui.js"
+        },
+        uiPhone: {
+            src: uiJSFilesPhone,
+            dest: phoneOutput + "js/ui.js"
+        },
+        uiStringsDesktop: {
+            src: uiStringsFiles,
+            dest: desktopOutput + "js/" + localeFolder + "/ui.strings.js"
+        },
+        uiStringsPhone: {
+            src: uiStringsFiles,
+            dest: phoneOutput + "js/" + localeFolder + "/ui.strings.js"
+        }
+    };
+
+    // Post process task
+    gruntConfig.replace = {
+        base: {
             options: {
-                force: true
+                patterns: [
+                    {
+                        match: /\$\(TARGET_DESTINATION\)/g,
+                        replacement: targetName
+                    },
+                    {
+                        match: /\$\(build.version\)/g,
+                        replacement: "<%= pkg.version %>"
+                    },
+                    {
+                        match: /\$\(build.date\)/g,
+                        replacement: buildDateString
+                    },
+                    {
+                        match: /\$\(build.branch\)/g,
+                        replacement: "<%= pkg.name %>"
+                    },
+                    {   // Strip file references
+                        match: /(.*)<reference(.*)\r\n/g,
+                        replacement: ""
+                    }
+                ]
             },
-            all: [
-                desktopOutput,
-                phoneOutput,
+            files: [
+              {expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/"},
+              {expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/"},
+              {expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/"},
+              {expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/"}
             ]
-        },
+        }
+    };
 
-        concat: {
-            baseDesktop: {
-                src: baseJSFiles,
-                dest: desktopOutput + "js/base.js"
-            },
-            basePhone: {
-                src: baseJSFilesPhone,
-                dest: phoneOutput + "js/base.js"
-            },
-            baseStringsDesktop: {
-                src: baseStringsFiles,
-                dest: desktopOutput + "js/" + localeFolder + "/base.strings.js"
-            },
-            baseStringsPhone: {
-                src: baseStringsFiles,
-                dest: phoneOutput + "js/" + localeFolder + "/base.strings.js"
-            },
-            uiDesktop: {
-                src: uiJSFiles,
-                dest: desktopOutput + "js/ui.js"
-            },
-            uiPhone: {
-                src: uiJSFilesPhone,
-                dest: phoneOutput + "js/ui.js"
-            },
-            uiStringsDesktop: {
-                src: uiStringsFiles,
-                dest: desktopOutput + "js/" + localeFolder + "/ui.strings.js"
-            },
-            uiStringsPhone: {
-                src: uiStringsFiles,
-                dest: phoneOutput + "js/" + localeFolder + "/ui.strings.js"
-            }
-        },
-
-        replace: {
-            base: {
-                options: {
-                    patterns: [
-                        {
-                            match: /\$\(TARGET_DESTINATION\)/g,
-                            replacement: targetName
-                        },
-                        {
-                            match: /\$\(build.version\)/g,
-                            replacement: "<%= pkg.version %>"
-                        },
-                        {
-                            match: /\$\(build.date\)/g,
-                            replacement: buildDateString
-                        },
-                        {
-                            match: /\$\(build.branch\)/g,
-                            replacement: "<%= pkg.name %>"
-                        },
-                        {   // Strip file references
-                            match: /(.*)<reference(.*)\r\n/g,
-                            replacement: ""
-                        }
-                    ]
-                },
+    // Test copy task, only if building internally
+    if (process.env._NTTREE) {
+        gruntConfig.copy = {
+            tests: {
                 files: [
-                  {expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/"},
-                  {expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/"},
-                  {expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/"},
-                  {expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/"}
+                    {expand: true, cwd: "tests/", src: ["**"], dest: outputFolder + "other." + version + ".debug/tests/unittests"}
                 ]
             }
-        },
+        };
+    }
 
-        less: {
-            desktopDark: {
-                src: ["src/less/desktop-dark.less"],
-                dest: desktopOutput + "css/ui-dark.css"
-            },
-            desktopLight: {
-                src: ["src/less/desktop-light.less"],
-                dest: desktopOutput + "css/ui-light.css"
-            },
-            phoneDark: {
-                src: ["src/less/phone-dark.less"],
-                dest: phoneOutput + "css/ui-dark.css"
-            },
-            phoneLight: {
-                src: ["src/less/phone-light.less"],
-                dest: phoneOutput + "css/ui-light.css"
-            },
-        }
-    });
+    // Project config
+    grunt.initConfig(gruntConfig);
 
     grunt.loadNpmTasks("grunt-contrib-concat");
     grunt.loadNpmTasks("grunt-contrib-less");
     grunt.loadNpmTasks("grunt-replace");
     grunt.loadNpmTasks("grunt-contrib-clean");
-    
-    grunt.registerTask("default", ["clean", "less", "concat", "replace"]);
+    grunt.loadNpmTasks("grunt-contrib-copy");
+
+    var defaultTask = ["clean", "less", "concat", "replace"];
+    if (process.env._NTTREE) {
+        defaultTask.push("copy");
+        grunt.registerTask("tests", ["copy:tests"]);
+    }
+
+    grunt.registerTask("default", defaultTask);
     grunt.registerTask("css", ["less"]);
     grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStrings", "replace"]);
     grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStrings", "replace"]);
