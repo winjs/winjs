@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>    
+    <title>FragmentJSExecutesOnce fragment</title>
+
+    <script type="text/javascript">
+//debugger;    
+        if (window && window.Windows) {
+            myFragLoadCounter++;
+        } else {
+            // under IE, code executes inside IFrame
+            parent.myFragLoadCounter++;
+        }
+    </script>
+</head>
+
+</html>

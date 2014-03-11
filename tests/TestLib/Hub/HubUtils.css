@@ -1,0 +1,29 @@
+﻿.win-hub-horizontal .win-listview {
+    height: 400px;
+    width: 800px;
+}
+
+    .win-hub-horizontal .win-listview .win-item {
+        height: 100px;
+        width: 240px;
+        background-color: lightgreen;
+    }
+
+.win-hub-vertical .win-listview {
+    height: 400px;
+    width: 800px;
+}
+
+    .win-hub-vertical .win-listview .win-item {
+        height: 100px;
+        width: 240px;
+        background-color: lightgreen;
+    }
+
+.win-hub-horizontal .win-hub-section {
+    width: 800px;
+}
+
+.win-hub-vertical .win-hub-section {
+    height: 800px;
+}

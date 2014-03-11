@@ -1,0 +1,28 @@
+﻿<!doctype HTML>
+<html>
+    <head>
+        <meta content="IE=EDGE" http-equiv="X-UA-Compatible" />
+    </head>
+    <body>
+        <!-- BEGINTEMPLATE: Template code for an Empty Settings Flyout -->
+        <div data-win-control="WinJS.UI.SettingsFlyout" data-win-options="{width: 'narrow', settingsCommandId: 'CommandA'}">
+            <div class="win-header">
+                <button type="button" onclick="WinJS.UI.SettingsFlyout.show()" class="win-backbutton"></button>
+                <div class="win-label">Custom Settings Narrow</div>
+            </div>
+            <div class="win-content">
+                Narrow Settings Flyout
+            </div>
+        </div>
+        <div id="CustomSettings" data-win-control="WinJS.UI.SettingsFlyout" data-win-options="{width: 'wide'}">
+            <div class="win-header">
+                <button type="button" onclick="WinJS.UI.SettingsFlyout.show()" class="win-backbutton"></button>
+                <div class="win-label">Custom Settings Wide</div>
+            </div>
+            <div class="win-content">
+                Wide Settings Flyout
+            </div>
+        </div>
+        <!-- ENDTEMPLATE -->
+    </body>
+</html>

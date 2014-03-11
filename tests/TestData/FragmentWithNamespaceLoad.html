@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Test Control</title>
+    <script data-win-fragmentLoad="Fragment.Test.init">
+        (function() {
+            if (window.WinJS) {
+                var game_init = function(elements, options) {
+                    elements.querySelector(".findme").innerHTML = options.text;
+                }
+                
+                WinJS.Namespace.define("Fragment.Test", {
+                    init: game_init
+                });
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="findme">This is just a test.</div>
+</body>
+</html>

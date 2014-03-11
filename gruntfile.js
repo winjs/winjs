@@ -328,11 +328,10 @@ module.exports = function(grunt) {
     });
 
     grunt.loadNpmTasks("grunt-contrib-concat");
-    grunt.loadNpmTasks("grunt-typescript");
     grunt.loadNpmTasks("grunt-contrib-less");
     grunt.loadNpmTasks("grunt-replace");
     grunt.loadNpmTasks("grunt-contrib-clean");
-
+    
     grunt.registerTask("default", ["clean", "less", "concat", "replace"]);
     grunt.registerTask("css", ["less"]);
     grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStrings", "replace"]);
