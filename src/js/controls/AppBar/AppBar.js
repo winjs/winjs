@@ -3,8 +3,6 @@
 (function appBarInit(WinJS) {
     "use strict";
 
-    // Change in Master
-
     WinJS.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBar">
