@@ -1,6 +1,5 @@
 module.exports = function(grunt) {
     var version = "2.1";
-    var targetName = "WinJS." + version;
     var buildDate = new Date();
     var month = buildDate.getMonth() + 1;
     var buildDateString = buildDate.getFullYear() + "." + month + "." + buildDate.getDate();
@@ -11,8 +10,11 @@ module.exports = function(grunt) {
         outputFolder = process.env._NTTREE + "/Corsica/";
     }
 
+    var targetName = "WinJS." + version;
+    var targetFramework = "Microsoft.WinJS.2.1";
     var desktopOutput = outputFolder + "Microsoft." + targetName + "/";
     var phoneOutput = outputFolder + "Microsoft.Phone." + targetName + "/";
+    var testsOutput = outputFolder + "other." + version + ".debug/tests/unittests/";
 
     var baseJSFiles = [
         "src/js/build/Copyright.js",
@@ -314,6 +316,10 @@ module.exports = function(grunt) {
                         replacement: targetName
                     },
                     {
+                        match: /\$\(TargetFramework\)/g,
+                        replacement: targetFramework
+                    },
+                    {
                         match: /\$\(build.version\)/g,
                         replacement: "<%= pkg.version %>"
                     },
@@ -324,10 +330,6 @@ module.exports = function(grunt) {
                     {
                         match: /\$\(build.branch\)/g,
                         replacement: "<%= pkg.name %>"
-                    },
-                    {   // Strip file references
-                        match: /(.*)<reference(.*)\r\n/g,
-                        replacement: ""
                     }
                 ]
             },
@@ -340,15 +342,20 @@ module.exports = function(grunt) {
         }
     };
 
-    // Test copy task, only if building internally
     if (process.env._NTTREE) {
+        // Test copy task, only if building internally
         gruntConfig.copy = {
             tests: {
                 files: [
-                    {expand: true, cwd: "tests/", src: ["**"], dest: outputFolder + "other." + version + ".debug/tests/unittests"}
+                    {expand: true, cwd: "tests/", src: ["**"], dest: testsOutput}
                 ]
             }
         };
+
+        // Also add tests to the replace task
+        var testReplace = {expand: true, cwd: testsOutput, src: ["**/*.js"], dest: testsOutput};
+        gruntConfig.replace.base.files.push(testReplace);
+        grunt.log.write("replace has " + gruntConfig.replace.base.files.length + " items");
     }
 
     // Project config
@@ -360,9 +367,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-contrib-copy");
 
-    var defaultTask = ["clean", "less", "concat", "replace"];
+    var defaultTask = ["clean", "less", "concat", "copy", "replace"];
     if (process.env._NTTREE) {
-        defaultTask.push("copy");
         grunt.registerTask("tests", ["copy:tests"]);
     }
 

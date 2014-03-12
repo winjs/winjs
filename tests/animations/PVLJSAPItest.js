@@ -5,12 +5,13 @@
 /// <reference path="../TestLib/animations/JSAnimationVerifier.js" />
 /// <reference path="../TestLib/animations/JSAnimationUtils.js" />
 
+// $(TARGET_DESTINATION)
 
 PVLJSFunctionTests = function () {
     var verifier = new AnimationVerifier();
     var util = new JSAnimationUtils();
     var result;
-	
+
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
         util.addDom(false);
@@ -22,18 +23,18 @@ PVLJSFunctionTests = function () {
         util.removeDom();
     }
 
-    //This will be called if the function call complete correctly.  
+    //This will be called if the function call complete correctly.
     var onComplete = function () {
         LiveUnit.LoggingCore.logComment("Complete");
         result = true;
     }
 
-    //This will be called if something wrong during the animation.	
+    //This will be called if something wrong during the animation.
     var onError = function (e) {
         LiveUnit.LoggingCore.logComment("ERROR: " + e.description);
         result = false;
     }
-	
+
 	function verifyPerformance (duration, targetDuration) {
 		var deviation = Math.abs(duration - targetDuration);
 		var errorTolerance = 500;
@@ -50,7 +51,7 @@ PVLJSFunctionTests = function () {
 			return true;
 		}
 	}
-	
+
 	function verifyMidState (elem, coordinatesTest, opacityTest) {
 		if (coordinatesTest) {
 			var currX = elem.getBoundingClientRect().left;
@@ -59,7 +60,7 @@ PVLJSFunctionTests = function () {
 				", startY: "+coordinatesTest.startY+", destX: "+coordinatesTest.destX+
 				", destY: "+coordinatesTest.destY+", currX: "+currX+", currY: "+currY);
 			LiveUnit.Assert.isTrue(verifier.VerifyCoordinateTransitionInProgress(
-				coordinatesTest.startX, coordinatesTest.startY, 
+				coordinatesTest.startX, coordinatesTest.startY,
 				coordinatesTest.destX, coordinatesTest.destY, currX, currY));
 		}
 		if (opacityTest) {
@@ -68,7 +69,7 @@ PVLJSFunctionTests = function () {
 			LiveUnit.Assert.isTrue(verifier.VerifyOpacityTransitionInProgress(elem));
 		}
 	}
-	
+
 	//This test is to test the slideUp function by passing one element.
     this.testSlideUp = function (signalTestCaseCompleted) {
 		var diffX = 0;
@@ -118,7 +119,7 @@ PVLJSFunctionTests = function () {
 		var start = WinJS.Utilities._now();
         WinJS.UI.Animation.slideUp(elem).done(verifyAnimation);
     }
-	
+
 	//This test is to test the slideDown function by passing one element.
 	this.testSlideDown = function (signalTestCaseCompleted) {
 		var diffX = 0;
@@ -169,7 +170,7 @@ PVLJSFunctionTests = function () {
 		var start = WinJS.Utilities._now();
         WinJS.UI.Animation.slideDown(elem).done(verifyAnimation);
 	}
-	
+
 	//This test is to test the slideLeftOut function by passing four elements.
 	this.testSlideLeftIn = function (signalTestCaseCompleted) {
 		var diffX = window.innerWidth;
@@ -196,7 +197,7 @@ PVLJSFunctionTests = function () {
 		    verifyMidState(elem1, coordinatesTest, opacityTest);
 			elem1.removeEventListener(WinJS.Utilities._browserEventEquivalents["transitionStart"], transitionStartTestHandler, false);
 		};
-		var transitionEndTestHandler = function () {			
+		var transitionEndTestHandler = function () {
 			elem1.removeEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], transitionEndTestHandler, false);
 			LiveUnit.LoggingCore.logComment("TransitionEND: 'transitionend' Handler triggered; Performing mid-state verifications:");
 		    verifyMidState(elem1, coordinatesTest, opacityTest);
@@ -223,7 +224,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.slideLeftIn(elem1, elem2, elem3, elem4).done(verifyAnimation);
 	}
-	
+
 	//This test is to test the slideRightOut function by passing four elements.
 	this.testSlideLeftOut = function (signalTestCaseCompleted) {
 		var diffX = -window.innerWidth;
@@ -275,7 +276,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.slideLeftOut(elem1, elem2, elem3, elem4).done(verifyAnimation);
 	}
-	
+
 	//This test is to test the slideRightIn function by passing four elements.
 	this.testSlideRightIn = function (signalTestCaseCompleted) {
 		var diffX = -window.innerWidth;
@@ -327,9 +328,9 @@ PVLJSFunctionTests = function () {
         elem1.addEventListener(WinJS.Utilities._browserEventEquivalents["transitionStart"], transitionStartTestHandler, false);
         elem1.addEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], transitionEndTestHandler, false);
         var start = WinJS.Utilities._now();
-        WinJS.UI.Animation.slideRightIn(elem1, elem2, elem3, elem4).done(verifyAnimation);	
+        WinJS.UI.Animation.slideRightIn(elem1, elem2, elem3, elem4).done(verifyAnimation);
 	}
-	
+
 	this.testSlideRightOut = function (signalTestCaseCompleted) {
 		var diffX = window.innerWidth;
 		var diffY = 0;
@@ -378,9 +379,9 @@ PVLJSFunctionTests = function () {
         elem1.addEventListener(WinJS.Utilities._browserEventEquivalents["transitionStart"], transitionStartTestHandler, false);
         elem1.addEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], transitionEndTestHandler, false);
         var start = WinJS.Utilities._now();
-        WinJS.UI.Animation.slideRightOut(elem1, elem2, elem3, elem4).done(verifyAnimation);	
+        WinJS.UI.Animation.slideRightOut(elem1, elem2, elem3, elem4).done(verifyAnimation);
 	}
-	
+
 	this.testTurnstileForwardIn = function (signalTestCaseCompleted) {
 		var verifyAnimation = function () {
 			var end = WinJS.Utilities._now();
@@ -419,7 +420,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.turnstileForwardIn(elem).done(verifyAnimation);
 	}
-	
+
 	this.testTurnstileForwardOut = function (signalTestCaseCompleted) {
 		var verifyAnimation = function () {
 			var end = WinJS.Utilities._now();
@@ -458,7 +459,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.turnstileForwardOut(elem).done(verifyAnimation);
 	}
-	
+
 	this.testTurnstileBackwardIn = function (signalTestCaseCompleted) {
 		var verifyAnimation = function () {
 			var end = WinJS.Utilities._now();
@@ -497,7 +498,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.turnstileBackwardIn(elem).done(verifyAnimation);
 	}
-	
+
 	this.testTurnstileBackwardOut = function (signalTestCaseCompleted) {
 		var verifyAnimation = function () {
 			var end = WinJS.Utilities._now();
@@ -536,7 +537,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.turnstileBackwardOut(elem).done(verifyAnimation);
 	}
-	
+
 	this.testContinuumForwardIn = function (signalTestCaseCompleted) {
 		var diffX = 0;
 		var diffY = 225;
@@ -588,7 +589,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.continuumForwardIn(elem1, elem2, elem3).done(verifyAnimation);
 	}
-	
+
 	this.testContinuumForwardOut = function (signalTestCaseCompleted) {
 		var diffX = 0;
 		var diffY = 200;
@@ -627,8 +628,8 @@ PVLJSFunctionTests = function () {
 		var startY = elem2.getBoundingClientRect().top;
 		var startYPositionOffset = startY - (.05) * elem2.getBoundingClientRect().height; //This is to emcompass the fact that the element expands as it
 									//moves towards  its destination. Without this,
-									//the midstate tests sometimes fail as the element is not between 
-									//the 'start' and 'destination' Y coordinates. 
+									//the midstate tests sometimes fail as the element is not between
+									//the 'start' and 'destination' Y coordinates.
 		var destX = startX + diffX;
 		var destY = startY + diffY;
 		var coordinatesTest = {
@@ -643,7 +644,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.continuumForwardOut(elem1, elem2).done(verifyAnimation);
 	}
-	
+
 	this.testContinuumBackwardIn = function (signalTestCaseCompleted) {
 		var diffX = 0;
 		var diffY = 165;
@@ -694,7 +695,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.continuumBackwardIn(elem1, elem2).done(verifyAnimation);
 	}
-	
+
 	this.testContinuumBackwardOut = function (signalTestCaseCompleted) {
 		var verifyAnimation = function () {
 			var end = WinJS.Utilities._now();
@@ -725,7 +726,7 @@ PVLJSFunctionTests = function () {
         var start = WinJS.Utilities._now();
         WinJS.UI.Animation.continuumBackwardOut(elem).done(verifyAnimation);
 	}
-	
+
     //This test is to test the fadeOut function by passing one element.
     this.testFadeOut = function (signalTestCaseCompleted) {
 		var verifyAnimation = function () {
@@ -863,7 +864,7 @@ PVLJSFunctionTests = function () {
 			var duration = end - start;
 			LiveUnit.LoggingCore.logComment("Verify duration:");
 			LiveUnit.Assert.isTrue(verifyPerformance(duration, targetDuration));
-            LiveUnit.LoggingCore.logComment("Verify testPointerDown :");	
+            LiveUnit.LoggingCore.logComment("Verify testPointerDown :");
 		    LiveUnit.Assert.isTrue(verifier.VerifyOpacityTransition(target, '1'));
             signalTestCaseCompleted();
         }
@@ -1057,7 +1058,7 @@ PVLJSFunctionTests = function () {
         var rectStartList = util.getBoundingRectArray(affected);
 		var start;
         WinJS.UI.Animation.dragBetweenEnter(affected).then
-			(function () { 
+			(function () {
 				start = WinJS.Utilities._now();
 				WinJS.UI.Animation.dragBetweenLeave(affected); }).done
 					(verifyAnimation);
@@ -1102,7 +1103,7 @@ PVLJSFunctionTests = function () {
         var targetDuration = util.getAnimationDuration("DragSourceEnd");
 		var start;
         WinJS.UI.Animation.dragSourceStart(target, affected).then
-			(function () { 
+			(function () {
 				start = WinJS.Utilities._now();
 				WinJS.UI.Animation.dragSourceEnd(target, { top: '0', left: '11' }, affected).done
 					(verifyAnimation);
@@ -1146,9 +1147,9 @@ PVLJSFunctionTests = function () {
 
         var list = document.querySelectorAll(".bar");
         var target = document.getElementById("div2");
-        var affected = [div3,div4]; 
-		var start; 
-		
+        var affected = [div3,div4];
+		var start;
+
         function expand() {
             var expand = WinJS.UI.Animation.createExpandAnimation(target, affected);
             target.style.position = "";
@@ -1235,8 +1236,8 @@ PVLJSFunctionTests = function () {
         WinJS.UI.Animation.exitContent(outgoing).done(verifyAnimation);
     }
 
-    
-    //this is to test transitionPage function.	
+
+    //this is to test transitionPage function.
     this.testEnterPage = function (signalTestCaseCompleted) {
         var verifyAnimation = function () {
 			var end = WinJS.Utilities._now();
@@ -1430,7 +1431,7 @@ PVLJSFunctionTests = function () {
 		var start = WinJS.Utilities._now();
         WinJS.UI.Animation.swipeReveal(div1).done(verifyAnimation);
     }
-    
+
     //This test is to test when animation is enabled, promise should fire asynchronously
     this.testAsyncPromiseEnableAnimation = function () {
         var number = 0;
@@ -1500,7 +1501,7 @@ PVLJSFunctionTests = function () {
         msSetImmediate(function() {promise.cancel(); LiveUnit.Assert.isTrue(result);});
     }
 
-    //This is to test canceling an empty animation. 
+    //This is to test canceling an empty animation.
     //onComplete should be fired.
     this.testCancelEmptyAnimation2 = function() {
         var promise = WinJS.UI.Animation.enterPage().then(onComplete, onError);
@@ -1523,16 +1524,16 @@ PVLJSFunctionTests = function () {
         promise.then(function() {
             num ++;
             LiveUnit.Assert.areEqual(1, num); //Verify promise is fired only once.
-            promise.cancel(); 
+            promise.cancel();
             window.setTimeout(callback,0);
         });
     }
     //This is to test canceling animation after animation finishes.
     //Cancel should be ignored and the conComplete promise should be fired only once.
-	
+
     this.testCancelAnimationAfterFinishing = function(signalTestCaseComplete) {
         var callback = function() {
-            promise.cancel(); 
+            promise.cancel();
             LiveUnit.Assert.isTrue(result); //Verify onComplete is fired by setting result = true;
             signalTestCaseComplete();
         }
