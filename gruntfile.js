@@ -7,8 +7,9 @@ module.exports = function(grunt) {
     var localeFolder = "en-US";
     var outputFolder = "bin/";
 
-    if (process.env._NTTREE)
+    if (process.env._NTTREE) {
         outputFolder = process.env._NTTREE + "/Corsica/";
+    }
 
     var desktopOutput = outputFolder + "Microsoft." + targetName + "/";
     var phoneOutput = outputFolder + "Microsoft.Phone." + targetName + "/";
@@ -232,7 +233,19 @@ module.exports = function(grunt) {
         all: [
             desktopOutput,
             phoneOutput,
-        ]
+        ],
+        base: [
+            desktopOutput + "js/base.js",
+            desktopOutput + "js/" + localeFolder + "/base.strings.js",
+            phoneOutput + "js/base.js",
+            phoneOutput + "js/" + localeFolder + "/base.strings.js",
+        ],
+        ui: [
+            desktopOutput + "js/ui.js",
+            desktopOutput + "js/" + localeFolder + "/ui.strings.js",
+            phoneOutput + "js/ui.js",
+            phoneOutput + "js/" + localeFolder + "/ui.strings.js",
+        ],
     };
 
     // Less build task
@@ -355,6 +368,6 @@ module.exports = function(grunt) {
 
     grunt.registerTask("default", defaultTask);
     grunt.registerTask("css", ["less"]);
-    grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStrings", "replace"]);
-    grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStrings", "replace"]);
+    grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
+    grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
 }

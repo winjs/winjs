@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>be81311b-f7c5-42b2-8f8c-e459543a9dc9</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0'">
+    <VisualStudioVersion>12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).Default.props" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).props" />
+  <PropertyGroup>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <RequiredPlatformVersion>8.1</RequiredPlatformVersion>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <PackageCertificateKeyFile>WinJS_TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="..\..\src\js\base\base.js" />
+    <Content Include="..\..\src\js\base\baseUtils-phone.js" />
+    <Content Include="..\..\src\js\base\baseUtils.js" />
+    <Content Include="..\..\src\js\base\dispose.js" />
+    <Content Include="..\..\src\js\base\errors.js" />
+    <Content Include="..\..\src\js\base\events.js" />
+    <Content Include="..\..\src\js\base\getWinJSString.js" />
+    <Content Include="..\..\src\js\base\log.js" />
+    <Content Include="..\..\src\js\base\promise.js" />
+    <Content Include="..\..\src\js\base\references.js" />
+    <Content Include="..\..\src\js\base\resources.js" />
+    <Content Include="..\..\src\js\base\safeHTML.js" />
+    <Content Include="..\..\src\js\base\scheduler.js" />
+    <Content Include="..\..\src\js\base\xhr.js" />
+    <Content Include="..\..\src\js\binding\bindingParser.js" />
+    <Content Include="..\..\src\js\binding\data.js" />
+    <Content Include="..\..\src\js\binding\dataTemplate.js" />
+    <Content Include="..\..\src\js\binding\dataTemplateCompiler.js" />
+    <Content Include="..\..\src\js\binding\declarative.js" />
+    <Content Include="..\..\src\js\binding\DOMWeakRefTable.js" />
+    <Content Include="..\..\src\js\binding\list.js" />
+    <Content Include="..\..\src\js\Build\endBase.js" />
+    <Content Include="..\..\src\js\Build\startBase.js" />
+    <Content Include="..\..\src\js\en-US\base.prefix.js" />
+    <Content Include="..\..\src\js\Library\stringsBlockFooter.js" />
+    <Content Include="..\..\src\js\Library\stringsBlockHeader.js" />
+    <Content Include="..\..\src\js\Library\stringsFooter.js" />
+    <Content Include="..\..\src\js\Library\stringsHeader.js" />
+    <Content Include="..\..\src\js\Res\Res.js" />
+    <Content Include="..\..\src\js\ui\control.js" />
+    <Content Include="..\..\src\js\ui\declarativeControls.js" />
+    <Content Include="..\..\src\js\ui\elementListUtilities.js" />
+    <Content Include="..\..\src\js\ui\elementUtilities.js" />
+    <Content Include="..\..\src\js\ui\fragmentControl.js" />
+    <Content Include="..\..\src\js\ui\fragmentLoader.js" />
+    <Content Include="..\..\src\js\ui\optionsLexer.js" />
+    <Content Include="..\..\src\js\ui\optionsParser.js" />
+    <Content Include="..\..\src\js\ui\tabManager.js" />
+    <Content Include="..\..\src\js\ui\transitionAnimation.js" />
+    <Content Include="..\..\src\js\ui\utilities.js" />
+    <Content Include="..\..\src\js\wwa-app\application.js" />
+    <Content Include="..\..\src\js\wwa-app\navigation2.js" />
+    <Content Include="..\..\src\js\wwa-app\state.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="..\..\src\js\en-US\base.resjson" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
+  <Target Name="BeforeBuild">
+    <Exec Command="grunt base --no-color" IgnoreExitCode="true" />
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  <PropertyGroup>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+</Project>
