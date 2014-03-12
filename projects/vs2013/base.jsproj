@@ -75,6 +75,7 @@
     <Content Include="..\..\src\js\binding\list.js" />
     <Content Include="..\..\src\js\Build\endBase.js" />
     <Content Include="..\..\src\js\Build\startBase.js" />
+    <Content Include="..\..\src\js\Build\writeProfilerMark.js" />
     <Content Include="..\..\src\js\en-US\base.prefix.js" />
     <Content Include="..\..\src\js\Library\stringsBlockFooter.js" />
     <Content Include="..\..\src\js\Library\stringsBlockHeader.js" />

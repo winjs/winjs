@@ -18,6 +18,7 @@ module.exports = function(grunt) {
 
     var baseJSFiles = [
         "src/js/build/Copyright.js",
+        "src/js/build/writeProfilerMark.js",
         "src/js/build/startbase.js",
         "src/js/base/references.js",
         "src/js/base/base.js",
@@ -352,6 +353,18 @@ module.exports = function(grunt) {
             }
         };
 
+        gruntConfig.shell = {
+            runTests: {
+                command: function (test, host) {
+                    return "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe /s:%_NTTREE%/Corsica/other." + version + ".debug/Tests/UnitTests/" + test + (host ? " /host:" + host : "") + " @res.txt"
+                },
+                options: {
+                    stdout: true,
+                    stderr: true
+                }
+            }
+        };
+
         // Also add tests to the replace task
         var testReplace = {expand: true, cwd: testsOutput, src: ["**/*.js"], dest: testsOutput};
         gruntConfig.replace.base.files.push(testReplace);
@@ -366,10 +379,22 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-replace");
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-contrib-copy");
+    grunt.loadNpmTasks("grunt-shell");
 
     var defaultTask = ["clean", "less", "concat", "copy", "replace"];
     if (process.env._NTTREE) {
-        grunt.registerTask("tests", ["copy:tests"]);
+        grunt.registerTask("test", function (test, host) {
+            var testArgs =  test || "*.js";
+            if (host) {
+                if (host === "vs") {
+                    testArgs += " /vs";
+                }
+            } else {
+                host = "wwa";
+            }
+        
+            grunt.task.run(["default", "shell:runTests:" + testArgs + ":" + host]);
+        });
     }
 
     grunt.registerTask("default", defaultTask);
