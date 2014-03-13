@@ -356,7 +356,7 @@ module.exports = function(grunt) {
         gruntConfig.shell = {
             runTests: {
                 command: function (test, host) {
-                    return "start %_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe /s:%_NTTREE%/Corsica/other." + version + ".debug/Tests/UnitTests/" + test + (host ? " /host:" + host : "") + " @res.txt"
+                    return "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe /s:%_NTTREE%/Corsica/other." + version + ".debug/Tests/UnitTests/" + test + (host ? " /host:" + host : "") + " @res.txt"
                 },
                 options: {
                     stdout: true,
@@ -385,7 +385,7 @@ module.exports = function(grunt) {
     if (process.env._NTTREE) {
         grunt.registerTask("test", function (test, host) {
             var testArgs =  test || "*.js";
-            
+
             if (host) {
                 host = host.toLowerCase();
                 if (host === "vs") {
@@ -395,7 +395,7 @@ module.exports = function(grunt) {
             } else {
                 host = "wwa";
             }
-        
+
             grunt.task.run(["default", "shell:runTests:" + testArgs + ":" + host]);
         });
     }
