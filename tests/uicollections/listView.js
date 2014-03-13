@@ -14,9 +14,9 @@ WinJSTests.ListView = function () {
 
     function parent(element) {
         document.body.appendChild(element);
-        return function () { 
+        return function () {
             WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element); 
+            document.body.removeChild(element);
         };
     }
 
@@ -1942,7 +1942,7 @@ WinJSTests.ListView = function () {
                     return Helper.round(parseFloat(n), 5);
                 });
 
-                LiveUnit.Assert.areEqual("100%", transform.perspective, description);
+                LiveUnit.Assert.areEqual("800px", transform.perspective, description);
                 LiveUnit.Assert.areEqual(expectedTransform.scale, scale, description);
                 Helper.Assert.areArraysEqual(expectedTransform.matrix3d, matrix3d, description);
             };
