@@ -385,9 +385,12 @@ module.exports = function(grunt) {
     if (process.env._NTTREE) {
         grunt.registerTask("test", function (test, host) {
             var testArgs =  test || "*.js";
+            
             if (host) {
+                host = host.toLowerCase();
                 if (host === "vs") {
                     testArgs += " /vs";
+                    host = "";
                 }
             } else {
                 host = "wwa";
