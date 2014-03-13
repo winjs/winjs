@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="TestDataSource.js" />
-/// <reference path="UnitTestsCommon.js" />
-/// <reference path="vds-tracing.js" />
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
+/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
 
 var StatusTests = function () {
     "use strict";

@@ -4,8 +4,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../ItemsManager/TestDataSource.js" />
-/// <reference path="../ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
+/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
 /// <deploy src="../TestData/" />
 
 var WinJSTests = WinJSTests || {};

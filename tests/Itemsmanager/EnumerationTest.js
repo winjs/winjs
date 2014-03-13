@@ -3,9 +3,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="TestDataSource.js" />
-/// <reference path="UnitTestsCommon.js" />
-/// <reference path="vds-tracing.js" />
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
+/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
 
 var EnumerationTests = function () {
     "use strict";

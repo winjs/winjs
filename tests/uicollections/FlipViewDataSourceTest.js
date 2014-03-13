@@ -2,8 +2,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../ItemsManager/TestDataSource.js" />
-/// <reference path="../ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
+/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
 /// <reference path="FlipperHelpers.js" />
 /// <deploy src="../TestData/" />
 
