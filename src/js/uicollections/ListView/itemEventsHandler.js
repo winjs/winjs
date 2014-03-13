@@ -39,6 +39,11 @@
 
             0, 0, 0, 1
         ];
+
+        // Scientific notation in transform values breaks the CSS3 values spec.
+        matrix = matrix.map(function (value) {
+            return value.toFixed(8);
+        });
         return "matrix3d(" + matrix.join(",") + ")";
     }
 
@@ -53,22 +58,22 @@
         var x = WinJS.Utilities._clamp((clickX - elementRect.left) / elementRect.width, 0, 1);
         var y = WinJS.Utilities._clamp((clickY - elementRect.top) / elementRect.height, 0, 1);
 
-        // Axis is perpendicular to the line drawn between the click position and the center of the item.  
-        // We set z to a small value so that even if x and y turn out to be 0, we still have an axis.  
+        // Axis is perpendicular to the line drawn between the click position and the center of the item.
+        // We set z to a small value so that even if x and y turn out to be 0, we still have an axis.
         var axis = {
             x: y - 0.5,
             y: -(x - 0.5),
             z: 0.0001
         };
 
-        // The angle of the rotation is larger when the click is farther away from the center. 
+        // The angle of the rotation is larger when the click is farther away from the center.
         var magnitude = Math.abs(x - 0.5) + Math.abs(y - 0.5); // an approximation
         var angle = magnitude * MAX_TILT_ROTATION;
 
         // The distance the control is pushed into z-space is larger when the click is closer to the center.
         var scale = 1 - (1 - magnitude) * MAX_TILT_SHRINK;
 
-        var transform = "perspective(100%) scale(" + scale + ", " + scale + ") " + rotationTransform3d(angle, axis);
+        var transform = "perspective(800px) scale(" + scale + ", " + scale + ") " + rotationTransform3d(angle, axis);
 
         return transform;
     }
@@ -326,7 +331,7 @@
                 onClick: function ItemEventsHandler_onClick(eventObject) {
                     if (!this._skipClick) {
                         // Handle the UIA invoke action on an item. this._skipClick is false which tells us that we received a click
-                        // event without an associated MSPointerUp event. This means that the click event was triggered thru UIA 
+                        // event without an associated MSPointerUp event. This means that the click event was triggered thru UIA
                         // rather than thru the GUI.
                         var entity = { type: WinJS.UI.ObjectType.item, index: this._site.indexForItemElement(eventObject.target) };
                         if (entity.index === WinJS.UI._INVALID_INDEX) {
@@ -576,7 +581,7 @@
                                         applyDownVisual(transform);
                                     });
                                 } else {
-                                    // Shrink by 97.5% unless that is larger than 7px in either direction. In that case we cap the 
+                                    // Shrink by 97.5% unless that is larger than 7px in either direction. In that case we cap the
                                     // scale so that it is no larger than 7px in either direction. We keep the scale uniform in both x
                                     // and y directions. Note that this scale cap only works if getItemPosition returns synchronously
                                     // which it does for the built in layouts.
@@ -1151,7 +1156,7 @@
                     }
                 },
             }, {
-                // Avoids unnecessary UIA selection events by only updating aria-selected if it has changed 
+                // Avoids unnecessary UIA selection events by only updating aria-selected if it has changed
                 setAriaSelected: function ItemEventsHandler_setAriaSelected(itemElement, isSelected) {
                     var ariaSelected = (itemElement.getAttribute("aria-selected") === "true");
 
