@@ -24,6 +24,7 @@
             var lastCloseTime = 0;
             var utilities = WinJS.Utilities;
             var animation = WinJS.UI.Animation;
+            var Key = utilities.Key;
 
             // Constants definition
             var DEFAULT_PLACEMENT = "top";
@@ -439,7 +440,7 @@
                     listener._lastKeyOrBlurEvent = listener._currentKeyOrBlurEvent;
                     switch (event.type) {
                         case "keyup":
-                            if (event.key === "Shift") {
+                            if (event.keyCode === Key.shift) {
                                 listener._currentKeyOrBlurEvent = null;
                             } else {
                                 listener._currentKeyOrBlurEvent = "keyboard";
@@ -802,7 +803,7 @@
                     // To handle keyboard support, we only want to display tooltip on the first tab key event only
                     if (event && event.type === "keyup") {
                         if (this._lastKeyOrBlurEvent == "keyboard" ||
-                            !this._lastKeyOrBlurEvent && event.key !== "Tab") {
+                            !this._lastKeyOrBlurEvent && event.keyCode !== Key.tab) {
                             return;
                         }
                     }

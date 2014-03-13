@@ -24,6 +24,7 @@
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Flyout: WinJS.Namespace._lazy(function () {
             var thisWinUI = WinJS.UI;
+            var Key = WinJS.Utilities.Key;
 
             // Class Names
             var appBarCommandClass = "win-command";
@@ -808,19 +809,19 @@
                 _handleKeyDown: function Flyout_handleKeyDown(event) {
                     // Escape closes flyouts but if the user has a text box with an IME candidate 
                     // window open, we want to skip the ESC key event since it is handled by the IME.
-                    // When the IME handles a key it sets event.keyCode to 229 for an easy check.
-                    if (event.key === "Esc" && event.keyCode !== 229) {
+                    // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
+                    if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
                         // Show a focus rect on what we move focus to
                         event.preventDefault();
                         event.stopPropagation();
                         this.winControl._keyboardInvoked = true;
                         this.winControl._hide();
-                    } else if ((event.key === "Spacebar" || event.key === "Enter")
+                    } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
                          && (this === document.activeElement)) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.winControl.hide();
-                    } else if (event.shiftKey && event.key === "Tab"
+                    } else if (event.shiftKey && event.keyCode === Key.tab
                           && this === document.activeElement
                           && !event.altKey && !event.ctrlKey && !event.metaKey) {
                         event.preventDefault();

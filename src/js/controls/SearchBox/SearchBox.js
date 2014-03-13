@@ -36,6 +36,7 @@
         SearchBox: WinJS.Namespace._lazy(function () {
             var utilities = WinJS.Utilities;
             var createEvent = WinJS.Utilities._createEventProperty;
+            var Key = utilities.Key;
 
             // Enums
             var ClassName = {
@@ -1048,23 +1049,23 @@
 
                 _keyDownHandler: function SearchBox_keyDownHandler(event) {
                     this._lastKeyPressLanguage = event.locale;
-                    if (event.key === "Tab") {
+                    if (event.keyCode === Key.tab) {
                         this._isProcessingTabKey = true;
                     }
-                    else if (event.key === "Up") {
+                    else if (event.keyCode === Key.upArrow) {
                         this._isProcessingUpKey = true;
                     }
-                    else if (event.key === "Down") {
+                    else if (event.keyCode === Key.downArrow) {
                         this._isProcessingDownKey = true;
                     }
-                    else if ((event.key === "Enter") && (event.locale === "ko")) {
+                    else if ((event.keyCode === Key.enter) && (event.locale === "ko")) {
                         this._isProcessingEnterKey = true;
                     }
                     // Ignore keys handled by ime.
-                    if (event.keyCode !== WinJS.UI.SearchBox._Constants.IME_HANDLED_KEYCODE) {
-                        if (event.key === "Tab") {
+                    if (event.keyCode !== Key.IME) {
+                        if (event.keyCode === Key.tab) {
                             this._handleTabKeyDown(event);
-                        } else if (event.key === "Esc") {
+                        } else if (event.keyCode === Key.escape) {
                             // If focus is not in input
                             if (this._currentFocusedIndex !== -1) {
                                 this.queryText = this._prevQueryText;
@@ -1080,7 +1081,7 @@
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
-                        } else if (event.key === "Up") {
+                        } else if (event.keyCode === Key.upArrow) {
                             var prevIndex;
                             if (this._currentSelectedIndex !== -1) {
                                 prevIndex = this._findPreviousSuggestionElementIndex(this._currentSelectedIndex);
@@ -1097,7 +1098,7 @@
                             this._updateSearchButtonClass();
                             event.preventDefault();
                             event.stopPropagation();
-                        } else if (event.key === "Down") {
+                        } else if (event.keyCode === Key.downArrow) {
                             var nextIndex = this._findNextSuggestionElementIndex(this._currentSelectedIndex);
                             // Restore user entered query when user navigates back to input.
                             if ((this._currentSelectedIndex !== -1) && (nextIndex === -1)) {
@@ -1109,7 +1110,7 @@
                             this._updateSearchButtonClass();
                             event.preventDefault();
                             event.stopPropagation();
-                        } else if (event.key === "Enter") {
+                        } else if (event.keyCode === Key.enter) {
                             if (this._currentSelectedIndex === -1) {
                                 this._submitQuery(this._inputElement.value, true /*fillLinguisticDetails*/, event);
                             } else {
@@ -1132,16 +1133,16 @@
                 },
 
                 _keyUpHandler: function SearchBox_keyUpHandler(event) {
-                    if (event.key === "Tab") {
+                    if (event.keyCode === Key.tab) {
                         this._isProcessingTabKey = false;
                     }
-                    else if (event.key === "Up") {
+                    else if (event.keyCode === Key.upArrow) {
                         this._isProcessingUpKey = false;
                     }
-                    else if (event.key === "Down") {
+                    else if (event.keyCode === Key.downArrow) {
                         this._isProcessingDownKey = false;
                     }
-                    else if (event.key === "Enter") {
+                    else if (event.keyCode === Key.enter) {
                         this._isProcessingEnterKey = false;
                     }
                 },
@@ -1454,7 +1455,6 @@
 
                 _Constants: {
                     MIN_POPUP_HEIGHT: 152,
-                    IME_HANDLED_KEYCODE: 229
                 },
 
                 _getKeyModifiers: function SearchBox_getKeyModifiers(ev) {

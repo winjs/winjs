@@ -24,6 +24,7 @@
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Hub: WinJS.Namespace._lazy(function () {
+            var Key = WinJS.Utilities.Key;
 
             function hubDefaultHeaderTemplate(section) {
                 var element = document.createTextNode(typeof section.header === "object" ? JSON.stringify(section.header) : ('' + section.header));
@@ -1015,7 +1016,7 @@
                 },
                 _windowKeyDownHandler: function hub_windowKeyDownHandler(ev) {
                     // Include tab and shift tab. Note: Alt Key + Tab and Windows Key + Tab do not fire keydown with ev.key === "Tab".
-                    if (ev.key === "Tab") {
+                    if (ev.keyCode === Key.tab) {
                         this._tabSeenLast = true;
                 
                         var that = this;
@@ -1093,10 +1094,10 @@
                     }
                 },
                 _keyDownHandler: function hub_keyDownHandler(ev) {
-                    var leftKey = this._rtl ? "Right" : "Left";
-                    var rightKey = this._rtl ? "Left" : "Right";
+                    var leftKey = this._rtl ? Key.rightArrow : Key.leftArrow;
+                    var rightKey = this._rtl ? Key.leftArrow : Key.rightArrow;
 
-                    if (ev.key === "Up" || ev.key === "Down" || ev.key === "Left" || ev.key === "Right" || ev.key === "PageUp" || ev.key === "PageDown") {
+                    if (ev.keyCode === Key.upArrow || ev.keyCode === Key.downArrow || ev.keyCode === Key.leftArrow || ev.keyCode === Key.rightArrow || ev.keyCode === Key.pageUp || ev.keyCode === Key.pageDown) {
                         var headerTabStopElement = this._findHeaderTabStop(ev.target);
                         if (headerTabStopElement && !this._isHeaderInteractive(ev.target)) {
                             var currentSection = this.sections.indexOf(headerTabStopElement.parentElement.parentElement.winControl);
@@ -1105,9 +1106,9 @@
                             // Page up/down go to the next/previous header and line it up with the app header. End/Home use
                             // default browser behavior (no focus change but scroll to start/end). Up/Right/Down/Left move 
                             // focus to the next/previous header and move it on screen (app header distance from either edge).
-                            if (ev.key === "PageDown" ||
-                                (this.orientation === WinJS.UI.Orientation.horizontal && ev.key === rightKey) ||
-                                (this.orientation === WinJS.UI.Orientation.vertical && ev.key === "Down")) {
+                            if (ev.keyCode === Key.pageDown ||
+                                (this.orientation === WinJS.UI.Orientation.horizontal && ev.keyCode === rightKey) ||
+                                (this.orientation === WinJS.UI.Orientation.vertical && ev.keyCode === Key.downArrow)) {
                                 // Do not include hidden headers.
                                 for (var i = currentSection + 1; i < this.sections.length; i++) {
                                     var section = this.sections.getAt(i);
@@ -1116,9 +1117,9 @@
                                         break;
                                     }
                                 }
-                            } else if (ev.key === "PageUp" ||
-                                (this.orientation === WinJS.UI.Orientation.horizontal && ev.key === leftKey) ||
-                                (this.orientation === WinJS.UI.Orientation.vertical && ev.key === "Up")) {
+                            } else if (ev.keyCode === Key.pageUp ||
+                                (this.orientation === WinJS.UI.Orientation.horizontal && ev.keyCode === leftKey) ||
+                                (this.orientation === WinJS.UI.Orientation.vertical && ev.keyCode === Key.upArrow)) {
                                 // Do not include hidden headers.
                                 for (var i = currentSection - 1; i >= 0; i--) {
                                     var section = this.sections.getAt(i);
@@ -1128,7 +1129,7 @@
                                     }
                                 }
                             }
-                            if (ev.key === "Right" || ev.key === "Down" || ev.key === "Left" || ev.key === "Up") {
+                            if (ev.keyCode === Key.upArrow || ev.keyCode === Key.downArrow || ev.keyCode === Key.leftArrow || ev.keyCode === Key.rightArrow) {
                                 useEnsureVisible = true;
                             }
 

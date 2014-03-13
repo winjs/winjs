@@ -102,6 +102,8 @@
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         NavBarCommand: WinJS.Namespace._lazy(function () {
+            var Key = WinJS.Utilities.Key;
+
             var strings = {
                 get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; }
             };
@@ -301,42 +303,42 @@
                         return;
                     }
 
-                    var leftStr = this._rtl ? "Right" : "Left";
-                    var rightStr = this._rtl ? "Left" : "Right";
+                    var leftStr = this._rtl ? Key.rightArrow : Key.leftArrow;
+                    var rightStr = this._rtl ? Key.leftArrow : Key.rightArrow;
 
-                    if (!ev.altKey && (ev.key === leftStr || ev.key === "Home" || ev.key === "End") && ev.target === this._splitButtonEl) {
+                    if (!ev.altKey && (ev.keyCode === leftStr || ev.keyCode === Key.home || ev.keyCode === Key.end) && ev.target === this._splitButtonEl) {
                         this._splitButtonActive = false;
                         try {
                             this._buttonEl.setActive();
                         } catch (e) {
                         }
-                        if (ev.key === leftStr) {
+                        if (ev.keyCode === leftStr) {
                             ev.stopPropagation();
                         }
                         ev.preventDefault();
-                    } else if (!ev.altKey && ev.key === rightStr && this.splitButton && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
+                    } else if (!ev.altKey && ev.keyCode === rightStr && this.splitButton && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
                         this._splitButtonActive = true;
                         try {
                             this._splitButtonEl.setActive();
                         } catch (e) {
                         }
-                        if (ev.key === rightStr) {
+                        if (ev.keyCode === rightStr) {
                             ev.stopPropagation();
                         }
                         ev.preventDefault();
-                    } else if ((ev.key === "Spacebar" || ev.key === "Enter") && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
+                    } else if ((ev.keyCode === Key.space || ev.keyCode === Key.enter) && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
                         if (this.location) {
                             WinJS.Navigation.navigate(this.location, this.state);
                         }
                         this._fireEvent(WinJS.UI.NavBarCommand._EventName._invoked);
-                    } else if ((ev.key === "Spacebar" || ev.key === "Enter") && ev.target === this._splitButtonEl) {
+                    } else if ((ev.keyCode === Key.space || ev.keyCode === Key.enter) && ev.target === this._splitButtonEl) {
                         this._toggleSplit();
                     }
                 },
 
-                _getFocusInto: function NavBarCommand_getFocusInto(key) {
-                    var leftStr = this._rtl ? "Right" : "Left";
-                    if ((key === leftStr) && this.splitButton) {
+                _getFocusInto: function NavBarCommand_getFocusInto(keyCode) {
+                    var leftStr = this._rtl ? Key.rightArrow : Key.leftArrow;
+                    if ((keyCode === leftStr) && this.splitButton) {
                         this._splitButtonActive = true;
                         return this._splitButtonEl;
                     } else {

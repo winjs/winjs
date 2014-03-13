@@ -3,8 +3,6 @@
 (function appBarInit(WinJS) {
     "use strict";
 
-    // Change in Master
-
     WinJS.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBar">
@@ -27,6 +25,7 @@
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AppBar: WinJS.Namespace._lazy(function () {
             var thisWinUI = WinJS.UI;
+            var Key = WinJS.Utilities.Key;
 
             // Class Names
             var commandClass = "win-commandlayout",
@@ -926,8 +925,8 @@
 
                     // Esc closes light-dismiss AppBars in all layouts but if the user has a text box with an IME 
                     // candidate window open, we want to skip the ESC key event since it is handled by the IME.
-                    // When the IME handles a key it sets event.keyCode to 229 for an easy check.
-                    if (event.key === "Esc" && event.keyCode !== 229) {
+                    // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
+                    if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
                         event.preventDefault();
                         event.stopPropagation();
                         thisWinUI._Overlay._hideAllFlyouts();
@@ -940,16 +939,16 @@
                             return; //ignore left, right, home & end keys if focused element has win-interactive class.
                         }
                         var rtl = getComputedStyle(this._element).direction === "rtl";
-                        var leftKey = rtl ? "Right" : "Left";
-                        var rightKey = rtl ? "Left" : "Right";
+                        var leftKey = rtl ? Key.rightArrow : Key.leftArrow;
+                        var rightKey = rtl ? Key.leftArrow : Key.rightArrow;
 
-                        if (event.key === leftKey || event.key == rightKey || event.key === "Home" || event.key === "End") {
+                        if (event.keyCode === leftKey || event.keyCode == rightKey || event.keyCode === Key.home || event.keyCode === Key.end) {
 
                             var focusableCommands = this._getFocusableCommandsInLogicalOrder();
                             var targetCommand;
 
                             if (focusableCommands.length) {
-                                switch (event.key) {
+                                switch (event.keyCode) {
                                     case leftKey:
                                         // Arrowing past the last command wraps back around to the first command.
                                         var index = Math.max(-1, focusableCommands.focusedIndex - 1) + focusableCommands.length;
@@ -962,12 +961,12 @@
                                         targetCommand = focusableCommands[index % focusableCommands.length].winControl.firstElementFocus;
                                         break;
 
-                                    case "Home":
+                                    case Key.home:
                                         var index = 0;
                                         targetCommand = focusableCommands[index].winControl.firstElementFocus;
                                         break;
 
-                                    case "End":
+                                    case Key.end:
                                         var index = focusableCommands.length - 1;
                                         targetCommand = focusableCommands[index].winControl.lastElementFocus;
                                         break;

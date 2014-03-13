@@ -42,6 +42,8 @@
             }, true);
         },
         _KeyboardBehavior: WinJS.Namespace._lazy(function () {
+            var Key = WinJS.Utilities.Key;
+
             return WinJS.Class.define(function KeyboardBehavior_ctor(element, options) {
                 // KeyboardBehavior allows you to easily convert a bunch of tabable elements into a single tab stop with 
                 // navigation replaced by keyboard arrow (Up/Down/Left/Right) + Home + End + Custom keys.
@@ -155,7 +157,7 @@
 
                 getAdjacent: {
                     get: function () {
-                        return this._getAdjacent
+                        return this._getAdjacent;
                     },
                     set: function (value) {
                         this._getAdjacent = value;
@@ -174,17 +176,17 @@
                         var minIndex = 0;
 
                         var rtl = getComputedStyle(this._element).direction === "rtl";
-                        var leftStr = rtl ? "Right" : "Left";
-                        var rightStr = rtl ? "Left" : "Right";
+                        var leftStr = rtl ? Key.rightArrow : Key.leftArrow;
+                        var rightStr = rtl ? Key.leftArrow : Key.rightArrow;
 
-                        var targetIndex = this.getAdjacent && this.getAdjacent(newIndex, ev.key);
+                        var targetIndex = this.getAdjacent && this.getAdjacent(newIndex, ev.keyCode);
                         if (+targetIndex === targetIndex) {
                             blockScrolling = true;
                             newIndex = targetIndex;
                         } else {
                             var modFixedSize = newIndex % this.fixedSize;
 
-                            if (ev.key === leftStr) {
+                            if (ev.keyCode === leftStr) {
                                 blockScrolling = true;
                                 if (this.fixedDirection === WinJS.UI._KeyboardBehavior.FixedDirection.width) {
                                     if (modFixedSize !== 0) {
@@ -195,7 +197,7 @@
                                         newIndex -= this.fixedSize;
                                     }
                                 }
-                            } else if (ev.key === rightStr) {
+                            } else if (ev.keyCode === rightStr) {
                                 blockScrolling = true;
                                 if (this.fixedDirection === WinJS.UI._KeyboardBehavior.FixedDirection.width) {
                                     if (modFixedSize !== this.fixedSize - 1) {
@@ -206,7 +208,7 @@
                                         newIndex += this.fixedSize;
                                     }
                                 }
-                            } else if (ev.key === "Up") {
+                            } else if (ev.keyCode === Key.upArrow) {
                                 blockScrolling = true;
                                 if (this.fixedDirection === WinJS.UI._KeyboardBehavior.FixedDirection.height) {
                                     if (modFixedSize !== 0) {
@@ -217,7 +219,7 @@
                                         newIndex -= this.fixedSize;
                                     }
                                 }
-                            } else if (ev.key === "Down") {
+                            } else if (ev.keyCode === Key.downArrow) {
                                 blockScrolling = true;
                                 if (this.fixedDirection === WinJS.UI._KeyboardBehavior.FixedDirection.height) {
                                     if (modFixedSize !== this.fixedSize - 1) {
@@ -228,15 +230,15 @@
                                         newIndex += this.fixedSize;
                                     }
                                 }
-                            } else if (ev.key === "Home") {
+                            } else if (ev.keyCode === Key.home) {
                                 blockScrolling = true;
                                 newIndex = 0;
-                            } else if (ev.key === "End") {
+                            } else if (ev.keyCode === Key.end) {
                                 blockScrolling = true;
                                 newIndex = this._element.children.length - 1;
-                            } else if (ev.key === "PageUp") {
+                            } else if (ev.keyCode === Key.pageUp) {
                                 blockScrolling = true;
-                            } else if (ev.key === "PageDown") {
+                            } else if (ev.keyCode === Key.pageDown) {
                                 blockScrolling = true;
                             }
                         }
@@ -244,10 +246,10 @@
                         newIndex = Math.max(0, Math.min(this._element.children.length - 1, newIndex));
 
                         if (newIndex !== this.currentIndex) {
-                            this._focus(newIndex, ev.key);
+                            this._focus(newIndex, ev.keyCode);
 
                             // Allow KeyboardBehavior to be nested
-                            if (ev.key === leftStr || ev.key === rightStr || ev.key === "Up" || ev.key === "Down") {
+                            if (ev.keyCode === leftStr || ev.keyCode === rightStr || ev.keyCode === Key.upArrow || ev.keyCode === Key.downArrow) {
                                 ev.stopPropagation();
                             }
                         }
@@ -258,13 +260,13 @@
                     }
                 },
 
-                _focus: function _KeyboardBehavior_focus(index, key) {
+                _focus: function _KeyboardBehavior_focus(index, keyCode) {
                     index = (+index === index) ? index : this.currentIndex;
 
                     var elementToFocus = this._element.children[index];
                     if (elementToFocus) {
                         if (elementToFocus.winControl && elementToFocus.winControl._getFocusInto) {
-                            elementToFocus = elementToFocus.winControl._getFocusInto(key);
+                            elementToFocus = elementToFocus.winControl._getFocusInto(keyCode);
                         }
 
                         this.currentIndex = index;

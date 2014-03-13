@@ -29,8 +29,9 @@
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         SettingsFlyout: WinJS.Namespace._lazy(function () {
             var thisWinUI = WinJS.UI;
+            var Key = WinJS.Utilities.Key;
 
-            var focusHasHitSettingsPaneOnce;
+            var settingsPageIsFocusedOnce;
 
             // Class Names
             var settingsFlyoutClass = "win-settingsflyout",
@@ -227,7 +228,7 @@
                 },
 
                 _initAfterAnimation: function SettingsFlyout_initAfterAnimation() {
-                    focusHasHitSettingsPaneOnce = 0;
+                    settingsPageIsFocusedOnce = 0;
 
                     // Verify that the firstDiv and finalDiv are in the correct location.
                     // Move them to the correct location or add them if they are not.
@@ -242,7 +243,7 @@
 
                     // Set focus to the firstDiv
                     if (this.element.children[0]) {
-                        this.element.children[0].addEventListener("focusout", function () { focusHasHitSettingsPaneOnce = 1; }, false);
+                        this.element.children[0].addEventListener("focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
                         this.element.children[0].focus();
                     }
 
@@ -362,16 +363,16 @@
                 },
 
                 _handleKeyDown: function SettingsFlyout_handleKeyDown(event) {
-                    if (event.key === "Esc") {
+                    if (event.keyCode === Key.escape) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.winControl._dismiss();
-                    } else if ((event.key === "Spacebar" || event.key === "Enter")
+                    } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
                            && (this.children[0] === document.activeElement)) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.winControl._dismiss();
-                    } else if (event.shiftKey && event.key === "Tab"
+                    } else if (event.shiftKey && event.keyCode === Key.tab
                     && this.children[0] === document.activeElement) {
                         event.preventDefault();
                         event.stopPropagation();
@@ -389,7 +390,7 @@
 
                 _focusOnLastFocusableElementFromParent: function SettingsFlyout_focusOnLastFocusableElementFromParent() {
                     var active = document.activeElement;
-                    if (!focusHasHitSettingsPaneOnce || !active || !WinJS.Utilities.hasClass(active, firstDivClass)) {
+                    if (!settingsPageIsFocusedOnce || !active || !WinJS.Utilities.hasClass(active, firstDivClass)) {
                         return;
                     }
 

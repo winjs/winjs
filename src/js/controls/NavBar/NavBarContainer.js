@@ -31,6 +31,8 @@
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         NavBarContainer: WinJS.Namespace._lazy(function () {
+            var Key = WinJS.Utilities.Key;
+
             var buttonFadeDelay = 3000;
             var PT_TOUCH = MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
             var MS_MANIPULATION_STATE_STOPPED = 0;
@@ -688,8 +690,8 @@
                 },
 
                 _keyDownHandler: function NavBarContainer_keyDownHandler(ev) {
-                    var key = ev.key
-                    if (!ev.altKey && (key === "PageUp" || key === "PageDown")) {
+                    var keyCode = ev.keyCode
+                    if (!ev.altKey && (keyCode === Key.pageUp || keyCode === Key.pageDown)) {
                         var srcElement = ev.target;
                         if (WinJS.Utilities._matchesSelector(srcElement, ".win-interactive, .win-interactive *")) {
                             return;
@@ -702,7 +704,7 @@
                         var page = Math.floor(index / (sizes.columnsPerPage * sizes.rowsPerPage));
 
                         var scrollPositionTarget = null;
-                        if (key === "PageUp") {
+                        if (keyCode === Key.pageUp) {
                             if (this.layout === WinJS.UI.Orientation.horizontal) {
                                 var indexOfFirstItemOnPage = page * sizes.columnsPerPage * sizes.rowsPerPage;
                                 if (index === indexOfFirstItemOnPage && this._surfaceEl.children[index].winControl._buttonEl === document.activeElement) {

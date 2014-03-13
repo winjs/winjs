@@ -24,6 +24,7 @@
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Menu: WinJS.Namespace._lazy(function () {
             var thisWinUI = WinJS.UI;
+            var Key = WinJS.Utilities.Key;
 
             // Class Names
             var menuClass = "win-menu";
@@ -286,27 +287,27 @@
                 },
 
                 _handleKeyDown: function Menu_handleKeyDown(event) {
-                    if (event.key === "Esc") {
+                    if (event.keyCode === Key.escape) {
                         // Show a focus rect on what we move focus to
                         this.winControl._keyboardInvoked = true;
                         this.winControl._hide();
-                    } else if ((event.key === "Spacebar" || event.key === "Enter")
+                    } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
                            && (this === document.activeElement)) {
                         event.preventDefault();
                         this.winControl.hide();
-                    } else if (event.key === "Up") {
+                    } else if (event.keyCode === Key.upArrow) {
                         var that = this;
                         thisWinUI.Menu._focusOnPreviousElement(that);
 
                         // Prevent the page from scrolling
                         event.preventDefault();
-                    } else if (event.key === "Down") {
+                    } else if (event.keyCode === Key.downArrow) {
                         that = this;
                         thisWinUI.Menu._focusOnNextElement(that);
 
                         // Prevent the page from scrolling
                         event.preventDefault();
-                    } else if (event.key === "Tab") {
+                    } else if (event.keyCode === Key.tab) {
                         event.preventDefault();
                     }
                 },

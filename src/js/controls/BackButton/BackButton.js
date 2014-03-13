@@ -3,14 +3,13 @@
     "use strict";
 
     var nav = WinJS.Navigation;
+    var Key = WinJS.Utilities.Key;
 
     // Class Names
     var navigationBackButtonClass = 'win-navigation-backbutton';
     var glyphClass = "win-back";
 
     // CONSTANTS
-    var KEY_LEFT = "Left";
-    var KEY_BROWSER_BACK = "BrowserBack";
     var MOUSE_BACK_BUTTON = 3;
 
     // Create Singleton for global event registering/unregistering. This Singleton should only be created once.
@@ -33,7 +32,7 @@
 
         function backButtonGlobalKeyUpHandler(event) {
             // Navigates back when (alt + left) or BrowserBack keys are released.
-            if ((event.key === KEY_LEFT && event.altKey && !event.shiftKey && !event.ctrlKey) || (event.key === KEY_BROWSER_BACK)) {
+            if ((event.keyCode === Key.leftArrow && event.altKey && !event.shiftKey && !event.ctrlKey) || (event.keyCode === Key.browserBack)) {
                 nav.back();
             }
         }

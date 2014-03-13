@@ -356,7 +356,7 @@ module.exports = function(grunt) {
         gruntConfig.shell = {
             runTests: {
                 command: function (test, host) {
-                    return "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe /s:%_NTTREE%/Corsica/other." + version + ".debug/Tests/UnitTests/" + test + (host ? " /host:" + host : "") + " @res.txt"
+                    return "start %_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe /s:%_NTTREE%/Corsica/other." + version + ".debug/Tests/UnitTests/" + test + (host ? " /host:" + host : "") + " @res.txt"
                 },
                 options: {
                     stdout: true,
