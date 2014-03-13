@@ -57,6 +57,10 @@
             return e.uniqueID || e._uniqueID;
         },
 
+        _elementsFromPoint: function() {
+
+        },
+
         _matchesSelector: function _matchesSelector(element, selectorString) {
             var matchesSelector = element.matches
                     || element.msMatchesSelector
