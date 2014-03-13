@@ -280,7 +280,7 @@
                         header = src;
                     } else {
                         var hitSrcElement = false;
-                        var hitTargets = document.msElementsFromPoint(ev.clientX, ev.clientY);
+                        var hitTargets = WinJS.Utilities._elementsFromPoint(ev.clientX, ev.clientY);
                         if (hitTargets &&
                                 // Make sure there aren't any elements obscuring the Pivot headers.
                                 // msElementsFromPoint sorts by z order.
