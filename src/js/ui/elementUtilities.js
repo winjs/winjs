@@ -57,7 +57,7 @@
             return e.uniqueID || e._uniqueID;
         },
 
-        _elementsFromPoint: function() {
+        _elementsFromPoint: function(x, y) {
 
         },
 
