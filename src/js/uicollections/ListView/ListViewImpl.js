@@ -1673,17 +1673,16 @@
                     events.forEach(function (eventHandler) {
                         WinJS.Utilities._addEventListener(that._viewport, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
-
-                    // Focus and Blur events need to be handled during the capturing phase, they do not bubble.
+                    
                     var elementEvents = [
-                        listViewHandler("Focus", false, true),
-                        listViewHandler("Blur", false, true),
+                        listViewHandler("FocusIn", false, false),
+                        listViewHandler("FocusOut", false, false),
                         modeHandler("KeyDown"),
                         modeHandler("KeyUp"),
                         listViewHandler("MSElementResize", false, false)
                     ];
                     elementEvents.forEach(function (eventHandler) {
-                        that._element.addEventListener(eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                        WinJS.Utilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
 
                     var viewportEvents = [
@@ -2753,7 +2752,7 @@
                     }, Scheduler.Priority.max, this, "WinJS.UI.ListView._onMSElementResize");
                 },
 
-                _onFocus: function ListView_onFocus(event) {
+                _onFocusIn: function ListView_onFocusIn(event) {
                     this._hasKeyboardFocus = true;
                     var that = this;
                     function moveFocusToItem(keyboardFocused) {
@@ -2829,7 +2828,7 @@
                     }
                 },
 
-                _onBlur: function ListView_onBlur(event) {
+                _onFocusOut: function ListView_onFocusOut(event) {
                     if (this._disposed) {
                         return;
                     }

@@ -5,6 +5,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/util.js" />
+/// <reference path="OverlayHelpers.js" />
 
 var CorsicaTests = CorsicaTests || {};
 
@@ -600,6 +602,124 @@ CorsicaTests.AppBarTests = function () {
                 LiveUnit.Assert.areEqual("none", clickEater.style.display);
                 complete();
             }, WinJS.Utilities.Scheduler.Priority.idle);
+        });
+    };
+    
+    this.testDismissesWhenLosingFocus = function (complete) {
+        var root = document.getElementById("appBarDiv");
+        root.innerHTML =
+            "<button id='outsideAppBar'>outsideAppBar</button>" +
+            "<div id='appBar'>" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"global\"}'></button>" +
+                "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", hidden: true, section:\"global\"}' />" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
+            "</div>";
+        var outsideAppBar = root.querySelector("#outsideAppBar");
+        var appBar = new WinJS.UI.AppBar(root.querySelector("#appBar"));
+        
+        OverlayHelpers.Assert.dismissesWhenLosingFocus({
+            overlay:appBar,
+            focusTo: outsideAppBar
+        }).then(complete);
+    };
+    
+    this.testRemainsVisibleWhenMovingFocusInternally = function (complete) {
+        var root = document.getElementById("appBarDiv");
+        root.innerHTML =
+            "<div id='appBar'>" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"global\"}'></button>" +
+                "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", hidden: true, section:\"global\"}' />" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
+            "</div>";
+        var appBar = new WinJS.UI.AppBar(root.querySelector("#appBar"));
+        OverlayHelpers.Assert.remainsVisibleWhenMovingFocusInternally({
+            overlay: appBar,
+            focusFrom: appBar.getCommandById("Button0").element,
+            focusTo: appBar.getCommandById("Button1").element
+        }).then(complete);
+    };
+    
+    // Creates a Menu within an AppBar, opens them both, and then gives focus to the Menu.
+    // Returns a promise which completes when the AppBar and Menu controls are in this state.
+    function createMenuInAppBar() {
+        return new WinJS.Promise(function (complete) {
+            var root = document.getElementById("appBarDiv");
+            root.innerHTML =
+                "<button id='outsideAppBar'>outsideAppBar</button>" +
+                "<div id='appBar' data-win-control='WinJS.UI.AppBar'>" +
+                    "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"global\"}'></button>" +
+                    "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", hidden: true, section:\"global\"}' />" +
+                    "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
+                    "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"MenuButton\",label:\"More\",type:\"flyout\",flyout:\"myMenu\"}'></button>" +
+                "</div>" +
+                "<div id='myMenu' tabindex='-1' data-win-control='WinJS.UI.Menu' " +
+                    "data-win-options='{commands:[" +
+                        "{id:\"MenuA\",label:\"Three\"}," +
+                        "{id:\"MenuB\",label:\"Four\",type:\"toggle\"}" +
+                    "]}'" +
+                "</div>";
+            
+            WinJS.UI.processAll(root).then(function () {
+                var appBar = root.querySelector("#appBar").winControl;
+                var button0 = appBar.getCommandById("Button0").element;
+                var button1 = appBar.getCommandById("Button1").element;
+                var menuButton = appBar.getCommandById("MenuButton").element;
+                var menu = root.querySelector("#myMenu").winControl;
+                var menuItemB = menu.element.querySelector("#MenuB");
+                
+                OverlayHelpers.show(appBar).then(function () {
+                    LiveUnit.Assert.isTrue(appBar.element.contains(document.activeElement), "Focus should initially be within the AppBar");
+                    LiveUnit.Assert.isFalse(appBar.hidden, "AppBar should initially be visible");
+                    
+                    return Helper.waitForFocus(menu.element, function () { menuButton.click() })
+                }).then(function() {                        
+                    LiveUnit.Assert.isTrue(menu.element.contains(document.activeElement), "After opening the menu, focus should be within it");
+                    LiveUnit.Assert.isFalse(menu.hidden, "Menu should be visible");
+                    LiveUnit.Assert.isFalse(appBar.hidden, "AppBar should have remained visible when opening a menu within it");
+                    
+                    return Helper.focus(menuItemB);
+                }).then(function() {
+                    LiveUnit.Assert.areEqual(menuItemB, document.activeElement, "MenuB should have focus");
+                    LiveUnit.Assert.isFalse(menu.hidden, "Menu should have remained visible");
+                    LiveUnit.Assert.isFalse(appBar.hidden, "AppBar should have remained visible when moving focus within the menu");
+                    
+                    complete();
+                });
+            });
+        });
+    }
+    
+    this.testMoveFocusFromMenuToAppBar = function (complete) {
+        createMenuInAppBar().then(function () {
+            var root = document.querySelector("#appBarDiv");
+            var appBar = root.querySelector("#appBar").winControl;
+            var menu = root.querySelector("#myMenu").winControl;
+            var button1 = appBar.getCommandById("Button1").element;
+            
+            Helper.focus(button1).then(function () {
+                LiveUnit.Assert.areEqual(button1, document.activeElement, "button1 should have focus");
+                LiveUnit.Assert.isTrue(menu.hidden, "Menu should have dismissed when losing focus");
+                LiveUnit.Assert.isFalse(appBar.hidden, "AppBar should have remained visible when moving focus from the menu to the AppBar");
+                
+                complete();
+            });
+        });
+    };
+    
+    this.testFocusLeavesMenuAndAppBar = function (complete) {
+        createMenuInAppBar().then(function () {
+            var root = document.querySelector("#appBarDiv");
+            var outsideAppBar = root.querySelector("#outsideAppBar");
+            var appBar = root.querySelector("#appBar").winControl;
+            var menu = root.querySelector("#myMenu").winControl;
+            
+            Helper.focus(outsideAppBar).then(function () {
+                LiveUnit.Assert.areEqual(outsideAppBar, document.activeElement, "Focus should have moved outside of the AppBar");
+                LiveUnit.Assert.isTrue(menu.hidden, "Menu should have dismissed when losing focus");
+                LiveUnit.Assert.isTrue(appBar.hidden, "AppBar should have dismissed when losing focus");
+                
+                complete();
+            });
         });
     };
 }

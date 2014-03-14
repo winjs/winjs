@@ -1243,8 +1243,8 @@
                     WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointerup", this._flyoutPointerReleasedHandler.bind(this));
                     WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointercancel", this._flyoutPointerReleasedHandler.bind(this));
                     WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointerout", this._flyoutPointerReleasedHandler.bind(this));
-                    this.element.addEventListener("focusin", this._searchBoxFocusInHandler.bind(this));
-                    this.element.addEventListener("focusout", this._searchBoxFocusOutHandler.bind(this));
+                    WinJS.Utilities._addEventListener(this.element, "focusin", this._searchBoxFocusInHandler.bind(this), false);
+                    WinJS.Utilities._addEventListener(this.element, "focusout", this._searchBoxFocusOutHandler.bind(this), false);
 
                     this._inputElement.addEventListener("compositionstart", inputOrImeChangeHandler);
                     this._inputElement.addEventListener("compositionupdate", inputOrImeChangeHandler);

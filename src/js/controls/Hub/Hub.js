@@ -150,7 +150,7 @@
 
                 WinJS.UI.setOptions(this, options);
 
-                this.element.addEventListener("focusin", this._focusin.bind(this));
+                WinJS.Utilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
                 this.element.addEventListener("keydown", this._keyDownHandler.bind(this));
                 this.element.addEventListener("click", this._clickHandler.bind(this));
                 this.element.addEventListener("mselementresize", this._resizeHandler.bind(this));

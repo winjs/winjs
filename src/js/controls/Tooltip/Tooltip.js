@@ -48,7 +48,7 @@
 
             var EVENTS_INVOKE = { "keyup": "", "pointerover": "" },
                 EVENTS_UPDATE = { "pointermove": "" },
-            EVENTS_DISMISS = { "pointerdown": "", "keydown": "", "blur": "", "pointerout": "", "pointercancel": "", "pointerup": "" },
+            EVENTS_DISMISS = { "pointerdown": "", "keydown": "", "focusout": "", "pointerout": "", "pointercancel": "", "pointerup": "" },
             EVENTS_BY_CHILD = { "pointerover": "", "pointerout": "" };
 
             // CSS class names
@@ -446,8 +446,8 @@
                                 listener._currentKeyOrBlurEvent = "keyboard";
                             }
                             break;
-                        case "blur":
-                            //anchor elment no longer in focus, clear up the stack
+                        case "focusout":
+                            //anchor element no longer in focus, clear up the stack
                             listener._currentKeyOrBlurEvent = null;
                             break;
                         default:
@@ -533,7 +533,7 @@
                             else {
                                 eventTrigger = eventType.substring(0, 3) === "key" ? "keyboard" : "mouse";
                             }
-                            if (eventType != "blur" && eventTrigger != this._showTrigger) {
+                            if (eventType != "focusout" && eventTrigger != this._showTrigger) {
                                 return;
                             }
                             this._onDismiss();

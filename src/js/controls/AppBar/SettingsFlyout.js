@@ -243,7 +243,7 @@
 
                     // Set focus to the firstDiv
                     if (this.element.children[0]) {
-                        this.element.children[0].addEventListener("focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
+                        WinJS.Utilities._addEventListener(this.element.children[0], "focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
                         this.element.children[0].focus();
                     }
 
@@ -480,7 +480,7 @@
                     firstDiv.setAttribute("role", "menuitem");
                     firstDiv.setAttribute("aria-hidden", "true");
                     firstDiv.tabIndex = _minTab;
-                    firstDiv.addEventListener("focus", this._focusOnLastFocusableElementFromParent, false);
+                    WinJS.Utilities._addEventListener(firstDiv, "focusin", this._focusOnLastFocusableElementFromParent, false);
 
                     // add to beginning
                     if (this._element.children[0]) {
@@ -505,7 +505,7 @@
                     finalDiv.setAttribute("role", "menuitem");
                     finalDiv.setAttribute("aria-hidden", "true");
                     finalDiv.tabIndex = _maxTab;
-                    finalDiv.addEventListener("focus", this._focusOnFirstFocusableElementFromParent, false);
+                    WinJS.Utilities._addEventListener(finalDiv, "focusin", this._focusOnFirstFocusableElementFromParent, false);
 
                     this._element.appendChild(finalDiv);
                 },

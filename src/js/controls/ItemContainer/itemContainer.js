@@ -239,8 +239,8 @@
                     eventHandler("LostPointerCapture"),
                     eventHandler("ContextMenu"),
                     eventHandler("MSHoldVisual", true),
-                    eventHandler("Focus"),
-                    eventHandler("Blur"),
+                    eventHandler("FocusIn"),
+                    eventHandler("FocusOut"),
                     eventHandler("DragStart"),
                     eventHandler("DragEnd"),
                     eventHandler("KeyDown")
@@ -425,7 +425,7 @@
 
                 _onPointerUp: function ItemContainer_onPointerUp(eventObject) {
                     if (utilities.hasClass(this._itemBox, WinJS.UI._itemFocusClass)) {
-                        this._onBlur(eventObject);
+                        this._onFocusOut(eventObject);
                     }
                     this._itemEventsHandler.onPointerUp(eventObject);
                 },
@@ -446,7 +446,7 @@
                     this._itemEventsHandler.onMSHoldVisual(eventObject);
                 },
 
-                _onFocus: function ItemContainer_onFocus(eventObject) {
+                _onFocusIn: function ItemContainer_onFocusIn(eventObject) {
                     if (this._itemBox.querySelector("." + WinJS.UI._itemFocusOutlineClass) || !WinJS.UI._keyboardSeenLast) {
                         return;
                     }
@@ -456,7 +456,7 @@
                     this._itemBox.appendChild(outline);
                 },
 
-                _onBlur: function ItemContainer_onBlur(eventObject) {
+                _onFocusOut: function ItemContainer_onFocusOut(eventObject) {
                     utilities.removeClass(this._itemBox, WinJS.UI._itemFocusClass);
                     var outline = this._itemBox.querySelector("." + WinJS.UI._itemFocusOutlineClass);
                     if (outline) {

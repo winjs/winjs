@@ -394,8 +394,9 @@
 
                     WinJS.Utilities._addEventListener(this._switchElement, "pointerdown", trackTap, false); // Use the gesture object so we could listen to tap events
                     this._switchElement.addEventListener("DOMAttrModified", onDOMAttrModified, false); // Listen to DOMAttrModified for aria-checked change
-                    this._switchElement.addEventListener("blur", function () { enableFocusRect(); cancelHandler(); }, false);
-                    this._domElement.addEventListener("focus", switchFocus, true);
+                    
+                    WinJS.Utilities._addEventListener(this._switchElement, "focusout", function () { enableFocusRect(); cancelHandler(); }, false);
+                    WinJS.Utilities._addEventListener(this._domElement, "focusin", switchFocus, false);
                     WinJS.Utilities._addEventListener(this._domElement, "pointerdown", dismissFocusRect, true);
                 },
 

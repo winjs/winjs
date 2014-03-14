@@ -986,6 +986,9 @@
                     // Set up global event handlers for all overlays
                     if (!_Overlay._flyoutEdgeLightDismissEvent) {
                         // Dismiss on blur & resize
+                        // Focus handlers generally use WinJS.Utilities._addEventListener with focusout/focusin. This
+                        // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
+                        // on window.
                         window.addEventListener("blur", _Overlay._checkBlur, false);
 
                         var that = this;
@@ -1035,7 +1038,7 @@
                 _handleEventsForFlyoutOrSettingsFlyout: function _Overlay_handleEventsForFlyoutOrSettingsFlyout() {
                     var that = this;
                     // Need to hide ourselves if we lose focus
-                    this._element.addEventListener("focusout", function (e) { _Overlay._hideIfLostFocus(that, e); }, false);
+                    WinJS.Utilities._addEventListener(this._element, "focusout", function (e) { _Overlay._hideIfLostFocus(that, e); }, false);
 
                     // Attempt to flag right clicks that may turn into edgy
                     WinJS.Utilities._addEventListener(this._element, "pointerdown", _Overlay._checkRightClickDown, true);
@@ -1242,10 +1245,10 @@
                     var settingsFlyout = overlay;
                     var flyoutControl = _Overlay._getParentControlUsingClassName(active, "win-flyout");
                     if (flyoutControl && flyoutControl._previousFocus && settingsFlyout.element.contains(flyoutControl._previousFocus)) {
-                        flyoutControl.element.addEventListener('focusout', function focusOut(event) {
+                        WinJS.Utilities._addEventListener(flyoutControl.element, 'focusout', function focusOut(event) {
                             // When the Flyout closes, hide the SetingsFlyout if it didn't regain focus.
                             _Overlay._hideIfLostFocus(settingsFlyout, event);
-                            flyoutControl.element.removeEventListener('focusout', focusOut, false);
+                            WinJS.Utilities._removeEventListener(flyoutControl.element, 'focusout', focusOut, false);
                         }, false);
                         return;
                     }
@@ -1280,8 +1283,12 @@
                         // there would be no flyout or appbar needing light dismiss.
                         var active = document.activeElement;
                         if (active && active.tagName === "IFRAME" && !active.msLightDismissBlur) {
-                            // This will go away when the IFRAME goes away, and we only create one
-                            active.msLightDismissBlur = active.addEventListener("blur", _Overlay._checkBlur, false);
+                            // - This will go away when the IFRAME goes away, and we only create one.
+                            // - This only works in IE because other browsers don't fire focus events on iframe elements.
+                            // - Can't use WinJS.Utilities._addEventListener's focusout because it doesn't fire when an
+                            //   iframe loses focus due to changing windows.
+                            active.addEventListener("blur", _Overlay._checkBlur, false);
+                            active.msLightDismissBlur = true;
                         }
                     }
                 }
@@ -1313,7 +1320,7 @@
             _Overlay._addHideFocusClass = function (element) {
                 if (element) {
                     WinJS.Utilities.addClass(element, hideFocusClass);
-                    element.addEventListener("focusout", _Overlay._removeHideFocusClass, false);
+                    WinJS.Utilities._addEventListener(element, "focusout", _Overlay._removeHideFocusClass, false);
                 }
             };
 
@@ -1323,7 +1330,7 @@
                 var target = event.target;
                 if (target && target !== document.activeElement) {
                     WinJS.Utilities.removeClass(target, hideFocusClass);
-                    event.target.removeEventListener("focusout", _Overlay._removeHideFocusClass, false);
+                    WinJS.Utilities._removeEventListener(event.target, "focusout", _Overlay._removeHideFocusClass, false);
                 }
             };
 

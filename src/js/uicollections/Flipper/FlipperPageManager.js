@@ -85,7 +85,7 @@
                         event.preventDefault();
                     }
                 }, true);
-                this._flipperDiv.addEventListener("focus", function (event) {
+                WinJS.Utilities._addEventListener(this._flipperDiv, "focusin", function (event) {
                     if (event.target === that._flipperDiv) {
                         if (that._currentPage.element) {
                             try {

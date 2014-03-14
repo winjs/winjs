@@ -846,7 +846,7 @@
                     }
 
                     var that = this;
-                    firstDiv.addEventListener("focus", function () { that._focusOnLastFocusableElementOrThis(); }, false);
+                    WinJS.Utilities._addEventListener(firstDiv, "focusin", function () { that._focusOnLastFocusableElementOrThis(); }, false);
 
                     return firstDiv;
                 },
@@ -861,7 +861,7 @@
 
                     this._element.appendChild(finalDiv);
                     var that = this;
-                    finalDiv.addEventListener("focus", function () { that._focusOnFirstFocusableElementOrThis(); }, false);
+                    WinJS.Utilities._addEventListener(finalDiv, "focusin", function () { that._focusOnFirstFocusableElementOrThis(); }, false);
 
                     return finalDiv;
                 },

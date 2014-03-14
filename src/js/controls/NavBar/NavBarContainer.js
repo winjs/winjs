@@ -525,7 +525,7 @@
                     this._element.addEventListener('mouseleave', this._mouseleave.bind(this));
                     WinJS.Utilities._addEventListener(this._element, 'pointerdown', this._MSPointerDown.bind(this));
                     WinJS.Utilities._addEventListener(this._element, 'pointermove', this._MSPointerMove.bind(this));
-                    this._element.addEventListener("focus", this._focusHandler.bind(this), true);
+                    WinJS.Utilities._addEventListener(this._element, "focusin", this._focusHandler.bind(this), false);
 
                     this._pageindicatorsEl = document.createElement('div');
                     WinJS.Utilities.addClass(this._pageindicatorsEl, WinJS.UI.NavBarContainer._ClassName.pageindicators);
@@ -555,7 +555,7 @@
 
                     this._surfaceEl.addEventListener("_invoked", this._navbarCommandInvokedHandler.bind(this));
                     this._surfaceEl.addEventListener("_splittoggle", this._navbarCommandSplitToggleHandler.bind(this));
-                    this._surfaceEl.addEventListener("focus", this._itemsFocusHandler.bind(this), true);
+                    WinJS.Utilities._addEventListener(this._surfaceEl, "focusin", this._itemsFocusHandler.bind(this), false);
                     this._surfaceEl.addEventListener("keydown", this._keyDownHandler.bind(this));
 
                     // Reparent NavBarCommands which were in declarative markup

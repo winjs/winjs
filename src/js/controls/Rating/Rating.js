@@ -498,8 +498,8 @@
 
                     var eventsRegisteredInLowerCase = [
                             ratingHandler("KeyDown"),
-                            ratingHandler("Blur"),
-                            ratingHandler("Focus"),
+                            ratingHandler("FocusOut"),
+                            ratingHandler("FocusIn"),
                             ratingHandler("PointerCancel"),
                             ratingHandler("PointerDown"),
                             ratingHandler("PointerMove"),
@@ -712,7 +712,7 @@
                     this._pointerDownAt = null;
                 },
 
-                _onBlur: function () {
+                _onFocusOut: function () {
                     if (!this._captured) {
                         this._onUserRatingChanged();
                         if (!this._lastEventWasChange && !this._lastEventWasCancel) {
@@ -721,7 +721,7 @@
                     }
                 },
 
-                _onFocus: function () {
+                _onFocusIn: function () {
                     if (!this._pointerDownFocus) {
                         // if the control is read only don't hover stars
                         if (!this._disabled) {
