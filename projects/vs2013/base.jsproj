@@ -52,53 +52,143 @@
     <PackageCertificateKeyFile>WinJS_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\..\src\js\base\base.js" />
-    <Content Include="..\..\src\js\base\baseUtils-phone.js" />
-    <Content Include="..\..\src\js\base\baseUtils.js" />
-    <Content Include="..\..\src\js\base\dispose.js" />
-    <Content Include="..\..\src\js\base\errors.js" />
-    <Content Include="..\..\src\js\base\events.js" />
-    <Content Include="..\..\src\js\base\getWinJSString.js" />
-    <Content Include="..\..\src\js\base\log.js" />
-    <Content Include="..\..\src\js\base\promise.js" />
-    <Content Include="..\..\src\js\base\references.js" />
-    <Content Include="..\..\src\js\base\resources.js" />
-    <Content Include="..\..\src\js\base\safeHTML.js" />
-    <Content Include="..\..\src\js\base\scheduler.js" />
-    <Content Include="..\..\src\js\base\xhr.js" />
-    <Content Include="..\..\src\js\binding\bindingParser.js" />
-    <Content Include="..\..\src\js\binding\data.js" />
-    <Content Include="..\..\src\js\binding\dataTemplate.js" />
-    <Content Include="..\..\src\js\binding\dataTemplateCompiler.js" />
-    <Content Include="..\..\src\js\binding\declarative.js" />
-    <Content Include="..\..\src\js\binding\DOMWeakRefTable.js" />
-    <Content Include="..\..\src\js\binding\list.js" />
-    <Content Include="..\..\src\js\Build\endBase.js" />
-    <Content Include="..\..\src\js\Build\startBase.js" />
-    <Content Include="..\..\src\js\Build\writeProfilerMark.js" />
-    <Content Include="..\..\src\js\en-US\base.prefix.js" />
-    <Content Include="..\..\src\js\Library\stringsBlockFooter.js" />
-    <Content Include="..\..\src\js\Library\stringsBlockHeader.js" />
-    <Content Include="..\..\src\js\Library\stringsFooter.js" />
-    <Content Include="..\..\src\js\Library\stringsHeader.js" />
-    <Content Include="..\..\src\js\Res\Res.js" />
-    <Content Include="..\..\src\js\ui\control.js" />
-    <Content Include="..\..\src\js\ui\declarativeControls.js" />
-    <Content Include="..\..\src\js\ui\elementListUtilities.js" />
-    <Content Include="..\..\src\js\ui\elementUtilities.js" />
-    <Content Include="..\..\src\js\ui\fragmentControl.js" />
-    <Content Include="..\..\src\js\ui\fragmentLoader.js" />
-    <Content Include="..\..\src\js\ui\optionsLexer.js" />
-    <Content Include="..\..\src\js\ui\optionsParser.js" />
-    <Content Include="..\..\src\js\ui\tabManager.js" />
-    <Content Include="..\..\src\js\ui\transitionAnimation.js" />
-    <Content Include="..\..\src\js\ui\utilities.js" />
-    <Content Include="..\..\src\js\wwa-app\application.js" />
-    <Content Include="..\..\src\js\wwa-app\navigation2.js" />
-    <Content Include="..\..\src\js\wwa-app\state.js" />
+    <Content Include="..\..\src\js\base\base.js">
+      <Link>js\base\base.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\baseUtils-phone.js">
+      <Link>js\base\baseUtils-phone.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\baseUtils.js">
+      <Link>js\base\baseUtils.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\dispose.js">
+      <Link>js\base\dispose.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\errors.js">
+      <Link>js\base\errors.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\events.js">
+      <Link>js\base\events.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\getWinJSString.js">
+      <Link>js\base\getWinJSString.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\log.js">
+      <Link>js\base\log.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\promise.js">
+      <Link>js\base\promise.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\references.js">
+      <Link>js\base\references.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\resources.js">
+      <Link>js\base\resources.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\safeHTML.js">
+      <Link>js\base\safeHTML.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\scheduler.js">
+      <Link>js\base\scheduler.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\base\xhr.js">
+      <Link>js\base\xhr.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\binding\bindingParser.js">
+      <Link>js\binding\bindingParser.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\binding\data.js">
+      <Link>js\binding\data.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\binding\dataTemplate.js">
+      <Link>js\binding\dataTemplate.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\binding\dataTemplateCompiler.js">
+      <Link>js\binding\dataTemplateCompiler.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\binding\declarative.js">
+      <Link>js\binding\declarative.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\binding\DOMWeakRefTable.js">
+      <Link>js\binding\DOMWeakRefTable.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\binding\list.js">
+      <Link>js\binding\list.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Build\endBase.js">
+      <Link>js\Build\endBase.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Build\startBase.js">
+      <Link>js\Build\startBase.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Build\writeProfilerMark.js">
+      <Link>js\Build\writeProfilerMark.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\en-US\base.prefix.js">
+      <Link>js\en-US\base.prefix.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Library\stringsBlockFooter.js">
+      <Link>js\Library\stringsBlockFooter.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Library\stringsBlockHeader.js">
+      <Link>js\Library\stringsBlockHeader.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Library\stringsFooter.js">
+      <Link>js\Library\stringsFooter.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Library\stringsHeader.js">
+      <Link>js\Library\stringsHeader.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Res\Res.js">
+      <Link>js\Res\Res.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\control.js">
+      <Link>js\ui\control.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\declarativeControls.js">
+      <Link>js\ui\declarativeControls.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\elementListUtilities.js">
+      <Link>js\ui\elementListUtilities.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\elementUtilities.js">
+      <Link>js\ui\elementUtilities.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\fragmentControl.js">
+      <Link>js\ui\fragmentControl.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\fragmentLoader.js">
+      <Link>js\ui\fragmentLoader.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\optionsLexer.js">
+      <Link>js\ui\optionsLexer.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\optionsParser.js">
+      <Link>js\ui\optionsParser.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\tabManager.js">
+      <Link>js\ui\tabManager.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\transitionAnimation.js">
+      <Link>js\ui\transitionAnimation.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\ui\utilities.js">
+      <Link>js\ui\utilities.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\wwa-app\application.js">
+      <Link>js\wwa-app\application.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\wwa-app\navigation2.js">
+      <Link>js\wwa-app\navigation2.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\wwa-app\state.js">
+      <Link>js\wwa-app\state.js</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="..\..\src\js\en-US\base.resjson" />
+    <PRIResource Include="..\..\src\js\en-US\base.resjson">
+      <Link>js\en-US\base.resjson</Link>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="package.appxmanifest">

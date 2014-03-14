@@ -57,115 +57,329 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\src\js\animations\animations.js" />
-    <Content Include="..\..\src\js\Build\endUI.js" />
-    <Content Include="..\..\src\js\Build\startUI.js" />
-    <Content Include="..\..\src\js\controls\AppBar\AppBar.js" />
-    <Content Include="..\..\src\js\controls\AppBar\AppBarCommand.js" />
-    <Content Include="..\..\src\js\controls\AppBar\AppBarIcon.js" />
-    <Content Include="..\..\src\js\controls\AppBar\Flyout.js" />
-    <Content Include="..\..\src\js\controls\AppBar\Menu.js" />
-    <Content Include="..\..\src\js\controls\AppBar\MenuCommand.js" />
-    <Content Include="..\..\src\js\controls\AppBar\Overlay.js" />
-    <Content Include="..\..\src\js\controls\AppBar\SettingsFlyout.js" />
-    <Content Include="..\..\src\js\controls\BackButton\BackButton.js" />
-    <Content Include="..\..\src\js\controls\DatePicker\datePicker.js" />
-    <Content Include="..\..\src\js\controls\Hub\Hub.js" />
-    <Content Include="..\..\src\js\controls\Hub\HubSection.js" />
-    <Content Include="..\..\src\js\controls\ItemContainer\itemContainer.js" />
-    <Content Include="..\..\src\js\controls\NavBar\KeyboardBehavior.js" />
-    <Content Include="..\..\src\js\controls\NavBar\NavBar.js" />
-    <Content Include="..\..\src\js\controls\NavBar\NavBarCommand.js" />
-    <Content Include="..\..\src\js\controls\NavBar\NavBarContainer.js" />
-    <Content Include="..\..\src\js\controls\Rating\Rating.js" />
-    <Content Include="..\..\src\js\controls\SearchBox\SearchBox.js" />
-    <Content Include="..\..\src\js\controls\Select\select.js" />
-    <Content Include="..\..\src\js\controls\SemanticZoom\SemanticZoom.js" />
-    <Content Include="..\..\src\js\controls\TimePicker\timePicker.js" />
-    <Content Include="..\..\src\js\controls\Toggle\Toggle.js" />
-    <Content Include="..\..\src\js\controls\Tooltip\Tooltip.js" />
-    <Content Include="..\..\src\js\controls\ViewBox\ViewBox.js" />
-    <Content Include="..\..\src\css\animation-library.css" />
-    <Content Include="..\..\src\css\colors-desktop.css" />
-    <Content Include="..\..\src\css\colors-phone.css" />
-    <Content Include="..\..\src\css\colors.css" />
-    <Content Include="..\..\src\css\controls-desktop.css" />
-    <Content Include="..\..\src\css\controls-phone.css" />
-    <Content Include="..\..\src\css\controls.css" />
-    <Content Include="..\..\src\css\html-controls-desktop.css" />
-    <Content Include="..\..\src\css\html-controls-phone.css" />
-    <Content Include="..\..\src\css\html-controls.css" />
-    <Content Include="..\..\src\css\typography-fonts.css" />
-    <Content Include="..\..\src\css\typography.css" />
-    <Content Include="..\..\src\css\uicollections-desktop.css" />
-    <Content Include="..\..\src\css\uicollections-phone.css" />
-    <Content Include="..\..\src\css\uicollections.css" />
-    <Content Include="..\..\src\js\en-US\ui.prefix.js" />
-    <Content Include="..\..\src\less\colors-backbutton.less" />
-    <Content Include="..\..\src\less\colors-flipview.less" />
-    <Content Include="..\..\src\less\colors-hub.less" />
-    <Content Include="..\..\src\less\colors-intrinsic.less" />
-    <Content Include="..\..\src\less\colors-listview.less" />
-    <Content Include="..\..\src\less\colors-navbar.less" />
-    <Content Include="..\..\src\less\colors-overlay.less" />
-    <Content Include="..\..\src\less\colors-rating.less" />
-    <Content Include="..\..\src\less\colors-searchbox.less" />
-    <Content Include="..\..\src\less\colors-semanticzoom.less" />
-    <Content Include="..\..\src\less\colors-toggleswitch.less" />
-    <Content Include="..\..\src\less\colors-tooltip.less" />
-    <Content Include="..\..\src\less\colors.less" />
-    <Content Include="..\..\src\less\desktop-dark.less" />
-    <Content Include="..\..\src\less\desktop-light.less" />
-    <Content Include="..\..\src\less\phone-dark.less" />
-    <Content Include="..\..\src\less\phone-light.less" />
-    <Content Include="..\..\src\less\styles-backbutton.less" />
-    <Content Include="..\..\src\less\styles-datetimepicker.less" />
-    <Content Include="..\..\src\less\styles-flipview.less" />
-    <Content Include="..\..\src\less\styles-hub.less" />
-    <Content Include="..\..\src\less\styles-intrinsic.less" />
-    <Content Include="..\..\src\less\styles-listview-shared.less" />
-    <Content Include="..\..\src\less\styles-navbar.less" />
-    <Content Include="..\..\src\less\styles-overlay.less" />
-    <Content Include="..\..\src\less\styles-rating.less" />
-    <Content Include="..\..\src\less\styles-scrollview.less" />
-    <Content Include="..\..\src\less\styles-searchbox.less" />
-    <Content Include="..\..\src\less\styles-semanticzoom.less" />
-    <Content Include="..\..\src\less\styles-toggleswitch.less" />
-    <Content Include="..\..\src\less\styles-tooltip.less" />
-    <Content Include="..\..\src\less\styles-viewbox.less" />
-    <Content Include="..\..\src\less\styles.less" />
-    <Content Include="..\..\src\less\typography.less" />
-    <Content Include="..\..\src\js\Library\stringsBlockFooter.js" />
-    <Content Include="..\..\src\js\Library\stringsBlockHeader.js" />
-    <Content Include="..\..\src\js\Library\stringsFooter.js" />
-    <Content Include="..\..\src\js\Library\stringsHeader.js" />
-    <Content Include="..\..\src\js\uicollections\Assert.js" />
-    <Content Include="..\..\src\js\uicollections\Flipper\Flipper.js" />
-    <Content Include="..\..\src\js\uicollections\Flipper\FlipperPageManager.js" />
-    <Content Include="..\..\src\js\uicollections\ItemsManager\BindingListDataSource.js" />
-    <Content Include="..\..\src\js\uicollections\ItemsManager\GroupDataSource.js" />
-    <Content Include="..\..\src\js\uicollections\ItemsManager\GroupedItemDataSource.js" />
-    <Content Include="..\..\src\js\uicollections\ItemsManager\ItemsManager.js" />
-    <Content Include="..\..\src\js\uicollections\ItemsManager\ListDataSource.js" />
-    <Content Include="..\..\src\js\uicollections\ItemsManager\ParallelWorkQueue.js" />
-    <Content Include="..\..\src\js\uicollections\ItemsManager\StorageDataSource.js" />
-    <Content Include="..\..\src\js\uicollections\ItemsManager\VersionManager.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\BrowseMode.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\Constants.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\ErrorMessages.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\GroupFocusCache.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\GroupsContainer.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\itemEventsHandler.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\ItemsContainer.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\Layouts2.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\ListViewImpl.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\SelectionManager.js" />
-    <Content Include="..\..\src\js\uicollections\ListView\VirtualizeContentsView.js" />
-    <Content Include="..\..\src\js\uicollections\references.js" />
-    <Content Include="..\..\src\js\uicollections\Repeater\Repeater.js" />
+    <Content Include="..\..\src\js\animations\animations.js">
+      <Link>animations\animations.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Build\endUI.js">
+      <Link>js\Build\endUI.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Build\startUI.js">
+      <Link>js\Build\startUI.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\AppBar.js">
+      <Link>js\controls\AppBar\AppBar.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\AppBarCommand.js">
+      <Link>js\controls\AppBar\AppBarCommand.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\AppBarIcon.js">
+      <Link>js\controls\AppBar\AppBarIcon.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\Flyout.js">
+      <Link>js\controls\AppBar\Flyout.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\Menu.js">
+      <Link>js\controls\AppBar\Menu.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\MenuCommand.js">
+      <Link>js\controls\AppBar\MenuCommand.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\Overlay.js">
+      <Link>js\controls\AppBar\Overlay.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\SettingsFlyout.js">
+      <Link>js\controls\AppBar\SettingsFlyout.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\BackButton\BackButton.js">
+      <Link>js\controls\BackButton\BackButton.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\DatePicker\datePicker.js">
+      <Link>js\controls\DatePicker\datePicker.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\Hub\Hub.js">
+      <Link>js\controls\Hub\Hub.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\Hub\HubSection.js">
+      <Link>js\controls\Hub\HubSection.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\ItemContainer\itemContainer.js">
+      <Link>js\controls\ItemContainer\itemContainer.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\NavBar\KeyboardBehavior.js">
+      <Link>js\controls\NavBar\KeyboardBehavior.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\NavBar\NavBar.js">
+      <Link>js\controls\NavBar\NavBar.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\NavBar\NavBarCommand.js">
+      <Link>js\controls\NavBar\NavBarCommand.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\NavBar\NavBarContainer.js">
+      <Link>js\controls\NavBar\NavBarContainer.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\Rating\Rating.js">
+      <Link>js\controls\Rating\Rating.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\SearchBox\SearchBox.js">
+      <Link>js\controls\SearchBox\SearchBox.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\Select\select.js">
+      <Link>js\controls\Select\select.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\SemanticZoom\SemanticZoom.js">
+      <Link>js\controls\SemanticZoom\SemanticZoom.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\TimePicker\timePicker.js">
+      <Link>js\controls\TimePicker\timePicker.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\Toggle\Toggle.js">
+      <Link>js\controls\Toggle\Toggle.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\Tooltip\Tooltip.js">
+      <Link>js\controls\Tooltip\Tooltip.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\ViewBox\ViewBox.js">
+      <Link>js\controls\ViewBox\ViewBox.js</Link>
+    </Content>
+    <Content Include="..\..\src\css\animation-library.css">
+      <Link>css\animation-library.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\colors-desktop.css">
+      <Link>css\colors-desktop.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\colors-phone.css">
+      <Link>css\colors-phone.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\colors.css">
+      <Link>css\colors.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\controls-desktop.css">
+      <Link>css\controls-desktop.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\controls-phone.css">
+      <Link>css\controls-phone.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\controls.css">
+      <Link>css\controls.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\html-controls-desktop.css">
+      <Link>css\html-controls-desktop.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\html-controls-phone.css">
+      <Link>css\html-controls-phone.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\html-controls.css">
+      <Link>css\html-controls.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\typography-fonts.css">
+      <Link>css\typography-fonts.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\typography.css">
+      <Link>css\typography.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\uicollections-desktop.css">
+      <Link>css\uicollections-desktop.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\uicollections-phone.css">
+      <Link>css\uicollections-phone.css</Link>
+    </Content>
+    <Content Include="..\..\src\css\uicollections.css">
+      <Link>css\uicollections.css</Link>
+    </Content>
+    <Content Include="..\..\src\js\en-US\ui.prefix.js">
+      <Link>js\en-US\ui.prefix.js</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-backbutton.less">
+      <Link>less\colors-backbutton.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-flipview.less">
+      <Link>less\colors-flipview.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-hub.less">
+      <Link>less\colors-hub.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-intrinsic.less">
+      <Link>less\colors-intrinsic.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-listview.less">
+      <Link>less\colors-listview.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-navbar.less">
+      <Link>less\colors-navbar.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-overlay.less">
+      <Link>less\colors-overlay.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-rating.less">
+      <Link>less\colors-rating.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-searchbox.less">
+      <Link>less\colors-searchbox.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-semanticzoom.less">
+      <Link>less\colors-semanticzoom.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-toggleswitch.less">
+      <Link>less\colors-toggleswitch.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors-tooltip.less">
+      <Link>less\colors-tooltip.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\colors.less">
+      <Link>less\colors.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\desktop-dark.less">
+      <Link>less\desktop-dark.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\desktop-light.less">
+      <Link>less\desktop-light.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\phone-dark.less">
+      <Link>less\phone-dark.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\phone-light.less">
+      <Link>less\phone-light.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-backbutton.less">
+      <Link>less\styles-backbutton.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-datetimepicker.less">
+      <Link>less\styles-datetimepicker.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-flipview.less">
+      <Link>less\styles-flipview.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-hub.less">
+      <Link>less\styles-hub.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-intrinsic.less">
+      <Link>less\styles-intrinsic.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-listview-shared.less">
+      <Link>less\styles-listview-shared.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-navbar.less">
+      <Link>less\styles-navbar.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-overlay.less">
+      <Link>less\styles-overlay.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-rating.less">
+      <Link>less\styles-rating.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-scrollview.less">
+      <Link>less\styles-scrollview.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-searchbox.less">
+      <Link>less\styles-searchbox.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-semanticzoom.less">
+      <Link>less\styles-semanticzoom.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-toggleswitch.less">
+      <Link>less\styles-toggleswitch.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-tooltip.less">
+      <Link>less\styles-tooltip.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles-viewbox.less">
+      <Link>less\styles-viewbox.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\styles.less">
+      <Link>less\styles.less</Link>
+    </Content>
+    <Content Include="..\..\src\less\typography.less">
+      <Link>less\typography.less</Link>
+    </Content>
+    <Content Include="..\..\src\js\Library\stringsBlockFooter.js">
+      <Link>js\Library\stringsBlockFooter.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Library\stringsBlockHeader.js">
+      <Link>js\Library\stringsBlockHeader.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Library\stringsFooter.js">
+      <Link>js\Library\stringsFooter.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\Library\stringsHeader.js">
+      <Link>js\Library\stringsHeader.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\Assert.js">
+      <Link>js\uicollections\Assert.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\Flipper\Flipper.js">
+      <Link>js\uicollections\Flipper\Flipper.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\Flipper\FlipperPageManager.js">
+      <Link>js\uicollections\Flipper\FlipperPageManager.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ItemsManager\BindingListDataSource.js">
+      <Link>js\uicollections\ItemsManager\BindingListDataSource.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ItemsManager\GroupDataSource.js">
+      <Link>js\uicollections\ItemsManager\GroupDataSource.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ItemsManager\GroupedItemDataSource.js">
+      <Link>js\uicollections\ItemsManager\GroupedItemDataSource.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ItemsManager\ItemsManager.js">
+      <Link>js\uicollections\ItemsManager\ItemsManager.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ItemsManager\ListDataSource.js">
+      <Link>js\uicollections\ItemsManager\ListDataSource.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ItemsManager\ParallelWorkQueue.js">
+      <Link>js\uicollections\ItemsManager\ParallelWorkQueue.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ItemsManager\StorageDataSource.js">
+      <Link>js\uicollections\ItemsManager\StorageDataSource.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ItemsManager\VersionManager.js">
+      <Link>js\uicollections\ItemsManager\VersionManager.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\BrowseMode.js">
+      <Link>js\uicollections\ListView\BrowseMode.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\Constants.js">
+      <Link>js\uicollections\ListView\Constants.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\ErrorMessages.js">
+      <Link>js\uicollections\ListView\ErrorMessages.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\GroupFocusCache.js">
+      <Link>js\uicollections\ListView\GroupFocusCache.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\GroupsContainer.js">
+      <Link>js\uicollections\ListView\GroupsContainer.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\itemEventsHandler.js">
+      <Link>js\uicollections\ListView\itemEventsHandler.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\ItemsContainer.js">
+      <Link>js\uicollections\ListView\ItemsContainer.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\Layouts2.js">
+      <Link>js\uicollections\ListView\Layouts2.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\ListViewImpl.js">
+      <Link>js\uicollections\ListView\ListViewImpl.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\SelectionManager.js">
+      <Link>js\uicollections\ListView\SelectionManager.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\ListView\VirtualizeContentsView.js">
+      <Link>js\uicollections\ListView\VirtualizeContentsView.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\references.js">
+      <Link>js\uicollections\references.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\uicollections\Repeater\Repeater.js">
+      <Link>js\uicollections\Repeater\Repeater.js</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="..\..\src\js\en-US\ui.resjson" />
+    <PRIResource Include="..\..\src\js\en-US\ui.resjson">
+      <Link>js\en-US\ui.resjson</Link>
+    </PRIResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
   <Target Name="BeforeBuild">
