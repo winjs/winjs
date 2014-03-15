@@ -14,11 +14,6 @@
         return text;
     };   
 
-    if (window.document) {
-        document.msElementsFromPoint = document.msElementsFromPoint
-            || function (x, y) { return [document.elementFromPoint(x, y)]; };
-    }
-
     window.setImmediate = window.setImmediate
         || window.blinkSetImmediate
         || window.webkitSetImmediate

@@ -57,6 +57,14 @@
             return e.uniqueID || e._uniqueID;
         },
 
+        _elementsFromPoint: function(x, y) {
+            if (document.msElementsFromPoint) {
+                return document.msElementsFromPoint(x, y);
+            } else {
+                return [document.elementFromPoint(x, y)];
+            }
+        },
+
         _matchesSelector: function _matchesSelector(element, selectorString) {
             var matchesSelector = element.matches
                     || element.msMatchesSelector

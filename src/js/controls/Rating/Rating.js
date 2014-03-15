@@ -641,7 +641,7 @@
                     var pointerAt = this._pointerDownAt || { x: eventObject.clientX, y: eventObject.clientY };
 
                     var star;
-                    var hit = document.msElementsFromPoint(eventObject.clientX, pointerAt.y);
+                    var hit = WinJS.Utilities._elementsFromPoint(eventObject.clientX, pointerAt.y);
                     if (hit) {
                         for (var i = 0, len = hit.length; i < len; i++) {
                             var item = hit[i];
