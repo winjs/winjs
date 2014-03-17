@@ -305,7 +305,7 @@ CorsicaTests.AppBarCommandTests = function () {
             "<button id=\"button1\"><button>" +
             "<button id=\"button2\"><button>" +
             "<button id=\"button3\"><button>;"
-        element.innerHTML =  toStaticHTML(HTMLString);
+        element.innerHTML =  HTMLString;
         var contentCommand = new WinJS.UI.AppBarCommand(element, {id:"contentCommand", type: "content" });
 
         document.body.appendChild(contentCommand.element);
