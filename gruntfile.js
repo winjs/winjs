@@ -83,7 +83,7 @@ module.exports = function (grunt) {
         "src/js/base/errors.js",
         "src/js/base/xhr.js",
         "src/js/base/safeHTML.js",
-        "src/js/base/getWintsString.js",
+        "src/js/base/getwinjsstring.js",
         "src/js/base/dispose.js",
 
         "src/js/ui/control.js",
