@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     var version = "2.1";
     var buildDate = new Date();
     var month = buildDate.getMonth() + 1;
@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     var outputFolder = "bin/";
 
     var testsOutput = "";
-    
+
     if (process.env._NTTREE) {
         outputFolder = process.env._NTTREE + "/Corsica/";
         testsOutput = outputFolder + "other." + version + ".debug/tests/unittests/";
@@ -68,7 +68,9 @@ module.exports = function(grunt) {
     ];
 
     var baseJSFilesPhone = [
-        "src/js/startBase.js",
+        "src/js/build/Copyright.js",
+        "src/js/build/writeProfilerMark.js",
+        "src/js/build/startBase.js",
         "src/js/base/references.js",
         "src/js/base/base.js",
         "src/js/base/baseUtils.js",
@@ -108,7 +110,7 @@ module.exports = function(grunt) {
         "src/js/binding/list.js",
         "src/js/binding/dataTemplateCompiler.js",
 
-        "src/js/res/Res.js",
+        "src/js/res/res.js",
 
         "src/js/endBase.js"
     ];
@@ -339,10 +341,10 @@ module.exports = function(grunt) {
                 ]
             },
             files: [
-              {expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/"},
-              {expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/"},
-              {expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/"},
-              {expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/"}
+              { expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/" },
+              { expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/" },
+              { expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/" },
+              { expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/" }
             ]
         }
     };
@@ -352,7 +354,7 @@ module.exports = function(grunt) {
         gruntConfig.copy = {
             tests: {
                 files: [
-                    {expand: true, cwd: "tests/", src: ["**"], dest: testsOutput}
+                    { expand: true, cwd: "tests/", src: ["**"], dest: testsOutput }
                 ]
             }
         };
@@ -370,7 +372,7 @@ module.exports = function(grunt) {
         };
 
         // Also add tests to the replace task
-        var testReplace = {expand: true, cwd: testsOutput, src: ["**/*.js"], dest: testsOutput};
+        var testReplace = { expand: true, cwd: testsOutput, src: ["**/*.js"], dest: testsOutput };
         gruntConfig.replace.base.files.push(testReplace);
         grunt.log.write("replace has " + gruntConfig.replace.base.files.length + " items");
     }
@@ -388,7 +390,7 @@ module.exports = function(grunt) {
     var defaultTask = ["clean", "less", "concat", "copy", "replace"];
     if (process.env._NTTREE) {
         grunt.registerTask("test", function (test, host) {
-            var testArgs =  test || "*.js";
+            var testArgs = test || "*.js";
 
             if (host) {
                 host = host.toLowerCase();
