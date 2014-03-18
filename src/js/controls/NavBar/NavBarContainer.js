@@ -34,7 +34,7 @@
             var Key = WinJS.Utilities.Key;
 
             var buttonFadeDelay = 3000;
-            var PT_TOUCH = MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+            var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
             var MS_MANIPULATION_STATE_STOPPED = 0;
 
             var createEvent = WinJS.Utilities._createEventProperty;
@@ -523,8 +523,8 @@
                 _setupTree: function NavBarContainer_setupTree() {
                     this._animateNextPreviousButtons = WinJS.Promise.wrap();
                     this._element.addEventListener('mouseleave', this._mouseleave.bind(this));
-                    this._element.addEventListener('pointerdown', this._MSPointerDown.bind(this));
-                    this._element.addEventListener('pointermove', this._MSPointerMove.bind(this));
+                    WinJS.Utilities._addEventListener(this._element, 'pointerdown', this._MSPointerDown.bind(this));
+                    WinJS.Utilities._addEventListener(this._element, 'pointermove', this._MSPointerMove.bind(this));
                     this._element.addEventListener("focus", this._focusHandler.bind(this), true);
 
                     this._pageindicatorsEl = document.createElement('div');
@@ -643,8 +643,8 @@
                             this._pendingResize = true;
 
                             this._resizeImplBound = this._resizeImplBound || this._resizeImpl.bind(this);
-                        
-                            if (!this._appBarEl || !this._appBarEl.contains(this.element)) {                          
+
+                            if (!this._appBarEl || !this._appBarEl.contains(this.element)) {
                                 if (this._appBarEl) {
                                     this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
                                 }
@@ -719,7 +719,7 @@
                                 var top = currentItem.offsetTop;
                                 var bottom = top + currentItem.offsetHeight;
                                 var scrollPosition = this._zooming ? this._zoomPosition : this._scrollPosition;
-                            
+
                                 if (top >= scrollPosition && bottom < scrollPosition + sizes.viewportOffsetHeight) {
                                     // current item is fully on screen.
                                     while (index > 0 &&

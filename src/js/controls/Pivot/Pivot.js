@@ -97,7 +97,7 @@
                 this._viewportWidth = null;
                 this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
                 this._viewportElement.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
-                this._viewportElement.addEventListener("pointerdown", this._pointerDownHandler.bind(this));
+                WinJS.Utilities._addEventListener(this._viewportElement, "pointerdown", this._pointerDownHandler.bind(this));
 
                 this._surfaceElement = document.createElement("DIV");
                 this._surfaceElement.className = WinJS.UI.Pivot._ClassName.pivotSurface;
@@ -282,8 +282,8 @@
                         var hitSrcElement = false;
                         var hitTargets = WinJS.Utilities._elementsFromPoint(ev.clientX, ev.clientY);
                         if (hitTargets &&
-                                // Make sure there aren't any elements obscuring the Pivot headers.
-                                // WinJS.Utilities._elementsFromPoint sorts by z order.
+                            // Make sure there aren't any elements obscuring the Pivot headers.
+                            // WinJS.Utilities._elementsFromPoint sorts by z order.
                                 hitTargets[0] === this._viewportElement) {
                             for (var i = 0, len = hitTargets.length; i < len; i++) {
                                 if (hitTargets[i] === src) {

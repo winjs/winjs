@@ -88,7 +88,7 @@
                 Promise = WinJS.Promise,
                 Animation = WinJS.UI.Animation;
 
-            var PT_TOUCH = MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+            var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
 
             function getElementWithClass(parent, className) {
                 return parent.querySelector("." + className);
@@ -231,8 +231,8 @@
                                 this._site.pressedContainer.addEventListener('dragstart', this._DragStartBound);
                                 if (!touchInput) {
                                     // This only works for non touch input because on touch input we set capture which immediately fires the MSPointerOut.
-                                    this._site.pressedContainer.addEventListener('pointerenter', this._PointerEnterBound);
-                                    this._site.pressedContainer.addEventListener('pointerleave', this._PointerLeaveBound);
+                                    WinJS.Utilities._addEventListener(this._site.pressedContainer, 'pointerenter', this._PointerEnterBound, false);
+                                    WinJS.Utilities._addEventListener(this._site.pressedContainer, 'pointerleave', this._PointerLeaveBound, false);
                                 }
                             } else {
                                 this._site.pressedHeader = this._site.headerFromElement(eventObject.target);
@@ -252,8 +252,8 @@
                             }
 
                             if (!touchInput) {
-                                window.addEventListener("pointerup", this._resetPointerDownStateBound);
-                                window.addEventListener("pointercancel", this._resetPointerDownStateBound);
+                                WinJS.Utilities._addEventListener(window, "pointerup", this._resetPointerDownStateBound, false);
+                                WinJS.Utilities._addEventListener(window, "pointercancel", this._resetPointerDownStateBound, false);
                             }
 
                             // The gesture recognizer is used for SRG, which is not supported on Phone
@@ -281,7 +281,7 @@
                         if (touchInput) {
                             try {
                                 // Move pointer capture to avoid hover visual on second finger
-                                site.canvasProxy.setPointerCapture(eventObject.pointerId);
+                                WinJS.Utilities._setPointerCapture(site.canvasProxy, eventObject.pointerId);
                             } catch (e) {
                                 WinJS.Utilities._writeProfilerMark("WinJS.UI._ItemEventsHandler:MSPointerDown,StopTM");
                                 return;
@@ -322,8 +322,8 @@
                         this._togglePressed(false);
                         if (this._site.pressedContainer) {
                             this._site.pressedContainer.removeEventListener('dragstart', this._DragStartBound);
-                            this._site.pressedContainer.removeEventListener('pointerenter', this._PointerEnterBound);
-                            this._site.pressedContainer.removeEventListener('pointerleave', this._PointerLeaveBound);
+                            WinJS.Utilities._removeEventListener(this._site.pressedContainer, 'pointerenter', this._PointerEnterBound, false);
+                            WinJS.Utilities._removeEventListener(this._site.pressedContainer, 'pointerleave', this._PointerLeaveBound, false);
                         }
                     }
                 },
@@ -365,7 +365,7 @@
 
                     try {
                         // Release the pointer capture to allow in air touch pointers to be reused for multiple interactions
-                        site.canvasProxy.releasePointerCapture(eventObject.pointerId);
+                        WinJS.Utilities._releasePointerCapture(site.canvasProxy, eventObject.pointerId);
                     } catch (e) {
                         // This can throw if SeZo had capture or if the pointer was not already captured
                     }

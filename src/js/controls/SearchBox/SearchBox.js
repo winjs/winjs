@@ -1238,11 +1238,11 @@
                     this._inputElement.addEventListener("keydown", this._keyDownHandler.bind(this));
                     this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));
                     this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
-                    this._inputElement.addEventListener("pointerdown", this._inputPointerDownHandler.bind(this));
-                    this._flyoutDivElement.addEventListener("pointerdown", this._flyoutPointerDownHandler.bind(this));
-                    this._flyoutDivElement.addEventListener("pointerup", this._flyoutPointerReleasedHandler.bind(this));
-                    this._flyoutDivElement.addEventListener("pointercancel", this._flyoutPointerReleasedHandler.bind(this));
-                    this._flyoutDivElement.addEventListener("pointerout", this._flyoutPointerReleasedHandler.bind(this));
+                    WinJS.Utilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
+                    WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointerdown", this._flyoutPointerDownHandler.bind(this));
+                    WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointerup", this._flyoutPointerReleasedHandler.bind(this));
+                    WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointercancel", this._flyoutPointerReleasedHandler.bind(this));
+                    WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointerout", this._flyoutPointerReleasedHandler.bind(this));
                     this.element.addEventListener("focusin", this._searchBoxFocusInHandler.bind(this));
                     this.element.addEventListener("focusout", this._searchBoxFocusOutHandler.bind(this));
 

@@ -104,9 +104,9 @@
                 zoomedOut: 2
             };
 
-            var PT_TOUCH = MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
-            var PT_PEN = MSPointerEvent.MSPOINTER_TYPE_PEN || "pen";
-            var PT_MOUSE = MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse";
+            var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+            var PT_PEN = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_PEN || "pen";
+            var PT_MOUSE = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse";
 
             function getDimension(element, property) {
                 return WinJS.Utilities.convertToPixels(element, property);
@@ -202,6 +202,7 @@
                 this._gesturing = false;
                 this._gestureEnding = false;
                 this._buttonShown = false;
+                this._shouldFakeTouchCancel = ("TouchEvent" in global);
 
                 // Initialize the control
 
@@ -216,11 +217,12 @@
                 if (!isPhone) {
                     this._element.addEventListener("mousewheel", this._onMouseWheel.bind(this), true);
                     this._element.addEventListener("keydown", this._onKeyDown.bind(this), true);
-                    this._element.addEventListener("pointerdown", this._onPointerDown.bind(this), this._isListView);
-                    this._element.addEventListener("pointermove", this._onPointerMove.bind(this), true);
-                    this._element.addEventListener("pointerout", this._onPointerOut.bind(this), true);
-                    this._element.addEventListener("pointercancel", this._onPointerCancel.bind(this), true);
-                    this._element.addEventListener("pointerup", this._onPointerUp.bind(this), false);
+
+                    Utilities._addEventListener(this._element, "pointerdown", this._onPointerDown.bind(this), true);
+                    Utilities._addEventListener(this._element, "pointermove", this._onPointerMove.bind(this), true);
+                    Utilities._addEventListener(this._element, "pointerout", this._onPointerOut.bind(this), true);
+                    Utilities._addEventListener(this._element, "pointercancel", this._onPointerCancel.bind(this), true);
+                    Utilities._addEventListener(this._element, "pointerup", this._onPointerUp.bind(this), false);
                     this._hiddenElement.addEventListener("gotpointercapture", this._onGotPointerCapture.bind(this), false);
                     this._hiddenElement.addEventListener("lostpointercapture", this._onLostPointerCapture.bind(this), false);
                     this._element.addEventListener("click", this._onClick.bind(this), true);
@@ -388,7 +390,6 @@
                     this._viewOut = this._elementOut.winControl.zoomableView;
                     this._elementInIsListView = this._elementIn.winControl instanceof WinJS.UI.ListView;
                     this._elementOutIsListView = this._elementOut.winControl instanceof WinJS.UI.ListView;
-                    this._isListView = this._elementInIsListView && this._elementOutIsListView;
 
                     // Remove the children and place them beneath new divs that will serve as canvases and viewports
 
@@ -725,12 +726,13 @@
                     }
                 },
 
-                _createPointerRecord: function (ev) {
+                _createPointerRecord: function (ev, fireCancelOnPinch) {
                     var location = this._getPointerLocation(ev);
 
                     var newRecord = {};
                     newRecord.startX = newRecord.currentX = location.x;
                     newRecord.startY = newRecord.currentY = location.y;
+                    newRecord.fireCancelOnPinch = fireCancelOnPinch;
 
                     this._pointerRecords[ev.pointerId] = newRecord;
                     this._pointerCount = Object.keys(this._pointerRecords).length;
@@ -751,8 +753,18 @@
                     return record;
                 },
 
+                _fakeCancelOnPointer: function (ev) {
+                    var touchEvent = document.createEvent("UIEvent");
+                    touchEvent.initUIEvent("touchcancel", true, true, window, 0);
+                    touchEvent.touches = ev.touches;
+                    touchEvent.targetTouches = ev.targetTouches;
+                    touchEvent.changedTouches = [ev._currentTouch];
+                    touchEvent._fakedBySemanticZoom = true;
+                    ev.target.dispatchEvent(touchEvent);
+                },
+
                 _handlePointerDown: function (ev) {
-                    this._createPointerRecord(ev);
+                    this._createPointerRecord(ev, false);
 
                     // When we get more than one pointer, we need to explicitly set PointerCapture on every pointer we've got to the SemanticZoom.
                     // This will fire lostCapture events on any descendant elements that had called setCapture earlier (for example, ListView items),
@@ -762,7 +774,7 @@
 
                     for (var i = 0, len = contactKeys.length; i < len; i++) {
                         try {
-                            this._hiddenElement.setPointerCapture(contactKeys[i] | 0);
+                            WinJS.Utilities._setPointerCapture(this._hiddenElement, contactKeys[i] || 0);
                         } catch (e) {
                             this._resetPointerRecords();
                             return;
@@ -772,11 +784,12 @@
 
                     ev.stopImmediatePropagation();
                     ev.cancelBubble = true;
+                    ev.preventDefault();
                 },
 
                 _handleFirstPointerDown: function (ev) {
                     this._resetPointerRecords();
-                    this._createPointerRecord(ev);
+                    this._createPointerRecord(ev, this._shouldFakeTouchCancel);
                     this._startedZoomedOut = this._zoomedOut;
                 },
 
@@ -881,16 +894,22 @@
                                 processPinchGesture(this._lastPinchDirection === PinchDirection.zoomedOut);
                             }
                         }
-
-                        // When two or more pointers are down, we want to hide all of their move events from the underlying view.
-                        ev.stopImmediatePropagation();
                     } else if (this._pointerCount > 2) {
                         // When more than two pointers are down, we're not going to interpret that as a pinch, so we reset the distance we'd recorded when it was
                         // just two pointers down.
                         this._resetPinchDistanceRecords();
-                        ev.stopImmediatePropagation();
                     }
 
+                    if (this._pointerCount >= 2) {
+                        // When two or more pointers are down, we want to hide all of their move events from the underlying view. 
+                        // If the pointer we're looking at needs to have a touch cancel event fired for it, we'll fake that now.
+                        if (pointerRecord.fireCancelOnPinch) {
+                            this._fakeCancelOnPointer(ev, pointerRecord);
+                            pointerRecord.fireCancelOnPinch = false;
+                        }
+                        ev.stopImmediatePropagation();
+                        ev.preventDefault();
+                    }
                     // If the pointerCount isn't 2, we're no longer making a pinch. This generally happens if you try pinching, find you can't zoom in the pinched direction,
                     // then release one finger. When that happens we need to animate back to normal state.
                     if (this._pointerCount !== 2 && this._isBouncingIn) {
@@ -903,19 +922,21 @@
                         return;
                     }
 
-                    this._completePointerUp(ev);
+                    this._completePointerUp(ev, false);
                 },
 
                 _onPointerUp: function (ev) {
                     this._releasePointerCapture(ev);
-                    this._completePointerUp(ev);
+                    this._completePointerUp(ev, true);
                     this._completeZoomingIfTimeout();
                 },
 
                 _onPointerCancel: function (ev) {
-                    this._releasePointerCapture(ev);
-                    this._completePointerUp(ev);
-                    this._completeZoomingIfTimeout();
+                    if (!ev._fakedBySemanticZoom) {
+                        this._releasePointerCapture(ev);
+                        this._completePointerUp(ev, false);
+                        this._completeZoomingIfTimeout();
+                    }
                 },
 
                 _onGotPointerCapture: function (ev) {
@@ -937,7 +958,7 @@
                         WinJS.Promise.timeout(eventTimeoutDelay).then(function () {
                             if (pointerRecord.dirty) {
                                 // If the timeout completed and the record is still dirty, we can discard it
-                                that._completePointerUp(ev);
+                                that._completePointerUp(ev, false);
                             }
                         });
                     }
@@ -1215,7 +1236,7 @@
                     }
                 },
 
-                _completePointerUp: function (ev) {
+                _completePointerUp: function (ev, stopPropagation) {
                     if (this._disposed) {
                         return;
                     }
@@ -1228,6 +1249,10 @@
                             this._playBounce(false);
                         }
 
+                        if (stopPropagation && this._pinchedDirection !== PinchDirection.none) {
+                            ev.stopImmediatePropagation();
+                            ev.cancelBubble = true;
+                        }
 
                         if (this._pointerCount === 0) {
                             // if we are not zooming and if there's any single pending pinch gesture detected that's not being triggered (fast pinch), process them now
@@ -1382,7 +1407,7 @@
                     try {
                         // Release the pointer capture since they are going away, to allow in air touch pointers 
                         // to be reused for multiple interactions
-                        this._hiddenElement.releasePointerCapture(id);
+                        WinJS.Utilities._releasePointerCapture(this._hiddenElement, id);
                     } catch (e) {
                         // This can throw if the pointer was not already captured
                     }

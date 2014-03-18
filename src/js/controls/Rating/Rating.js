@@ -47,9 +47,9 @@
                 CHANGE = "change",
                 PREVIEW_CHANGE = "previewchange",
                 MOUSE_LBUTTON = 0, // Event attribute to indicate a mouse left click 
-                PT_TOUCH = MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch", // Pointer type to indicate a touch event
-                PT_PEN = MSPointerEvent.MSPOINTER_TYPE_PEN || "pen", // Pointer type to indicate a pen event
-                PT_MOUSE = MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse"; // Pointer type to indicate a mouse event
+                PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch", // Pointer type to indicate a touch event
+                PT_PEN = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_PEN || "pen", // Pointer type to indicate a pen event
+                PT_MOUSE = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse"; // Pointer type to indicate a mouse event
 
             var hiddenAverageRatingCss = "padding-left: 0px; padding-right: 0px; border-left: 0px; border-right: 0px; -ms-flex: none; display: none";
 
@@ -513,7 +513,7 @@
 
                     var i;
                     for (i = 0; i < eventsRegisteredInLowerCase.length; ++i) {
-                        this._element.addEventListener(eventsRegisteredInLowerCase[i].lowerCaseName, eventsRegisteredInLowerCase[i].handler, false);
+                        WinJS.Utilities._addEventListener(this._element, eventsRegisteredInLowerCase[i].lowerCaseName, eventsRegisteredInLowerCase[i].handler, false);
                     }
                     for (i = 0; i < events.length; ++i) {
                         this._element.addEventListener(events[i].name, events[i].handler, false);
@@ -617,7 +617,7 @@
                         this._pointerDownFocus = true;
                         if (!this._disabled) {
                             // Only capture the event when active to support block panning
-                            this._element.setPointerCapture(eventObject.pointerId);
+                            WinJS.Utilities._setPointerCapture(this._element, eventObject.pointerId);
                             this._captured = true;
 
                             if (eventObject.pointerType === PT_TOUCH) {
@@ -684,6 +684,7 @@
 
                     this._tentativeRating = newTentativeRating;
                     this._showTentativeRating(firePreviewChange, tooltipType);
+                    eventObject.preventDefault();
                 },
 
                 _onPointerMove: function (eventObject) {
@@ -704,7 +705,7 @@
 
                 _onPointerUp: function (eventObject) {
                     if (this._captured) {
-                        this._element.releasePointerCapture(eventObject.pointerId);
+                        WinJS.Utilities._releasePointerCapture(this._element, eventObject.pointerId);
                         this._captured = false;
                         this._onUserRatingChanged();
                     }

@@ -1671,7 +1671,7 @@
                         modeHandler("MSManipulationStateChanged", true, true)
                     ];
                     events.forEach(function (eventHandler) {
-                        that._viewport.addEventListener(eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                        WinJS.Utilities._addEventListener(that._viewport, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
 
                     // Focus and Blur events need to be handled during the capturing phase, they do not bubble.

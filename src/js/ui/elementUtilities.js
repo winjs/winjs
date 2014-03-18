@@ -43,10 +43,144 @@
         return WinJS.Utilities.convertToPixels(element, window.getComputedStyle(element, null)[property]);
     }
 
+    var _MSPointerEvent = global.MSPointerEvent || {
+        MSPOINTER_TYPE_TOUCH: "touch",
+        MSPOINTER_TYPE_PEN: "pen",
+        MSPOINTER_TYPE_MOUSE: "mouse",
+    };
+
+    function addPointerHandlers(element, eventNameLowercase, callback, capture) {
+        if (!element._pointerEventsMap) {
+            element._pointerEventsMap = {};
+        }
+        if (!element._pointerEventsMap[eventNameLowercase]) {
+            element._pointerEventsMap[eventNameLowercase] = [];
+        }
+
+        var mouseWrapper,
+            touchWrapper;
+        var translations = eventTranslations[eventNameLowercase];
+
+        // Browsers fire a touch event and then a mouse event when the input is touch. touchHandled is used to prevent invoking the pointer callback twice.
+        var touchHandled;
+
+        if (translations.mouse) {
+            mouseWrapper = function (eventObject) {
+                eventObject._normalizedType = eventNameLowercase;
+                if (!touchHandled) {
+                    return mouseEventTranslator(callback, eventObject);
+                }
+                touchHandled = false;
+            }
+            element.addEventListener(translations.mouse, mouseWrapper, capture);
+        }
+
+        if (translations.touch) {
+            touchWrapper = function (eventObject) {
+                eventObject._normalizedType = eventNameLowercase;
+                touchHandled = true;
+                return touchEventTranslator(callback, eventObject);
+            }
+            element.addEventListener(translations.touch, touchWrapper, capture);
+        }
+
+        element._pointerEventsMap[eventNameLowercase].push({
+            originalCallback: callback,
+            mouseWrapper: mouseWrapper,
+            touchWrapper: touchWrapper,
+            capture: capture
+        });
+    }
+
+    function removePointerHandlers(element, eventNameLowercase, callback, capture) {
+        if (!element._pointerEventsMap || !element._pointerEventsMap[eventNameLowercase]) {
+            return;
+        }
+
+        var mappedEvents = element._pointerEventsMap[eventNameLowercase];
+
+        for (var i = mappedEvents.length - 1; i >= 0; i--) {
+            var mapping = mappedEvents[i];
+            if (mapping.originalCallback === callback && (!!capture === !!mapping.capture)) {
+                var translations = eventTranslations[eventNameLowercase];
+                if (mapping.mouseWrapper) {
+                    element.removeEventListener(translations.mouse, mapping.mouseWrapper, capture);
+                }
+                if (mapping.touchWrapper) {
+                    element.removeEventListener(translations.touch, mapping.touchWrapper, capture);
+                }
+                mappedEvents.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    function touchEventTranslator(callback, eventObject) {
+        eventObject._handledTouch = true;
+        var changedTouches = eventObject.changedTouches,
+            retVal = null;
+
+        for (var i = 0, len = changedTouches.length; i < len; i++) {
+            var touchObject = changedTouches[i];
+            eventObject.pointerType = _MSPointerEvent.MSPOINTER_TYPE_TOUCH;
+            eventObject.pointerId = touchObject.identifier;
+            eventObject.screenX = touchObject.screenX;
+            eventObject.screenY = touchObject.screenY;
+            eventObject.clientX = touchObject.clientX;
+            eventObject.clientY = touchObject.clientY;
+            eventObject.pageX = touchObject.pageX;
+            eventObject.pageY = touchObject.pageY;
+            eventObject.radiusX = touchObject.radiusX;
+            eventObject.radiusY = touchObject.radiusY;
+            eventObject.rotationAngle = touchObject.rotationAngle;
+            eventObject.force = touchObject.force;
+            eventObject._currentTouch = touchObject;
+            retVal = retVal || callback(eventObject);
+        }
+        return retVal;
+    }
+
+    function mouseEventTranslator(callback, eventObject) {
+        eventObject.pointerType = _MSPointerEvent.MSPOINTER_TYPE_MOUSE;
+        eventObject.pointerId = -1;
+        return callback(eventObject);
+    }
+
+    var eventTranslations = {
+        pointerdown: {
+            touch: "touchstart",
+            mouse: "mousedown"
+        },
+        pointerup: {
+            touch: "touchend",
+            mouse: "mouseup"
+        },
+        pointermove: {
+            touch: "touchmove",
+            mouse: "mousemove"
+        },
+        pointerenter: {
+            touch: null,
+            mouse: "mouseenter"
+        },
+        pointerover: {
+            touch: null,
+            mouse: "mouseover"
+        },
+        pointerout: {
+            touch: "touchleave",
+            mouse: "mouseout"
+        },
+        pointercancel: {
+            touch: "touchcancel",
+            mouse: null
+        }
+    };
+
     var uniqueElementIDCounter = 0;
     WinJS.Namespace.define("WinJS.Utilities", {
         _dataKey: "_msDataKey",
-        _pixelsRE: /^-?\d+(px)?$/i,
+        _pixelsRE: /^-?\d+\.?\d*(px)?$/i,
         _numberRE: /^-?\d+/i,
 
         _uniqueID: function (e) {
@@ -72,6 +206,36 @@
                     || element.webkitMatchesSelector;
             return matchesSelector.call(element, selectorString);
         },
+
+        _addEventListener: function (element, type, listener, useCapture) {
+            var eventNameLower = type && type.toLowerCase();
+            if (!global.PointerEvent && eventTranslations[eventNameLower]) {
+                addPointerHandlers(element, eventNameLower, listener, useCapture);
+            }
+            element.addEventListener(type, listener, useCapture);
+        },
+
+        _removeEventListener: function (element, type, listener, useCapture) {
+            var eventNameLower = type && type.toLowerCase();
+            if (!global.PointerEvent && eventTranslations[eventNameLower]) {
+                removePointerHandlers(element, eventNameLower, listener, useCapture);
+            }
+            element.removeEventListener(type, listener, useCapture);
+        },
+
+        _setPointerCapture: function (element, pointerId) {
+            if (element.setPointerCapture) {
+                element.setPointerCapture(pointerId);
+            }
+        },
+
+        _releasePointerCapture: function (element, pointerId) {
+            if (element.releasePointerCapture) {
+                element.releasePointerCapture(pointerId);
+            }
+        },
+
+        _MSPointerEvent: _MSPointerEvent,
 
         _zoomTo: function _zoomTo(element, args) {
             if (element.msZoomTo) {
@@ -1056,7 +1220,7 @@
 
                 return value;
             } else {
-                return parseInt(value, 10) || 0;
+                return Math.round(parseFloat(value, 10)) || 0;
             }
         },
 
