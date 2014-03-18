@@ -6,15 +6,19 @@ module.exports = function(grunt) {
     var localeFolder = "en-US";
     var outputFolder = "bin/";
 
+    var testsOutput = "";
+    
     if (process.env._NTTREE) {
         outputFolder = process.env._NTTREE + "/Corsica/";
+        testsOutput = outputFolder + "other." + version + ".debug/tests/unittests/";
+    } else {
+        testsOutput = outputFolder + "tests/";
     }
 
     var targetName = "WinJS." + version;
     var targetFramework = "Microsoft.WinJS.2.1";
     var desktopOutput = outputFolder + "Microsoft." + targetName + "/";
     var phoneOutput = outputFolder + "Microsoft.Phone." + targetName + "/";
-    var testsOutput = outputFolder + "other." + version + ".debug/tests/unittests/";
 
     var baseJSFiles = [
         "src/js/build/Copyright.js",

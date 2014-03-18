@@ -33,7 +33,7 @@
 
         } catch (e) {
             // when targetting winjs loose files
-            importScripts("source/base.js");
+            importScripts("../../bin/Microsoft.WinJS.2.1/js/base.js");
         }
         var Point = WinJS.Class.define(function () { }, { x: 0, y: 5 });
         var pt = new Point();

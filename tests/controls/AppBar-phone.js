@@ -311,7 +311,7 @@ if (WinJS.Utilities.isPhone) {
                     "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", icon:\"scan\", section:\"selection\"}'></button>" +
                 "</div>";
 
-            that._element.innerHTML = toStaticHTML(htmlString);
+            that._element.innerHTML = htmlString;
             WinJS.UI.processAll().then(function () {
                 return WinJS.Promise.timeout(500); // Bug # 222085
             }).then(function () {
@@ -351,7 +351,7 @@ if (WinJS.Utilities.isPhone) {
                     "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", icon:\"scan\", section:\"selection\"}'></button>" +
                 "</div>";
 
-            that._element.innerHTML = toStaticHTML(htmlString);
+            that._element.innerHTML = htmlString;
             WinJS.UI.processAll().then(function () {
                 return WinJS.Promise.timeout(500); // Bug # 222085
             }).then(function () {

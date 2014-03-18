@@ -10,10 +10,6 @@
     var isSafari = navigator.userAgent.toLowerCase().indexOf("safari") > -1;
     window.__winjs_not_ie = isMozilla || isSafari || window.chrome;
 
-    window.toStaticHTML = window.toStaticHTML || function (text) {
-        return text;
-    };   
-
     window.setImmediate = window.setImmediate
         || window.blinkSetImmediate
         || window.webkitSetImmediate

@@ -55,12 +55,12 @@ WinJSTests.RepeaterIntegrationTests = function () {
                         "</thead>" +
                         "<tbody data-win-control='WinJS.UI.Repeater' data-win-options='{ data: window.data }'>" +
                             "<tr>" +
-                                "<td class='row' style='backgroundColor:green;' data-win-bind='textContent: title'></td>" +
+                                "<td class='row' data-win-bind='textContent: title'></td>" +
                             "</tr>" +
                         "</tbody>" +
                     "</table>";
 
-        root.innerHTML = toStaticHTML(html);
+        root.innerHTML = html;
 
         WinJS.UI.processAll().
             then(function () {

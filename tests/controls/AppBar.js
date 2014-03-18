@@ -263,7 +263,7 @@ CorsicaTests.AppBarTests = function () {
                 "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
             "</div>";
 
-        that._element.innerHTML = toStaticHTML(htmlString);
+        that._element.innerHTML = htmlString;
         WinJS.UI.processAll().
         then(function () {
             var appbar = document.querySelector(".win-appbar").winControl;
@@ -281,12 +281,12 @@ CorsicaTests.AppBarTests = function () {
             "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
             "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\", section:\"selection\"}'></button>" +
             "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\", section:\"global\"}'></button>" +
-            "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", section:\"global\"}'></hr>" +
+            "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", section:\"global\"}' />" +
             "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", section:\"selection\"}' />" +
             "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"button\", section:\"selection\"}'></button>" +
             "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button5\", label:\"Button 5\", type:\"button\", section:\"global\", hidden: true}'></button>" +
             "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", hidden: true, section:\"global\"}' />";
-        that._element.innerHTML = toStaticHTML(htmlString);
+        that._element.innerHTML = htmlString;
         /* Tabstops in visual order (separators and hidden buttons are not tabstops)
             Selection:
                 0) Button 2
@@ -356,7 +356,7 @@ CorsicaTests.AppBarTests = function () {
         var htmlString = "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"global\"}'></button>" +
             "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>";
             
-        that._element.innerHTML = toStaticHTML(htmlString);
+        that._element.innerHTML = htmlString;
         var AppBar = new WinJS.UI.AppBar(that._element);
         LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
         LiveUnit.Assert.isNotNull(AppBar, "AppBar element should not be null when instantiated.");
@@ -437,7 +437,7 @@ CorsicaTests.AppBarTests = function () {
         "<div data-win-control='WinJS.UI.AppBarCommand' data-win-options=\"{id:'x8', section:'global',type:'content', lastElementFocus:select('#adele')}\"><img id='adele' tabindex='0' src='images/adele.png' />" +
         "<div> <span id=\"nowplaying\">Now Playing</span><span id=\"songtitle\">Rumour Has It</span><span id=\"albumtitle\">21 (Deluxe Edition) By Adele</span></div></div>";
 
-        that._element.innerHTML = toStaticHTML(htmlString);
+        that._element.innerHTML = htmlString;
         /* Left Right Home End key focusable commands in visual order
             Selection:
                 0) "buttons" Content Command: "orange"<->"yellow" (firstElementFocus is set to #orange and lastElementFocus is set to #yellow)
@@ -530,7 +530,7 @@ CorsicaTests.AppBarTests = function () {
         "<div data-win-control='WinJS.UI.AppBarCommand' data-win-options=\"{id:'x8', section:'global',type:'content', lastElementFocus:select('#adele')}\"><img id='adele' tabindex='0' src='images/adele.png' />" +
         "<div> <span id=\"nowplaying\">Now Playing</span><span id=\"songtitle\">Rumour Has It</span><span id=\"albumtitle\">21 (Deluxe Edition) By Adele</span></div></div>";
 
-        that._element.innerHTML = toStaticHTML(htmlString);
+        that._element.innerHTML = htmlString;
         /* Left Right Home End key focusable commands in visual order
             Selection:
                 N/A

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>base</title>
+    <!-- WinJS references -->
+    <link type="text/css" rel="stylesheet" href="../../../bin/Microsoft.WinJS.2.1/css/ui-dark.css" />
+    <script src="../../../bin/Microsoft.WinJS.2.1/js/base.js"></script>
+    <script src="../../../bin/Microsoft.WinJS.2.1/js/ui.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../bin/Microsoft.WinJS.2.1/css/ui-dark.css" />
+    <script src="../../bin/Microsoft.WinJS.2.1/js/base.js"></script>
+    <script src="../../bin/Microsoft.WinJS.2.1/js/ui.js"></script>
+    <script src="../../bin/Microsoft.WinJS.2.1/js/en-US/base.strings.js"></script>
+    <script src="../../bin/Microsoft.WinJS.2.1/js/en-US/ui.strings.js"></script>
+
+    <!-- Test framework references -->
+    <script src="../TestLib/qunit-1.14.0.js"></script>
+    <script src="../TestLib/liveToQ.js"></script>
+    <script src="../TestLib/util.js"></script>
+
+    <!-- Test references -->
+    <script src="asyncCausalityChain.js"></script>
+    <script src="base.js"></script>
+    <script src="dispose.js"></script>
+    <script src="events.js"></script>
+    <script src="log.js"></script>
+    <script src="promise.js"></script>
+    <script src="queue.js"></script>
+    <script src="resources.js"></script>
+    <script src="safehtml.js"></script>
+    <script src="scheduler.js"></script>
+    <script src="utilities.js"></script>
+    <script src="webworkervalidation.js"></script>
+    <script src="xhr.js"></script>
+</head>
+<body>
+    <div id="toolsDiv" style="height: 100%">
+        <div id="buttons" style="height: 40px">
+            <button onclick="runAllTests()">Run All</button>
+            <button onclick="resetTests()">Reset</button>
+        </div>
+        <div id="loadedTests" style="height: calc(100% - 40px); overflow-y: scroll">
+        </div>
+    </div>
+</body>
+</html>
