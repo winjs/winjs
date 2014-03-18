@@ -19,7 +19,7 @@
 
     <!-- Test references -->
     <script src="asyncCausalityChain.js"></script>
-    <!--<script src="base.js"></script>-->
+    <script src="base.js"></script>
     <script src="dispose.js"></script>
     <script src="events.js"></script>
     <script src="log.js"></script>
@@ -34,11 +34,11 @@
 </head>
 <body>
     <div id="toolsDiv" style="height: 100%">
-        <div id="buttons">
+        <div id="buttons" style="height: 40px">
             <button onclick="runAllTests()">Run All</button>
             <button onclick="resetTests()">Reset</button>
         </div>
-        <div id="loadedTests" style="height: 90%; overflow-y: scroll">
+        <div id="loadedTests" style="height: calc(100% - 40px); overflow-y: scroll">
         </div>
     </div>
 </body>

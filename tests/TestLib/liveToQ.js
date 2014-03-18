@@ -127,6 +127,10 @@
             }
         },
 
+        GetWrappedCallback: function (func) {
+            return func;
+        },
+
         LoggingCore: {
             logComment: function (message) {
                 //console.log("  LoggingCore: " + message);

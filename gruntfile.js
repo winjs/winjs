@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 
     var testsOutput = "";
     
-    if (false && process.env._NTTREE) {
+    if (process.env._NTTREE) {
         outputFolder = process.env._NTTREE + "/Corsica/";
         testsOutput = outputFolder + "other." + version + ".debug/tests/unittests/";
     } else {
