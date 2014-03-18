@@ -112,7 +112,7 @@ module.exports = function (grunt) {
 
         "src/js/res/res.js",
 
-        "src/js/endBase.js"
+        "src/js/build/endbase.js"
     ];
 
     var baseStringsFiles = [
