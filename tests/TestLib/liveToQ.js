@@ -5,9 +5,10 @@
     function _() {
     }
 
+    var globalErrorHandler = null;
+
     var tests = [];
     var testMap = {};
-
     var testQueue = [];
 
     window.onload = function () {
@@ -26,6 +27,33 @@
         }
     };
 
+    function hookupGlobalErrorHandlers(testFunc) {
+        window.removeEventListener("error", globalErrorHandler);
+
+        var expectedException = testFunc["LiveUnit.ExpectedException"];
+        if (expectedException && expectedException.length) {
+            QUnit.config.current.ignoreGlobalErrors = true;
+            globalErrorHandler = function (e) {
+                var handled = false;
+                for (var i = 0; i < expectedException.length; i++) {
+                    if (expectedException[i].message === e.message) {
+                        handled = true;
+                        break;
+                    }
+                }
+                if (handled) {
+                    QUnit.assert.ok(true, "Caught expected exception: " + e.message);
+                    e.preventDefault();
+                    e.stopPropagation();
+                } else {
+                    QUnit.assert.ok(false, "Unexpected exception: " + e.message);
+                }
+            };
+            window.addEventListener("error", globalErrorHandler);
+        } else {
+        }
+    }
+
     function runTests(tests) {
         tests.forEach(function (test) {
             testQueue.push(function () {
@@ -39,7 +67,7 @@
                 if (testFunc.length) {
                     // Async WebUnit tests take a 'complete' parameter
                     QUnit.asyncTest(test.testName, function () {
-                        QUnit.config.current.ignoreGlobalErrors = true;
+                        hookupGlobalErrorHandlers(testFunc);
                         QUnit.assert.ok(true, "Test Started");
                         testFunc.call(module, function () {
                             QUnit.start();
@@ -47,7 +75,7 @@
                     });
                 } else {
                     QUnit.test(test.testName, function () {
-                        QUnit.config.current.ignoreGlobalErrors = true;
+                        hookupGlobalErrorHandlers(testFunc);
                         QUnit.assert.ok(true, "Test Started");
                         testFunc.call(module);
                     });
