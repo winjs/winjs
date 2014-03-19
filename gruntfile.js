@@ -350,7 +350,9 @@ module.exports = function (grunt) {
               { expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/" },
               { expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/" },
               { expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/" },
-              { expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/" }
+              { expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/" },
+              { expand: true, flatten: true, src: [desktopOutput + "css/*.css"], dest: desktopOutput + "css/" },
+              { expand: true, flatten: true, src: [phoneOutput + "css/*.css"], dest: phoneOutput + "css/" },
             ]
         }
     };
