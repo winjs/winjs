@@ -181,7 +181,8 @@ module.exports = function (grunt) {
     ];
 
     var uiJSFilesPhone = [
-        "src/js/startUI.js",
+        "src/js/build/Copyright.js",
+        "src/js/build/startUI.js",
         "src/js/uicollections/references.js",
         "src/js/animations/animations.js",
         "src/js/uicollections/Assert.js",
@@ -216,7 +217,7 @@ module.exports = function (grunt) {
         "src/js/controls/ItemContainer/itemContainer.js",
         "src/js/controls/SemanticZoom/SemanticZoom.js",
         "src/js/controls/ViewBox/ViewBox.js",
-        "src/js/endUI.js",
+        "src/js/build/endUI.js"
     ];
 
     var uiStringsFiles = [
