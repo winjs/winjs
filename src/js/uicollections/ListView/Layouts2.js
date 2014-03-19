@@ -222,7 +222,7 @@
                     this._resetAnimationCaches(true);
                 },
 
-                /// <field type="String" oamOptionsDatatype="WinJS.UI.Orientation" helpKeyword="WinJS.UI._LayoutCommon.orientation">
+                /// <field type="String" oamOptionsDatatype="WinJS.UI.Orientation" locid="WinJS.UI._LayoutCommon.orientation" helpKeyword="WinJS.UI._LayoutCommon.orientation">
                 /// Gets or sets the orientation for the layout.
                 /// The default value is "horizontal".
                 /// </field>
@@ -4189,7 +4189,7 @@
                     }
                 },
 
-                /// <field type="String" oamOptionsDatatype="WinJS.UI.Orientation" helpKeyword="WinJS.UI.CellSpanningLayout.orientation">
+                /// <field type="String" oamOptionsDatatype="WinJS.UI.Orientation" locid="WinJS.UI.CellSpanningLayout.orientation" helpKeyword="WinJS.UI.CellSpanningLayout.orientation">
                 /// Gets the orientation of the layout. CellSpanning layout only supports horizontal orientation.
                 /// </field>
                 orientation: {
