@@ -20,6 +20,10 @@ module.exports = function (grunt) {
     var desktopOutput = outputFolder + "Microsoft." + targetName + "/";
     var phoneOutput = outputFolder + "Microsoft.Phone." + targetName + "/";
 
+    // Make sure that Grunt doesn't remove BOM from our utf8 files
+    // on read
+    grunt.file.preserveBOM = true;
+
     var baseJSFiles = [
         "src/js/build/Copyright.js",
         "src/js/build/writeProfilerMark.js",
@@ -363,8 +367,30 @@ module.exports = function (grunt) {
 
         gruntConfig.shell = {
             runTests: {
-                command: function (test, host) {
-                    return "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe /s:%_NTTREE%/Corsica/other." + version + ".debug/Tests/UnitTests/" + test + (host ? " /host:" + host : "") + " @res.txt"
+                command: function () {
+                    var args = [];
+                    for (var i = 0; i < arguments.length; ++i)
+                        args.push(arguments[i]);
+
+                    var testArgs = "*.js";
+                    var host = "wwa";
+                    if (args.length > 1) {
+                        var last = args[args.length - 1].toLowerCase();
+                        if (last.indexOf("*") < 0 && last.indexOf(".") < 0) {
+                            host = last;
+                            args.pop();
+                        }
+                    }
+
+                    var command = "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe";
+                    for (var i = 0; i < args.length; ++i)
+                        command +=  " /s:%_NTTREE%/Corsica/other." + version + ".debug/Tests/UnitTests/" + args[i];
+                    if (host === "vs")
+                        command += " /vs";
+                    else
+                        command += " /host:" + host;
+                    command += " @res.txt";
+                    return command;
                 },
                 options: {
                     stdout: true,
@@ -376,7 +402,6 @@ module.exports = function (grunt) {
         // Also add tests to the replace task
         var testReplace = { expand: true, cwd: testsOutput, src: ["**/*.js"], dest: testsOutput };
         gruntConfig.replace.base.files.push(testReplace);
-        grunt.log.write("replace has " + gruntConfig.replace.base.files.length + " items");
     }
 
     // Project config
@@ -391,20 +416,12 @@ module.exports = function (grunt) {
 
     var defaultTask = ["clean", "less", "concat", "copy", "replace"];
     if (process.env._NTTREE) {
-        grunt.registerTask("test", function (test, host) {
-            var testArgs = test || "*.js";
+        grunt.registerTask("test", function () {
+            var args = [];
+            for (var i = 0; i < arguments.length; ++i)
+                args.push(arguments[i]);
 
-            if (host) {
-                host = host.toLowerCase();
-                if (host === "vs") {
-                    testArgs += " /vs";
-                    host = "";
-                }
-            } else {
-                host = "wwa";
-            }
-
-            grunt.task.run(["default", "shell:runTests:" + testArgs + ":" + host]);
+            grunt.task.run(["default", "shell:runTests:" + args.join(":")]);
         });
     }
 
