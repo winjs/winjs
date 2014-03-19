@@ -46,16 +46,16 @@
     var inPageIndexSelector = "#pageIndex";
 
     WinJS.Namespace.define("WinJSTests", {
-        BackButtonTests: WinJS.Class.define(function () { }, {
-            setUp: function BackButtonTests_setUp() {
+        BackButtonTests: WinJS.Class.define(function () {
+            this.setUp = function BackButtonTests_setUp() {
                 LiveUnit.LoggingCore.logComment("In setup");
                 var newNode = document.createElement("div");
                 newNode.id = "BackButtonTests";
                 document.body.appendChild(newNode);
                 this._element = newNode;
-            },
+            };
 
-            tearDown: function BackButtonTests_tearDown() {
+            this.tearDown = function BackButtonTests_tearDown() {
                 LiveUnit.LoggingCore.logComment("In tearDown");
                 if (this._element) {
                     WinJS.Utilities.disposeSubTree(this._element);
@@ -73,25 +73,25 @@
                 this._backButtonContainer = null;
                 this._nextPageButton = null;
                 this._randomPageButton = null;
-            },
+            };
 
-            _initialize: function BackButtonTests__initialize() {
+            this._initialize = function BackButtonTests__initialize() {
                 var that = this;
                 return util.createPageControl(this._element).then(function (pageControl) {
                     that._pageControl = pageControl;
                     that._loadPageControlContent();
                 });
-            },
+            };
 
-            _loadPageControlContent: function BackButtonTests__loadPageControlContent() {
+            this._loadPageControlContent = function BackButtonTests__loadPageControlContent() {
                 var pageControl = this._pageControl;
                 this._backButtonContainer = pageControl._element.querySelector(inPageBackButtonContainerSelector);
                 this._nextPageButton = pageControl._element.querySelector(inPageNextPageButtonSelector);
                 this._randomPageButton = pageControl._element.querySelector(inPageRandomPageButtonSelector);
                 this._pageIndex = parseInt(pageControl._element.querySelector(inPageIndexSelector).textContent);
-            },
+            };
 
-            test_existence_createInPageControlHTML: function BackButtonTests_test_existence_createInPageControlHTML(complete) {
+            this.test_existence_createInPageControlHTML = function BackButtonTests_test_existence_createInPageControlHTML(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     util.createBackButtonWithHTML(that._backButtonContainer).then(function (backButton) {
@@ -99,9 +99,9 @@
                         complete();
                     });
                 });
-            },
+            };
 
-            test_existence_createInPageControlJS: function BackButtonTests_test_existence_createInPageControlJS(complete) {
+            this.test_existence_createInPageControlJS = function BackButtonTests_test_existence_createInPageControlJS(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     util.createBackButtonWithJS(that._backButtonContainer).then(function (backButton) {
@@ -109,9 +109,9 @@
                         complete();
                     });
                 });
-            },
+            };
 
-            test_existence_createOutOfPageControlHTML: function BackButtonTests_test_existence_createOutOfPageControlHTML(complete) {
+            this.test_existence_createOutOfPageControlHTML = function BackButtonTests_test_existence_createOutOfPageControlHTML(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     util.createBackButtonWithHTML(that._element).then(function (backButton) {
@@ -119,9 +119,9 @@
                         complete();
                     });
                 });
-            },
+            };
 
-            test_existence_createOutOfPageControlJS: function BackButtonTests_test_existence_createOutOfPageControlJS(complete) {
+            this.test_existence_createOutOfPageControlJS = function BackButtonTests_test_existence_createOutOfPageControlJS(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     util.createBackButtonWithJS(that._element).then(function (backButton) {
@@ -129,9 +129,9 @@
                         complete();
                     });
                 });
-            },
+            };
 
-            test_styling_className: function BackButtonTests_test_styling_className(complete) {
+            this.test_styling_className = function BackButtonTests_test_styling_className(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     util.createBackButtonWithJS(that._backButtonContainer).then(function (backButton) {
@@ -140,9 +140,9 @@
                         complete();
                     });
                 });
-            },
+            };
 
-            test_interaction_click: function BackButtonTests_test_interaction_click(complete) {
+            this.test_interaction_click = function BackButtonTests_test_interaction_click(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     return that.helper_NavigateToPage(1);
@@ -153,18 +153,18 @@
                 }).then(function (backButton) {
                     return that.helper_VerifyNavigatedToPage(function () { backButton._element.click(); }, 0);
                 }).then(complete, unHandledError);
-            },
+            };
 
-            test_interaction_click_nothingInHistory: function BackButtonTests_test_interaction_click_nothingInHistory(complete) {
+            this.test_interaction_click_nothingInHistory = function BackButtonTests_test_interaction_click_nothingInHistory(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     return that.helper_createBackButton();
                 }).then(function (backButton) {
                     return that.helper_VerifyNoNavigationHappened(function () { backButton._element.click(); });
                 }).then(complete, unHandledError);
-            },
+            };
 
-            test_interaction_click_3times: function BackButtonTests_test_interaction_click_3times(complete) {
+            this.test_interaction_click_3times = function BackButtonTests_test_interaction_click_3times(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     return that.helper_NavigateToPage(1);
@@ -191,9 +191,9 @@
                 }).then(function (backButton) {
                     return that.helper_VerifyNavigatedToPage(function () { backButton._element.click(); }, 0);
                 }).then(complete, unHandledError);
-            },
+            };
 
-            test_interaction_click_3times_but2available: function BackButtonTests_test_interaction_click_3times_but2available(complete) {
+            this.test_interaction_click_3times_but2available = function BackButtonTests_test_interaction_click_3times_but2available(complete) {
                 var that = this;
                 this._initialize().then(function () {
                     return that.helper_NavigateToPage(1);
@@ -216,9 +216,9 @@
                 }).then(function (backButton) {
                     return that.helper_VerifyNoNavigationHappened(function () { backButton._element.click(); });
                 }).then(complete, unHandledError);
-            },
+            };
 
-            test_userWorkflow: function BackButtonTests_test_userWorkflow(complete){
+            this.test_userWorkflow = function BackButtonTests_test_userWorkflow(complete){
                 var that = this;
                 this._initialize().then(function () {
                     return that.helper_NavigateToPage(1);
@@ -261,28 +261,28 @@
                 }).then(function (backButton) {
                     return that.helper_VerifyNavigatedToPage(function () { backButton._element.click(); }, 0);
                 }).then(complete, unHandledError);
-            },
+            };
 
-            helper_createBackButton: function (type) {
+            this.helper_createBackButton = function (type) {
                 this._loadPageControlContent();
                 if (type == "HTML") {
                     return util.createBackButtonWithHTML(this._backButtonContainer);
                 } else {
                     return util.createBackButtonWithJS(this._backButtonContainer);
                 }
-            },
+            };
 
-            helper_NavigateToPage: function (index) {
+            this.helper_NavigateToPage = function (index) {
                 return nav.navigate(this._pageControl.home, { pageIndex: index });
-            },
+            };
 
-            helper_VerifyCurrentPageIndex: function (index) {
+            this.helper_VerifyCurrentPageIndex = function (index) {
                 this._loadPageControlContent();
                 LiveUnit.Assert.areEqual(index, this._pageIndex);
                 return WinJS.Promise.wrap();
-            },
+            };
 
-            helper_VerifyNavigatedToPage: function (action, index) {
+            this.helper_VerifyNavigatedToPage = function (action, index) {
                 var that = this;
                 return new WinJS.Promise(function (complete) {
                     var completed = false;
@@ -304,9 +304,9 @@
 
                     action();
                 });
-            },
+            };
 
-            helper_VerifyNoNavigationHappened: function (action) {
+            this.helper_VerifyNoNavigationHappened = function (action) {
                 var that = this;
                 return new WinJS.Promise(function (complete) {
                     var completed = false;
@@ -326,7 +326,7 @@
 
                     action();
                 });
-            },
+            };
         }),
     });
 

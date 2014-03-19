@@ -32,7 +32,7 @@ WinJSTests.GroupListEditorTest = function () {
         //WinBlue: 298587
         this._oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("../TestData/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -45,7 +45,7 @@ WinJSTests.GroupListEditorTest = function () {
             WinJS.Utilities.disposeSubTree(element);
             document.body.removeChild(element);
         }
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("../TestData/Listview.css");
     }
 
     function getDataObject(pattern, counter, title) {

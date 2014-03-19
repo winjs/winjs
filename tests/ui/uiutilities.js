@@ -548,7 +548,7 @@ CorsicaTests.Utilities = function () {
 
         var s = document.createElement("link");
         s.setAttribute("rel", "stylesheet");
-        s.setAttribute("href", "metrics.css");
+        s.setAttribute("href", "../TestData/metrics.css");
         document.head.appendChild(s);
 
         var newNode = document.createElement("div");

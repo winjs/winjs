@@ -5,35 +5,114 @@
     function _() {
     }
 
-    var globalErrorHandler = null;
+    var TestTimeoutDuration = 10000;
+
+    var qUnitGlobalErrorHandler = window.onerror;
+    var toolsDiv = null;
+    var loadedTests = null;
+    var inputFilter = null;
+    var testTimeoutHandle = 0;
+    var filterTimeoutHandle = 0;
 
     var tests = [];
     var testMap = {};
     var testQueue = [];
+    var verboseLog = "";
+    var loadedTestsScrollPosition = 0;
 
     window.onload = function () {
-        var container = document.querySelector("#loadedTests");
+        toolsDiv = document.querySelector("#toolsDiv");
+        loadedTests = document.querySelector("#loadedTests");
+        inputFilter = document.querySelector("#inputFilter");
         tests.forEach(function (test) {
-            container.appendChild(test.element);
+            loadedTests.appendChild(test.element);
         });
     };
     window.runAllTests = function () {
         runTests(tests);
     };
     window.resetTests = function () {
-        var container = document.querySelector("#loadedTests");
-        for (var i = 0, l = container.children.length; i < l; i++) {
-            container.children[i].style.backgroundColor = "";
-        }
+        window.location = window.location;
+    };
+    window.filterTests = function () {
+        clearTimeout(filterTimeoutHandle);
+        setTimeout(function () {
+            var filter = inputFilter.value;
+
+            for (var i = loadedTests.children.length - 1; i >= 0; i--) {
+                loadedTests.removeChild(loadedTests.children[i]);
+            }
+
+            for (var i = 0; i < tests.length; i++) {
+                var test = tests[i];
+                if (test.testName.toLowerCase().indexOf(filter) >= 0 || test.moduleName.toLowerCase().indexOf(filter) >= 0) {
+                    loadedTests.appendChild(test.element);
+                }
+            }
+        }, 500);
     };
 
-    function hookupGlobalErrorHandlers(testFunc) {
-        window.removeEventListener("error", globalErrorHandler);
+    function runTests(tests) {
+        tests.forEach(function (test) {
+            testQueue.push(function () {
+                test.isComplete = false;
+                verboseLog = "";
 
+                var module = test.module;
+                QUnit.module(test.moduleName, {
+                    setup: module.setUp ? module.setUp.bind(module) : _,
+                    teardown: module.tearDown ? module.tearDown.bind(module) : _
+                });
+
+                var testFunc = module["test" + test.testName];
+                if (testFunc.length) {
+                    // Async WebUnit tests take a 'complete' parameter
+                    QUnit.asyncTest(test.testName, function () {
+                        hookupGlobalErrorHandlers(testFunc);
+                        QUnit.assert.ok(true, "Test Started");
+                        try {
+                            testFunc.call(module, function () {
+                                QUnit.start();
+                            });
+                        } catch (e) {
+                            setTimeout(function () {
+                                setTimeout(function () {
+                                    QUnit.start();
+                                });
+                                throw e;
+                            });
+                        }
+                    });
+                } else {
+                    QUnit.asyncTest(test.testName, function () {
+                        hookupGlobalErrorHandlers(testFunc);
+                        QUnit.assert.ok(true, "Test Started");
+                        try {
+                            testFunc.call(module);
+                        }
+                        catch (e) {
+                            setTimeout(function () {
+                                setTimeout(function () {
+                                    QUnit.start();
+                                });
+                                throw e;
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        runNext();
+    }
+
+    function hookupGlobalErrorHandlers(testFunc) {
         var expectedException = testFunc["LiveUnit.ExpectedException"];
-        if (expectedException && expectedException.length) {
-            QUnit.config.current.ignoreGlobalErrors = true;
-            globalErrorHandler = function (e) {
+        if (expectedException) {
+            if (expectedException.message) {
+                expectedException = [expectedException];
+            }
+
+            window.onerror = function (e) {
                 var handled = false;
                 for (var i = 0; i < expectedException.length; i++) {
                     if (expectedException[i].message === e.message) {
@@ -49,75 +128,69 @@
                     QUnit.assert.ok(false, "Unexpected exception: " + e.message);
                 }
             };
-            window.addEventListener("error", globalErrorHandler);
         } else {
+            window.onerror = qUnitGlobalErrorHandler;
         }
     }
 
-    function runTests(tests) {
-        tests.forEach(function (test) {
-            testQueue.push(function () {
-                var module = test.module;
-                QUnit.module(test.moduleName, {
-                    setup: module.setUp || _,
-                    teardown: module.tearDown || _
-                });
+    function cleanUp() {
+        clearTimeout(testTimeoutHandle);
 
-                var testFunc = module["test" + test.testName];
-                if (testFunc.length) {
-                    // Async WebUnit tests take a 'complete' parameter
-                    QUnit.asyncTest(test.testName, function () {
-                        hookupGlobalErrorHandlers(testFunc);
-                        QUnit.assert.ok(true, "Test Started");
-                        testFunc.call(module, function () {
-                            QUnit.start();
-                        });
-                    });
-                } else {
-                    QUnit.test(test.testName, function () {
-                        hookupGlobalErrorHandlers(testFunc);
-                        QUnit.assert.ok(true, "Test Started");
-                        testFunc.call(module);
-                    });
-                }
-            });
-        });
-        runNext();
+        WinJS.Utilities.disposeSubTree(document.body);
+        document.body.innerHTML = "";
+
+        testTimeoutHandle = setTimeout(function () {
+            document.body.appendChild(toolsDiv);
+            loadedTests.scrollTop = loadedTestsScrollPosition;
+        }, 500);
     }
+
+    function testStart(args) {
+        clearTimeout(testTimeoutHandle);
+        testTimeoutHandle = setTimeout(function () {
+            testDone(args, true);
+        }, TestTimeoutDuration);
+    }
+    QUnit.testStart(testStart);
+
+    function testDone(args, timeout) {
+        var test = testMap[args.module + "." + args.name];
+        if (test.isComplete) {
+            return;
+        }
+        cleanUp();
+        test.element.style.backgroundColor = (args.failed || timeout) ? "red" : "green";
+        test.isComplete = true;
+
+        if (timeout) {
+            console.log(args.module + ": " + args.name + " TIMEOUT");
+        }
+        else if (args.failed) {
+            console.log(args.module + ": " + args.name + ", " + args.passed + "/" + args.total + ", " + args.runtime + "ms");
+            console.log(verboseLog);
+        } else {
+            console.log(args.module + ": " + args.name + ", PASSED in " + args.runtime + "ms");
+        }
+
+        setImmediate(runNext);
+    }
+    QUnit.testDone(testDone);
 
     function runNext() {
         if (!testQueue.length) {
             return;
         }
+
+        if (document.body.contains(toolsDiv)) {
+            loadedTestsScrollPosition = loadedTests.scrollTop;
+            document.body.removeChild(toolsDiv);
+        }
+
         var test = testQueue[0];
         testQueue.splice(0, 1);
 
         test();
     }
-
-    QUnit.testStart(function (args) {
-        //console.log("Test Started - " + args.module + ": " + args.name);
-    });
-
-    QUnit.testDone(function (args) {
-        setImmediate(runNext);
-
-        var test = testMap[args.module + "." + args.name];
-        test.element.style.backgroundColor = args.failed ? "red" : "green";
-
-        //console.log("Test Finished - " + args.module + ": " + args.name + ", " + args.passed + "/" + args.total + ", " + args.runtime + "ms");
-        if (args.failed) {
-            console.log(args.module + ": " + args.name + ", " + args.passed + "/" + args.total + ", " + args.runtime + "ms");
-        } else {
-            console.log(args.module + ": " + args.name + ", PASSED in " + args.runtime + "ms");
-        }
-    });
-
-    QUnit.moduleDone(function (args) {
-
-    });
-    QUnit.moduleStart(function (args) {
-    });
 
     window.LiveUnit = {
         Assert: {
@@ -152,7 +225,21 @@
                     debugger;
                 }
                 QUnit.assert.ok(truthy, message);
-            }
+            },
+
+            isNull: function (obj, message) {
+                if (obj) {
+                    debugger;
+                }
+                QUnit.assert.equal(obj, null, message);
+            },
+
+            isNotNull: function (obj, message) {
+                if (!obj) {
+                    debugger;
+                }
+                QUnit.assert.notEqual(obj, null, message);
+            },
         },
 
         GetWrappedCallback: function (func) {
@@ -161,7 +248,7 @@
 
         LoggingCore: {
             logComment: function (message) {
-                //console.log("  LoggingCore: " + message);
+                verboseLog += "\n" + message;
             }
         },
 
@@ -186,7 +273,8 @@
                     moduleName: moduleName,
                     module: testModule,
                     testName: testName,
-                    element: div
+                    element: div,
+                    isComplete: false,
                 };
                 tests.push(test);
                 testMap[fullName] = test;

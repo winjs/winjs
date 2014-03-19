@@ -23,6 +23,7 @@ function namedObjectContainsString(obj, string) {
     // returns -1 if no match.
     var index = 0;
     string = string.toLowerCase();
+    string = string.replace("../", "");
 
     for (var i in obj) {
         if (i.toLowerCase().indexOf(string) >= 0) {

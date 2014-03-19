@@ -72,7 +72,7 @@ WinJSTests.ListViewAnimation2Test = function () {
         document.body.appendChild(listViewEl);
 
         listViewEl.addEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], onTransitionEnd, true);
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("../TestData/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -83,7 +83,7 @@ WinJSTests.ListViewAnimation2Test = function () {
         listViewEl.removeEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], onTransitionEnd, true);
         WinJS.Utilities.disposeSubTree(listViewEl);
         document.body.removeChild(listViewEl);
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("../TestData/Listview.css");
     };
 
     function onTransitionEnd(ev) {
