@@ -914,7 +914,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(this.start, range.start);
                     LiveUnit.Assert.areEqual(this.end, range.end);
                     var that = this;
-                    setImmediate(function () {
+                    WinJS.Utilities._setImmediate(function () {
                         that.completePromise();
                     });
                 }

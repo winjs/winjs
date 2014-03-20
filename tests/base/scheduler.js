@@ -148,7 +148,7 @@ CorsicaTests.Scheduler = function () {
 
     function immediate() {
         return new WinJS.Promise(function (c) {
-            setImmediate(c);
+            WinJS.Utilities._setImmediate(c);
         });
     }
 
@@ -216,6 +216,9 @@ CorsicaTests.Scheduler = function () {
     //  the platform. Useful for getting code to run in between calls to the
     //  scheduler pump to verify that the pump yields.
     //
+    var scheduleWithHost = window.setImmediate ? window.setImmediate.bind(window) : function (callback) {
+        setTimeout(callback, 16);
+    };
     function mimicSchedulePump(fn, wwaPriority) {
         var ran = false;
         var runner = function () {
@@ -230,7 +233,7 @@ CorsicaTests.Scheduler = function () {
             if (wwaPriority === MSApp.HIGH) {
                 setTimeout(runner, 0);
             }
-            setImmediate(runner);
+            scheduleWithHost(runner);
         }
     }
 

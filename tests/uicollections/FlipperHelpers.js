@@ -264,7 +264,7 @@ function runFlipViewTests(flipView, tests, usePageCompletedEvent) {
     var currentTest = 0;
 
     function runNextTest() {
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             if (currentTest < tests.length) {
                 verifyFlipViewPagePositions(flipView);
                 var moveOn = tests[currentTest++]();

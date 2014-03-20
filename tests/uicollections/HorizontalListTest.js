@@ -193,7 +193,7 @@ WinJSTests.HorizontalListTest = function () {
                 var ensureVisibleIndex = ensureVisibleTargets.pop();
                 lv.ensureVisible(ensureVisibleIndex);
 
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     LiveUnit.Assert.isTrue(ensureVisibleIndex >= lv.indexOfFirstVisible, "Index of first visible should be less than or eq to ensured visible item index");
                     LiveUnit.Assert.isTrue(ensureVisibleIndex <= lv.indexOfLastVisible, "Index of first visible should be greater than or eq to ensured visible item index");
                     c();

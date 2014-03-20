@@ -10,25 +10,6 @@
     var isSafari = navigator.userAgent.toLowerCase().indexOf("safari") > -1;
     window.__winjs_not_ie = isMozilla || isSafari || window.chrome;
 
-    window.setImmediate = window.setImmediate
-        || window.blinkSetImmediate
-        || window.webkitSetImmediate
-        || function (expression, args) { return setTimeout(expression, 0, args); };
-    window.clearImmediate = window.clearImmediate
-        || window.blinkClearImmediate
-        || window.webkitClearImmediate
-        || clearTimeout;
-
-    window.msSetImmediate = window.setImmediate
-        || window.blinkSetImmediate ||
-        window.webkitSetImmediate
-        || function (expression, args) { return setTimeout(expression, 0, args); };
-
-    window.msClearImmediate = window.clearImmediate
-        || window.blinkClearImmediate ||
-        window.webkitClearImmediate ||
-        clearTimeout;
-
     if (!window.MutationObserver) {
         window.MutationObserver = function () {
             this.observe = nop;
@@ -39,7 +20,7 @@
     if (window.HTMLElement && !HTMLElement.prototype.setActive) {
         HTMLElement.prototype.setActive = function () {
             var that = this;
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 that.focus();
             });
 

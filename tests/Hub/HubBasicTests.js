@@ -311,7 +311,7 @@ HubTests.BasicTests = function () {
                         currentScrollPosition = Math.min(scrollRange.max, currentScrollPosition + increment);
                         control.scrollPosition = currentScrollPosition;
 
-                        setImmediate(function () {
+                        WinJS.Utilities._setImmediate(function () {
                             //hit test for sectionOnScreen
                             var index = HubUtils.findCurrentSectionOnScreen(control);
                             LiveUnit.Assert.areEqual(index, control.sectionOnScreen);

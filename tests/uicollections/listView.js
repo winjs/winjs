@@ -300,7 +300,7 @@ WinJSTests.ListView = function () {
                     listView.element.style.display = "none";
                     if (completed === 1) {
                         listView.itemDataSource.insertAtEnd(null, { group: "0", title: "Tile 1" });
-                        setImmediate(function () {
+                        WinJS.Utilities._setImmediate(function () {
                             validateUnhandledErrorsOnIdle().
                                 done(function () {
                                     WinJS.Utilities.disposeSubTree(placeholder);
@@ -633,7 +633,7 @@ WinJSTests.ListView = function () {
             filtered.dispose();
             document.body.removeChild(lv.element);
             lv.dispose();
-            setImmediate(complete);
+            WinJS.Utilities._setImmediate(complete);
         });
     };
 

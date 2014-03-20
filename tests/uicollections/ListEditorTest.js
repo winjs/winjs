@@ -1043,7 +1043,7 @@ WinJSTests.ListEditorTest = function () {
                     return new WinJS.Promise(function (testPromiseComplete) {
                         var c = testPromiseComplete;
                         if (unionTester.interruptLayout) {
-                            setImmediate(function () {
+                            WinJS.Utilities._setImmediate(function () {
                                 unionTester.interruptLayout();
                                 unionTester.interruptLayout = null;
                             });

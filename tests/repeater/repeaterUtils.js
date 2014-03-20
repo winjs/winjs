@@ -122,7 +122,7 @@ function waitForReady(listView, delay) {
 
             if (delay) {
                 if (delay < 0) {
-                    setImmediate(waitForReady_work);
+                    WinJS.Utilities._setImmediate(waitForReady_work);
                 }
                 else {
                     setTimeout(waitForReady_work, delay);

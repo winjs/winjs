@@ -972,7 +972,7 @@
                 if (timeoutMS) {
                     id = setTimeout(c, timeoutMS);
                 } else {
-                    setImmediate(c);
+                    WinJS.Utilities._setImmediate(c);
                 }
             },
             function () {

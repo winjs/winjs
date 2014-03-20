@@ -1020,7 +1020,7 @@
                         this._tabSeenLast = true;
                 
                         var that = this;
-                        setImmediate(function () {
+                        WinJS.Utilities._yieldForEvents(function () {
                             that._tabSeenLast = false;
                         });
                     }

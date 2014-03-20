@@ -1337,24 +1337,24 @@ CorsicaTests.Promise = function () {
         var i = 0;
         var hit1 = false, hit2 = false;
 
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             hit1 = true;
         });
         
-        // calling timeout() without a parameter results in calling setImmediate() which will 
+        // calling timeout() without a parameter results in calling WinJS.Utilities._setImmediate() which will 
         // execute immediately after the browser has processed outstanding work.  
         WinJS.Promise.timeout().then(function () {
             i++;
             LiveUnit.Assert.areEqual(1, i);
-            LiveUnit.Assert.isTrue(hit1, "expected to run after the above explicit setImmediate");            
-            LiveUnit.Assert.isFalse(hit2, "expected to run before the below explicit setImmediate");            
+            LiveUnit.Assert.isTrue(hit1, "expected to run after the above explicit WinJS.Utilities._setImmediate");            
+            LiveUnit.Assert.isFalse(hit2, "expected to run before the below explicit WinJS.Utilities._setImmediate");            
         }).
         then(null, errorHandler).
         then(complete);
 
         LiveUnit.Assert.areEqual(0, i);
 
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             hit2 = true;
         });
     };

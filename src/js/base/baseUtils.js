@@ -327,6 +327,21 @@
             writable: false,
             enumerable: true
         },
+        
+        _setImmediate: global.setImmediate ? global.setImmediate.bind(global) : function (handler) {
+            setTimeout(handler, 0);
+        },
+        
+        // Allows the browser to finish dispatching its current set of events before running
+        // the callback.
+        _yieldForEvents: global.setImmediate ? global.setImmediate.bind(global) : function (handler) {
+            setTimeout(handler, 0);
+        },
+        
+        // Allows the browser to notice a DOM modification before running the callback.
+        _yieldForDomModification: global.setImmediate ? global.setImmediate.bind(global) : function (handler) {
+            setTimeout(handler, 0);
+        },
 
         _shallowCopy: function _shallowCopy(a) {
             // Shallow copy a single object.

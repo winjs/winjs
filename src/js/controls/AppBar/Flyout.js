@@ -256,7 +256,7 @@
                                     // Restore the role so that css is applied correctly
                                     var previousFocus = this._previousFocus;
                                     if (previousFocus) {
-                                        setImmediate(function () {
+                                        WinJS.Utilities._yieldForDomModification(function () {
                                             previousFocus.setAttribute("role", role);
                                         });
                                     }
@@ -681,7 +681,7 @@
                     if (this._keyboardHiding) {
                         // Hiding keyboard, update our position, giving the anchor a chance to update first.
                         var that = this;
-                        setImmediate(function () { that._findPosition(); });
+                        WinJS.Utilities._setImmediate(function () { that._findPosition(); });
                         this._keyboardHiding = false;
                     }
                 },
@@ -741,7 +741,7 @@
                     } else {
                         // Not resized, update our final position, giving the anchor a chance to update first.
                         var that = this;
-                        setImmediate(function () { that._findPosition(); });
+                        WinJS.Utilities._setImmediate(function () { that._findPosition(); });
                     }
                 },
 

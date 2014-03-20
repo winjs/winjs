@@ -231,7 +231,7 @@ WinJSTests.ItemContainerTests = function () {
 
         click(control, { target: element });
 
-        setImmediate(complete);
+        WinJS.Utilities._setImmediate(complete);
     };
 
     this.testSelectionChangingEventCalled = function (complete) {

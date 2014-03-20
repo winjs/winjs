@@ -34,7 +34,7 @@ HubTests.Utilities = (function () {
             });
 
             //Give the Hub a chance to append the element in DOM before we show the ListView
-            setImmediate(function () { element && element.winControl && element.winControl.forceLayout(); });
+            WinJS.Utilities._setImmediate(function () { element && element.winControl && element.winControl.forceLayout(); });
 
             return elementHost;
         }
@@ -415,7 +415,7 @@ HubTests.Utilities = (function () {
                 if (delay >= 0) {
                     setTimeout(waitForReady_work, delay);
                 } else {
-                    setImmediate(waitForReady_work);
+                    WinJS.Utilities._setImmediate(waitForReady_work);
                 }
 
             });
