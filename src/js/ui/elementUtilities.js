@@ -43,6 +43,25 @@
         return WinJS.Utilities.convertToPixels(element, window.getComputedStyle(element, null)[property]);
     }
 
+    var _MSGestureEvent = global.MSGestureEvent || {
+        MSGESTURE_FLAG_BEGIN: 1,
+        MSGESTURE_FLAG_CANCEL: 4,
+        MSGESTURE_FLAG_END: 2,
+        MSGESTURE_FLAG_INERTIA: 8,
+        MSGESTURE_FLAG_NONE: 0
+    };
+
+    var _MSManipulationEvent = global.MSManipulationEvent || {
+        MS_MANIPULATION_STATE_ACTIVE: 1,
+        MS_MANIPULATION_STATE_CANCELLED: 6,
+        MS_MANIPULATION_STATE_COMMITTED: 7,
+        MS_MANIPULATION_STATE_DRAGGING: 5,
+        MS_MANIPULATION_STATE_INERTIA: 2,
+        MS_MANIPULATION_STATE_PRESELECT: 3,
+        MS_MANIPULATION_STATE_SELECTING: 4,
+        MS_MANIPULATION_STATE_STOPPED: 0
+    };
+
     var uniqueElementIDCounter = 0;
     WinJS.Namespace.define("WinJS.Utilities", {
         _dataKey: "_msDataKey",
@@ -56,6 +75,24 @@
 
             return e.uniqueID || e._uniqueID;
         },
+
+        _createGestureRecognizer: function () {
+            if (global.MSGesture) {
+                return new MSGesture();
+            }
+
+            var doNothing = function () {
+            };
+            return {
+                addEventListener: doNothing,
+                removeEventListener: doNothing,
+                addPointer: doNothing,
+                stop: doNothing
+            };
+        },
+
+        _MSGestureEvent: _MSGestureEvent,
+        _MSManipulationEvent: _MSManipulationEvent,
 
         _elementsFromPoint: function(x, y) {
             if (document.msElementsFromPoint) {

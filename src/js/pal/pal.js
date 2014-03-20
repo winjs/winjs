@@ -29,26 +29,7 @@
         window.webkitClearImmediate ||
         clearTimeout;
 
-    window.MSManipulationEvent = window.MSManipulationEvent || {
-        MS_MANIPULATION_STATE_ACTIVE: 1,
-        MS_MANIPULATION_STATE_CANCELLED: 6,
-        MS_MANIPULATION_STATE_COMMITTED: 7,
-        MS_MANIPULATION_STATE_DRAGGING: 5,
-        MS_MANIPULATION_STATE_INERTIA: 2,
-        MS_MANIPULATION_STATE_PRESELECT: 3,
-        MS_MANIPULATION_STATE_SELECTING: 4,
-        MS_MANIPULATION_STATE_STOPPED: 0
-    };
     window.MSPointerEvent = window.MSPointerEvent || {};
-
-    if (!window.MSGesture) {
-        window.MSGesture = function () {
-            this.addEventListener = nop;
-            this.removeEventListener = nop;
-            this.addPointer = nop;
-            this.stop = nop;
-        };
-    }
 
     if (!window.MutationObserver) {
         window.MutationObserver = function () {

@@ -35,6 +35,7 @@
                 itemAnimationStart: "itemanimationstart",
                 itemAnimationEnd: "itemanimationend",
             };
+            var MSManipulationEventStates = WinJS.Utilities._MSManipulationEvent;
 
             var Pivot = WinJS.Class.define(function Pivot_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Pivot.Pivot">
@@ -107,7 +108,7 @@
                 this._currentIndexOnScreen = 0;
                 this._loadId = 0;
                 this._navMode = WinJS.UI.Pivot._NavigationModes.none;
-                this._currentManipulationState = MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
+                this._currentManipulationState = MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED;
 
                 // This internally assigns this.items which causes item to be used (even from options) before selectedIndex
                 this._parse();
@@ -372,7 +373,7 @@
                     }
 
                     if ((this._navMode === WinJS.UI.Pivot._NavigationModes.none || this._navMode === WinJS.UI.Pivot._NavigationModes.scroll)
-                            && this._currentManipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
+                            && this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
 
                         this._navMode = WinJS.UI.Pivot._NavigationModes.scroll;
                         WinJS.log && WinJS.log('_scrollHandler ScrollPosition: ' + this._viewportElement.scrollLeft, "winjs pivot", "log");
@@ -395,9 +396,9 @@
                         // Ignore sub scroller manipulations.
                         return;
                     }
-                    if (this._currentManipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
+                    if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
                         WinJS.log && WinJS.log('MSManipulation: Stopped', "winjs pivot", "log");
-                    } else if (this._currentManipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_INERTIA) {
+                    } else if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                         WinJS.log && WinJS.log('MSManipulation: Inertia', "winjs pivot", "log");
                     } else {
                         WinJS.log && WinJS.log('MSManipulation: Active', "winjs pivot", "log");
@@ -409,7 +410,7 @@
 
                     this._manipulationRecenterPromise && this._manipulationRecenterPromise.cancel();
 
-                    if (this._currentManipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
+                    if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
                         this._navMode = WinJS.UI.Pivot._NavigationModes.none;
                         this._scrollHandler();
 
@@ -425,7 +426,7 @@
                             if (that._disposed) {
                                 return;
                             }
-                            if (that._currentManipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
+                            if (that._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
                                 // If we are still "stopped" we should recenter.
                                 WinJS.log && WinJS.log('Still in Stopped state: calling _recenterUI', "winjs pivot", "log");
                                 that._recenterUI();
@@ -434,7 +435,7 @@
                                 this._stoppedAndRecenteredSignal = null;
                             }
                         });
-                    } else if (this._currentManipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_INERTIA) {
+                    } else if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                         var destinationX = ev.inertiaDestinationX;
                         if (+destinationX === destinationX) {
                             WinJS.log && WinJS.log('MSManipulation: inertiaDestinationX: ' + destinationX);
@@ -972,7 +973,7 @@
                         this._offsetFromCenter++;
                     }
 
-                    if (this._currentManipulationState !== MSManipulationEvent.MS_MANIPULATION_STATE_INERTIA) {
+                    if (this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                         if (this._skipHeaderSlide) {
                             WinJS.log && WinJS.log('_skipHeaderSlide index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
                             this._viewportElement.scrollLeft = this._currentScrollTargetLocation;

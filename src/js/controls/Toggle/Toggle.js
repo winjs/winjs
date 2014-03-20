@@ -102,7 +102,7 @@
                 this._disposed = false;
                 this._spaceKeyDown = false;
 
-                this._gesture = new MSGesture(); // Add the gesture object before creating the listeners in _setElement for gesture events handling
+                this._gesture = WinJS.Utilities._createGestureRecognizer(); // Add the gesture object before creating the listeners in _setElement for gesture events handling
                 this._shouldHideFocus = false; // This variable is needed to prevent focus rect from showing between the time during pointer down and focus happens.
                 this._pointerId = 0;
                 this._hasCapture = false;

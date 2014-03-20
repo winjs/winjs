@@ -5,6 +5,7 @@
     var MAX_TILT_ROTATION = 0.15;
     var MAX_TILT_SHRINK = 0.025;
     var uniqueID = WinJS.Utilities._uniqueID;
+    var MSManipulationEventStates = WinJS.Utilities._MSManipulationEvent;
 
     function unitVector3d(v) {
         var mag = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
@@ -136,7 +137,7 @@
                     // We're not necessarily guaranteed to get onMSPointerDown before we get a selection event from cross slide,
                     // so if we hit a select state with no pressed item box recorded, we need to set up the pressed info before
                     // processing the selection.
-                    if (state === MSManipulationEvent.MS_MANIPULATION_STATE_PRESELECT && !this._site.pressedItemBox) {
+                    if (state === MSManipulationEventStates.MS_MANIPULATION_STATE_PRESELECT && !this._site.pressedItemBox) {
                         var currentPressedIndex = this._site.indexForItemElement(eventObject.target);
 
                         this._site.pressedEntity = { type: WinJS.UI.ObjectType.item, index: currentPressedIndex };
@@ -155,17 +156,17 @@
                             }
                         }
                     }
-                    if (this._canSelect && (state === MSManipulationEvent.MS_MANIPULATION_STATE_PRESELECT ||
-                        state === MSManipulationEvent.MS_MANIPULATION_STATE_COMMITTED ||
-                        state === MSManipulationEvent.MS_MANIPULATION_STATE_CANCELLED ||
-                        state === MSManipulationEvent.MS_MANIPULATION_STATE_SELECTING ||
-                        state === MSManipulationEvent.MS_MANIPULATION_STATE_DRAGGING)) {
+                    if (this._canSelect && (state === MSManipulationEventStates.MS_MANIPULATION_STATE_PRESELECT ||
+                        state === MSManipulationEventStates.MS_MANIPULATION_STATE_COMMITTED ||
+                        state === MSManipulationEventStates.MS_MANIPULATION_STATE_CANCELLED ||
+                        state === MSManipulationEventStates.MS_MANIPULATION_STATE_SELECTING ||
+                        state === MSManipulationEventStates.MS_MANIPULATION_STATE_DRAGGING)) {
                         this._dispatchSwipeBehavior(state);
                     }
 
-                    if (state === MSManipulationEvent.MS_MANIPULATION_STATE_COMMITTED ||
-                        state === MSManipulationEvent.MS_MANIPULATION_STATE_CANCELLED ||
-                        state === MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
+                    if (state === MSManipulationEventStates.MS_MANIPULATION_STATE_COMMITTED ||
+                        state === MSManipulationEventStates.MS_MANIPULATION_STATE_CANCELLED ||
+                        state === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
                         this.resetPointerDownState();
                     }
                 },
@@ -197,7 +198,7 @@
                     this._PointerEnterBound = this._PointerEnterBound || this.onPointerEnter.bind(this);
                     this._PointerLeaveBound = this._PointerLeaveBound || this.onPointerLeave.bind(this);
 
-                    this._swipeBehaviorState = MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
+                    this._swipeBehaviorState = MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED;
                     var swipeEnabled = site.swipeBehavior === WinJS.UI.SwipeBehavior.select,
                         swipeBehavior = touchInput && swipeEnabled,
                         isInteractive = this._isInteractive(eventObject.target),
@@ -407,7 +408,7 @@
                             }
                         }
 
-                        if ((this._site.pressedHeader || this._site.pressedContainer) && this._swipeBehaviorState !== MSManipulationEvent.MS_MANIPULATION_STATE_COMMITTED) {
+                        if ((this._site.pressedHeader || this._site.pressedContainer) && this._swipeBehaviorState !== MSManipulationEventStates.MS_MANIPULATION_STATE_COMMITTED) {
                             var upPosition = WinJS.UI._getCursorPos(eventObject);
                             var isTap = Math.abs(upPosition.left - this._site.pressedPosition.left) <= WinJS.UI._TAP_END_THRESHOLD &&
                                 Math.abs(upPosition.top - this._site.pressedPosition.top) <= WinJS.UI._TAP_END_THRESHOLD;
@@ -451,14 +452,14 @@
                 },
 
                 onPointerCancel: function ItemEventsHandler_onPointerCancel(eventObject) {
-                    if (this._pointerId === eventObject.pointerId && this._swipeBehaviorState !== MSManipulationEvent.MS_MANIPULATION_STATE_PRESELECT) {
+                    if (this._pointerId === eventObject.pointerId && this._swipeBehaviorState !== MSManipulationEventStates.MS_MANIPULATION_STATE_PRESELECT) {
                         WinJS.Utilities._writeProfilerMark("WinJS.UI._ItemEventsHandler:MSPointerCancel,info");
                         this.resetPointerDownState();
                     }
                 },
 
                 onLostPointerCapture: function ItemEventsHandler_onLostPointerCapture(eventObject) {
-                    if (this._pointerId === eventObject.pointerId && this._swipeBehaviorState !== MSManipulationEvent.MS_MANIPULATION_STATE_PRESELECT) {
+                    if (this._pointerId === eventObject.pointerId && this._swipeBehaviorState !== MSManipulationEventStates.MS_MANIPULATION_STATE_PRESELECT) {
                         WinJS.Utilities._writeProfilerMark("WinJS.UI._ItemEventsHandler:MSLostPointerCapture,info");
                         this.resetPointerDownState();
                     }
@@ -663,11 +664,11 @@
                 },
 
                 _endSwipeBehavior: function ItemEventsHandler_endSwipeBehavior() {
-                    if (!(this._swipeBehaviorState === MSManipulationEvent.MS_MANIPULATION_STATE_PRESELECT ||
-                        this._swipeBehaviorState === MSManipulationEvent.MS_MANIPULATION_STATE_SELECTING ||
-                        this._swipeBehaviorState === MSManipulationEvent.MS_MANIPULATION_STATE_DRAGGING ||
-                        this._swipeBehaviorState === MSManipulationEvent.MS_MANIPULATION_STATE_COMMITTED ||
-                        this._swipeBehaviorState === MSManipulationEvent.MS_MANIPULATION_STATE_CANCELLED)) {
+                    if (!(this._swipeBehaviorState === MSManipulationEventStates.MS_MANIPULATION_STATE_PRESELECT ||
+                        this._swipeBehaviorState === MSManipulationEventStates.MS_MANIPULATION_STATE_SELECTING ||
+                        this._swipeBehaviorState === MSManipulationEventStates.MS_MANIPULATION_STATE_DRAGGING ||
+                        this._swipeBehaviorState === MSManipulationEventStates.MS_MANIPULATION_STATE_COMMITTED ||
+                        this._swipeBehaviorState === MSManipulationEventStates.MS_MANIPULATION_STATE_CANCELLED)) {
                         return;
                     }
 
@@ -698,11 +699,11 @@
 
                 _createGestureRecognizer: function ItemEventsHandler_createGestureRecognizer() {
                     var rootElement = this._site.eventHandlerRoot;
-                    var recognizer = new MSGesture();
+                    var recognizer = WinJS.Utilities._createGestureRecognizer();
                     recognizer.target = rootElement;
                     var that = this;
                     rootElement.addEventListener("MSGestureHold", function (eventObject) {
-                        if (that._site.pressedEntity.index !== -1 && eventObject.detail === MSGestureEvent.MSGESTURE_FLAG_BEGIN) {
+                        if (that._site.pressedEntity.index !== -1 && eventObject.detail === WinJS.Utilities._MSGestureEvent.MSGESTURE_FLAG_BEGIN) {
                             that._startSelfRevealGesture();
                         }
                     });
@@ -717,10 +718,10 @@
                     if (this._site.pressedItemBox) {
                         var pressedIndex = this._site.pressedEntity.index;
                         if (this._swipeBehaviorState !== manipulationState) {
-                            if (manipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_DRAGGING && this._canSelect) {
+                            if (manipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_DRAGGING && this._canSelect) {
                                 this._animateSelectionChange(this._site.selection._isIncluded(pressedIndex));
                                 this._removeSelectionHint(this._selectionHint);
-                            } else if (manipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_PRESELECT) {
+                            } else if (manipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_PRESELECT) {
                                 WinJS.Utilities._writeProfilerMark("WinJS.UI._ItemEventsHandler:crossSlidingStarted,info");
                                 var site = this._site,
                                     pressedElement = site.itemAtIndex(pressedIndex),
@@ -733,7 +734,7 @@
                                     this._prepareItem(this._site.pressedEntity, pressedElement, selected);
                                 }
 
-                                if (this._swipeBehaviorState !== MSManipulationEvent.MS_MANIPULATION_STATE_SELECTING) {
+                                if (this._swipeBehaviorState !== MSManipulationEventStates.MS_MANIPULATION_STATE_SELECTING) {
                                     if (this._site.animatedElement && utilities.hasClass(this._site.animatedElement, WinJS.UI._pressedClass)) {
                                         this._site.animatedDownPromise && this._site.animatedDownPromise.cancel();
                                         utilities.removeClass(this._site.animatedElement, WinJS.UI._pressedClass);
@@ -744,7 +745,7 @@
                                 } else {
                                     this._animateSelectionChange(this._site.selection._isIncluded(pressedIndex));
                                 }
-                            } else if (manipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_COMMITTED) {
+                            } else if (manipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_COMMITTED) {
                                 WinJS.Utilities._writeProfilerMark("WinJS.UI._ItemEventsHandler:crossSlidingCompleted,info");
                                 var that = this,
                                     site = this._site,
@@ -752,7 +753,7 @@
                                     swipeBehaviorSelectionChanged = this._swipeBehaviorSelectionChanged,
                                     swipeBehaviorSelected = this.swipeBehaviorSelected;
 
-                                if (this._swipeBehaviorState === MSManipulationEvent.MS_MANIPULATION_STATE_SELECTING && swipeBehaviorSelectionChanged) {
+                                if (this._swipeBehaviorState === MSManipulationEventStates.MS_MANIPULATION_STATE_SELECTING && swipeBehaviorSelectionChanged) {
                                     if (this._selectionAllowed() && site.swipeBehavior === WinJS.UI.SwipeBehavior.select) {
                                         if (site.selectionMode === WinJS.UI.SelectionMode.single) {
                                             if (swipeBehaviorSelected) {
@@ -772,10 +773,10 @@
 
                                 // snap back and remove addional elements
                                 this._endSwipeBehavior();
-                            } else if (manipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_SELECTING && this._canSelect) {
+                            } else if (manipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_SELECTING && this._canSelect) {
                                 this._animateSelectionChange(!this._site.selection._isIncluded(pressedIndex));
-                            } else if (this._swipeBehaviorState === MSManipulationEvent.MS_MANIPULATION_STATE_SELECTING && this._canSelect) {
-                                this._animateSelectionChange(this._site.selection._isIncluded(pressedIndex), (manipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_CANCELLED));
+                            } else if (this._swipeBehaviorState === MSManipulationEventStates.MS_MANIPULATION_STATE_SELECTING && this._canSelect) {
+                                this._animateSelectionChange(this._site.selection._isIncluded(pressedIndex), (manipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_CANCELLED));
                             }
                         }
                     }

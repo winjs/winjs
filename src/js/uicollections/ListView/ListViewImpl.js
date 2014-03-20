@@ -394,7 +394,7 @@
                 this._itemsBlockExtent = -1;
                 this._viewportWidth = WinJS.UI._UNINITIALIZED;
                 this._viewportHeight = WinJS.UI._UNINITIALIZED;
-                this._manipulationState = MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
+                this._manipulationState = WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
                 this._maxDeferredItemCleanup = Number.MAX_VALUE;
                 this._groupsToRemove = {};
                 this._setupInternalTree();
@@ -2856,12 +2856,12 @@
                     this._manipulationState = ev.currentState;
                     that._writeProfilerMark("_onMSManipulationStateChanged state(" + ev.currentState + "),info");
 
-                    if (this._manipulationState !== MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED && !this._manipulationEndSignal) {
+                    if (this._manipulationState !== WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED && !this._manipulationEndSignal) {
                         this._manipulationEndSignal = new WinJS._Signal();
                         this._manipulationEndSignal.promise.done(done, done);
                     }
 
-                    if (this._manipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
+                    if (this._manipulationState === WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
                         this._manipulationEndSignal.complete();
                     }
                 },
