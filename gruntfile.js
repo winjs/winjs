@@ -19,18 +19,14 @@ module.exports = function (grunt) {
       return object;
     }
 
-        "src/js/uicollections/references.js",
-        "src/js/build/startUI.js",
-    var gruntConfig = {};
+    // Load task options
+    var gruntConfig = loadConfig('./tasks/options/');
 
     // Package data
     gruntConfig.pkg = grunt.file.readJSON("package.json");
 
-    // Load task options
-    grunt.util._.extend(gruntConfig, loadConfig('./tasks/options/'));
               { expand: true, flatten: true, src: [desktopOutput + "css/*.css"], dest: desktopOutput + "css/" },
               { expand: true, flatten: true, src: [phoneOutput + "css/*.css"], dest: phoneOutput + "css/" },
-
     // Project config
     grunt.initConfig(gruntConfig);
 
