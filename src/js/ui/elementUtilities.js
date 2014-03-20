@@ -757,7 +757,12 @@
             /// <field locid="WinJS.Utilities.Key.singleQuote" helpKeyword="WinJS.Utilities.Key.singleQuote">
             /// SINGLE QUOTE key.
             /// </field>
-            singleQuote: 222
+            singleQuote: 222,
+
+            /// <field locid="WinJS.Utilities.Key.IME" helpKeyword="WinJS.Utilities.Key.IME">
+            /// Any IME input.
+            /// </field>
+            IME: 229
         },
 
         data: function (element) {
