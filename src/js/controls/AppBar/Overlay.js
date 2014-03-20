@@ -1038,8 +1038,8 @@
                     this._element.addEventListener("focusout", function (e) { _Overlay._hideIfLostFocus(that, e); }, false);
 
                     // Attempt to flag right clicks that may turn into edgy
-                    this._element.addEventListener("pointerdown", _Overlay._checkRightClickDown, true);
-                    this._element.addEventListener("pointerup", _Overlay._checkRightClickUp, true);
+                    WinJS.Utilities._addEventListener(this._element, "pointerdown", _Overlay._checkRightClickDown, true);
+                    WinJS.Utilities._addEventListener(this._element, "pointerup", _Overlay._checkRightClickUp, true);
                 },
 
                 _writeProfilerMark: function _Overlay_writeProfilerMark(text) {
@@ -1088,8 +1088,8 @@
             _Overlay._createClickEatingDivTemplate = function (divClass, hideClickEatingDivFunction) {
                 var clickEatingDiv = document.createElement("section");
                 WinJS.Utilities.addClass(clickEatingDiv, divClass);
-                clickEatingDiv.addEventListener("pointerup", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
-                clickEatingDiv.addEventListener("pointerdown", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
+                WinJS.Utilities._addEventListener(clickEatingDiv, "pointerdown", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
+                WinJS.Utilities._addEventListener(clickEatingDiv, "pointerup", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
                 clickEatingDiv.addEventListener("click", hideClickEatingDivFunction, true);
                 // Tell Aria that it's clickable
                 clickEatingDiv.setAttribute("role", "menuitem");
@@ -1391,7 +1391,7 @@
 
                 // Get the height of the visible document, e.g. the height of the visual viewport minus any IHM occlusion.
                 get _visibleDocHeight() {
-                    return _Overlay._keyboardInfo._visualViewportHeight -_Overlay._keyboardInfo._extraOccluded;
+                    return _Overlay._keyboardInfo._visualViewportHeight - _Overlay._keyboardInfo._extraOccluded;
                 },
 
                 // Get the visual viewport height. window.innerHeight doesn't return floating point values which are present with high DPI.

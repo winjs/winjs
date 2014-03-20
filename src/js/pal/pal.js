@@ -29,8 +29,6 @@
         window.webkitClearImmediate ||
         clearTimeout;
 
-    window.MSPointerEvent = window.MSPointerEvent || {};
-
     if (!window.MutationObserver) {
         window.MutationObserver = function () {
             this.observe = nop;
@@ -87,145 +85,6 @@
         });
     }
 
-    if (window.chrome || isSafari || isMozilla) {
-        var pointerEventsMap = {};
-        function addPointerHandlers(element, eventNameLowercase, callback, capture) {
-            if (!pointerEventsMap[element.uniqueID]) {
-                pointerEventsMap[element.uniqueID] = {};
-            }
-            if (!pointerEventsMap[element.uniqueID][eventNameLowercase]) {
-                pointerEventsMap[element.uniqueID][eventNameLowercase] = [];
-            }
-
-            var mouseWrapper,
-                touchWrapper;
-
-            var translations = eventTranslations[eventNameLowercase];
-
-            if (translations.mouse) {
-                mouseWrapper = function (e) {
-                    e.type = eventNameLowercase;
-                    return mouseEventTranslator(translations.mouse, callback, e);
-                }
-                element.addEventListener(translations.mouse, mouseWrapper, capture);
-            }
-
-            if (translations.touch) {
-                touchWrapper = function (e) {
-                    e.type = eventNameLowercase;
-                    return touchEventTranslator(callback, e);
-                }
-                element.addEventListener(translations.touch, touchWrapper, capture);
-            }
-
-            pointerEventsMap[element.uniqueID][eventNameLowercase].push({
-                originalCallback: callback,
-                mouseWrapper: mouseWrapper,
-                touchWrapper: touchWrapper,
-                capture: capture
-            });
-        }
-
-        function removePointerHandlers(element, eventNameLowercase, callback, capture) {
-            if (!pointerEventsMap[element.uniqueID] || !pointerEventsMap[element.uniqueID][eventNameLowercase]) {
-                return;
-            }
-
-            var mappedEvents = pointerEventsMap[element.uniqueID][eventNameLowercase];
-            for (var i = 0; i < mappedEvents.length; i++) {
-                var mapping = mappedEvents[i];
-                if (mapping.originalCallback === callback && (!!capture === !!mapping.capture)) {
-                    var translations = eventTranslations[eventNameLowercase];
-                    if (mapping.mouseWrapper) {
-                        element.removeEventListener(translations.mouse, mapping.mouseWrapper, capture);
-                    }
-                    if (mapping.touchWrapper) {
-                        element.removeEventListener(translations.touch, mapping.touchWrapper, capture);
-                    }
-                    mappedEvents.splice(i, 1);
-                    break;
-                }
-            }
-        }
-    }
-
-    var touchPropertiesToCopy = [
-    "screenX",
-    "screenY",
-    "clientX",
-    "clientY",
-    "pageX",
-    "pageY",
-    "radiusX",
-    "radiusY",
-    "rotationAngle",
-    "force"
-    ];
-
-    function moveTouchPropertiesToEventObject(eventObject, touchObject) {
-        eventObject.pointerId = touchObject.identifier;
-        eventObject.pointerType = "touch";
-        for (var i = 0; i < touchPropertiesToCopy.length; i++) {
-            var prop = touchPropertiesToCopy[i];
-            eventObject[prop] = touchObject[prop];
-        }
-    }
-
-    function touchEventTranslator(callback, eventObject) {
-        eventObject.preventDefault();
-        var changedTouches = eventObject.changedTouches,
-            retVal = null;
-
-        for (var i = 0; i < changedTouches.length; i++) {
-            moveTouchPropertiesToEventObject(eventObject, changedTouches[i]);
-            retVal = retVal || callback(eventObject);
-        }
-
-        return retVal;
-    }
-
-    var lastMouseID = -1;
-    function mouseEventTranslator(name, callback, eventObject) {
-        eventObject.pointerType = "mouse";
-        eventObject.pointerId = lastMouseID;
-        if (name === "mouseup") {
-            lastMouseID--;
-        }
-        return callback(eventObject);
-    }
-
-    var eventTranslations = {
-        pointerdown: {
-            touch: "touchstart",
-            mouse: "mousedown"
-        },
-        pointerup: {
-            touch: "touchend",
-            mouse: "mouseup"
-        },
-        pointermove: {
-            touch: "touchmove",
-            mouse: "mousemove"
-        },
-        pointerenter: {
-            touch: null,
-            mouse: "mouseenter"
-        },
-        pointerover: {
-            touch: null,
-            mouse: "mouseover"
-        },
-        pointerout: {
-            touch: "touchleave",
-            mouse: "mouseout"
-        },
-        pointercancel: {
-            touch: "touchcancel",
-            mouse: null
-        }
-    };
-
-
     if (window.chrome || isSafari) {
         var cssTranslations = [
             "-ms-grid-row", "grid-row",
@@ -242,29 +101,4 @@
         }
 
     }
-
-    if (window.chrome || isSafari || isMozilla) {
-        var originalAddEventListener = HTMLElement.prototype.addEventListener,
-            originalRemoveEventListener = HTMLElement.prototype.removeEventListener;
-
-        HTMLElement.prototype.addEventListener = function (name, callback, capture) {
-            var eventNameLower = name && name.toLowerCase();
-            if (eventTranslations[eventNameLower]) {
-                return addPointerHandlers(this, eventNameLower, callback, capture);
-            }
-            return originalAddEventListener.call(this, name, callback, capture);
-        };
-
-        HTMLElement.prototype.removeEventListener = function (name, callback, capture) {
-            var eventNameLower = name && name.toLowerCase();
-            if (eventTranslations[eventNameLower]) {
-                return removePointerHandlers(this, eventNameLower, callback, capture);
-            }
-            return originalRemoveEventListener.call(this, name, callback, capture);
-        };
-
-        HTMLElement.prototype.setPointerCapture = nop;
-        HTMLElement.prototype.releasePointerCapture = nop;
-    }
-
 }(this));

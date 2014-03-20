@@ -246,7 +246,7 @@
                     eventHandler("KeyDown")
                 ];
                 events.forEach(function (eventHandler) {
-                    that.element.addEventListener(eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                    WinJS.Utilities._addEventListener(that.element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                 });
 
                 this._writeProfilerMark("constructor,StopTM");

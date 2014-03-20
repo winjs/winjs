@@ -638,7 +638,7 @@
                         that._mouseInViewport = false;
                     }, false);
 
-                    var PT_TOUCH = MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+                    var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
                     function handleShowButtons(e) {
                         if (e.pointerType !== PT_TOUCH) {
                             that._touchInteraction = false;
