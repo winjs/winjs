@@ -1,28 +1,22 @@
 module.exports = function (grunt) {
-    var version = "2.1";
-    var buildDate = new Date();
-    var month = buildDate.getMonth() + 1;
-    var buildDateString = buildDate.getFullYear() + "." + month + "." + buildDate.getDate();
-    var localeFolder = "en-US";
-    var outputFolder = "bin/";
-
-    var testsOutput = "";
-
-    if (process.env._NTTREE) {
-        outputFolder = process.env._NTTREE + "/Corsica/";
-        testsOutput = outputFolder + "other." + version + ".debug/tests/unittests/";
-    } else {
-        testsOutput = outputFolder + "tests/";
-    }
-
-    var targetName = "WinJS." + version;
-    var targetFramework = "Microsoft.WinJS.2.1";
-    var desktopOutput = outputFolder + "Microsoft." + targetName + "/";
-    var phoneOutput = outputFolder + "Microsoft.Phone." + targetName + "/";
+    var config = require("./config.js");
 
     // Make sure that Grunt doesn't remove BOM from our utf8 files
     // on read
     grunt.file.preserveBOM = true;
+
+    function loadConfig(path) {
+      var glob = require('glob');
+      var object = {};
+      var key;
+
+      glob.sync('*', {cwd: path}).forEach(function(option) {
+        key = option.replace(/\.js$/,'');
+        object[key] = require(path + option);
+      });
+
+      return object;
+    }
 
     var baseJSFiles = [
         "src/js/build/Copyright.js",
@@ -123,8 +117,8 @@ module.exports = function (grunt) {
         "src/js/build/Copyright.js",
         "src/js/library/stringsHeader.js",
         "src/js/library/stringsBlockHeader.js",
-        "src/js/" + localeFolder + "/base.prefix.js",
-        "src/js/" + localeFolder + "/base.resjson",
+        "src/js/" + config.localeFolder + "/base.prefix.js",
+        "src/js/" + config.localeFolder + "/base.resjson",
         "src/js/library/stringsBlockFooter.js",
         "src/js/library/stringsFooter.js"
     ];
@@ -229,8 +223,8 @@ module.exports = function (grunt) {
         "src/js/build/Copyright.js",
         "src/js/library/stringsHeader.js",
         "src/js/library/stringsBlockHeader.js",
-        "src/js/" + localeFolder + "/ui.prefix.js",
-        "src/js/" + localeFolder + "/ui.resjson",
+        "src/js/" + config.localeFolder + "/ui.prefix.js",
+        "src/js/" + config.localeFolder + "/ui.resjson",
         "src/js/library/stringsBlockFooter.js",
         "src/js/library/stringsFooter.js"
     ];
@@ -240,187 +234,16 @@ module.exports = function (grunt) {
     // Package data
     gruntConfig.pkg = grunt.file.readJSON("package.json");
 
-    // Clean task
-    gruntConfig.clean = {
-        options: {
-            force: true
-        },
-        all: [
-            desktopOutput,
-            phoneOutput,
-        ],
-        base: [
-            desktopOutput + "js/base.js",
-            desktopOutput + "js/" + localeFolder + "/base.strings.js",
-            phoneOutput + "js/base.js",
-            phoneOutput + "js/" + localeFolder + "/base.strings.js",
-        ],
-        ui: [
-            desktopOutput + "js/ui.js",
-            desktopOutput + "js/" + localeFolder + "/ui.strings.js",
-            phoneOutput + "js/ui.js",
-            phoneOutput + "js/" + localeFolder + "/ui.strings.js",
-        ],
-    };
-
-    // Less build task
-    gruntConfig.less = {
-        desktopDark: {
-            src: ["src/less/desktop-dark.less"],
-            dest: desktopOutput + "css/ui-dark.css"
-        },
-        desktopLight: {
-            src: ["src/less/desktop-light.less"],
-            dest: desktopOutput + "css/ui-light.css"
-        },
-        phoneDark: {
-            src: ["src/less/phone-dark.less"],
-            dest: phoneOutput + "css/ui-dark.css"
-        },
-        phoneLight: {
-            src: ["src/less/phone-light.less"],
-            dest: phoneOutput + "css/ui-light.css"
-        },
-    };
-
-    // Javascript concat task
-    gruntConfig.concat = {
-        baseDesktop: {
-            src: baseJSFiles,
-            dest: desktopOutput + "js/base.js"
-        },
-        basePhone: {
-            src: baseJSFilesPhone,
-            dest: phoneOutput + "js/base.js"
-        },
-        baseStringsDesktop: {
-            src: baseStringsFiles,
-            dest: desktopOutput + "js/" + localeFolder + "/base.strings.js"
-        },
-        baseStringsPhone: {
-            src: baseStringsFiles,
-            dest: phoneOutput + "js/" + localeFolder + "/base.strings.js"
-        },
-        uiDesktop: {
-            src: uiJSFiles,
-            dest: desktopOutput + "js/ui.js"
-        },
-        uiPhone: {
-            src: uiJSFilesPhone,
-            dest: phoneOutput + "js/ui.js"
-        },
-        uiStringsDesktop: {
-            src: uiStringsFiles,
-            dest: desktopOutput + "js/" + localeFolder + "/ui.strings.js"
-        },
-        uiStringsPhone: {
-            src: uiStringsFiles,
-            dest: phoneOutput + "js/" + localeFolder + "/ui.strings.js"
-        }
-    };
-
-    // Post process task
-    gruntConfig.replace = {
-        base: {
-            options: {
-                patterns: [
-                    {
-                        match: /\$\(TARGET_DESTINATION\)/g,
-                        replacement: targetName
-                    },
-                    {
-                        match: /\$\(TargetFramework\)/g,
-                        replacement: targetFramework
-                    },
-                    {
-                        match: /\$\(build.version\)/g,
-                        replacement: "<%= pkg.version %>"
-                    },
-                    {
-                        match: /\$\(build.date\)/g,
-                        replacement: buildDateString
-                    },
-                    {
-                        match: /\$\(build.branch\)/g,
-                        replacement: "<%= pkg.name %>"
-                    }
-                ]
-            },
-            files: [
-              { expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/" },
-              { expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/" },
-              { expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/" },
-              { expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/" },
+    // Load task options
+    grunt.util._.extend(gruntConfig, loadConfig('./tasks/options/'));
               { expand: true, flatten: true, src: [desktopOutput + "css/*.css"], dest: desktopOutput + "css/" },
               { expand: true, flatten: true, src: [phoneOutput + "css/*.css"], dest: phoneOutput + "css/" },
-            ]
-        }
-    };
-
-    if (process.env._NTTREE) {
-        // Test copy task, only if building internally
-        gruntConfig.copy = {
-            tests: {
-                files: [
-                    { expand: true, cwd: "tests/", src: ["**"], dest: testsOutput }
-                ]
-            }
-        };
-
-        gruntConfig.shell = {
-            runTests: {
-                command: function () {
-                    var args = [];
-                    for (var i = 0; i < arguments.length; ++i)
-                        args.push(arguments[i]);
-
-                    // Default args
-                    if (args.length === 0 || args[0] === "")
-                        args[0] = "*.js";
-                    var host = "wwa";
-
-                    // Determine if last argument is a host parameter (not a glob pattern)
-                    // Host parameter is only valid with 1 or more parameters
-                    if (args.length > 1) {
-                        var last = args[args.length - 1].toLowerCase();
-                        if (last.indexOf("*") < 0 && last.indexOf(".") < 0) {
-                            host = last;
-                            args.pop();
-                        }
-                    }
-
-                    // Build up command string
-                    var command = "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe";
-                    for (var i = 0; i < args.length; ++i)
-                        command +=  " /s:%_NTTREE%/Corsica/other." + version + ".debug/Tests/UnitTests/" + args[i];
-                    if (host === "vs")
-                        command += " /vs";
-                    else
-                        command += " /host:" + host;
-                    command += " @res.txt";
-                    return command;
-                },
-                options: {
-                    stdout: true,
-                    stderr: true
-                }
-            }
-        };
-
-        // Also add tests to the replace task
-        var testReplace = { expand: true, cwd: testsOutput, src: ["**/*.js"], dest: testsOutput };
-        gruntConfig.replace.base.files.push(testReplace);
-    }
 
     // Project config
     grunt.initConfig(gruntConfig);
 
-    grunt.loadNpmTasks("grunt-contrib-concat");
-    grunt.loadNpmTasks("grunt-contrib-less");
-    grunt.loadNpmTasks("grunt-replace");
-    grunt.loadNpmTasks("grunt-contrib-clean");
-    grunt.loadNpmTasks("grunt-contrib-copy");
-    grunt.loadNpmTasks("grunt-shell");
+    // Load all grunt-tasks in package.json
+    require("load-grunt-tasks")(grunt);
 
     var defaultTask = ["clean", "less", "concat", "copy", "replace"];
     if (process.env._NTTREE) {
