@@ -2,35 +2,35 @@ var config = require("../../config.js");
 
 module.exports = {
     baseDesktop: {
-        src: baseJSFiles,
+        src: config.baseJSFiles,
         dest: config.desktopOutput + "js/base.js"
     },
     basePhone: {
-        src: baseJSFilesPhone,
+        src: config.baseJSFilesPhone,
         dest: config.phoneOutput + "js/base.js"
     },
     baseStringsDesktop: {
-        src: baseStringsFiles,
+        src: config.baseStringsFiles,
         dest: config.desktopOutput + "js/" + config.localeFolder + "/base.strings.js"
     },
     baseStringsPhone: {
-        src: baseStringsFiles,
+        src: config.baseStringsFiles,
         dest: config.phoneOutput + "js/" + config.localeFolder + "/base.strings.js"
     },
     uiDesktop: {
-        src: uiJSFiles,
+        src: config.uiJSFiles,
         dest: config.desktopOutput + "js/ui.js"
     },
     uiPhone: {
-        src: uiJSFilesPhone,
+        src: config.uiJSFilesPhone,
         dest: config.phoneOutput + "js/ui.js"
     },
     uiStringsDesktop: {
-        src: uiStringsFiles,
+        src: config.uiStringsFiles,
         dest: config.desktopOutput + "js/" + config.localeFolder + "/ui.strings.js"
     },
     uiStringsPhone: {
-        src: uiStringsFiles,
+        src: config.uiStringsFiles,
         dest: config.phoneOutput + "js/" + config.localeFolder + "/ui.strings.js"
     }
 }
