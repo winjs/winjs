@@ -34,7 +34,7 @@ WinJSTests.ListViewCancel = function () {
             var count = 1000;
             this.itemsFromIndex = function (index, countBefore, countAfter) {
                 if (pendingStep) {
-                    setImmediate(pendingStep);
+                    WinJS.Utilities._setImmediate(pendingStep);
                     pendingStep = null;
                 }
 
@@ -129,7 +129,7 @@ WinJSTests.ListViewCancel = function () {
         function step5() {
             if (listView.loadingState === "complete") {
                 listView.removeEventListener('loadingstatechanged', step5);
-                setImmediate(step6);
+                WinJS.Utilities._setImmediate(step6);
             }
         }
 

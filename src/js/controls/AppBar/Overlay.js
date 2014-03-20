@@ -1192,7 +1192,7 @@
                 if (_Overlay._checkSameClickEatingPointerUp(event, false)) {
                     // It was a right click we may want to eat.
                     _Overlay._rightMouseMightEdgy = true;
-                    setImmediate(function () { _Overlay._rightMouseMightEdgy = false; });
+                    WinJS.Utilities._yieldForEvents(function () { _Overlay._rightMouseMightEdgy = false; });
                 }
             };
 

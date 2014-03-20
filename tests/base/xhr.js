@@ -346,7 +346,7 @@ CorsicaTests.XHR = function () {
             var callback = function (success) {
                 LiveUnit.Assert.areEqual(true, success);
                 LiveUnit.Assert.areEqual(1, progressPos);
-                setImmediate(complete);
+                WinJS.Utilities._setImmediate(complete);
             }
 
             WinJS.xhr(options).

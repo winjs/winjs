@@ -52,7 +52,7 @@
         }
         var period = U._DOMWeakRefTable_sweepPeriod;
         if (period === 0) {
-            setImmediate(cleanup);
+            WinJS.Utilities.Scheduler.schedule(cleanup, WinJS.Utilities.Scheduler.Priority.idle, null, "WinJS.Utilities._DOMWeakRefTable.cleanup");
             cleanupToken = 1;
         } else {
             cleanupToken = setInterval(cleanup, U._DOMWeakRefTable_sweepPeriod);
@@ -64,11 +64,15 @@
             return;
         }
         var period = U._DOMWeakRefTable_sweepPeriod;
-        if (period === 0) {                             // if we're using post
-            if (!cleanupToken) {                        // and there isn't already one scheduled
-                if (Object.keys(table).length !== 0) {  // and there are items in the table
-                    setImmediate(cleanup);           // schedule another call to cleanup
-                    cleanupToken = 1;                   // and protect against overscheduling
+        if (period === 0) {                                 // if we're using post
+            if (!cleanupToken) {                            // and there isn't already one scheduled
+                if (Object.keys(table).length !== 0) {      // and there are items in the table
+                    WinJS.Utilities.Scheduler.schedule(     // schedule another call to cleanup
+                        cleanup,
+                        WinJS.Utilities.Scheduler.Priority.idle,
+                        null, "WinJS.Utilities._DOMWeakRefTable.cleanup"
+                    );           
+                    cleanupToken = 1;                       // and protect against overscheduling
                 }
             }
         } else if (cleanupToken) {

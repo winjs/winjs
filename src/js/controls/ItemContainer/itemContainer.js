@@ -91,9 +91,9 @@
 
                 var that = this;
                 if (!this.selectionDisabled) {
-                    setImmediate(function () {
+                    WinJS.Utilities.Scheduler.schedule(function ItemContainer_async_initialize() {
                         that._setDirectionClass();
-                    });
+                    }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.UI.ItemContainer_async_initialize");
                 }
                 this._itemEventsHandler = new WinJS.UI._ItemEventsHandler(Object.create({
                     containerFromElement: function (element) {
@@ -474,7 +474,7 @@
                         this._dragging = true;
                         var that = this;
                         // We delay setting the win-dragsource CSS class so that IE has time to create a thumbnail before me make it opaque
-                        setImmediate(function () {
+                        WinJS.Utilities._yieldForDomModification(function () {
                             if (that._dragging) {
                                 utilities.addClass(that._itemBox, WinJS.UI._dragSourceClass);
                             }

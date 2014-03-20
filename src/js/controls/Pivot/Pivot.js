@@ -416,7 +416,7 @@
                         var that = this;
                         this._manipulationRecenterPromise = WinJS.Promise._cancelBlocker(
                             WinJS.Promise.join([
-                                WinJS.Promise.timeout(),
+                                WinJS.Utilities.Scheduler.schedulePromiseNormal(null, "WinJS.UI.Pivot._MSManipulationStateChangedHandler_animationPlaceholder"),
                                 this._hidePivotItemAnimation,
                                 this._showPivotItemAnimation,
                                 this._slideHeadersAnimation
@@ -815,7 +815,7 @@
                     if (WinJS.UI.isAnimationEnabled()) {
                         this._hidePivotItemAnimation = WinJS.UI.Animation[negativeTransform ? "slideRightOut" : "slideLeftOut"](element);
                     } else {
-                        this._hidePivotItemAnimation = WinJS.Promise.timeout();
+                        this._hidePivotItemAnimation = WinJS.Utilities.Scheduler.schedulePromiseNormal(null, "WinJS.UI.Pivot._hidePivotItem_animationPlaceholder");
                     }
 
                     this._hidePivotItemAnimation.then(cleanup, cleanup);

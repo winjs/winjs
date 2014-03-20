@@ -1701,7 +1701,7 @@
 
                     var that = this;
                     // Need to yield to the host here
-                    setImmediate(function () {
+                    WinJS.Utilities._setImmediate(function () {
                         if (that._viewportOnItemStart()) {
                             that._blockTabs = false;
                             if (that._currentPage.element) {

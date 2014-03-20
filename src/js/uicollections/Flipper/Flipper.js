@@ -804,7 +804,7 @@
                     if (wheelWithinFlipper && withinAvoidTime) {
                         this._panningDivContainer.style["overflowX"] = "hidden";
                         this._panningDivContainer.style["overflowY"] = "hidden";
-                        setImmediate(function () {
+                        WinJS.Utilities._yieldForDomModification(function () {
                             // Avoid being stuck between items
                             that._pageManager._ensureCentered();
 

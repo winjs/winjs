@@ -359,7 +359,7 @@
                     this._skipClick = true;
                     var that = this;
                     var swipeEnabled = this._site.swipeBehavior === WinJS.UI.SwipeBehavior.select;
-                    setImmediate(function () {
+                    WinJS.Utilities._yieldForEvents(function () {
                         that._skipClick = false;
                     });
 
@@ -614,7 +614,7 @@
                                     // setImmediate is used rather than requestAnimationFrame to ensure that the item
                                     // doesn't get stuck down for too long -- apps are told to put long running invoke
                                     // code behind a setImmediate and togglePressed's async code needs to run first.
-                                    setImmediate(function () {
+                                    WinJS.Utilities._setImmediate(function () {
                                         if (utilities.hasClass(element, WinJS.UI._pressedClass)) {
                                             applyUpVisual(element, expectingStyle);
                                         }

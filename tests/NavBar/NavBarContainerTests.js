@@ -114,7 +114,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var sixthNavItem = navbarContainer._surfaceEl.children[5].winControl;
             LiveUnit.Assert.areEqual(sixthNavItem._buttonEl, document.activeElement);
             LiveUnit.Assert.areEqual(5, navbarContainer.currentIndex);
@@ -197,7 +197,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             var lastNavItem = navbarContainer._surfaceEl.children[99].winControl;
 
@@ -209,7 +209,7 @@ WinJSTests.NavBarContainerTests = function () {
             LiveUnit.Assert.areEqual(lastNavItem._buttonEl, document.activeElement);
             LiveUnit.Assert.areEqual(99, navbarContainer.currentIndex);
 
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 for (var i = 0; i < 100; i++) {
                     CommonUtilities.keydown(lastNavItem._buttonEl, Key.leftArrow);
                 }
@@ -231,7 +231,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         //LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             var thirdNavItem = navbarContainer._surfaceEl.children[2].winControl;
             var fourthNavItem = navbarContainer._surfaceEl.children[3].winControl;
@@ -312,7 +312,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             var secondNavItem = navbarContainer._surfaceEl.children[1].winControl;
             var thirdNavItem = navbarContainer._surfaceEl.children[2].winControl;
@@ -378,7 +378,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
             LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
@@ -421,7 +421,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
             LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
@@ -452,7 +452,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
             LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
@@ -486,7 +486,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
             LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
@@ -517,7 +517,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
             LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
@@ -548,7 +548,7 @@ WinJSTests.NavBarContainerTests = function () {
 
         navbarContainer.element.focus();
         LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             var secondNavItem = navbarContainer._surfaceEl.children[1].winControl;
 
@@ -872,7 +872,7 @@ WinJSTests.NavBarContainerTests = function () {
         navbarContainerEl.style.display = "none";
         // Resize
         this._element.style.width = "700px";
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             // Show
             navbarContainerEl.style.display = "block";
             var currentPageIndicatorCount = navbarContainerEl.querySelectorAll(".win-navbarcontainer-pageindicator").length;
@@ -913,7 +913,7 @@ WinJSTests.NavBarContainerTests = function () {
         // Press end, then home
         navbarContainer.element.focus();
         //LiveUnit.Assert.areEqual(navbarContainer.element, document.activeElement);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             var lastNavItem = navbarContainer._surfaceEl.children[9].winControl;
 

@@ -101,7 +101,7 @@ WinJSTests.HubTests = function () {
                 return element;
             }
 
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 LiveUnit.Assert.areEqual("Text: Header for section 0", hub.sections.getAt(0)._headerContentElement.textContent, "Template function");
                 complete();
             });
@@ -118,7 +118,7 @@ WinJSTests.HubTests = function () {
             templateEl.innerHTML = '<span>Template: </span><span data-win-bind="textContent: header"></div>';
             hub.headerTemplate = new WinJS.Binding.Template(templateEl);
 
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 LiveUnit.Assert.areEqual("Template: Header for section 0", hub.sections.getAt(0)._headerContentElement.textContent, "Binding template");
                 complete();
             });

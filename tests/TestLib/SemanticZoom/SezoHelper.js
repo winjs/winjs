@@ -13,7 +13,7 @@ SezoHelper.waitForZoomChanged = function waitForZoomChanged(sezo, isZoomedOut) {
                 LiveUnit.Assert.isFalse(sezo.zoomedOut ^ isZoomedOut);
             }
             // Yield so that child control can finish the pending work
-            setImmediate(c);
+            WinJS.Utilities._setImmediate(c);
         }
     });
 };

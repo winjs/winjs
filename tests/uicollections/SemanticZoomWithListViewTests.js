@@ -209,7 +209,7 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
                 enableUIAnimations();
                 complete();
             } else {
-                setImmediate(testNextItem);
+                WinJS.Utilities._setImmediate(testNextItem);
             }
         });
 
