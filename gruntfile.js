@@ -128,6 +128,7 @@ module.exports = function (grunt) {
     var uiJSFiles = [
         "src/js/build/Copyright.js",
         "src/js/build/startUI.js",
+        "src/js/uicollections/references.js",
         "src/js/animations/animations.js",
         "src/js/uicollections/Assert.js",
         "src/js/uicollections/ItemsManager/BindingListDataSource.js",
