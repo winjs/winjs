@@ -85,11 +85,11 @@ WinJSTests.VirtualizedViewTests = function () {
         defaultPagesToPrefetch = WinJS.UI._VirtualizeContentsView._pagesToPrefetch;
         //WinBlue: 298587
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
-        appendCSSFileToHead("../TestData/Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
-        removeCSSFileFromHead("../TestData/Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
         document.body.removeChild(VirtualizeContentsViewTestHost);
         WinJS.UI._VirtualizeContentsView._chunkSize = defaultChunkSize;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = defaultMaxTime;

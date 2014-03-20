@@ -29,7 +29,12 @@
         });
     };
     window.runAllTests = function () {
-        runTests(tests);
+        var selectedTests = [];
+        for (var i = 0, l = loadedTests.children.length; i < l; i++) {
+            selectedTests.push(loadedTests.children[i].testRecord);
+        }
+
+        runTests(selectedTests);
     };
     window.resetTests = function () {
         window.location = window.location;
@@ -89,6 +94,7 @@
                         QUnit.assert.ok(true, "Test Started");
                         try {
                             testFunc.call(module);
+                            QUnit.start();
                         }
                         catch (e) {
                             setTimeout(function () {
@@ -112,20 +118,18 @@
                 expectedException = [expectedException];
             }
 
-            window.onerror = function (e) {
+            window.onerror = function (error) {
                 var handled = false;
                 for (var i = 0; i < expectedException.length; i++) {
-                    if (expectedException[i].message === e.message) {
+                    if (expectedException[i].message === error) {
                         handled = true;
                         break;
                     }
                 }
                 if (handled) {
-                    QUnit.assert.ok(true, "Caught expected exception: " + e.message);
-                    e.preventDefault();
-                    e.stopPropagation();
+                    QUnit.assert.ok(true, "Caught expected exception: " + error);
                 } else {
-                    QUnit.assert.ok(false, "Unexpected exception: " + e.message);
+                    QUnit.assert.ok(false, "Unexpected exception: " + error);
                 }
             };
         } else {
@@ -276,6 +280,7 @@
                     element: div,
                     isComplete: false,
                 };
+                div.testRecord = test;
                 tests.push(test);
                 testMap[fullName] = test;
 

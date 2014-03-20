@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     var outputFolder = "bin/";
 
     var testsOutput = "";
-    
+
     if (process.env._NTTREE) {
         outputFolder = process.env._NTTREE + "/Corsica/";
         testsOutput = outputFolder + "other." + version + ".debug/tests/unittests/";
@@ -344,19 +344,32 @@ module.exports = function(grunt) {
               {expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/"},
               {expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/"}
             ]
+        },
+        tests: {
+            options: {
+                patterns: [
+                    {
+                        match: /\$\(TESTDATA\)\//g,
+                        replacement: ""
+                    }
+                ]
+            },
+            files: [
+                { expand: true, flatten: false, src: [testsOutput + "**/*.js"], dest: "" },
+                { expand: true, flatten: false, src: [testsOutput + "**/*.html"], dest: "" },
+            ]
         }
     };
 
+   gruntConfig.copy = {
+        tests: {
+            files: [
+                {expand: true, cwd: "tests/", src: ["**"], dest: testsOutput}
+            ]
+        }
+    };
+    
     if (process.env._NTTREE) {
-        // Test copy task, only if building internally
-        gruntConfig.copy = {
-            tests: {
-                files: [
-                    {expand: true, cwd: "tests/", src: ["**"], dest: testsOutput}
-                ]
-            }
-        };
-
         gruntConfig.shell = {
             runTests: {
                 command: function (test, host) {

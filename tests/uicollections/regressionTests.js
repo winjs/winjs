@@ -24,12 +24,12 @@ WinJSTests.ListViewRegression = function () {
     
     this.setUp = function (complete) {
         removeListviewAnimations();
-        appendCSSFileToHead("../TestData/Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
         restoreListviewAnimations();
-        removeCSSFileFromHead("../TestData/Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     };
 
     this.testWin8_342083 = function (complete) {

@@ -113,7 +113,7 @@ CorsicaTests.Fragments = function () {
         assertCacheIsClear(true);
 
         var temp = document.createElement("span");
-        var fragfile = "../TestData/FragmentSingleElement.html";
+        var fragfile = "$(TESTDATA)/FragmentSingleElement.html";
 
         WinJS.UI.Fragments.render(fragfile, temp).
             then(function (docfrag) {
@@ -179,7 +179,7 @@ CorsicaTests.Fragments = function () {
         assertCacheIsClear(true);
 
         var temp = document.createElement("span");
-        var fragfile = "../TestData/FragmentHTMExtension.HTM";
+        var fragfile = "$(TESTDATA)/FragmentHTMExtension.HTM";
 
         WinJS.UI.Fragments.render(fragfile, temp).
             then(function (docfrag) {
@@ -222,7 +222,7 @@ CorsicaTests.Fragments = function () {
     
     this.testRemoteFragmentLoading = function (complete) {
         var temp = document.createElement("div");
-        var fragfile = "../TestData/FragmentBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentBasic.html";
         WinJS.UI.Fragments.renderCopy(fragfile).
             then(function (docfrag) {
                 assertCacheContents(fragfile);
@@ -241,7 +241,7 @@ CorsicaTests.Fragments = function () {
     this.testRemoteFragmentLoading2 = function (complete) {
         // try null param to renderCopy 
         var temp = document.createElement("div");
-        var fragfile = "../TestData/FragmentBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentBasic.html";
         WinJS.UI.Fragments.renderCopy(fragfile, null).
             then(function (docfrag) {
                 assertCacheContents(fragfile);
@@ -259,7 +259,7 @@ CorsicaTests.Fragments = function () {
     
     this.testRemoteFragmentLoadingAppend = function (complete) {
         var temp = document.createElement("div");
-        WinJS.UI.Fragments.renderCopy("../TestData/FragmentBasic.html", temp).
+        WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentBasic.html", temp).
             then(function (docfrag) {
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");
                 LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
@@ -271,7 +271,7 @@ CorsicaTests.Fragments = function () {
     
     this.testRemoteFragmentLoadingNoCopy = function (complete) {
         var temp = document.createElement("div");
-        WinJS.UI.Fragments.render("../TestData/FragmentBasic.html").
+        WinJS.UI.Fragments.render("$(TESTDATA)/FragmentBasic.html").
             then(function (docfrag) { 
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");
                 temp.appendChild(docfrag);
@@ -286,7 +286,7 @@ CorsicaTests.Fragments = function () {
 
     this.testRemoteFragmentLoadingAppendNoCopy = function (complete) {
         var temp = document.createElement("div");
-        WinJS.UI.Fragments.render("../TestData/FragmentBasic.html", temp).
+        WinJS.UI.Fragments.render("$(TESTDATA)/FragmentBasic.html", temp).
             then(function (docfrag) {
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");
                 LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
@@ -299,7 +299,7 @@ CorsicaTests.Fragments = function () {
     this.testFragmentWithScriptAndStyles  = function (complete) {
         var temp = document.createElement("div");
         document.body.appendChild(temp);
-        WinJS.UI.Fragments.renderCopy("../TestData/FragmentWithScriptAndStyles.html").
+        WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentWithScriptAndStyles.html").
             then(function (docfrag) {
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");
                 fragmentWithScriptAndStylesLoad(docfrag, { text : 'option1' }); 
@@ -320,7 +320,7 @@ CorsicaTests.Fragments = function () {
     this.testFragmentWithScriptAndStylesNoBody  = function (complete) {
         var temp = document.createElement("div");
         document.body.appendChild(temp);
-        WinJS.UI.Fragments.renderCopy("../TestData/FragmentWithScriptAndStylesNoBody.html").
+        WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentWithScriptAndStylesNoBody.html").
             then(function (docfrag) {
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");
                 fragmentWithScriptAndStylesLoadNoBody(docfrag, { text: 'option1' });
@@ -342,7 +342,7 @@ CorsicaTests.Fragments = function () {
 	this.testFragmentWithScriptAndStylesNoBodyNoLoad  = function (complete) {
         var temp = document.createElement("div");
         document.body.appendChild(temp);
-	    WinJS.UI.Fragments.renderCopy("../TestData/FragmentWithScriptAndStylesNoBodyNoLoad.html").
+	    WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentWithScriptAndStylesNoBodyNoLoad.html").
             then(function (docfrag) {
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");
                 temp.appendChild(docfrag); 
@@ -362,7 +362,7 @@ CorsicaTests.Fragments = function () {
     this.testFragmentWithExternalScriptAndStyles  = function (complete) {
         var temp = document.createElement("div");
         document.body.appendChild(temp);
-        WinJS.UI.Fragments.renderCopy("../TestData/FragmentWithExternalScriptAndStyles.html").
+        WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentWithExternalScriptAndStyles.html").
             then(function (docfrag) {
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");
                 fragmentWithExternalScriptAndStylesLoad(docfrag); 
@@ -388,7 +388,7 @@ CorsicaTests.Fragments = function () {
         document.body.appendChild(temp);
         
         // page1.html contains <script> references to WinJS*
-        WinJS.UI.Fragments.renderCopy("../TestData/page1.html").
+        WinJS.UI.Fragments.renderCopy("$(TESTDATA)/page1.html").
             then(function (docfrag) {
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");                
                 temp.appendChild(docfrag); 
@@ -405,7 +405,7 @@ CorsicaTests.Fragments = function () {
     this.testFragmentWithNamespaceLoad  = function (complete) {
         var temp = document.createElement("div");
         document.body.appendChild(temp);
-        WinJS.UI.Fragments.renderCopy("../TestData/FragmentWithNamespaceLoad.html").
+        WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentWithNamespaceLoad.html").
             then(function (docfrag) {
                 LiveUnit.Assert.isNotNull(docfrag, "docfrag should never be null after successful render");
                 Fragment.Test.init(docfrag, { text: 'options' });
@@ -467,8 +467,8 @@ CorsicaTests.Fragments = function () {
         try {
             var rendered = false;
             var temp = document.createElement("div");
-            WinJS.UI.Fragments.clearCache("../TestData/FragmentBasic.html");
-            WinJS.UI.Fragments.render("../TestData/FragmentBasic.html", temp).
+            WinJS.UI.Fragments.clearCache("$(TESTDATA)/FragmentBasic.html");
+            WinJS.UI.Fragments.render("$(TESTDATA)/FragmentBasic.html", temp).
                 then(function () {
                     LiveUnit.Assert.areEqual(2, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[1].textContent, "Text content does not match");
@@ -491,8 +491,8 @@ CorsicaTests.Fragments = function () {
 
         var temp = document.createElement("div");
 
-        WinJS.UI.Fragments.cache("../TestData/FragmentBasic.html").
-            then(function () { return WinJS.UI.Fragments.renderCopy("../TestData/FragmentBasic.html", temp); }).
+        WinJS.UI.Fragments.cache("$(TESTDATA)/FragmentBasic.html").
+            then(function () { return WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentBasic.html", temp); }).
             then(function () {
                 LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                 LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
@@ -506,7 +506,7 @@ CorsicaTests.Fragments = function () {
         WinJS.UI.Fragments.clearCache();
 
         var temp = document.createElement("div");
-        var fragfile = "../TestData/FragmentBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentBasic.html";
 
         WinJS.UI.Fragments.cache(fragfile).
             then(function() { assertCacheContents(fragfile); }).
@@ -524,7 +524,7 @@ CorsicaTests.Fragments = function () {
         WinJS.UI.Fragments.clearCache();
 
         var temp = document.createElement("div");
-        var fragfile = "../TestData/FragmentBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentBasic.html";
 
         WinJS.UI.Fragments.cache(fragfile).
             then(function () { return WinJS.UI.Fragments.cache(fragfile); }).
@@ -545,7 +545,7 @@ CorsicaTests.Fragments = function () {
 
         var temp = document.createElement("div");
 
-        WinJS.UI.Fragments.render("../TestData/Fragment2WinJSControls.html", temp).
+        WinJS.UI.Fragments.render("$(TESTDATA)/Fragment2WinJSControls.html", temp).
             then(function () {
             // after it loads, verify there's 1 element with id=datepicker
             LiveUnit.Assert.areEqual(1, temp.querySelectorAll("#datepicker").length);
@@ -563,7 +563,7 @@ CorsicaTests.Fragments = function () {
     }
     
     this.testRelativePaths = function (complete) {
-        WinJS.UI.Fragments.renderCopy("../TestData/Subdirectory/RelativePathFragments.html").
+        WinJS.UI.Fragments.renderCopy("$(TESTDATA)/Subdirectory/RelativePathFragments.html").
             then(function (docfrag) { 
                 LiveUnit.Assert.areNotEqual(-1, docfrag.querySelector("IMG").src.indexOf("/Subdirectory/"));
                 LiveUnit.Assert.areNotEqual(-1, docfrag.querySelector("A").href.indexOf("/Subdirectory/"));
@@ -634,7 +634,7 @@ CorsicaTests.Fragments = function () {
         var temp = document.createElement("div");
         document.body.appendChild(temp);
 
-        WinJS.UI.Fragments.renderCopy("../TestData/FragmentFindmeInternal.html").
+        WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentFindmeInternal.html").
         then(function (docfrag) {
             LiveUnit.Assert.isNotNull(docfrag, "docfrag isNotNull");
             temp.appendChild(docfrag);
@@ -659,7 +659,7 @@ CorsicaTests.Fragments = function () {
             var temp = document.createElement("div");
             document.body.appendChild(temp);
 
-            WinJS.UI.Fragments.renderCopy("../TestData/FragmentControlCombo.html").
+            WinJS.UI.Fragments.renderCopy("$(TESTDATA)/FragmentControlCombo.html").
             then(function (docfrag) {
                 // initialization occurs here
 
@@ -704,9 +704,9 @@ CorsicaTests.Fragments = function () {
         //       !!!!CorsicaTests.Fragments.testJSExecutesOnce: Cannot redefine non-configurable
         //       property 'oncontextchanged' when trying to append <script> tag for base.js 
         if (isWinRTEnabled()) {
-            fragfile = "../TestData/FragmentJSExecutesOnce.html";
+            fragfile = "$(TESTDATA)/FragmentJSExecutesOnce.html";
         } else {
-            fragfile = "../TestData/FragmentJSExecutesOnce(ie).html";
+            fragfile = "$(TESTDATA)/FragmentJSExecutesOnce(ie).html";
         }
 
         // load the same fragment file 3 times
@@ -740,7 +740,7 @@ CorsicaTests.Fragments = function () {
             return;
         }
         
-        var fragfile = "../TestData/FragmentVariableAccess.html";
+        var fragfile = "$(TESTDATA)/FragmentVariableAccess.html";
 
         // note: global variables get stuck onto the window object
         window.myFragLoadCounter = window.myFragLoadCounter || 1;
