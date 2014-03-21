@@ -1,9 +1,6 @@
 ///<reference path="qunit-1.14.0.js" />
 
 (function () {
-    function _() {
-    }
-
     var qUnitGlobalErrorHandler = window.onerror;
 
     var verboseLog = "";
@@ -13,13 +10,17 @@
     QUnit.config.testTimeout = 20000;
     QUnit.breakOnAssertFail = false;
 
-    window.onload = function () {
+    var qunitDiv;
+    window.addEventListener("DOMContentLoaded", function () {
+        qunitDiv = document.querySelector("#qunit");
+
         function addOptions() {
             var toolBar = document.querySelector("#qunit-testrunner-toolbar");
             if (!toolBar) {
-                setTimeout(addOptions, 100);
+                setTimeout(addOptions);
                 return;
             }
+
             var cb = document.createElement("input");
             cb.type = "checkbox";
             cb.onchange = function () {
@@ -38,7 +39,9 @@
             toolBar.appendChild(btn);
         }
         addOptions();
-    };
+    });
+
+
 
     function handleGlobalError(testFunc, error) {
         var expectedException = testFunc["LiveUnit.ExpectedException"];
@@ -79,17 +82,17 @@
 
     function cleanUp() {
         WinJS.Utilities.disposeSubTree(document.body);
+        qunitDiv.style.zIndex = 0;
     }
 
-    QUnit.testDone(function testDone(args, timeout) {
+    QUnit.testStart(function testStart() {
+        qunitDiv.style.zIndex = -1;
+    });
+
+    QUnit.testDone(function testDone(args) {
         cleanUp();
 
-        if (timeout) {
-            // If a test timed out, then it never called start, so we do that here now.
-            console.log(args.module + ": " + args.name + " TIMEOUT");
-            QUnit.start();
-        }
-        else if (args.failed) {
+        if (args.failed) {
             console.log(args.module + ": " + args.name + ", " + args.passed + "/" + args.total + ", " + args.runtime + "ms");
             console.log(verboseLog);
         }
@@ -112,7 +115,7 @@
             },
 
             fail: function (message) {
-                if(QUnit.breakOnAssertFail) {
+                if (QUnit.breakOnAssertFail) {
                     debugger;
                 }
                 QUnit.assert.ok(false, message);
@@ -161,6 +164,17 @@
         },
 
         registerTestClass: function (moduleName) {
+            function runSetupTeardownFunc(func) {
+                if (func.length) {
+                    QUnit.stop();
+                    func(function () {
+                        QUnit.start();
+                    });
+                } else {
+                    func();
+                }
+            }
+
             var path = moduleName.split(".");
             var module = window;
             path.forEach(function (key) {
@@ -169,8 +183,18 @@
             var testModule = new module();
 
             QUnit.module(moduleName, {
-                setup: testModule.setUp ? testModule.setUp.bind(testModule) : _,
-                teardown: testModule.tearDown ? testModule.tearDown.bind(testModule) : _
+                setup: function () {
+                    if (!testModule.setUp) {
+                        return;
+                    }
+                    runSetupTeardownFunc(testModule.setUp.bind(testModule));
+                },
+                teardown: function () {
+                    if (!testModule.tearDown) {
+                        return;
+                    }
+                    runSetupTeardownFunc(testModule.tearDown.bind(testModule));
+                }
             });
 
             Object.keys(testModule).forEach(function (key) {
@@ -187,7 +211,6 @@
                         hookupGlobalErrorHandler(testFunc);
                         QUnit.assert.ok(true, "Test Started");
                         var error = false;
-                        var start = performance.now();
                         try {
                             testFunc.call(testModule, function () {
                                 if (!error) {
