@@ -25,8 +25,6 @@ module.exports = function (grunt) {
     // Package data
     gruntConfig.pkg = grunt.file.readJSON("package.json");
 
-              { expand: true, flatten: true, src: [desktopOutput + "css/*.css"], dest: desktopOutput + "css/" },
-              { expand: true, flatten: true, src: [phoneOutput + "css/*.css"], dest: phoneOutput + "css/" },
     // Project config
     grunt.initConfig(gruntConfig);
 
