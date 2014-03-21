@@ -24,44 +24,7 @@ module.exports = function (grunt) {
 
     // Package data
     gruntConfig.pkg = grunt.file.readJSON("package.json");
-
-            testsOutput
-        test: [
-            testsOutput + "**/*.js",
-            testsOutput + "**/*.html",
-        ],
-        qunit: [
-            testsOutput + "TestLib/liveToQ/*.*"
-        ],
-        tests: {
-            options: {
-                patterns: [
-                    {
-                        match: "TESTPAGE_HEAD",
-                        replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageHead.html') %>"
-                    },
-                    {
-                        match: "TESTPAGE_BODY",
-                        replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageBody.html') %>"
-                    }
-                ],
-            },
-            files: [
-                { expand: true, flatten: false, src: [testsOutput + "**/*.js"], dest: "" },
-                { expand: true, flatten: false, src: [testsOutput + "**/*.html"], dest: "" },
-            ]
-        },
-              { expand: true, flatten: false, src: [testsOutput + "**/*.html"], dest: "" },
-    if (process.env._NTTREE) {
-        gruntConfig.replace.tests.options.patterns.push({
-            match: /\$\(TESTDATA\)\//g,
-            replacement: ""
-        });
-    } else {
-        gruntConfig.replace.tests.options.patterns.push({
-            match: /\$\(TESTDATA\)\//g,
-            replacement: "../TestData/"
-        });
+    
     // Project config
     grunt.initConfig(gruntConfig);
 
