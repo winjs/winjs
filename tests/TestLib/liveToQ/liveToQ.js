@@ -6,7 +6,6 @@
     var verboseLog = "";
 
     QUnit.config.autostart = false;
-    QUnit.config.hidepassed = true;
     QUnit.config.testTimeout = 20000;
     QUnit.breakOnAssertFail = false;
 
