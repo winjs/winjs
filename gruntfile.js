@@ -240,6 +240,7 @@ module.exports = function(grunt) {
         all: [
             desktopOutput,
             phoneOutput,
+            testsOutput
         ],
         base: [
             desktopOutput + "js/base.js",
@@ -253,6 +254,10 @@ module.exports = function(grunt) {
             phoneOutput + "js/ui.js",
             phoneOutput + "js/" + localeFolder + "/ui.strings.js",
         ],
+        test: [
+            testsOutput + "**/*.js",
+            testsOutput + "**/*.html",
+        ]
     };
 
     // Less build task
@@ -313,6 +318,24 @@ module.exports = function(grunt) {
 
     // Post process task
     gruntConfig.replace = {
+        tests: {
+            options: {
+                patterns: [
+                    {
+                        match: "TESTPAGE_HEAD",
+                        replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageHead.html') %>"
+                    },
+                    {
+                        match: "TESTPAGE_BODY",
+                        replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageBody.html') %>"
+                    }
+                ],
+            },
+            files: [
+                { expand: true, flatten: false, src: [testsOutput + "**/*.js"], dest: "" },
+                { expand: true, flatten: false, src: [testsOutput + "**/*.html"], dest: "" },
+            ]
+        },
         base: {
             options: {
                 patterns: [
@@ -339,26 +362,13 @@ module.exports = function(grunt) {
                 ]
             },
             files: [
-              {expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/"},
-              {expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/"},
-              {expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/"},
-              {expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/"}
+              { expand: true, flatten: true, src: [desktopOutput + "js/*.js"], dest: desktopOutput + "js/" },
+              { expand: true, flatten: true, src: [desktopOutput + "js/" + localeFolder + "/*.js"], dest: desktopOutput + "js/" + localeFolder + "/" },
+              { expand: true, flatten: true, src: [phoneOutput + "js/*.js"], dest: phoneOutput + "js/" },
+              { expand: true, flatten: true, src: [phoneOutput + "js/" + localeFolder + "/*.js"], dest: phoneOutput + "js/" + localeFolder + "/" },
+              { expand: true, flatten: false, src: [testsOutput + "**/*.html"], dest: "" },
             ]
         },
-        tests: {
-            options: {
-                patterns: [
-                    {
-                        match: /\$\(TESTDATA\)\//g,
-                        replacement: ""
-                    }
-                ]
-            },
-            files: [
-                { expand: true, flatten: false, src: [testsOutput + "**/*.js"], dest: "" },
-                { expand: true, flatten: false, src: [testsOutput + "**/*.html"], dest: "" },
-            ]
-        }
     };
 
    gruntConfig.copy = {
@@ -381,11 +391,20 @@ module.exports = function(grunt) {
                 }
             }
         };
+        gruntConfig.replace.tests.options.patterns.push({
+            match: /\$\(TESTDATA\)\//g,
+            replacement: ""
+        });
 
         // Also add tests to the replace task
         var testReplace = {expand: true, cwd: testsOutput, src: ["**/*.js"], dest: testsOutput};
         gruntConfig.replace.base.files.push(testReplace);
         grunt.log.write("replace has " + gruntConfig.replace.base.files.length + " items");
+    } else {
+        gruntConfig.replace.tests.options.patterns.push({
+            match: /\$\(TESTDATA\)\//g,
+            replacement: "../TestData/"
+        });
     }
 
     // Project config

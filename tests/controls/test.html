@@ -1,26 +1,16 @@
-<!-- saved from url=(0023)http://www.contoso.com/ -->
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>controls</title>
-    <!-- WinJS references -->
-    <link type="text/css" rel="stylesheet" href="../../bin/Microsoft.WinJS.2.1/css/ui-dark.css" />
-    <script src="../../bin/Microsoft.WinJS.2.1/js/base.js"></script>
-    <script src="../../bin/Microsoft.WinJS.2.1/js/ui.js"></script>
-    <script src="../../bin/Microsoft.WinJS.2.1/js/en-US/base.strings.js"></script>
-    <script src="../../bin/Microsoft.WinJS.2.1/js/en-US/ui.strings.js"></script>
+@@TESTPAGE_HEAD
 
-    <!-- Test framework references -->
-    <script src="../TestLib/qunit-1.14.0.js"></script>
-    <script src="../TestLib/liveToQ.js"></script>
+    <title>controls</title>
+
     <script src="../TestLib/util.js"></script>
     <script src="../TestLib/LegacyLiveUnit/commonutils.js"></script>
     <script src="RatingUtils.js"></script>
     <script src="ToggleUtils.js"></script>
     <script src="TooltipUtils.js"></script>
 
-    <!-- Test references -->
     <script src="AppBar.js"></script>
     <script src="AppBarCommand.js"></script>
     <script src="AppBarScalability.js"></script>
@@ -54,13 +44,6 @@
     <script src="ViewBox.js"></script>
 </head>
 <body>
-    <div id="toolsDiv" style="height: 100%">
-        <div id="buttons" style="height: 40px">
-            <button onclick="runAllTests()">Run All</button>
-            <button onclick="resetTests()">Reset</button>
-        </div>
-        <div id="loadedTests" style="height: calc(100% - 40px); overflow-y: scroll">
-        </div>
-    </div>
+@@TESTPAGE_BODY
 </body>
 </html>

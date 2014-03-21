@@ -91,7 +91,7 @@ CommonUtils.prototype = (function () {
 
             var loaded = false;
             for (var i = 0; i < document.styleSheets.length; i++) {
-                if (document.styleSheets[i].href && (document.styleSheets[i].href.indexOf(cssFileName) > 0) && document.styleSheets[i].cssRules.length > 0) {
+                if (document.styleSheets[i].href && (document.styleSheets[i].href.indexOf(cssFileName) > 0)) {
                     LiveUnit.LoggingCore.logComment("Found CSS Stylesheet: " + cssFileName);
                     LiveUnit.LoggingCore.logComment("At: " + document.styleSheets[i].href);
                     loaded = true;
@@ -122,7 +122,7 @@ CommonUtils.prototype = (function () {
 
             var removed = false,
                 cssSheets = document.styleSheets;
-            for (var i = 0; i < cssSheets.length; i++) {
+            for (var i = cssSheets.length - 1; i >= 0; i--) {
                 if (cssSheets[i].href && (cssSheets[i].href.indexOf(cssFileName) > 0)) {
                     cssSheets[i].ownerNode.parentNode.removeChild(cssSheets[i].ownerNode);
                     LiveUnit.LoggingCore.logComment("Successfully removed CSS Stylesheet: " + cssFileName);
