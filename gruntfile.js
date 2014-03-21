@@ -257,7 +257,10 @@ module.exports = function(grunt) {
         test: [
             testsOutput + "**/*.js",
             testsOutput + "**/*.html",
-        ]
+        ],
+        qunit: [
+            testsOutput + "TestLib/liveToQ/*.*"
+        ],
     };
 
     // Less build task
@@ -432,7 +435,7 @@ module.exports = function(grunt) {
                 host = "wwa";
             }
 
-            grunt.task.run(["default", "shell:runTests:" + testArgs + ":" + host]);
+            grunt.task.run(["default", "clean:qunit", "shell:runTests:" + testArgs + ":" + host]);
         });
     }
 
