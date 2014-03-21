@@ -5,6 +5,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/> 
+/// <reference path="../TestLib/util.js" />
+/// <reference path="OverlayHelpers.js" />
 
 var CorsicaTests = CorsicaTests || {};
 
@@ -33,10 +35,10 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
         var flyouts = document.querySelectorAll(".win-flyout");
         Array.prototype.forEach.call(flyouts, function(element){
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
+            disposeAndRemove(element);
             element = null;
         });
+        disposeAndRemove(this._element);
         this._element = null;
         
         disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
@@ -379,6 +381,44 @@ CorsicaTests.FlyoutTests = function () {
             document.body.removeChild(anchor);
             complete();
         }, false);
+    };
+    
+    this.testDismissesWhenLosingFocus = function (complete) {
+        var root = this._element;
+        root.innerHTML =
+            "<button id='outsideFlyout'>outsideFlyout</button>" +
+            "<div id='anchor'></div>" +
+            "<div id='flyout'>" +
+                "<button id='button0'>Button0</button>" +
+                "<button id='button1'>Button1</button>" +
+            "</div>";
+        var outsideFlyout = root.querySelector("#outsideFlyout");
+        var flyout = new WinJS.UI.Flyout(root.querySelector("#flyout"), {
+            anchor: root.querySelector("#anchor")
+        });
+        
+        OverlayHelpers.Assert.dismissesWhenLosingFocus({
+            overlay:flyout,
+            focusTo: outsideFlyout
+        }).then(complete);
+    };
+    
+    this.testRemainsVisibleWhenMovingFocusInternally = function (complete) {
+        var root = this._element;
+        root.innerHTML =
+            "<div id='anchor'></div>" +
+            "<div id='flyout'>" +
+                "<button id='button0'>Button0</button>" +
+                "<button id='button1'>Button1</button>" +
+            "</div>";
+        var flyout = new WinJS.UI.Flyout(root.querySelector("#flyout"), {
+            anchor: root.querySelector("#anchor")
+        });
+        OverlayHelpers.Assert.remainsVisibleWhenMovingFocusInternally({
+            overlay: flyout,
+            focusFrom: flyout.element.querySelector("#button0"),
+            focusTo: flyout.element.querySelector("#button1")
+        }).then(complete);
     };
 
 }

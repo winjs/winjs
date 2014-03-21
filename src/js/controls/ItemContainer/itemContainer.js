@@ -91,9 +91,9 @@
 
                 var that = this;
                 if (!this.selectionDisabled) {
-                    setImmediate(function () {
+                    WinJS.Utilities.Scheduler.schedule(function ItemContainer_async_initialize() {
                         that._setDirectionClass();
-                    });
+                    }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.UI.ItemContainer_async_initialize");
                 }
                 this._itemEventsHandler = new WinJS.UI._ItemEventsHandler(Object.create({
                     containerFromElement: function (element) {
@@ -239,14 +239,14 @@
                     eventHandler("LostPointerCapture"),
                     eventHandler("ContextMenu"),
                     eventHandler("MSHoldVisual", true),
-                    eventHandler("Focus"),
-                    eventHandler("Blur"),
+                    eventHandler("FocusIn"),
+                    eventHandler("FocusOut"),
                     eventHandler("DragStart"),
                     eventHandler("DragEnd"),
                     eventHandler("KeyDown")
                 ];
                 events.forEach(function (eventHandler) {
-                    that.element.addEventListener(eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                    WinJS.Utilities._addEventListener(that.element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                 });
 
                 this._writeProfilerMark("constructor,StopTM");
@@ -425,7 +425,7 @@
 
                 _onPointerUp: function ItemContainer_onPointerUp(eventObject) {
                     if (utilities.hasClass(this._itemBox, WinJS.UI._itemFocusClass)) {
-                        this._onBlur(eventObject);
+                        this._onFocusOut(eventObject);
                     }
                     this._itemEventsHandler.onPointerUp(eventObject);
                 },
@@ -446,7 +446,7 @@
                     this._itemEventsHandler.onMSHoldVisual(eventObject);
                 },
 
-                _onFocus: function ItemContainer_onFocus(eventObject) {
+                _onFocusIn: function ItemContainer_onFocusIn(eventObject) {
                     if (this._itemBox.querySelector("." + WinJS.UI._itemFocusOutlineClass) || !WinJS.UI._keyboardSeenLast) {
                         return;
                     }
@@ -456,7 +456,7 @@
                     this._itemBox.appendChild(outline);
                 },
 
-                _onBlur: function ItemContainer_onBlur(eventObject) {
+                _onFocusOut: function ItemContainer_onFocusOut(eventObject) {
                     utilities.removeClass(this._itemBox, WinJS.UI._itemFocusClass);
                     var outline = this._itemBox.querySelector("." + WinJS.UI._itemFocusOutlineClass);
                     if (outline) {
@@ -474,7 +474,7 @@
                         this._dragging = true;
                         var that = this;
                         // We delay setting the win-dragsource CSS class so that IE has time to create a thumbnail before me make it opaque
-                        setImmediate(function () {
+                        WinJS.Utilities._yieldForDomModification(function () {
                             if (that._dragging) {
                                 utilities.addClass(that._itemBox, WinJS.UI._dragSourceClass);
                             }

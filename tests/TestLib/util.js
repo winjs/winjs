@@ -350,6 +350,43 @@ var Helper;
             });
         });
     };
+        
+    // Returns a promise which completes when *element* receives focus. When *includeDescendants* is true,
+    // the promise completes when *element* or any of its descendants receives focus. *moveFocus* is a
+    // callback which is expected to trigger the focus change that the caller is interested in. 
+    Helper._waitForFocus = function focus(element, moveFocus, options) {
+        options = options || {};
+        var includeDescendants = options.includeDescendants;
+        
+        var p = new WinJS.Promise(function (complete) {
+            element.addEventListener("focus", function focusHandler() {
+                if (includeDescendants || document.activeElement === element) {
+                    element.removeEventListener("focus", focusHandler, false);
+                    complete();
+                }
+            }, true);
+        });
+        moveFocus();
+        return p;
+    };
+    
+    Helper.focus = function focus(element) {
+        return Helper._waitForFocus(element, function () { element.focus(); }, {
+            includeDescendants: false
+        });
+    };
+    
+    Helper.waitForFocus = function focus(element, moveFocus) {
+        return Helper._waitForFocus(element, moveFocus, {
+            includeDescendants: false
+        });
+    };
+    
+    Helper.waitForFocusWithin = function focus(element, moveFocus) {
+        return Helper._waitForFocus(element, moveFocus, {
+            includeDescendants: true
+        });
+    };
     
     // Useful for disabling tests which were generated programmatically. Disables testName which
     // is part of the testObj tests. It's safest to call this function at the bottom of the

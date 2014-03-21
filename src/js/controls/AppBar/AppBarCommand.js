@@ -147,7 +147,7 @@
 
                     // Hide the modern focus rect on click or touch
                     var that = this;
-                    this._element.addEventListener("pointerdown", function () { thisWinUI._Overlay._addHideFocusClass(that._element); }, false);
+                    WinJS.Utilities._addEventListener(this._element, "pointerdown", function () { thisWinUI._Overlay._addHideFocusClass(that._element); }, false);
 
                     // Make sure we have an ARIA role
                     var role = this._element.getAttribute("role");

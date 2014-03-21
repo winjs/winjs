@@ -231,7 +231,7 @@ WinJSTests.ItemContainerTests = function () {
 
         click(control, { target: element });
 
-        setImmediate(complete);
+        WinJS.Utilities._setImmediate(complete);
     };
 
     this.testSelectionChangingEventCalled = function (complete) {
@@ -297,13 +297,13 @@ WinJSTests.ItemContainerTests = function () {
         WinJS.UI._keyboardSeenLast = false;
 
         LiveUnit.Assert.areEqual(0, element.querySelectorAll("." + WinJS.UI._itemFocusOutlineClass).length);
-        control._onFocus({ target: element });
+        control._onFocusIn({ target: element });
         LiveUnit.Assert.areEqual(0, element.querySelectorAll("." + WinJS.UI._itemFocusOutlineClass).length);
         WinJS.UI._keyboardSeenLast = true;
-        control._onFocus({ target: element });
+        control._onFocusIn({ target: element });
         LiveUnit.Assert.areEqual(1, element.querySelectorAll("." + WinJS.UI._itemFocusOutlineClass).length);
         WinJS.UI._keyboardSeenLast = null;
-        control._onBlur({ target: element });
+        control._onFocusOut({ target: element });
         LiveUnit.Assert.areEqual(0, element.querySelectorAll("." + WinJS.UI._itemFocusOutlineClass).length);
 
         complete();

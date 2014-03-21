@@ -970,8 +970,8 @@ WinJSTests.ListEditorTest = function () {
         var delayedRequests = [];
         var delayRequests = false;
         var realRequestItem = listView._view.items.requestItem.bind(listView._view.items);
-        listView._onFocus = function () { };
-        listView._onBlur = function () { };
+        listView._onFocusIn = function () { };
+        listView._onFocusOut = function () { };
         listView._view.items.requestItem = function (index) {
             if (delayRequests) {
                 var signal = new WinJS._Signal();
@@ -1043,7 +1043,7 @@ WinJSTests.ListEditorTest = function () {
                     return new WinJS.Promise(function (testPromiseComplete) {
                         var c = testPromiseComplete;
                         if (unionTester.interruptLayout) {
-                            setImmediate(function () {
+                            WinJS.Utilities._setImmediate(function () {
                                 unionTester.interruptLayout();
                                 unionTester.interruptLayout = null;
                             });

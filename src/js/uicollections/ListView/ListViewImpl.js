@@ -394,7 +394,7 @@
                 this._itemsBlockExtent = -1;
                 this._viewportWidth = WinJS.UI._UNINITIALIZED;
                 this._viewportHeight = WinJS.UI._UNINITIALIZED;
-                this._manipulationState = MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
+                this._manipulationState = WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
                 this._maxDeferredItemCleanup = Number.MAX_VALUE;
                 this._groupsToRemove = {};
                 this._setupInternalTree();
@@ -1671,19 +1671,18 @@
                         modeHandler("MSManipulationStateChanged", true, true)
                     ];
                     events.forEach(function (eventHandler) {
-                        that._viewport.addEventListener(eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                        WinJS.Utilities._addEventListener(that._viewport, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
-
-                    // Focus and Blur events need to be handled during the capturing phase, they do not bubble.
+                    
                     var elementEvents = [
-                        listViewHandler("Focus", false, true),
-                        listViewHandler("Blur", false, true),
+                        listViewHandler("FocusIn", false, false),
+                        listViewHandler("FocusOut", false, false),
                         modeHandler("KeyDown"),
                         modeHandler("KeyUp"),
                         listViewHandler("MSElementResize", false, false)
                     ];
                     elementEvents.forEach(function (eventHandler) {
-                        that._element.addEventListener(eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                        WinJS.Utilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
 
                     var viewportEvents = [
@@ -2753,7 +2752,7 @@
                     }, Scheduler.Priority.max, this, "WinJS.UI.ListView._onMSElementResize");
                 },
 
-                _onFocus: function ListView_onFocus(event) {
+                _onFocusIn: function ListView_onFocusIn(event) {
                     this._hasKeyboardFocus = true;
                     var that = this;
                     function moveFocusToItem(keyboardFocused) {
@@ -2829,7 +2828,7 @@
                     }
                 },
 
-                _onBlur: function ListView_onBlur(event) {
+                _onFocusOut: function ListView_onFocusOut(event) {
                     if (this._disposed) {
                         return;
                     }
@@ -2856,12 +2855,12 @@
                     this._manipulationState = ev.currentState;
                     that._writeProfilerMark("_onMSManipulationStateChanged state(" + ev.currentState + "),info");
 
-                    if (this._manipulationState !== MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED && !this._manipulationEndSignal) {
+                    if (this._manipulationState !== WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED && !this._manipulationEndSignal) {
                         this._manipulationEndSignal = new WinJS._Signal();
                         this._manipulationEndSignal.promise.done(done, done);
                     }
 
-                    if (this._manipulationState === MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
+                    if (this._manipulationState === WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
                         this._manipulationEndSignal.complete();
                     }
                 },

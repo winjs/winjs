@@ -34,12 +34,12 @@
             element.addEventListener("keydown", function (ev) {
                 WinJS.Utilities.addClass(ev.target, "win-keyboard");
             }, true);
-            element.addEventListener("focusin", function (ev) {
+            WinJS.Utilities._addEventListener(element, "focusin", function (ev) {
                 WinJS.UI._keyboardSeenLast && WinJS.Utilities.addClass(ev.target, "win-keyboard");
-            }, true);
-            element.addEventListener("focusout", function (ev) {
+            }, false);
+            WinJS.Utilities._addEventListener(element, "focusout", function (ev) {
                 WinJS.Utilities.removeClass(ev.target, "win-keyboard");
-            }, true);
+            }, false);
         },
         _KeyboardBehavior: WinJS.Namespace._lazy(function () {
             var Key = WinJS.Utilities.Key;

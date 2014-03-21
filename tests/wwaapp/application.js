@@ -2605,7 +2605,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
 
@@ -2645,7 +2645,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
 
@@ -2685,7 +2685,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
 
@@ -2727,7 +2727,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
 
@@ -2771,13 +2771,13 @@ CorsicaTests.ApplicationTests = function () {
 
                 WinJS.Application.start();
 
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.queueEvent({ type: "activated" });
                 });
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
@@ -2822,13 +2822,13 @@ CorsicaTests.ApplicationTests = function () {
 
                 WinJS.Application.start();
 
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.queueEvent({ type: "activated" });
                 });
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     LiveUnit.Assert.areEqual(1, count);
                     enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
@@ -2871,13 +2871,13 @@ CorsicaTests.ApplicationTests = function () {
 
                 WinJS.Application.start();
 
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.queueEvent({ type: "activated" });
                 });
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     LiveUnit.Assert.areEqual(1, count);
                     enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
@@ -2921,13 +2921,13 @@ CorsicaTests.ApplicationTests = function () {
 
                 WinJS.Application.start();
 
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.queueEvent({ type: "activated" });
                 });
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     LiveUnit.Assert.areEqual(1, count);
                     enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
@@ -2966,13 +2966,13 @@ CorsicaTests.ApplicationTests = function () {
 
                 WinJS.Application.start();
 
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     WinJS.Application.queueEvent({ type: "activated" });
                 });
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     LiveUnit.Assert.areEqual(1, count);
                     enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
@@ -3010,13 +3010,13 @@ CorsicaTests.ApplicationTests = function () {
 
                 WinJS.Application.start();
 
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     throw "catch me if you can";
                 });
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
@@ -3280,7 +3280,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
@@ -3327,7 +3327,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     enableWebunitErrorHandler(true);
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3440,7 +3440,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     enableWebunitErrorHandler(true);
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3488,7 +3488,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     enableWebunitErrorHandler(true);
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3603,7 +3603,7 @@ CorsicaTests.ApplicationTests = function () {
                 // intentionally using undefined variable
                 var x = thisVariableNotDefined + 1;
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     window.onerror = oldOnError;
                     enableWebunitErrorHandler(true);
                     WinJS.Application.stop();
@@ -3853,7 +3853,7 @@ CorsicaTests.ApplicationTests = function () {
                 // generate error that result in calls to window.onerror by intentionally using undefined variable
                 var x = thisVariableNotDefined + 1;
             } finally {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     window.onerror = oldOnError;
                     window.removeEventListener("error", eh);
                     enableWebunitErrorHandler(true);

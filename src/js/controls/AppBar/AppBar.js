@@ -472,10 +472,10 @@
                 this._addOverlayEventHandlers(false);
 
                 // Need to store what had focus before
-                this._element.addEventListener("focusin", function (event) { _checkStorePreviousFocus(event); }, false);
+                WinJS.Utilities._addEventListener(this._element, "focusin", function (event) { _checkStorePreviousFocus(event); }, false);
 
                 // Need to hide ourselves if we lose focus
-                this._element.addEventListener("focusout", function (event) { _hideIfAllAppBarsLostFocus(); }, false);
+                WinJS.Utilities._addEventListener(this._element, "focusout", function (event) { _hideIfAllAppBarsLostFocus(); }, false);
 
                 // Commands layout AppBar measures and caches its content synchronously in setOptions through the .commands property setter.
                 // Remove the commands layout AppBar from the layout tree at this point so we don't cause unnecessary layout costs whenever
@@ -1523,7 +1523,7 @@
                         appBarFirstDiv.className = firstDivClass;
                         appBarFirstDiv.tabIndex = -1;
                         appBarFirstDiv.setAttribute("aria-hidden", "true");
-                        appBarFirstDiv.addEventListener("focus", _setFocusToPreviousAppBar, true);
+                        WinJS.Utilities._addEventListener(appBarFirstDiv, "focusin", _setFocusToPreviousAppBar, false);
                         // add to beginning
                         if (this._element.children[0]) {
                             this._element.insertBefore(appBarFirstDiv, this._element.children[0]);
@@ -1541,7 +1541,7 @@
                         appBarFinalDiv.className = finalDivClass;
                         appBarFinalDiv.tabIndex = -1;
                         appBarFinalDiv.setAttribute("aria-hidden", "true");
-                        appBarFinalDiv.addEventListener("focus", _setFocusToNextAppBar, true);
+                        WinJS.Utilities._addEventListener(appBarFinalDiv, "focusin", _setFocusToNextAppBar, false);
                         this._element.appendChild(appBarFinalDiv);
                     }
 
@@ -1603,10 +1603,10 @@
                         // Hook up a 'focusout' listener to this Flyout element to make sure that light dismiss AppBars close if focus moves anywhere other than back to an AppBar.
                         var appBarElement = thisWinUI.AppBar._isAppBarOrChild(flyoutControl._previousFocus);
                         if (appBarElement) {
-                            flyoutControl.element.addEventListener('focusout', function focusOut(event) {
+                            WinJS.Utilities._addEventListener(flyoutControl.element, 'focusout', function focusOut(event) {
                                 // Hides any open AppBars if the new activeElement is not in an AppBar.
                                 _hideIfAllAppBarsLostFocus();
-                                flyoutControl.element.removeEventListener('focusout', focusOut, false);
+                                WinJS.Utilities._removeEventListener(flyoutControl.element, 'focusout', focusOut, false);
                             }, false);
                         }
                         return appBarElement;

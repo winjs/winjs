@@ -792,7 +792,7 @@ var NotificationTests = function () {
 
             // See if it's time to wrap up and wait for everything to complete
             if (++NotificationTests.step < stepCount) {
-                setImmediate(stepOnce);
+                WinJS.Utilities._setImmediate(stepOnce);
             } else {
                 // Refresh one last time in case there were errors and fetching stopped
                 dataSource.invalidateAll();
@@ -815,7 +815,7 @@ var NotificationTests = function () {
                         complete();
                     } else {
                         testDataAdapter.fulfillAllRequests();
-                        setImmediate(completeAllRequests);
+                        WinJS.Utilities._setImmediate(completeAllRequests);
                     }
                 })();
             }
@@ -836,7 +836,7 @@ var NotificationTests = function () {
             TestComponents.seedPseudorandom(NotificationTests.iteration);
             testRandomUsageOnce(indices, asynchronous, failures, changes, notifications, function () {
                 if (++NotificationTests.iteration < iterationCount) {
-                    setImmediate(continueTest);
+                    WinJS.Utilities._setImmediate(continueTest);
                 } else {
                     signalTestCaseCompleted();
                 }

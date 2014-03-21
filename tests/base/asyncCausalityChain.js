@@ -84,7 +84,7 @@ CorsicaTests.AsyncCausalityChain = function () {
             });
             LiveUnit.Assert.areEqual(0, that.CallbackStarting[0].id);
 
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 verify({
                     opStartingCount: 1,
                     opCompletedCount: 1,
@@ -120,7 +120,7 @@ CorsicaTests.AsyncCausalityChain = function () {
 
     this.testPromiseThen = function (complete) {
         var p = new WinJS.Promise(function (c, e, p) {
-            setImmediate(c);
+            WinJS.Utilities._setImmediate(c);
         });
 
         var that = this;
@@ -139,7 +139,7 @@ CorsicaTests.AsyncCausalityChain = function () {
         verify({
             opStartingCount: 1
         });
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             verify({
                 opStartingCount: 1,
                 opCompletedCount: 1,
@@ -156,7 +156,7 @@ CorsicaTests.AsyncCausalityChain = function () {
         var that = this;
 
         var p = new WinJS.Promise(function (c, e, p) {
-            setImmediate(e);
+            WinJS.Utilities._setImmediate(e);
         });
 
         p.then(null, function () {
@@ -173,7 +173,7 @@ CorsicaTests.AsyncCausalityChain = function () {
         verify({
             opStartingCount: 1
         });
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             verify({
                 opStartingCount: 1,
                 opCompletedCount: 1,
@@ -187,7 +187,7 @@ CorsicaTests.AsyncCausalityChain = function () {
 
     this.testPromiseCancel = function (complete) {
         var p = new WinJS.Promise(function (c, e, p) {
-            setImmediate(c);
+            WinJS.Utilities._setImmediate(c);
         });
 
         p.then(null, function () { });
@@ -196,7 +196,7 @@ CorsicaTests.AsyncCausalityChain = function () {
             opStartingCount: 1
         });
         p.cancel();
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             verify({
                 opStartingCount: 1,
                 opCompletedCount: 1,

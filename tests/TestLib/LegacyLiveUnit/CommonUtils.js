@@ -932,11 +932,11 @@ CommonUtils.prototype = (function () {
             ///  Handle to element to throw focus from
             /// </param>
             if (element) {
-                var event = document.createEvent("FocusEvent");
-                // Tried using initFocusEvent, but it didn't seem to work.  Just use initEvent instead.
-                // event.initFocusEvent("focus", true, true, window, 0, element);
-                event.initEvent("focus", true, true);
-                element.dispatchEvent(event);
+                // All of WinJS listens to these custom focus events instead of
+                // the native browser focus events.
+                WinJS.Utilities._bubbleEvent(element, "focusin", {
+                    type: "focusin"
+                });
             }
         },
 
@@ -948,13 +948,14 @@ CommonUtils.prototype = (function () {
             ///  Handle to element to throw blur from
             /// </param>
             if (element) {
-                var event = document.createEvent("FocusEvent");
-                // Tried using initFocusEvent, but it didn't seem to work.  Just use initEvent instead.
-                event.initEvent("blur", true, true);
-                element.dispatchEvent(event);
+                // All of WinJS listens to these custom focus events instead of
+                // the native browser focus events.
+                WinJS.Utilities._bubbleEvent(element, "focusout", {
+                    type: "focusout"
+                });
             }
         },
-
+        
         keydown: function (element, keyCode, locale) {
             /// <summary>
             ///  Throw keydown event from element.
@@ -970,10 +971,10 @@ CommonUtils.prototype = (function () {
             /// </param>
             if (element) {
                 locale = locale || "en-US";
-                // We are purposely creating a UIEvent instead of a KeyboardEvent because we cannot assign the keyCode.
+                // We are purposely creating a CustomEvent instead of a KeyboardEvent because we cannot assign the keyCode.
                 // This method works as long as there is no need to specify modifier keys.
-                var event = document.createEvent("UIEvent");
-                event.initUIEvent("keydown", true, true, window, 0);
+                var event = document.createEvent("CustomEvent");
+                event.initCustomEvent("keydown", true, true, window, 0);
                 event.keyCode = keyCode;
                 event.locale = locale;
                 element.dispatchEvent(event);
@@ -989,10 +990,10 @@ CommonUtils.prototype = (function () {
             /// </param>
             if (element) {
                 locale = locale || "en-US";
-                // We are purposely creating a UIEvent instead of a KeyboardEvent because we cannot assign the keyCode.
+                // We are purposely creating a CustomEvent instead of a KeyboardEvent because we cannot assign the keyCode.
                 // This method works as long as there is no need to specify modifier keys.
-                var event = document.createEvent("UIEvent");
-                event.initUIEvent("keyup", true, true, window, 0);
+                var event = document.createEvent("CustomEvent");
+                event.initCustomEvent("keyup", true, true, window, 0);
                 event.keyCode = keyCode;
                 event.locale = locale;
                 element.dispatchEvent(event);

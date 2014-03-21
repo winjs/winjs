@@ -6,31 +6,31 @@ var CorsicaTests = CorsicaTests || {};
 CorsicaTests.Queue = function () {
     "use strict";
     this.testSimpleQueue = function (complete) {
-        setImmediate(complete);
+        WinJS.Utilities._setImmediate(complete);
     };
 
     this.testQueueOrdering = function (complete) {
         var i = 0;
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             i++;
             LiveUnit.Assert.areEqual(1, i);
         });
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             i++;
             LiveUnit.Assert.areEqual(2, i);
         });
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             i++;
             LiveUnit.Assert.areEqual(3, i);
         });
-        setImmediate(complete);
+        WinJS.Utilities._setImmediate(complete);
 
         LiveUnit.Assert.areEqual(0, i);
     };
 
     this.testFrameSkipping = function (complete) {
         var i = 0;
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             i++;
             LiveUnit.Assert.areEqual(1, i);
 
@@ -38,11 +38,11 @@ CorsicaTests.Queue = function () {
             var start = new Date();
             while ((new Date() - start) < 20) { }
         });
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             i++;
             LiveUnit.Assert.areEqual(2, i);
         });
-        setImmediate(complete);
+        WinJS.Utilities._setImmediate(complete);
 
         LiveUnit.Assert.areEqual(0, i);
     };

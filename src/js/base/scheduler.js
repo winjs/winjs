@@ -142,7 +142,7 @@
         },
 
         /// <field type="WinJS.Utilities.Scheduler._OwnerToken" locid="WinJS.Utilities.Scheduler._JobNode.owner" helpKeyword="WinJS.Utilities.Scheduler._JobNode.owner">
-        /// Gets an owner token for the job. You can use this owner token’s cancelAll method to cancel related jobs. 
+        /// Gets an owner token for the job. You can use this owner token's cancelAll method to cancel related jobs. 
         /// </field>
         owner: {
             get: function () { return this._owner; },
@@ -1057,6 +1057,14 @@
     //
     // Interfacing with the WWA Scheduler
     //
+    
+    // The purpose of yielding to the host is to give the host the opportunity to do some work.
+    // setImmediate has this guarantee built-in so we prefer that. Otherwise, we do setTimeout 16
+    // which should give the host a decent amount of time to do work.
+    //
+    var scheduleWithHost = global.setImmediate ? global.setImmediate.bind(global) : function (callback) {
+        setTimeout(callback, 16);
+    };
 
     // Stubs for the parts of the WWA scheduler APIs that we use. These stubs are
     //  used in contexts where the WWA scheduler is not available.
@@ -1070,7 +1078,7 @@
             }
             // We always schedule using setImmediate
             //
-            setImmediate(callback);
+            scheduleWithHost(callback);
         },
 
         execAtPriority: function (callback, priority) {

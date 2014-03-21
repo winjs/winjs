@@ -142,7 +142,7 @@
                 return this;
             },
             toggleClass: function (name) {
-                /// <signature helpKeyword="WinJS.Utilities.QueryCollection.toggleClass">>
+                /// <signature helpKeyword="WinJS.Utilities.QueryCollection.toggleClass">
                 /// <summary locid="WinJS.Utilities.QueryCollection.toggleClass">
                 /// Toggles (adds or removes) the specified class on all the elements in the collection.
                 /// If the class is present, it is removed; if it is absent, it is added.

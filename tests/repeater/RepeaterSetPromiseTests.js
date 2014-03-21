@@ -139,7 +139,7 @@ WinJSTests.RepeaterSetPromiseTests = function () {
                     LiveUnit.Assert.areEqual(false, isControlDisposed,
                                 "Repeater's child element should not be disposed until the setPromise timeout promise is complete.");
 
-                    setImmediate(function () {
+                    WinJS.Utilities._setImmediate(function () {
                         isControlDisposed = affectedWinControl._disposed;
                         LiveUnit.Assert.areEqual(true, isControlDisposed,
                                     "Repeater's child element should be disposed now that the setPromise timeout promise is complete.");

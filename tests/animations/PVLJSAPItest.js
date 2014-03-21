@@ -1499,11 +1499,12 @@ PVLJSFunctionTests = function () {
         LiveUnit.Assert.isTrue(result); //Verify onComplete is fired by setting result = true;
     }
 
-    //This is to test canceling an empty animation in msSetImmediate function
+    //This is to test canceling an empty animation in setImmediate function
     //onComplete should be fired.
     this.testCancelEmptyAnimation = function(complete) {
         var promise = WinJS.UI.Animation.enterPage().then(onComplete, onError);
         LiveUnit.Assert.isTrue(result === null); //Verifty onComplete is not fired yet.
+        
         msSetImmediate(function () {
             promise.cancel();
             LiveUnit.Assert.isTrue(result);

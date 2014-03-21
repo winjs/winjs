@@ -122,7 +122,7 @@ var EnumerationTests = function () {
             localWalk(listBinding.fromKey(TestComponents.pseudorandom(count).toString()));
 
             if (++walk < walkMax) {
-                setImmediate(walkList);
+                WinJS.Utilities._setImmediate(walkList);
             } else {
                 (function completeAllRequests() {
                     if (dataSource.testDataAdapter.requestCount() === 0) {
@@ -131,7 +131,7 @@ var EnumerationTests = function () {
                         complete();
                     } else {
                         dataSource.testDataAdapter.fulfillAllRequests();
-                        setImmediate(completeAllRequests);
+                        WinJS.Utilities._setImmediate(completeAllRequests);
                     }
                 })();
             }

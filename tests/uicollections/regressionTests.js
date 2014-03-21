@@ -436,7 +436,7 @@ WinJSTests.ListViewRegression = function () {
                 checkTile(listView, 0, "Item0");
 
                 listView.itemDataSource = (new WinJS.Binding.List(tiles)).dataSource;
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     // template is changed while fadeOut animation is in progress
                     listView.itemTemplate = renderer;
                     listView.forceLayout();
