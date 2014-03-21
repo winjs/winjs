@@ -1353,7 +1353,7 @@
                             // If the element is no longer a valid focus target, it will throw, we
                             // simply won't do anything in this case
                             try {
-                                (this._zoomedOut ? this._elementOut : this._elementIn).setActive();
+                                WinJS.Utilities._setActive(this._zoomedOut ? this._elementOut : this._elementIn);
                             } catch (e) { }
                         }
                     }

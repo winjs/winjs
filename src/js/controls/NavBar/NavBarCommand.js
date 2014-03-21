@@ -309,7 +309,7 @@
                     if (!ev.altKey && (ev.keyCode === leftStr || ev.keyCode === Key.home || ev.keyCode === Key.end) && ev.target === this._splitButtonEl) {
                         this._splitButtonActive = false;
                         try {
-                            this._buttonEl.setActive();
+                            WinJS.Utilities._setActive(this._buttonEl);
                         } catch (e) {
                         }
                         if (ev.keyCode === leftStr) {
@@ -319,7 +319,7 @@
                     } else if (!ev.altKey && ev.keyCode === rightStr && this.splitButton && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
                         this._splitButtonActive = true;
                         try {
-                            this._splitButtonEl.setActive();
+                            WinJS.Utilities._setActive(this._splitButtonEl);
                         } catch (e) {
                         }
                         if (ev.keyCode === rightStr) {

@@ -1296,11 +1296,11 @@
 
             // Try to set us as active
             _Overlay._trySetActive = function (element) {
-                if (!element || !element.setActive || !document.body || !document.body.contains(element)) {
+                if (!element || !document.body || !document.body.contains(element)) {
                     return false;
                 }
                 try {
-                    element.setActive();
+                    WinJS.Utilities._setActive(element);
                 } catch (err) {
                     return false;
                 }

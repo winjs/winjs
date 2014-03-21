@@ -83,22 +83,8 @@ WinJSTests.NavBarTests = function () {
 
         navBar = new WinJS.UI.NavBar();
 
-        var foo = {},
-            expectedErrMsg = "Error string not set";
-
-        try {
-            Object.defineProperties(foo, { layout: { value: "custom", writable: false } });
-            foo.layout = "someValue";
-        } catch (e) {
-            expectedErrMsg = e.message;
-        }
-
-        try {
-            navBar.layout = "commands";
-            LiveUnit.Assert.fail("Should throw");
-        } catch (e) {
-            LiveUnit.Assert.areEqual(expectedErrMsg, e.message)
-        }
+        // The layout setter of the NavBar is a no-op.
+        navBar.layout = "commands";
         LiveUnit.Assert.areEqual("custom", navBar.layout);
     };
 

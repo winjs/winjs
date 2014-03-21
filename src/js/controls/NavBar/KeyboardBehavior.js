@@ -272,7 +272,7 @@
                         this.currentIndex = index;
 
                         try {
-                            elementToFocus.setActive();
+                            WinJS.Utilities._setActive(elementToFocus);
                         } catch (e) {
                         }
                     }

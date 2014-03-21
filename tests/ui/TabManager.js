@@ -77,11 +77,11 @@ CorsicaTests.TabManager = function () {
         });
 
         // Make sure the childFocus is focusable before the test
-        childFocus.setActive();
+        WinJS.Utilities._setActive(childFocus);
         LiveUnit.Assert.isTrue(document.activeElement === childFocus);
 
         // Put focus on 'before'
-        before.setActive();
+        WinJS.Utilities._setActive(before);
         LiveUnit.Assert.isTrue(document.activeElement === before);
 
         // Focus the prefix, which should fire onTabEnter and focus should not move

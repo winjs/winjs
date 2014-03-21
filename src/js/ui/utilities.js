@@ -175,7 +175,7 @@
 
             if (useSetActive) {
                 try {
-                    elem.setActive();
+                    WinJS.Utilities._setActive(elem);
                 } catch (e) {
                 }
             } else {

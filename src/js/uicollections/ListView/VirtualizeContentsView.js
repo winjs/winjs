@@ -2553,7 +2553,7 @@
                             var focused = this._listView._selection._getFocused();
                             if (focused.type === WinJS.UI.ObjectType.item && this.items.itemBoxAt(focused.index) === itemBox) {
                                 try {
-                                    this._requireFocusRestore.setActive();
+                                    WinJS.Utilities._setActive(this._requireFocusRestore);
                                 } catch (e) {
                                 }
                                 this._requireFocusRestore = null;

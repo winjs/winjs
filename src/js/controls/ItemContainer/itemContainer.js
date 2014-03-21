@@ -509,7 +509,7 @@
                             if (!this.selectionDisabled) {
                                 this.selected = !this.selected;
                                 try {
-                                    this.element.setActive();
+                                    WinJS.Utilities._setActive(this.element);
                                 } catch (e) { }
                                 handled = true;
                             }

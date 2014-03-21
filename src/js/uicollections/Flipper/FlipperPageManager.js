@@ -89,7 +89,7 @@
                     if (event.target === that._flipperDiv) {
                         if (that._currentPage.element) {
                             try {
-                                that._currentPage.element.setActive();
+                                WinJS.Utilities._setActive(that._currentPage.element);
                             } catch (e) { }
                         }
                     }
@@ -397,7 +397,7 @@
                                 try {
                                     // Give focus to the panning div ONLY if anything inside the flipview control currently has
                                     // focus; otherwise, it will be lost when the current page is animated during the navigation.
-                                    this._panningDiv.setActive();
+                                    WinJS.Utilities._setActive(this._panningDiv);
                                 } catch (e) { }
                             }
                             this._navigationAnimationRecord = {};
@@ -1707,7 +1707,7 @@
                             if (that._currentPage.element) {
                                 if (that._hasFocus) {
                                     try {
-                                        that._currentPage.element.setActive();
+                                        WinJS.Utilities._setActive(that._currentPage.element);
                                         that._tabManager.childFocus = that._currentPage.element;
                                     } catch (e) { }
                                 }

@@ -1149,7 +1149,7 @@
                     var targetSection = this.sections.getAt(index);
 
                     try {
-                        targetSection._headerTabStopElement.setActive();
+                        WinJS.Utilities._setActive(targetSection._headerTabStopElement);
                     } catch (e) {
                     }
 

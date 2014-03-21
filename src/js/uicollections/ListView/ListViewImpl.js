@@ -1552,7 +1552,7 @@
                         if (document.activeElement !== this._viewport && this._hasKeyboardFocus) {
                             this._keyboardEventsHelper._shouldHaveFocus = true;
                             try {
-                                this._keyboardEventsHelper.setActive();
+                                WinJS.Utilities._setActive(this._keyboardEventsHelper);
                             } catch (ex) {
                             }
                         }
@@ -1590,12 +1590,12 @@
 
                             // Some consumers of ListView listen for item invoked events and hide the listview when an item is clicked.
                             // Since keyboard interactions rely on async operations, sometimes an invoke event can be received before we get
-                            // to item.setActive(), and the listview will be made invisible. If that happens and we call item.setActive(), an exception
+                            // to WinJS.Utilities._setActive(item), and the listview will be made invisible. If that happens and we call item.setActive(), an exception
                             // is raised for trying to focus on an invisible item. Checking visibility is non-trivial, so it's best
                             // just to catch the exception and ignore it.
                             try {
                                 that._itemFocused = true;
-                                item.setActive();
+                                WinJS.Utilities._setActive(item);
                             } catch (error) { }
                         }
                     };

@@ -308,7 +308,7 @@
                             utilities.removeClass(this.element, ClassName.searchboxDisabled);
                             if (document.activeElement === this.element) {
                                 try {
-                                    this._inputElement.setActive();
+                                    WinJS.Utilities._setActive(this._inputElement);
                                 } catch (e) {
                                 }
                             }
@@ -1348,7 +1348,7 @@
                     } else if (collectionChange === Windows.Foundation.Collections.CollectionChange.itemRemoved) {
                         if ((this._suggestionsData.length === 1)) {
                             try {
-                                this._inputElement.setActive();
+                                WinJS.Utilities._setActive(this._inputElement);
                             } catch (e) {
                             }
                             this._hideFlyout();

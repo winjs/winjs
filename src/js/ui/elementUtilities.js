@@ -414,6 +414,16 @@
             }
         },
 
+        _setActive: function _setActive(element) {
+            if (global.HTMLElement && HTMLElement.prototype.setActive) {
+                element.setActive();
+            } else {
+                WinJS.Utilities._setImmediate(function () {
+                    element.focus();
+                });
+            }
+        },
+
         /// <field locid="WinJS.Utilities.Key" helpKeyword="WinJS.Utilities.Key">
         /// Defines a set of keyboard values.
         /// </field>

@@ -754,7 +754,7 @@
                             }
 
                             try {
-                                element.setActive();
+                                WinJS.Utilities._setActive(element);
                             } catch (e) {
                             }
                         } else {
@@ -809,7 +809,7 @@
                             }
 
                             try {
-                                element.setActive();
+                                WinJS.Utilities._setActive(element);
                             } catch (e) {
                             }
                         }
