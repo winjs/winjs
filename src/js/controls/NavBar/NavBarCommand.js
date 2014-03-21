@@ -308,20 +308,14 @@
 
                     if (!ev.altKey && (ev.keyCode === leftStr || ev.keyCode === Key.home || ev.keyCode === Key.end) && ev.target === this._splitButtonEl) {
                         this._splitButtonActive = false;
-                        try {
-                            WinJS.Utilities._setActive(this._buttonEl);
-                        } catch (e) {
-                        }
+                        WinJS.Utilities._setActive(this._buttonEl);
                         if (ev.keyCode === leftStr) {
                             ev.stopPropagation();
                         }
                         ev.preventDefault();
                     } else if (!ev.altKey && ev.keyCode === rightStr && this.splitButton && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
                         this._splitButtonActive = true;
-                        try {
-                            WinJS.Utilities._setActive(this._splitButtonEl);
-                        } catch (e) {
-                        }
+                        WinJS.Utilities._setActive(this._splitButtonEl);
                         if (ev.keyCode === rightStr) {
                             ev.stopPropagation();
                         }

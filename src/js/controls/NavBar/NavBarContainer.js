@@ -753,10 +753,7 @@
                                 this._scrollTo(scrollPositionTarget);
                             }
 
-                            try {
-                                WinJS.Utilities._setActive(element);
-                            } catch (e) {
-                            }
+                            WinJS.Utilities._setActive(element);
                         } else {
                             if (this.layout === WinJS.UI.Orientation.horizontal) {
                                 var indexOfLastItemOnPage = (page + 1) * sizes.columnsPerPage * sizes.rowsPerPage - 1;

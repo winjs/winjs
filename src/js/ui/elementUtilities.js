@@ -415,13 +415,21 @@
         },
 
         _setActive: function _setActive(element) {
-            if (global.HTMLElement && HTMLElement.prototype.setActive) {
-                element.setActive();
-            } else {
-                WinJS.Utilities._setImmediate(function () {
+            var success = true;
+            try {
+                if (global.HTMLElement && HTMLElement.prototype.setActive) {
+                    element.setActive();
+                } else {
+                    // We are aware the unlike setActive(), focus() will scroll to the element that gets focus. However, this is
+                    // our current cross-browser solution until there is an equivalent for setActive() in other browsers.
                     element.focus();
-                });
+                }
+            } catch (e) {
+                // setActive() raises an exception when trying to focus an invisible item. Checking visibility is non-trivial, so it's best
+                // just to catch the exception and ignore it. focus() on the other hand, does not raise exceptions.
+                success = false;
             }
+            return success;
         },
 
         /// <field locid="WinJS.Utilities.Key" helpKeyword="WinJS.Utilities.Key">

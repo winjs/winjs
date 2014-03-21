@@ -1299,9 +1299,7 @@
                 if (!element || !document.body || !document.body.contains(element)) {
                     return false;
                 }
-                try {
-                    WinJS.Utilities._setActive(element);
-                } catch (err) {
+                if (!WinJS.Utilities._setActive(element)) {
                     return false;
                 }
                 return (element === document.activeElement);

@@ -307,10 +307,7 @@
                             this._domElement.disabled = false;
                             utilities.removeClass(this.element, ClassName.searchboxDisabled);
                             if (document.activeElement === this.element) {
-                                try {
-                                    WinJS.Utilities._setActive(this._inputElement);
-                                } catch (e) {
-                                }
+                                WinJS.Utilities._setActive(this._inputElement);
                             }
                         } else {
                             // Disable control
@@ -1347,10 +1344,8 @@
 
                     } else if (collectionChange === Windows.Foundation.Collections.CollectionChange.itemRemoved) {
                         if ((this._suggestionsData.length === 1)) {
-                            try {
-                                WinJS.Utilities._setActive(this._inputElement);
-                            } catch (e) {
-                            }
+                            WinJS.Utilities._setActive(this._inputElement);
+
                             this._hideFlyout();
                         }
                         var index = event.index;

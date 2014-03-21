@@ -1148,10 +1148,7 @@
                 _tryFocus: function hub_tryFocus(index) {
                     var targetSection = this.sections.getAt(index);
 
-                    try {
-                        WinJS.Utilities._setActive(targetSection._headerTabStopElement);
-                    } catch (e) {
-                    }
+                    WinJS.Utilities._setActive(targetSection._headerTabStopElement);
 
                     return document.activeElement === targetSection._headerTabStopElement;
                 },

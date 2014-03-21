@@ -174,10 +174,7 @@
             }
 
             if (useSetActive) {
-                try {
-                    WinJS.Utilities._setActive(elem);
-                } catch (e) {
-                }
+                WinJS.Utilities._setActive(elem);
             } else {
                 elem.focus();
             }

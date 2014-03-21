@@ -1551,10 +1551,7 @@
                         // from the viewport to the keyboardEventsHelper when scrolling with Narrator Touch.
                         if (document.activeElement !== this._viewport && this._hasKeyboardFocus) {
                             this._keyboardEventsHelper._shouldHaveFocus = true;
-                            try {
-                                WinJS.Utilities._setActive(this._keyboardEventsHelper);
-                            } catch (ex) {
-                            }
+                            WinJS.Utilities._setActive(this._keyboardEventsHelper);
                         }
                     }
                     this._itemFocused = false;
@@ -1593,10 +1590,8 @@
                             // to WinJS.Utilities._setActive(item), and the listview will be made invisible. If that happens and we call item.setActive(), an exception
                             // is raised for trying to focus on an invisible item. Checking visibility is non-trivial, so it's best
                             // just to catch the exception and ignore it.
-                            try {
-                                that._itemFocused = true;
-                                WinJS.Utilities._setActive(item);
-                            } catch (error) { }
+                            that._itemFocused = true;
+                            WinJS.Utilities._setActive(item);
                         }
                     };
 

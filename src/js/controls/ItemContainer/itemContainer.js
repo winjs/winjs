@@ -508,10 +508,7 @@
                             keyCode === Key.space) {
                             if (!this.selectionDisabled) {
                                 this.selected = !this.selected;
-                                try {
-                                    WinJS.Utilities._setActive(this.element);
-                                } catch (e) { }
-                                handled = true;
+                                handled = WinJS.Utilities._setActive(this.element);
                             }
                         } else if (keyCode === Key.escape && this.selected) {
                             this.selected = false;

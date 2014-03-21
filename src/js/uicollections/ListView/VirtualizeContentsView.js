@@ -2552,10 +2552,7 @@
                         if (this._requireFocusRestore && activeElement === this._listView._keyboardEventsHelper) {
                             var focused = this._listView._selection._getFocused();
                             if (focused.type === WinJS.UI.ObjectType.item && this.items.itemBoxAt(focused.index) === itemBox) {
-                                try {
-                                    WinJS.Utilities._setActive(this._requireFocusRestore);
-                                } catch (e) {
-                                }
+                                WinJS.Utilities._setActive(this._requireFocusRestore);
                                 this._requireFocusRestore = null;
                             }
                         }
