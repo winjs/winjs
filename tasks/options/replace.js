@@ -30,7 +30,9 @@ module.exports = {
           {expand: true, flatten: true, src: [config.desktopOutput + "js/*.js"], dest: config.desktopOutput + "js/"},
           {expand: true, flatten: true, src: [config.desktopOutput + "js/" + config.localeFolder + "/*.js"], dest: config.desktopOutput + "js/" + config.localeFolder + "/"},
           {expand: true, flatten: true, src: [config.phoneOutput + "js/*.js"], dest: config.phoneOutput + "js/"},
-          {expand: true, flatten: true, src: [config.phoneOutput + "js/" + config.localeFolder + "/*.js"], dest: config.phoneOutput + "js/" + config.localeFolder + "/"}
+          {expand: true, flatten: true, src: [config.phoneOutput + "js/" + config.localeFolder + "/*.js"], dest: config.phoneOutput + "js/" + config.localeFolder + "/"},
+          {expand: true, flatten: true, src: [desktopOutput + "css/*.css"], dest: desktopOutput + "css/"},
+          {expand: true, flatten: true, src: [phoneOutput + "css/*.css"], dest: phoneOutput + "css/"}
         ]
     }
 }
