@@ -18,7 +18,7 @@ WinJSTests.SemanticZoomTests = function () {
         newNode.innerHTML =
             "<div id='sezoDiv' style='width:500px; height:500px'><div id='child1'></div><div id='child2'></div></div>";
         document.body.appendChild(newNode);
-        appendCSSFileToHead("ListView.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -28,7 +28,7 @@ WinJSTests.SemanticZoomTests = function () {
             WinJS.Utilities.disposeSubTree(element);
             document.body.removeChild(element);
         }
-        removeCSSFileFromHead("ListView.css");
+        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     };
 
     var that = this;
@@ -132,7 +132,10 @@ WinJSTests.SemanticZoomTests = function () {
                         sezo.removeEventListener("zoomchanged", handler);
 
                         // Yield so that listView can finish the pending work
-                        setImmediate(c, list2.zoomableView.getCurrentItem.call(list2.zoomableView));
+                        var item = list2.zoomableView.getCurrentItem.call(list2.zoomableView);
+                        WinJS.Utilities._setImmediate(function () {
+                            c(item);
+                        });
                     }
 
                     // Zoom out
@@ -198,7 +201,10 @@ WinJSTests.SemanticZoomTests = function () {
                         sezo.removeEventListener("zoomchanged", handler);
 
                         // Yield so that listView can finish the pending work
-                        setImmediate(c, list2.zoomableView.getCurrentItem.call(list2.zoomableView));
+                        var item = list2.zoomableView.getCurrentItem.call(list2.zoomableView);
+                        WinJS.Utilities._setImmediate(function () {
+                            c(item);
+                        });
                     }
 
                     // Set focus on item at startIndex
@@ -304,7 +310,7 @@ WinJSTests.SemanticZoomTests = function () {
                         return new WinJS.Promise(function (c, e, p) {
                             sezo.addEventListener("zoomchanged", function (ev) {
                                 // Yield so that listView can finish the pending work
-                                setImmediate(c);
+                                WinJS.Utilities._setImmediate(c);
                             });
 
                             sezo.zoomedOut = !sezo.zoomedOut;
@@ -573,7 +579,7 @@ WinJSTests.SemanticZoomTests = function () {
         this["testSezoOnZoomChangedOption" + layoutName] = function (complete) {
 
             function zoomChangedHandler(e) {
-                setImmediate(complete);
+                WinJS.Utilities._setImmediate(complete);
             }
 
             var sezo = createSezoWithBindingList({ type: layoutName, orientation: WinJS.UI.Orientation.horizontal }, 10, { onzoomchanged: zoomChangedHandler }),
@@ -691,7 +697,7 @@ WinJSTests.SemanticZoomTests = function () {
             }
             function onZoomedIn() {
                 sezo.removeEventListener("zoomchanged", onZoomedIn);
-                setImmediate(complete);
+                WinJS.Utilities._setImmediate(complete);
             }
             sezo.addEventListener("zoomchanged", onZoomedOut);
             fakeEventObject.wheelDelta = -1;
@@ -715,7 +721,7 @@ WinJSTests.SemanticZoomTests = function () {
         var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
         document.body.appendChild(sezoDiv);
 
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             var csSezo = getComputedStyle(sezoDiv);
             var csLv1 = getComputedStyle(lv1.element);
             var csLv2 = getComputedStyle(lv2.element);

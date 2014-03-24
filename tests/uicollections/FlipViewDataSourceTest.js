@@ -99,7 +99,7 @@ WinJSTests.FlipViewDatasourceTests = function () {
                 // Jump
                 flipView.currentPage = 0;
 
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     // Change
                     list.setAt(0, { title: "Tampa", data1: "America" });
                     LiveUnit.Assert.areEqual("TampaAmerica", flipView._pageManager._currentPage.element.textContent);

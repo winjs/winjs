@@ -44,11 +44,11 @@
             var OFFSET_PROGRAMMATIC_TOUCH = 20;
             var OFFSET_PROGRAMMATIC_NONTOUCH = 12;
             var SAFETY_NET_GAP = 1; // We set a 1-pixel gap between the right or bottom edge of the tooltip and the viewport to avoid possible re-layout
-            var PT_TOUCH = MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch"; // pointer type to indicate a touch event
+            var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch"; // pointer type to indicate a touch event
 
             var EVENTS_INVOKE = { "keyup": "", "pointerover": "" },
                 EVENTS_UPDATE = { "pointermove": "" },
-            EVENTS_DISMISS = { "pointerdown": "", "keydown": "", "blur": "", "pointerout": "", "pointercancel": "", "pointerup": "" },
+            EVENTS_DISMISS = { "pointerdown": "", "keydown": "", "focusout": "", "pointerout": "", "pointercancel": "", "pointerup": "" },
             EVENTS_BY_CHILD = { "pointerover": "", "pointerout": "" };
 
             // CSS class names
@@ -446,8 +446,8 @@
                                 listener._currentKeyOrBlurEvent = "keyboard";
                             }
                             break;
-                        case "blur":
-                            //anchor elment no longer in focus, clear up the stack
+                        case "focusout":
+                            //anchor element no longer in focus, clear up the stack
                             listener._currentKeyOrBlurEvent = null;
                             break;
                         default:
@@ -461,10 +461,10 @@
                         listener._captureLastKeyBlurOrPointerOverEvent(event, listener);
                         listener._handleEvent(event);
                     };
-                    element.addEventListener(eventType, handler, false);
+                    WinJS.Utilities._addEventListener(element, eventType, handler, false);
 
                     this._eventListenerRemoveStack.push(function () {
-                        element.removeEventListener(eventType, handler, false);
+                        WinJS.Utilities._removeEventListener(element, eventType, handler, false);
                     });
                 },
 
@@ -483,7 +483,7 @@
                 },
 
                 _handleEvent: function (event) {
-                    var eventType = event.type;
+                    var eventType = event._normalizedType || event.type;
                     if (!this._triggerByOpen) {
                         // If the anchor element has children, we should ignore events that are caused within the anchor element
                         // Please note that we are not using event.target here as in bubbling phases from the child, the event target
@@ -533,7 +533,7 @@
                             else {
                                 eventTrigger = eventType.substring(0, 3) === "key" ? "keyboard" : "mouse";
                             }
-                            if (eventType != "blur" && eventTrigger != this._showTrigger) {
+                            if (eventType != "focusout" && eventTrigger != this._showTrigger) {
                                 return;
                             }
                             this._onDismiss();

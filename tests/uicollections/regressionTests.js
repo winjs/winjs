@@ -24,12 +24,12 @@ WinJSTests.ListViewRegression = function () {
     
     this.setUp = function (complete) {
         removeListviewAnimations();
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
         restoreListviewAnimations();
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     };
 
     this.testWin8_342083 = function (complete) {
@@ -436,7 +436,7 @@ WinJSTests.ListViewRegression = function () {
                 checkTile(listView, 0, "Item0");
 
                 listView.itemDataSource = (new WinJS.Binding.List(tiles)).dataSource;
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     // template is changed while fadeOut animation is in progress
                     listView.itemTemplate = renderer;
                     listView.forceLayout();

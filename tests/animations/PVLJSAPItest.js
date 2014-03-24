@@ -12,15 +12,21 @@ PVLJSFunctionTests = function () {
     var util = new JSAnimationUtils();
     var result;
 
+    var animationsEnabledAtSetUp = true;
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
         util.addDom(false);
         result = null;
+        animationsEnabledAtSetUp = WinJS.UI.isAnimationEnabled();
     }
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tear down");
         util.removeDom();
+
+        if (animationsEnabledAtSetUp && !WinJS.UI.isAnimationEnabled()) {
+            WinJS.UI.enableAnimations();
+        }
     }
 
     //This will be called if the function call complete correctly.
@@ -1493,12 +1499,17 @@ PVLJSFunctionTests = function () {
         LiveUnit.Assert.isTrue(result); //Verify onComplete is fired by setting result = true;
     }
 
-    //This is to test canceling an empty animation in msSetImmediate function
+    //This is to test canceling an empty animation in setImmediate function
     //onComplete should be fired.
-    this.testCancelEmptyAnimation = function() {
+    this.testCancelEmptyAnimation = function(complete) {
         var promise = WinJS.UI.Animation.enterPage().then(onComplete, onError);
         LiveUnit.Assert.isTrue(result === null); //Verifty onComplete is not fired yet.
-        msSetImmediate(function() {promise.cancel(); LiveUnit.Assert.isTrue(result);});
+        
+        msSetImmediate(function () {
+            promise.cancel();
+            LiveUnit.Assert.isTrue(result);
+            complete();
+        });
     }
 
     //This is to test canceling an empty animation.

@@ -9,7 +9,7 @@
                 // use this behavior.
                 // :active does not bubble to its parent like :hover does so this is also useful for that scenario.
                 this._element = element;
-                this._element.addEventListener("pointerdown", this._MSPointerDownButtonHandler.bind(this));
+                WinJS.Utilities._addEventListener(this._element, "pointerdown", this._MSPointerDownButtonHandler.bind(this));
             }, {
                 _MSPointerDownButtonHandler: function _WinPressed_MSPointerDownButtonHandler(ev) {
                     if (!this._pointerUpBound) {
@@ -27,10 +27,10 @@
                         if (!WinJS.Utilities._matchesSelector(ev.target, ".win-interactive, .win-interactive *")) {
                             this._pointerId = ev.pointerId;
 
-                            window.addEventListener("pointerup", this._pointerUpBound, true);
-                            window.addEventListener("pointercancel", this._pointerCancelBound), true;
-                            this._element.addEventListener("pointerover", this._pointerOverBound, true);
-                            this._element.addEventListener("pointerout", this._pointerOutBound, true);
+                            WinJS.Utilities._addEventListener(window, "pointerup", this._pointerUpBound, true);
+                            WinJS.Utilities._addEventListener(window, "pointercancel", this._pointerCancelBound), true;
+                            WinJS.Utilities._addEventListener(this._element, "pointerover", this._pointerOverBound, true);
+                            WinJS.Utilities._addEventListener(this._element, "pointerout", this._pointerOutBound, true);
 
                             WinJS.Utilities.addClass(this._element, WinJS.UI._WinPressed.winPressed);
                         }

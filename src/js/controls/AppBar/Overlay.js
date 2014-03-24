@@ -986,6 +986,9 @@
                     // Set up global event handlers for all overlays
                     if (!_Overlay._flyoutEdgeLightDismissEvent) {
                         // Dismiss on blur & resize
+                        // Focus handlers generally use WinJS.Utilities._addEventListener with focusout/focusin. This
+                        // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
+                        // on window.
                         window.addEventListener("blur", _Overlay._checkBlur, false);
 
                         var that = this;
@@ -1035,11 +1038,11 @@
                 _handleEventsForFlyoutOrSettingsFlyout: function _Overlay_handleEventsForFlyoutOrSettingsFlyout() {
                     var that = this;
                     // Need to hide ourselves if we lose focus
-                    this._element.addEventListener("focusout", function (e) { _Overlay._hideIfLostFocus(that, e); }, false);
+                    WinJS.Utilities._addEventListener(this._element, "focusout", function (e) { _Overlay._hideIfLostFocus(that, e); }, false);
 
                     // Attempt to flag right clicks that may turn into edgy
-                    this._element.addEventListener("pointerdown", _Overlay._checkRightClickDown, true);
-                    this._element.addEventListener("pointerup", _Overlay._checkRightClickUp, true);
+                    WinJS.Utilities._addEventListener(this._element, "pointerdown", _Overlay._checkRightClickDown, true);
+                    WinJS.Utilities._addEventListener(this._element, "pointerup", _Overlay._checkRightClickUp, true);
                 },
 
                 _writeProfilerMark: function _Overlay_writeProfilerMark(text) {
@@ -1088,8 +1091,8 @@
             _Overlay._createClickEatingDivTemplate = function (divClass, hideClickEatingDivFunction) {
                 var clickEatingDiv = document.createElement("section");
                 WinJS.Utilities.addClass(clickEatingDiv, divClass);
-                clickEatingDiv.addEventListener("pointerup", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
-                clickEatingDiv.addEventListener("pointerdown", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
+                WinJS.Utilities._addEventListener(clickEatingDiv, "pointerdown", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
+                WinJS.Utilities._addEventListener(clickEatingDiv, "pointerup", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
                 clickEatingDiv.addEventListener("click", hideClickEatingDivFunction, true);
                 // Tell Aria that it's clickable
                 clickEatingDiv.setAttribute("role", "menuitem");
@@ -1192,7 +1195,7 @@
                 if (_Overlay._checkSameClickEatingPointerUp(event, false)) {
                     // It was a right click we may want to eat.
                     _Overlay._rightMouseMightEdgy = true;
-                    setImmediate(function () { _Overlay._rightMouseMightEdgy = false; });
+                    WinJS.Utilities._yieldForEvents(function () { _Overlay._rightMouseMightEdgy = false; });
                 }
             };
 
@@ -1242,10 +1245,10 @@
                     var settingsFlyout = overlay;
                     var flyoutControl = _Overlay._getParentControlUsingClassName(active, "win-flyout");
                     if (flyoutControl && flyoutControl._previousFocus && settingsFlyout.element.contains(flyoutControl._previousFocus)) {
-                        flyoutControl.element.addEventListener('focusout', function focusOut(event) {
+                        WinJS.Utilities._addEventListener(flyoutControl.element, 'focusout', function focusOut(event) {
                             // When the Flyout closes, hide the SetingsFlyout if it didn't regain focus.
                             _Overlay._hideIfLostFocus(settingsFlyout, event);
-                            flyoutControl.element.removeEventListener('focusout', focusOut, false);
+                            WinJS.Utilities._removeEventListener(flyoutControl.element, 'focusout', focusOut, false);
                         }, false);
                         return;
                     }
@@ -1280,8 +1283,12 @@
                         // there would be no flyout or appbar needing light dismiss.
                         var active = document.activeElement;
                         if (active && active.tagName === "IFRAME" && !active.msLightDismissBlur) {
-                            // This will go away when the IFRAME goes away, and we only create one
-                            active.msLightDismissBlur = active.addEventListener("blur", _Overlay._checkBlur, false);
+                            // - This will go away when the IFRAME goes away, and we only create one.
+                            // - This only works in IE because other browsers don't fire focus events on iframe elements.
+                            // - Can't use WinJS.Utilities._addEventListener's focusout because it doesn't fire when an
+                            //   iframe loses focus due to changing windows.
+                            active.addEventListener("blur", _Overlay._checkBlur, false);
+                            active.msLightDismissBlur = true;
                         }
                     }
                 }
@@ -1313,7 +1320,7 @@
             _Overlay._addHideFocusClass = function (element) {
                 if (element) {
                     WinJS.Utilities.addClass(element, hideFocusClass);
-                    element.addEventListener("focusout", _Overlay._removeHideFocusClass, false);
+                    WinJS.Utilities._addEventListener(element, "focusout", _Overlay._removeHideFocusClass, false);
                 }
             };
 
@@ -1323,7 +1330,7 @@
                 var target = event.target;
                 if (target && target !== document.activeElement) {
                     WinJS.Utilities.removeClass(target, hideFocusClass);
-                    event.target.removeEventListener("focusout", _Overlay._removeHideFocusClass, false);
+                    WinJS.Utilities._removeEventListener(event.target, "focusout", _Overlay._removeHideFocusClass, false);
                 }
             };
 
@@ -1391,7 +1398,7 @@
 
                 // Get the height of the visible document, e.g. the height of the visual viewport minus any IHM occlusion.
                 get _visibleDocHeight() {
-                    return _Overlay._keyboardInfo._visualViewportHeight -_Overlay._keyboardInfo._extraOccluded;
+                    return _Overlay._keyboardInfo._visualViewportHeight - _Overlay._keyboardInfo._extraOccluded;
                 },
 
                 // Get the visual viewport height. window.innerHeight doesn't return floating point values which are present with high DPI.

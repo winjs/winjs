@@ -292,7 +292,7 @@ WinJSTests.PhotosAppScenarios = function () {
                 }
 
                 // Don't wait till control is ready to update the DOM contents
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     var templateKeys = Object.keys(templateItems);
                     templateKeys.map(updateTemplate);
                 });
@@ -337,7 +337,7 @@ WinJSTests.PhotosAppScenarios = function () {
         }
         
         // Don't wait for pageselected to add items
-        setImmediate(addItems);
+        WinJS.Utilities._setImmediate(addItems);
     };
 };
 

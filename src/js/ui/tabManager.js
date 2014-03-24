@@ -22,7 +22,7 @@
             // synchronously exiting the TabContainer since any asynchrony will allow the setImmediate to
             // run and unset the 'sync' flag.
             tabHelper.sync = true;
-            setImmediate(function () {
+            WinJS.Utilities._yieldForEvents(function () {
                 tabHelper.sync = false;
             });
         }

@@ -85,11 +85,11 @@ WinJSTests.VirtualizedViewTests = function () {
         defaultPagesToPrefetch = WinJS.UI._VirtualizeContentsView._pagesToPrefetch;
         //WinBlue: 298587
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
         document.body.removeChild(VirtualizeContentsViewTestHost);
         WinJS.UI._VirtualizeContentsView._chunkSize = defaultChunkSize;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = defaultMaxTime;
@@ -1691,7 +1691,7 @@ WinJSTests.VirtualizedViewTests = function () {
         });
 
         listView._view._scheduleLazyTreeCreation = function () {
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 listView.itemDataSource.beginEdits();
                 listView.itemDataSource.list.splice(10, 10);
                 listView.itemDataSource.list.shift();
@@ -4405,7 +4405,7 @@ WinJSTests.VirtualizedViewTests = function () {
             };
 
             VirtualizeContentsViewTestHost.appendChild(wrapper);
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 sezo.zoomedOut = true;
             });
         };
@@ -4758,12 +4758,12 @@ WinJSTests.VirtualizedViewTests = function () {
 
             var cancellationPromise = realSetupAria.call(lv._view, timedOut);
 
-            // We do 1 setImmediate, allowing aria to schedule its belowNormal priority
+            // We do 1 WinJS.Utilities._setImmediate, allowing aria to schedule its belowNormal priority
             // task, since we have 100s of items per page aria worker should need another
             // timeslice to finish its job. But before it can enter its 2nd timeslice,
             // we scroll away from the current viewport and aria worker should get
             // canceled.
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 WinJS.Utilities.Scheduler.schedule(function () {
                     // accessibilityannotationcomplete fires when aria completes, when that happens,
                     // no errors should have been caught.

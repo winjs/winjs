@@ -638,7 +638,7 @@
                         that._mouseInViewport = false;
                     }, false);
 
-                    var PT_TOUCH = MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+                    var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
                     function handleShowButtons(e) {
                         if (e.pointerType !== PT_TOUCH) {
                             that._touchInteraction = false;
@@ -804,7 +804,7 @@
                     if (wheelWithinFlipper && withinAvoidTime) {
                         this._panningDivContainer.style["overflowX"] = "hidden";
                         this._panningDivContainer.style["overflowY"] = "hidden";
-                        setImmediate(function () {
+                        WinJS.Utilities._yieldForDomModification(function () {
                             // Avoid being stuck between items
                             that._pageManager._ensureCentered();
 

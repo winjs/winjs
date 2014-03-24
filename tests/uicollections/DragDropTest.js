@@ -29,7 +29,7 @@ WinJSTests.ListViewDragDropTest = function () {
         newNode.style.width = "200px";
         newNode.style.height = "300px";
         document.body.appendChild(newNode);
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -40,7 +40,7 @@ WinJSTests.ListViewDragDropTest = function () {
             WinJS.Utilities.disposeSubTree(element);
             document.body.removeChild(element);
         }
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     }
 
     function getRawData(count) {
@@ -343,15 +343,15 @@ WinJSTests.ListViewDragDropTest = function () {
                     handlers["itemdragleave"] = function (e) {
                         complete();
                     };
-                    setImmediate(function () {
+                    WinJS.Utilities._setImmediate(function () {
                         generateEventInElement(listView, "onDragLeave", listView.elementFromIndex(1), rtl);
                     });
                 };
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     generateEventInElement(listView, "onDragOver", listView.elementFromIndex(1), rtl);
                 });
             };
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(1), rtl);
             });
         };
@@ -379,7 +379,7 @@ WinJSTests.ListViewDragDropTest = function () {
             handlers["itemdragenter"] = function (e) {
                 complete();
             };
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(1), rtl);
             });
         };
@@ -418,13 +418,13 @@ WinJSTests.ListViewDragDropTest = function () {
                 handlers["itemdragleave"] = function (e) {
                     complete();
                 };
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     generateEventInElement(listView, "onDragLeave", listView.elementFromIndex(4), rtl);
                     generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(5), rtl);
                     generateEventInElement(listView, "onDragLeave", listView.elementFromIndex(5), rtl);
                 });
             };
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(4), rtl);
             });
         };
@@ -524,7 +524,7 @@ WinJSTests.ListViewDragDropTest = function () {
         };
         generateEventInElement(listView, "onDragStart", listView.elementFromIndex(2), rtl);
         generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(2), rtl);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             generateEventInElement(listView, "onDragEnd", listView.elementFromIndex(2), rtl);
         });
     });
@@ -709,7 +709,7 @@ WinJSTests.ListViewDragDropTest = function () {
             if (currentTest === indicesToTest.length) {
                 complete();
             } else {
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     generateEventInElement(listView, "onDragLeave", lastOverElement, rtl);
                     (function () {
                         var currentSet = indicesToTest[currentTest++];
@@ -718,26 +718,26 @@ WinJSTests.ListViewDragDropTest = function () {
                         generateEventInElement(listView, "onDragEnter", lastOverElement, rtl);
                         handlers["itemdragbetween"] = function (e) {
                             LiveUnit.Assert.areEqual(currentSet.topHalf.expectedInsertAfter, e.detail.insertAfterIndex);
-                            setImmediate(function () {
+                            WinJS.Utilities._setImmediate(function () {
                                 verifyShiftsAreCorrect(currentSet.topHalf);
                                 unsetTransforms(currentSet);
                                 handlers["itemdragbetween"] = function (e) {
                                     LiveUnit.Assert.areEqual(currentSet.bottomHalf.expectedInsertAfter, e.detail.insertAfterIndex);
-                                    setImmediate(function () {
+                                    WinJS.Utilities._setImmediate(function () {
                                         verifyShiftsAreCorrect(currentSet.bottomHalf);
                                         unsetTransforms(currentSet);
                                         // We need to reset after each test by moving to 0, 0, since items that share drop targets (eg, between the bottom half of 0
                                         // and the top half of 1) won't fire duplicate dragBetween events. Calling this top half 0 at the end of each set makes sure
                                         // the next set can run properly.
                                         handlers["itemdragbetween"] = function (e) {
-                                            setImmediate(function () {
+                                            WinJS.Utilities._setImmediate(function () {
                                                 testNextSet();
                                             });
                                         };
                                         generateEventInElement(listView, "onDragLeave", lastOverElement, rtl);
                                         lastOverElement = listView.elementFromIndex(0);
                                         generateEventInElement(listView, "onDragEnter", lastOverElement, rtl, getCursorOffsetInTopHalfOfItem(lastOverElement));
-                                        setImmediate(function () {
+                                        WinJS.Utilities._setImmediate(function () {
                                             generateEventInElement(listView, "onDragOver", lastOverElement, rtl, getCursorOffsetInTopHalfOfItem(lastOverElement));
                                         });
                                     });
@@ -745,7 +745,7 @@ WinJSTests.ListViewDragDropTest = function () {
                                 generateEventInElement(listView, "onDragOver", lastOverElement, rtl, getCursorOffsetInBottomHalfOfItem(lastOverElement));
                             });
                         };
-                        setImmediate(function () {
+                        WinJS.Utilities._setImmediate(function () {
                             generateEventInElement(listView, "onDragOver", lastOverElement, rtl, getCursorOffsetInTopHalfOfItem(lastOverElement));
                         });
                     })();
@@ -791,10 +791,10 @@ WinJSTests.ListViewDragDropTest = function () {
             handlers["itemdragend"] = function (e) {
                 complete();
             };
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 LiveUnit.Assert.isTrue(dragLeaveCalled);
                 generateEventInElement(listView, "onDrop", element2, rtl);
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     generateEventInElement(listView, "onDragEnd", element2, rtl);
                 });
             });
@@ -833,7 +833,7 @@ WinJSTests.ListViewDragDropTest = function () {
         };
         handlers["itemdragbetween"] = function (e) {
             LiveUnit.Assert.areEqual(2, e.detail.insertAfterIndex);
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 function onLoadingStateChanged() {
                     if (listView.loadingState === "complete") {
                         LiveUnit.Assert.areEqual(dragDropCallCount, 1);
@@ -847,7 +847,7 @@ WinJSTests.ListViewDragDropTest = function () {
                 }
                 listView.addEventListener("loadingstatechanged", onLoadingStateChanged);
                 generateEventInElement(listView, "onDrop", listView._viewport, rtl, cursorOffset);
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     generateEventInElement(listView, "onDragEnd", listView._viewport, rtl, cursorOffset);
                 });
             });
@@ -888,7 +888,7 @@ WinJSTests.ListViewDragDropTest = function () {
         };
         handlers["itemdragbetween"] = function (e) {
             LiveUnit.Assert.areEqual(6, e.detail.insertAfterIndex);
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 function onLoadingStateChanged() {
                     if (listView.loadingState === "complete") {
                         listView.removeEventListener("loadingstatechanged", onLoadingStateChanged);
@@ -907,7 +907,7 @@ WinJSTests.ListViewDragDropTest = function () {
                 }
                 listView.addEventListener("loadingstatechanged", onLoadingStateChanged);
                 generateEventInElement(listView, "onDrop", targetElement, rtl, cursorOffset);
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     generateEventInElement(listView, "onDragEnd", targetElement, rtl, cursorOffset);
                 });
             });

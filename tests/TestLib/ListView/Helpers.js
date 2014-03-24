@@ -80,7 +80,7 @@ if (typeof (WinJS) !== "undefined") {
         s.setAttribute("rel", "stylesheet");
         s.setAttribute("href", cssFile);
         document.head.appendChild(s);
-        return waitForCSSFile("/" + cssFile);
+        return waitForCSSFile("/" + cssFile.replace("../", ""));
     }
 
     function removeCSSFileFromHead(link) {
@@ -171,7 +171,7 @@ if (typeof (WinJS) !== "undefined") {
             return new WinJS.Promise(function (complete) {
                 function waitForDeferredAction_handler() {
                     listView.removeEventListener("accessibilityannotationcomplete", waitForDeferredAction_handler, false);
-                    setImmediate(function () {
+                    WinJS.Utilities._setImmediate(function () {
                         complete(x);
                     });
                 }
@@ -210,7 +210,7 @@ if (typeof (WinJS) !== "undefined") {
 
                 if (delay) {
                     if (delay < 0) {
-                        setImmediate(waitForReady_work);
+                        WinJS.Utilities._setImmediate(waitForReady_work);
                     }
                     else {
                         setTimeout(waitForReady_work, delay);
@@ -278,7 +278,7 @@ if (typeof (WinJS) !== "undefined") {
                 }
             }
         }
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             whenLoadingComplete(listview, stateChanged);
         });
     }

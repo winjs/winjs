@@ -114,7 +114,7 @@ WinJSTests.GroupsTests = function () {
         this._oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
         removeListviewAnimations();
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -125,7 +125,7 @@ WinJSTests.GroupsTests = function () {
         document.body.removeChild(element);
         restoreListviewAnimations();
         WinJS.Utilities.stopLog();
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
         cleanupUnhandledErrors();
 
     }
@@ -1183,7 +1183,7 @@ WinJSTests.GroupsTests = function () {
         listView.itemDataSource = groupTimelineList.dataSource;
         listView.groupDataSource = groupTimelineList.groups.dataSource;
         waitForDeferredAction(listView)().then(function () {
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 list.splice(0, 1, { startDate: new Date(2013, 4, 12, 5), text: "Fri 5am" }),
                 list.splice(1, 1, { startDate: new Date(2013, 4, 12, 6), text: "Fri 6am" }),
                 list.splice(2, 1, { startDate: new Date(2013, 4, 12, 10), text: "Fri 10am" }),

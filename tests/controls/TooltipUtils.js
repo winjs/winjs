@@ -64,7 +64,7 @@ TooltipUtils.prototype = (function () {
                 // We could use the "light style" too
                 // commonUtils.addCss("ui-light.css");
                 commonUtils.addCss("ui-dark.css");
-                commonUtils.addCss("tooltip.css");
+                commonUtils.addCss("tooltip.css", true);
             }
             // Create a default "anchor/trigger" element the tooltip will be attached to
             // and give it a border and default text so it's easier to see when visually

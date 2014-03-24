@@ -10,14 +10,20 @@ SetAnimationsTests = function () {
     var verifier = new AnimationVerifier();
     var util = new JSAnimationUtils();
 	
+    var animationsEnabledAtSetUp = true;
     this.setUp = function () {
         util.addDom("ui-light.css", false);
         result = null;
+        animationsEnabledAtSetUp = WinJS.UI.isAnimationEnabled();
     }
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tear down");
         util.removeDom("ui-light.css");
+
+        if (animationsEnabledAtSetUp && !WinJS.UI.isAnimationEnabled()) {
+            WinJS.UI.enableAnimations();
+        }
     }
 
     function outputOpacity(elem) {
@@ -46,10 +52,11 @@ SetAnimationsTests = function () {
     }
 	
     //test to ensure animations execute as expected when .enableAnimations() is called.
-    this.testTurnOnAnimation = function() {
+    this.testTurnOnAnimation = function(complete) {
 		var callback = function () {
 			var result = (outputOpacity(elem) !== "0");
 			LiveUnit.Assert.isTrue(result);
+			complete();
 		}
         var elem = document.getElementById("div1");
         WinJS.UI.enableAnimations();

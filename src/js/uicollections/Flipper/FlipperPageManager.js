@@ -85,7 +85,7 @@
                         event.preventDefault();
                     }
                 }, true);
-                this._flipperDiv.addEventListener("focus", function (event) {
+                WinJS.Utilities._addEventListener(this._flipperDiv, "focusin", function (event) {
                     if (event.target === that._flipperDiv) {
                         if (that._currentPage.element) {
                             try {
@@ -1701,7 +1701,7 @@
 
                     var that = this;
                     // Need to yield to the host here
-                    setImmediate(function () {
+                    WinJS.Utilities._setImmediate(function () {
                         if (that._viewportOnItemStart()) {
                             that._blockTabs = false;
                             if (that._currentPage.element) {

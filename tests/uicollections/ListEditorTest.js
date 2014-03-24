@@ -31,7 +31,7 @@ WinJSTests.ListEditorTest = function () {
         for (var i = 0; i < 100; ++i) {
             bigDataSet[i] = { title: "Tile" + i };
         }
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -42,7 +42,7 @@ WinJSTests.ListEditorTest = function () {
             WinJS.Utilities.disposeSubTree(element);
             document.body.removeChild(element);
         }
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     }
 
     function setupListView(element, layoutName, items, useBindingList, async) {
@@ -970,8 +970,8 @@ WinJSTests.ListEditorTest = function () {
         var delayedRequests = [];
         var delayRequests = false;
         var realRequestItem = listView._view.items.requestItem.bind(listView._view.items);
-        listView._onFocus = function () { };
-        listView._onBlur = function () { };
+        listView._onFocusIn = function () { };
+        listView._onFocusOut = function () { };
         listView._view.items.requestItem = function (index) {
             if (delayRequests) {
                 var signal = new WinJS._Signal();
@@ -1043,7 +1043,7 @@ WinJSTests.ListEditorTest = function () {
                     return new WinJS.Promise(function (testPromiseComplete) {
                         var c = testPromiseComplete;
                         if (unionTester.interruptLayout) {
-                            setImmediate(function () {
+                            WinJS.Utilities._setImmediate(function () {
                                 unionTester.interruptLayout();
                                 unionTester.interruptLayout = null;
                             });

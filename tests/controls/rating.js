@@ -163,11 +163,11 @@ CorsicaTests.RatingTests = function () {
         };
 
         ratingElement.setAttribute("aria-valuenow", 3);
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             verifyRatingProperties(3, 5.5, 10, true);
 
             ratingElement.setAttribute("aria-valuenow", 0);
-            setImmediate(function () {
+            WinJS.Utilities._setImmediate(function () {
                 verifyRatingProperties(0, 5.5, 10, true);
 
                 //update maxRating = 7
@@ -183,7 +183,7 @@ CorsicaTests.RatingTests = function () {
                 verifyRatingProperties(0, 5, 5, false);
 
                 ratingElement.setAttribute("aria-valuenow", 4);
-                setImmediate(function () {
+                WinJS.Utilities._setImmediate(function () {
                     verifyRatingProperties(4, 5, 5, false);
 
                     //update userRating = 3

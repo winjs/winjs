@@ -344,7 +344,7 @@ WinJSTests.BrowseModeTests = function () {
         LiveUnit.Assert.isTrue(utilities.hasClass(first, WinJS.UI._pressedClass));
         browseMode.onPointerUp(createPointerUpEvent(first));
         browseMode.onclick();
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             LiveUnit.Assert.areEqual(0, invoked.index);
             LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
             complete();
@@ -366,7 +366,7 @@ WinJSTests.BrowseModeTests = function () {
         LiveUnit.Assert.isFalse(utilities.hasClass(first, WinJS.UI._pressedClass));
         browseMode.onPointerUp(createPointerUpEvent(first));
         browseMode.onclick();
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             LiveUnit.Assert.isFalse(utilities.hasClass(first, WinJS.UI._pressedClass));
             complete();
         });
@@ -390,7 +390,7 @@ WinJSTests.BrowseModeTests = function () {
 
         browseMode.onPointerUp(createPointerUpEvent(second));
         browseMode.onclick();
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
             LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
             complete();
@@ -439,7 +439,7 @@ WinJSTests.BrowseModeTests = function () {
 
         browseMode.onPointerUp(createPointerUpEvent(first));
         browseMode.onclick();
-        setImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             LiveUnit.Assert.areEqual(0, invoked.index);
             LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
             LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));

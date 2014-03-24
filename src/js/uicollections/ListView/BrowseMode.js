@@ -603,7 +603,7 @@
                             that.onDragEnd(eventObject);
                         });
                         // We delay setting the opacity of the dragged items so that IE has time to create a thumbnail before me make them invisible
-                        setImmediate(function () {
+                        WinJS.Utilities._yieldForDomModification(function () {
                             if (that._dragging) {
                                 var indicesSelected = that._dragInfo.getIndices();
                                 for (var i = 0, len = indicesSelected.length; i < len; i++) {
