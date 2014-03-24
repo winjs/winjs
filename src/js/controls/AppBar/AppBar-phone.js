@@ -323,7 +323,7 @@
                 },
 
                 /// <field type="String" defaultValue="bottom" oamOptionsDatatype="WinJS.UI.AppBar.placement" locid="WinJS.UI.AppBar.placement" helpKeyword="WinJS.UI.AppBar.placement" hidden="true">
-                /// The placement of the AppBar on the display. The only value for phone is"bottom".
+                /// The placement of the AppBar on the display. The only value for phone is "bottom".
                 /// </field>
                 placement: {
                     get: function () {
@@ -388,7 +388,7 @@
                     }
                 },
 
-                /// <field type="Array" locid="WinJS.UI.AppBar.closedDisplayMode" helpKeyword="WinJS.UI.AppBar.closedDisplayMode" isAdvanced="true">
+                /// <field type="String" defaultValue="compact" locid="WinJS.UI.AppBar.closedDisplayMode" helpKeyword="WinJS.UI.AppBar.closedDisplayMode" isAdvanced="true">
                 /// Gets/Sets how AppBar will display itself while closed. Values are "compact" and "minimal".
                 /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1"/>
                 /// </field>
