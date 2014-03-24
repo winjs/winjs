@@ -1,6 +1,24 @@
 var config = require("../../config.js");
 
 module.exports = {
+    tests: {
+        options: {
+            patterns: [
+                {
+                    match: "TESTPAGE_HEAD",
+                    replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageHead.html') %>"
+                },
+                {
+                    match: "TESTPAGE_BODY",
+                    replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageBody.html') %>"
+                }
+            ],
+        },
+        files: [
+            { expand: true, flatten: false, src: [config.testsOutput + "**/*.js"], dest: "" },
+            { expand: true, flatten: false, src: [config.testsOutput + "**/*.html"], dest: "" },
+        ]
+    },
     base: {
         options: {
             patterns: [
@@ -34,24 +52,6 @@ module.exports = {
           {expand: true, flatten: true, src: [config.desktopOutput + "css/*.css"], dest: config.desktopOutput + "css/"},
           {expand: true, flatten: true, src: [config.phoneOutput + "css/*.css"], dest: config.phoneOutput + "css/"},
           { expand: true, flatten: false, src: [config.testsOutput + "**/*.html"], dest: "" },
-        ]
-    },
-    tests: {
-        options: {
-            patterns: [
-                {
-                    match: "TESTPAGE_HEAD",
-                    replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageHead.html') %>"
-                },
-                {
-                    match: "TESTPAGE_BODY",
-                    replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageBody.html') %>"
-                }
-            ],
-        },
-        files: [
-            { expand: true, flatten: false, src: [config.testsOutput + "**/*.js"], dest: "" },
-            { expand: true, flatten: false, src: [config.testsOutput + "**/*.html"], dest: "" },
         ]
     },
 }
