@@ -20,4 +20,7 @@ module.exports = {
         config.phoneOutput + "js/ui.js",
         config.phoneOutput + "js/" + config.localeFolder + "/ui.strings.js",
     ],
+    qunit: [
+        config.testsOutput + "TestLib/liveToQ/*.*"
+    ]
 }
