@@ -92,15 +92,17 @@
         }
 
         .mixin(@theme);
+    }
+}
 
-        @media (-ms-high-contrast) {
-            .win-switch:disabled::-ms-fill-lower {
-                background-color: GrayText;
-            }
+@media (-ms-high-contrast) {
+    .win-toggleswitch {
+        .win-switch:disabled::-ms-fill-lower {
+            background-color: GrayText;
+        }
 
-            .win-switch::-ms-thumb {
-                height: 17px;
-            }
+        .win-switch::-ms-thumb {
+            height: 17px;
         }
     }
 }

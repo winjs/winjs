@@ -86,16 +86,18 @@
         }
 
         .mixin(@theme);
+    }
+}
 
-        .win-switch::-ms-fill-upper, .win-switch:enabled:hover::-ms-fill-upper,
-        .win-switch:disabled::-ms-fill-upper {
-            background-color: transparent;
-        }
+.win-toggleswitch {
+    .win-switch::-ms-fill-upper, .win-switch:enabled:hover::-ms-fill-upper,
+    .win-switch:disabled::-ms-fill-upper {
+        background-color: transparent;
+    }
 
-        @media (-ms-high-contrast) {
-            .win-switch:disabled::-ms-fill-lower {
-                background-color: GrayText;
-            }
+    @media (-ms-high-contrast) {
+        .win-switch:disabled::-ms-fill-lower {
+            background-color: GrayText;
         }
     }
 }

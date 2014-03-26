@@ -34,25 +34,25 @@
     }
 
     .mixin(@theme);
+}
 
-    @media (-ms-high-contrast) {
-        .win-rating .win-star:before {
-            content: "\E082" !important;
-        }
-        .win-rating .win-star.win-full {
-            color: HighLight;
-        }
-        .win-rating .win-star.win-tentative.win-full {
-            color: ButtonText;
-        }
-        .win-rating .win-star.win-empty {
-            color: ButtonFace;
-        }
-        .win-rating .win-star:after {
-            content: "\E224" !important;
-            position: relative;
-            top: -100%;
-            color: ButtonText;
-        }
+@media (-ms-high-contrast) {
+    .win-rating .win-star:before {
+        content: "\E082" !important;
+    }
+    .win-rating .win-star.win-full {
+        color: HighLight;
+    }
+    .win-rating .win-star.win-tentative.win-full {
+        color: ButtonText;
+    }
+    .win-rating .win-star.win-empty {
+        color: ButtonFace;
+    }
+    .win-rating .win-star:after {
+        content: "\E224" !important;
+        position: relative;
+        top: -100%;
+        color: ButtonText;
     }
 }
