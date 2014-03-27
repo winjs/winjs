@@ -12,7 +12,7 @@
     "load-grunt-tasks": "^0.4.0",
     "glob": "^3.2.9",
     "qunitjs": "~1.14.0",
-    "grunt-jslint": "~1.1.8"
+    "grunt-contrib-jshint": "~0.9.2"
     "minimist": "0.0.8",
     "grunt-contrib-uglify": "^0.4.0",
     "grunt-contrib-connect": "^0.7.1"

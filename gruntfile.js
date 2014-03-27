@@ -1,4 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+"use strict"
 
 module.exports = function (grunt) {
     "use strict";
@@ -44,4 +45,5 @@ module.exports = function (grunt) {
     grunt.registerTask("css", ["less"]);
     grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
     grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
-};
+    grunt.registerTask("lint", ["jshint"]);
+}

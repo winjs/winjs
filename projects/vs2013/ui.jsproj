@@ -342,6 +342,10 @@
     <Content Include="..\..\src\js\uicollections\Repeater\Repeater.js">
       <Link>js\uicollections\Repeater\Repeater.js</Link>
     </Content>
+    <Content Include="js\controls\AppBar\AppBar-phone.js" />
+    <Content Include="js\controls\AppBar\AppBarCommand-phone.js" />
+    <Content Include="js\controls\Pivot\Pivot.js" />
+    <Content Include="js\controls\Pivot\PivotItem.js" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="..\..\src\js\en-US\ui.resjson">
