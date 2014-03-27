@@ -75,10 +75,8 @@ CorsicaTests.TooltipTests = function () {
             tooltip = null;
         } finally {
             LiveUnit.Assert.isNotNull(tooltip, "Tooltip should allow instantiating with a null anchor.");
-            LiveUnit.Assert.isNotNull(tooltip.anchorElement, "When tooltip is instantiating with a null anchor, an anchor is generated for it.");
-            if (tooltip && tooltip.anchorElement) {
-                document.body.removeChild(tooltip.anchorElement);
-            }
+            LiveUnit.Assert.isNotNull(tooltip.element, "When tooltip is instantiating with a null anchor, an anchor is generated for it.");
+            tooltip.dispose();
         }
      }
     this.testTooltipNullInstatiation["Owner"] = "lipinc";

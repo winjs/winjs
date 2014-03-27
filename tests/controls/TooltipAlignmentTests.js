@@ -40,7 +40,12 @@ TooltipAlignmentTests = function () {
         // set up the tooltip
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "short text" });
 
+        var completed = false;
         function tooltipEventListener(event) {
+            if (completed) {
+                return;
+            }
+
             LiveUnit.Assert.isNotNull(event);
             LiveUnit.LoggingCore.logComment(event.type);
             tooltipUtils.logTooltipInformation(tooltip);
@@ -61,6 +66,7 @@ TooltipAlignmentTests = function () {
                     // Verify the changed text is centered too (see Win8 bug: 275298)
                     LiveUnit.Assert.areEqual(tooltipUtils.getTooltipAlignmentFromElement(tooltip), "horizontal center");
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    completed = true;
                     break;
             }
         }
@@ -83,7 +89,12 @@ TooltipAlignmentTests = function () {
         // set up the tooltip
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "tooltip" });
 
+        var completed = false;
         function tooltipEventListener(event) {
+            if (completed) {
+                return;
+            }
+
             LiveUnit.Assert.isNotNull(event);
             LiveUnit.LoggingCore.logComment(event.type);
             tooltipUtils.logTooltipInformation(tooltip);
@@ -106,6 +117,7 @@ TooltipAlignmentTests = function () {
                     // Verify the changed placement is centered too (see Win8 bug: 292981)
                     LiveUnit.Assert.areEqual(tooltipUtils.getTooltipAlignmentFromElement(tooltip), "vertical center");
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    completed = true;
                     break;
             }
         }
@@ -134,7 +146,12 @@ TooltipAlignmentTests = function () {
         // set up the tooltip
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "tooltip", placement: tooltipPlacement });
 
+        var completed = false;
         function tooltipEventListener(event) {
+            if (completed) {
+                return;
+            }
+
             LiveUnit.Assert.isNotNull(event);
             LiveUnit.LoggingCore.logComment(event.type);
             tooltipUtils.logTooltipInformation(tooltip);
@@ -151,6 +168,7 @@ TooltipAlignmentTests = function () {
                     tooltipUtils.getTooltipDistanceFromWindow(tooltip);
 
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    completed = true;
                     break;
             }
         }

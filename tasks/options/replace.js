@@ -4,14 +4,6 @@ module.exports = {
     tests: {
         options: {
             patterns: [
-                {
-                    match: "TESTPAGE_HEAD",
-                    replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageHead.html') %>"
-                },
-                {
-                    match: "TESTPAGE_BODY",
-                    replacement: "<%= grunt.file.read('tests/TestLib/liveToQ/testPageBody.html') %>"
-                }
             ],
         },
         files: [
