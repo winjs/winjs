@@ -1,9 +1,9 @@
 Windows Library for JavaScript (WinJS)
 =====
 
-The WinJS source code of the existing WinJS library is released under the Apache 2.0 license as an Open Source project by [Microsoft Open Technologies](http://aka.ms/winjsopensource), the Microsoft wholly owned subsidiary created to advance Microsoft’s investment in openness and interoperability.
+This project is actively developed by the WinJS team assigned to the Microsoft Open Tech Hub and in collaboration with the community of open source developers. Together we are dedicated to creating the best possible solution for HTML/CSS/JS application development.
 
-WinJS is a set of actively developed JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology forged with the following principles in mind:
+WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology forged with the following principles in mind:
 
 * Provide developers with a distinctive set UI controls with high polish and performance with fundamental support for touch, mouse, keyboard and accessibility
 * Provide developers with a cohesive set of components and utilities to build the scaffolding and infrastructure of their applications
