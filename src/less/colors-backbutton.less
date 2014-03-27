@@ -76,14 +76,15 @@
         }
     }
 
-    button.win-navigation-backbutton, button.win-navigation-backbutton:active,
-    button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:hover {
-        // Overwrite default background and border styles from HTML button element
-        background-color: transparent;
-        border: none;
-    }
 
     .mixin(@theme);
+}
+
+button.win-navigation-backbutton, button.win-navigation-backbutton:active,
+button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:hover {
+    // Overwrite default background and border styles from HTML button element
+    background-color: transparent;
+    border: none;
 }
 
 @media (-ms-high-contrast) {
