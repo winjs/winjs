@@ -72,9 +72,6 @@
     <Content Include="..\..\tests\animations\SetAnimationsTests.js">
       <Link>animations\SetAnimationsTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\animations\test.html">
-      <Link>animations\test.html</Link>
-    </Content>
     <Content Include="..\..\tests\base\asyncCausalityChain.js">
       <Link>base\asyncCausalityChain.js</Link>
     </Content>
@@ -104,9 +101,6 @@
     </Content>
     <Content Include="..\..\tests\base\scheduler.js">
       <Link>base\scheduler.js</Link>
-    </Content>
-    <Content Include="..\..\tests\base\test.html">
-      <Link>base\test.html</Link>
     </Content>
     <Content Include="..\..\tests\base\utilities.js">
       <Link>base\utilities.js</Link>
@@ -593,12 +587,6 @@
     </Content>
     <Content Include="..\..\tests\TestLib\liveToQ\qunit-1.14.0.js">
       <Link>TestLib\liveToQ\qunit-1.14.0.js</Link>
-    </Content>
-    <Content Include="..\..\tests\TestLib\liveToQ\testPageBody.html">
-      <Link>TestLib\liveToQ\testPageBody.html</Link>
-    </Content>
-    <Content Include="..\..\tests\TestLib\liveToQ\testPageHead.html">
-      <Link>TestLib\liveToQ\testPageHead.html</Link>
     </Content>
     <Content Include="..\..\tests\TestLib\NavBar\NavBarUtils.js">
       <Link>TestLib\NavBar\NavBarUtils.js</Link>
