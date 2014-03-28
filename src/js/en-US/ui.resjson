@@ -1,4 +1,12 @@
-{
+/*
+Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0.
+
+See License.txt in the project root for license information.
+*/
+
+﻿{
     "appBarAriaLabel": "App Bar",
     "appBarCommandAriaLabel": "App Bar Item",
     "asynchronousRender" : "Top level items must render synchronously",
@@ -150,7 +158,7 @@
     "appBarIcons\\favorite":                            "\uE113", //  group:Media
     "_appBarIcons\\favorite.comment":                   "{Locked:qps-ploc,qps-plocm}",
     "appBarIcons\\camera":                              "\uE114", //  group:System
-    "_appBarIcons\\camera.comment":                     "{Locked:qps-ploc,qps-plocm}",
+    "_appBarIcons\\camera.comment":                     "{Locked:qps-ploc,qps-plocm}",    
     "appBarIcons\\settings":                            "\uE115", //  group:System
     "_appBarIcons\\settings.comment":                   "{Locked:qps-ploc,qps-plocm}",
     "appBarIcons\\video":                               "\uE116", //  group:Media
