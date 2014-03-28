@@ -6,7 +6,7 @@ module.exports = function (grunt) {
         for (var i = 0; i < arguments.length; ++i)
             args.push(arguments[i]);
 
-        grunt.task.run(["default", "shell:runTests:" + args.join(":")]);
+        grunt.task.run(["default", "clean:qunit", "shell:runTests:" + args.join(":")]);
     });
     
     // Generate QUnit test pages
