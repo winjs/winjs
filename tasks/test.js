@@ -1,15 +1,20 @@
 module.exports = function (grunt) {
     var config = require("../config.js");
     
-    grunt.registerTask("test", function () {        
-        var args = [];
-        for (var i = 0; i < arguments.length; ++i)
-            args.push(arguments[i]);
+    grunt.registerTask("test", function () {
+        if (config.inRazzle) {
+            var args = [];
+            for (var i = 0; i < arguments.length; ++i)
+                args.push(arguments[i]);
 
-        grunt.task.run(["default", "clean:qunit", "shell:runTests:" + args.join(":")]);
+            grunt.task.run(["default", "clean:qunit", "shell:runTests:" + args.join(":")]);
+        } else {
+            grunt.task.run(["default", "shell:openQUnitTestPage"]);
+        }
     });
     
     // Generate QUnit test pages
+    grunt.log.write("Building QUnit test pages...");
     var fs = require("fs");
     
     function clean(path) {
@@ -24,7 +29,6 @@ module.exports = function (grunt) {
                     fs.unlinkSync(curPath);
                 }
             });
-            fs.rmdirSync(path);
         }
     }
     
@@ -63,7 +67,8 @@ module.exports = function (grunt) {
     }
 
     var testMenuTemplate = 
-'<!DOCTYPE html>                                                                                                            \r\n\
+'<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
+<!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\
 <head>                                                                                                                      \r\n\
     <title>WinJS Tests</title>                                                                                              \r\n\
@@ -83,7 +88,8 @@ module.exports = function (grunt) {
 </html>';
     
     var testPageTemplate =
-'<!-- saved from url=(0014)about:internet -->\r\n\
+'<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
+<!-- saved from url=(0014)about:internet -->\r\n\
 <!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\
 <head>                                                                                                                      \r\n\
@@ -97,12 +103,12 @@ module.exports = function (grunt) {
     <script src="../../@@TARGETFRAMEWORK/js/en-US/ui.strings.js"></script>                                                  \r\n\
                                                                                                                             \r\n\
     <!-- Test framework references -->                                                                                      \r\n\
-    <link type="text/css" rel="stylesheet" href="../TestLib/liveToQ/qunit-1.14.0.css" />                                    \r\n\
-    <script src="../TestLib/liveToQ/qunit-1.14.0.js"></script>                                                              \r\n\
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/qunitjs/qunit/qunit.css" />                          \r\n\
+    <script src="../../../node_modules/qunitjs/qunit/qunit.js"></script>                                                    \r\n\
     <script src="../TestLib/liveToQ/livetoQ.js"></script>                                                                   \r\n\
                                                                                                                             \r\n\
     <!-- Test references -->                                                                                                \r\n\
-@@TESTREFERENCES                                                                                                                       \r\n\
+@@TESTREFERENCES                                                                                                            \r\n\
 </head>                                                                                                                     \r\n\
 <body>                                                                                                                      \r\n\
     <div id="qunit" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; overflow-y: scroll;"></div>  \r\n\
@@ -110,9 +116,13 @@ module.exports = function (grunt) {
 </body>                                                                                                                     \r\n\
 </html>'.replace(/@@TARGETFRAMEWORK/g, config.targetFramework);
     
-    clean("./bin/");
-    fs.mkdirSync("./bin/");
-    fs.mkdirSync("./bin/tests/");
+    clean("./bin");
+    if (!fs.existsSync("./bin")) {
+        fs.mkdirSync("./bin");
+    }
+    if (!fs.existsSync("./bin/tests")) {
+        fs.mkdirSync("./bin/tests");
+    }
     
     var dirs = fs.readdirSync("./tests");
     var tests = "";
@@ -129,7 +139,7 @@ module.exports = function (grunt) {
         var srcs = [];
         var csss = [];
         var files = fs.readdirSync("./tests/" + dir);
-        for (var i = files.length - 1; i >= 0; i --) {
+        for (var i = files.length - 1; i >= 0; i--) {
             // Some folders have .html test assets, we can ignore those
             var file = files[i];
             if (file.indexOf(".css") >= 0) {
@@ -148,7 +158,7 @@ module.exports = function (grunt) {
                 var length = srcsCopy.length;
                 deps.forEach(function (dep) {
                     if (dep === srcs[i]) {
-                        // Some files reference themselves, this check breaks an infinite loop
+                        // Some files reference themselves, this check breaks the infinite loop
                         return;
                     }
                     if (dep.indexOf(".css") >= 0) {
@@ -183,10 +193,16 @@ module.exports = function (grunt) {
         }
         testReferences = testReferences.substr(0, testReferences.length - 2);
         html = html.replace("@@TESTREFERENCES", testReferences);
-        fs.mkdirSync("./bin/tests/" + dir);
-        fs.writeFileSync("./bin/tests/" + dir + "/test.html", html);
+        
+        var testFolder = "./bin/tests/" + dir;
+        if (!fs.existsSync(testFolder)) {
+            fs.mkdirSync(testFolder);
+        }
+        fs.writeFileSync(testFolder + "/test.html", html);
         tests += '    <h2><a href="' + dir + '/test.html">' + dir + " tests</a></h2>\r\n";
     });
     tests = tests.substr(0, tests.length - 2);
     fs.writeFileSync("./bin/tests/tests.html", testMenuTemplate.replace("@@TESTS", tests));
+    
+    grunt.log.writeln("Done!");
 };

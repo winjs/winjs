@@ -37,5 +37,8 @@ module.exports = {
             stdout: true,
             stderr: true
         }
+    },
+    openQUnitTestPage: {
+        command: "start bin/tests/tests.html"
     }
 }
