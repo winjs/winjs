@@ -1,12 +1,4 @@
-/*
-Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0.
-
-See License.txt in the project root for license information.
-*/
-
-﻿{
+{
     "attributeBindingSingleProperty": "Attribute binding requires a single destination attribute name, often in the form \"this['aria-label']\" or \"width\".",
     "bindingInitializerNotFound": "Initializer not found:'{0}'",
     "cannotBindToThis": "Can't bind to 'this'.",
