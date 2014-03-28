@@ -379,10 +379,10 @@
             return (global.performance && performance.now()) || Date.now();
         },
 
-        _traceAsyncOperationStarting: (global.Debug && Debug.msTraceAsyncOperationStarting.bind(global.Debug)) || nop,
-        _traceAsyncOperationCompleted: (global.Debug && Debug.msTraceAsyncOperationCompleted.bind(global.Debug)) || nop,
-        _traceAsyncCallbackStarting: (global.Debug && Debug.msTraceAsyncCallbackStarting.bind(global.Debug)) || nop,
-        _traceAsyncCallbackCompleted: (global.Debug && Debug.msTraceAsyncCallbackCompleted.bind(global.Debug)) || nop
+        _traceAsyncOperationStarting: (global.Debug && Debug.msTraceAsyncOperationStarting && Debug.msTraceAsyncOperationStarting.bind(global.Debug)) || nop,
+        _traceAsyncOperationCompleted: (global.Debug && Debug.msTraceAsyncOperationCompleted && Debug.msTraceAsyncOperationCompleted.bind(global.Debug)) || nop,
+        _traceAsyncCallbackStarting: (global.Debug && Debug.msTraceAsyncCallbackStarting && Debug.msTraceAsyncCallbackStarting.bind(global.Debug)) || nop,
+        _traceAsyncCallbackCompleted: (global.Debug && Debug.msTraceAsyncCallbackCompleted && Debug.msTraceAsyncCallbackCompleted.bind(global.Debug)) || nop
     });
 
     WinJS.Namespace.define("WinJS", {
