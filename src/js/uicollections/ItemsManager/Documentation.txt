@@ -1,5 +1,4 @@
-// Copyright (c) Microsoft Corporation
-// All rights reserved
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 // IListDataSource functions and objects that are declared only for documentation purposes
 
@@ -79,7 +78,7 @@ var IItemPromise = WinJS.Class.derive(Promise, function () {
 
         release: function () {
             /// <summary>
-            /// Requests that notifications no longer be sent for the item.  The item is only released when the number 
+            /// Requests that notifications no longer be sent for the item.  The item is only released when the number
             /// of release calls matches the number of retain calls.  The number of release calls must not exceed the
             /// number of retain calls.  This method is only present if an IListNotificationHandler was passed to
             /// IListDataSource.createListBinding when the IListBinding that returned this IItemPromise was created.
@@ -169,7 +168,7 @@ var IListNotificationHandler = WinJS.Class.define(function () {
             /// </param>
             /// <param name="existingHandle" optional="true" type="String">
             /// If the item was a mirage due to the request resolving to an item that has already been obtained by
-            /// other means, the handle of the latter item. 
+            /// other means, the handle of the latter item.
             /// </param>
         },
 
@@ -341,7 +340,7 @@ var IListDataAdapter = WinJS.Class.define(function () {
             /// <summary>
             /// OPTIONAL
             /// At least one of itemsFromKey and itemsFromIndex must be implemented.
-            ///     
+            ///
             /// Fetches the item with the given key, and surrounding items in the list
             /// </summary>
             /// <param name="key" type="String">
@@ -367,7 +366,7 @@ var IListDataAdapter = WinJS.Class.define(function () {
             /// <summary>
             /// OPTIONAL
             /// At least one of itemsFromKey and itemsFromIndex must be implemented.
-            ///     
+            ///
             /// Fetches the item with the given index, and surrounding items in the list
             /// </summary>
             /// <param name="index" type="Number" integer="true">

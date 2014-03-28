@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
 //
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//
 //  Abstract:
 //
 //      Instantiation test cases for the Toggle JavaScript control.  Note that a large
@@ -40,7 +38,7 @@ ToggleInstantiationTests = function() {
         toggleUtils.verifyFunction(toggle, "removeEventListener");
         toggleUtils.verifyFunction(toggle, "dispatchEvent");
     };
-    
+
     this.testToggle_Instantiation["Owner"] = "michabol";
     this.testToggle_Instantiation["Priority"] = "feature";
     this.testToggle_Instantiation["Description"] = "Test Toggle Instantiation";
