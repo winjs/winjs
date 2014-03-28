@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
 //
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//
 //  Abstract:
 //
 //  Placement Tests for the tooltip.  When we create tooltips, we can specify which side of the "anchor element"
@@ -64,7 +62,7 @@ TooltipPlacementTests = function () {
                     // Don't validate these, just log them since we have separate distance tests.
                     tooltipUtils.getTooltipDistanceFromElement(tooltip);
                     tooltipUtils.getTooltipDistanceFromWindow(tooltip);
-                            
+
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
                 break;
             }

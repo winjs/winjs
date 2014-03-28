@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
 //
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//
 //  Abstract:
 //
 //      JavaScript Animation Verifier
@@ -31,7 +29,7 @@ AnimationVerifier.prototype = (function () {
             ///     If it is a single element, just check this one. The verification needs the client rectangle of the DOM element(s)
             ///     before and after the animation/transition.
             /// </param>
-            /// <returns type="bool"/> 
+            /// <returns type="bool"/>
             function  compareDouble(d1, d2, precision) {
                 if (Math.abs(d1 - d2) <= precision) {
                     return true;
@@ -81,7 +79,7 @@ AnimationVerifier.prototype = (function () {
             /// <param name="currY" type="Integer">
             ///     Specifies the current y-coordinate
             /// </param>
-            /// <returns type="bool"/> 
+            /// <returns type="bool"/>
 			if (currX == 0 && currY == 0) {
 				LiveUnit.LoggingCore.logComment("WARNING: Current X,Y Coordinates are (0,0)");
 				LiveUnit.LoggingCore.logComment("Likely reason for these coordinates: Animation 'complete' promise returned before 'transitionend' fired. Thus, coordinates test in transitionEndTestHandler() will be non-existant -> (0,0)");
@@ -97,9 +95,9 @@ AnimationVerifier.prototype = (function () {
 					(currX >= startX && currX <= destX && currY >= startY && currY <= destY) || //(start <= X <= dest) && (start <= Y <= dest)
 					(currX >= startX && currX <= destX && currY <= startY && currY >= destY) //(start <= X <= dest) && (start >= Y >= dest)
 				);
-			}	
-		},	
-		
+			}
+		},
+
 		VerifyDestinationCoordinates: function (refX, refY, actX, actY) {
 		    /// <summary>
             ///     Verify translation end state
@@ -126,7 +124,7 @@ AnimationVerifier.prototype = (function () {
 			return (lowerBoundX <= actX && upperBoundX >= actX &&
 				lowerBoundY <= actY && upperBoundY >= actY);
 		},
-		
+
         //Verify translate2D transition, final state should be the same as diffX, diffY
         VerifyTranslate2DTransition: function (diffX, diffY) {
             /// <summary>
@@ -138,7 +136,7 @@ AnimationVerifier.prototype = (function () {
             /// <param name="diffY" type="Integer">
             ///     Specifies the vertical translate distance
             /// </param>
-            /// <returns type="bool"/> 
+            /// <returns type="bool"/>
             var ret = true;
             return this.VerifyEachElementStatusChange(function (before, after, compareDouble) {
                 hor = after.left - before.left;
@@ -235,7 +233,7 @@ AnimationVerifier.prototype = (function () {
             return this.VerifyEachElementStatusChange(function (before, after, compareDouble) {
                 var actualRatioX = (after.right - after.left) / (before.right - before.left);
                 var actualRatioY = (after.bottom - after.top) / (before.bottom - before.top);
- 
+
                 if (!compareDouble(actualRatioX, ratioX, 0.005)) {
                     LiveUnit.LoggingCore.logComment("Error:Horizontal scale is not correct. should be:" + ratioX + " currently:" + actualRatioX);
                     ret = false;
@@ -244,8 +242,8 @@ AnimationVerifier.prototype = (function () {
                     LiveUnit.LoggingCore.logComment("Error:Vertical scale is not correct. should be:" + ratioY + " currently:" + actualRatioY);
                     ret = false;
                 }
-                
-            return ret;  
+
+            return ret;
           });
         },
 
@@ -264,7 +262,7 @@ AnimationVerifier.prototype = (function () {
             return this.VerifyEachElementStatusChange(function (before, after, compareDouble) {
                 var actualRatioX = (after.right - after.left) / (before.right - before.left);
                 var actualRatioY = (after.bottom - after.top) / (before.bottom - before.top);
-          
+
                 if ((actualRatioX === 1) || (actualRatioY === 1)){
                     LiveUnit.LoggingCore.logComment("Error:Horizontal scale is not correct. should between " + ratioX + " and " + ratioY + "currently ratioX=" + actualRatioX + " ratioY=" + actualRatioY);
                     ret = false;
@@ -273,11 +271,11 @@ AnimationVerifier.prototype = (function () {
                     LiveUnit.LoggingCore.logComment("Error:Horizontal scale is not correct. should between " + ratioX + " and " + ratioY + "currently ratioX=" + actualRatioX + " ratioY=" + actualRatioY);
                     ret = false;
                 }
-                
-            return ret;  
+
+            return ret;
           });
         },
-        
+
        VerifyOpacityTransition: function (elem, value) {
             /// <summary>
             ///     Verify opacity transition.
@@ -295,7 +293,7 @@ AnimationVerifier.prototype = (function () {
             if (Array.isArray(elem)) {
                 for (var i = 0; i < elem.length; i++) {
                     var opacity = window.getComputedStyle(elem[i], null).getPropertyValue('opacity');
-                   
+
                     if (opacity !== value) {
 						var tolerance = .01;
 						if (opacity > (value + tolerance) || opacity < (value - tolerance)) {
@@ -306,7 +304,7 @@ AnimationVerifier.prototype = (function () {
                     }
                 }
             } else {
-                var opacity = window.getComputedStyle(elem, null).getPropertyValue('opacity');               
+                var opacity = window.getComputedStyle(elem, null).getPropertyValue('opacity');
                 if (opacity !== value) {
                     var tolerance = .01;
 					if (opacity > (value + tolerance) || opacity < (value - tolerance)) {
@@ -323,10 +321,10 @@ AnimationVerifier.prototype = (function () {
             /// <summary>
             ///     Verify opacity transition.
             /// </summary>
-            /// <returns type="bool"/> 
+            /// <returns type="bool"/>
             var ret = true;
             var opacity;
-            
+
             if (Array.isArray(elem)) {
                 for (var i = 0; i < elem.length; i++) {
                     var opacity = window.getComputedStyle(elem[i], null).getPropertyValue('opacity');
@@ -338,7 +336,7 @@ AnimationVerifier.prototype = (function () {
                 }
             } else {
                 var opacity = window.getComputedStyle(elem, null).getPropertyValue('opacity');
-                
+
                 if (opacity >= '0' && opacity <= '1'){
                     ret = true;
                 } else {
@@ -349,15 +347,15 @@ AnimationVerifier.prototype = (function () {
 
             return ret;
       },
-	  
+
       VerifyOpacityAnimation: function(elem) {
             /// <summary>
             ///     Verify opacity transition.
             /// </summary>
-            /// <returns type="bool"/> 
+            /// <returns type="bool"/>
             var ret = true;
             var opacity;
-            
+
             if (Array.isArray(elem)) {
                 for (var i = 0; i < elem.length; i++) {
                     var opacity = window.getComputedStyle(elem[i], null).getPropertyValue('opacity');
@@ -370,7 +368,7 @@ AnimationVerifier.prototype = (function () {
             } else {
                 var opacity = window.getComputedStyle(elem, null).getPropertyValue('opacity');
                 LiveUnit.LoggingCore.logComment("opacity:" + opacity);
-                
+
                 if (opacity === '0' || opacity === '1'){
                         LiveUnit.LoggingCore.logComment("Opacity is not correct. Should be between 0 and 1, currently is: " + opacity);
                         ret = false;

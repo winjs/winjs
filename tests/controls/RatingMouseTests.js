@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
 //
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//
 //  Abstract:
 //
 //      Rating control mouse tests utilizing simulated UI interaction we can
@@ -683,7 +681,7 @@ RatingMouseTests = function () {
         // Register the test actions we will be taking
         var actions = {};
         for (var i = 0; i < 4 * ratingUtils.defaultMaxRating; ++i) {
-            // Clicking takes 4 events - over, down, up, off - so throw each event every 4th iteration through this loop 
+            // Clicking takes 4 events - over, down, up, off - so throw each event every 4th iteration through this loop
             //  (this also explains the "4 * ratingUtils.defaultMaxRating;" in the for loop above)
             switch (i % 4 + 1) {
                 case 1:
@@ -742,7 +740,7 @@ RatingMouseTests = function () {
         // Register the test actions we will be taking
         var actions = {};
         for (var i = 0; i < 4 * ratingUtils.defaultMaxRating; ++i) {
-            // Clicking takes 4 events - over, down, up, off - so throw each event every 4th iteration through this loop 
+            // Clicking takes 4 events - over, down, up, off - so throw each event every 4th iteration through this loop
             //  (this also explains the "4 * ratingUtils.defaultMaxRating;" in the for loop above)
             switch (i % 4 + 1) {
                 case 1:

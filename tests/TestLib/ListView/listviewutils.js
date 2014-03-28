@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
 //
-// Copyright (c) 2010 Microsoft Corporation
-//
 // Abstract:
 //
 //   Utility functions for testing the List View
@@ -722,7 +720,7 @@ ListViewUtils.prototype = (function () {
             var isRtl = (computedListviewStyles.direction === "rtl");
             var listviewRect = listviewEl.getBoundingClientRect();
 
-            // get all items in the DOM - can't rely on order            
+            // get all items in the DOM - can't rely on order
             var items = listviewEl.querySelectorAll(".win-container");
             var visibleElementList = [];
             var visibleTest = fullyVisible ? function fullyVisibleTest(elementRect) {
@@ -902,7 +900,7 @@ ListViewUtils.prototype = (function () {
         getGroupListViewForLayout: function ListViewUtils_getGroupListViewForLayout(layout, direction) {
             /// <signature>
             /// <summary>
-            /// Get listview of 100 items with 20 groups for your layout         
+            /// Get listview of 100 items with 20 groups for your layout
             /// </summary>
             /// </signature>
             var testItemRenderer = this.createItemRenderer();
