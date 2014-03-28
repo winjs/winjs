@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
 
@@ -6,7 +7,7 @@ var CorsicaTests = CorsicaTests || {};
 CorsicaTests.Promise = function () {
     "use strict";
     var timeoutMax = 33 * 2;    // expected duration for use with timeout() or timeout(0), 33ms was not always reliable
-    
+
     var AsyncWorkQueue = function () {
         this._queue = [];
         this._token = 0;
@@ -112,7 +113,7 @@ CorsicaTests.Promise = function () {
             q.schedule(function () { error("I refuse to do math!"); }, 0);
         });
     }
-    
+
     this.testInitializationError = function () {
         q.clear();
 
@@ -169,8 +170,8 @@ CorsicaTests.Promise = function () {
 
         p.then(
             function (v) { hitCompleteCount++; },
-            function (e) { 
-                hitErrorCount++; 
+            function (e) {
+                hitErrorCount++;
                 LiveUnit.Assert.areEqual(e, 1);
             }
         );
@@ -246,11 +247,11 @@ CorsicaTests.Promise = function () {
 
         p.
         then(
-            function (v) { 
-                hitCompleteCount++; 
+            function (v) {
+                hitCompleteCount++;
                 LiveUnit.Assert.areEqual(2, v);
-            }, 
-            function () { hitErrorCount++; }, 
+            },
+            function () { hitErrorCount++; },
             function () { hitProgressCount++; }
         );
 
@@ -276,13 +277,13 @@ CorsicaTests.Promise = function () {
 
         p.
         then(
-            function (v) { 
-                hitCompleteCount++; 
+            function (v) {
+                hitCompleteCount++;
                 LiveUnit.Assert.areEqual(2, v);
-            }, 
-            function () { hitErrorCount++; }, 
-            function (v) { 
-                hitProgressCount++; 
+            },
+            function () { hitErrorCount++; },
+            function (v) {
+                hitProgressCount++;
                 LiveUnit.Assert.areEqual(0, v);
             }
         );
@@ -309,11 +310,11 @@ CorsicaTests.Promise = function () {
 
         p.
         then(
-            function () { hitCompleteCount++; }, 
+            function () { hitCompleteCount++; },
             function (e) {
                 hitErrorCount++;
                 LiveUnit.Assert.areEqual(2, e);
-            }, 
+            },
             function () { hitProgressCount++; }
         );
 
@@ -339,13 +340,13 @@ CorsicaTests.Promise = function () {
 
         p.
         then(
-            function () { hitCompleteCount++; }, 
+            function () { hitCompleteCount++; },
             function (e) {
                 hitErrorCount++;
                 LiveUnit.Assert.areEqual(2, e);
-            }, 
-            function (v) { 
-                hitProgressCount++; 
+            },
+            function (v) {
+                hitProgressCount++;
                 LiveUnit.Assert.areEqual(0, v);
             }
         );
@@ -502,7 +503,7 @@ CorsicaTests.Promise = function () {
             q.schedule(function () { c(2); });
         });
 
-        var hitProgress1Count = 0, hitProgress2Count = 0, hitProgress3Count = 0, 
+        var hitProgress1Count = 0, hitProgress2Count = 0, hitProgress3Count = 0,
             hitProgress4Count = 0, hitCompleteCount = 0;
 
         p.then(null, null, function (v) {
@@ -593,16 +594,16 @@ CorsicaTests.Promise = function () {
 
         var c = asyncAdd(1, 2);
 
-        a = c.then(function (v) { 
+        a = c.then(function (v) {
                 hitCompleteCount++;
-                return b; 
+                return b;
             }).
             then(function (v) {
-                hitCompleteCount++; 
+                hitCompleteCount++;
             });
 
-        b = c.then(function (v) { 
-                hitCompleteCount++; return a; 
+        b = c.then(function (v) {
+                hitCompleteCount++; return a;
             }).
             then(function (v) {
                 hitCompleteCount++;
@@ -629,7 +630,7 @@ CorsicaTests.Promise = function () {
         );
         var a = a0.then(
             function () { hitCompleteCount++; },
-            function (e) { 
+            function (e) {
                 hitSecondErrorCount++;
                 LiveUnit.Assert.areEqual("Canceled", e.message);
                 throw e;
@@ -642,7 +643,7 @@ CorsicaTests.Promise = function () {
         )
         var b = b0.then(
             function () { hitCompleteCount++; },
-            function (e) { 
+            function (e) {
                 hitSecondErrorCount++;
                 LiveUnit.Assert.areEqual("Canceled", e.message);
                 throw e;
@@ -688,9 +689,9 @@ CorsicaTests.Promise = function () {
             asyncAddWithCancellation(1, 2, function () { hitCancelCount++; }).
                 then(function () { hitProtectedCompleteCount++; })
         ).then(
-            function () { hitCompleteCount++; }, 
-            function (e) {  
-                hitErrorCount++; 
+            function () { hitCompleteCount++; },
+            function (e) {
+                hitErrorCount++;
                 LiveUnit.Assert.areEqual("Canceled", e.message);
             }
         );
@@ -730,11 +731,11 @@ CorsicaTests.Promise = function () {
         var p = asyncAdd(1, 2);
         p.
             then(
-                function (v) { 
+                function (v) {
                     hitCompleteCount++;
                     LiveUnit.Assert.areEqual(3, v);
-                    return p; 
-                }, 
+                    return p;
+                },
                 function () { hitErrorCount++; }
             ).
             then(
@@ -909,7 +910,7 @@ CorsicaTests.Promise = function () {
         LiveUnit.Assert.areEqual(1, hitCompleteCount);
         LiveUnit.Assert.isTrue(o === p1Value);
 
-        // The contract we look for in 'as' is the same as 'is', you must have 
+        // The contract we look for in 'as' is the same as 'is', you must have
         // a function which is named 'then'.
         var o2 = { then: function () { } };
         LiveUnit.Assert.isTrue(o2 === WinJS.Promise.as(o2));
@@ -1165,7 +1166,7 @@ CorsicaTests.Promise = function () {
         var a = WinJS.Promise.wrapError(1);
         a.cancel();
         a.then(
-            function () { hitCompleteCount++; }, 
+            function () { hitCompleteCount++; },
             function (e) {
                 hitErrorCount++;
                 LiveUnit.Assert.areEqual(1, e);
@@ -1340,14 +1341,14 @@ CorsicaTests.Promise = function () {
         WinJS.Utilities._setImmediate(function () {
             hit1 = true;
         });
-        
-        // calling timeout() without a parameter results in calling WinJS.Utilities._setImmediate() which will 
-        // execute immediately after the browser has processed outstanding work.  
+
+        // calling timeout() without a parameter results in calling WinJS.Utilities._setImmediate() which will
+        // execute immediately after the browser has processed outstanding work.
         WinJS.Promise.timeout().then(function () {
             i++;
             LiveUnit.Assert.areEqual(1, i);
-            LiveUnit.Assert.isTrue(hit1, "expected to run after the above explicit WinJS.Utilities._setImmediate");            
-            LiveUnit.Assert.isFalse(hit2, "expected to run before the below explicit WinJS.Utilities._setImmediate");            
+            LiveUnit.Assert.isTrue(hit1, "expected to run after the above explicit WinJS.Utilities._setImmediate");
+            LiveUnit.Assert.isFalse(hit2, "expected to run before the below explicit WinJS.Utilities._setImmediate");
         }).
         then(null, errorHandler).
         then(complete);
@@ -1358,7 +1359,7 @@ CorsicaTests.Promise = function () {
             hit2 = true;
         });
     };
-    
+
 
     this.testTimeoutOfPromises = function (complete) {
         var p = new WinJS.Promise(function () { });
@@ -1375,13 +1376,13 @@ CorsicaTests.Promise = function () {
 
         WinJS.Promise.timeout(0, p).
             then(
-                function () { 
+                function () {
                     hitCompleteCount++;
-                    LiveUnit.Assert.fail(); 
+                    LiveUnit.Assert.fail();
                 },
-                function (e) { 
+                function (e) {
                     hitErrorCount++;
-                    LiveUnit.Assert.areEqual("Canceled", e.name); 
+                    LiveUnit.Assert.areEqual("Canceled", e.name);
                 }
             ).
             then(function () {
@@ -1408,11 +1409,11 @@ CorsicaTests.Promise = function () {
 
         WinJS.Promise.timeout(0, p).
             then(
-                function (v) { 
+                function (v) {
                     hitCompleteCount++;
-                    LiveUnit.Assert.areEqual(1, v); 
+                    LiveUnit.Assert.areEqual(1, v);
                 },
-                function () { 
+                function () {
                     hitErrorCount++;
                     LiveUnit.Assert.fail();
                 }
@@ -1430,8 +1431,8 @@ CorsicaTests.Promise = function () {
     this.testTimeoutZeroWait = function (complete) {
         var i = 0;
         var start = new Date();
-        
-        // We were seeing some occaisional failures when expecting delay < 33ms so using larger value now 
+
+        // We were seeing some occaisional failures when expecting delay < 33ms so using larger value now
         // to increase test reliability.
         WinJS.Promise.timeout(0).then(function () {
             i++;
@@ -1443,12 +1444,12 @@ CorsicaTests.Promise = function () {
         then(complete);
         LiveUnit.Assert.areEqual(0, i);
     };
-    
+
     this.testTimeoutWait = function (complete) {
-        var timeoutDuration = 100;        
+        var timeoutDuration = 100;
         var i = 0;
         var start = new Date();
-        
+
         // expecting this timeout to fire within 50% of requested time out at the earliest
         WinJS.Promise.timeout(timeoutDuration).then(function () {
             i++;
@@ -1543,7 +1544,7 @@ CorsicaTests.Promise = function () {
         var c = new WinJS.Promise.wrapError(1);
         c.then(
             function () { hitCompleteCount++; },
-            function (e) { 
+            function (e) {
                 hitErrorCount++;
                 LiveUnit.Assert.areEqual(1, e);
             },
@@ -1566,12 +1567,12 @@ CorsicaTests.Promise = function () {
         };
         var errorPromise = WinJS.Promise.wrapError(1);
         LiveUnit.Assert.areEqual(1, hitCount);
-        
+
         var p = new WinJS.Promise(function (c, e) {
             q.schedule(function () { e(1); });
         });
         LiveUnit.Assert.areEqual(1, hitCount);
-        
+
         q.drain();
 
         LiveUnit.Assert.areEqual(2, hitCount);
@@ -1645,7 +1646,7 @@ CorsicaTests.Promise = function () {
             var id = details.id;
             if (!details.parent) {
                 unhandledErrors[id] = details;
-                WinJS.Promise.timeout().then(function () { 
+                WinJS.Promise.timeout().then(function () {
                     var error = unhandledErrors[id];
                     if (error) {
                         //
@@ -1670,7 +1671,7 @@ CorsicaTests.Promise = function () {
         var p = p.
             then(function (v) { /* never get here */ hitCompleteCount++; }).
             then(function (v) { /* never get here either */ hitCompleteCount++; });
-        // since we optimize the case where a promise has already been completed in error and 
+        // since we optimize the case where a promise has already been completed in error and
         // no error handler was specified we will only see a single onerrorCallbackCount
         LiveUnit.Assert.areEqual(1, onerrorCallbackCount);
         LiveUnit.Assert.areEqual(0, hitCompleteCount);
@@ -1689,13 +1690,13 @@ CorsicaTests.Promise = function () {
         LiveUnit.Assert.areEqual(1, hitErrorCount);
         LiveUnit.Assert.areEqual(0, Object.keys(unhandledErrors).length);
         LiveUnit.Assert.areEqual(0, unhandledAfterPostCount);
-        
+
         WinJS.Promise.timeout().then(function () {
             LiveUnit.Assert.areEqual(1, hitCompleteCount);
             LiveUnit.Assert.areEqual(1, hitErrorCount);
             LiveUnit.Assert.areEqual(0, Object.keys(unhandledErrors).length);
             LiveUnit.Assert.areEqual(0, unhandledAfterPostCount);
-            
+
             WinJS.Promise.onerror = undefined;
 
             complete();
@@ -1710,7 +1711,7 @@ CorsicaTests.Promise = function () {
             var id = details.id;
             if (!details.parent) {
                 unhandledErrors[id] = details;
-                WinJS.Promise.timeout().then(function () { 
+                WinJS.Promise.timeout().then(function () {
                     var error = unhandledErrors[id];
                     if (error) {
                         //
@@ -1746,7 +1747,7 @@ CorsicaTests.Promise = function () {
             // After hitting the unhandled handler it cleared out the unhandled error
             LiveUnit.Assert.areEqual(0, Object.keys(unhandledErrors).length);
             LiveUnit.Assert.areEqual(1, unhandledAfterPostCount);
-        
+
             p.
                 then(null, function (v) { hitErrorCount++; return 1; }).
                 then(function (v) {
@@ -1757,7 +1758,7 @@ CorsicaTests.Promise = function () {
             LiveUnit.Assert.areEqual(1, hitErrorCount);
             LiveUnit.Assert.areEqual(0, Object.keys(unhandledErrors).length);
             LiveUnit.Assert.areEqual(1, unhandledAfterPostCount);
-            
+
             WinJS.Promise.timeout().then(function () {
                 LiveUnit.Assert.areEqual(1, hitCompleteCount);
                 LiveUnit.Assert.areEqual(1, hitErrorCount);
@@ -1773,7 +1774,7 @@ CorsicaTests.Promise = function () {
     }
     // Testing basic error functionality and throwing an error inside complete
     this.testBasicOnErrorFunctionality = function(){
-        
+
         var errorHitCount = 0, completeHitCount = 0;
         var onErrorHitCount = 0;
         try{
@@ -1799,12 +1800,12 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     // Test removing the onerror handler before an error takes place and make sure that onerror will not be called
     this.testUnRegisterHandlerBeforeCallingPromise = function(){
-        
+
         var handlerHitCount = 0;
-        
+
         var errroHandler = function () { return true; }
         WinJS.Application.addEventListener("error", errorHandler);
         WinJS.Promise.onerror = function (evt) {
@@ -1813,7 +1814,7 @@ CorsicaTests.Promise = function () {
         }
         try{
             WinJS.Promise.onerror = undefined;
-        
+
             var p = new WinJS.Promise(function () { throw "exception inside function"; }, function(){}).
                 then(function () { LiveUnit.Assert.areEqual(0, handlerHitCount);});
         }finally{
@@ -1821,10 +1822,10 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     // Making sure that the errorID is the same for all the promise tree
     this.testVerifySameErrorId = function () {
-        
+
         var handlerHitCount = 0;
         var id = undefined;
         WinJS.Promise.onerror = function (evt) {
@@ -1841,11 +1842,11 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     this.testThrowingUndefined = function(){
-        
+
         WinJS.Promise.onerror = function (evt) {
-            var detail = evt.detail;  
+            var detail = evt.detail;
             LiveUnit.Assert.isTrue(!detail.exception);
             LiveUnit.Assert.areEqual("undefined", typeof detail.exception);
         }
@@ -1855,11 +1856,11 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     this.testThrowingNull = function(){
-        
+
         WinJS.Promise.onerror = function (evt) {
-            var detail = evt.detail;  
+            var detail = evt.detail;
             LiveUnit.Assert.areEqual(null, detail.exception);
             LiveUnit.Assert.areEqual("object", typeof detail.exception);
         }
@@ -1869,11 +1870,11 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     this.testThrowingNumber = function(){
-        
+
         WinJS.Promise.onerror = function (evt) {
-            var detail = evt.detail;  
+            var detail = evt.detail;
             LiveUnit.Assert.areEqual(1, detail.exception);
             LiveUnit.Assert.areEqual("number", typeof detail.exception);
         }
@@ -1883,11 +1884,11 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     this.testThrowingObject = function(){
-        
+
         WinJS.Promise.onerror = function (evt) {
-            var detail = evt.detail;  
+            var detail = evt.detail;
             var temp = detail.exception;
             var type = typeof temp;
             LiveUnit.Assert.areEqual("object", type);
@@ -1899,10 +1900,10 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     // Making sure that different IDs are generated for errors produced by different promise trees
     this.testDifferentIdsForDifferentPromises = function(){
-        
+
         var handlerHitCount = 0;
         var id = undefined;
         WinJS.Promise.onerror = function (evt) {
@@ -1911,8 +1912,8 @@ CorsicaTests.Promise = function () {
             if(!detail.parent) {
                 if(id)
                     LiveUnit.Assert.areNotEqual(id, detail.id);
-                else 
-                    id = detail.id;                
+                else
+                    id = detail.id;
             }
 
         }
@@ -1927,10 +1928,10 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     // Making sure that same object is passed to onerror for an error on the same promise tree
     this.testVerifySameObjectInMultipleErrorHandlers = function() {
-        
+
         function Equal(evt1, evt2) {
             for(var i in evt1){
                 if(typeof evt1[i] === "object")
@@ -1946,7 +1947,7 @@ CorsicaTests.Promise = function () {
         }
         function eventHandler2(evt){
             detail2 =  evt.detail;
-            
+
             LiveUnit.Assert.isTrue(Equal(detail1, detail2));
             handlerHitCount++;
         }
@@ -1955,7 +1956,7 @@ CorsicaTests.Promise = function () {
             LiveUnit.Assert.isTrue(Equal(detail3, detail2));
             handlerHitCount++;
         }
-            
+
         WinJS.Promise.addEventListener("error", eventHandler1);
         WinJS.Promise.addEventListener("error", eventHandler2);
         WinJS.Promise.addEventListener("error", eventHandler3);
@@ -1993,19 +1994,19 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     // Testing parent list and making sure that the parent is falsy only in case of the root
     // This will still work work the first time because the parent is undefined for the initial error
     this.testOnErrorParentsList = function(){
-        
+
         var parent = undefined;
-        
+
         WinJS.Promise.onerror = function (evt) {
-            var detail = evt.detail;            
+            var detail = evt.detail;
             LiveUnit.Assert.areEqual(parent, detail.parent);
-            
+
             parent = detail.promise;
-            
+
         }
         try{
             var p = new WinJS.Promise(function () { throw "exception inside function"; }).
@@ -2018,14 +2019,14 @@ CorsicaTests.Promise = function () {
     }
 
     this.testOnErrorParameterProperties = function(){
-        
+
         var exceptionStr = "exception inside function";
         WinJS.Promise.onerror = function (evt) {
-            var detail = evt.detail; 
+            var detail = evt.detail;
             if(!detail.parent) {
                 LiveUnit.Assert.isTrue(!!detail.exception);
                 LiveUnit.Assert.isTrue(!detail.handler);
-                LiveUnit.Assert.isTrue(!detail.error);   
+                LiveUnit.Assert.isTrue(!detail.error);
                 LiveUnit.Assert.areEqual(exceptionStr, detail.exception);
             }
         }
@@ -2034,13 +2035,13 @@ CorsicaTests.Promise = function () {
             then(function () {}, function () {});
         }finally{
             WinJS.Promise.onerror = undefined;
-        } 
+        }
     }
-    
+
     // Throwing an error in error handler
     // This will result in throwing a new error with a new id which will result in a new a tree of onerror function call
     this.testThrowingAnErrorInErrorHandler = function(){
-        
+
         var handlerHitCount = 0, hitCount = 0;
         var str;
 
@@ -2066,12 +2067,12 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.removeEventListener("error", eventHandler);
         }
     }
-    
+
     // Testing an error chain
     this.testHugeErrorWithChain = function(){
-        
+
         var handlerHitCount = 0, hitCount = 0;
-        
+
         function eventHandler(evt){
             handlerHitCount++;
         }
@@ -2090,20 +2091,20 @@ CorsicaTests.Promise = function () {
         }finally{
             WinJS.Promise.removeEventListener("error", eventHandler);
         }
-        
+
     }
-    
+
     // Testing unregistering the onerror inside an error chain by using removeEventListener
     this.testUnregisterInHugeChain = function(){
-        
+
         var handlerHitCount = 0, hitCount = 0;
-        
+
         function eventHandler(evt){
             handlerHitCount++;
         }
 
         WinJS.Promise.addEventListener("error", eventHandler);
-        
+
         try{
             var p = new WinJS.Promise(function () { throw "Error initializing"; });
 
@@ -2112,7 +2113,7 @@ CorsicaTests.Promise = function () {
                     function () { hitCount++; },
                     function (e) { throw e; }
                 ).
-                then( 
+                then(
                     function () { hitCount++;  },
                     function (e) {
                         WinJS.Promise.removeEventListener("error", eventHandler);
@@ -2125,17 +2126,17 @@ CorsicaTests.Promise = function () {
                 );
 
             LiveUnit.Assert.areEqual(0, hitCount);
-            LiveUnit.Assert.areEqual(3, handlerHitCount);            
+            LiveUnit.Assert.areEqual(3, handlerHitCount);
         }finally{
             WinJS.Promise.removeEventListener("error", eventHandler);
         }
     }
-    
+
     // Testing unregistering the onerror inside an error chain by setting onerror to undefined
     this.testSettingOnErrorToUndefinedInHugeChain = function(){
-        
+
         var handlerHitCount = 0, hitCount = 0;
-        
+
         WinJS.Promise.onerror = function (evt){
             handlerHitCount++;
         }
@@ -2148,14 +2149,14 @@ CorsicaTests.Promise = function () {
                     function (e) {throw e;}
                 ).
                 then(
-                    function () { hitCount++; }, 
+                    function () { hitCount++; },
                     function (e) {
                         WinJS.Promise.onerror = undefined;
                         throw e;
                     }
                 ).
                 then(
-                    function () { hitCount++; }, 
+                    function () { hitCount++; },
                     function (e) {}
                 );
 
@@ -2165,13 +2166,13 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
-    // Testing chaining when the then does not have an error handler so the error or the exception 
+
+    // Testing chaining when the then does not have an error handler so the error or the exception
     // gets chained to the next then so that it can be handled by an errorHandler
     this.testSettingOnErrorToUndefinedInHugeChain2 = function(){
-        
+
         var handlerHitCount = 0, hitCount = 0;
-        
+
         WinJS.Promise.onerror = function (evt){
             handlerHitCount++;
         }
@@ -2181,8 +2182,8 @@ CorsicaTests.Promise = function () {
             p.
                 then(function () { hitCount++; }).
                 then(
-                    function () { 
-                        hitCount++; 
+                    function () {
+                        hitCount++;
                     },
                     function (e) {
                         WinJS.Promise.onerror = undefined;
@@ -2197,24 +2198,24 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.onerror = undefined;
         }
     }
-    
+
     this.testRemovingOnErrorInHugeChain2 = function(){
-        
+
         var handlerHitCount = 0, hitCount = 0;
-        
+
         function eventHandler(evt){
             handlerHitCount++;
         }
         WinJS.Promise.addEventListener("error", eventHandler);
-        
+
         try {
             var p = new WinJS.Promise(function () {throw "Error initializing";});
 
             p.
                 then(function () { hitCount++; }).
                 then(
-                    function () { 
-                        hitCount++; 
+                    function () {
+                        hitCount++;
                     },
                     function (e) {
                         WinJS.Promise.removeEventListener("error", eventHandler);
@@ -2224,16 +2225,16 @@ CorsicaTests.Promise = function () {
                 then( function () { hitCount++; }, function (e) {});
 
             LiveUnit.Assert.areEqual(0, hitCount);
-            LiveUnit.Assert.areEqual(2, handlerHitCount);            
-            
+            LiveUnit.Assert.areEqual(2, handlerHitCount);
+
         }finally{
             WinJS.Promise.removeEventListener("error", eventHandler);
         }
     }
-    
+
     // adding multiple listeners to onerror and make sure that they all get called
     this.testAddingMultipleListeners = function() {
-        
+
         function eventHandler1(evt){
             var detail = evt.detail;
             if(!detail.parent)
@@ -2241,7 +2242,7 @@ CorsicaTests.Promise = function () {
         }
         function eventHandler2(evt){
             var detail = evt.detail;
-            
+
             if(!detail.parent)
                 handlerHitCount++;
         }
@@ -2250,7 +2251,7 @@ CorsicaTests.Promise = function () {
             if(!detail.parent)
                 handlerHitCount++;
         }
-        
+
         WinJS.Promise.addEventListener("error", eventHandler1);
         WinJS.Promise.addEventListener("error", eventHandler1);
         WinJS.Promise.addEventListener("error", eventHandler2);
@@ -2272,10 +2273,10 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.removeEventListener("error", eventHandler3);
         }
     }
-    
+
     // deleting the last listener of the error and make sure that it won't get called in future errors
     this.testDeletingMultipleErrorHandlers = function() {
-       
+
         function eventHandler1(evt){
             var detail = evt.detail;
             if(!detail.parent)
@@ -2306,7 +2307,7 @@ CorsicaTests.Promise = function () {
                 then(function () { hitCompleteCount++; },function (e) {});
 
             var p2 = new WinJS.Promise(function () {throw "Error initializing 2";});
-            
+
             LiveUnit.Assert.areEqual(0, hitCompleteCount);
             LiveUnit.Assert.areEqual(5, handlerHitCount);
         }finally {
@@ -2314,12 +2315,12 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.removeEventListener("error", eventHandler2);
             WinJS.Promise.removeEventListener("error", eventHandler3);
         }
-        
+
     }
-    
+
     // deleting the listener in the middle of the onerror and make sure that it won't get called in future errors
     this.testDeletingMultipleErrorHandlers2 = function() {
-        
+
         function eventHandler1(evt){
             var detail = evt.detail;
             WinJS.Promise.removeEventListener("error", eventHandler2);
@@ -2328,7 +2329,7 @@ CorsicaTests.Promise = function () {
         }
         function eventHandler2(evt){
             var detail = evt.detail;
-            
+
             if(!detail.parent)
                 handlerHitCount++;
         }
@@ -2357,23 +2358,23 @@ CorsicaTests.Promise = function () {
             WinJS.Promise.removeEventListener("error", eventHandler3);
         }
     }
-    
+
     this.testAddingFinally = function () {
         Object.getPrototypeOf(WinJS.Promise.prototype).cleanup = function (func) {
             return this.then(
                 function (v) {
                     func();
                     return v;
-                }, 
+                },
                 function (e) {
                     func();
                     throw e;
                 }
             );
         };
-        
+
         q.clear();
-        
+
         var hitCompleteCount = 0;
         var hitFirstFinallyCount = 0;
         var hitSecondFinallyCount = 0;
@@ -2396,41 +2397,41 @@ CorsicaTests.Promise = function () {
                 hitErrorCount++;
                 LiveUnit.Assert.areEqual("MyError", e);
             });
-        
+
         q.drain();
-        
+
         LiveUnit.Assert.areEqual(1, hitCompleteCount);
         LiveUnit.Assert.areEqual(1, hitFirstFinallyCount);
         LiveUnit.Assert.areEqual(1, hitSecondFinallyCount);
         LiveUnit.Assert.areEqual(1, hitErrorCount);
     }
-    
+
     this.testAddingAlways = function () {
         Object.getPrototypeOf(WinJS.Promise.prototype).always = function (func) {
             return this.then(func, func);
         };
 
         q.clear();
-        
+
         var hitCompleteCount = 0;
         asyncAdd(1, 2).
             always(function () { return 5; }).
-            then(function (v) { 
+            then(function (v) {
                 hitCompleteCount++;
                 LiveUnit.Assert.areEqual(5, v);
             });
-            
+
         q.drain();
-        
+
         LiveUnit.Assert.areEqual(1, hitCompleteCount);
     }
-  
+
     this.testDoneSimple = function () {
         var old = WinJS.Utilities.Scheduler.schedule;
         try {
             WinJS.Utilities.Scheduler.schedule = function (f) { f(); };
 
-            var p = new WinJS.Promise(function (c, e) { 
+            var p = new WinJS.Promise(function (c, e) {
                 e(1);
             });
 
@@ -2440,7 +2441,7 @@ CorsicaTests.Promise = function () {
                 hitErrorCount++;
                 throw e;
             });
-        
+
             LiveUnit.Assert.areEqual(1, hitErrorCount);
 
             var hitCatchCount = 0;
@@ -2463,8 +2464,8 @@ CorsicaTests.Promise = function () {
 
 
             q.clear();
-        
-            var p = new WinJS.Promise(function (c, e) { 
+
+            var p = new WinJS.Promise(function (c, e) {
                 q.schedule(function () { e(1) });
             });
 
@@ -2474,7 +2475,7 @@ CorsicaTests.Promise = function () {
                 hitErrorCount++;
                 throw e;
             });
-        
+
             LiveUnit.Assert.areEqual(0, hitErrorCount);
 
             var hitCatchCount = 0;
@@ -2509,8 +2510,8 @@ CorsicaTests.Promise = function () {
 
 
             q.clear();
-        
-            var p = new WinJS.Promise(function (c, e) { 
+
+            var p = new WinJS.Promise(function (c, e) {
                 q.schedule(function () { e(1) });
             });
 
@@ -2521,7 +2522,7 @@ CorsicaTests.Promise = function () {
                 hitErrorCount++;
                 throw e;
             });
-        
+
             LiveUnit.Assert.areEqual(0, hitErrorCount);
 
             var hitCatchCount = 0;
@@ -2549,18 +2550,18 @@ CorsicaTests.Promise = function () {
             WinJS.Utilities.Scheduler.schedule = old;
         }
     };
-    
+
     function addAsyncNoQueue(l, r, options) {
         // if options not passed in, define it as an empty object so we can just check if members are present
         options = options || {};
-        
+
         return new WinJS.Promise(
             function(complete, error) {
                 try {
                     if(options.throwException) {
                         throw "addAsyncNoQueue throwing requested exception";
                     }
-                    
+
                     var sum = l + r;
                     complete(sum);
                 } catch (e) {
@@ -2569,7 +2570,7 @@ CorsicaTests.Promise = function () {
             }
         );
     }
-    
+
     this.testDoneChainedSuccess = function(complete) {
         // test success case where done() chained to successful promise
         addAsyncNoQueue(1, 2).
@@ -2582,9 +2583,9 @@ CorsicaTests.Promise = function () {
             complete();
         });
     }
-    
+
     this.testErrorHandledDoneSuccess = function(complete) {
-        // generate error in promise, handle error in then(), verify success in done() 
+        // generate error in promise, handle error in then(), verify success in done()
         addAsyncNoQueue(1, 2, { throwException:1 } ).
         then(function() {
                 LiveUnit.Assert.fail("expected error from prev promise");
@@ -2599,7 +2600,7 @@ CorsicaTests.Promise = function () {
             complete();
         });
     }
-    
+
     this.testDoneChainedError = function(complete) {
         // chain done() to a promise chain that throws an exception not handled by intermediate then()
         addAsyncNoQueue(1, 2, { throwException:1 } ).
@@ -2617,7 +2618,7 @@ CorsicaTests.Promise = function () {
             }
         );
     }
-    
+
     this.testDoneAsErrorHandler = function(complete) {
         // use done() as an error handler
         addAsyncNoQueue(1, 2, { throwException:1 } ).
@@ -2631,7 +2632,7 @@ CorsicaTests.Promise = function () {
             }
         );
     }
-    
+
     this.testDoneUnhandledError = function(complete) {
         var old = WinJS.Utilities.Scheduler.schedule;
         try {
@@ -2640,7 +2641,7 @@ CorsicaTests.Promise = function () {
             // done() without error handler, expect throw() and onerror()
             var hitCount = 0;
             var catchHit = 0;
-        
+
             WinJS.Promise.onerror = function (evt) {
                 LiveUnit.Assert.isTrue(!!evt.detail.error);
                 // verify error msg
@@ -2659,18 +2660,18 @@ CorsicaTests.Promise = function () {
             } finally {
                 LiveUnit.Assert.areEqual(1, hitCount);  // verify onerror was called
                 LiveUnit.Assert.areEqual(1, catchHit);  // verify catch was called
-            
+
                 // reset the onerror handler
                 WinJS.Promise.onerror = undefined;
 
-                complete();        
+                complete();
             }
         }
         finally {
             WinJS.Utilities.Scheduler.schedule = old;
         }
     }
-    
+
     this.testDoneUnhandledError2 = function(complete) {
         var old = WinJS.Utilities.Scheduler.schedule;
         try {
@@ -2679,7 +2680,7 @@ CorsicaTests.Promise = function () {
             // empty done() without error handler, expect throw() and onerror()
             var hitCount = 0;
             var catchHit = 0;
-        
+
             WinJS.Promise.onerror = function (evt) {
                 LiveUnit.Assert.isTrue(!!evt.detail.error);
                 // verify error msg
@@ -2695,35 +2696,35 @@ CorsicaTests.Promise = function () {
             } finally {
                 LiveUnit.Assert.areEqual(1, hitCount);  // verify onerror was called
                 LiveUnit.Assert.areEqual(1, catchHit);  // verify catch was called
-            
+
                 // reset the onerror handler
                 WinJS.Promise.onerror = undefined;
 
-                complete();        
+                complete();
             }
         }
         finally {
             WinJS.Utilities.Scheduler.schedule = old;
         }
-    }    
-    
+    }
+
     this.testDoneCanceled = function(complete) {
         // validate canceled promise goes through done() error function
         var cancelCount = 0;
         var token;
 
-        // create promise with a cancel handler.  
+        // create promise with a cancel handler.
         // This promise waits 500ms before completing to give time to cancel
         var x = new WinJS.Promise(
             function(c) {
                 token = setTimeout(function() { cancelCount = -1; c(); }, 5);
             },
             function() {
-                clearTimeout(token);            
+                clearTimeout(token);
                 ++cancelCount;
             });
-            
-        // call the promise    
+
+        // call the promise
         x.
         then(function() {
                 LiveUnit.Assert.fail("1 expected error from canceled promise");
@@ -2742,21 +2743,21 @@ CorsicaTests.Promise = function () {
                 LiveUnit.Assert.areEqual(1, cancelCount, "expected cancel count == 1 in done()");
                 complete();
             });
-                
+
         // since the promise is async and waiting 500ms in this case, we have time to cancel it
         x.cancel();
     }
-    
+
     this.testDoneProgress = function(complete) {
         // validate progress calls get to done()
         var expectedCount = 50;
         var progressCount = 0;
 
         // Create a promise which counts to 50, notifying done() of progress
-        // We need to delay via setTimeout so we can hook up the done() statement to 
+        // We need to delay via setTimeout so we can hook up the done() statement to
         // monitor the progress calls.
         var x = new WinJS.Promise(function(c, e, p) {
-            setTimeout(function() { 
+            setTimeout(function() {
                 for (var count = 0; count < expectedCount; count++) {
                     p(count);
                 };
@@ -2764,7 +2765,7 @@ CorsicaTests.Promise = function () {
             },
             5);
         });
-            
+
         x.done(
             function(c) {
                 LiveUnit.Assert.areEqual(1, c, "expected return value from complete == 1 from done()");
@@ -2780,7 +2781,7 @@ CorsicaTests.Promise = function () {
                 progressCount++;
             });
     }
-    
+
     this.testEmptyJoin = function (complete) {
         WinJS.Promise.join([]).
             then(null, errorHandler).
