@@ -582,12 +582,6 @@
     <Content Include="..\..\tests\TestLib\liveToQ\liveToQ.js">
       <Link>TestLib\liveToQ\liveToQ.js</Link>
     </Content>
-    <Content Include="..\..\tests\TestLib\liveToQ\qunit-1.14.0.css">
-      <Link>TestLib\liveToQ\qunit-1.14.0.css</Link>
-    </Content>
-    <Content Include="..\..\tests\TestLib\liveToQ\qunit-1.14.0.js">
-      <Link>TestLib\liveToQ\qunit-1.14.0.js</Link>
-    </Content>
     <Content Include="..\..\tests\TestLib\NavBar\NavBarUtils.js">
       <Link>TestLib\NavBar\NavBarUtils.js</Link>
     </Content>
