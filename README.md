@@ -23,7 +23,7 @@ In order build WinJS, ensure that you have [git](http://git-scm.com/downloads) a
 
 Clone a copy of the master WinJS git repo:
 ```
-git clone git://github.com/winjs/winjs.git
+git clone https://github.com/winjs/winjs.git
 ```
 
 Change to the `winjs` directory:
