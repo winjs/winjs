@@ -1,5 +1,4 @@
-// Copyright (c) Microsoft Corporation
-// All rights reserved
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
@@ -24,12 +23,12 @@ CorsicaTests.DOMWeakRefTable = function () {
     }
 
     var U = WinJS.Utilities;
-    
+
     this.testBasic = function (complete) {
         var id = "myElement";
         var content = "MyElementContent";
 
-        // force cleanup on post and always clearing the table by 
+        // force cleanup on post and always clearing the table by
         // pushing the timeout into the future
         var previous_sweepPeriod = U._DOMWeakRefTable_sweepPeriod;
         var previous_timeout = U._DOMWeakRefTable_timeout;
@@ -65,7 +64,7 @@ CorsicaTests.DOMWeakRefTable = function () {
         var id = "myElement";
         var content = "MyElementContent";
 
-        // force cleanup on post and always clearing the table by 
+        // force cleanup on post and always clearing the table by
         // pushing the timeout into the future
         var previous_sweepPeriod = U._DOMWeakRefTable_sweepPeriod;
         var previous_timeout = U._DOMWeakRefTable_timeout;
@@ -92,7 +91,7 @@ CorsicaTests.DOMWeakRefTable = function () {
                 var element3 = U._getWeakRefElement(id);
                 LiveUnit.Assert.areEqual(id, element2.id);
                 LiveUnit.Assert.areEqual(content, element2.textContent);
-                LiveUnit.Assert.areEqual(0, U._DOMWeakRefTable_tableSize);                
+                LiveUnit.Assert.areEqual(0, U._DOMWeakRefTable_tableSize);
             }).
             then(null, onError).
             then(function () {
@@ -108,7 +107,7 @@ CorsicaTests.DOMWeakRefTable = function () {
         var id = "myElement";
         var content = "MyElementContent";
 
-        // force cleanup on post and always clearing the table by 
+        // force cleanup on post and always clearing the table by
         // pushing the timeout into the future
         var previous_sweepPeriod = U._DOMWeakRefTable_sweepPeriod;
         var previous_timeout = U._DOMWeakRefTable_timeout;
@@ -128,7 +127,7 @@ CorsicaTests.DOMWeakRefTable = function () {
         WinJS.Promise.timeout().
             then(function () {
                 // The element should have aged out of the table by now
-                LiveUnit.Assert.areEqual(0, U._DOMWeakRefTable_tableSize);                
+                LiveUnit.Assert.areEqual(0, U._DOMWeakRefTable_tableSize);
 
                 var element3 = U._getWeakRefElement(id);
                 LiveUnit.Assert.areEqual(id, element3.id);
@@ -143,13 +142,13 @@ CorsicaTests.DOMWeakRefTable = function () {
             }).
             then(complete);
     };
-    
+
 
     this.testBasicAddingToDOMAndAgingOutTimer = function (complete) {
         var id = "myElement";
         var content = "MyElementContent";
 
-        // force cleanup on post and always clearing the table by 
+        // force cleanup on post and always clearing the table by
         // pushing the timeout into the future
         var previous_sweepPeriod = U._DOMWeakRefTable_sweepPeriod;
         var previous_timeout = U._DOMWeakRefTable_timeout;
@@ -166,12 +165,12 @@ CorsicaTests.DOMWeakRefTable = function () {
 
         document.body.appendChild(element);
 
-        // *4 is to ensure we get into the next frame... 
+        // *4 is to ensure we get into the next frame...
         //
         WinJS.Promise.timeout(U._DOMWeakRefTable_sweepPeriod * 4).
             then(function () {
                 // The element should have aged out of the table by now
-                LiveUnit.Assert.areEqual(0, U._DOMWeakRefTable_tableSize);                
+                LiveUnit.Assert.areEqual(0, U._DOMWeakRefTable_tableSize);
 
                 var element3 = U._getWeakRefElement(id);
                 LiveUnit.Assert.areEqual(id, element3.id);
@@ -185,7 +184,7 @@ CorsicaTests.DOMWeakRefTable = function () {
                 U._DOMWeakRefTable_noTimeoutUnderDebugger = previous_noTimeoutUnderDebugger;
             }).
             then(complete);
-    };    
+    };
 }
 
 LiveUnit.registerTestClass("CorsicaTests.DOMWeakRefTable");
