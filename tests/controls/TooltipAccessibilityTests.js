@@ -1,6 +1,5 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
-//
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Abstract:
 //
@@ -60,10 +59,10 @@ TooltipAccessibilityTests = function () {
                 case "beforeopen":
                     LiveUnit.Assert.isNull(tooltip._anchorElement.getAttribute("aria-describedby"));
 
-                    // The tooltip DOM isn't created until after "beforeopen" returns so  
-                    // lets immediately fire another event and check the tooltip's DOM  
-                    // then.  We have to add the tooltipEventListener as a property  
-                    // of a global object (let's try window), otherwise it's not available to setTimeout().  
+                    // The tooltip DOM isn't created until after "beforeopen" returns so
+                    // lets immediately fire another event and check the tooltip's DOM
+                    // then.  We have to add the tooltipEventListener as a property
+                    // of a global object (let's try window), otherwise it's not available to setTimeout().
                     window.tooltipEventListener = tooltipEventListener;
                     setTimeout("window.tooltipEventListener({type:'beforeopen+1'});");
                     break;
