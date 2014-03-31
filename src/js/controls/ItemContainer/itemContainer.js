@@ -474,6 +474,11 @@
                     } else {
                         this._dragging = true;
                         var that = this;
+                        eventObject.dataTransfer.setData("text", "");
+                        if (eventObject.dataTransfer.setDragImage) {
+                            var rect = this.element.getBoundingClientRect();
+                            eventObject.dataTransfer.setDragImage(this.element, eventObject.clientX - rect.left, eventObject.clientY - rect.top);
+                        }
                         // We delay setting the win-dragsource CSS class so that IE has time to create a thumbnail before me make it opaque
                         WinJS.Utilities._yieldForDomModification(function () {
                             if (that._dragging) {
