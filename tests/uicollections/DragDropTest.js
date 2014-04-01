@@ -92,7 +92,7 @@ WinJSTests.ListViewDragDropTest = function () {
             clientX: elementRect[rtl ? "right" : "left"] + (rtl ? -offset.x : offset.x),
             clientY: elementRect.top + offset.y,
             preventDefault: function () { },
-            dataTransfer: {},
+            dataTransfer: { setData: function () { }},
             target: element
         };
 
