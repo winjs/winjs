@@ -1,0 +1,28 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "../../",
+            "folder_exclude_patterns": ["node_modules", "bin"]
+		}
+	],
+    "settings":
+    {
+        "tab_size": 4,
+        "translate_tabs_to_spaces": true
+    },
+    "build_systems":
+    [
+        {
+            "name": "Grunt Build",
+            "cmd": ["grunt", "--no-color"],
+            "working_dir": "$file_path",
+            "selector": "source.js, source.less, source.json, source.html, source.htm",
+            "windows":
+            {
+                "cmd": ["grunt.cmd", "--no-color"]
+            }
+        }
+    ]
+}
