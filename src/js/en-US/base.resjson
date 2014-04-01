@@ -1,4 +1,4 @@
-﻿{
+{
     "attributeBindingSingleProperty": "Attribute binding requires a single destination attribute name, often in the form \"this['aria-label']\" or \"width\".",
     "bindingInitializerNotFound": "Initializer not found:'{0}'",
     "cannotBindToThis": "Can't bind to 'this'.",
