@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 var cssparse = require("css-parse");
 var fs = require("fs");
+var colorCompare = require("../color-compare.js");
 
 function compressStyles(stylesheet)
 {
@@ -60,7 +61,12 @@ function compareStyles(stylesA, stylesB)
                 continue;
             }
 
-            if (ruleA.value !== ruleB.value)
+            if (ruleA.value == undefined || ruleB.value === undefined)
+            {
+                console.log("Skipping undefined value for " + ruleB.property);
+                continue;
+            }
+            if (!colorCompare(ruleA.value, ruleB.value))
             {
                 diff[selector][ruleA.property] = ruleA.value + " !== " + ruleB.value;
             }
@@ -90,7 +96,7 @@ module.exports = function(grunt) {
         var errorCount = 0;
         for (var i in diff)
         {
-            if (i.indexOf("input[") < 0)
+            if (i.indexOf("body") < 0)
                 continue;
 
             if (diff[i].substr)
