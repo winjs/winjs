@@ -474,6 +474,9 @@
                     } else {
                         this._dragging = true;
                         var that = this;
+
+                        // Firefox requires setData to be called on the dataTransfer object in order for DnD to continue.
+                        // Firefox also has an issue rendering the item's itemBox+element, so we need to use setDragImage, using the item's container, to get it to render.
                         eventObject.dataTransfer.setData("text", "");
                         if (eventObject.dataTransfer.setDragImage) {
                             var rect = this.element.getBoundingClientRect();
