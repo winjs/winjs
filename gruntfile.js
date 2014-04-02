@@ -30,15 +30,16 @@ module.exports = function (grunt) {
     // jshint
     gruntConfig.jshint = {
       options: {
-        force: false,
+        // set to true so we don't stop the build if jshint finds something
+        force: true,
         maxerr: 10000,
         globalstrict: true,
-        newcap: false,
         node: true
       },
       files: {
         src: [
-            "src/**/*.js"
+          'src/**/*.js',
+          'test/**/*.js'
         ]
       }
     };
