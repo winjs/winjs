@@ -48,4 +48,6 @@ Run the following and the WinJS JavaScript and CSS files will be put in the `bin
 grunt
 ```
 
+# Try WinJS
+Check out our online playground http://try.buildwinjs.com
 
