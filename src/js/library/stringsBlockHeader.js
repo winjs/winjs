@@ -1,1 +1,1 @@
-addStrings(
+﻿addStrings(

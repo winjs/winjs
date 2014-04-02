@@ -1,4 +1,4 @@
-{
+﻿{
     "appBarAriaLabel": "App Bar",
     "appBarCommandAriaLabel": "App Bar Item",
     "asynchronousRender" : "Top level items must render synchronously",
