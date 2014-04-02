@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
     .mixin(dark) {
         .win-navbarcontainer-pageindicator {
@@ -99,84 +99,85 @@
         }
     }
     .mixin(@theme);
+}
 
-    @media (-ms-high-contrast) {
-        .win-navbarcontainer-pageindicator {
-            background-color: ButtonFace;
-        }
-        .win-navbarcontainer-pageindicator:after {
-            display: block;
-            border: 1px solid ButtonText;
-            content: "";
-            width: ~"calc(100% - 2px)";
-            height: ~"calc(100% - 2px)";
-        }
-        .win-navbarcontainer-pageindicator-current {
-            background-color: ButtonText;
-        }
-        .win-navbarcontainer-pageindicator:hover {
-            background-color: Highlight;
-        }
-        .win-navbarcontainer-pageindicator-current:hover {
-            background-color: ButtonText;
-        }
-        .win-navbarcontainer-pageindicator:hover:active {
-            background-color: ButtonText;
-        }
-        .win-navbarcontainer-navarrow {
-            background-color: ButtonFace;
-            color: ButtonText;
-        }
-        .win-navbarcontainer-navarrow:after {
-            position: absolute;
-            top: 0;
-            left:0;
-            border: 2px solid ButtonText;
-            content: "";
-            width: ~"calc(100% - 3px)";
-            height: ~"calc(100% - 3px)";
-        }
-        .win-navbarcontainer-navarrow:hover {
-            background-color: Highlight;
-            color: HighlightText;
-        }
-        .win-navbarcontainer-navarrow:hover:active {
-            background-color: ButtonText;
-            color: ButtonFace;
-        }
 
-        /*
-            NavBarCommand colors.
-        */
-        .win-navbarcommand-button,
-        .win-navbarcommand-splitbutton {
-            background-color: ButtonFace;
-            color: ButtonText;
-        }
-        .win-navbarcommand-button:after,
-        .win-navbarcommand-splitbutton:after {
-            position: absolute;
-            top: 0;
-            left:0;
-            border: 2px solid ButtonText;
-            content: "";
-            width: ~"calc(100% - 3px)";
-            height: ~"calc(100% - 3px)";
-            pointer-events: none;
-        }
-        .win-navbarcommand-button:hover,
-        .win-navbarcommand-splitbutton:hover {
-            background-color: Highlight;
-            color: HighlightText;
-        }
-        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
-        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
-        .win-navbarcommand-button.win-pressed,
-        .win-navbarcommand-button.win-pressed:hover,
-        .win-navbarcommand-splitbutton.win-pressed,
-        .win-navbarcommand-splitbutton.win-pressed:hover {
-            background-color: ButtonText;
-            color: ButtonFace;
-        }
+@media (-ms-high-contrast) {
+    .win-navbarcontainer-pageindicator {
+        background-color: ButtonFace;
+    }
+    .win-navbarcontainer-pageindicator:after {
+        display: block;
+        border: 1px solid ButtonText;
+        content: "";
+        width: ~"calc(100% - 2px)";
+        height: ~"calc(100% - 2px)";
+    }
+    .win-navbarcontainer-pageindicator-current {
+        background-color: ButtonText;
+    }
+    .win-navbarcontainer-pageindicator:hover {
+        background-color: Highlight;
+    }
+    .win-navbarcontainer-pageindicator-current:hover {
+        background-color: ButtonText;
+    }
+    .win-navbarcontainer-pageindicator:hover:active {
+        background-color: ButtonText;
+    }
+    .win-navbarcontainer-navarrow {
+        background-color: ButtonFace;
+        color: ButtonText;
+    }
+    .win-navbarcontainer-navarrow:after {
+        position: absolute;
+        top: 0;
+        left:0;
+        border: 2px solid ButtonText;
+        content: "";
+        width: ~"calc(100% - 3px)";
+        height: ~"calc(100% - 3px)";
+    }
+    .win-navbarcontainer-navarrow:hover {
+        background-color: Highlight;
+        color: HighlightText;
+    }
+    .win-navbarcontainer-navarrow:hover:active {
+        background-color: ButtonText;
+        color: ButtonFace;
+    }
+
+    /*
+        NavBarCommand colors.
+    */
+    .win-navbarcommand-button,
+    .win-navbarcommand-splitbutton {
+        background-color: ButtonFace;
+        color: ButtonText;
+    }
+    .win-navbarcommand-button:after,
+    .win-navbarcommand-splitbutton:after {
+        position: absolute;
+        top: 0;
+        left:0;
+        border: 2px solid ButtonText;
+        content: "";
+        width: ~"calc(100% - 3px)";
+        height: ~"calc(100% - 3px)";
+        pointer-events: none;
+    }
+    .win-navbarcommand-button:hover,
+    .win-navbarcommand-splitbutton:hover {
+        background-color: Highlight;
+        color: HighlightText;
+    }
+    .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
+    .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
+    .win-navbarcommand-button.win-pressed,
+    .win-navbarcommand-button.win-pressed:hover,
+    .win-navbarcommand-splitbutton.win-pressed,
+    .win-navbarcommand-splitbutton.win-pressed:hover {
+        background-color: ButtonText;
+        color: ButtonFace;
     }
 }
