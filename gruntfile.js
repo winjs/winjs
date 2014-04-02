@@ -36,9 +36,9 @@ module.exports = function (grunt) {
     // Register external tasks
     grunt.loadTasks("tasks/");
 
-    // Task alias's
-    grunt.registerTask("default", ["clean", "less", "concat", "copy", "replace"]);
+    // Task aliases
+    grunt.registerTask("default", ["clean", "less", "ts", "concat", "copy", "replace"]);
     grunt.registerTask("css", ["less"]);
-    grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
-    grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
+    grunt.registerTask("base", ["clean:base", "ts", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
+    grunt.registerTask("ui", ["clean:ui", "ts", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
 }
