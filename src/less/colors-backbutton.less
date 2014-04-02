@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
     .mixin(dark) {
         .win-navigation-backbutton, .win-navigation-backbutton:active,
@@ -76,58 +76,59 @@
         }
     }
 
+
+    .mixin(@theme);
+}
+
+button.win-navigation-backbutton, button.win-navigation-backbutton:active,
+button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:hover {
+    // Overwrite default background and border styles from HTML button element
+    background-color: transparent;
+    border: none;
+}
+
+@media (-ms-high-contrast) {
     button.win-navigation-backbutton, button.win-navigation-backbutton:active,
     button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:hover {
-        // Overwrite default background and border styles from HTML button element
+        /* Overwrite default background and border styles from BackButton control's <button> element */
         background-color: transparent;
         border: none;
     }
+    .win-backbutton, .win-back, .win-semanticzoom-button {
+        background-color: ButtonFace;
+        border-color: ButtonText;
+        color: ButtonText;
+    }
 
-    .mixin(@theme);
+    .win-backbutton:hover:active,
+    .win-navigation-backbutton:hover:active .win-back,
+    .win-semanticzoom-button:hover:active {
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
+    .win-backbutton:disabled, .win-navigation-backbutton:disabled .win-back,
+    .win-backbutton:disabled:active,
+    .win-navigation-backbutton:disabled:active .win-back {
+        background-color: ButtonFace;
+        border-color: GrayText;
+        color: GrayText;
+    }
 
-    @media (-ms-high-contrast) {
-        button.win-navigation-backbutton, button.win-navigation-backbutton:active,
-        button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:hover {
-            /* Overwrite default background and border styles from BackButton control's <button> element */
-            background-color: transparent;
-            border: none;
-        }
-        .win-backbutton, .win-back, .win-semanticzoom-button {
-            background-color: ButtonFace;
-            border-color: ButtonText;
-            color: ButtonText;
-        }
+    .win-backbutton:-ms-keyboard-active, win-navigation-backbutton:-ms-keyboard-active .win-back,
+    .win-semanticzoom-button:-ms-keyboard-active {
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
 
-        .win-backbutton:hover:active,
-        .win-navigation-backbutton:hover:active .win-back,
-        .win-semanticzoom-button:hover:active {
-            background-clip: border-box;
-            background-color: ButtonText;
-            border-color: transparent;
-            color: ButtonFace;
-        }
-        .win-backbutton:disabled, .win-navigation-backbutton:disabled .win-back,
-        .win-backbutton:disabled:active,
-        .win-navigation-backbutton:disabled:active .win-back {
-            background-color: ButtonFace;
-            border-color: GrayText;
-            color: GrayText;
-        }
-
-        .win-backbutton:-ms-keyboard-active, win-navigation-backbutton:-ms-keyboard-active .win-back,
-        .win-semanticzoom-button:-ms-keyboard-active {
-            background-clip: border-box;
-            background-color: ButtonText;
-            border-color: transparent;
-            color: ButtonFace;
-        }
-
-        .win-backbutton:hover,
-        .win-navigation-backbutton:hover .win-back,
-        .win-semanticzoom-button:hover {
-            background-color: Highlight;
-            border-color: ButtonText;
-            color: HighlightText;
-        }
+    .win-backbutton:hover,
+    .win-navigation-backbutton:hover .win-back,
+    .win-semanticzoom-button:hover {
+        background-color: Highlight;
+        border-color: ButtonText;
+        color: HighlightText;
     }
 }

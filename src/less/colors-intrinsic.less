@@ -1,5 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// Dark colors mixin
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
 
     // These classes reverse the colors on the subtree to which they are applied.
@@ -656,243 +655,242 @@
             }
         }
     }
+}
 
-    @media (-ms-high-contrast) {
-        .win-type-interactive {
-            color: WindowText;
-        }
-        .win-type-interactive:hover, .win-type-interactive:hover:active {
-            color: -ms-hotlight;
-        }
-        .win-type-interactive:-ms-keyboard-active {
-            color: -ms-hotlight;
-        }
+@media (-ms-high-contrast) {
+    .win-type-interactive {
+        color: WindowText;
+    }
+    .win-type-interactive:hover, .win-type-interactive:hover:active {
+        color: -ms-hotlight;
+    }
+    .win-type-interactive:-ms-keyboard-active {
+        color: -ms-hotlight;
+    }
 
-        /*
-        Text selection high contrast color.
-        */
-        ::selection, select:focus::-ms-value {
-            background-color: Highlight;
-            color: HighlightText;
-        }
+    /*
+    Text selection high contrast color.
+    */
+    ::selection, select:focus::-ms-value {
+        background-color: Highlight;
+        color: HighlightText;
+    }
 
-        /*
-        Button
-        */
-        button, input[type=button], input[type=reset],
-        input[type=file]::-ms-browse {
-            background-color: ButtonFace;
-            border-color: ButtonText;
-            color: ButtonText;
-        }
+    /*
+    Button
+    */
+    button, input[type=button], input[type=reset],
+    input[type=file]::-ms-browse {
+        background-color: ButtonFace;
+        border-color: ButtonText;
+        color: ButtonText;
+    }
 
-        button[type=submit], input[type=submit] {
-            background-color: Highlight;
-            border-color: ButtonText;
-            color: HighlightText;
-        }
+    button[type=submit], input[type=submit] {
+        background-color: Highlight;
+        border-color: ButtonText;
+        color: HighlightText;
+    }
 
-        button:hover:active, button[type=submit]:hover:active, input[type=button]:hover:active,
-        input[type=submit]:hover:active, input[type=reset]:hover:active,
-        input[type=file]::-ms-browse:hover:active {
-            background-clip: border-box;
-            background-color: ButtonText;
-            border-color: transparent;
-            color: ButtonFace;
-        }
-        button:disabled, button[type=submit]:disabled, input[type=button]:disabled,
-        input[type=submit]:disabled, input[type=reset]:disabled,
-        input[type=file]:disabled::-ms-browse, button:disabled:active, button[type=submit]:disabled:active,
-        input[type=button]:disabled:active, input[type=submit]:disabled:active,
-        input[type=reset]:disabled:active, input[type=file]:disabled::-ms-browse:active {
-            background-color: ButtonFace;
-            border-color: GrayText;
-            color: GrayText;
-        }
+    button:hover:active, button[type=submit]:hover:active, input[type=button]:hover:active,
+    input[type=submit]:hover:active, input[type=reset]:hover:active,
+    input[type=file]::-ms-browse:hover:active {
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
+    button:disabled, button[type=submit]:disabled, input[type=button]:disabled,
+    input[type=submit]:disabled, input[type=reset]:disabled,
+    input[type=file]:disabled::-ms-browse, button:disabled:active, button[type=submit]:disabled:active,
+    input[type=button]:disabled:active, input[type=submit]:disabled:active,
+    input[type=reset]:disabled:active, input[type=file]:disabled::-ms-browse:active {
+        background-color: ButtonFace;
+        border-color: GrayText;
+        color: GrayText;
+    }
 
-        button:-ms-keyboard-active, button[type=submit]:-ms-keyboard-active, input[type=button]:-ms-keyboard-active,
-        input[type=submit]:-ms-keyboard-active, input[type=reset]:-ms-keyboard-active {
-            background-clip: border-box;
-            background-color: ButtonText;
-            border-color: transparent;
-            color: ButtonFace;
-        }
+    button:-ms-keyboard-active, button[type=submit]:-ms-keyboard-active, input[type=button]:-ms-keyboard-active,
+    input[type=submit]:-ms-keyboard-active, input[type=reset]:-ms-keyboard-active {
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
 
-        button:hover, input[type=button]:hover, input[type=reset]:hover,
-        input::-ms-clear:hover, input::-ms-reveal:hover,
-        input[type=file]::-ms-browse:hover {
-            background-color: Highlight;
-            border-color: ButtonText;
-            color: HighlightText;
-        }
+    button:hover, input[type=button]:hover, input[type=reset]:hover,
+    input::-ms-clear:hover, input::-ms-reveal:hover,
+    input[type=file]::-ms-browse:hover {
+        background-color: Highlight;
+        border-color: ButtonText;
+        color: HighlightText;
+    }
 
-        input::-ms-clear:hover:active, input::-ms-reveal:hover:active {
-            background-clip: border-box;
-            background-color: ButtonText;
-            border-color: transparent;
-            color: ButtonFace;
-        }
-        input:disabled::-ms-clear, input:disabled::-ms-reveal, select:disabled::-ms-expand {
-            background-color: ButtonFace;
-            border-color: GrayText;
-            color: GrayText;
-        }
+    input::-ms-clear:hover:active, input::-ms-reveal:hover:active {
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
+    input:disabled::-ms-clear, input:disabled::-ms-reveal, select:disabled::-ms-expand {
+        background-color: ButtonFace;
+        border-color: GrayText;
+        color: GrayText;
+    }
 
-        input::-ms-clear, input::-ms-reveal, select::-ms-expand {
-            background-color: ButtonFace;
-            border-color: ButtonText;
-            color: ButtonText;
-        }
+    input::-ms-clear, input::-ms-reveal, select::-ms-expand {
+        background-color: ButtonFace;
+        border-color: ButtonText;
+        color: ButtonText;
+    }
 
-        /*
-        Select
-        */
-        select:active:not(:disabled)::-ms-expand {
-            color: ButtonFace;
-            background-color: ButtonText;
-        }
-        option:checked, select:focus::-ms-value {
-            color: HighlightText;
-            background-color: Highlight;
-        }
-        select:active:not(:disabled)::-ms-value,
-        option:hover:active, option:checked:hover:active {
-            color: ButtonFace;
-            background-color: ButtonText;
-        }
-        option:checked:disabled, option:checked:disabled:active,
-        optgroup:disabled option:checked, optgroup:disabled option:checked:active,
-        select:disabled option:checked, select:disabled option:checked:active,
-        select:disabled:focus::-ms-value {
-            color: ButtonFace;
-            background-color: GrayText;
-        }
+    /*
+    Select
+    */
+    select:active:not(:disabled)::-ms-expand {
+        color: ButtonFace;
+        background-color: ButtonText;
+    }
+    option:checked, select:focus::-ms-value {
+        color: HighlightText;
+        background-color: Highlight;
+    }
+    select:active:not(:disabled)::-ms-value,
+    option:hover:active, option:checked:hover:active {
+        color: ButtonFace;
+        background-color: ButtonText;
+    }
+    option:checked:disabled, option:checked:disabled:active,
+    optgroup:disabled option:checked, optgroup:disabled option:checked:active,
+    select:disabled option:checked, select:disabled option:checked:active,
+    select:disabled:focus::-ms-value {
+        color: ButtonFace;
+        background-color: GrayText;
+    }
 
-        /*
-        Link high contrast colors.
-        */
-        a {
-            color: -ms-hotlight;
-        }
-        a[disabled] {
-            color: GrayText;
-        }
+    /*
+    Link high contrast colors.
+    */
+    a {
+        color: -ms-hotlight;
+    }
+    a[disabled] {
+        color: GrayText;
+    }
 
-        /*
-        Text input, checkbox, radio, and select high contrast colors.
-        */
-        input:hover::-ms-check { /* only checkbox and radio have hover state */
-            background-color: Highlight;
-            color: HighlightText;
-        }
+    /*
+    Text input, checkbox, radio, and select high contrast colors.
+    */
+    input:hover::-ms-check { /* only checkbox and radio have hover state */
+        background-color: Highlight;
+        color: HighlightText;
+    }
 
-        input[type=text], input[type=password],
-        input[type=email], input[type=number],
-        input[type=tel], input[type=url],
-        input[type=search], textarea, .win-textarea, select,
-        input::-ms-check {
-            background-color: ButtonFace;
-            border-color: ButtonText;
-            color: ButtonText;
-        }
-        input:hover:active::-ms-check { /* only checkbox and radio have active state */
-            background-clip: border-box;
-            background-color: ButtonText;
-            border-color: transparent;
-            color: ButtonFace;
-        }
-        input[type=text]:disabled, input[type=password]:disabled,
-        input[type=email]:disabled, input[type=number]:disabled,
-        input[type=tel]:disabled, input[type=url]:disabled,
-        input[type=search]:disabled, input[type=file]::-ms-value,
-        textarea:disabled, .win-textarea:disabled, select:disabled,
-        input:disabled::-ms-check, input:disabled:active::-ms-check {
-            border-color: GrayText;
-            color: ButtonText;
-            background-color: ButtonFace;
-        }
-        input:disabled::-ms-check, input:disabled:active::-ms-check,
-        input[type]:-ms-input-placeholder, textarea:-ms-input-placeholder,
-        select:disabled::-ms-value {
-            color: GrayText;
-        }
-        input:-ms-keyboard-active::-ms-check { /* only checkbox and radio have active state */
-            background-clip: border-box;
-            background-color: ButtonText;
-            border-color: transparent;
-            color: ButtonFace;
-        }
+    input[type=text], input[type=password],
+    input[type=email], input[type=number],
+    input[type=tel], input[type=url],
+    input[type=search], textarea, .win-textarea, select,
+    input::-ms-check {
+        background-color: ButtonFace;
+        border-color: ButtonText;
+        color: ButtonText;
+    }
+    input:hover:active::-ms-check { /* only checkbox and radio have active state */
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
+    input[type=text]:disabled, input[type=password]:disabled,
+    input[type=email]:disabled, input[type=number]:disabled,
+    input[type=tel]:disabled, input[type=url]:disabled,
+    input[type=search]:disabled, input[type=file]::-ms-value,
+    textarea:disabled, .win-textarea:disabled, select:disabled,
+    input:disabled::-ms-check, input:disabled:active::-ms-check {
+        border-color: GrayText;
+        color: ButtonText;
+        background-color: ButtonFace;
+    }
+    input:disabled::-ms-check, input:disabled:active::-ms-check,
+    input[type]:-ms-input-placeholder, textarea:-ms-input-placeholder,
+    select:disabled::-ms-value {
+        color: GrayText;
+    }
+    input:-ms-keyboard-active::-ms-check { /* only checkbox and radio have active state */
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
 
-        /*
-        Progress high contrast colors.
-        */
-        progress {
-            border: 1px solid ButtonText;
-            background-color: ButtonFace;
-            color: Highlight;
-        }
-        progress:indeterminate {
-            border: transparent;
-        }
-        progress::-ms-fill {
-            border-right: 1px solid ButtonText;
-            background-color: Highlight;
-        }
-        progress.win-paused:not(:indeterminate)::-ms-fill {
-            background-color: GrayText;
-        }
-        progress.win-paused:not(:indeterminate) {
-            opacity: 1.0;
-        }
+    /*
+    Progress high contrast colors.
+    */
+    progress {
+        border: 1px solid ButtonText;
+        background-color: ButtonFace;
+        color: Highlight;
+    }
+    progress:indeterminate {
+        border: transparent;
+    }
+    progress::-ms-fill {
+        border-right: 1px solid ButtonText;
+        background-color: Highlight;
+    }
+    progress.win-paused:not(:indeterminate)::-ms-fill {
+        background-color: GrayText;
+    }
+    progress.win-paused:not(:indeterminate) {
+        opacity: 1.0;
+    }
 
-        /*
-        Slider
-        */
-        input[type=range]::-ms-track {
-            border: 1px solid ButtonText;
-            background-color: ButtonFace;
-            color: transparent;
-        }
-        input[type=range]:disabled::-ms-track {
-            border-color: GrayText;
-        }
-        input[type=range]::-ms-fill-lower {
-            background-color: Highlight;
-        }
-        input[type=range]:disabled::-ms-fill-lower {
-            background-color: transparent;
-        }
-        input[type=range]::-ms-ticks-before,
-        input[type=range]::-ms-ticks-after {
-            color: ButtonText;
-        }
-        input[type=range]:disabled::-ms-ticks-before,
-        input[type=range]:disabled::-ms-ticks-after {
-            color: GrayText;
-        }
-        input[type=range]::-ms-thumb {
-            background-color: ButtonText;
-            border-left: 1px solid HighlightText;
-            border-right: 1px solid HighlightText;
-        }
-        input[type=range].win-vertical::-ms-thumb {
-            border-left-style: none;
-            border-right-style: none;
-            border-top: 1px solid HighlightText;
-            border-bottom: 1px solid HighlightText;
-        }
-        input[type=range]:active::-ms-thumb {
-            background-color: HighlightText;
-            border-color: ButtonText;
-        }
-        input[type=range]:disabled::-ms-thumb,
-        input[type=range]:disabled:active::-ms-thumb {
-            background-color: GrayText;
-            border-color: GrayText;
-        }
-        input[type=range]:hover::-ms-thumb {
-            background-color: Highlight;
-        }
-
+    /*
+    Slider
+    */
+    input[type=range]::-ms-track {
+        border: 1px solid ButtonText;
+        background-color: ButtonFace;
+        color: transparent;
+    }
+    input[type=range]:disabled::-ms-track {
+        border-color: GrayText;
+    }
+    input[type=range]::-ms-fill-lower {
+        background-color: Highlight;
+    }
+    input[type=range]:disabled::-ms-fill-lower {
+        background-color: transparent;
+    }
+    input[type=range]::-ms-ticks-before,
+    input[type=range]::-ms-ticks-after {
+        color: ButtonText;
+    }
+    input[type=range]:disabled::-ms-ticks-before,
+    input[type=range]:disabled::-ms-ticks-after {
+        color: GrayText;
+    }
+    input[type=range]::-ms-thumb {
+        background-color: ButtonText;
+        border-left: 1px solid HighlightText;
+        border-right: 1px solid HighlightText;
+    }
+    input[type=range].win-vertical::-ms-thumb {
+        border-left-style: none;
+        border-right-style: none;
+        border-top: 1px solid HighlightText;
+        border-bottom: 1px solid HighlightText;
+    }
+    input[type=range]:active::-ms-thumb {
+        background-color: HighlightText;
+        border-color: ButtonText;
+    }
+    input[type=range]:disabled::-ms-thumb,
+    input[type=range]:disabled:active::-ms-thumb {
+        background-color: GrayText;
+        border-color: GrayText;
+    }
+    input[type=range]:hover::-ms-thumb {
+        background-color: Highlight;
     }
 }

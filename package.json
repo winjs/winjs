@@ -10,6 +10,7 @@
     "grunt-contrib-copy": "~0.5.0",
     "grunt-shell": "~0.6.4",
     "load-grunt-tasks": "^0.4.0",
-    "glob": "^3.2.9"
+    "glob": "^3.2.9",
+    "grunt-byte-order-mark": "^0.1.0"
   }
 }

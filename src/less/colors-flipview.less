@@ -1,46 +1,44 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-.Colors(@theme) {
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+.win-flipview {
+    .win-navbutton {
+        background-color: rgba(213, 213, 213, 0.35);
+        color: rgba(0, 0, 0, 0.60);
+    }
+    .win-navbutton:hover {
+        background-color: rgba(215, 215, 215, 0.94);
+        color: rgba(0, 0, 0, 1.0);
+    }
+    .win-navbutton:hover:active {
+        background-color: rgba(41, 41, 41, 0.74);
+        color: rgba(255, 255, 255, 1.0);
+    }
+}
+
+@media (-ms-high-contrast) {
     .win-flipview {
+        .win-navbottom {
+            left: 50%;
+            top: 100%;
+            margin-left: -35px;
+            margin-top: -35px;
+        }
         .win-navbutton {
-            background-color: rgba(213, 213, 213, 0.35);
-            color: rgba(0, 0, 0, 0.60);
+            background-color: ButtonFace;
+            color: ButtonText;
+            border: 2px solid ButtonText;
+            width: 65px;
+            height: 35px;
         }
         .win-navbutton:hover {
-            background-color: rgba(215, 215, 215, 0.94);
-            color: rgba(0, 0, 0, 1.0);
+            background-color: Highlight;
+            color: HighlightText;
         }
-        .win-navbutton:hover:active {
-            background-color: rgba(41, 41, 41, 0.74);
-            color: rgba(255, 255, 255, 1.0);
+        .win-navbutton:active {
+            background-color: ButtonText;
+            color: ButtonFace;
         }
-    }
-
-    @media (-ms-high-contrast) {
-        .win-flipview {
-            .win-navbottom {
-                left: 50%;
-                top: 100%;
-                margin-left: -35px;
-                margin-top: -35px;
-            }
-            .win-navbutton {
-                background-color: ButtonFace;
-                color: ButtonText;
-                border: 2px solid ButtonText;
-                width: 65px;
-                height: 35px;
-            }
-            .win-navbutton:hover {
-                background-color: Highlight;
-                color: HighlightText;
-            }
-            .win-navbutton:active {
-                background-color: ButtonText;
-                color: ButtonFace;
-            }
-            .win-navright {
-                margin-left: -65px;
-            }
+        .win-navright {
+            margin-left: -65px;
         }
     }
 }

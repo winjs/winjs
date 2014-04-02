@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
 
     .mixin(dark) {
@@ -48,23 +48,23 @@
     }
 
     .mixin(@theme);
+}
 
-    @media (-ms-high-contrast) {
-        button.win-hub-section-header-tabstop,
-        button.win-hub-section-header-tabstop:hover,
-        button.win-hub-section-header-tabstop:hover:active {
-            background-color: transparent;
-            color: WindowText;
-        }
-        button.win-hub-section-header-tabstop:-ms-keyboard-active {
-            color: WindowText;
-        }
-        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover,
-        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover:active {
-            color: -ms-hotlight;
-        }
-        button.win-hub-section-header-tabstop.win-hub-section-header-interactive:-ms-keyboard-active {
-            color: -ms-hotlight;
-        }
+@media (-ms-high-contrast) {
+    button.win-hub-section-header-tabstop,
+    button.win-hub-section-header-tabstop:hover,
+    button.win-hub-section-header-tabstop:hover:active {
+        background-color: transparent;
+        color: WindowText;
+    }
+    button.win-hub-section-header-tabstop:-ms-keyboard-active {
+        color: WindowText;
+    }
+    button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover,
+    button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover:active {
+        color: -ms-hotlight;
+    }
+    button.win-hub-section-header-tabstop.win-hub-section-header-interactive:-ms-keyboard-active {
+        color: -ms-hotlight;
     }
 }
