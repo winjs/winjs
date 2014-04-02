@@ -1,9 +1,5 @@
-﻿/*!
-  © Microsoft. All rights reserved.
-
-  This library is supported for use in Windows Store apps only.
-
+/*!
+  Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
   Build: $(build.version).$(build.branch).$(build.date)
-  
   Version: $(TARGET_DESTINATION)
 */

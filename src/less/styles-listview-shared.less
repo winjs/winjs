@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .win-listview {
     overflow: hidden;
     height: 400px;
@@ -400,6 +401,7 @@
 }
 // Uniform and cell spanning groups
 .win-listview .win-gridlayout.win-structuralnodes .win-uniformgridlayout.win-itemscontainer.win-laidout {
+    display: -webkit-flex;
     display: flex;
     flex-flow: row;
 }
@@ -408,6 +410,7 @@
 .win-listview .win-horizontal .win-listlayout .win-itemsblock,
 .win-listview .win-horizontal .win-gridlayout .win-uniformgridlayout.win-itemscontainer.win-laidout,
 .win-listview .win-horizontal .win-gridlayout .win-uniformgridlayout .win-itemsblock {
+    display: -webkit-flex;
     display: flex;
     flex-flow: column wrap;
     align-content: flex-start;
@@ -423,11 +426,13 @@
 }
 // Vertical - uniform group
 .win-listview .win-vertical .win-gridlayout.win-structuralnodes .win-uniformgridlayout.win-itemscontainer.win-laidout {
+    display: -webkit-flex;
     display: flex;
     flex-flow: column;
 }
 .win-listview .win-vertical .win-gridlayout .win-uniformgridlayout.win-itemscontainer.win-laidout,
 .win-listview .win-vertical .win-gridlayout .win-uniformgridlayout .win-itemsblock {
+    display: -webkit-flex;
     display: flex;
     flex-flow: row wrap;
     align-content: flex-start;

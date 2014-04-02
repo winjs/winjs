@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 ﻿
 (function flipperPageManagerInit(WinJS) {
     "use strict";
@@ -88,9 +89,7 @@
                 WinJS.Utilities._addEventListener(this._flipperDiv, "focusin", function (event) {
                     if (event.target === that._flipperDiv) {
                         if (that._currentPage.element) {
-                            try {
-                                that._currentPage.element.setActive();
-                            } catch (e) { }
+                            WinJS.Utilities._setActive(that._currentPage.element);
                         }
                     }
                 }, false);
@@ -394,11 +393,9 @@
 
                         if (incomingPage.element) {
                             if (this._hasFocus) {
-                                try {
-                                    // Give focus to the panning div ONLY if anything inside the flipview control currently has
-                                    // focus; otherwise, it will be lost when the current page is animated during the navigation.
-                                    this._panningDiv.setActive();
-                                } catch (e) { }
+                                // Give focus to the panning div ONLY if anything inside the flipview control currently has
+                                // focus; otherwise, it will be lost when the current page is animated during the navigation.
+                                WinJS.Utilities._setActive(this._panningDiv);
                             }
                             this._navigationAnimationRecord = {};
                             this._navigationAnimationRecord.goForward = goForward;
@@ -1706,10 +1703,8 @@
                             that._blockTabs = false;
                             if (that._currentPage.element) {
                                 if (that._hasFocus) {
-                                    try {
-                                        that._currentPage.element.setActive();
-                                        that._tabManager.childFocus = that._currentPage.element;
-                                    } catch (e) { }
+                                    WinJS.Utilities._setActive(that._currentPage.element);
+                                    that._tabManager.childFocus = that._currentPage.element;
                                 }
                                 if (that._lastSelectedElement !== that._currentPage.element) {
                                     if (that._lastSelectedPage && that._lastSelectedPage.element && !isFlipper(that._lastSelectedPage.element)) {

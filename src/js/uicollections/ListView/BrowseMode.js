@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 ﻿(function browseModeInit(global, WinJS, undefined) {
     "use strict";
 
@@ -575,6 +576,17 @@
                             dataTransfer: eventObject.dataTransfer,
                             dragInfo: this._dragInfo
                         });
+
+                        // Firefox requires setData to be called on the dataTransfer object in order for DnD to continue.
+                        // Firefox also has an issue rendering the item's itemBox+element, so we need to use setDragImage, using the item's container, to get it to render.
+                        eventObject.dataTransfer.setData("text", "");
+                        if (eventObject.dataTransfer.setDragImage) {
+                            var pressedItemData = this.site._view.items.itemDataAt(this._pressedEntity.index);
+                            if (pressedItemData && pressedItemData.container) {
+                                var rect = pressedItemData.container.getBoundingClientRect();
+                                eventObject.dataTransfer.setDragImage(pressedItemData.container, eventObject.clientX - rect.left, eventObject.clientY - rect.top);
+                            }
+                        }
                         this.site.element.dispatchEvent(event);
                         if (this.site.itemsDraggable && !this.site.itemsReorderable) {
                             if (!this._firedDragEnter) {
@@ -970,6 +982,7 @@
                         }
                     }
                     this._clearDragProperties();
+                    eventObject.preventDefault();
                 },
 
                 _checkAutoScroll: function (x, y) {

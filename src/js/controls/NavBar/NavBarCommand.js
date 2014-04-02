@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 (function NavBarCommandInit(global, WinJS, undefined) {
     "use strict";
 
@@ -308,20 +309,14 @@
 
                     if (!ev.altKey && (ev.keyCode === leftStr || ev.keyCode === Key.home || ev.keyCode === Key.end) && ev.target === this._splitButtonEl) {
                         this._splitButtonActive = false;
-                        try {
-                            this._buttonEl.setActive();
-                        } catch (e) {
-                        }
+                        WinJS.Utilities._setActive(this._buttonEl);
                         if (ev.keyCode === leftStr) {
                             ev.stopPropagation();
                         }
                         ev.preventDefault();
                     } else if (!ev.altKey && ev.keyCode === rightStr && this.splitButton && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
                         this._splitButtonActive = true;
-                        try {
-                            this._splitButtonEl.setActive();
-                        } catch (e) {
-                        }
+                        WinJS.Utilities._setActive(this._splitButtonEl);
                         if (ev.keyCode === rightStr) {
                             ev.stopPropagation();
                         }

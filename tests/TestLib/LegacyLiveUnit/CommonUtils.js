@@ -1,6 +1,5 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
-//
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Abstract:
 //
@@ -368,7 +367,7 @@ CommonUtils.prototype = (function () {
 
                     // HTML standard specifies styleSheet object should have a cssRules attribute,
                     //  but current implementations of IE (even IE9) still call this attribute rules
-                    //  To be future-proof, use cssRules if its declared, otherwise continue using 
+                    //  To be future-proof, use cssRules if its declared, otherwise continue using
                     //  the existing IE-only "rules" attribute of the styleSheet.
                     var rules = sheet.cssRules ? sheet.cssRules : sheet.rules;
                     if (!rules) {
@@ -441,7 +440,7 @@ CommonUtils.prototype = (function () {
             ///  Create a random block of HTML as either an element or a string
             /// </summary>
             /// <param name="totalElements" type="integer">
-            ///  Number specifying total number of elements to add. 
+            ///  Number specifying total number of elements to add.
             /// </param>
             /// <param name="returnString" type="boolean">
             /// </param>
@@ -520,7 +519,7 @@ CommonUtils.prototype = (function () {
             }
 
             var rect = elem.getBoundingClientRect();
-            // Some code samples show adding the scroll offsets of html and body to the values for getBoundingClientRect(), but 
+            // Some code samples show adding the scroll offsets of html and body to the values for getBoundingClientRect(), but
             // we don't seem to need that (ex. rect.left += (document.documentElement.scrollLeft + document.body.scrollLeft) ).
             // getBoundingClientRect is also returning the correct width and height properties (apparently this is undocumented),
             // so we don't have to create them ourselves.
@@ -955,7 +954,7 @@ CommonUtils.prototype = (function () {
                 });
             }
         },
-        
+
         keydown: function (element, keyCode, locale) {
             /// <summary>
             ///  Throw keydown event from element.

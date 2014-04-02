@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 ﻿
 (function listViewImplInit(global, WinJS, undefined) {
     "use strict";
@@ -1551,10 +1552,7 @@
                         // from the viewport to the keyboardEventsHelper when scrolling with Narrator Touch.
                         if (document.activeElement !== this._viewport && this._hasKeyboardFocus) {
                             this._keyboardEventsHelper._shouldHaveFocus = true;
-                            try {
-                                this._keyboardEventsHelper.setActive();
-                            } catch (ex) {
-                            }
+                            WinJS.Utilities._setActive(this._keyboardEventsHelper);
                         }
                     }
                     this._itemFocused = false;
@@ -1590,13 +1588,11 @@
 
                             // Some consumers of ListView listen for item invoked events and hide the listview when an item is clicked.
                             // Since keyboard interactions rely on async operations, sometimes an invoke event can be received before we get
-                            // to item.setActive(), and the listview will be made invisible. If that happens and we call item.setActive(), an exception
+                            // to WinJS.Utilities._setActive(item), and the listview will be made invisible. If that happens and we call item.setActive(), an exception
                             // is raised for trying to focus on an invisible item. Checking visibility is non-trivial, so it's best
                             // just to catch the exception and ignore it.
-                            try {
-                                that._itemFocused = true;
-                                item.setActive();
-                            } catch (error) { }
+                            that._itemFocused = true;
+                            WinJS.Utilities._setActive(item);
                         }
                     };
 
@@ -3693,18 +3689,22 @@
                             }
                             var eventDetails = that._fireAnimationEvent(WinJS.UI.ListViewAnimationType.contentTransition);
                             that._firedAnimationEvent = true;
+                            var overflowStyle = WinJS.Utilities._browserStyleEquivalents["overflow-style"];
+                            var animatedElement = overflowStyle ? that._viewport : that._canvas;
                             if (!eventDetails.prevented) {
                                 that._fadingViewportOut = true;
-                                that._viewport.style["-ms-overflow-style"] = "none";
-                                AnimationHelper.fadeOutElement(that._viewport).then(function () {
+                                if (overflowStyle) {
+                                    animatedElement.style[overflowStyle.scriptName] = "none";
+                                }
+                                AnimationHelper.fadeOutElement(animatedElement).then(function () {
                                     if (that._isZombie()) { return; }
                                     that._fadingViewportOut = false;
-                                    that._viewport.style.opacity = 1.0;
+                                    animatedElement.style.opacity = 1.0;
                                     complete();
                                 });
                             } else {
                                 that._disableEntranceAnimation = true;
-                                that._viewport.style.opacity = 1.0;
+                                animatedElement.style.opacity = 1.0;
                                 complete();
                             }
                         }
@@ -3717,9 +3717,13 @@
                         animationPromise: Promise.wrap()
                     };
                     var that = this;
+                    var overflowStyle = WinJS.Utilities._browserStyleEquivalents["overflow-style"];
+                    var animatedElement = overflowStyle ? this._viewport : this._canvas;
                     function resetViewOpacity() {
                         that._canvas.style.opacity = 1;
-                        that._viewport.style["-ms-overflow-style"] = "";
+                        if (overflowStyle) {
+                            animatedElement.style[overflowStyle.scriptName] = "";
+                        }
                     }
 
                     if (this._disableEntranceAnimation || this._animationsDisabled()) {
@@ -3746,13 +3750,17 @@
                             this._waitingEntranceAnimationPromise.cancel();
                         }
                         this._canvas.style.opacity = 0;
-                        this._viewport.style["-ms-overflow-style"] = "none";
+                        if (overflowStyle) {
+                            animatedElement.style[overflowStyle.scriptName] = "none";
+                        }
                         this._waitingEntranceAnimationPromise = eventDetails.animationPromise.then(function () {
                             if (!that._isZombie()) {
                                 that._canvas.style.opacity = 1;
-                                return AnimationHelper.animateEntrance(that._viewport, firstTime).then(function () {
+                                return AnimationHelper.animateEntrance(animatedElement, firstTime).then(function () {
                                     if (!that._isZombie()) {
-                                        that._viewport.style["-ms-overflow-style"] = "";
+                                        if (overflowStyle) {
+                                            animatedElement.style[overflowStyle.scriptName] = "";
+                                        }
                                         that._waitingEntranceAnimationPromise = null;
                                     }
                                 });

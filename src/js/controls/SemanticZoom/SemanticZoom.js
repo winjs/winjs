@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 ﻿// Semantic Zoom control
 (function semanticZoomInit(global) {
     "use strict";
@@ -1352,9 +1353,7 @@
                         if (this._isActive) {
                             // If the element is no longer a valid focus target, it will throw, we
                             // simply won't do anything in this case
-                            try {
-                                (this._zoomedOut ? this._elementOut : this._elementIn).setActive();
-                            } catch (e) { }
+                            WinJS.Utilities._setActive(this._zoomedOut ? this._elementOut : this._elementIn);
                         }
                     }
 

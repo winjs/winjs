@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 ﻿(function virtualizeContentsViewInit(global, WinJS, undefined) {
     "use strict";
 
@@ -2552,10 +2553,7 @@
                         if (this._requireFocusRestore && activeElement === this._listView._keyboardEventsHelper) {
                             var focused = this._listView._selection._getFocused();
                             if (focused.type === WinJS.UI.ObjectType.item && this.items.itemBoxAt(focused.index) === itemBox) {
-                                try {
-                                    this._requireFocusRestore.setActive();
-                                } catch (e) {
-                                }
+                                WinJS.Utilities._setActive(this._requireFocusRestore);
                                 this._requireFocusRestore = null;
                             }
                         }

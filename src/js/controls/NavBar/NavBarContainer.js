@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 (function NavBarContainerInit(global, WinJS, undefined) {
     "use strict";
 
@@ -753,10 +754,7 @@
                                 this._scrollTo(scrollPositionTarget);
                             }
 
-                            try {
-                                element.setActive();
-                            } catch (e) {
-                            }
+                            WinJS.Utilities._setActive(element);
                         } else {
                             if (this.layout === WinJS.UI.Orientation.horizontal) {
                                 var indexOfLastItemOnPage = (page + 1) * sizes.columnsPerPage * sizes.rowsPerPage - 1;
@@ -809,7 +807,7 @@
                             }
 
                             try {
-                                element.setActive();
+                                WinJS.Utilities._setActive(element);
                             } catch (e) {
                             }
                         }

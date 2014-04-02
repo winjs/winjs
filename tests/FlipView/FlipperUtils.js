@@ -1,6 +1,5 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
-//
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Abstract:
 //
@@ -88,7 +87,7 @@ FlipperUtils.prototype = (function () {
             });
         },
 
-        create2DFlipper: function FlipperUtils_create2DFlipper (childInsertPage, parentOptions, childOptions) {                        
+        create2DFlipper: function FlipperUtils_create2DFlipper (childInsertPage, parentOptions, childOptions) {
             function parentDataSource(numItems) {
                 var testData = [];
                 for (var i = 0; i < numItems; ++i) {
@@ -101,7 +100,7 @@ FlipperUtils.prototype = (function () {
                 }
                 return new WinJS.Binding.List(testData).dataSource;
             }
-            
+
             function childDataSource(numItems) {
                 var testData = [];
                 for (var i = 0; i < numItems; ++i) {
@@ -114,7 +113,7 @@ FlipperUtils.prototype = (function () {
                 return itemPromise.then(function(item) {
                     var result = document.createElement("div");
                     result.setAttribute("id", item.data.title);
-                                        
+
                     if (item.data.childFlipper) {
                         if (!childOptions) {
                             childOptions = {};
@@ -127,7 +126,7 @@ FlipperUtils.prototype = (function () {
                     } else {
                         result.innerHTML =
                             "<div>" + item.data.title + "</div>" +
-                            "<div>" + item.data.content + "</div>";                            
+                            "<div>" + item.data.content + "</div>";
                     }
                     return result;
                 });
@@ -139,7 +138,7 @@ FlipperUtils.prototype = (function () {
                     result.setAttribute("id", item.data.title);
                     result.innerHTML =
                         "<div>" + item.data.title + "</div>" +
-                        "<div>" + item.data.content + "</div>";                        
+                        "<div>" + item.data.content + "</div>";
                     return result;
                 });
             }
@@ -148,37 +147,37 @@ FlipperUtils.prototype = (function () {
                 childItemCount = parentItemCount / 2,
                 parentFlipperDataSource = parentDataSource(parentItemCount),
                 childFlipperDataSource = childDataSource(childItemCount);
-            
+
             if (!parentOptions) {
                 parentOptions = {};
             }
             parentOptions.itemDataSource = parentFlipperDataSource;
             parentOptions.itemTemplate = parentItemTemplate;
-            var parentFlipper = this.instantiate(this.basicFlipperID(), parentOptions); 
+            var parentFlipper = this.instantiate(this.basicFlipperID(), parentOptions);
 
             LiveUnit.Assert.isNotNull(parentFlipper, "Parent flipper element should not be null when instantiated.");
             LiveUnit.Assert.isTrue(typeof parentFlipper.next === "function", "Parent flipper Doesn't appear to be a valid flipper.");
-            
-            return parentFlipper;          
+
+            return parentFlipper;
         },
 
         addFlipperDom: function FlipperUtils_addFlipperDom() {
             /// <summary>
             ///     Add a main flipper DOM from HTML
             /// </summary>
-            
+
             LiveUnit.LoggingCore.logComment("Add Flipper div \"" + mainFlipperDivId + "\" to the DOM");
             var flipperNode = document.createElement("div");
             flipperNode.setAttribute("id", mainFlipperDivId);
-            
+
             var htmlString = '<div id="flipper" style="width: 200px; height: 200px; overflow:hidden">';
             flipperNode.innerHTML = htmlString;
             document.body.appendChild(flipperNode);
-        },  
+        },
 
         basicFlipperHtmlIDs: function FlipperUtils_basicFlipperHtmlIDs() {
             /// <summary>
-            ///     Return div ID's for the divs in flipper page 
+            ///     Return div ID's for the divs in flipper page
             /// </summary>
             /// <returns type="array_object"/>
 
@@ -319,7 +318,7 @@ FlipperUtils.prototype = (function () {
             var itemTemplate = this.flipperDataTemplate;
             var defaultData = true;
 
-            // Get all the passed options 
+            // Get all the passed options
             if (options) {
                 if (options.currentPage) {
                     var flipperCount = flipperUtilsObject.flipperData().length;
@@ -399,7 +398,7 @@ FlipperUtils.prototype = (function () {
 
             if (flipper) {
                 LiveUnit.LoggingCore.logComment("Flipper has been instantiated.");
-                
+
                 LiveUnit.LoggingCore.logComment("Flipper orientation is: " + flipper.orientation);
                 LiveUnit.Assert.isTrue(flipper.orientation === orientationVerify, "Flipper orientation is not " + orientationVerify);
                 LiveUnit.LoggingCore.logComment("Flipper itemSpacing is: " + flipper.itemSpacing);
@@ -417,7 +416,7 @@ FlipperUtils.prototype = (function () {
 
         isFlipperItemVisible: function FlipperUtils_isFlipperItemVisible(elementID) {
             /// <summary>
-            ///     Check if current flipper element is visible via DOM validation. This function depends ///     upon the implementation details of flipper. 
+            ///     Check if current flipper element is visible via DOM validation. This function depends ///     upon the implementation details of flipper.
             /// </summary>
             /// <param name="elementID" type="string">
             ///     The element ID of the flipper item to check.
@@ -435,7 +434,7 @@ FlipperUtils.prototype = (function () {
                 // If failing, check with the dev if this is still the right way to obtain the panning div
                 // Right now (beta milestone), this info can be found in FlipperHelpers.js file in the dev
                 // unittests
-                var panningDivScrollLeft = flipper._panningDivContainer.scrollLeft; 
+                var panningDivScrollLeft = flipper._panningDivContainer.scrollLeft;
                 var panningDivScrollRight = panningDivScrollLeft + flipper._panningDivContainer.offsetWidth;
 
                 LiveUnit.LoggingCore.logComment("offsetLeft: " + offsetLeft);
@@ -486,7 +485,7 @@ FlipperUtils.prototype = (function () {
                 var prevInfo = flipperElement.getElementsByClassName("win-navtop")[0];
                 var nextInfo = flipperElement.getElementsByClassName("win-navbottom")[0];
             }
-            
+
             var accessibleFlipper = {
                 label: flipperElement.getAttribute("aria-label"),
                 role: flipperElement.getAttribute("role"),
@@ -540,14 +539,14 @@ FlipperUtils.prototype = (function () {
             /// <summary>
             ///     Custom Item Renderer for the CommonUtil simpleArraryDataSource.
             /// </summary>
-            
+
             return itemPromise.then(function(item) {
                 var result = document.createElement("div");
 
-                // The title is unique for each dataObject and is being used as the ID 
+                // The title is unique for each dataObject and is being used as the ID
                 // so it can be easily looked up later for validation.
                 result.setAttribute("id", item.data.title);
-                result.innerHTML = 
+                result.innerHTML =
                     "<div>" + item.data.title + "</div>" +
                     "<div>" + item.data.content + "</div>";
                 return result;
@@ -579,11 +578,11 @@ FlipperUtils.prototype = (function () {
             /// </returns>
             /// </summary>
 
-            /*                           
+            /*
             var items = [],
                 listBinding = itemDataSource.createListBinding(),
                 remaining = true;
-             
+
             for (var itemPromise = listBinding.first(); remaining; itemPromise = listBinding.next()) {
                 items.push(itemPromise);
 
@@ -607,7 +606,7 @@ FlipperUtils.prototype = (function () {
                     for (var i = 0; i < count; i++) {
                         promises.push(listBinding.current());
                         listBinding.next();
-                    }                                
+                    }
                 });
                 listBinding.release();
                 return WinJS.Promise.join(promises);
@@ -636,7 +635,7 @@ FlipperUtils.prototype = (function () {
                 errors = [],
                 verifyPosition,
                 flipper,
-                insertData = { title: insertAction, content: insertAction };                
+                insertData = { title: insertAction, content: insertAction };
                 flipperDiv = document.getElementById(this.basicFlipperID());
 
             // Setup event handlers if passed in.
@@ -660,7 +659,7 @@ FlipperUtils.prototype = (function () {
 
                 // Setup verify variables to check against after inserting items around.
                 LiveUnit.LoggingCore.logComment(insertAction + ": Attempting to insert item...");
-                
+
                 var verifydschanged = LiveUnit.GetWrappedCallback(function (ev) {
                     Complete();
                 });
@@ -700,7 +699,7 @@ FlipperUtils.prototype = (function () {
                 }
             });
             flipperDiv.addEventListener(pageSelectedEvent, action, false);
-            
+
             flipper = this.instantiate(this.basicFlipperID(), { itemDataSource: itemDataSourceObject, itemTemplate: this.simpleArrayRenderer });
             LiveUnit.Assert.isNotNull(flipper, "Flipper element should not be null when instantiated.");
 
@@ -722,7 +721,7 @@ FlipperUtils.prototype = (function () {
             function Error(error) {
                 errors.push(error);
             }
-            
+
             function Complete() {
                 // Retrieve all items from datasource for logging purposes.
                 LiveUnit.LoggingCore.logComment("DataSource Object After " + insertAction);
@@ -803,7 +802,7 @@ FlipperUtils.prototype = (function () {
             var action = LiveUnit.GetWrappedCallback(function () {
                 if (!flipper) {
                     LiveUnit.Assert.fail("Flipper object is invalid");
-                }                
+                }
                 flipper.removeEventListener(pageSelectedEvent, action);
 
                 // Retrieve all items from datasource for logging purposes.
@@ -879,7 +878,7 @@ FlipperUtils.prototype = (function () {
 
             var flipper = this.instantiate(this.basicFlipperID(), { itemDataSource: itemDataSourceObject, itemTemplate: this.simpleArrayRenderer });
             LiveUnit.Assert.isNotNull(flipper, "Flipper element should not be null when instantiated.");
-            
+
             // This must run after all promises have completed.
             var timeout = setTimeout(function() {
                     if (errors[0]) {
@@ -907,7 +906,7 @@ FlipperUtils.prototype = (function () {
                     for (var i = 0; i < items.length; i++) {
                         LiveUnit.LoggingCore.logComment("key: " + items[i].key + ", title: " + items[i].data.title);
                     }
-                });                
+                });
 
                 itemDataSourceObject.itemFromIndex(verifyPosition).then(function (item) {
                     var verifyItem = item;
@@ -940,7 +939,7 @@ FlipperUtils.prototype = (function () {
                         LiveUnit.Assert.isTrue(flipperUtilsObject.isFlipperItemVisible(moveData.data.title), "Flipper is not showing correct data.");
                     }
                 }, Error);
-            }            
+            }
         },
 
         removeItem: function FlipperUtils_removeItem(removeAction, onSuccess, onError, setEventHandlers) {
@@ -1005,7 +1004,7 @@ FlipperUtils.prototype = (function () {
                     default:
                         LiveUnit.Assert.fail(removeAction + ": Unrecognized remove action.");
                 }
-                
+
                 var verifydschanged = LiveUnit.GetWrappedCallback(function () {
                     Complete();
                 });
@@ -1113,8 +1112,8 @@ FlipperUtils.prototype = (function () {
             // Setup event handlers if passed in.
             if (setEventHandlers) {
                 setEventHandlers(flipperUtilsObject.basicFlipperID());
-            }           
-            
+            }
+
             var action = LiveUnit.GetWrappedCallback(function () {
                 if (!flipper) {
                     LiveUnit.Assert.fail("Flipper is not a valid object");
@@ -1169,7 +1168,7 @@ FlipperUtils.prototype = (function () {
 
             flipper = this.instantiate(this.basicFlipperID(), { itemDataSource: itemDataSourceObject, itemTemplate: this.simpleArrayRenderer });
             LiveUnit.Assert.isNotNull(flipper, "Flipper element should not be null when instantiated.");
-            
+
             // This must run after all promises have completed.
             var timeout = setTimeout(function() {
                     if (errors[0]) {

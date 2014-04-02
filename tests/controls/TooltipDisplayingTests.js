@@ -1,6 +1,5 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
-//
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Abstract:
 //
@@ -690,7 +689,7 @@ TooltipDisplayingTests = function () {
     this.testTooltip_VerifyOnEvents["Description"] = "Test events are all thrown and in the right order";
     this.testTooltip_VerifyOnEvents["Category"] = "Displaying";
     this.testTooltip_VerifyOnEvents["LiveUnit.IsAsync"] = true;
-    
+
     this.testTooltip_VerifyAnchorContainingChild = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
 

@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 ﻿(function searchboxInit(global) {
     "use strict";
 
@@ -307,10 +308,7 @@
                             this._domElement.disabled = false;
                             utilities.removeClass(this.element, ClassName.searchboxDisabled);
                             if (document.activeElement === this.element) {
-                                try {
-                                    this._inputElement.setActive();
-                                } catch (e) {
-                                }
+                                WinJS.Utilities._setActive(this._inputElement);
                             }
                         } else {
                             // Disable control
@@ -1347,10 +1345,8 @@
 
                     } else if (collectionChange === Windows.Foundation.Collections.CollectionChange.itemRemoved) {
                         if ((this._suggestionsData.length === 1)) {
-                            try {
-                                this._inputElement.setActive();
-                            } catch (e) {
-                            }
+                            WinJS.Utilities._setActive(this._inputElement);
+
                             this._hideFlyout();
                         }
                         var index = event.index;

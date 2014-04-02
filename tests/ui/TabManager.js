@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
 
@@ -77,11 +78,11 @@ CorsicaTests.TabManager = function () {
         });
 
         // Make sure the childFocus is focusable before the test
-        childFocus.setActive();
+        WinJS.Utilities._setActive(childFocus);
         LiveUnit.Assert.isTrue(document.activeElement === childFocus);
 
         // Put focus on 'before'
-        before.setActive();
+        WinJS.Utilities._setActive(before);
         LiveUnit.Assert.isTrue(document.activeElement === before);
 
         // Focus the prefix, which should fire onTabEnter and focus should not move

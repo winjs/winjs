@@ -1,5 +1,8 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 (function NavBarInit(global, WinJS, undefined) {
     "use strict";
+
+    var customLayout = "custom";
 
     WinJS.Namespace.define("WinJS.UI", {
         /// <field>
@@ -53,7 +56,7 @@
 
                 // Default to Placement = Top and Layout = Custom
                 options.placement = options.placement || "top";
-                options.layout = "custom";
+                options.layout = customLayout;
 
                 WinJS.UI.AppBar.call(this, element, options);
 
@@ -74,8 +77,12 @@
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 layout: {
-                    value: "custom",
-                    writable: false
+                    get: function () {
+                        return customLayout;
+                    },
+                    set: function (value) {
+                        // NOP
+                    },
                 },
 
                 /// <field type="Function" locid="WinJS.UI.NavBar.onchildrenprocessed" helpKeyword="WinJS.UI.NavBar.onchildrenprocessed">

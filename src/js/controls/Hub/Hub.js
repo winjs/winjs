@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 (function hubInit(global, WinJS, undefined) {
     "use strict";
 
@@ -1148,10 +1149,7 @@
                 _tryFocus: function hub_tryFocus(index) {
                     var targetSection = this.sections.getAt(index);
 
-                    try {
-                        targetSection._headerTabStopElement.setActive();
-                    } catch (e) {
-                    }
+                    WinJS.Utilities._setActive(targetSection._headerTabStopElement);
 
                     return document.activeElement === targetSection._headerTabStopElement;
                 },
