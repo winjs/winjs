@@ -3,6 +3,8 @@
 module.exports = function (grunt) {
     var config = require("./config.js");
 
+    grunt.file.preserveBOM = true;
+
     // Helper function to load the config file
     function loadConfig(path) {
       var glob = require('glob');
@@ -33,8 +35,8 @@ module.exports = function (grunt) {
     grunt.loadTasks("tasks/");
 
     // Task alias's
-    grunt.registerTask("default", ["clean", "less", "concat", "copy", "replace", "bom"]);
-    grunt.registerTask("css", ["less", "bom"]);
-    grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace", "bom"]);
-    grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less", "bom"]);
+    grunt.registerTask("default", ["clean", "less", "concat", "copy", "replace"]);
+    grunt.registerTask("css", ["less"]);
+    grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
+    grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
 }
