@@ -8,6 +8,8 @@ WinJS is a set of JavaScript toolkits that allow developers to build application
 * Provide developers with a distinctive set UI controls with high polish and performance with fundamental support for touch, mouse, keyboard and accessibility
 * Provide developers with a cohesive set of components and utilities to build the scaffolding and infrastructure of their applications
 
+This is a first step for the WinJS project and there is still a lot of work that needs to be done. So please check out the [roadmap](https://github.com/winjs/winjs/wiki/Roadmap) to see where the project is headed or participate by [contributing](https://github.com/winjs/winjs/wiki/Contribute) along the way. 
+
 # Contribute
 There are many of ways to [contribute](https://github.com/winjs/winjs/wiki/Contribute) to the project.
 
