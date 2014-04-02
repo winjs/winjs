@@ -52,7 +52,12 @@ TooltipDistanceTests = function () {
         // set up the tooltip
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "t", placement: tooltipPlacement });
 
+        var testComplete = false;
         function tooltipEventListener(event) {
+            if (testComplete) {
+                return;
+            }
+
             LiveUnit.Assert.isNotNull(event);
             LiveUnit.LoggingCore.logComment(event.type);
             tooltipUtils.logTooltipInformation(tooltip);
@@ -92,10 +97,14 @@ TooltipDistanceTests = function () {
                     var actualDistance = tooltipUtils.getTooltipDistanceFromElement(tooltip,
                         (((inputMethod == "touch") || (inputMethod == "mouse")) ? "center" : "edge"));
 
+                    // On some browsers, the actual distance will be reported as 21.00000123 which will fail asserts which don't really matter
+                    actualDistance = Math.round(actualDistance);
+
                     LiveUnit.Assert.isTrue((actualDistance <= (distance + DISTANCE_TOLERANCE)), "Expected distance: " + distance);
                     LiveUnit.Assert.isTrue((actualDistance >= (distance - DISTANCE_TOLERANCE)), "Expected distance: " + distance);
 
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    testComplete = true;
                     break;
             }
         }

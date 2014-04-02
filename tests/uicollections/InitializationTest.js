@@ -39,7 +39,7 @@ WinJSTests.InitializationTests = function () {
             "<div id='test2' style='width:600px;height:400px;'></div>";
         document.body.appendChild(newNode);
         removeListviewAnimations();
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -50,7 +50,7 @@ WinJSTests.InitializationTests = function () {
             document.body.removeChild(element);
         }
         restoreListviewAnimations();
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     }
 
     // Test methods

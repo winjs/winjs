@@ -579,8 +579,8 @@
     <Content Include="..\..\tests\TestLib\ListView\listviewverify.js">
       <Link>TestLib\ListView\listviewverify.js</Link>
     </Content>
-    <Content Include="..\..\tests\TestLib\liveToQ.js">
-      <Link>TestLib\liveToQ.js</Link>
+    <Content Include="..\..\tests\TestLib\liveToQ\liveToQ.js">
+      <Link>TestLib\liveToQ\liveToQ.js</Link>
     </Content>
     <Content Include="..\..\tests\TestLib\NavBar\NavBarUtils.js">
       <Link>TestLib\NavBar\NavBarUtils.js</Link>
@@ -789,6 +789,7 @@
     <Folder Include="TestLib\LegacyLiveUnit\" />
     <Folder Include="TestLib\ListView\" />
     <Folder Include="TestLib\NavBar\" />
+    <Folder Include="TestLib\liveToQ\" />
     <Folder Include="TestLib\SemanticZoom\" />
     <Folder Include="uicollections\" />
     <Folder Include="UIListBinding\" />

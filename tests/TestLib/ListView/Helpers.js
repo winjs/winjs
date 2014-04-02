@@ -81,7 +81,7 @@ if (typeof (WinJS) !== "undefined") {
         s.setAttribute("rel", "stylesheet");
         s.setAttribute("href", cssFile);
         document.head.appendChild(s);
-        return waitForCSSFile("/" + cssFile);
+        return waitForCSSFile("/" + cssFile.replace("../", ""));
     }
 
     function removeCSSFileFromHead(link) {
