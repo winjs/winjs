@@ -496,11 +496,11 @@ CorsicaTests.Base = function () {
             foo: 1,
         });
 
-        WinJS.Namespace.defineWithParent(Test, "TestNamespace.ɪ", {
+        WinJS.Namespace.defineWithParent(Test, "TestNamespace.\u026a", {
             foo: 2,
         });
 
-        WinJS.Namespace.defineWithParent(Test, "才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123", {
+        WinJS.Namespace.defineWithParent(Test, "\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123", {
             foo: 42
         });
 
@@ -509,12 +509,12 @@ CorsicaTests.Base = function () {
         LiveUnit.Assert.isTrue("foo" in Test.TestNamespace.I);
         LiveUnit.Assert.areEqual(1, Test.TestNamespace.I.foo);
 
-        LiveUnit.Assert.isTrue("ɪ" in Test.TestNamespace);
-        LiveUnit.Assert.isTrue("foo" in Test.TestNamespace.ɪ);
-        LiveUnit.Assert.areEqual(2, Test.TestNamespace.ɪ.foo);
+        LiveUnit.Assert.isTrue("\u026a" in Test.TestNamespace);
+        LiveUnit.Assert.isTrue("foo" in Test.TestNamespace["\u026a"]);
+        LiveUnit.Assert.areEqual(2, Test.TestNamespace["\u026a"].foo);
 
-        LiveUnit.Assert.isTrue("才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123" in Test);
-        LiveUnit.Assert.areEqual(42, Test.才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123.foo);
+        LiveUnit.Assert.isTrue("\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123" in Test);
+        LiveUnit.Assert.areEqual(42, Test["\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123"].foo);
 
     }
 

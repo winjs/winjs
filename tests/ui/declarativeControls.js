@@ -28,10 +28,10 @@ window.ContainerTestContainer = function (element, options) {
 window.ContainerTestContainer.isDeclarativeControlContainer = true;
 window.ContainerTestContainer.supportedForProcessing = true;
 
-window.才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123 = "data";
+window["\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123"] = "data";
 
 CorsicaTests.DeclarativeControls = function () {
-    
+
     function errorHandler(msg) {
         try {
             LiveUnit.Assert.fail('There was an unhandled error in your test: ' + msg);
@@ -59,8 +59,8 @@ CorsicaTests.DeclarativeControls = function () {
         WinJS.UI.processAll(holder.firstChild.firstChild);
         LiveUnit.Assert.areEqual(1, containerCount);
         LiveUnit.Assert.areEqual(1, leafCount);
-    }   
-     
+    }
+
     this.testBasicDeclaration = function () {
         LiveUnit.Assert.isTrue(WinJS.Utilities.getMember("DeclTest"));
         LiveUnit.Assert.areEqual(WinJS.Utilities.getMember("DeclTest")(5, 5), 5);
@@ -70,8 +70,8 @@ CorsicaTests.DeclarativeControls = function () {
         WinJS.UI.process(holder.firstChild);
         var control = holder.firstChild.winControl;
         LiveUnit.Assert.areEqual(123, control.test);
-    }     
-    
+    }
+
     this.testBasicDeclarationWhitespace = function () {
         LiveUnit.Assert.isTrue(WinJS.Utilities.getMember("DeclTest"));
         LiveUnit.Assert.areEqual(WinJS.Utilities.getMember("DeclTest")(5, 5), 5);
@@ -82,7 +82,7 @@ CorsicaTests.DeclarativeControls = function () {
         var control = holder.firstChild.winControl;
         LiveUnit.Assert.areEqual(123, control.test);
     }
-     
+
     this.testBasicAsyncDeclaration = function (complete) {
         LiveUnit.Assert.isTrue(WinJS.Utilities.getMember("AsyncDeclTest"));
         LiveUnit.Assert.areEqual(WinJS.Utilities.getMember("AsyncDeclTest")(5, 5, function() {}), 5);
@@ -94,36 +94,36 @@ CorsicaTests.DeclarativeControls = function () {
             complete();
         });
     }
-    
+
     this.testCallbackBasicDeclaration = function () {
         LiveUnit.Assert.isTrue(WinJS.Utilities.getMember("DeclTest"));
         LiveUnit.Assert.areEqual(WinJS.Utilities.getMember("DeclTest")(5, 5), 5);
 
         var holder = document.createElement("div");
         holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test:123}'></div>";
-        
+
         var callbackCount = 0;
         var callback = function() {
             callbackCount++;
         }
-        
+
         WinJS.UI.process(holder.firstChild).then(callback);
         LiveUnit.Assert.areEqual(1, callbackCount);
         var control = holder.firstChild.winControl;
         LiveUnit.Assert.areEqual(123, control.test);
     }
-    
+
     this.testCallbackForElementWithoutControl = function () {
         LiveUnit.Assert.isTrue(WinJS.Utilities.getMember("DeclTest"));
         LiveUnit.Assert.areEqual(WinJS.Utilities.getMember("DeclTest")(5, 5), 5);
 
         var element = document.createElement("div");
-        
+
         var callbackCount = 0;
         var callback = function() {
             callbackCount++;
         }
-        
+
         WinJS.UI.process(element).then(callback);
         LiveUnit.Assert.areEqual(1, callbackCount);
     }
@@ -131,33 +131,33 @@ CorsicaTests.DeclarativeControls = function () {
     this.testCallbackBasicDeclarationWithProcessAllOnRootWithControl = function () {
         LiveUnit.Assert.isTrue(WinJS.Utilities.getMember("DeclTest"));
         LiveUnit.Assert.areEqual(WinJS.Utilities.getMember("DeclTest")(5, 5), 5);
-        
+
         var holder = document.createElement("div");
         holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test:123}'></div>";
-        
+
         var callbackCount = 0;
         var callback = function() {
             callbackCount++;
         }
-        
+
         WinJS.UI.processAll(holder.firstChild).then(callback);
         LiveUnit.Assert.areEqual(1, callbackCount);
         var control = holder.firstChild.winControl;
         LiveUnit.Assert.areEqual(123, control.test);
     }
-    
+
     this.testCallbackBasicDeclarationWithProcessAll = function () {
         LiveUnit.Assert.isTrue(WinJS.Utilities.getMember("DeclTest"));
         LiveUnit.Assert.areEqual(WinJS.Utilities.getMember("DeclTest")(5, 5), 5);
-        
+
         var holder = document.createElement("div");
         holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test:123}'></div><div data-win-control='DeclTest' data-win-options='{test:134}'></div>";
-        
+
         var callbackCount = 0;
         var callback = function() {
             callbackCount++;
         }
-        
+
         WinJS.UI.processAll(holder).then(callback);
         LiveUnit.Assert.areEqual(1, callbackCount);
         var control = holder.firstChild.winControl;
@@ -169,14 +169,14 @@ CorsicaTests.DeclarativeControls = function () {
     this.testCallbackBasicDeclarationWithProcessAllWithoutControls = function () {
         LiveUnit.Assert.isTrue(WinJS.Utilities.getMember("DeclTest"));
         LiveUnit.Assert.areEqual(WinJS.Utilities.getMember("DeclTest")(5, 5), 5);
-        
+
         var holder = document.createElement("div");
-        
+
         var callbackCount = 0;
         var callback = function() {
             callbackCount++;
         }
-        
+
         WinJS.UI.processAll(holder).then(callback);
         LiveUnit.Assert.areEqual(1, callbackCount);
     }
@@ -187,12 +187,12 @@ CorsicaTests.DeclarativeControls = function () {
         var hadException = false;
         var control;
         WinJS.UI.process(holder.firstChild).then(
-            function (c) { control = c; }, 
+            function (c) { control = c; },
             function (e) {
                 LiveUnit.Assert.areEqual("Invalid data-win-control attribute", e);
                 hadException = true;
             });
-    
+
         LiveUnit.Assert.isFalse(hadException);
         LiveUnit.Assert.areEqual(undefined, control);
     }
@@ -295,11 +295,11 @@ CorsicaTests.DeclarativeControls = function () {
         WinJS.UI.processAll(holder).then(null, function() { hitCatch = true; });
         LiveUnit.Assert.isTrue(hitCatch);
     }
-    
+
     this.testManyControls = function() {
         var holder = document.createElement("div");
         var control;
-        
+
         for(var i = 0; i < 1000; i++) {
             control = document.createElement("div");
             control.setAttribute("data-win-control", "DeclTest");
@@ -311,27 +311,27 @@ CorsicaTests.DeclarativeControls = function () {
             control = holder.children[i].winControl;
             LiveUnit.Assert.areEqual(i, control.test);
         }
-        
+
     }
-    
+
     this.testLocalizedOptions1 = function () {
         var holder = document.createElement("div");
-        holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test1:\"才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123\", 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123:-55.22}'></div>";
+        holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test1:\"\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123\", \u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123:-55.22}'></div>";
         WinJS.UI.processAll(holder);
         var control = holder.firstChild.winControl;
-        LiveUnit.Assert.areEqual("才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123", control.test1);
-        LiveUnit.Assert.areEqual(-55.22, control['才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123'], "Can't name option property something localized");
+        LiveUnit.Assert.areEqual("\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123", control.test1);
+        LiveUnit.Assert.areEqual(-55.22, control['\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123'], "Can't name option property something localized");
     }
-    
+
     this.testLocalizedOptions2 = function () {
         var holder = document.createElement("div");
-        holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test1:才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123, test2: 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123}'></div>";
+        holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test1:\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123, test2: \u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123}'></div>";
         WinJS.UI.processAll(holder);
         var control = holder.firstChild.winControl;
-        LiveUnit.Assert.areEqual(才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123, control.test1);
-        LiveUnit.Assert.areEqual(才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123, control.test2);
+        LiveUnit.Assert.areEqual(window["\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123"], control.test1);
+        LiveUnit.Assert.areEqual(window["\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123"], control.test2);
     }
-    
+
     this.testControlDocumentFragment = function (complete) {
         var holder = document.createElement("div");
         holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test:123}'></div>";
@@ -341,17 +341,17 @@ CorsicaTests.DeclarativeControls = function () {
         WinJS.UI.Fragments.renderCopy(holder).then(function (docfrag) {
             frag.appendChild(docfrag);
             WinJS.UI.Fragments.clearCache(holder);
-        
+
             var docFrag = document.createDocumentFragment();
             docFrag.appendChild(frag);
-        
+
             WinJS.UI.processAll(docFrag);
             var control = docFrag.firstChild.firstChild.winControl;
             LiveUnit.Assert.areEqual(123, control.test);
             complete();
         });
     }
-    
+
     this.testControlFragment = function (complete) {
         var holder = document.createElement("div");
         holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test:123}'></div>";
@@ -361,7 +361,7 @@ CorsicaTests.DeclarativeControls = function () {
         WinJS.UI.Fragments.renderCopy(holder).then(function (docfrag) {
             frag.appendChild(docfrag);
             WinJS.UI.Fragments.clearCache(holder);
-        
+
             WinJS.UI.process(frag.firstChild);
             var control = frag.firstChild.winControl;
             LiveUnit.Assert.areEqual(123, control.test);
@@ -413,7 +413,7 @@ CorsicaTests.DeclarativeControls = function () {
             complete();
         }
 
-        
+
     };
 
     this.testOptionQueryExpressionBasicFindElementById_LookupFromRoot_AtCurrentScope = function (complete) {
