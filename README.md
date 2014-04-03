@@ -13,12 +13,12 @@ This is a first step for the WinJS project and there is still a lot of work that
 # Contribute
 There are many of ways to [contribute](https://github.com/winjs/winjs/wiki/Contribute) to the project.
 
-You can contribute by reviewing and sending feedback on code checkins, suggesting and trying out new features as they are implemented, submit bugs and help us verify fixes as they are checked in, as well as submit code fixes or code contributions of your own.
+You can contribute by reviewing and sending feedback on code checkins, suggesting and trying out new features as they are implemented, submitting bugs and helping us verify fixes as they are checked in, as well as submitting code fixes or code contributions of your own.
 
 Note that all code submissions will be rigorously reviewed and tested by the team, and only those that meet an extremely high bar for both quality and design/roadmap appropriateness will be merged into the source.
 
 # Roadmap
-The source code on this repo is under active development that will be part of our next release. For details on our planned features and future direction please refer to our [roadmap](https://github.com/winjs/winjs/wiki/Roadmap).
+The source code on this repo is under active development that will be part of our next release. For details on our planned features and future direction, please refer to our [roadmap](https://github.com/winjs/winjs/wiki/Roadmap).
 
 # Build WinJS
 In order build WinJS, ensure that you have [git](http://git-scm.com/downloads) and [Node.js](http://nodejs.org/download/) installed.
