@@ -24,13 +24,13 @@ CorsicaTests.DatePicker = function () {
         DatePicker_Month: "win-datepicker-month",
         DatePicker_Year: "win-datepicker-year",
         DatePicker_Date: "win-datepicker-date"
-    },
+    };
 
     this.DatePickerQuery = {
         Month: this.DatePickerClassName.DatePicker + " ." + this.DatePickerClassName.DatePicker_Month,
         Year: this.DatePickerClassName.DatePicker + " ." + this.DatePickerClassName.DatePicker_Year,
         Date: this.DatePickerClassName.DatePicker + " ." + this.DatePickerClassName.DatePicker_Date
-    },
+    };
 
     this.testMaxMinCurrentDatesFarTop = function () {
         if (!isWinRTEnabled()) { return; }
@@ -237,7 +237,7 @@ CorsicaTests.DatePicker = function () {
             document.body.removeChild(controlElement);
             document.body.removeChild(selectElement);
         }
-    }
+    };
 
     this.testEmptyOptions = function () {
         var controlElement = document.createElement("div");
@@ -377,7 +377,7 @@ CorsicaTests.DatePicker = function () {
         LiveUnit.Assert.areEqual(1968, picker.current.getFullYear(), "Check the Year");
         LiveUnit.Assert.areEqual(10, picker.current.getMonth(), "Check the Month");
         LiveUnit.Assert.areEqual(21, picker.current.getDate(), "Check the Day on Month");
-    }
+    };
 
     this.testDatePattern = function () {
         if (window.Windows && Windows.Globalization && Windows.Globalization.Calendar) {
@@ -427,7 +427,7 @@ CorsicaTests.DatePicker = function () {
                 document.body.removeChild(controlElement);
             }
         }
-    }
+    };
 
 
 
@@ -515,7 +515,7 @@ CorsicaTests.DatePicker = function () {
         //cleanup
         WinJS.Utilities.disposeSubTree(controlElement);
         document.body.removeChild(controlElement);
-    }
+    };
     
     this.testDatePickerDispose = function () {
         var dp = new WinJS.UI.DatePicker();
@@ -525,7 +525,7 @@ CorsicaTests.DatePicker = function () {
         
         dp.dispose();
         dp.dispose();
-    }
+    };
 }
 
 LiveUnit.registerTestClass("CorsicaTests.DatePicker");
