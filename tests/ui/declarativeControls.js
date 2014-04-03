@@ -28,6 +28,7 @@ window.ContainerTestContainer = function (element, options) {
 window.ContainerTestContainer.isDeclarativeControlContainer = true;
 window.ContainerTestContainer.supportedForProcessing = true;
 
+// Define a property on window with a long unicode string
 window["\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123"] = "data";
 
 CorsicaTests.DeclarativeControls = function () {
