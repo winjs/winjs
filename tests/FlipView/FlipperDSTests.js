@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="..\TestLib\LegacyLiveUnit\commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
 /// <reference path="FlipperUtils.js"/>
-/// <reference path="..\TestLib\ItemsManager\TestDataSource.js"/>
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 
 var DataSourceTests = null;
 
