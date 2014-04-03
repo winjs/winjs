@@ -76,7 +76,7 @@ CorsicaTests.DatePicker = function () {
         var t = new Date();
         var date1 = new Date(t.getFullYear(), t.getMonth(), t.getDate(), 12, 0, 0, 0);
         var control = new WinJS.UI.DatePicker(controlElement, { calendar: "GregorianCalendar" });
-        var t = new Date();
+        t = new Date();
         var date2 = new Date(t.getFullYear(), t.getMonth(), t.getDate(), 12, 0, 0, 0);
 
         LiveUnit.Assert.areEqual(controlElement, control._domElement);
@@ -91,7 +91,7 @@ CorsicaTests.DatePicker = function () {
         if (isWinRTEnabled()) {
             var calendars = ["HijriCalendar", "GregorianCalendar"];
             var dateRanges = [{ start: new Date(2009, 0, 1), end: new Date(2012, 11, 31) }, { start: new Date(2008, 0, 1), end: new Date(2013, 11, 31) }];
-            var dates = [new Date(2010, 0, 1), new Date(2010, 1, 1), new Date(2010, 11, 31), ]
+            var dates = [new Date(2010, 0, 1), new Date(2010, 1, 1), new Date(2010, 11, 31), ];
 
             dateRanges.forEach(function (range) {
                 dates.forEach(function (date) {
@@ -99,7 +99,7 @@ CorsicaTests.DatePicker = function () {
                         var ni = WinJS.UI.DatePicker.getInformation(
                         range.start,
                         range.end,
-                        cal)
+                        cal);
 
                         var f2 = date;
                         var f3 = ni.getIndex(f2);
@@ -122,7 +122,7 @@ CorsicaTests.DatePicker = function () {
             ];
 
             dateRanges.forEach(function (range) {
-                var ni = WinJS.UI.DatePicker.getInformation(range.start, range.end)
+                var ni = WinJS.UI.DatePicker.getInformation(range.start, range.end);
 
                 var f2 = new Date(2012, 7, 31);
                 var f3 = ni.getIndex(f2);
@@ -244,7 +244,7 @@ CorsicaTests.DatePicker = function () {
         var t = new Date();
         var date1 = new Date(t.getFullYear(), t.getMonth(), t.getDate(), 12, 0, 0, 0);
         var control = new WinJS.UI.DatePicker(controlElement, { calendar: "GregorianCalendar" });
-        var t = new Date();
+        t = new Date();
         var date2 = new Date(t.getFullYear(), t.getMonth(), t.getDate(), 12, 0, 0, 0);
 
         LiveUnit.Assert.areEqual(controlElement, control._domElement);
@@ -504,7 +504,7 @@ CorsicaTests.DatePicker = function () {
                 }
 
             }
-        }
+        };
 
 
         //modify current and re-check updated values
@@ -516,16 +516,16 @@ CorsicaTests.DatePicker = function () {
         WinJS.Utilities.disposeSubTree(controlElement);
         document.body.removeChild(controlElement);
     };
-    
+
     this.testDatePickerDispose = function () {
         var dp = new WinJS.UI.DatePicker();
         LiveUnit.Assert.isTrue(dp.dispose);
         LiveUnit.Assert.isTrue(dp.element.classList.contains("win-disposable"));
         LiveUnit.Assert.isFalse(dp._disposed);
-        
+
         dp.dispose();
         dp.dispose();
     };
-}
+};
 
 LiveUnit.registerTestClass("CorsicaTests.DatePicker");
