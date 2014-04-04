@@ -19,6 +19,7 @@ declare module WinJS {
         var _TemplateCompiler;
     }
 
+<<<<<<< HEAD
     module Namespace {
         var _lazy;
     }
@@ -32,6 +33,8 @@ declare module WinJS {
         function _formatString(format: string, ...values: any[]): string;
     }
 
+=======
+>>>>>>> Moving base folder to TypeScript modules.
     module UI {
         var optionsParser;
         var _AUTOSCROLL_DELAY;
@@ -181,25 +184,37 @@ declare module WinJS {
 
     module Utilities {
         var _clamp;
+<<<<<<< HEAD
         var _createEventProperty;
         var _createWeakRef;
         var _dataKey;
         var _deprecated;
         var _disposeElement;
+=======
+        var _createWeakRef;
+        var _dataKey;
+        var _deprecated;
+>>>>>>> Moving base folder to TypeScript modules.
         var _focusFirstFocusableElement;
         var _focusLastFocusableElement;
         var _getLowestTabIndexInList;
         var _getHighestTabIndexInList;
+<<<<<<< HEAD
         var _getMemberFiltered;
         var _getProfilerMarkIdentifier;
         var _getWeakRefElement;
         var _isDOMElement;
         var _linkedListMixin;
+=======
+        var _getWeakRefElement;
+        var _isDOMElement;
+>>>>>>> Moving base folder to TypeScript modules.
         var _DOMWeakRefTable_fastLoadPath;
         var _DOMWeakRefTable_noTimeoutUnderDebugger;
         var _DOMWeakRefTable_sweepPeriod;
         var _DOMWeakRefTable_timeout       
         var _setActiveFirstFocusableElement;
+<<<<<<< HEAD
         var _shallowCopy;
         var _syncRenderer;
         var _trySetActive;
@@ -212,6 +227,13 @@ declare module WinJS {
         var _setActive;
 
         var isPhone;
+=======
+        var _syncRenderer;
+        var _trySetActive;
+        var _writeProfilerMark;
+        var _setActive;
+
+>>>>>>> Moving base folder to TypeScript modules.
         var supportedForProcessing;
         var testReadyState: string;
     }

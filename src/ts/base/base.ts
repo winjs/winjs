@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function baseInit(global) {
+module WinJS {
     "use strict";
 
     function initializeProperties(target, members, prefix?) {
@@ -35,20 +35,9 @@
         }
     }
 
-    (function (rootNamespace) {
+    export module Namespace {
 
-        // Create the rootNamespace in the global namespace
-        if (!global[rootNamespace]) {
-            global[rootNamespace] = Object.create(Object.prototype);
-        }
-
-        // Cache the rootNamespace we just created in a local variable
-        var _rootNamespace = global[rootNamespace];
-        if (!_rootNamespace.Namespace) {
-            _rootNamespace.Namespace = Object.create(Object.prototype);
-        }
-
-        function defineWithParent(parentNamespace, name, members) {
+        export function defineWithParent(parentNamespace, name, members) {
             /// <signature helpKeyword="WinJS.Namespace.defineWithParent">
             /// <summary locid="WinJS.Namespace.defineWithParent">
             /// Defines a new namespace with the specified name under the specified parent namespace.
@@ -88,7 +77,7 @@
             return currentNamespace;
         }
 
-        function define(name, members) {
+        export function define(name, members) {
             /// <signature helpKeyword="WinJS.Namespace.define">
             /// <summary locid="WinJS.Namespace.define">
             /// Defines a new namespace with the specified name.
@@ -103,16 +92,16 @@
             /// The newly-defined namespace.
             /// </returns>
             /// </signature>
-            return defineWithParent(global, name, members);
+            return defineWithParent(self, name, members);
         }
 
-        var LazyStates = {
-            uninitialized: 1,
-            working: 2,
-            initialized: 3,
+        enum LazyStates {
+            uninitialized = 1,
+            working = 2,
+            initialized = 3,
         };
 
-        function lazy(f) {
+        export function _lazy(f) {
             if (typeof f === "string") {
                 var target = f;
                 f = function () {
@@ -166,23 +155,11 @@
                 configurable: true,
             }
         }
+    }
 
-        // Establish members of the "WinJS.Namespace" namespace
-        Object.defineProperties(_rootNamespace.Namespace, {
+    export module Class {
 
-            defineWithParent: { value: defineWithParent, writable: true, enumerable: true, configurable: true },
-
-            define: { value: define, writable: true, enumerable: true, configurable: true },
-
-            _lazy: { value: lazy, writable: true, enumerable: true, configurable: true },
-
-        });
-
-    })("WinJS");
-
-    (function (WinJS) {
-
-        function define(constructor, instanceMembers, staticMembers) {
+        export function define(constructor, instanceMembers?, staticMembers?) {
             /// <signature helpKeyword="WinJS.Class.define">
             /// <summary locid="WinJS.Class.define">
             /// Defines a class using the given constructor and the specified instance members.
@@ -211,7 +188,7 @@
             return constructor;
         }
 
-        function derive(baseClass, constructor, instanceMembers, staticMembers) {
+        export function derive(baseClass, constructor, instanceMembers?, staticMembers?) {
             /// <signature helpKeyword="WinJS.Class.derive">
             /// <summary locid="WinJS.Class.derive">
             /// Creates a sub-class based on the supplied baseClass parameter, using prototypal inheritance.
@@ -250,7 +227,7 @@
             }
         }
 
-        function mix(constructor) {
+        export function mix(constructor, ...mixins:any[]) {
             /// <signature helpKeyword="WinJS.Class.mix">
             /// <summary locid="WinJS.Class.mix">
             /// Defines a class using the given constructor and the union of the set of instance members
@@ -264,21 +241,12 @@
             /// </returns>
             /// </signature>
             constructor = constructor || function () { };
-            var i, len;
-            for (i = 1, len = arguments.length; i < len; i++) {
-                initializeProperties(constructor.prototype, arguments[i]);
-            }
+            mixins.forEach(function(mixin) {
+                initializeProperties(constructor.prototype, mixin);
+            });
             return constructor;
         }
+    }
 
-        // Establish members of "WinJS.Class" namespace
-        WinJS.Namespace.define("WinJS.Class", {
-            define: define,
-            derive: derive,
-            mix: mix
-        });
-
-    })(WinJS);
-
-})(this);
+}
 

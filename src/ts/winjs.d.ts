@@ -13,10 +13,6 @@ interface Event {
     detail: any;
 }
 
-interface Function {
-    (...args: any[]): any;
-}
-
 declare module Windows {
     var ApplicationModel;
     var Data;
@@ -28,11 +24,6 @@ declare module Windows {
 }
 
 declare module WinJS {
-    var validation: boolean;
-
-    function log(message: string, tags: string, type: string);
-    function strictProcessing();
-    function xhr(options: IXHROptions): Promise<XMLHttpRequest>;
 
     interface KeyValuePair<K, V> {
         key: K;
@@ -43,22 +34,6 @@ declare module WinJS {
 
     interface IDisposable {
         dispose();
-    }
-
-    interface IXHROptions {
-        url: string;
-
-        customRequestInitializer?: (req: XMLHttpRequest) => any;
-        data?: any;
-        headers?: string[];
-        password?: string;
-        responseType?: string;
-        type?: string;
-        user?: string;
-    }
-
-    class ErrorFromName {
-        constructor(name: string, message?: string);
     }
 
     class Promise<T> {
@@ -243,17 +218,6 @@ declare module WinJS {
         }
     }
 
-    module Class {
-        function define<T>(ctor: T, instanceMembers?: any, staticMembers?: any): T;                     // not quite
-        function derive<T>(baseClass: any, ctor: T, instanceMembers?: any, staticMembers?: any): T;     // not quite
-        function mix<T>(cls: T, ...mixin: any[]): T;                                                      // not quite
-    }
-
-    module Namespace {
-        function define(name: string, members: any): any;                                       // not quite?
-        function defineWithParent(parentNamespace: any, name: string, members: any): any;       // not quite?
-    }
-
     module Navigation {
         var canGoBack: boolean;
         var canGoForward: boolean;
@@ -290,16 +254,12 @@ declare module WinJS {
     }
 
     module Resources {
-        function getString(resourceId: string): any;
         function processAll(rootElement?: HTMLElement);
 
         var oncontextchanged: (e: CustomEvent) => any;
-        function dispatchEvent(type: "contextchanged", details);
-        function dispatchEvent(type: string, details);
-        function addEventListener(type: "contextchanged", listener: (e: CustomEvent) => any);
-        function addEventListener(type: string, listener: (e: CustomEvent) => any);
-        function removeEventListener(type: "contextchanged", listener: (e: CustomEvent) => any);
-        function removeEventListener(type: string, listener: (e: CustomEvent) => any);
+        //function dispatchEvent(type: "contextchanged", details);
+        //function addEventListener(type: "contextchanged", listener: (e: CustomEvent) => any);
+        //function removeEventListener(type: "contextchanged", listener: (e: CustomEvent) => any);
     }
 
     module UI {
@@ -1499,7 +1459,6 @@ declare module WinJS {
     }
 
     module Utilities {
-        var eventMixin;
 
         enum Key {
             a,
@@ -1525,13 +1484,6 @@ declare module WinJS {
             subtract,
             tab,
             upArrow,
-        }
-
-        interface ILogOptions {
-            type: string;
-            action?: (message: string, tags: string, type: string) => void;
-            excludeTags: string;
-            tags: string;
         }
 
         interface IRect {
@@ -1563,21 +1515,14 @@ declare module WinJS {
             template(templateElement: HTMLElement, data: any, renderDonePromiseCallback?: (promise: Promise<HTMLElement>) => any): QueryCollection;
             toggleClass(name: string): QueryCollection;
         }
-
-        var hasWinRT: boolean;
-
         function addClass<T extends HTMLElement>(element: T, className: string): T;
         function children(element: HTMLElement): QueryCollection;
         function convertToPixels(element: HTMLElement, value: string): number;
-        function createEventProperties(...events: string[]): any; // can we type this?
         function data(element: HTMLElement): any;
-        function disposeSubTree(element: HTMLElement);
         function empty<T extends HTMLElement>(element: T): T;
         function eventWithinElement(element: HTMLElement, event: Event): boolean;
-        function formatLog(message: string, tag: string, type: string): string;
         function getContentHeight(element: HTMLElement): number;
         function getContentWidth(element: HTMLElement): number;
-        function getMember(name: string, root?: any): any;
         function getPosition(element: HTMLElement): IRect;
         function getRelativeLeft(element: HTMLElement, parent: HTMLElement): number;
         function getRelativeTop(element: HTMLElement, parent: HTMLElement): number;
@@ -1585,69 +1530,8 @@ declare module WinJS {
         function getTotalWidth(element: HTMLElement): number;
         function hasClass(element: Element, className: string): boolean;
         function id(id: string): QueryCollection;
-        function insertAdjacentHTML(element: HTMLElement, position: string, text: string);              // 2)
-        function insertAdjacentHTMLUnsafe(element: HTMLElement, position: string, text: string);        // 2)
-        function markDisposable(element: HTMLElement, disposeImpl?: Function);
-        function markSupportedForProcessing<T>(func: T): T;
         function query(query: string, element: HTMLElement): QueryCollection;
-        function ready(callback?: Function, async?: boolean): Promise<any>;
         function removeClass<T extends HTMLElement>(element: T, className: string): T;
-        function requireSupportedForProcessing<T>(value: T): T;
-        function setInnerHTML(element: HTMLElement, text: string);
-        function setInnerHTMLUnsafe(element: HTMLElement, text: string);
-        function setOuterHTML(element: HTMLElement, text: string);
-        function setOuterHTMLUnsafe(element: HTMLElement, text: string);
-        function startLog(options: ILogOptions);
-        function stopLog();
         function toggleClass<T extends HTMLElement>(element: T, className: string): T;
-
-        module Scheduler {
-            enum Priority {
-                aboveNormal,
-                belowNormal,
-                high,
-                idle,
-                max,
-                min,
-                normal
-            }
-
-            interface IJob {
-                completed: boolean;
-                id: number;
-                name: string;
-                owner: IOwnerToken;
-                priority: Priority;
-
-                cancel();
-                pause();
-                resume();
-            }
-
-            interface IJobInfo {
-                job: IJob;
-                shouldYield: boolean;
-
-                setWork(work: Function);
-                setPromise(promise: Promise<any>);
-            }
-
-            interface IOwnerToken {
-                cancelAll();
-            }
-
-            var currentPriority: Priority;
-
-            function createOwnerToken(): IOwnerToken;
-            function execHigh<T>(callback: (...args) => T): T;
-            function retrieveState(): string;               // 2) maybe not, since its for debugging only
-            function requestDrain(priority?: number, name?: string): Promise<any>;
-            function schedule<T>(work: (jobInfo: IJobInfo) => any, priority?: Priority, thisArg?: T, name?: string): IJob;
-            function schedulePromiseAboveNormal<T>(promiseValue: T, jobName: string): Promise<T>;
-            function schedulePromiseBelowNormal<T>(promiseValue: T, jobName: string): Promise<T>;
-            function schedulePromiseHigh<T>(promiseValue: T, jobName: string): Promise<T>;
-            function schedulePromiseIdle<T>(promiseValue: T, jobName: string): Promise<T>;
-            function schedulePromiseNormal<T>(promiseValue: T, jobName: string): Promise<T>;
-        }
     }
 }

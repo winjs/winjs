@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function () {
+module WinJS {
     "use strict";
-    WinJS.Namespace.define("WinJS.Utilities", {
 
-        markDisposable: function (element, disposeImpl) {
+    export module Utilities {
+
+        export function markDisposable (element: HTMLElement, disposeImpl?:Function) {
             /// <signature helpKeyword="WinJS.Utilities.markDisposable">
             /// <summary locid="WinJS.Utilities.markDisposable">
             /// Adds the specified dispose implementation to the specified element and marks it as disposable.
@@ -30,9 +31,14 @@
                     disposeImpl();
                 }
             };
-        },
+        }
 
-        disposeSubTree: function (element) {
+        export interface IDisposable extends HTMLElement {
+            winControl?: IDisposable;
+            dispose?: ()=>void;
+        }
+
+        export function disposeSubTree(element:HTMLElement) {
             /// <signature helpKeyword="WinJS.Utilities.disposeSubTree">
             /// <summary locid="WinJS.Utilities.disposeSubTree">
             /// Disposes all first-generation disposable elements that are descendents of the specified element.
@@ -52,7 +58,7 @@
             var index = 0;
             var length = query.length;
             while (index < length) {
-                var disposable = query[index];
+                var disposable:IDisposable = <any>query[index];
                 if (disposable.winControl && disposable.winControl.dispose) {
                     disposable.winControl.dispose();
                 }
@@ -64,9 +70,9 @@
                 index += disposable.querySelectorAll(".win-disposable").length + 1;
             }
             WinJS.Utilities._writeProfilerMark("WinJS.Utilities.disposeSubTree,StopTM");
-        },
+        }
 
-        _disposeElement: function (element) {
+        export function _disposeElement(element:IDisposable) {
             // This helper should only be used for supporting dispose scenarios predating the dispose pattern.
             // The specified element should be well enough defined so we don't have to check whether it
             // a) has a disposable winControl,
@@ -90,5 +96,5 @@
                 WinJS.Utilities.disposeSubTree(element);
             }
         }
-    });
-})();
+    }
+}

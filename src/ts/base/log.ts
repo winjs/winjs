@@ -1,39 +1,61 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function logInit() {
+module WinJS {
     "use strict";
 
-    var spaceR = /\s+/g;
-    var typeR = /^(error|warn|info|log)$/;
+    export var log;
 
-    function format(message, tag, type) {
-        /// <signature helpKeyword="WinJS.Utilities.formatLog">
-        /// <summary locid="WinJS.Utilities.formatLog">
-        /// Adds tags and type to a logging message.
-        /// </summary>
-        /// <param name="message" type="String" locid="WinJS.Utilities.startLog_p:message">The message to format.</param>
-        /// <param name="tag" type="String" locid="WinJS.Utilities.startLog_p:tag">
-        /// The tag(s) to apply to the message. Separate multiple tags with spaces.
-        /// </param>
-        /// <param name="type" type="String" locid="WinJS.Utilities.startLog_p:type">The type of the message.</param>
-        /// <returns type="String" locid="WinJS.Utilities.startLog_returnValue">The formatted message.</returns>
-        /// </signature>
-        var m = message;
-        if (typeof (m) === "function") { m = m(); }
+    export module Utilities {
+        var spaceR = /\s+/g;
+        var typeR = /^(error|warn|info|log)$/;
 
-        return ((type && typeR.test(type)) ? ("") : (type ? (type + ": ") : "")) +
-            (tag ? tag.replace(spaceR, ":") + ": " : "") +
-            m;
-    }
-    function defAction(message, tag, type) {
-        var m = WinJS.Utilities.formatLog(message, tag, type);
-        console[(type && typeR.test(type)) ? type : "log"](m);
-    }
-    function escape(s) {
-        // \s (whitespace) is used as separator, so don't escape it
-        return s.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
-    }
-    WinJS.Namespace.define("WinJS.Utilities", {
-        startLog: function (options) {
+        export function formatLog(message:string, tag:string, type:string);
+        export function formatLog(message:Function, tag:string, type:string);
+        export function formatLog(message:any, tag:string, type:string) {
+            /// <signature helpKeyword="WinJS.Utilities.formatLog">
+            /// <summary locid="WinJS.Utilities.formatLog">
+            /// Adds tags and type to a logging message.
+            /// </summary>
+            /// <param name="message" type="String" locid="WinJS.Utilities.startLog_p:message">The message to format.</param>
+            /// <param name="tag" type="String" locid="WinJS.Utilities.startLog_p:tag">
+            /// The tag(s) to apply to the message. Separate multiple tags with spaces.
+            /// </param>
+            /// <param name="type" type="String" locid="WinJS.Utilities.startLog_p:type">The type of the message.</param>
+            /// <returns type="String" locid="WinJS.Utilities.startLog_returnValue">The formatted message.</returns>
+            /// </signature>
+            var m = message;
+            if (typeof (m) === "function") { m = m(); }
+
+            return ((type && typeR.test(type)) ? ("") : (type ? (type + ": ") : "")) +
+                (tag ? tag.replace(spaceR, ":") + ": " : "") +
+                m;
+        }
+        function defAction(message:string, tag:string, type:string) {
+            var m = WinJS.Utilities.formatLog(message, tag, type);
+            console[(type && typeR.test(type)) ? type : "log"](m);
+        }
+        function escape(s:string) {
+            // \s (whitespace) is used as separator, so don't escape it
+            return s.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
+        }
+
+        export interface ILogAction {
+            (message:string, tag:string, type:string):void;
+        }
+
+        export interface ILogOptions {
+            type: string;
+            excludeTags: string;
+            tags: string;
+            action: ILogAction;
+        }
+
+        interface IResult extends ILogAction {
+            next: ILogAction;
+        };
+
+        export function startLog(options:string);
+        export function startLog(options:ILogOptions);
+        export function startLog(options:any) {
             /// <signature helpKeyword="WinJS.Utilities.startLog">
             /// <summary locid="WinJS.Utilities.startLog">
             /// Configures a logger that writes messages containing the specified tags from WinJS.log to console.log.
@@ -68,7 +90,7 @@
                 return;
             }
 
-            var result:any = function (message, tag, type) {
+            var result:IResult = <IResult>function (message:string, tag:string, type:string) {
                 if (!((el && !el.test(type))          // if the expected log level is not satisfied
                     || (not && not.test(tag))         // if any of the excluded categories exist
                     || (has && !has.test(tag)))) {    // if at least one of the included categories doesn't exist
@@ -79,15 +101,15 @@
             };
             result.next = WinJS.log;
             WinJS.log = result;
-        },
-        stopLog: function () {
+        }
+        
+        export function stopLog() {
             /// <signature helpKeyword="WinJS.Utilities.stopLog">
             /// <summary locid="WinJS.Utilities.stopLog">
             /// Removes the previously set up logger.
             /// </summary>
             /// </signature>
             delete WinJS.log;
-        },
-        formatLog: format
-    });
-})();
+        }
+    }
+}
