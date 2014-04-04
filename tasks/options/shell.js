@@ -18,9 +18,12 @@
                 args.files = args.files || args.file;
                 args.host = args.host || args.h;
                 args.debug = args.debug || args.d;
-                files = args.files.split(",");
-                host = args.host.toLowerCase();
-                debug = args.debug;
+                if (args.files)
+                    files = args.files.split(",");
+                if (args.host)
+                    host = args.host.toLowerCase();
+                if (args.debug)
+                    debug = args.debug;
 
                 // Build up command string
                 var command = "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe";
@@ -33,7 +36,7 @@
                 else
                     command += " /host:" + host;
                 command += " @res.txt";
-                return command;
+                return "echo " + command;
             },
             options: {
                 stdout: true,
