@@ -21,7 +21,7 @@ Note that all code submissions will be rigorously reviewed and tested by the tea
 The source code on this repo is under active development that will be part of our next release. For details on our planned features and future direction please refer to our [roadmap](https://github.com/winjs/winjs/wiki/Roadmap).
 
 # Build WinJS
-In order build WinJS, ensure that you have [git](http://git-scm.com/downloads) and [Node.js](http://nodejs.org/download/) installed.
+In order to build WinJS, ensure that you have [git](http://git-scm.com/downloads) and [Node.js](http://nodejs.org/download/) installed.
 
 Clone a copy of the master WinJS git repo:
 ```
