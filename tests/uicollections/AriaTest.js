@@ -40,7 +40,7 @@ WinJSTests.AriaTests = function () {
             "</div>";
         document.body.appendChild(newNode);
         removeListviewAnimations();
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -55,7 +55,7 @@ WinJSTests.AriaTests = function () {
             document.body.removeChild(element);
         }
         restoreListviewAnimations();
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     }
 
     function setupListview(element, layoutName, useGroups) {

@@ -30,7 +30,7 @@ WinJSTests.ListViewDragDropTest = function () {
         newNode.style.width = "200px";
         newNode.style.height = "300px";
         document.body.appendChild(newNode);
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -41,7 +41,7 @@ WinJSTests.ListViewDragDropTest = function () {
             WinJS.Utilities.disposeSubTree(element);
             document.body.removeChild(element);
         }
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     }
 
     function getRawData(count) {

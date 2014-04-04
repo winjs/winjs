@@ -6,6 +6,7 @@
 //      Flipper Test Utilities for the Flipper test cases
 //
 //-----------------------------------------------------------------------------
+/// <reference path="..\TestLib\LegacyLiveUnit\commonutils.js"/>
 
 // flipperUtilsObject is used to dereference methods when in callback functions.
 var flipperUtilsObject;

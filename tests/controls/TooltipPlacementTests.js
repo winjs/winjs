@@ -47,7 +47,12 @@ TooltipPlacementTests = function () {
         // set up the tooltip
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "tooltip", placement: tooltipPlacement });
 
+        var testComplete = false;
         function tooltipEventListener(event) {
+            if (testComplete) {
+                return;
+            }
+
             LiveUnit.Assert.isNotNull(event);
             LiveUnit.LoggingCore.logComment(event.type);
             tooltipUtils.logTooltipInformation(tooltip);
@@ -64,6 +69,7 @@ TooltipPlacementTests = function () {
                     tooltipUtils.getTooltipDistanceFromWindow(tooltip);
 
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    testComplete = true;
                 break;
             }
         }
