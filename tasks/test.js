@@ -1,20 +1,19 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 module.exports = function (grunt) {
     var config = require("../config.js");
-    
+
     grunt.registerTask("test", function () {
         if (config.inRazzle) {
-            var taskArgs = Array.prototype.slice.call(arguments).join(":");
-            grunt.task.run(["default", "clean:qunit", "shell:runTests:" + taskArgs]);
+            grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
         } else {
             grunt.task.run(["default", "shell:openQUnitTestPage"]);
         }
     });
-    
+
     // Generate QUnit test pages
     grunt.log.write("Building QUnit test pages...");
     var fs = require("fs");
-    
+
     function clean(path) {
         var files = [];
         if( fs.existsSync(path) ) {
@@ -29,10 +28,10 @@ module.exports = function (grunt) {
             });
         }
     }
-    
+
     function extractDependencies(fileContents) {
         var deps = [];
-    
+
         var lines = fileContents.split("\r\n");
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];
@@ -44,17 +43,17 @@ module.exports = function (grunt) {
                     continue;
                 }
             }
-            
+
             var startIndex = line.indexOf('path="') + 6;
             var endIndex = line.indexOf('"', startIndex);
-            
+
             deps.push(line.substring(startIndex, endIndex));
-            
+
             processedOne = true;
         }
         return deps;
     }
-    
+
     function arrayIndexOf(arr, obj) {
         for (var i = 0; i < arr.length; i++) {
             if (arr[i] === obj) {
@@ -64,7 +63,7 @@ module.exports = function (grunt) {
         return -1;
     }
 
-    var testMenuTemplate = 
+    var testMenuTemplate =
 '<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
 <!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\
@@ -84,7 +83,7 @@ module.exports = function (grunt) {
 @@TESTS                                                                                                                     \r\n\
 </body>                                                                                                                     \r\n\
 </html>';
-    
+
     var testPageTemplate =
 '<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
 <!-- saved from url=(0014)about:internet -->\r\n\
@@ -113,7 +112,7 @@ module.exports = function (grunt) {
     <div id="qunit-fixture"></div>                                                                                          \r\n\
 </body>                                                                                                                     \r\n\
 </html>'.replace(/@@TARGETFRAMEWORK/g, config.targetFramework);
-    
+
     clean("./bin");
     if (!fs.existsSync("./bin")) {
         fs.mkdirSync("./bin");
@@ -121,19 +120,19 @@ module.exports = function (grunt) {
     if (!fs.existsSync("./bin/tests")) {
         fs.mkdirSync("./bin/tests");
     }
-    
+
     var dirs = fs.readdirSync("./tests");
     var tests = "";
     dirs.forEach(function (dir) {
         if (!fs.lstatSync("./tests/" + dir).isDirectory() || dir === "TestData" || dir === "TestLib") {
             return;
         }
-        
+
         var html = testPageTemplate;
         html = html.replace("@@TITLE", dir);
-        
+
         var testReferences = "";
-        
+
         var srcs = [];
         var csss = [];
         var files = fs.readdirSync("./tests/" + dir);
@@ -160,7 +159,7 @@ module.exports = function (grunt) {
                         return;
                     }
                     if (dep.indexOf(".css") >= 0) {
-                        if (arrayIndexOf(csss, dep) < 0) { 
+                        if (arrayIndexOf(csss, dep) < 0) {
                             csss.push(dep);
                         }
                     } else {
@@ -182,7 +181,7 @@ module.exports = function (grunt) {
             }
             srcs = srcsCopy;
         }
-        
+
         for (var i = 0; i< csss.length; i++) {
             testReferences += '    <link type="text/css" rel="stylesheet" href="' + csss[i] + '" />';
         }
@@ -191,7 +190,7 @@ module.exports = function (grunt) {
         }
         testReferences = testReferences.substr(0, testReferences.length - 2);
         html = html.replace("@@TESTREFERENCES", testReferences);
-        
+
         var testFolder = "./bin/tests/" + dir;
         if (!fs.existsSync(testFolder)) {
             fs.mkdirSync(testFolder);
@@ -201,6 +200,6 @@ module.exports = function (grunt) {
     });
     tests = tests.substr(0, tests.length - 2);
     fs.writeFileSync("./bin/tests/tests.html", testMenuTemplate.replace("@@TESTS", tests));
-    
+
     grunt.log.writeln("Done!");
 };

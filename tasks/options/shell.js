@@ -1,43 +1,47 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-var config = require("../../config.js");
 
-module.exports = {
-    runTests: {
-        command: function () {
-            var args = Array.prototype.slice.call(arguments);
+(function() {
+    "use strict";
+    var config = require("../../config.js");
+    var parseArgs = require("minimist");
 
-            // Default args
-            if (args.length === 0 || args[0] === "")
-                args[0] = "*.js";
-            var host = "wwa";
+    module.exports = {
+        runTests: {
+            command: function () {
+                // Default args
+                var files = ["*.js"];
+                var host = "wwa";
+                var debug = false;
 
-            // Determine if last argument is a host parameter (not a glob pattern)
-            // Host parameter is only valid with 1 or more parameters
-            if (args.length > 1) {
-                var last = args[args.length - 1].toLowerCase();
-                if (last.indexOf("*") < 0 && last.indexOf(".") < 0) {
-                    host = last;
-                    args.pop();
-                }
+                // Get arguments
+                var args = parseArgs(process.argv);
+                args.files = args.files || args.file;
+                args.host = args.host || args.h;
+                args.debug = args.debug || args.d;
+                files = args.files.split(",");
+                host = args.host.toLowerCase();
+                debug = args.debug;
+
+                // Build up command string
+                var command = "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe";
+            for (var i = 0, l = files.length; i < l; ++i)
+                    command +=  " /s:%_NTTREE%/Corsica/other." + config.version + ".debug/Tests/UnitTests/" + files[i];
+                if (debug)
+                    command += " /debug";
+                if (host === "vs")
+                    command += " /vs";
+                else
+                    command += " /host:" + host;
+                command += " @res.txt";
+                return command;
+            },
+            options: {
+                stdout: true,
+                stderr: true
             }
-
-            // Build up command string
-            var command = "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe";
-            for (var i = 0, l = args.length; i < l; ++i)
-                command +=  " /s:%_NTTREE%/Corsica/other." + config.version + ".debug/Tests/UnitTests/" + args[i];
-            if (host === "vs")
-                command += " /vs";
-            else
-                command += " /host:" + host;
-            command += " @res.txt";
-            return command;
         },
-        options: {
-            stdout: true,
-            stderr: true
+        openQUnitTestPage: {
+            command: "start bin/tests/tests.html"
         }
-    },
-    openQUnitTestPage: {
-        command: "start bin/tests/tests.html"
-    }
 };
+})();
