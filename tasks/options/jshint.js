@@ -6,8 +6,8 @@
 */
 (function () {
     "use strict";
-    var config = require("../../config.js");    
-
+    var config = require("../../config.js");
+   
     var cloneOptions = function (opt){
         var temp = {};
         for(var key in opt){
@@ -19,6 +19,7 @@
     // Options:
     var sharedOptions = {
         force: true, // Report JSHint errors but not fail the task. This enabled temporarily until we can decide on a final configuration and fix remaining errors.
+        reporter: "tasks/utilities/jshintreporter.js",
         asi: true, // Suppress warnings about missing semicolons.        
         sub: true, // Suppress warnings about using [] notation when it can be expressed in dot notation.
         expr: true, // Suppress warnings about the use of expressions where expected to see assignments or function calls.
@@ -27,11 +28,11 @@
     }
 
     var buildOptions = cloneOptions(sharedOptions);
-    buildOptions.node = true; // Defines globals exposed inside of Node runtime enviornment.
+    buildOptions.node = true; // Defines globals exposed inside of Node runtime enviornment.    
 
     var sourceOptions = cloneOptions(sharedOptions);
-    sourceOptions.browser = true; // Defines globals exposed by modern browsers, with the exclusion of developer globals like alert and console.
-
+    sourceOptions.browser = true; // Defines globals exposed by modern browsers, with the exclusion of developer globals like alert and console.    
+    
     module.exports = {
         buildFiles: {
             src: config.lint.buildFiles,
