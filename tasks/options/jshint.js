@@ -7,10 +7,10 @@
 (function () {
     "use strict";
     var config = require("../../config.js");
-   
-    var cloneOptions = function (opt){
+
+    var cloneOptions = function (opt) {
         var temp = {};
-        for(var key in opt){
+        for (var key in opt) {
             temp[key] = opt[key];
         }
         return temp;
@@ -31,8 +31,8 @@
     buildOptions.node = true; // Defines globals exposed inside of Node runtime enviornment.    
 
     var sourceOptions = cloneOptions(sharedOptions);
-    sourceOptions.browser = true; // Defines globals exposed by modern browsers, with the exclusion of developer globals like alert and console.    
-    
+    sourceOptions.browser = true; // Defines globals exposed by modern browsers, with the exclusion of developer globals like alert and console.        
+
     module.exports = {
         buildFiles: {
             src: config.lint.buildFiles,
