@@ -200,7 +200,11 @@
             /// The newly-defined class.
             /// </returns>
             /// </signature>
-            constructor = constructor || function () { };
+            if (typeof constructor !== 'function') {
+                staticMembers = instanceMembers || {};
+                instanceMembers = constructor || {};
+                constructor = function () { };
+            }
             WinJS.Utilities.markSupportedForProcessing(constructor);
             if (instanceMembers) {
                 initializeProperties(constructor.prototype, instanceMembers);
@@ -233,7 +237,11 @@
             /// </returns>
             /// </signature>
             if (baseClass) {
-                constructor = constructor || function () { };
+                if (typeof constructor !== 'function') {
+                    staticMembers = instanceMembers || {};
+                    instanceMembers = constructor || {};
+                    constructor = function () { };
+                }
                 var basePrototype = baseClass.prototype;
                 constructor.prototype = Object.create(basePrototype);
                 WinJS.Utilities.markSupportedForProcessing(constructor);
