@@ -36,7 +36,7 @@
                 else
                     command += " /host:" + host;
                 command += " @res.txt";
-                return "echo " + command;
+                return command;
             },
             options: {
                 stdout: true,
