@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\src\js\animations\animations.js">
-      <Link>animations\animations.js</Link>
+      <Link>js\animations\animations.js</Link>
     </Content>
     <Content Include="..\..\src\js\Build\endUI.js">
       <Link>js\Build\endUI.js</Link>
@@ -66,8 +66,14 @@
     <Content Include="..\..\src\js\Build\startUI.js">
       <Link>js\Build\startUI.js</Link>
     </Content>
+    <Content Include="..\..\src\js\controls\AppBar\AppBar-phone.js">
+      <Link>js\controls\AppBar\AppBar-phone.js</Link>
+    </Content>
     <Content Include="..\..\src\js\controls\AppBar\AppBar.js">
       <Link>js\controls\AppBar\AppBar.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\AppBar\AppBarCommand-phone.js">
+      <Link>js\controls\AppBar\AppBarCommand-phone.js</Link>
     </Content>
     <Content Include="..\..\src\js\controls\AppBar\AppBarCommand.js">
       <Link>js\controls\AppBar\AppBarCommand.js</Link>
@@ -117,6 +123,12 @@
     <Content Include="..\..\src\js\controls\NavBar\NavBarContainer.js">
       <Link>js\controls\NavBar\NavBarContainer.js</Link>
     </Content>
+    <Content Include="..\..\src\js\controls\Pivot\Pivot.js">
+      <Link>js\controls\Pivot\Pivot.js</Link>
+    </Content>
+    <Content Include="..\..\src\js\controls\Pivot\PivotItem.js">
+      <Link>js\controls\Pivot\PivotItem.js</Link>
+    </Content>
     <Content Include="..\..\src\js\controls\Rating\Rating.js">
       <Link>js\controls\Rating\Rating.js</Link>
     </Content>
@@ -140,51 +152,6 @@
     </Content>
     <Content Include="..\..\src\js\controls\ViewBox\ViewBox.js">
       <Link>js\controls\ViewBox\ViewBox.js</Link>
-    </Content>
-    <Content Include="..\..\src\css\animation-library.css">
-      <Link>css\animation-library.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\colors-desktop.css">
-      <Link>css\colors-desktop.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\colors-phone.css">
-      <Link>css\colors-phone.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\colors.css">
-      <Link>css\colors.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\controls-desktop.css">
-      <Link>css\controls-desktop.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\controls-phone.css">
-      <Link>css\controls-phone.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\controls.css">
-      <Link>css\controls.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\html-controls-desktop.css">
-      <Link>css\html-controls-desktop.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\html-controls-phone.css">
-      <Link>css\html-controls-phone.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\html-controls.css">
-      <Link>css\html-controls.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\typography-fonts.css">
-      <Link>css\typography-fonts.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\typography.css">
-      <Link>css\typography.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\uicollections-desktop.css">
-      <Link>css\uicollections-desktop.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\uicollections-phone.css">
-      <Link>css\uicollections-phone.css</Link>
-    </Content>
-    <Content Include="..\..\src\css\uicollections.css">
-      <Link>css\uicollections.css</Link>
     </Content>
     <Content Include="..\..\src\js\en-US\ui.prefix.js">
       <Link>js\en-US\ui.prefix.js</Link>

@@ -17,18 +17,21 @@ CommonUtils.prototype = (function () {
     // Please keep these in alphabetical order.
     // Please refrain from adding any LiveUnit.Assert's in this class.
     return {
-        addCss: function CommonUtils_addCss(cssFileName) {
+        addCss: function CommonUtils_addCss(cssFileName, local) {
             /// <summary>
             ///     Load CSS from a file into the DOM.
             /// </summary>
             /// <param name="cssFileName" type="string">
             ///     Name of the CSS file to load.
             /// </param>
+            /// <param name="cssFileName" type="string">
+            ///     True, if this file is in the same folder as the executing script.
+            /// </param>
             /// <returns type="boolean"/>
 
             var added = false,
                 fullName = null;
-            if (typeof (WebUnit) === 'undefined') {
+            if (typeof (WebUnit) === 'undefined' && !local) {
                 // Don't use getPath, since that returns the "file:" location and we want the "http:" location in order to enable our tests in WWA's.
                 fullName = this.getCSSFromServer(cssFileName);
             }
@@ -55,10 +58,16 @@ CommonUtils.prototype = (function () {
             /// </param>
             /// <returns type="string"/>
 
-            var scriptTags = document.getElementsByTagName('script'),
-                resourcePathOnServer = scriptTags[4].src,
-                ToIndex = resourcePathOnServer.lastIndexOf("/"),
-                cssPath = resourcePathOnServer.substring(0, ToIndex);
+            var resourcePath = "";
+            for (var i = 0; i < document.styleSheets.length; i++) {
+                var sheet = document.styleSheets[i];
+                if (sheet.href) {
+                    resourcePath = sheet.href;
+                    break;
+                }
+            }
+            var ToIndex = resourcePath.lastIndexOf("/"),
+                cssPath = resourcePath.substring(0, ToIndex);
 
             cssPath = cssPath + "/" + fileName;
             return cssPath;
@@ -81,7 +90,7 @@ CommonUtils.prototype = (function () {
 
             var loaded = false;
             for (var i = 0; i < document.styleSheets.length; i++) {
-                if (document.styleSheets[i].href && (document.styleSheets[i].href.indexOf(cssFileName) > 0) && document.styleSheets[i].cssRules.length > 0) {
+                if (document.styleSheets[i].href && (document.styleSheets[i].href.indexOf(cssFileName) > 0)) {
                     LiveUnit.LoggingCore.logComment("Found CSS Stylesheet: " + cssFileName);
                     LiveUnit.LoggingCore.logComment("At: " + document.styleSheets[i].href);
                     loaded = true;
@@ -112,11 +121,12 @@ CommonUtils.prototype = (function () {
 
             var removed = false,
                 cssSheets = document.styleSheets;
-            for (var i = 0; i < cssSheets.length; i++) {
+            for (var i = cssSheets.length - 1; i >= 0; i--) {
                 if (cssSheets[i].href && (cssSheets[i].href.indexOf(cssFileName) > 0)) {
                     cssSheets[i].ownerNode.parentNode.removeChild(cssSheets[i].ownerNode);
                     LiveUnit.LoggingCore.logComment("Successfully removed CSS Stylesheet: " + cssFileName);
                     removed = true;
+                    break;
                 }
             }
 
@@ -142,6 +152,8 @@ CommonUtils.prototype = (function () {
             /// </param>
             LiveUnit.LoggingCore.logComment("Adding \"" + tagName + "\" with id \"" + tagId + "\" to the DOM");
             var tag = document.createElement(tagName);
+            tag.style.position = "absolute";
+            tag.style.left = tag.style.top = "0px";
             for (var a in attributes) {
                 tag.setAttribute(a, attributes[a]);
             }

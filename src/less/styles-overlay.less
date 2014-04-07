@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-﻿/*
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+/*
 AppBar/Flyout z-index values:
     1000 - AppBar/settings click-eating div
     1002 - AppBar
@@ -346,6 +346,7 @@ Flyout control.
 */
 .win-flyout {
     z-index: 1008;
+    position: fixed;
     position: -ms-device-fixed;
     padding: 25px 20px 20px 20px;
     border-style: solid;
@@ -464,6 +465,7 @@ the style "-ms-touch-select: none;"
 /* Singleton element maintained by _Overlay, used for getting accurate floating point measurements of the total size of the visual viewport.
     Floating point is necesary in high DPI resolutions. */
 .win-visualviewport-space {
+    position: fixed;
     position:-ms-device-fixed;
     height: 100vh;
     width: 100vw;

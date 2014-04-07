@@ -32,7 +32,7 @@ WinJSTests.ListEditorTest = function () {
         for (var i = 0; i < 100; ++i) {
             bigDataSet[i] = { title: "Tile" + i };
         }
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -43,7 +43,7 @@ WinJSTests.ListEditorTest = function () {
             WinJS.Utilities.disposeSubTree(element);
             document.body.removeChild(element);
         }
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     }
 
     function setupListView(element, layoutName, items, useBindingList, async) {

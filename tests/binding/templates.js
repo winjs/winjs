@@ -1014,7 +1014,7 @@ CorsicaTests.TemplateCompilerTests = function () {
 
     };
 
-    this.testDefaultInitializerOneTime = function () {
+    this.testDefaultInitializerOneTime = function (complete) {
 
         var templateDiv = document.createElement("div");
         templateDiv.innerHTML = "<div id='testObTemplateStyleBind2'>\
@@ -1041,13 +1041,14 @@ CorsicaTests.TemplateCompilerTests = function () {
             return WinJS.Promise.timeout().then(function () { return d; });
         }).then(function (d) {
             LiveUnit.Assert.areEqual("red", d.querySelector(".one").style.backgroundColor);
+            complete();
         });
 
     };
 
     // In order to support blend we need to support changing the template and recompiling
     //
-    this.testResetOnFragmentTreeChange = function () {
+    this.testResetOnFragmentTreeChange = function (complete) {
 
         var templateDiv = document.createElement("div");
         templateDiv.innerHTML = "<div id='testObTemplateStyleBind2'>\
@@ -1092,11 +1093,12 @@ CorsicaTests.TemplateCompilerTests = function () {
         }).then(function (d) {
             LiveUnit.Assert.areEqual("red", d.querySelector(".one").style.backgroundColor);
             LiveUnit.Assert.areEqual("100", d.querySelector(".two").textContent);
+            complete();
         });
 
     };
 
-    this.testResetOnFragmentAttributeChange = function () {
+    this.testResetOnFragmentAttributeChange = function (complete) {
 
         var templateDiv = document.createElement("div");
         templateDiv.innerHTML = "<div id='testObTemplateStyleBind2'>\
@@ -1139,6 +1141,7 @@ CorsicaTests.TemplateCompilerTests = function () {
         }).then(function (d) {
             LiveUnit.Assert.areEqual("red", d.querySelector(".one").style.backgroundColor);
             LiveUnit.Assert.areEqual("something", d.querySelector(".one").getAttribute("aria-label"));
+            complete();
         });
 
     };

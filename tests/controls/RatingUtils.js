@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-﻿//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 //
 //  Abstract:
 //
@@ -14,7 +14,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
-/// <reference path="..\TestLib\LegacyLiveUnit\commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
 /// <reference path="RatingUtils.js"/>
 
 function RatingUtils() {
@@ -729,7 +729,7 @@ RatingUtils.prototype = (function () {
 
                 // Verify star uses a font glyph
                 if (starStyle.display !== "none") {
-                    LiveUnit.Assert.areEqual("\"\"", starBeforePartStyle.getPropertyValue("content"), "Verify star " + (i + 1) + " uses the proper glyph by default.");
+                    LiveUnit.Assert.areEqual("\"\ue082\"", starBeforePartStyle.getPropertyValue("content"), "Verify star " + (i + 1) + " uses the proper glyph by default.");
                 }
 
                 // Check to see if we are showing a floating-point average rating, and, if so, whether we are
@@ -778,7 +778,7 @@ RatingUtils.prototype = (function () {
                     starBeforePartStyle = window.getComputedStyle(star, ":before");
 
                     // Verify star uses a font glyph
-                    LiveUnit.Assert.areEqual("\"\"", starBeforePartStyle.getPropertyValue("content"), "Verify star " + (i + 1) + " uses the proper glyph by default.");
+                    LiveUnit.Assert.areEqual("\"\ue082\"", starBeforePartStyle.getPropertyValue("content"), "Verify star " + (i + 1) + " uses the proper glyph by default.");
 
                     if (Math.floor(rating.averageRating) === rating.averageRating) {
                         LiveUnit.Assert.areEqual("0 0 auto", starStyle.flex, "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");

@@ -19,7 +19,7 @@ WinJSTests.SemanticZoomTests = function () {
         newNode.innerHTML =
             "<div id='sezoDiv' style='width:500px; height:500px'><div id='child1'></div><div id='child2'></div></div>";
         document.body.appendChild(newNode);
-        appendCSSFileToHead("ListView.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -29,7 +29,7 @@ WinJSTests.SemanticZoomTests = function () {
             WinJS.Utilities.disposeSubTree(element);
             document.body.removeChild(element);
         }
-        removeCSSFileFromHead("ListView.css");
+        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     };
 
     var that = this;

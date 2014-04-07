@@ -5631,7 +5631,7 @@ var Tests = Tests || {};
                     .then(null, errorHandler)
                     .then(complete);
             }
-            this.testBindingInListCallingAllListenersAndUpdatingAll = function () {
+            this.testBindingInListCallingAllListenersAndUpdatingAll = function (complete) {
                 var data = [{ index: 3, content: { groupKey: "three" } }, { index: 1, content: { groupKey: "one" } }, { index: 4, content: { groupKey: "four" } },
                     { index: 2, content: { groupKey: "two" } }, { index: 5, content: { groupKey: "five" } }, { index: 6, content: { groupKey: "six" } }];
 
@@ -5671,6 +5671,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(verifyIndex(sorted, [1, 2, 3, 4, 5, 6]));
                     LiveUnit.Assert.areEqual(1, group.groups.length);
                     LiveUnit.Assert.areEqual(6, hit, "making sure that the binding is working fine");
+                    complete();
 
                 });
             }

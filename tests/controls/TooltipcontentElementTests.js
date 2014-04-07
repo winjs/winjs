@@ -13,7 +13,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="..\TestLib\LegacyLiveUnit\commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
 /// <reference path="tooltiputils.js"/>
 /// <reference path="tooltip.css"/>
 
@@ -43,7 +43,12 @@ TooltipContentElementTests = function () {
         divElement.innerHTML = "tooltip";
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { contentElement: divElement });
 
+        var completed = false;
         function tooltipEventListener(event) {
+            if (completed) {
+                return;
+            }
+
             LiveUnit.Assert.isNotNull(event);
             LiveUnit.LoggingCore.logComment(event.type);
             tooltipUtils.logTooltipInformation(tooltip);
@@ -58,6 +63,7 @@ TooltipContentElementTests = function () {
                     // mouse out of the tooltip which should dismiss it.
                     commonUtils.mouseOverUsingMiP(element, null);
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    completed = true;
                     break;
             }
         }

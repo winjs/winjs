@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
     .win-toggleswitch {
         background-color: transparent;
@@ -92,15 +92,17 @@
         }
 
         .mixin(@theme);
+    }
+}
 
-        @media (-ms-high-contrast) {
-            .win-switch:disabled::-ms-fill-lower {
-                background-color: GrayText;
-            }
+@media (-ms-high-contrast) {
+    .win-toggleswitch {
+        .win-switch:disabled::-ms-fill-lower {
+            background-color: GrayText;
+        }
 
-            .win-switch::-ms-thumb {
-                height: 17px;
-            }
+        .win-switch::-ms-thumb {
+            height: 17px;
         }
     }
 }

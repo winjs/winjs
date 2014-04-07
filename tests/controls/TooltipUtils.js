@@ -13,7 +13,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="..\TestLib\LegacyLiveUnit\commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
 /// <reference path="tooltiputils.js"/>
 /// <reference path="tooltip.css"/>
 
@@ -63,7 +63,7 @@ TooltipUtils.prototype = (function () {
                 // We could use the "light style" too
                 // commonUtils.addCss("ui-light.css");
                 commonUtils.addCss("ui-dark.css");
-                commonUtils.addCss("tooltip.css");
+                commonUtils.addCss("tooltip.css", true);
             }
             // Create a default "anchor/trigger" element the tooltip will be attached to
             // and give it a border and default text so it's easier to see when visually

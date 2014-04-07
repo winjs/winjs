@@ -11,6 +11,7 @@
     "grunt-shell": "~0.6.4",
     "load-grunt-tasks": "^0.4.0",
     "glob": "^3.2.9",
-    "css-parse": "^1.7.0"
+    "qunitjs": "~1.14.0",
+    "minimist": "0.0.8"
   }
 }

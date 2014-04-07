@@ -14,7 +14,7 @@ var WinJSTests = WinJSTests || {};
 WinJSTests.FragmentControl = function () {
     "use strict";
     this.testFragmentControlBasicRender = function (complete) {
-        var fragfile = "FragmentControlBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
             
         WinJS.UI.Pages._remove(fragfile);
 
@@ -32,7 +32,7 @@ WinJSTests.FragmentControl = function () {
     };
     
     this.testFragmentControlBasicRenderHTMLBody = function (complete) {
-        var fragfile = "FragmentBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentBasic.html";
         WinJS.UI.Pages._remove(fragfile);
 
         var d = document.createElement("span");
@@ -44,7 +44,7 @@ WinJSTests.FragmentControl = function () {
 
     this.testFragmentControlRemove = function (complete) {
         // remove clears the fragment from the cache and deletes item from viewmap
-        var fragfile = "FragmentControlBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
         WinJS.UI.Pages._remove(fragfile);
 
         var d = document.createElement("div");
@@ -72,13 +72,13 @@ WinJSTests.FragmentControl = function () {
     };
 
     this.testFragmentControlBasicGet = function () {
-        WinJS.UI.Pages._remove("FragmentControlBasic.html");
+        WinJS.UI.Pages._remove("$(TESTDATA)/FragmentControlBasic.html");
         LiveUnit.Assert.isTrue(WinJS.UI.Pages.get("FragmentControlBasic.html") !== undefined);
     };
     
     this.testElementReady = function (complete) {
         // verify elementReady promise returns rendered element, but processAll() + other has not been called
-        var fragfile = "FragmentControlBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
         WinJS.UI.Pages._remove(fragfile);
 
         var d = document.createElement("div");
@@ -101,7 +101,7 @@ WinJSTests.FragmentControl = function () {
 
     this.testFragmentControlBasicInstance = function (complete) {
         // verify renderComplete promise returns rendered element
-        var fragfile = "FragmentControlBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
         WinJS.UI.Pages._remove(fragfile);
 
         var d = document.createElement("div");
@@ -129,7 +129,7 @@ WinJSTests.FragmentControl = function () {
     if (WinJS.UI.DatePicker) {
         this.testRenderCompleteProcessAll = function (complete) {
             // verify renderComplete promise returns rendered element and that processAll() has been called
-            var fragfile = "FragmentControlCombo.html";
+            var fragfile = "$(TESTDATA)/FragmentControlCombo.html";
             WinJS.UI.Pages._remove(fragfile);
 
             var d = document.createElement("div");
@@ -171,7 +171,7 @@ WinJSTests.FragmentControl = function () {
 
     this.testEmbeddedJSCSS = function(complete) {
         // load fragment with embedded JS and CSS, call fragment JS function, validate CSS
-        var fragfile = "FragmentFindmeInternal.html";
+        var fragfile = "$(TESTDATA)/FragmentFindmeInternal.html";
         WinJS.UI.Pages._remove(fragfile);
         
         var d = document.createElement("div");
@@ -201,7 +201,7 @@ WinJSTests.FragmentControl = function () {
     
     this.testExternalJSCSS = function(complete) {
         // load fragment with links to external JS and CSS, call fragment JS function, validate CSS
-        var fragfile = "FragmentWithExternalScriptAndStyles.html";
+        var fragfile = "$(TESTDATA)/FragmentWithExternalScriptAndStyles.html";
         WinJS.UI.Pages._remove(fragfile);
         
         var d = document.createElement("div");
@@ -417,7 +417,7 @@ WinJSTests.FragmentControl = function () {
 
 
     this.testSelfHost = function (complete) {
-        var fragfile = "FragmentControlSelfHost.html";
+        var fragfile = "$(TESTDATA)/FragmentControlSelfHost.html";
         WinJS.UI.Pages._remove(fragfile);
 
         var iframe = document.createElement("iframe");
@@ -454,7 +454,7 @@ WinJSTests.FragmentControl = function () {
 
     this.testSelfHostDocumentRunsWhenNotSelfHosted = function (complete) {
         // load fragment with links to external JS and CSS, call fragment JS function, validate CSS
-        var fragfile = "FragmentControlNotSelfHost.html";
+        var fragfile = "$(TESTDATA)/FragmentControlNotSelfHost.html";
         WinJS.UI.Pages._remove(fragfile);
         
         var d = document.createElement("div");
@@ -536,7 +536,7 @@ WinJSTests.FragmentControl = function () {
     };
   
     this.testRenderSetsWinControlOnHostElement = function (complete) {
-        var fragfile = "FragmentControlBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
             
         WinJS.UI.Pages._remove(fragfile);
 
@@ -555,7 +555,7 @@ WinJSTests.FragmentControl = function () {
     };
     
     this.testNewInstanceSetsWinControlOnHostElement = function () {
-        var fragfile = "FragmentControlBasic.html";
+        var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
         WinJS.UI.Pages._remove(fragfile);
 
         var d = document.createElement("div");
@@ -567,7 +567,7 @@ WinJSTests.FragmentControl = function () {
     };
     
     this.testDisposePageControl = function(complete) {
-        var fragfile = "FragmentForDisposeTests.html";
+        var fragfile = "$(TESTDATA)/FragmentForDisposeTests.html";
         WinJS.UI.Pages._remove(fragfile);
 
         WinJS.UI.Pages.render(fragfile).then(function (page) {

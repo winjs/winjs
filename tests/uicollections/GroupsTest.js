@@ -115,7 +115,7 @@ WinJSTests.GroupsTests = function () {
         this._oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
         removeListviewAnimations();
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -126,7 +126,7 @@ WinJSTests.GroupsTests = function () {
         document.body.removeChild(element);
         restoreListviewAnimations();
         WinJS.Utilities.stopLog();
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
         cleanupUnhandledErrors();
 
     }

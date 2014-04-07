@@ -40,7 +40,7 @@ WinJSTests.ConfigurationTests = function () {
             "</div>";
         document.body.appendChild(newNode);
         removeListviewAnimations();
-        appendCSSFileToHead("Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -52,7 +52,7 @@ WinJSTests.ConfigurationTests = function () {
             document.body.removeChild(element);
         }
         restoreListviewAnimations();
-        removeCSSFileFromHead("Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
     }
 
     function checkTile(listview, index, left, top, caption) {

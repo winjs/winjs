@@ -28,14 +28,7 @@
     }
     else {
         // running in the worker context
-        try {
-            // when targetting winjs package
-            importScripts("//$(TargetFramework)/js/base.js");
-
-        } catch (e) {
-            // when targetting winjs loose files
-            importScripts("../../bin/Microsoft.WinJS.2.1/js/base.js");
-        }
+        importScripts("webworkerscript.js");
         var Point = WinJS.Class.define(function () { }, { x: 0, y: 5 });
         var pt = new Point();
         pt.x = 1;

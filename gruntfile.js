@@ -26,7 +26,7 @@ module.exports = function (grunt) {
 
     // Package data
     gruntConfig.pkg = grunt.file.readJSON("package.json");
-
+    
     // Project config
     grunt.initConfig(gruntConfig);
 

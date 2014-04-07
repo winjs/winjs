@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-﻿.Colors(@theme) {
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+.Colors(@theme) {
     .mixin(dark) {
         // Command colors
         button.win-command:focus,
@@ -280,174 +280,16 @@
         }
     }
 
-    /*
-        win-hide-focus needs the qualifier for win-ui-light or dark,
-        otherwise .win-ui-dark button.win-command:focus is more
-        qualified and stomps on the transparent that doesn't have .win-ui-dark
-    */
-    &.win-command.win-hidefocus:focus, .win-command.win-hidefocus:focus {
-        border-color: transparent;
-    }
-
     .mixin(@theme);
+}
 
-    @media (-ms-high-contrast) {
-        .win-appbar {
-            background-color: ButtonFace;
-            border-color: Highlight;
-        }
-
-        /*
-        AppBarCommand and Command button high contrast colors.
-        */
-        button.win-command,
-        button.win-command:active,
-        button.win-command:hover:active,
-        div.win-command,
-        div.win-command:active,
-        div.win-command:hover:active {
-            background-color: transparent;
-            border-color: transparent;
-        }
-        hr.win-command {
-            background-color: ButtonText;
-        }
-        .win-label {
-            background-color: transparent;
-            color: ButtonText;
-        }
-        button:disabled .win-label,
-        button:disabled:active .win-label {
-            color: GrayText;
-        }
-        button.win-command:focus,
-        div.win-command:focus {
-            border-color: ButtonText;
-        }
-        button.win-hidefocus:focus,
-        div.win-hidefocus:focus {
-            outline: none;
-        }
-        button.win-command.win-hidefocus:focus,
-        div.win-command.win-hidefocus:focus {
-            border-color: transparent;
-        }
-
-        /*
-        Command Image high contrast colors with states
-        */
-        .win-commandimage {
-            background-color: transparent;
-            color: ButtonText;
-        }
-        button:active .win-commandimage,
-        button:hover:active .win-commandimage {
-            color: ButtonFace;
-        }
-        button:hover .win-commandimage {
-            color: HighlightText;
-        }
-        button:disabled .win-commandimage,
-        button:disabled:active .win-commandimage {
-            color: GrayText;
-        }
-        button[aria-checked=true] .win-commandimage {
-            color: ButtonFace;
-        }
-        button[aria-checked=true]:active .win-commandimage,
-        button[aria-checked=true]:hover:active .win-commandimage {
-            color: ButtonText;
-        }
-        button[aria-checked=true]:hover .win-commandimage {
-            color: HighlightText;
-        }
-        button[aria-checked=true]:disabled .win-commandimage,
-        button[aria-checked=true]:disabled:active .win-commandimage {
-            color: ButtonFace;
-        }
-
-        /*
-        Command Image high contrast colors with states
-        */
-        .win-commandring {
-            background-color: transparent;
-            border-color: ButtonText;
-        }
-        button:active .win-commandring,
-        button:hover:active .win-commandring {
-            background-color: ButtonText;
-            border-color: ButtonText;
-        }
-        button:hover .win-commandring {
-            background-color: Highlight;
-            border-color: ButtonText;
-        }
-        button:disabled .win-commandring,
-        button:disabled:active .win-commandring {
-            background-color: transparent;
-            border-color: GrayText;
-        }
-        button[aria-checked=true] .win-commandring {
-            background-color: ButtonText;
-            border-color: ButtonText;
-        }
-        button[aria-checked=true]:active .win-commandring,
-        button[aria-checked=true]:hover:active .win-commandring {
-            background-color: ButtonFace;
-            border-color: ButtonText;
-        }
-        button[aria-checked=true]:hover .win-commandring {
-            background-color: Highlight;
-            border-color: ButtonText;
-        }
-        button[aria-checked=true]:disabled .win-commandring,
-        button[aria-checked=true]:disabled:active .win-commandring {
-            background-color: GrayText;
-            border-color: GrayText;
-        }
-
-        /*
-        Menu command high contrast colors
-        */
-        .win-menu hr.win-command {
-            background-color: ButtonText;
-        }
-        .win-menu button.win-command {
-            background-color: ButtonFace;
-            color: ButtonText;
-        }
-        .win-menu button.win-command:focus {
-            outline: none;
-            background-color: Highlight;
-            color: HighlightText;
-        }
-        .win-menu button.win-command:active {
-            background-color: Highlight;
-            color: HighlightText;
-        }
-        .win-menu button.win-command:hover:active {
-            background-color: ButtonText;
-            color: ButtonFace;
-        }
-        .win-menu button.win-command:-ms-keyboard-active {
-            background-color: ButtonText;
-            color: ButtonFace;
-        }
-        .win-menu button.win-command:disabled,
-        .win-menu button.win-command:disabled:active {
-            background-color: ButtonFace;
-            color: GrayText;
-        }
-
-        /*
-        Flyout control high contrast colors.
-        */
-        .win-flyout, .win-settingsflyout {
-            background-color: Window;
-            border-color: WindowText;
-            color: WindowText;
-        }
-    }
+/*
+    win-hide-focus needs the qualifier for win-ui-light or dark,
+    otherwise .win-ui-dark button.win-command:focus is more
+    qualified and stomps on the transparent that doesn't have .win-ui-dark
+*/
+&.win-command.win-hidefocus:focus, .win-command.win-hidefocus:focus {
+    border-color: transparent;
 }
 
 button.win-command, div.win-command {
@@ -493,4 +335,162 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
 }
 .win-settingsflyout.win-ui-dark {
     background-color: rgb(0, 0, 0);
+}
+
+@media (-ms-high-contrast) {
+    .win-appbar {
+        background-color: ButtonFace;
+        border-color: Highlight;
+    }
+
+    /*
+    AppBarCommand and Command button high contrast colors.
+    */
+    button.win-command,
+    button.win-command:active,
+    button.win-command:hover:active,
+    div.win-command,
+    div.win-command:active,
+    div.win-command:hover:active {
+        background-color: transparent;
+        border-color: transparent;
+    }
+    hr.win-command {
+        background-color: ButtonText;
+    }
+    .win-label {
+        background-color: transparent;
+        color: ButtonText;
+    }
+    button:disabled .win-label,
+    button:disabled:active .win-label {
+        color: GrayText;
+    }
+    button.win-command:focus,
+    div.win-command:focus {
+        border-color: ButtonText;
+    }
+    button.win-hidefocus:focus,
+    div.win-hidefocus:focus {
+        outline: none;
+    }
+    button.win-command.win-hidefocus:focus,
+    div.win-command.win-hidefocus:focus {
+        border-color: transparent;
+    }
+
+    /*
+    Command Image high contrast colors with states
+    */
+    .win-commandimage {
+        background-color: transparent;
+        color: ButtonText;
+    }
+    button:active .win-commandimage,
+    button:hover:active .win-commandimage {
+        color: ButtonFace;
+    }
+    button:hover .win-commandimage {
+        color: HighlightText;
+    }
+    button:disabled .win-commandimage,
+    button:disabled:active .win-commandimage {
+        color: GrayText;
+    }
+    button[aria-checked=true] .win-commandimage {
+        color: ButtonFace;
+    }
+    button[aria-checked=true]:active .win-commandimage,
+    button[aria-checked=true]:hover:active .win-commandimage {
+        color: ButtonText;
+    }
+    button[aria-checked=true]:hover .win-commandimage {
+        color: HighlightText;
+    }
+    button[aria-checked=true]:disabled .win-commandimage,
+    button[aria-checked=true]:disabled:active .win-commandimage {
+        color: ButtonFace;
+    }
+
+    /*
+    Command Image high contrast colors with states
+    */
+    .win-commandring {
+        background-color: transparent;
+        border-color: ButtonText;
+    }
+    button:active .win-commandring,
+    button:hover:active .win-commandring {
+        background-color: ButtonText;
+        border-color: ButtonText;
+    }
+    button:hover .win-commandring {
+        background-color: Highlight;
+        border-color: ButtonText;
+    }
+    button:disabled .win-commandring,
+    button:disabled:active .win-commandring {
+        background-color: transparent;
+        border-color: GrayText;
+    }
+    button[aria-checked=true] .win-commandring {
+        background-color: ButtonText;
+        border-color: ButtonText;
+    }
+    button[aria-checked=true]:active .win-commandring,
+    button[aria-checked=true]:hover:active .win-commandring {
+        background-color: ButtonFace;
+        border-color: ButtonText;
+    }
+    button[aria-checked=true]:hover .win-commandring {
+        background-color: Highlight;
+        border-color: ButtonText;
+    }
+    button[aria-checked=true]:disabled .win-commandring,
+    button[aria-checked=true]:disabled:active .win-commandring {
+        background-color: GrayText;
+        border-color: GrayText;
+    }
+
+    /*
+    Menu command high contrast colors
+    */
+    .win-menu hr.win-command {
+        background-color: ButtonText;
+    }
+    .win-menu button.win-command {
+        background-color: ButtonFace;
+        color: ButtonText;
+    }
+    .win-menu button.win-command:focus {
+        outline: none;
+        background-color: Highlight;
+        color: HighlightText;
+    }
+    .win-menu button.win-command:active {
+        background-color: Highlight;
+        color: HighlightText;
+    }
+    .win-menu button.win-command:hover:active {
+        background-color: ButtonText;
+        color: ButtonFace;
+    }
+    .win-menu button.win-command:-ms-keyboard-active {
+        background-color: ButtonText;
+        color: ButtonFace;
+    }
+    .win-menu button.win-command:disabled,
+    .win-menu button.win-command:disabled:active {
+        background-color: ButtonFace;
+        color: GrayText;
+    }
+
+    /*
+    Flyout control high contrast colors.
+    */
+    .win-flyout, .win-settingsflyout {
+        background-color: Window;
+        border-color: WindowText;
+        color: WindowText;
+    }
 }

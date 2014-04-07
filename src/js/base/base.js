@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-﻿(function baseInit(global, undefined) {
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+(function baseInit(global, undefined) {
     "use strict";
 
     function initializeProperties(target, members, prefix) {
@@ -155,7 +155,7 @@
                     switch (state) {
                         case LazyStates.working:
                             throw "Illegal: reentrancy on initialization";
-                        
+
                         default:
                             state = LazyStates.initialized;
                             result = value;
