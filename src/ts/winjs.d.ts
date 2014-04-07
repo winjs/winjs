@@ -36,11 +36,20 @@ declare module WinJS {
         dispose();
     }
 
+    interface IPromise<T> {
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => IPromise<U>):IPromise<U>;
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => U):IPromise<U>;
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => void):IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error:any) => IPromise<U>):IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error:any) => U):IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error:any) => void):IPromise<U>;
+    }
+
     class Promise<T> {
         static _cancelBlocker;
         static _getStack;
 
-        static cancel: Promise<any>;
+        static cancel: IPromise<any>;
 
         static onerror: (e: CustomEvent) => any;
 
@@ -51,20 +60,20 @@ declare module WinJS {
         static removeEventListener(type: "error", listener: (e: CustomEvent) => any);
         static removeEventListener(type: string, listener: (e: CustomEvent) => any);
 
-        static any<T>(values: Promise<T>[]): Promise<KeyValuePair<string, Promise<T>>>;
-        static as<P>(value?: Promise<P>): Promise<P>;
-        static as<T>(value?: T): Promise<T>;
+        static any<T>(values: Promise<T>[]): IPromise<KeyValuePair<string, IPromise<T>>>;
+        static as<P>(value?: Promise<P>): IPromise<P>;
+        static as<T>(value?: T): IPromise<T>;
         static is(value): boolean;
-        static join<T>(values: Promise<T>[]): Promise<T[]>;
-        static join<T>(values: { [keys: string]: Promise<T> }): Promise<{ [keys: string]: T }>;
-        static join(values: any): Promise<any>;
-        static thenEach<T>(values: Promise<T>[], complete: (result: T) => any, e?: Function, p?: Function): Promise<T[]>;
-        static thenEach<T>(values: { [keys: string]: Promise<T> }, complete: (result: any) => any, e?: Function, p?: Function): Promise<{ [keys: string]: T }>;
-        static timeout(timeout: number): Promise<any>;
-        static timeout<T>(timeout: number, promise: Promise<T>): Promise<T>;
-        static wrap<T>(value?: Promise<T>): Promise<T>;
-        static wrap<T>(value?: T): Promise<T>;
-        static wrapError(error?: any): Promise<any>;
+        static join<T>(values: Promise<T>[]): IPromise<T[]>;
+        static join<T>(values: { [keys: string]: IPromise<T> }): IPromise<{ [keys: string]: T }>;
+        static join(values: any): IPromise<any>;
+        static thenEach<T>(values: IPromise<T>[], complete: (result: T) => any, e?: Function, p?: Function): IPromise<T[]>;
+        static thenEach<T>(values: { [keys: string]: IPromise<T> }, complete: (result: any) => any, e?: Function, p?: Function): IPromise<{ [keys: string]: T }>;
+        static timeout(timeout: number): IPromise<any>;
+        static timeout<T>(timeout: number, promise: IPromise<T>): IPromise<T>;
+        static wrap<T>(value?: IPromise<T>): IPromise<T>;
+        static wrap<T>(value?: T): IPromise<T>;
+        static wrapError(error?: any): IPromise<any>;
 
         constructor(init: (c: (result?: T) => void, e: (error?) => void, p: (progress?) => void) => any, onCancel?: Function);
 
@@ -72,18 +81,15 @@ declare module WinJS {
 
         cancel();
         done(complete: (result: T) => any, error?: (error) => any, progress?: (prog: any) => any);
-        then(complete?: void, error?: void): Promise<T>;
-        then<U>(complete: (result: T) => Promise<U>, error?: (error) => any, progress?: (prog: any) => any): Promise<U>;
-        then<U>(complete: (result: T) => U, error?: (error) => any, progress?: (prog: any) => any): Promise<U>;
-        then<U>(complete: void, error: (error) => Promise<U>, progress?: (prog: any) => any): Promise<U>;
-        then<U>(complete: void, error: (error) => U, progress?: (prog: any) => any): Promise<U>;
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => IPromise<U>):IPromise<U>;
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => U):IPromise<U>;
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => void):IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error:any) => IPromise<U>):IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error:any) => U):IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error:any) => void):IPromise<U>;
     }
 
     module Application {
-        var local: IOHelper;
-        var roaming: IOHelper;
-        var sessionState: any;
-        var temp: IOHelper;
 
         var onactivated: (e: any) => any;
         var oncheckpoint: (e: any) => any;
@@ -122,13 +128,6 @@ declare module WinJS {
         function queueEvent(eventRecord: any);
         function start();
         function stop();
-
-        class IOHelper {
-            exists(fileName: string): Promise<boolean>;
-            readText(fileName: string, def: string): Promise<string>;
-            remove(fileName: string): Promise<any>;
-            writeText(fileName: string, text: string): Promise<number>;
-        }
     }
 
     module Binding {
@@ -218,48 +217,9 @@ declare module WinJS {
         }
     }
 
-    module Navigation {
-        var canGoBack: boolean;
-        var canGoForward: boolean;
-        var history: INavigationHistory;
-        var location: string;
-        var state: any;
-
-        var onbeforenavigate: (e: CustomEvent) => any;
-        var onnavigated: (e: CustomEvent) => any;
-        var onbeforenavigate: (e: CustomEvent) => any;
-        function dispatchEvent(type: "beforenavigate", details);
-        function dispatchEvent(type: "navigated", details);
-        function dispatchEvent(type: "navigating", details);
-        function dispatchEvent(type: string, details);
-        function addEventListener(type: "beforenavigate", listener: (e: CustomEvent) => any, capture?: boolean);
-        function addEventListener(type: "navigated", listener: (e: CustomEvent) => any, capture?: boolean);
-        function addEventListener(type: "navigating", listener: (e: CustomEvent) => any, capture?: boolean);
-        function addEventListener(type: string, listener: (e: CustomEvent) => any, capture?: boolean);
-        function removeEventListener(type: "beforenavigate", listener: (e: CustomEvent) => any);
-        function removeEventListener(type: "navigated", listener: (e: CustomEvent) => any, useCapture?: boolean );
-        function removeEventListener(type: "navigating", listener: (e: CustomEvent) => any, useCapture?: boolean );
-        function removeEventListener(type: string, listener: (e: CustomEvent) => any, useCapture?: boolean );
-
-        function setPromise(promise: Promise<any>);
-        function back(distance?: number): Promise<boolean>;
-        function forward(distance?: number): Promise<boolean>;
-        function navigate(location: any, initialState?: any): Promise<boolean>;
-
-        interface INavigationHistory {
-            backStack: string[];
-            current: { location: string; initialPlaceholder: boolean; };
-            forwardStack: string[];
-        }
-    }
 
     module Resources {
         function processAll(rootElement?: HTMLElement);
-
-        var oncontextchanged: (e: CustomEvent) => any;
-        //function dispatchEvent(type: "contextchanged", details);
-        //function addEventListener(type: "contextchanged", listener: (e: CustomEvent) => any);
-        //function removeEventListener(type: "contextchanged", listener: (e: CustomEvent) => any);
     }
 
     module UI {

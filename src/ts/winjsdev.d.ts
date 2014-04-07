@@ -7,8 +7,6 @@ declare module WinJS {
     var _Signal;
 
     module Application {
-        var _loadState;
-        var _oncheckpoint;
         var _sessionStateLoaded;
         var _terminateApp;
     }

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function navigationInit(WinJS) {
+module WinJS {
     "use strict";
 
     var navigatedEventName = "navigated";
@@ -7,18 +7,30 @@
     var beforenavigateEventName = "beforenavigate";
     var ListenerType = WinJS.Class.mix(WinJS.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), WinJS.Utilities.eventMixin);
     var listeners = new ListenerType();
-    var history:any = {
+
+    export interface IHistoryState {
+        location: string;
+        initialPlaceholder?: boolean;
+        state?: any;
+    }
+
+    export interface IHistory {
+        backStack: IHistoryState[];
+        current: IHistoryState;
+        forwardStack: IHistoryState[];
+    }
+    var _history:IHistory = {
         backStack: [],
         current: { location: "", initialPlaceholder: true },
         forwardStack: []
     };
 
-    var raiseBeforeNavigate = function (proposed) {
+    var raiseBeforeNavigate = function (proposed:IHistoryState) {
         WinJS.Utilities._writeProfilerMark("WinJS.Navigation:navigation,StartTM");
         return WinJS.Promise.as().
             then(function () {
                 var waitForPromise = WinJS.Promise.as();
-                var defaultPrevented = listeners.dispatchEvent(beforenavigateEventName, {
+                var defaultPrevented:boolean = listeners.dispatchEvent(beforenavigateEventName, {
                     setPromise: function (promise) { 
                         /// <signature helpKeyword="WinJS.Navigation.beforenavigate.setPromise">
                         /// <summary locid="WinJS.Navigation.beforenavigate.setPromise">
@@ -35,12 +47,12 @@
                     location: proposed.location,
                     state: proposed.state
                 });
-                return waitForPromise.then(function beforeNavComplete(cancel) {
+                return waitForPromise.then(function beforeNavComplete(cancel:boolean) {
                     return defaultPrevented || cancel;
                 });
             });
     };
-    var raiseNavigating = function (delta?) {
+    var raiseNavigating = function (delta?:number):IPromise<any> {
         return WinJS.Promise.as().
             then(function () {
                 var waitForPromise = WinJS.Promise.as();
@@ -58,20 +70,20 @@
                     
                         waitForPromise = waitForPromise.then(function() { return promise; }); 
                     },
-                    location: history.current.location,
-                    state: history.current.state,
+                    location: _history.current.location,
+                    state: _history.current.state,
                     delta: delta
                 });
                 return waitForPromise;
             });
     };
-    var raiseNavigated = function (value, err) {
+    var raiseNavigated = function (value, err?) {
         WinJS.Utilities._writeProfilerMark("WinJS.Navigation:navigation,StopTM");
         var waitForPromise = WinJS.Promise.as();
         var detail:any = {
             value: value,
-            location: history.current.location,
-            state: history.current.state,
+            location: _history.current.location,
+            state: _history.current.state,
             setPromise: function (promise) { 
                 /// <signature helpKeyword="WinJS.Navigation.navigated.setPromise">
                 /// <summary locid="WinJS.Navigation.navigated.setPromise">
@@ -93,18 +105,18 @@
         return waitForPromise;
     };
 
-    var go = function (distance, fromStack, toStack, delta) {
+    var go = function (distance:number, fromStack:IHistoryState[], toStack:IHistoryState[], delta:number):IPromise<boolean> {
         distance = Math.min(distance, fromStack.length);
         if (distance > 0) {
             return raiseBeforeNavigate(fromStack[fromStack.length - distance]).
                 then(function goBeforeCompleted(cancel) {
                     if (!cancel) {
-                        toStack.push(history.current);
+                        toStack.push(_history.current);
                         while (distance - 1 != 0) {
                             distance--;
                             toStack.push(fromStack.pop());
                         }
-                        history.current = fromStack.pop();
+                        _history.current = fromStack.pop();
                         return raiseNavigating(delta).then(
                             raiseNavigated,
                             function (err) {
@@ -113,58 +125,68 @@
                             }).then(function () { return true; });
                     }
                     else {
-                        return false;
+                        WinJS.Promise.wrap(false);
                     }
                 });
         }
         return WinJS.Promise.wrap(false);
     }
 
-    WinJS.Namespace.define("WinJS.Navigation", {
+    export module Navigation {
         /// <field name="canGoForward" type="Boolean" locid="WinJS.Navigation.canGoForward" helpKeyword="WinJS.Navigation.canGoForward">
         /// Determines whether it is possible to navigate forwards.
         /// </field>
-        canGoForward: {
+        export declare var canGoForward:boolean;
+        Object.defineProperty(Navigation, 'canGoForward', {
             get: function () {
-                return history.forwardStack.length > 0;
-            }
-        },
+                return _history.forwardStack.length > 0;
+            },
+            enumerable: true
+        });
         /// <field name="canGoBack" type="Boolean" locid="WinJS.Navigation.canGoBack" helpKeyword="WinJS.Navigation.canGoBack">
         /// Determines whether it is possible to navigate backwards.
         /// </field>
-        canGoBack: {
+        export declare var canGoBack:boolean;
+        Object.defineProperty(Navigation, 'canGoBack', {
             get: function () {
-                return history.backStack.length > 0;
-            }
-        },
+                return _history.backStack.length > 0;
+            },
+            enumerable: true
+        });
         /// <field name="location" locid="WinJS.Navigation.location" helpKeyword="WinJS.Navigation.location">
         /// Gets the current location.
         /// </field>
-        location: {
+        export declare var location:string;
+        Object.defineProperty(Navigation, 'location', {
             get: function () {
-                return history.current.location;
-            }
-        },
+                return _history.current.location;
+            },
+            enumerable: true
+        });
         /// <field name="state" locid="WinJS.Navigation.state" helpKeyword="WinJS.Navigation.state">
         /// Gets or sets the navigation state.
         /// </field>
-        state: {
+        export declare var state:any;
+        Object.defineProperty(Navigation, 'state', {
             get: function () {
-                return history.current.state;
+                return _history.current.state;
             },
             set: function (value) {
-                history.current.state = value;
-            }
-        },
+                _history.current.state = value;
+            },
+            enumerable: true
+        });
         /// <field name="history" locid="WinJS.Navigation.history" helpKeyword="WinJS.Navigation.history">
         /// Gets or sets the navigation history.
         /// </field>
-        history: {
+        export declare var history;
+
+        Object.defineProperty(Navigation, 'history', {
             get: function () {
-                return history;
+                return _history;
             },
             set: function (value) {
-                var s = history = value;
+                var s = _history = value;
 
                 // ensure the require fields are present
                 //
@@ -172,9 +194,10 @@
                 s.forwardStack = s.forwardStack || [];
                 s.current = s.current || { location: "", initialPlaceholder: true };
                 s.current.location = s.current.location || "";
-            }
-        },
-        forward: function (distance) {
+            },
+            enumerable: true
+        });
+        export function forward(distance?:number) {
             /// <signature helpKeyword="WinJS.Navigation.forward">
             /// <summary locid="WinJS.Navigation.forward">
             /// Navigates forwards.
@@ -188,9 +211,9 @@
             /// </returns>
             /// </signature>
             distance = distance || 1;
-            return go(distance, history.forwardStack, history.backStack, distance);
-        },
-        back: function (distance) {
+            return go(distance, _history.forwardStack, _history.backStack, distance);
+        }
+        export function back(distance?:number) {
             /// <signature helpKeyword="WinJS.Navigation.back">
             /// <summary locid="WinJS.Navigation.back">
             /// Navigates backwards.
@@ -204,9 +227,9 @@
             /// </returns>
             /// </signature>
             distance = distance || 1;
-            return go(distance, history.backStack, history.forwardStack, -distance);
-        },
-        navigate: function (location, initialState) {
+            return go(distance, _history.backStack, _history.forwardStack, -distance);
+        }
+        export function navigate(location:string, initialState?:any) {
             /// <signature helpKeyword="WinJS.Navigation.navigate">
             /// <summary locid="WinJS.Navigation.navigate">
             /// Navigates to a location.
@@ -223,15 +246,15 @@
             /// the navigation was successful.
             /// </returns>
             /// </signature>
-            var proposed = { location: location, state: initialState };
+            var proposed:IHistoryState = { location: location, state: initialState };
             return raiseBeforeNavigate(proposed).
                 then(function navBeforeCompleted(cancel) {
                     if (!cancel) {
-                        if (!history.current.initialPlaceholder) {
-                            history.backStack.push(history.current);
+                        if (!_history.current.initialPlaceholder) {
+                            _history.backStack.push(_history.current);
                         }
-                        history.forwardStack = [];
-                        history.current = proposed;
+                        _history.forwardStack = [];
+                        _history.current = proposed;
 
                         // error or no, we go from navigating -> navigated
                         // cancelation should be handled with "beforenavigate"
@@ -244,11 +267,16 @@
                             }).then(function () { return true; });
                     }
                     else {
-                        return false;
+                        return WinJS.Promise.wrap(false);
                     }
                 });
-        },
-        addEventListener: function (eventType, listener, capture) {
+        }
+
+        export function addEventListener(type: "beforenavigate", listener: (e: CustomEvent) => any, capture?: boolean);
+        export function addEventListener(type: "navigated", listener: (e: CustomEvent) => any, capture?: boolean);
+        export function addEventListener(type: "navigating", listener: (e: CustomEvent) => any, capture?: boolean);
+        export function addEventListener(eventType:string, listener:EventListener, capture:boolean);
+        export function addEventListener(eventType:string, listener:EventListener, capture:boolean) {
             /// <signature helpKeyword="WinJS.Navigation.addEventListener">
             /// <summary locid="WinJS.Navigation.addEventListener">
             /// Adds an event listener to the control.
@@ -264,8 +292,13 @@
             /// </param>
             /// </signature>
             listeners.addEventListener(eventType, listener, capture);
-        },
-        removeEventListener: function (eventType, listener, capture) {
+        }
+
+        export function removeEventListener(type: "beforenavigate", listener: (e: CustomEvent) => any);
+        export function removeEventListener(type: "navigated", listener: (e: CustomEvent) => any, useCapture?: boolean);
+        export function removeEventListener(type: "navigating", listener: (e: CustomEvent) => any, useCapture?: boolean);
+        export function removeEventListener(eventType:string, listener:EventListener, capture:boolean);
+        export function removeEventListener(eventType:string, listener:EventListener, capture:boolean) {
             /// <signature helpKeyword="WinJS.Navigation.removeEventListener">
             /// <summary locid="WinJS.Navigation.removeEventListener">
             /// Removes an event listener from the control.
@@ -282,7 +315,12 @@
             /// </signature>
             listeners.removeEventListener(eventType, listener, capture);
         }
-    });
 
-    Object.defineProperties(WinJS.Navigation, WinJS.Utilities.createEventProperties(navigatedEventName, navigatingEventName, beforenavigateEventName));
-})(WinJS);
+        declare var onbeforenavigate: (e: CustomEvent) => any;
+        declare var onnavigated: (e: CustomEvent) => any;
+        declare var onbeforenavigate: (e: CustomEvent) => any;
+
+        Object.defineProperties(WinJS.Navigation, WinJS.Utilities.createEventProperties(navigatedEventName, navigatingEventName, beforenavigateEventName));
+    }
+    
+}
