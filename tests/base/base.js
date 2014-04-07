@@ -10,7 +10,7 @@ CorsicaTests.Base = function () {
     if (window.ScriptEngineMajorVersion) {
         this.testRuntimeVersion = function () {
             LiveUnit.Assert.isTrue(ScriptEngineMajorVersion() >= 9, "Not using JScript9 or later, check registry keys for hosted WebOCs");
-        }
+        };
         this.testRuntimeVersion["Owner"] = "jeffish";
         this.testRuntimeVersion["Description"] = "This sanity test verifies we are running in the EZE Runtime.";
     }
@@ -18,33 +18,33 @@ CorsicaTests.Base = function () {
     if (document.documentMode) {
         this.testDocMode = function () {
             LiveUnit.Assert.isTrue(document.documentMode >= 9, "Document mode not IE9 standards mode or later");
-        }
+        };
     }
 
     this.testFastDOM = function () {
         LiveUnit.Assert.areEqual("[object Window]", window.toString(), "FastDOM is not enabled");
-    }
+    };
 
     this.testWinExists = function () {
         LiveUnit.Assert.isTrue("WinJS" in window, "WinJS is not loaded.");
-    }
+    };
 
     this.testNamespaceExists = function () {
         LiveUnit.Assert.isTrue("Namespace" in WinJS, "Namespace is not defined.");
-    }
+    };
 
     this.testClassExists = function () {
         LiveUnit.Assert.isTrue("Class" in WinJS, "Namespace is not defined.");
-    }
+    };
 
     this.testNamespaceMembers = function () {
         LiveUnit.Assert.isTrue("defineWithParent" in WinJS.Namespace);
         LiveUnit.Assert.isTrue("define" in WinJS.Namespace);
-    }
+    };
 
     this.testClassMembers = function () {
         LiveUnit.Assert.isTrue("define" in WinJS.Class);
-    }
+    };
 
     this.testPatching = function () {
         WinJS.Namespace.define("Foo.Bar", { x: function () { return 5; } });
@@ -52,13 +52,13 @@ CorsicaTests.Base = function () {
         Foo.Bar.x = function () { return 10; };
         LiveUnit.Assert.areEqual(10, Foo.Bar.x());
         delete window.Foo;
-    }
+    };
 
     this.testEmptyNamespace = function () {
         var Test = {};
         WinJS.Namespace.defineWithParent(Test, "TestNamespace");
         LiveUnit.Assert.isTrue("TestNamespace" in Test);
-    }
+    };
 
     this.testNamespaceDefine = function () {
         var Test = {};
@@ -73,7 +73,7 @@ CorsicaTests.Base = function () {
 
         LiveUnit.Assert.isTrue("bar" in Test.TestNamespace);
         LiveUnit.Assert.areEqual(42, Test.TestNamespace.bar());
-    }
+    };
 
     this.testGlobalNamespaceDefine = function () {
         if ("TestNamespace" in window) {
@@ -96,7 +96,7 @@ CorsicaTests.Base = function () {
         finally {
             delete window["TestNamespace"];
         }
-    }
+    };
 
     this.testNamespaceDoubleDefine = function () {
         var Test = {};
@@ -125,7 +125,7 @@ CorsicaTests.Base = function () {
         LiveUnit.Assert.isTrue("qux" in Test.TestNamespace);
         LiveUnit.Assert.areEqual("xyzzy", Test.TestNamespace.qux());
 
-    }
+    };
 
     this.testDeepNamespaceDefine = function () {
         var Test = {};
@@ -138,7 +138,7 @@ CorsicaTests.Base = function () {
         LiveUnit.Assert.areEqual(33, Test.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.foo);
         LiveUnit.Assert.areEqual(42, Test.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.bar());
 
-    }
+    };
 
     this.testBigNamespaceDefine = function () {
         var Test = {};
@@ -154,11 +154,11 @@ CorsicaTests.Base = function () {
 
         LiveUnit.Assert.areEqual(1000, Object.getOwnPropertyNames(Test.TestNamespace).length);
 
-        for (var i = 0; i < 1000; i++) {
+        for (i = 0; i < 1000; i++) {
             LiveUnit.Assert.isTrue("foo" + i in Test.TestNamespace);
             LiveUnit.Assert.areEqual(42, Test.TestNamespace["foo" + i]);
         }
-    }
+    };
 
     this.testNamespaceExtending = function () {
         var Test = {};
@@ -177,11 +177,11 @@ CorsicaTests.Base = function () {
 
         LiveUnit.Assert.areEqual(1000, Object.getOwnPropertyNames(Test.TestNamespace).length);
 
-        for (var i = 0; i < 1000; i++) {
+        for (i = 0; i < 1000; i++) {
             LiveUnit.Assert.isTrue("foo" + i in Test.TestNamespace);
             LiveUnit.Assert.areEqual(i, Test.TestNamespace["foo" + i]);
         }
-    }
+    };
 
     this.testClassDefine = function () {
         var testClass = WinJS.Class.define(null, {
@@ -199,7 +199,7 @@ CorsicaTests.Base = function () {
 
         LiveUnit.Assert.areEqual(10, instance.prop1);
         LiveUnit.Assert.areEqual(42, instance.func1());
-    }
+    };
 
     this.testClassDefineWithStatics = function () {
         var testClass = WinJS.Class.define(null, {
@@ -219,7 +219,7 @@ CorsicaTests.Base = function () {
         var instance = new testClass();
         LiveUnit.Assert.isFalse("static1" in instance);
         LiveUnit.Assert.isFalse("static2" in instance);
-    }
+    };
 
     this.testClassDefineWithConstructor = function () {
         var testClass = WinJS.Class.define(function (value) {
@@ -234,7 +234,7 @@ CorsicaTests.Base = function () {
 
         var instance = new testClass("hello");
         LiveUnit.Assert.areEqual("hello", instance.prop1);
-    }
+    };
 
     this.testClassDefineWithFactoryPattern = function () {
         var testClass = WinJS.Class.define(function (value) {
@@ -256,7 +256,7 @@ CorsicaTests.Base = function () {
 
         var instance2 = testClass.create("hello2");
         LiveUnit.Assert.areEqual("hello2", instance2.prop1);
-    }
+    };
 
     this.testClassDefineWithConstructor2 = function () {
         var testClass = WinJS.Class.define(function (value) {
@@ -276,7 +276,7 @@ CorsicaTests.Base = function () {
 
         var instance2 = testClass("hello2");
         LiveUnit.Assert.areEqual("hello2", instance2.prop1);
-    }
+    };
 
     this.testClassDefineWithNoMembers = function () {
         var testClass = WinJS.Class.define(null, null);
@@ -395,7 +395,7 @@ CorsicaTests.Base = function () {
         instance.prop2 = 32;
         LiveUnit.Assert.areEqual(32, instance.prop1);
         LiveUnit.Assert.areEqual(32, instance.prop2);
-    }
+    };
 
     this.testAsyncTestCompletion = function (complete) {
         var i = 0;
@@ -405,7 +405,7 @@ CorsicaTests.Base = function () {
             complete();
         }, 1);
         LiveUnit.Assert.areEqual(i, 0);
-    }
+    };
 
     this.testPropertyDefinition1 = function () {
 
@@ -424,7 +424,7 @@ CorsicaTests.Base = function () {
         LiveUnit.Assert.areEqual("prop2", Object.keys(testClass.prototype)[0]);
         LiveUnit.Assert.areEqual(10, testClass.prototype._prop1);
         LiveUnit.Assert.areEqual(10, testClass.prototype.prop2);
-    }
+    };
 
     this.testPropertyDefinition2 = function () {
 
@@ -445,7 +445,7 @@ CorsicaTests.Base = function () {
         LiveUnit.Assert.areEqual("_prop1", Object.keys(testClass.prototype)[0]);
         LiveUnit.Assert.areEqual(10, testClass.prototype._prop1);
         LiveUnit.Assert.areEqual(10, testClass.prototype.prop2);
-    }
+    };
 
     this.testNamespaceCaseSensitivity = function () {
         var Test = {};
@@ -487,7 +487,7 @@ CorsicaTests.Base = function () {
         LiveUnit.Assert.isTrue("qux" in Test.TestNamespace.SUBNAMESPACE);
         LiveUnit.Assert.areEqual("xyzzy", Test.TestNamespace.SUBNAMESPACE.qux());
 
-    }
+    };
 
     this.testNamespaceUnicodeDefine = function () {
         var Test = {};
@@ -496,11 +496,12 @@ CorsicaTests.Base = function () {
             foo: 1,
         });
 
-        WinJS.Namespace.defineWithParent(Test, "TestNamespace.ɪ", {
+        WinJS.Namespace.defineWithParent(Test, "TestNamespace.\u026a", {
             foo: 2,
         });
 
-        WinJS.Namespace.defineWithParent(Test, "才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123", {
+        // Define a namespace using a long unicode string
+        WinJS.Namespace.defineWithParent(Test, "\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123", {
             foo: 42
         });
 
@@ -509,14 +510,15 @@ CorsicaTests.Base = function () {
         LiveUnit.Assert.isTrue("foo" in Test.TestNamespace.I);
         LiveUnit.Assert.areEqual(1, Test.TestNamespace.I.foo);
 
-        LiveUnit.Assert.isTrue("ɪ" in Test.TestNamespace);
-        LiveUnit.Assert.isTrue("foo" in Test.TestNamespace.ɪ);
-        LiveUnit.Assert.areEqual(2, Test.TestNamespace.ɪ.foo);
+        LiveUnit.Assert.isTrue("\u026a" in Test.TestNamespace);
+        LiveUnit.Assert.isTrue("foo" in Test.TestNamespace["\u026a"]);
+        LiveUnit.Assert.areEqual(2, Test.TestNamespace["\u026a"].foo);
 
-        LiveUnit.Assert.isTrue("才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123" in Test);
-        LiveUnit.Assert.areEqual(42, Test.才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß§Abcd123.foo);
+        // Test namespace using a long unicode string
+        LiveUnit.Assert.isTrue("\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123" in Test);
+        LiveUnit.Assert.areEqual(42, Test["\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7\u624d\u80fd\u30bd\u042b\u2168\u84a4\u90f3\u0930\u094d\u0915\u094d\u0921\u094d\u0930\u093e\u00fc\u0131\u015f\u011f\u0130li\u064a\u0648\u0646\u064a\u0643\u0648\u062f\u00f6\u00c4\u00fc\u00df\u00a7Abcd123"].foo);
 
-    }
+    };
 
     this.testNamespaceDelete = function () {
         var Test = {};
@@ -540,7 +542,7 @@ CorsicaTests.Base = function () {
 
         delete Test.TestNamespace;
         LiveUnit.Assert.isFalse("TestNamespace" in Test, "Namespaces should be configurable");
-    }
+    };
 
     this.testExecuteAfterDomLoaded = function () {
         WinJS.Utilities.testReadyState = "loading";
@@ -549,7 +551,7 @@ CorsicaTests.Base = function () {
         var callbackHit = false;
         var callback = function () {
             callbackHit = true;
-        }
+        };
 
         var oldAddEventListener = window.addEventListener;
 
@@ -558,7 +560,7 @@ CorsicaTests.Base = function () {
             LiveUnit.Assert.areEqual("DOMContentLoaded", name);
             LiveUnit.Assert.areEqual(false, capture);
             func();
-        }
+        };
 
         try {
             WinJS.Utilities.ready(callback);
@@ -619,7 +621,7 @@ CorsicaTests.Base = function () {
 
     this.testDeriveWithStatics = function () {
         var ctorFn = function (v) { this.bar = v; };
-        var ctorFn2 = function (v) { this.bar = v; }
+        var ctorFn2 = function (v) { this.bar = v; };
 
         var TestClass1 = WinJS.Class.define(ctorFn, {
             bar: 23,
@@ -657,11 +659,11 @@ CorsicaTests.Base = function () {
         LiveUnit.Assert.areEqual(42, obj2.foo());
         LiveUnit.Assert.areEqual(32, obj2.baz);
         LiveUnit.Assert.areEqual(ctorFn2, obj2.constructor);
-    }
+    };
 
     this.testDerive = function () {
         var ctorFn = function (v) { this.bar = v; };
-        var ctorFn2 = function (v) { this.bar = v; }
+        var ctorFn2 = function (v) { this.bar = v; };
 
         var TestClass1 = WinJS.Class.define(ctorFn, {
             bar: 23,
@@ -786,7 +788,7 @@ CorsicaTests.Base = function () {
             // Make sure to set this back
             WinJS.validation = false;
         }
-    }
-}
+    };
+};
 
 LiveUnit.registerTestClass("CorsicaTests.Base");
