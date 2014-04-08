@@ -25,68 +25,10 @@ declare module Windows {
 
 declare module WinJS {
 
-    interface KeyValuePair<K, V> {
-        key: K;
-        value: V;
-    }
-
     interface Option<T1, T2> { }
 
     interface IDisposable {
         dispose();
-    }
-
-    interface IPromise<T> {
-        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => IPromise<U>):IPromise<U>;
-        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => U):IPromise<U>;
-        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => void):IPromise<U>;
-        then<U>(complete: (result: T) => U, error?: (error:any) => IPromise<U>):IPromise<U>;
-        then<U>(complete: (result: T) => U, error?: (error:any) => U):IPromise<U>;
-        then<U>(complete: (result: T) => U, error?: (error:any) => void):IPromise<U>;
-    }
-
-    class Promise<T> {
-        static _cancelBlocker;
-        static _getStack;
-
-        static cancel: IPromise<any>;
-
-        static onerror: (e: CustomEvent) => any;
-
-        static dispatchEvent(type: "error", details);
-        static dispatchEvent(type: string, details);
-        static addEventListener(type: "error", listener: (e: CustomEvent) => any);
-        static addEventListener(type: string, listener: (e: CustomEvent) => any);
-        static removeEventListener(type: "error", listener: (e: CustomEvent) => any);
-        static removeEventListener(type: string, listener: (e: CustomEvent) => any);
-
-        static any<T>(values: Promise<T>[]): IPromise<KeyValuePair<string, IPromise<T>>>;
-        static as<P>(value?: Promise<P>): IPromise<P>;
-        static as<T>(value?: T): IPromise<T>;
-        static is(value): boolean;
-        static join<T>(values: Promise<T>[]): IPromise<T[]>;
-        static join<T>(values: { [keys: string]: IPromise<T> }): IPromise<{ [keys: string]: T }>;
-        static join(values: any): IPromise<any>;
-        static thenEach<T>(values: IPromise<T>[], complete: (result: T) => any, e?: Function, p?: Function): IPromise<T[]>;
-        static thenEach<T>(values: { [keys: string]: IPromise<T> }, complete: (result: any) => any, e?: Function, p?: Function): IPromise<{ [keys: string]: T }>;
-        static timeout(timeout: number): IPromise<any>;
-        static timeout<T>(timeout: number, promise: IPromise<T>): IPromise<T>;
-        static wrap<T>(value?: IPromise<T>): IPromise<T>;
-        static wrap<T>(value?: T): IPromise<T>;
-        static wrapError(error?: any): IPromise<any>;
-
-        constructor(init: (c: (result?: T) => void, e: (error?) => void, p: (progress?) => void) => any, onCancel?: Function);
-
-        supportedForProcessing: boolean;
-
-        cancel();
-        done(complete: (result: T) => any, error?: (error) => any, progress?: (prog: any) => any);
-        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => IPromise<U>):IPromise<U>;
-        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => U):IPromise<U>;
-        then<U>(complete: (result: T) => IPromise<U>, error?: (error:any) => void):IPromise<U>;
-        then<U>(complete: (result: T) => U, error?: (error:any) => IPromise<U>):IPromise<U>;
-        then<U>(complete: (result: T) => U, error?: (error:any) => U):IPromise<U>;
-        then<U>(complete: (result: T) => U, error?: (error:any) => void):IPromise<U>;
     }
 
     module Application {

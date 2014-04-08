@@ -183,11 +183,11 @@
 
                         var renderCalled = load.then(function Pages_init(loadResult) {
                             return WinJS.Promise.join({
-                                loadResult: loadResult,
-                                initResult: that.init(element, options)
+                                'loadResult': loadResult,
+                                'initResult': that.init(element, options)
                             });
                         }).then(function Pages_render(result) {
-                            return that.render(element, options, result.loadResult);
+                            return that.render(element, options, result['loadResult']);
                         });
 
                         this.elementReady = renderCalled.then(function () { return element; });

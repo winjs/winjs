@@ -4,7 +4,6 @@ declare var msGetWeakWinRTProperty;
 declare var msSetWeakWinRTProperty;
 
 declare module WinJS {
-    var _Signal;
 
     module Application {
         var _sessionStateLoaded;

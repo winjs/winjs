@@ -1,7 +1,19 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function promiseInit(global) {
+module WinJS {
     "use strict";
 
+    export interface IPromise<T> {
+        done(complete?: (result: T) => any, error?: (error) => any, progress?: (progress: any) => any);
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>;
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => U, progress?: (progress: any) => void): IPromise<U>;
+        then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => void, progress?: (progress: any) => void): IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error: any) => U, progress?: (progress: any) => void): IPromise<U>;
+        then<U>(complete: (result: T) => U, error?: (error: any) => void, progress?: (progress: any) => void): IPromise<U>;
+        cancel();
+    }
+
+    var global:any = self;
     global.Debug && (global.Debug.setNonUserCodeExceptions = true);
 
     var ListenerType = WinJS.Class.mix(WinJS.Class.define(null, { /*empty*/ }, { supportedForProcessing: false }), WinJS.Utilities.eventMixin);
@@ -11,12 +23,13 @@
     var errorET = "error";
     var canceledName = "Canceled";
     var tagWithStack:any = false;
-    var tag:any = {
+    var tag = {
         promise: 0x01,
         thenPromise: 0x02,
         errorPromise: 0x04,
         exceptionPromise: 0x08,
         completePromise: 0x10,
+        all: 0x0
     };
     tag.all = tag.promise | tag.thenPromise | tag.errorPromise | tag.exceptionPromise | tag.completePromise;
 
@@ -47,16 +60,30 @@
     // listeners of the state transition, until leaf notes are reached.
     //
 
-    var state_created,              // -> working
-        state_working,              // -> error | error_notify | success | success_notify | canceled | waiting
-        state_waiting,              // -> error | error_notify | success | success_notify | waiting_canceled
-        state_waiting_canceled,     // -> error | error_notify | success | success_notify | canceling
-        state_canceled,             // -> error | error_notify | success | success_notify | canceling
-        state_canceling,            // -> error_notify
-        state_success_notify,       // -> success
-        state_success,              // -> .
-        state_error_notify,         // -> error
-        state_error;                // -> .
+    interface IState {
+        name: string;
+        enter(promise:_PromiseStateMachine<any>):void;
+        cancel(promise:_PromiseStateMachine<any>):void;
+        done(promise, onComplete, onError, onProgress):void;
+        then(promise, onComplete, onError, onProgress):void;
+        _completed(promise, value):void;
+        _error(promise, value, onerrorDetails, context):void;
+        _notify(promise, queue):void;
+        _progress(promise, value):void;
+        _setCompleteValue(promise, value):void;
+        _setErrorValue(promise, value, onerrorDetails, context):void;
+    };
+
+    var state_created : IState,              // -> working
+        state_working : IState,              // -> error | error_notify | success | success_notify | canceled | waiting
+        state_waiting : IState,              // -> error | error_notify | success | success_notify | waiting_canceled
+        state_waiting_canceled : IState,     // -> error | error_notify | success | success_notify | canceling
+        state_canceled : IState,             // -> error | error_notify | success | success_notify | canceling
+        state_canceling : IState,            // -> error_notify
+        state_success_notify : IState,       // -> success
+        state_success : IState,              // -> .
+        state_error_notify : IState,         // -> error
+        state_error : IState;                // -> .
 
     // Noop function, used in the various states to indicate that they don't support a given
     // message. Named with the somewhat cute name '_' because it reads really well in the states.
@@ -330,13 +357,23 @@
     // would have to remember to do things like pumping the state machine to catch state transitions.
     //
 
-    var PromiseStateMachine = WinJS.Class.define(null, {
-        _listeners: null,
-        _nextState: null,
-        _state: null,
-        _value: null,
+    export class _PromiseStateMachine<T> implements IPromise<T> {
 
-        cancel: function () {
+        static supportedForProcessing = false;
+
+        public _listeners = null;
+        public _nextState = null;
+        public _state = null;
+        public _value = null;
+        public _stack = null;
+
+        constructor() {
+            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
+                this._stack = WinJS.Promise._getStack();
+            }
+        }
+
+        public cancel() {
             /// <signature helpKeyword="WinJS.PromiseStateMachine.cancel">
             /// <summary locid="WinJS.PromiseStateMachine.cancel">
             /// Attempts to cancel the fulfillment of a promised value. If the promise hasn't
@@ -346,8 +383,9 @@
             /// </signature>
             this._state.cancel(this);
             this._run();
-        },
-        done: function Promise_done(onComplete, onError, onProgress) {
+        }
+
+        public done(onComplete?: (result: T) => any, onError?: (error) => any, onProgress?: (prog: any) => any) {
             /// <signature helpKeyword="WinJS.PromiseStateMachine.done">
             /// <summary locid="WinJS.PromiseStateMachine.done">
             /// Allows you to specify the work to be done on the fulfillment of the promised value,
@@ -377,8 +415,15 @@
             /// </param>
             /// </signature>
             this._state.done(this, onComplete, onError, onProgress);
-        },
-        then: function Promise_then(onComplete, onError, onProgress) {
+        }
+
+        public then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => IPromise<U>): IPromise<U>;
+        public then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => U): IPromise<U>;
+        public then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => void): IPromise<U>;
+        public then<U>(complete: (result: T) => U, error?: (error: any) => IPromise<U>): IPromise<U>;
+        public then<U>(complete: (result: T) => U, error?: (error: any) => U): IPromise<U>;
+        public then<U>(complete: (result: T) => U, error?: (error: any) => void): IPromise<U>;
+        public then<U>(onComplete?, onError?, onProgress?): IPromise<U> {
             /// <signature helpKeyword="WinJS.PromiseStateMachine.then">
             /// <summary locid="WinJS.PromiseStateMachine.then">
             /// Allows you to specify the work to be done on the fulfillment of the promised value,
@@ -409,53 +454,67 @@
             /// </signature>
             
             return this._state.then(this, onComplete, onError, onProgress);
-        },
+        }
 
-        _chainedError: function (value, context) {
+        public _chainedError(value, context) {
             var result = this._state._error(this, value, detailsForChainedError, context);
             this._run();
             return result;
-        },
-        _completed: function (value) {
+        }
+
+        public _completed(value) {
             var result = this._state._completed(this, value);
             this._run();
             return result;
-        },
-        _error: function (value) {
+        }
+
+        public _error(value) {
             var result = this._state._error(this, value, detailsForError);
             this._run();
             return result;
-        },
-        _progress: function (value) {
+        }
+
+        public _progress(value) {
             this._state._progress(this, value);
-        },
-        _setState: function (state) {
+        }
+
+        public _setState(state) {
             this._nextState = state;
-        },
-        _setCompleteValue: function (value) {
+        }
+
+        public _setCompleteValue(value) {
             this._state._setCompleteValue(this, value);
             this._run();
-        },
-        _setChainedErrorValue: function (value, context) {
+        }
+
+        public _setChainedErrorValue(value, context) {
             var result = this._state._setErrorValue(this, value, detailsForChainedError, context);
             this._run();
             return result;
-        },
-        _setExceptionValue: function (value) {
+        }
+        
+        public _setExceptionValue(value) {
             var result = this._state._setErrorValue(this, value, detailsForException);
             this._run();
             return result;
-        },
-        _run: function () {
+        }
+        
+        public _run() {
             while (this._nextState) {
                 this._state = this._nextState;
                 this._nextState = null;
                 this._state.enter(this);
             }
         }
-    }, {
-        supportedForProcessing: false
-    });
+
+        public _cancelAction() { 
+            /* override in child class */
+        }
+
+        public _cleanupAction() { 
+            /* override in child class */
+        }
+    }
 
     //
     // Implementations of shared state machine code.
@@ -680,25 +739,29 @@
     // Internal implementation detail promise, ThenPromise is created when a promise needs
     // to be returned from a then() method.
     //
-    var ThenPromise = WinJS.Class.derive(PromiseStateMachine,
-        function (creator) {
+    class ThenPromise<T> extends _PromiseStateMachine<T> {
 
-            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
-                this._stack = WinJS.Promise._getStack();
-            }
+        static supportedForProcessing = false;
+
+        private _creator = null;
+
+        constructor (creator) {
+
+            super();
 
             this._creator = creator;
             this._setState(state_created);
             this._run();
-        }, {
-            _creator: null,
+        } 
 
-            _cancelAction: function () { if (this._creator) { this._creator.cancel(); } },
-            _cleanupAction: function () { this._creator = null; }
-        }, {
-            supportedForProcessing: false
+        public _cancelAction() { 
+            if (this._creator) { this._creator.cancel(); } 
         }
-    );
+        public _cleanupAction() { 
+            this._creator = null; 
+        }
+        
+    }
 
     //
     // Slim promise implementations for already completed promises, these are created
@@ -706,158 +769,153 @@
     // and WinJS.Promise.wrapError.
     //
 
-    var ErrorPromise = WinJS.Class.define(
-        function ErrorPromise_ctor(value) {
+    class ErrorPromise<T> implements IPromise<T> {
+        static supportedForProcessing = false
+        private _value;
+        private _stack;
+        constructor(value, errorFunc = detailsForError) {
 
-            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.errorPromise))) {
+            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
                 this._stack = WinJS.Promise._getStack();
             }
 
             this._value = value;
-            callonerror(this, value, detailsForError);
-        }, {
-            cancel: function () {
-                /// <signature helpKeyword="WinJS.PromiseStateMachine.cancel">
-                /// <summary locid="WinJS.PromiseStateMachine.cancel">
-                /// Attempts to cancel the fulfillment of a promised value. If the promise hasn't
-                /// already been fulfilled and cancellation is supported, the promise enters
-                /// the error state with a value of Error("Canceled").
-                /// </summary>
-                /// </signature>
-            },
-            done: function ErrorPromise_done(unused, onError) {
-                /// <signature helpKeyword="WinJS.PromiseStateMachine.done">
-                /// <summary locid="WinJS.PromiseStateMachine.done">
-                /// Allows you to specify the work to be done on the fulfillment of the promised value,
-                /// the error handling to be performed if the promise fails to fulfill
-                /// a value, and the handling of progress notifications along the way.
-                ///
-                /// After the handlers have finished executing, this function throws any error that would have been returned
-                /// from then() as a promise in the error state.
-                /// </summary>
-                /// <param name='onComplete' type='Function' locid="WinJS.PromiseStateMachine.done_p:onComplete">
-                /// The function to be called if the promise is fulfilled successfully with a value.
-                /// The fulfilled value is passed as the single argument. If the value is null,
-                /// the fulfilled value is returned. The value returned
-                /// from the function becomes the fulfilled value of the promise returned by
-                /// then(). If an exception is thrown while executing the function, the promise returned
-                /// by then() moves into the error state.
-                /// </param>
-                /// <param name='onError' type='Function' optional='true' locid="WinJS.PromiseStateMachine.done_p:onError">
-                /// The function to be called if the promise is fulfilled with an error. The error
-                /// is passed as the single argument. If it is null, the error is forwarded.
-                /// The value returned from the function is the fulfilled value of the promise returned by then().
-                /// </param>
-                /// <param name='onProgress' type='Function' optional='true' locid="WinJS.PromiseStateMachine.done_p:onProgress">
-                /// the function to be called if the promise reports progress. Data about the progress
-                /// is passed as the single argument. Promises are not required to support
-                /// progress.
-                /// </param>
-                /// </signature>
-                var value = this._value;
-                if (onError) {
-                    try {
-                        if (!onError.handlesOnError) {
-                            callonerror(null, value, detailsForHandledError, this, onError);
-                        }
-                        var result = onError(value);
-                        if (result && typeof result === "object" && typeof result.done === "function") {
-                            // If a promise is returned we need to wait on it.
-                            result.done();
-                        }
-                        return;
-                    } catch (ex) {
-                        value = ex;
-                    }
-                }
-                if (value instanceof Error && value.message === canceledName) {
-                    // suppress cancel
-                    return;
-                }
-                // force the exception to be thrown asyncronously to avoid any try/catch blocks
-                //
-                WinJS.Utilities.Scheduler.schedule(function Promise_done_rethrow() {
-                    throw value;
-                }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.Promise._throwException");
-            },
-            then: function ErrorPromise_then(unused, onError) {
-                /// <signature helpKeyword="WinJS.PromiseStateMachine.then">
-                /// <summary locid="WinJS.PromiseStateMachine.then">
-                /// Allows you to specify the work to be done on the fulfillment of the promised value,
-                /// the error handling to be performed if the promise fails to fulfill
-                /// a value, and the handling of progress notifications along the way.
-                /// </summary>
-                /// <param name='onComplete' type='Function' locid="WinJS.PromiseStateMachine.then_p:onComplete">
-                /// The function to be called if the promise is fulfilled successfully with a value.
-                /// The value is passed as the single argument. If the value is null, the value is returned.
-                /// The value returned from the function becomes the fulfilled value of the promise returned by
-                /// then(). If an exception is thrown while this function is being executed, the promise returned
-                /// by then() moves into the error state.
-                /// </param>
-                /// <param name='onError' type='Function' optional='true' locid="WinJS.PromiseStateMachine.then_p:onError">
-                /// The function to be called if the promise is fulfilled with an error. The error
-                /// is passed as the single argument. If it is null, the error is forwarded.
-                /// The value returned from the function becomes the fulfilled value of the promise returned by then().
-                /// </param>
-                /// <param name='onProgress' type='Function' optional='true' locid="WinJS.PromiseStateMachine.then_p:onProgress">
-                /// The function to be called if the promise reports progress. Data about the progress
-                /// is passed as the single argument. Promises are not required to support
-                /// progress.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.PromiseStateMachine.then_returnValue">
-                /// The promise whose value is the result of executing the complete or
-                /// error function.
-                /// </returns>
-                /// </signature>
-
-                // If the promise is already in a error state and no error handler is provided
-                // we optimize by simply returning the promise instead of creating a new one.
-                //
-                if (!onError) { return this; }
-                var result;
-                var value = this._value;
+            callonerror(this, value, errorFunc);
+        }
+        public cancel() {
+            /// <signature helpKeyword="WinJS.PromiseStateMachine.cancel">
+            /// <summary locid="WinJS.PromiseStateMachine.cancel">
+            /// Attempts to cancel the fulfillment of a promised value. If the promise hasn't
+            /// already been fulfilled and cancellation is supported, the promise enters
+            /// the error state with a value of Error("Canceled").
+            /// </summary>
+            /// </signature>
+        }
+        public done(unused, onError) {
+            /// <signature helpKeyword="WinJS.PromiseStateMachine.done">
+            /// <summary locid="WinJS.PromiseStateMachine.done">
+            /// Allows you to specify the work to be done on the fulfillment of the promised value,
+            /// the error handling to be performed if the promise fails to fulfill
+            /// a value, and the handling of progress notifications along the way.
+            ///
+            /// After the handlers have finished executing, this function throws any error that would have been returned
+            /// from then() as a promise in the error state.
+            /// </summary>
+            /// <param name='onComplete' type='Function' locid="WinJS.PromiseStateMachine.done_p:onComplete">
+            /// The function to be called if the promise is fulfilled successfully with a value.
+            /// The fulfilled value is passed as the single argument. If the value is null,
+            /// the fulfilled value is returned. The value returned
+            /// from the function becomes the fulfilled value of the promise returned by
+            /// then(). If an exception is thrown while executing the function, the promise returned
+            /// by then() moves into the error state.
+            /// </param>
+            /// <param name='onError' type='Function' optional='true' locid="WinJS.PromiseStateMachine.done_p:onError">
+            /// The function to be called if the promise is fulfilled with an error. The error
+            /// is passed as the single argument. If it is null, the error is forwarded.
+            /// The value returned from the function is the fulfilled value of the promise returned by then().
+            /// </param>
+            /// <param name='onProgress' type='Function' optional='true' locid="WinJS.PromiseStateMachine.done_p:onProgress">
+            /// the function to be called if the promise reports progress. Data about the progress
+            /// is passed as the single argument. Promises are not required to support
+            /// progress.
+            /// </param>
+            /// </signature>
+            var value = this._value;
+            if (onError) {
                 try {
                     if (!onError.handlesOnError) {
                         callonerror(null, value, detailsForHandledError, this, onError);
                     }
-                    result = new CompletePromise(onError(value));
-                } catch (ex) {
-                    // If the value throw from the error handler is the same as the value
-                    // provided to the error handler then there is no need for a new promise.
-                    //
-                    if (ex === value) {
-                        result = this;
-                    } else {
-                        result = new ExceptionPromise(ex);
+                    var result = onError(value);
+                    if (result && typeof result === "object" && typeof result.done === "function") {
+                        // If a promise is returned we need to wait on it.
+                        result.done();
                     }
+                    return;
+                } catch (ex) {
+                    value = ex;
                 }
-                return result;
             }
-        }, {
-            supportedForProcessing: false
-        }
-    );
-
-    var ExceptionPromise = WinJS.Class.derive(ErrorPromise,
-        function ExceptionPromise_ctor(value) {
-
-            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.exceptionPromise))) {
-                this._stack = WinJS.Promise._getStack();
+            if (value instanceof Error && value.message === canceledName) {
+                // suppress cancel
+                return;
             }
-
-            this._value = value;
-            callonerror(this, value, detailsForException);
-        }, {
-            /* empty */
-        }, {
-            supportedForProcessing: false
+            // force the exception to be thrown asyncronously to avoid any try/catch blocks
+            //
+            WinJS.Utilities.Scheduler.schedule(function Promise_done_rethrow() {
+                throw value;
+            }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.Promise._throwException");
         }
-    );
+        public then(unused, onError) {
+            /// <signature helpKeyword="WinJS.PromiseStateMachine.then">
+            /// <summary locid="WinJS.PromiseStateMachine.then">
+            /// Allows you to specify the work to be done on the fulfillment of the promised value,
+            /// the error handling to be performed if the promise fails to fulfill
+            /// a value, and the handling of progress notifications along the way.
+            /// </summary>
+            /// <param name='onComplete' type='Function' locid="WinJS.PromiseStateMachine.then_p:onComplete">
+            /// The function to be called if the promise is fulfilled successfully with a value.
+            /// The value is passed as the single argument. If the value is null, the value is returned.
+            /// The value returned from the function becomes the fulfilled value of the promise returned by
+            /// then(). If an exception is thrown while this function is being executed, the promise returned
+            /// by then() moves into the error state.
+            /// </param>
+            /// <param name='onError' type='Function' optional='true' locid="WinJS.PromiseStateMachine.then_p:onError">
+            /// The function to be called if the promise is fulfilled with an error. The error
+            /// is passed as the single argument. If it is null, the error is forwarded.
+            /// The value returned from the function becomes the fulfilled value of the promise returned by then().
+            /// </param>
+            /// <param name='onProgress' type='Function' optional='true' locid="WinJS.PromiseStateMachine.then_p:onProgress">
+            /// The function to be called if the promise reports progress. Data about the progress
+            /// is passed as the single argument. Promises are not required to support
+            /// progress.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.PromiseStateMachine.then_returnValue">
+            /// The promise whose value is the result of executing the complete or
+            /// error function.
+            /// </returns>
+            /// </signature>
 
-    var CompletePromise = WinJS.Class.define(
-        function CompletePromise_ctor(value) {
+            // If the promise is already in a error state and no error handler is provided
+            // we optimize by simply returning the promise instead of creating a new one.
+            //
+            if (!onError) { return this; }
+            var result;
+            var value = this._value;
+            try {
+                if (!onError.handlesOnError) {
+                    callonerror(null, value, detailsForHandledError, this, onError);
+                }
+                result = new CompletePromise(onError(value));
+            } catch (ex) {
+                // If the value throw from the error handler is the same as the value
+                // provided to the error handler then there is no need for a new promise.
+                //
+                if (ex === value) {
+                    result = this;
+                } else {
+                    result = new ExceptionPromise(ex);
+                }
+            }
+            return result;
+        }
+    }
 
-            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.completePromise))) {
+    class ExceptionPromise<T> extends ErrorPromise<T> {
+        static supportedForProcessing = false;
+        constructor(value) {
+            super(value, detailsForException);
+        }
+    }
+
+    class CompletePromise<T> implements IPromise<T> {
+        static supportedForProcessing = false;
+        public _value;
+        public _stack;
+
+        constructor(value) {
+
+            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
                 this._stack = WinJS.Promise._getStack();
             }
 
@@ -867,101 +925,98 @@
                 return result;
             }
             this._value = value;
-        }, {
-            cancel: function () {
-                /// <signature helpKeyword="WinJS.PromiseStateMachine.cancel">
-                /// <summary locid="WinJS.PromiseStateMachine.cancel">
-                /// Attempts to cancel the fulfillment of a promised value. If the promise hasn't
-                /// already been fulfilled and cancellation is supported, the promise enters
-                /// the error state with a value of Error("Canceled").
-                /// </summary>
-                /// </signature>
-            },
-            done: function CompletePromise_done(onComplete) {
-                /// <signature helpKeyword="WinJS.PromiseStateMachine.done">
-                /// <summary locid="WinJS.PromiseStateMachine.done">
-                /// Allows you to specify the work to be done on the fulfillment of the promised value,
-                /// the error handling to be performed if the promise fails to fulfill
-                /// a value, and the handling of progress notifications along the way.
-                ///
-                /// After the handlers have finished executing, this function throws any error that would have been returned
-                /// from then() as a promise in the error state.
-                /// </summary>
-                /// <param name='onComplete' type='Function' locid="WinJS.PromiseStateMachine.done_p:onComplete">
-                /// The function to be called if the promise is fulfilled successfully with a value.
-                /// The fulfilled value is passed as the single argument. If the value is null,
-                /// the fulfilled value is returned. The value returned
-                /// from the function becomes the fulfilled value of the promise returned by
-                /// then(). If an exception is thrown while executing the function, the promise returned
-                /// by then() moves into the error state.
-                /// </param>
-                /// <param name='onError' type='Function' optional='true' locid="WinJS.PromiseStateMachine.done_p:onError">
-                /// The function to be called if the promise is fulfilled with an error. The error
-                /// is passed as the single argument. If it is null, the error is forwarded.
-                /// The value returned from the function is the fulfilled value of the promise returned by then().
-                /// </param>
-                /// <param name='onProgress' type='Function' optional='true' locid="WinJS.PromiseStateMachine.done_p:onProgress">
-                /// the function to be called if the promise reports progress. Data about the progress
-                /// is passed as the single argument. Promises are not required to support
-                /// progress.
-                /// </param>
-                /// </signature>
-                if (!onComplete) { return; }
-                try {
-                    var result = onComplete(this._value);
-                    if (result && typeof result === "object" && typeof result.done === "function") {
-                        result.done();
-                    }
-                } catch (ex) {
-                    // force the exception to be thrown asynchronously to avoid any try/catch blocks
-                    WinJS.Utilities.Scheduler.schedule(function Promise_done_rethrow() {
-                        throw ex;
-                    }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.Promise._throwException");
-                }
-            },
-            then: function CompletePromise_then(onComplete) {
-                /// <signature helpKeyword="WinJS.PromiseStateMachine.then">
-                /// <summary locid="WinJS.PromiseStateMachine.then">
-                /// Allows you to specify the work to be done on the fulfillment of the promised value,
-                /// the error handling to be performed if the promise fails to fulfill
-                /// a value, and the handling of progress notifications along the way.
-                /// </summary>
-                /// <param name='onComplete' type='Function' locid="WinJS.PromiseStateMachine.then_p:onComplete">
-                /// The function to be called if the promise is fulfilled successfully with a value.
-                /// The value is passed as the single argument. If the value is null, the value is returned.
-                /// The value returned from the function becomes the fulfilled value of the promise returned by
-                /// then(). If an exception is thrown while this function is being executed, the promise returned
-                /// by then() moves into the error state.
-                /// </param>
-                /// <param name='onError' type='Function' optional='true' locid="WinJS.PromiseStateMachine.then_p:onError">
-                /// The function to be called if the promise is fulfilled with an error. The error
-                /// is passed as the single argument. If it is null, the error is forwarded.
-                /// The value returned from the function becomes the fulfilled value of the promise returned by then().
-                /// </param>
-                /// <param name='onProgress' type='Function' optional='true' locid="WinJS.PromiseStateMachine.then_p:onProgress">
-                /// The function to be called if the promise reports progress. Data about the progress
-                /// is passed as the single argument. Promises are not required to support
-                /// progress.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.PromiseStateMachine.then_returnValue">
-                /// The promise whose value is the result of executing the complete or
-                /// error function.
-                /// </returns>
-                /// </signature>
-                try {
-                    // If the value returned from the completion handler is the same as the value
-                    // provided to the completion handler then there is no need for a new promise.
-                    //
-                    var newValue = onComplete ? onComplete(this._value) : this._value;
-                    return newValue === this._value ? this : new CompletePromise(newValue);
-                } catch (ex) {
-                    return new ExceptionPromise(ex);
-                }
-            }
-        }, {
-            supportedForProcessing: false
+        } 
+        public cancel() {
+            /// <signature helpKeyword="WinJS.PromiseStateMachine.cancel">
+            /// <summary locid="WinJS.PromiseStateMachine.cancel">
+            /// Attempts to cancel the fulfillment of a promised value. If the promise hasn't
+            /// already been fulfilled and cancellation is supported, the promise enters
+            /// the error state with a value of Error("Canceled").
+            /// </summary>
+            /// </signature>
         }
-    );
+        public done(onComplete) {
+            /// <signature helpKeyword="WinJS.PromiseStateMachine.done">
+            /// <summary locid="WinJS.PromiseStateMachine.done">
+            /// Allows you to specify the work to be done on the fulfillment of the promised value,
+            /// the error handling to be performed if the promise fails to fulfill
+            /// a value, and the handling of progress notifications along the way.
+            ///
+            /// After the handlers have finished executing, this function throws any error that would have been returned
+            /// from then() as a promise in the error state.
+            /// </summary>
+            /// <param name='onComplete' type='Function' locid="WinJS.PromiseStateMachine.done_p:onComplete">
+            /// The function to be called if the promise is fulfilled successfully with a value.
+            /// The fulfilled value is passed as the single argument. If the value is null,
+            /// the fulfilled value is returned. The value returned
+            /// from the function becomes the fulfilled value of the promise returned by
+            /// then(). If an exception is thrown while executing the function, the promise returned
+            /// by then() moves into the error state.
+            /// </param>
+            /// <param name='onError' type='Function' optional='true' locid="WinJS.PromiseStateMachine.done_p:onError">
+            /// The function to be called if the promise is fulfilled with an error. The error
+            /// is passed as the single argument. If it is null, the error is forwarded.
+            /// The value returned from the function is the fulfilled value of the promise returned by then().
+            /// </param>
+            /// <param name='onProgress' type='Function' optional='true' locid="WinJS.PromiseStateMachine.done_p:onProgress">
+            /// the function to be called if the promise reports progress. Data about the progress
+            /// is passed as the single argument. Promises are not required to support
+            /// progress.
+            /// </param>
+            /// </signature>
+            if (!onComplete) { return; }
+            try {
+                var result = onComplete(this._value);
+                if (result && typeof result === "object" && typeof result.done === "function") {
+                    result.done();
+                }
+            } catch (ex) {
+                // force the exception to be thrown asynchronously to avoid any try/catch blocks
+                WinJS.Utilities.Scheduler.schedule(function Promise_done_rethrow() {
+                    throw ex;
+                }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.Promise._throwException");
+            }
+        }
+        public then<U>(onComplete):IPromise<U> {
+            /// <signature helpKeyword="WinJS.PromiseStateMachine.then">
+            /// <summary locid="WinJS.PromiseStateMachine.then">
+            /// Allows you to specify the work to be done on the fulfillment of the promised value,
+            /// the error handling to be performed if the promise fails to fulfill
+            /// a value, and the handling of progress notifications along the way.
+            /// </summary>
+            /// <param name='onComplete' type='Function' locid="WinJS.PromiseStateMachine.then_p:onComplete">
+            /// The function to be called if the promise is fulfilled successfully with a value.
+            /// The value is passed as the single argument. If the value is null, the value is returned.
+            /// The value returned from the function becomes the fulfilled value of the promise returned by
+            /// then(). If an exception is thrown while this function is being executed, the promise returned
+            /// by then() moves into the error state.
+            /// </param>
+            /// <param name='onError' type='Function' optional='true' locid="WinJS.PromiseStateMachine.then_p:onError">
+            /// The function to be called if the promise is fulfilled with an error. The error
+            /// is passed as the single argument. If it is null, the error is forwarded.
+            /// The value returned from the function becomes the fulfilled value of the promise returned by then().
+            /// </param>
+            /// <param name='onProgress' type='Function' optional='true' locid="WinJS.PromiseStateMachine.then_p:onProgress">
+            /// The function to be called if the promise reports progress. Data about the progress
+            /// is passed as the single argument. Promises are not required to support
+            /// progress.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.PromiseStateMachine.then_returnValue">
+            /// The promise whose value is the result of executing the complete or
+            /// error function.
+            /// </returns>
+            /// </signature>
+            try {
+                // If the value returned from the completion handler is the same as the value
+                // provided to the completion handler then there is no need for a new promise.
+                //
+                var newValue = onComplete ? onComplete(this._value) : this._value;
+                return newValue === this._value ? this : new CompletePromise(newValue);
+            } catch (ex) {
+                return new ExceptionPromise(ex);
+            }
+        }
+    }
 
     //
     // Promise is the user-creatable WinJS.Promise object.
@@ -995,8 +1050,16 @@
 
     var staticCanceledPromise;
 
-    var Promise = WinJS.Class.derive(PromiseStateMachine,
-        function Promise_ctor(init, oncancel) {
+    export interface KeyValuePair<K, V> {
+        key: K;
+        value: V;
+    }
+
+    export class Promise<T> extends _PromiseStateMachine<T> {
+
+        private _oncancel = null;
+
+        constructor(init: (c: (result?: T) => void, e: (error?) => void, p: (progress?) => void) => any, oncancel?: Function) {
             /// <signature helpKeyword="WinJS.Promise">
             /// <summary locid="WinJS.Promise">
             /// A promise provides a mechanism to schedule work to be done on a value that
@@ -1015,9 +1078,7 @@
             /// </param>
             /// </signature>
 
-            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.promise))) {
-                this._stack = WinJS.Promise._getStack();
-            }
+            super();
 
             this._oncancel = oncancel;
             this._setState(state_created);
@@ -1031,427 +1092,454 @@
             } catch (ex) {
                 this._setExceptionValue(ex);
             }
-        }, {
-            _oncancel: null,
-
-            _cancelAction: function () {
-                if (this._oncancel) {
-                    try { this._oncancel(); } catch (ex) { }
-                }
-            },
-            _cleanupAction: function () { this._oncancel = null; }
-        }, {
-
-            addEventListener: function Promise_addEventListener(eventType, listener, capture) {
-                /// <signature helpKeyword="WinJS.Promise.addEventListener">
-                /// <summary locid="WinJS.Promise.addEventListener">
-                /// Adds an event listener to the control.
-                /// </summary>
-                /// <param name="eventType" locid="WinJS.Promise.addEventListener_p:eventType">
-                /// The type (name) of the event.
-                /// </param>
-                /// <param name="listener" locid="WinJS.Promise.addEventListener_p:listener">
-                /// The listener to invoke when the event is raised.
-                /// </param>
-                /// <param name="capture" locid="WinJS.Promise.addEventListener_p:capture">
-                /// Specifies whether or not to initiate capture.
-                /// </param>
-                /// </signature>
-                promiseEventListeners.addEventListener(eventType, listener, capture);
-            },
-            any: function Promise_any(values) {
-                /// <signature helpKeyword="WinJS.Promise.any">
-                /// <summary locid="WinJS.Promise.any">
-                /// Returns a promise that is fulfilled when one of the input promises
-                /// has been fulfilled.
-                /// </summary>
-                /// <param name="values" type="Array" locid="WinJS.Promise.any_p:values">
-                /// An array that contains promise objects or objects whose property
-                /// values include promise objects.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.Promise.any_returnValue">
-                /// A promise that on fulfillment yields the value of the input (complete or error).
-                /// </returns>
-                /// </signature>
-                return new Promise(
-                    function (complete, error, progress) {
-                        var keys = Object.keys(values);
-                        var errors = Array.isArray(values) ? [] : {};
-                        if (keys.length === 0) {
-                            complete();
-                        }
-                        var canceled = 0;
-                        keys.forEach(function (key) {
-                            Promise.as(values[key]).then(
-                                function () { complete({ key: key, value: values[key] }); },
-                                function (e) {
-                                    if (e instanceof Error && e.name === canceledName) {
-                                        if ((++canceled) === keys.length) {
-                                            complete(WinJS.Promise.cancel);
-                                        }
-                                        return;
-                                    }
-                                    error({ key: key, value: values[key] });
-                                }
-                            );
-                        });
-                    },
-                    function () {
-                        var keys = Object.keys(values);
-                        keys.forEach(function (key) {
-                            var promise = Promise.as(values[key]);
-                            if (typeof promise.cancel === "function") {
-                                promise.cancel();
-                            }
-                        });
-                    }
-                );
-            },
-            as: function Promise_as(value) {
-                /// <signature helpKeyword="WinJS.Promise.as">
-                /// <summary locid="WinJS.Promise.as">
-                /// Returns a promise. If the object is already a promise it is returned;
-                /// otherwise the object is wrapped in a promise.
-                /// </summary>
-                /// <param name="value" locid="WinJS.Promise.as_p:value">
-                /// The value to be treated as a promise.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.Promise.as_returnValue">
-                /// A promise.
-                /// </returns>
-                /// </signature>
-                if (value && typeof value === "object" && typeof value.then === "function") {
-                    return value;
-                }
-                return new (<any>CompletePromise)(value);
-            },
-            /// <field type="WinJS.Promise" helpKeyword="WinJS.Promise.cancel" locid="WinJS.Promise.cancel">
-            /// Canceled promise value, can be returned from a promise completion handler
-            /// to indicate cancelation of the promise chain.
-            /// </field>
-            cancel: {
-                get: function () {
-                    return (staticCanceledPromise = staticCanceledPromise || new ErrorPromise(new WinJS.ErrorFromName(canceledName)));
-                }
-            },
-            dispatchEvent: function Promise_dispatchEvent(eventType, details) {
-                /// <signature helpKeyword="WinJS.Promise.dispatchEvent">
-                /// <summary locid="WinJS.Promise.dispatchEvent">
-                /// Raises an event of the specified type and properties.
-                /// </summary>
-                /// <param name="eventType" locid="WinJS.Promise.dispatchEvent_p:eventType">
-                /// The type (name) of the event.
-                /// </param>
-                /// <param name="details" locid="WinJS.Promise.dispatchEvent_p:details">
-                /// The set of additional properties to be attached to the event object.
-                /// </param>
-                /// <returns type="Boolean" locid="WinJS.Promise.dispatchEvent_returnValue">
-                /// Specifies whether preventDefault was called on the event.
-                /// </returns>
-                /// </signature>
-                return promiseEventListeners.dispatchEvent(eventType, details);
-            },
-            is: function Promise_is(value) {
-                /// <signature helpKeyword="WinJS.Promise.is">
-                /// <summary locid="WinJS.Promise.is">
-                /// Determines whether a value fulfills the promise contract.
-                /// </summary>
-                /// <param name="value" locid="WinJS.Promise.is_p:value">
-                /// A value that may be a promise.
-                /// </param>
-                /// <returns type="Boolean" locid="WinJS.Promise.is_returnValue">
-                /// true if the specified value is a promise, otherwise false.
-                /// </returns>
-                /// </signature>
-                return value && typeof value === "object" && typeof value.then === "function";
-            },
-            join: function Promise_join(values) {
-                /// <signature helpKeyword="WinJS.Promise.join">
-                /// <summary locid="WinJS.Promise.join">
-                /// Creates a promise that is fulfilled when all the values are fulfilled.
-                /// </summary>
-                /// <param name="values" type="Object" locid="WinJS.Promise.join_p:values">
-                /// An object whose fields contain values, some of which may be promises.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.Promise.join_returnValue">
-                /// A promise whose value is an object with the same field names as those of the object in the values parameter, where
-                /// each field value is the fulfilled value of a promise.
-                /// </returns>
-                /// </signature>
-                return new Promise(
-                    function (complete, error, progress) {
-                        var keys = Object.keys(values);
-                        var errors = Array.isArray(values) ? [] : {};
-                        var results = Array.isArray(values) ? [] : {};
-                        var undefineds = 0;
-                        var pending = keys.length;
-                        var argDone = function (key) {
-                            if ((--pending) === 0) {
-                                var errorCount = Object.keys(errors).length;
-                                if (errorCount === 0) {
-                                    complete(results);
-                                } else {
-                                    var canceledCount = 0;
-                                    keys.forEach(function (key) {
-                                        var e = errors[key];
-                                        if (e instanceof Error && e.name === canceledName) {
-                                            canceledCount++;
-                                        }
-                                    });
-                                    if (canceledCount === errorCount) {
-                                        complete(WinJS.Promise.cancel);
-                                    } else {
-                                        error(errors);
-                                    }
-                                }
-                            } else {
-                                progress({ Key: key, Done: true });
-                            }
-                        };
-                        keys.forEach(function (key) {
-                            var value = values[key];
-                            if (value === undefined) {
-                                undefineds++;
-                            } else {
-                                Promise.then(value,
-                                    function (value) { results[key] = value; argDone(key); },
-                                    function (value) { errors[key] = value; argDone(key); }
-                                );
-                            }
-                        });
-                        pending -= undefineds;
-                        if (pending === 0) {
-                            complete(results);
-                            return;
-                        }
-                    },
-                    function () {
-                        Object.keys(values).forEach(function (key) {
-                            var promise = Promise.as(values[key]);
-                            if (typeof promise.cancel === "function") {
-                                promise.cancel();
-                            }
-                        });
-                    }
-                );
-            },
-            removeEventListener: function Promise_removeEventListener(eventType, listener, capture) {
-                /// <signature helpKeyword="WinJS.Promise.removeEventListener">
-                /// <summary locid="WinJS.Promise.removeEventListener">
-                /// Removes an event listener from the control.
-                /// </summary>
-                /// <param name='eventType' locid="WinJS.Promise.removeEventListener_eventType">
-                /// The type (name) of the event.
-                /// </param>
-                /// <param name='listener' locid="WinJS.Promise.removeEventListener_listener">
-                /// The listener to remove.
-                /// </param>
-                /// <param name='capture' locid="WinJS.Promise.removeEventListener_capture">
-                /// Specifies whether or not to initiate capture.
-                /// </param>
-                /// </signature>
-                promiseEventListeners.removeEventListener(eventType, listener, capture);
-            },
-            supportedForProcessing: false,
-            then: function Promise_then(value, onComplete, onError, onProgress) {
-                /// <signature helpKeyword="WinJS.Promise.then">
-                /// <summary locid="WinJS.Promise.then">
-                /// A static version of the promise instance method then().
-                /// </summary>
-                /// <param name="value" locid="WinJS.Promise.then_p:value">
-                /// the value to be treated as a promise.
-                /// </param>
-                /// <param name="onComplete" type="Function" locid="WinJS.Promise.then_p:complete">
-                /// The function to be called if the promise is fulfilled with a value.
-                /// If it is null, the promise simply
-                /// returns the value. The value is passed as the single argument.
-                /// </param>
-                /// <param name="onError" type="Function" optional="true" locid="WinJS.Promise.then_p:error">
-                /// The function to be called if the promise is fulfilled with an error. The error
-                /// is passed as the single argument.
-                /// </param>
-                /// <param name="onProgress" type="Function" optional="true" locid="WinJS.Promise.then_p:progress">
-                /// The function to be called if the promise reports progress. Data about the progress
-                /// is passed as the single argument. Promises are not required to support
-                /// progress.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.Promise.then_returnValue">
-                /// A promise whose value is the result of executing the provided complete function.
-                /// </returns>
-                /// </signature>
-                return Promise.as(value).then(onComplete, onError, onProgress);
-            },
-            thenEach: function Promise_thenEach(values, onComplete, onError, onProgress) {
-                /// <signature helpKeyword="WinJS.Promise.thenEach">
-                /// <summary locid="WinJS.Promise.thenEach">
-                /// Performs an operation on all the input promises and returns a promise
-                /// that has the shape of the input and contains the result of the operation
-                /// that has been performed on each input.
-                /// </summary>
-                /// <param name="values" locid="WinJS.Promise.thenEach_p:values">
-                /// A set of values (which could be either an array or an object) of which some or all are promises.
-                /// </param>
-                /// <param name="onComplete" type="Function" locid="WinJS.Promise.thenEach_p:complete">
-                /// The function to be called if the promise is fulfilled with a value.
-                /// If the value is null, the promise returns the value.
-                /// The value is passed as the single argument.
-                /// </param>
-                /// <param name="onError" type="Function" optional="true" locid="WinJS.Promise.thenEach_p:error">
-                /// The function to be called if the promise is fulfilled with an error. The error
-                /// is passed as the single argument.
-                /// </param>
-                /// <param name="onProgress" type="Function" optional="true" locid="WinJS.Promise.thenEach_p:progress">
-                /// The function to be called if the promise reports progress. Data about the progress
-                /// is passed as the single argument. Promises are not required to support
-                /// progress.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.Promise.thenEach_returnValue">
-                /// A promise that is the result of calling Promise.join on the values parameter.
-                /// </returns>
-                /// </signature>
-                var result = Array.isArray(values) ? [] : {};
-                Object.keys(values).forEach(function (key) {
-                    result[key] = Promise.as(values[key]).then(onComplete, onError, onProgress);
-                });
-                return Promise.join(result);
-            },
-            timeout: function Promise_timeout(time, promise) {
-                /// <signature helpKeyword="WinJS.Promise.timeout">
-                /// <summary locid="WinJS.Promise.timeout">
-                /// Creates a promise that is fulfilled after a timeout.
-                /// </summary>
-                /// <param name="timeout" type="Number" optional="true" locid="WinJS.Promise.timeout_p:timeout">
-                /// The timeout period in milliseconds. If this value is zero or not specified
-                /// setImmediate is called, otherwise setTimeout is called.
-                /// </param>
-                /// <param name="promise" type="Promise" optional="true" locid="WinJS.Promise.timeout_p:promise">
-                /// A promise that will be canceled if it doesn't complete before the
-                /// timeout has expired.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.Promise.timeout_returnValue">
-                /// A promise that is completed asynchronously after the specified timeout.
-                /// </returns>
-                /// </signature>
-                var to = timeout(time);
-                return promise ? timeoutWithPromise(to, promise) : to;
-            },
-            wrap: function Promise_wrap(value) {
-                /// <signature helpKeyword="WinJS.Promise.wrap">
-                /// <summary locid="WinJS.Promise.wrap">
-                /// Wraps a non-promise value in a promise. You can use this function if you need
-                /// to pass a value to a function that requires a promise.
-                /// </summary>
-                /// <param name="value" locid="WinJS.Promise.wrap_p:value">
-                /// Some non-promise value to be wrapped in a promise.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.Promise.wrap_returnValue">
-                /// A promise that is successfully fulfilled with the specified value
-                /// </returns>
-                /// </signature>
-                return new (<any>CompletePromise)(value);
-            },
-            wrapError: function Promise_wrapError(error) {
-                /// <signature helpKeyword="WinJS.Promise.wrapError">
-                /// <summary locid="WinJS.Promise.wrapError">
-                /// Wraps a non-promise error value in a promise. You can use this function if you need
-                /// to pass an error to a function that requires a promise.
-                /// </summary>
-                /// <param name="error" locid="WinJS.Promise.wrapError_p:error">
-                /// A non-promise error value to be wrapped in a promise.
-                /// </param>
-                /// <returns type="WinJS.Promise" locid="WinJS.Promise.wrapError_returnValue">
-                /// A promise that is in an error state with the specified value.
-                /// </returns>
-                /// </signature>
-                return new ErrorPromise(error);
-            },
-
-            _veryExpensiveTagWithStack: {
-                get: function () { return tagWithStack; },
-                set: function (value) { tagWithStack = value; }
-            },
-            _veryExpensiveTagWithStack_tag: tag,
-            _getStack: function () {
-                if (global.Debug && Debug.debuggerEnabled) {
-                    try { throw new Error(); } catch (e) { return e.stack; }
-                }
-            },
-
-            _cancelBlocker: function Promise__cancelBlocker(input) {
-                //
-                // Returns a promise which on cancelation will still result in downstream cancelation while
-                //  protecting the promise 'input' from being  canceled which has the effect of allowing 
-                //  'input' to be shared amoung various consumers.
-                //
-                if (!Promise.is(input)) {
-                    return Promise.wrap(input);
-                }
-                var complete;
-                var error;
-                var output = new WinJS.Promise(
-                    function (c, e) {
-                        complete = c;
-                        error = e;
-                    },
-                    function () {
-                        complete = null;
-                        error = null;
-                    }
-                );
-                input.then(
-                    function (v) { complete && complete(v); },
-                    function (e) { error && error(e); }
-                );
-                return output;
-            },
-
         }
-    );
+
+        public _cancelAction() {
+            if (this._oncancel) {
+                try { this._oncancel(); } catch (ex) { }
+            }
+        }
+
+        public _cleanupAction() { 
+            this._oncancel = null; 
+        }
+         
+        static addEventListener(eventType: "error", listener: (e: CustomEvent) => any, capture?:boolean);
+        static addEventListener(eventType: string, listener: (e: CustomEvent) => any, capture?:boolean);
+        static addEventListener(eventType: string, listener: (e: CustomEvent) => any, capture?:boolean) {
+            /// <signature helpKeyword="WinJS.Promise.addEventListener">
+            /// <summary locid="WinJS.Promise.addEventListener">
+            /// Adds an event listener to the control.
+            /// </summary>
+            /// <param name="eventType" locid="WinJS.Promise.addEventListener_p:eventType">
+            /// The type (name) of the event.
+            /// </param>
+            /// <param name="listener" locid="WinJS.Promise.addEventListener_p:listener">
+            /// The listener to invoke when the event is raised.
+            /// </param>
+            /// <param name="capture" locid="WinJS.Promise.addEventListener_p:capture">
+            /// Specifies whether or not to initiate capture.
+            /// </param>
+            /// </signature>
+            promiseEventListeners.addEventListener(eventType, listener, capture);
+        }
+        static any<T>(values: Promise<T>[]): IPromise<KeyValuePair<string, IPromise<T>>> {
+            /// <signature helpKeyword="WinJS.Promise.any">
+            /// <summary locid="WinJS.Promise.any">
+            /// Returns a promise that is fulfilled when one of the input promises
+            /// has been fulfilled.
+            /// </summary>
+            /// <param name="values" type="Array" locid="WinJS.Promise.any_p:values">
+            /// An array that contains promise objects or objects whose property
+            /// values include promise objects.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.Promise.any_returnValue">
+            /// A promise that on fulfillment yields the value of the input (complete or error).
+            /// </returns>
+            /// </signature>
+            return new Promise(
+                function (complete, error, progress) {
+                    var keys = Object.keys(values);
+                    var errors = Array.isArray(values) ? [] : {};
+                    if (keys.length === 0) {
+                        complete();
+                    }
+                    var canceled = 0;
+                    keys.forEach(function (key) {
+                        Promise.as(values[key]).then(
+                            function () { complete({ key: key, value: values[key] }); },
+                            function (e) {
+                                if (e instanceof Error && e.name === canceledName) {
+                                    if ((++canceled) === keys.length) {
+                                        complete(WinJS.Promise.cancel);
+                                    }
+                                    return;
+                                }
+                                error({ key: key, value: values[key] });
+                            }
+                        );
+                    });
+                },
+                function () {
+                    var keys = Object.keys(values);
+                    keys.forEach(function (key) {
+                        var promise = Promise.as(values[key]);
+                        if (typeof promise.cancel === "function") {
+                            promise.cancel();
+                        }
+                    });
+                }
+            );
+        }
+        static as<T>(value?: T): IPromise<T>;
+        static as<P>(value?: Promise<P>): IPromise<P> {
+            /// <signature helpKeyword="WinJS.Promise.as">
+            /// <summary locid="WinJS.Promise.as">
+            /// Returns a promise. If the object is already a promise it is returned;
+            /// otherwise the object is wrapped in a promise.
+            /// </summary>
+            /// <param name="value" locid="WinJS.Promise.as_p:value">
+            /// The value to be treated as a promise.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.Promise.as_returnValue">
+            /// A promise.
+            /// </returns>
+            /// </signature>
+            if (value && typeof value === "object" && typeof value.then === "function") {
+                return value;
+            }
+            return new (<any>CompletePromise)(value);
+        }
+        /// <field type="WinJS.Promise" helpKeyword="WinJS.Promise.cancel" locid="WinJS.Promise.cancel">
+        /// Canceled promise value, can be returned from a promise completion handler
+        /// to indicate cancelation of the promise chain.
+        /// </field>
+        static get cancel():IPromise<any> {
+            return (staticCanceledPromise = staticCanceledPromise || new ErrorPromise(new WinJS.ErrorFromName(canceledName)));
+            
+        }
+
+        static dispatchEvent(eventType: "error", details);
+        static dispatchEvent(eventType: string, details);
+        static dispatchEvent(eventType: string, details) {
+            /// <signature helpKeyword="WinJS.Promise.dispatchEvent">
+            /// <summary locid="WinJS.Promise.dispatchEvent">
+            /// Raises an event of the specified type and properties.
+            /// </summary>
+            /// <param name="eventType" locid="WinJS.Promise.dispatchEvent_p:eventType">
+            /// The type (name) of the event.
+            /// </param>
+            /// <param name="details" locid="WinJS.Promise.dispatchEvent_p:details">
+            /// The set of additional properties to be attached to the event object.
+            /// </param>
+            /// <returns type="Boolean" locid="WinJS.Promise.dispatchEvent_returnValue">
+            /// Specifies whether preventDefault was called on the event.
+            /// </returns>
+            /// </signature>
+            return promiseEventListeners.dispatchEvent(eventType, details);
+        }
+        static is(value:any):boolean {
+            /// <signature helpKeyword="WinJS.Promise.is">
+            /// <summary locid="WinJS.Promise.is">
+            /// Determines whether a value fulfills the promise contract.
+            /// </summary>
+            /// <param name="value" locid="WinJS.Promise.is_p:value">
+            /// A value that may be a promise.
+            /// </param>
+            /// <returns type="Boolean" locid="WinJS.Promise.is_returnValue">
+            /// true if the specified value is a promise, otherwise false.
+            /// </returns>
+            /// </signature>
+            return value && typeof value === "object" && typeof value.then === "function";
+        }
+
+        static join<T>(values: Promise<T>[]): IPromise<T[]>;
+        static join<T>(values: { [keys: string]: IPromise<T> }): IPromise<{ [keys: string]: T }>;
+        static join(values: any): IPromise<any> {
+            /// <signature helpKeyword="WinJS.Promise.join">
+            /// <summary locid="WinJS.Promise.join">
+            /// Creates a promise that is fulfilled when all the values are fulfilled.
+            /// </summary>
+            /// <param name="values" type="Object" locid="WinJS.Promise.join_p:values">
+            /// An object whose fields contain values, some of which may be promises.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.Promise.join_returnValue">
+            /// A promise whose value is an object with the same field names as those of the object in the values parameter, where
+            /// each field value is the fulfilled value of a promise.
+            /// </returns>
+            /// </signature>
+            return new Promise(
+                function (complete, error, progress) {
+                    var keys = Object.keys(values);
+                    var errors = Array.isArray(values) ? [] : {};
+                    var results = Array.isArray(values) ? [] : {};
+                    var undefineds = 0;
+                    var pending = keys.length;
+                    var argDone = function (key) {
+                        if ((--pending) === 0) {
+                            var errorCount = Object.keys(errors).length;
+                            if (errorCount === 0) {
+                                complete(results);
+                            } else {
+                                var canceledCount = 0;
+                                keys.forEach(function (key) {
+                                    var e = errors[key];
+                                    if (e instanceof Error && e.name === canceledName) {
+                                        canceledCount++;
+                                    }
+                                });
+                                if (canceledCount === errorCount) {
+                                    complete(WinJS.Promise.cancel);
+                                } else {
+                                    error(errors);
+                                }
+                            }
+                        } else {
+                            progress({ Key: key, Done: true });
+                        }
+                    };
+                    keys.forEach(function (key) {
+                        var value = values[key];
+                        if (value === undefined) {
+                            undefineds++;
+                        } else {
+                            Promise.as(value).then(
+                                function (value) { results[key] = value; argDone(key); },
+                                function (value) { errors[key] = value; argDone(key); }
+                            );
+                        }
+                    });
+                    pending -= undefineds;
+                    if (pending === 0) {
+                        complete(results);
+                        return;
+                    }
+                },
+                function () {
+                    Object.keys(values).forEach(function (key) {
+                        var promise = Promise.as(values[key]);
+                        if (typeof promise.cancel === "function") {
+                            promise.cancel();
+                        }
+                    });
+                }
+            );
+        }
+
+        static removeEventListener(eventType: "error", listener: (e: CustomEvent) => any, capture: boolean);
+        static removeEventListener(eventType: string, listener: (e: CustomEvent) => any, capture: boolean);
+        static removeEventListener(eventType: string, listener: (e: CustomEvent) => any, capture: boolean) {
+            /// <signature helpKeyword="WinJS.Promise.removeEventListener">
+            /// <summary locid="WinJS.Promise.removeEventListener">
+            /// Removes an event listener from the control.
+            /// </summary>
+            /// <param name='eventType' locid="WinJS.Promise.removeEventListener_eventType">
+            /// The type (name) of the event.
+            /// </param>
+            /// <param name='listener' locid="WinJS.Promise.removeEventListener_listener">
+            /// The listener to remove.
+            /// </param>
+            /// <param name='capture' locid="WinJS.Promise.removeEventListener_capture">
+            /// Specifies whether or not to initiate capture.
+            /// </param>
+            /// </signature>
+            promiseEventListeners.removeEventListener(eventType, listener, capture);
+        }
+
+        static supportedForProcessing = false;
+
+        static then<T>(value:any, onComplete: (result: T) => any, onError: (error:any) => any, onProgress: (progress:any) => any):IPromise<T> {
+            /// <signature helpKeyword="WinJS.Promise.then">
+            /// <summary locid="WinJS.Promise.then">
+            /// A static version of the promise instance method then().
+            /// </summary>
+            /// <param name="value" locid="WinJS.Promise.then_p:value">
+            /// the value to be treated as a promise.
+            /// </param>
+            /// <param name="onComplete" type="Function" locid="WinJS.Promise.then_p:complete">
+            /// The function to be called if the promise is fulfilled with a value.
+            /// If it is null, the promise simply
+            /// returns the value. The value is passed as the single argument.
+            /// </param>
+            /// <param name="onError" type="Function" optional="true" locid="WinJS.Promise.then_p:error">
+            /// The function to be called if the promise is fulfilled with an error. The error
+            /// is passed as the single argument.
+            /// </param>
+            /// <param name="onProgress" type="Function" optional="true" locid="WinJS.Promise.then_p:progress">
+            /// The function to be called if the promise reports progress. Data about the progress
+            /// is passed as the single argument. Promises are not required to support
+            /// progress.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.Promise.then_returnValue">
+            /// A promise whose value is the result of executing the provided complete function.
+            /// </returns>
+            /// </signature>
+            return Promise.as(value).then(onComplete, onError, onProgress);
+        }
+
+        static thenEach<T>(values: IPromise<T>[], onComplete: (result: T) => any, onError?: (error) => any, onProgress?: (progress?) => any): IPromise<T[]>;
+        static thenEach<T>(values: { [keys: string]: IPromise<T> }, onComplete: (result: any) => any, onError?: (error) => any, onProgress?: (progress?) => any): IPromise<{ [keys: string]: T }>;
+        static thenEach<T>(values: any, onComplete: (result: T) => any, onError?: (error) => any, onProgress?: (progress?) => any): IPromise<any> {
+            /// <signature helpKeyword="WinJS.Promise.thenEach">
+            /// <summary locid="WinJS.Promise.thenEach">
+            /// Performs an operation on all the input promises and returns a promise
+            /// that has the shape of the input and contains the result of the operation
+            /// that has been performed on each input.
+            /// </summary>
+            /// <param name="values" locid="WinJS.Promise.thenEach_p:values">
+            /// A set of values (which could be either an array or an object) of which some or all are promises.
+            /// </param>
+            /// <param name="onComplete" type="Function" locid="WinJS.Promise.thenEach_p:complete">
+            /// The function to be called if the promise is fulfilled with a value.
+            /// If the value is null, the promise returns the value.
+            /// The value is passed as the single argument.
+            /// </param>
+            /// <param name="onError" type="Function" optional="true" locid="WinJS.Promise.thenEach_p:error">
+            /// The function to be called if the promise is fulfilled with an error. The error
+            /// is passed as the single argument.
+            /// </param>
+            /// <param name="onProgress" type="Function" optional="true" locid="WinJS.Promise.thenEach_p:progress">
+            /// The function to be called if the promise reports progress. Data about the progress
+            /// is passed as the single argument. Promises are not required to support
+            /// progress.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.Promise.thenEach_returnValue">
+            /// A promise that is the result of calling Promise.join on the values parameter.
+            /// </returns>
+            /// </signature>
+            var result:any = Array.isArray(values) ? [] : {};
+            Object.keys(values).forEach(function (key) {
+                result[key] = Promise.as(values[key]).then(onComplete, onError, onProgress);
+            });
+            return Promise.join(result);
+        }
+
+        static timeout<T>(time: number, promise: IPromise<T>): IPromise<T>;
+        static timeout(time: number, promise?: IPromise<any>): IPromise<any> {
+            /// <signature helpKeyword="WinJS.Promise.timeout">
+            /// <summary locid="WinJS.Promise.timeout">
+            /// Creates a promise that is fulfilled after a timeout.
+            /// </summary>
+            /// <param name="timeout" type="Number" optional="true" locid="WinJS.Promise.timeout_p:timeout">
+            /// The timeout period in milliseconds. If this value is zero or not specified
+            /// setImmediate is called, otherwise setTimeout is called.
+            /// </param>
+            /// <param name="promise" type="Promise" optional="true" locid="WinJS.Promise.timeout_p:promise">
+            /// A promise that will be canceled if it doesn't complete before the
+            /// timeout has expired.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.Promise.timeout_returnValue">
+            /// A promise that is completed asynchronously after the specified timeout.
+            /// </returns>
+            /// </signature>
+            var to = timeout(time);
+            return promise ? timeoutWithPromise(to, promise) : to;
+        }
+
+        static wrap<T>(value?: IPromise<T>): IPromise<T>;
+        static wrap<T>(value?: T): IPromise<T>;
+        static wrap<T>(value?:any): IPromise<T> {
+            /// <signature helpKeyword="WinJS.Promise.wrap">
+            /// <summary locid="WinJS.Promise.wrap">
+            /// Wraps a non-promise value in a promise. You can use this function if you need
+            /// to pass a value to a function that requires a promise.
+            /// </summary>
+            /// <param name="value" locid="WinJS.Promise.wrap_p:value">
+            /// Some non-promise value to be wrapped in a promise.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.Promise.wrap_returnValue">
+            /// A promise that is successfully fulfilled with the specified value
+            /// </returns>
+            /// </signature>
+            return new (<any>CompletePromise)(value);
+        }
+        static wrapError(error?: any): IPromise<any> {
+            /// <signature helpKeyword="WinJS.Promise.wrapError">
+            /// <summary locid="WinJS.Promise.wrapError">
+            /// Wraps a non-promise error value in a promise. You can use this function if you need
+            /// to pass an error to a function that requires a promise.
+            /// </summary>
+            /// <param name="error" locid="WinJS.Promise.wrapError_p:error">
+            /// A non-promise error value to be wrapped in a promise.
+            /// </param>
+            /// <returns type="WinJS.Promise" locid="WinJS.Promise.wrapError_returnValue">
+            /// A promise that is in an error state with the specified value.
+            /// </returns>
+            /// </signature>
+            return new ErrorPromise(error);
+        }
+
+        private static get _veryExpensiveTagWithStack() { 
+            return tagWithStack; 
+        }
+        private static set _veryExpensiveTagWithStack(value) { 
+            tagWithStack = value;
+        }
+        private static _veryExpensiveTagWithStack_tag = tag;
+
+        public static _getStack() {
+            if (global.Debug && Debug.debuggerEnabled) {
+                try { throw new Error(); } catch (e) { return e.stack; }
+            }
+        }
+
+        public static _cancelBlocker(input) {
+            //
+            // Returns a promise which on cancelation will still result in downstream cancelation while
+            //  protecting the promise 'input' from being  canceled which has the effect of allowing 
+            //  'input' to be shared amoung various consumers.
+            //
+            if (!Promise.is(input)) {
+                return Promise.wrap(input);
+            }
+            var complete;
+            var error;
+            var output = new WinJS.Promise<any>(
+                function (c, e, p) {
+                    complete = c;
+                    error = e;
+                },
+                function () {
+                    complete = null;
+                    error = null;
+                }
+            );
+            input.then(
+                function (v) { complete && complete(v); },
+                function (e) { error && error(e); }
+            );
+            return output;
+        }
+
+        public onerror: (e: CustomEvent) => any;
+    }
     Object.defineProperties(Promise, WinJS.Utilities.createEventProperties(errorET));
 
-    var SignalPromise = WinJS.Class.derive(PromiseStateMachine,
-        function (cancel) {
+    export class _SignalPromise<T> extends _PromiseStateMachine<T> {
+        static supportedForProcessing = false;
+
+        private _oncancel;
+
+        constructor(cancel) {
+            super();
             this._oncancel = cancel;
             this._setState(state_created);
             this._run();
-        }, {
-            _cancelAction: function () { this._oncancel && this._oncancel(); },
-            _cleanupAction: function () { this._oncancel = null; }
-        }, {
-            supportedForProcessing: false
         }
-    );
-
-    var Signal = WinJS.Class.define(
-        function Signal_ctor(oncancel) {
-            this._promise = new SignalPromise(oncancel);
-        }, {
-            promise: {
-                get: function () { return this._promise; }
-            },
-
-            cancel: function Signal_cancel() {
-                this._promise.cancel();
-            },
-            complete: function Signal_complete(value) {
-                this._promise._completed(value);
-            },
-            error: function Signal_error(value) {
-                this._promise._error(value);
-            },
-            progress: function Signal_progress(value) {
-                this._promise._progress(value);
-            }
-        }, {
-            supportedForProcessing: false,
+        public _cancelAction() { 
+            this._oncancel && this._oncancel(); 
         }
-    );
+        public _cleanupAction() { 
+            this._oncancel = null; 
+        }
 
-    // Publish WinJS.Promise
-    //
-    WinJS.Namespace.define("WinJS", {
-        Promise: Promise,
-        _Signal: Signal
-    });
+    }
 
-})(this);
+    export class _Signal<T> {
+        static supportedForProcessing = false;
+        private _promise:_SignalPromise<T>;
+
+        constructor(oncancel) {
+            this._promise = new _SignalPromise<T>(oncancel);
+        }
+        public get promise() { 
+            return this._promise; 
+        }
+
+        public cancel() {
+            this._promise.cancel();
+        }
+
+        public complete(value) {
+            this._promise._completed(value);
+        }
+        public error(value) {
+            this._promise._error(value);
+        }
+        public progress(value) {
+            this._promise._progress(value);
+        }
+
+    }
+
+}
