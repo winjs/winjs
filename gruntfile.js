@@ -3,8 +3,6 @@
     "use strict";
 
     module.exports = function (grunt) {
-    "use strict";
-
         var config = require("./config.js");
 
         // Make sure that Grunt doesn't remove BOM from our utf8 files
@@ -41,7 +39,7 @@
         grunt.loadTasks("tasks/");
 
         // Task alias's
-        grunt.registerTask("default", ["jshint", "clean", "less", "concat", "copy", "replace"]);
+        grunt.registerTask("default", ["clean", "less", "concat", "copy", "replace"]);
     grunt.registerTask("release", ["default", "uglify"]);
         grunt.registerTask("css", ["less"]);
         grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
