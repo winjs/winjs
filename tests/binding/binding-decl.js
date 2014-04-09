@@ -2382,6 +2382,20 @@ CorsicaTests.BindingDeclTests = function () {
          then(complete, errorHandler);
 
     };
+    
+    this.testGetValue = function () {
+      var obj = {
+        title: "foo",
+        pages: {
+          page1: "bar"
+        }
+      }
+      LiveUnit.Assert.areEqual(WinJS.Binding.getValue(obj, "title", "foo"));
+      LiveUnit.Assert.areEqual(WinJS.Binding.getValue(obj, "pages.page1", "bar"));
+      LiveUnit.Assert.areEqual(WinJS.Binding.getValue(obj, "nonExisting", undefined));
+      LiveUnit.Assert.areEqual(WinJS.Binding.getValue(obj, "pages.page2", undefined));
+    }
+
 };
 
 LiveUnit.registerTestClass('CorsicaTests.BindingDeclTests');
