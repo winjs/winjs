@@ -35,9 +35,7 @@
         reporterOutput: undefined, // If reporterOutput is specified then all output will be written to the given filepath instead of printed to stdout.
 
         '-W053': true, // Ignore (W053)  Do not use String as a constructor.
-        '-W018': true, // Ignore (W018)  Confusing use of '!'.
-        //'-W053': true, // Ignore (W053)  Do not use String as a constructor.
-        //'-W053': true, // Ignore (W053)  Do not use String as a constructor.
+        '-W018': true, // Ignore (W018)  Confusing use of '!'.       
 
         /*
           ENFORCING Options: When set to true, (or in some cases an integer value) these options will make JSHint produce more warnings about your code.

@@ -17,7 +17,7 @@
                 return str.replace(encodeHtmlRegEx, function (m) {
                     return encodeHtmlEscapeMap[m] || "";
                 });
-            };
+            }
             function stripDirectionMarker(str) {
                 return str.replace(stringDirectionRegEx, "");
             }

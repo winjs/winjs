@@ -51,7 +51,7 @@
                     element = element.parentNode;
                 }
                 return null;
-            };
+            }
 
             var strings = {
                 get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },

@@ -462,7 +462,7 @@
                             getLength: function () { return 2; },
                             getValue: function (index) {
                                 var date = WinJS.UI.TimePicker._sentinelDate();
-                                if (index == 0) {
+                                if (!index) {
                                     date.setHours(1);
                                     var am = periodFormatter.format(date);
                                     return am;
@@ -544,7 +544,7 @@
                 _getInformationJS: function (clock, minuteIncrement) {
                     var hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-                    var minutes = new Object();
+                    var minutes = {};
                     minutes.getLength = function () { return 60 / minuteIncrement; }
                     minutes.getValue = function (index) {
                         var display = index * minuteIncrement;

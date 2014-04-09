@@ -15,7 +15,7 @@
 
         if (count < 4) {
             // Only 3 depth is supported in the innerHTML
-            if (count == 0) {
+            if (!count) {
                 if (rootElement.getAttribute) {
                     // Fragment-loaded root element isn't caught by querySelectorAll
                     var rootElementNode = rootElement.getAttribute('data-win-res');
@@ -61,7 +61,7 @@
         }
 
         return WinJS.Promise.as(rootElement);
-    };
+    }
 
     function setAttributes(root, descriptor) {
         var names = Object.keys(descriptor);

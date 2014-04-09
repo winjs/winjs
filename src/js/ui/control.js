@@ -22,7 +22,7 @@
         /// </param>
         /// </signature>
         _setOptions(control, options);
-    };
+    }
 
     function _setOptions(control, options, eventsOnly) {
         if (typeof options === "object") {
@@ -48,7 +48,7 @@
                 }
             }
         }
-    };
+    }
 
     WinJS.Namespace.define("WinJS.UI", {
         DOMEventMixin: WinJS.Namespace._lazy(function () {
