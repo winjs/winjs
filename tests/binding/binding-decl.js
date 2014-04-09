@@ -2361,6 +2361,27 @@ CorsicaTests.BindingDeclTests = function () {
            then(complete, errorHandler);
         
     };
+
+    this.testAddClassOneTimeWithArray = function (complete) {
+
+      var mydiv = document.createElement("div");
+      var cleanup = parent(mydiv);
+      mydiv.classList.add("originalClass");
+      mydiv.setAttribute("id", "mydiv");
+      mydiv.setAttribute("data-win-bind", "textContent:names WinJS.Binding.addClassOneTime");
+
+      var obj = WinJS.Binding.as({ names: ["Sally", "Nelly"] });
+      var bindingDone = WinJS.Binding.processAll(mydiv, obj);
+
+      bindingDone.
+         then(post).then(function () {
+           LiveUnit.Assert.areEqual("originalClass Sally Nelly", mydiv.className);
+         })
+         .then(null, errorHandler).
+         then(cleanup).
+         then(complete, errorHandler);
+
+    };
 };
 
 LiveUnit.registerTestClass('CorsicaTests.BindingDeclTests');
