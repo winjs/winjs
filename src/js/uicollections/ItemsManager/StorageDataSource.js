@@ -121,7 +121,7 @@
                     }
                     function listener(ev) {
                         that._notificationHandler.changed(that._item(ev.target));
-                    };
+                    }
 
                     var perfId = "WinJS.UI.StorageDataSource:itemsFromIndex(" + first + "-" + (first + count - 1) + ")";
                     WinJS.Utilities._writeProfilerMark(perfId + ",StartTM");

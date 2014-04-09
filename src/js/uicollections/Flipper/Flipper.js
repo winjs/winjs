@@ -897,7 +897,7 @@
                                     })
                                 };
                             }
-                        };
+                        }
                     } else if (typeof itemTemplate === "object") {
                         itemRenderer = itemTemplate.renderItem;
                     }

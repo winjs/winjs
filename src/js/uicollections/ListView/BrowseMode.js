@@ -1312,7 +1312,7 @@
                 },
 
                 onTabEnter: function (eventObject) {
-                    if (this.site._groups.length() == 0) {
+                    if (!this.site._groups.length()) {
                         return;
                     }
 
@@ -1367,7 +1367,7 @@
                 },
 
                 onTabExit: function (eventObject) {
-                    if (!this.site._supportsGroupHeaderKeyboarding || this.site._groups.length() == 0) {
+                    if (!this.site._supportsGroupHeaderKeyboarding || !this.site._groups.length()) {
                         return;
                     }
 

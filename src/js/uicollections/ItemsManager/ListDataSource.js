@@ -2479,7 +2479,7 @@
                         if (typeof index === "number" && results[resultsCount - 1] === endMarker) {
                             // If the count wasn't known, it is now
                             count = index - offset + resultsCount - 1;
-                        } else if (isNonNegativeNumber(count) && index == undefined) {
+                        } else if (isNonNegativeNumber(count) && !index) {
                             // If the index wasn't known, it is now
                             index = count - (resultsCount - 1) + offset;
                         }

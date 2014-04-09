@@ -20,24 +20,6 @@
     var sharedOptions = {
 
         /*
-          Options specifically for configuration of Grunt JSHint plugin. 
-          https://www.npmjs.org/package/grunt-contrib-jshint
-        */
-        reporter: "tasks/utilities/jshintreporter.js", // Path to the custom reporter we use, default is the built-in Grunt reporter. 
-        globals: { // Tells JSHint about global variables that are defined elsewhere. If value is false (default), JSHint will consider that variable as read-only.
-            WinJS: true,
-            Windows: false,
-        },
-        jshintrc: undefined, // If set to true, no config will be sent to jshint and jshint will search for .jshintrc files relative to the files being linted.
-        extensions: undefined, // A list of non-dot-js extensions to check.
-        ignores: config.lint.ignoreFiles,// Array of files and dirs to ignore. This will override your .jshintignore file if set and does not merge.
-        force: true, // Set force to true to report JSHint errors but not fail the task.   
-        reporterOutput: undefined, // If reporterOutput is specified then all output will be written to the given filepath instead of printed to stdout.
-
-        '-W053': true, // Ignore (W053)  Do not use String as a constructor.
-        '-W018': true, // Ignore (W018)  Confusing use of '!'.       
-
-        /*
           ENFORCING Options: When set to true, (or in some cases an integer value) these options will make JSHint produce more warnings about your code.
           http://www.jshint.com/docs/options/#enforcing-options
         */
@@ -99,6 +81,29 @@
         supernew: true, // Suppresses warnings about "weird" constructions like new function () { ... } and new Object;. 
         validthis: true, // Suppresses warnings about possible strict violations when the code is running in strict mode and you use this in a non-constructor function.
         noyield: true, // Suppresses warnings about generator functions with no yield statement in them.
+
+        /*
+            Suppress specific JSHint warnings with no corresponding Options flag.
+        */
+        '-W053': true, // Ignore (W053)  Do not use String as a constructor.
+        '-W018': true, // Ignore (W018)  Confusing use of '!'.       
+        '-W002': true, // Ignore (W002)  Value of 'e' may be overwritten in IE 8 and earlier.
+        "-W120": true, // Ignore (W120)  You might be leaking a variable (a) here.
+
+        /*
+            Exrta Options specifically for configuration of Grunt JSHint plugin. 
+            https://www.npmjs.org/package/grunt-contrib-jshint
+        */
+        reporter: "tasks/utilities/jshintreporter.js", // Path to the custom reporter we use, default is the built-in Grunt reporter. 
+        globals: { // Tells JSHint about global variables that are defined elsewhere. If value is false (default), JSHint will consider that variable as read-only.
+            WinJS: true,
+            Windows: false,
+        },
+        jshintrc: undefined, // If set to true, no config will be sent to jshint and jshint will search for .jshintrc files relative to the files being linted.
+        extensions: undefined, // A list of non-dot-js extensions to check.
+        ignores: config.lint.ignoreFiles,// Array of files and dirs to ignore. This will override your .jshintignore file if set and does not merge.
+        force: true, // Set force to true to report JSHint errors but not fail the task.   
+        reporterOutput: undefined, // If reporterOutput is specified then all output will be written to the given filepath instead of printed to stdout.        
     };
 
     var buildOptions = cloneOptions(sharedOptions);

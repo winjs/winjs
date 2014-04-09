@@ -100,7 +100,7 @@
                 then(function goBeforeCompleted(cancel) {
                     if (!cancel) {
                         toStack.push(history.current);
-                        while (distance - 1 != 0) {
+                        while (!(distance - 1)) {
                             distance--;
                             toStack.push(fromStack.pop());
                         }

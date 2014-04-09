@@ -414,7 +414,6 @@ StringLiteral       7.8.4
                                 case 0x2029:    // paragraph separator
                                     offset += 2;
                                     continue;
-                                    break;
 
                                 case 0x000D:    // carriage return
                                     if (offset + 2 < limit && text.charCodeAt(offset + 2) === 0x000A) {
@@ -424,7 +423,6 @@ StringLiteral       7.8.4
                                         offset += 2;
                                     }
                                     continue;
-                                    break;
                             }
                         }
                         offset++;
@@ -515,8 +513,8 @@ StringLiteral       7.8.4
                     while (offset < limit) {
                         var startOffset = offset;
                         var code = text.charCodeAt(offset++);
-                        var type = undefined;
-                        var token = undefined;
+                        var type;
+                        var token;
                         switch (code) {
                             case isWhitespace(code) && code:
                             case isLineTerminator(code) && code:
@@ -524,7 +522,6 @@ StringLiteral       7.8.4
                                 token = { type: tokenType.separator, length: offset - startOffset };
                                 // don't include whitespace in the token stream.
                                 continue;
-                                break;
 
                             case /*"*/34:
                             case /*'*/39:

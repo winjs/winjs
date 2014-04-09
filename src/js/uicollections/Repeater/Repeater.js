@@ -129,7 +129,7 @@
                         this._writeProfilerMark("data.set,StartTM");
                         if (this._data) {
                             this._removeDataListeners();
-                        };
+                        }
                         this._data = data || new WinJS.Binding.List();
                         this._addDataListeners();
                         if (!this._initializing) {
