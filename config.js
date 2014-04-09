@@ -239,7 +239,15 @@
 
     config.lint = {
         srcFiles: ["src/**/*.js"],
-        buildFiles: ["gruntfile.js", "config.js", "tasks/**/*.js"]
+        buildFiles: ["gruntfile.js", "config.js", "tasks/**/*.js"],
+        ignoreFiles: [
+            "src/js/en-US/base.prefix.js",
+            "src/js/en-US/ui.prefix.js",
+            "src/js/library/stringsBlockFooter.js",
+            "src/js/library/stringsBlockHeader.js",
+            "src/js/library/stringsFooter.js",
+            "src/js/library/stringsHeader.js",
+        ],
     };
 
 })();
