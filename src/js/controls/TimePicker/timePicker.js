@@ -168,7 +168,6 @@
                         }
                     },
                     set: function (value) {
-                        var that = this;
                         var newTime;
                         if (typeof (value) === "string") {
                             newTime = WinJS.UI.TimePicker._sentinelDate();
@@ -337,8 +336,6 @@
                     }
 
                     this._addControlsInOrder(info);
-
-                    var that = this;
 
                     var hoursAmpm = this._getHoursAmpm(this.current);
                     this._hourControl = new WinJS.UI._Select(this._hourElement, {

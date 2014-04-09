@@ -7,6 +7,7 @@
     "use strict";
 
     if (global.LiveUnit) {
+        // This runs in the UI context
         global.CorsicaTests = global.CorsicaTests || {};
 
         global.CorsicaTests.WebWorkerValidationTests = function () {
@@ -27,8 +28,15 @@
         global.LiveUnit.registerTestClass("CorsicaTests.WebWorkerValidationTests");
     }
     else {
-        // running in the worker context
-        importScripts("webworkerscript.js");
+        // This runs in the worker context
+        try {
+            // Import base.js from the project reference
+            importScripts("//$(TargetFramework)/js/base.js");
+
+        } catch (e) {
+            // Import base.js from loose files
+            importScripts("source/base.js");
+        }
         var Point = WinJS.Class.define(function () { }, { x: 0, y: 5 });
         var pt = new Point();
         pt.x = 1;

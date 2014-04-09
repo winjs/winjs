@@ -208,8 +208,6 @@
                 },
 
                 _createControls: function () {
-                    var that = this;
-
                     var info = this._information;
                     var index = info.getIndex(this.current);
 
