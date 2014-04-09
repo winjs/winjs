@@ -214,7 +214,7 @@
                 });
             }
             function createIdentifier(prefix, count, suffix) {
-                if (suffix) {
+                if (suffix) {                   
                     return new String("" + prefix + count + "_" + suffix);
                 } else {
                     return new String("" + prefix + count);
@@ -282,7 +282,7 @@
                 var that = this;
                 this.compiler = compiler;
                 this.kind = kind;
-                this.base = new String(name);
+                this.base = "" + name;
                 this.tree = {
                     children: {},
                     parent: this.base,
@@ -1629,7 +1629,7 @@
                                     //
                                     // We can reverse this to make css property names.
                                     //
-                                    if (targetCssProperty[0] === "m" && targetCssProperty[1] === "s" || 
+                                    if (targetCssProperty[0] === "m" && targetCssProperty[1] === "s" ||
                                             targetCssProperty.substring(0, 6) === "webkit") {
                                         targetCssProperty = "-" + targetCssProperty;
                                     }
@@ -1641,10 +1641,10 @@
                             }
                             break;
 
-                            case "innerText":
-                            case "textContent":
-                                return { kind: TextBindingKind.textContent, attribute: "textContent" };
-                        }
+                        case "innerText":
+                        case "textContent":
+                            return { kind: TextBindingKind.textContent, attribute: "textContent" };
+                    }
                 },
 
                 oneTimeTreeBinding: function (binding) {
@@ -2007,253 +2007,255 @@
                 });
             }
 
-            var renderImplMainCodePrefixTemplate = trimLinesRight("\
-container.classList.add(\"win-template\");                                                              \n\
-var html = {html};                                                                                      \n\
-{insertAdjacentHTMLUnsafe}(container, \"beforeend\", html);                                             \n\
-returnedElement = {returnedElement};                                                                    \n\
-                                                                                                        \n\
-// Capture Definitions                                                                                  \n\
-{capture_definitions};                                                                                  \n\
-{set_msParentSelectorScope};                                                                            \n\
-                                                                                                        \n\
-");
+            
+            var renderImplMainCodePrefixTemplate = trimLinesRight(
+"container.classList.add(\"win-template\");                                                              \n" +
+"var html = {html};                                                                                      \n" +
+"{insertAdjacentHTMLUnsafe}(container, \"beforeend\", html);                                             \n" +
+"returnedElement = {returnedElement};                                                                    \n" +
+"                                                                                                        \n" +
+"// Capture Definitions                                                                                  \n" +
+"{capture_definitions};                                                                                  \n" +
+"{set_msParentSelectorScope};                                                                            \n" +
+"                                                                                                        \n" 
+);
 
-            var renderImplControlAndBindingProcessing = trimLinesRight("\
-// Control Processing                                                                                   \n\
-{control_processing};                                                                                   \n\
-                                                                                                        \n\
-// Binding Processing                                                                                   \n\
-{binding_processing};                                                                                   \n\
-                                                                                                        \n\
-var result = {promise_as}(returnedElement);                                                             \n\
-");
+            var renderImplControlAndBindingProcessing = trimLinesRight(
+"// Control Processing                                                                                   \n" +
+"{control_processing};                                                                                   \n" +
+"                                                                                                        \n" +
+"// Binding Processing                                                                                   \n" +
+"{binding_processing};                                                                                   \n" +
+"                                                                                                        \n" +
+"var result = {promise_as}(returnedElement);                                                             \n"
+);
 
-            var renderImplAsyncControlAndBindingProcessing = trimLinesRight("\
-var controlSignal = new {Signal}();                                                                     \n\
-var controlDone = function () {{ if (--{control_counter} === 0) {{ controlSignal.complete(); }} }};     \n\
-controlDone();                                                                                          \n\
-                                                                                                        \n\
-// Control Processing                                                                                   \n\
-{control_processing};                                                                                   \n\
-                                                                                                        \n\
-var result = controlSignal.promise.then(function () {{                                                  \n\
-    // Binding Processing                                                                               \n\
-    {binding_processing};                                                                               \n\
-    return {promise}.join({nestedTemplates});                                                           \n\
-}}).then(function () {{                                                                                 \n\
-    return returnedElement;                                                                             \n\
-}}).then(null, function (e) {{                                                                          \n\
-    if (typeof e === \"object\" && e.name === \"Canceled\") {{ returnedElement.dispose(); }}            \n\
-    return {promise}.wrapError(e);                                                                      \n\
-}});                                                                                                    \n\
-");
+            var renderImplAsyncControlAndBindingProcessing = trimLinesRight(
+"var controlSignal = new {Signal}();                                                                     \n" +
+"var controlDone = function () {{ if (--{control_counter} === 0) {{ controlSignal.complete(); }} }};     \n" +
+"controlDone();                                                                                          \n" +
+"                                                                                                        \n" +
+"// Control Processing                                                                                   \n" +
+"{control_processing};                                                                                   \n" +
+"                                                                                                        \n" +
+"var result = controlSignal.promise.then(function () {{                                                  \n" +
+"    // Binding Processing                                                                               \n" +
+"    {binding_processing};                                                                               \n" +
+"    return {promise}.join({nestedTemplates});                                                           \n" +
+"}}).then(function () {{                                                                                 \n" +
+"    return returnedElement;                                                                             \n" +
+"}}).then(null, function (e) {{                                                                          \n" +
+"    if (typeof e === \"object\" && e.name === \"Canceled\") {{ returnedElement.dispose(); }}            \n" +
+"    return {promise}.wrapError(e);                                                                      \n" +
+"}});                                                                                                    \n"
+);
 
-            var renderImplMainCodeSuffixTemplate = trimLinesRight("\
-{markDisposable}(returnedElement, function () {{ {disposeInstance}(returnedElement, result); }});       \n\
-{suffix_statements};                                                                                    \n\
-");
 
-            var renderImplCodeTemplate = trimLinesRight("\
-function render(data, container) {{                                                                     \n\
-    {debug_break}                                                                                       \n\
-    if (typeof data === \"object\" && typeof data.then === \"function\") {{                             \n\
-        // async data + a container falls back to interpreted path                                      \n\
-        if (container) {{                                                                               \n\
-            var result = this._renderInterpreted(data, container);                                      \n\
-            return result.element.then(function () {{ return result.renderComplete; }});                \n\
-        }}                                                                                              \n\
-        return {cancelBlocker}(data).then(function(data) {{ return render(data); }});                   \n\
-    }}                                                                                                  \n\
-                                                                                                        \n\
-    {writeProfilerMark}({profilerMarkIdentifierStart});                                                 \n\
-                                                                                                        \n\
-    // Declarations                                                                                     \n\
-    var {instance_variable_declarations};                                                               \n\
-    var returnedElement;                                                                                \n\
-                                                                                                        \n\
-    // Global Definitions                                                                               \n\
-    {global_definitions};                                                                               \n\
-                                                                                                        \n\
-    // Data Definitions                                                                                 \n\
-    data = (data === {global} ? data : {requireSupportedForProcessing}(data));                          \n\
-    {data_definitions};                                                                                 \n\
-                                                                                                        \n\
-    // Instance Variable Definitions                                                                    \n\
-    {instance_variable_definitions};                                                                    \n\
-                                                                                                        \n\
-    // HTML Processing                                                                                  \n\
-    container = container || {document}.createElement({tagName});                                       \n\
-    var startIndex = container.childElementCount;                                                       \n\
-    " + trim(indent(4, renderImplMainCodePrefixTemplate)) + "                                           \n\
-                                                                                                        \n\
-    " + trim(indent(4, renderImplControlAndBindingProcessing)) + "                                      \n\
-    " + trim(indent(4, renderImplMainCodeSuffixTemplate)) + "                                           \n\
-                                                                                                        \n\
-    {writeProfilerMark}({profilerMarkIdentifierStop});                                                  \n\
-                                                                                                        \n\
-    return result;                                                                                      \n\
-}}                                                                                                      \n\
-");
+            var renderImplMainCodeSuffixTemplate = trimLinesRight(
+"{markDisposable}(returnedElement, function () {{ {disposeInstance}(returnedElement, result); }});       \n" +
+"{suffix_statements};                                                                                    \n"
+);
 
-            var renderImplCodeAsyncTemplate = trimLinesRight("\
-function render(data, container) {{                                                                     \n\
-    {debug_break}                                                                                       \n\
-    if (typeof data === \"object\" && typeof data.then === \"function\") {{                             \n\
-        // async data + a container falls back to interpreted path                                      \n\
-        if (container) {{                                                                               \n\
-            var result = this._renderInterpreted(data, container);                                      \n\
-            return result.element.then(function () {{ return result.renderComplete; }});                \n\
-        }}                                                                                              \n\
-        return {cancelBlocker}(data).then(function(data) {{ return render(data, container); }});        \n\
-    }}                                                                                                  \n\
-                                                                                                        \n\
-    {writeProfilerMark}({profilerMarkIdentifierStart});                                                 \n\
-                                                                                                        \n\
-    // Declarations                                                                                     \n\
-    var {instance_variable_declarations};                                                               \n\
-    var returnedElement;                                                                                \n\
-                                                                                                        \n\
-    // Global Definitions                                                                               \n\
-    {global_definitions};                                                                               \n\
-                                                                                                        \n\
-    // Data Definitions                                                                                 \n\
-    data = (data === {global} ? data : {requireSupportedForProcessing}(data));                          \n\
-    {data_definitions};                                                                                 \n\
-                                                                                                        \n\
-    // Instance Variable Definitions                                                                    \n\
-    {instance_variable_definitions};                                                                    \n\
-                                                                                                        \n\
-    // HTML Processing                                                                                  \n\
-    container = container || {document}.createElement({tagName});                                       \n\
-    var startIndex = container.childElementCount;                                                       \n\
-    " + trim(indent(4, renderImplMainCodePrefixTemplate)) + "                                           \n\
-                                                                                                        \n\
-    " + trim(indent(4, renderImplAsyncControlAndBindingProcessing)) + "                                 \n\
-    " + trim(indent(4, renderImplMainCodeSuffixTemplate)) + "                                           \n\
-                                                                                                        \n\
-    {writeProfilerMark}({profilerMarkIdentifierStop});                                                  \n\
-                                                                                                        \n\
-    return result;                                                                                      \n\
-}}                                                                                                      \n\
-");
+            var renderImplCodeTemplate = trimLinesRight(
+"function render(data, container) {{                                                                     \n" +
+"    {debug_break}                                                                                       \n" +
+"    if (typeof data === \"object\" && typeof data.then === \"function\") {{                             \n" +
+"        // async data + a container falls back to interpreted path                                      \n" +
+"        if (container) {{                                                                               \n" +
+"            var result = this._renderInterpreted(data, container);                                      \n" +
+"            return result.element.then(function () {{ return result.renderComplete; }});                \n" +
+"        }}                                                                                              \n" +
+"        return {cancelBlocker}(data).then(function(data) {{ return render(data); }});                   \n" +
+"    }}                                                                                                  \n" +
+"                                                                                                        \n" +
+"    {writeProfilerMark}({profilerMarkIdentifierStart});                                                 \n" +
+"                                                                                                        \n" +
+"    // Declarations                                                                                     \n" +
+"    var {instance_variable_declarations};                                                               \n" +
+"    var returnedElement;                                                                                \n" +
+"                                                                                                        \n" +
+"    // Global Definitions                                                                               \n" +
+"    {global_definitions};                                                                               \n" +
+"                                                                                                        \n" +
+"    // Data Definitions                                                                                 \n" +
+"    data = (data === {global} ? data : {requireSupportedForProcessing}(data));                          \n" +
+"    {data_definitions};                                                                                 \n" +
+"                                                                                                        \n" +
+"    // Instance Variable Definitions                                                                    \n" +
+"    {instance_variable_definitions};                                                                    \n" +
+"                                                                                                        \n" +
+"    // HTML Processing                                                                                  \n" +
+"    container = container || {document}.createElement({tagName});                                       \n" +
+"    var startIndex = container.childElementCount;                                                       \n" +
+"    " + trim(indent(4, renderImplMainCodePrefixTemplate)) + "                                           \n" +
+"                                                                                                        \n" +
+"    " + trim(indent(4, renderImplControlAndBindingProcessing)) + "                                      \n" +
+"    " + trim(indent(4, renderImplMainCodeSuffixTemplate)) + "                                           \n" +
+"                                                                                                        \n" +
+"    {writeProfilerMark}({profilerMarkIdentifierStop});                                                  \n" +
+"                                                                                                        \n" +
+"    return result;                                                                                      \n" +
+"}}                                                                                                      \n"
+);
 
-            var renderItemImplMainCodeSuffixTemplate = trimLinesRight("\
-{markDisposable}(returnedElement, function () {{ {disposeInstance}(returnedElement, result, renderComplete); }});\n\
-{suffix_statements};                                                                                    \n\
-");
+            var renderImplCodeAsyncTemplate = trimLinesRight(
+"function render(data, container) {{                                                                     \n" +
+"    {debug_break}                                                                                       \n" +
+"    if (typeof data === \"object\" && typeof data.then === \"function\") {{                             \n" +
+"        // async data + a container falls back to interpreted path                                      \n" +
+"        if (container) {{                                                                               \n" +
+"            var result = this._renderInterpreted(data, container);                                      \n" +
+"            return result.element.then(function () {{ return result.renderComplete; }});                \n" +
+"        }}                                                                                              \n" +
+"        return {cancelBlocker}(data).then(function(data) {{ return render(data, container); }});        \n" +
+"    }}                                                                                                  \n" +
+"                                                                                                        \n" +
+"    {writeProfilerMark}({profilerMarkIdentifierStart});                                                 \n" +
+"                                                                                                        \n" +
+"    // Declarations                                                                                     \n" +
+"    var {instance_variable_declarations};                                                               \n" +
+"    var returnedElement;                                                                                \n" +
+"                                                                                                        \n" +
+"    // Global Definitions                                                                               \n" +
+"    {global_definitions};                                                                               \n" +
+"                                                                                                        \n" +
+"    // Data Definitions                                                                                 \n" +
+"    data = (data === {global} ? data : {requireSupportedForProcessing}(data));                          \n" +
+"    {data_definitions};                                                                                 \n" +
+"                                                                                                        \n" +
+"    // Instance Variable Definitions                                                                    \n" +
+"    {instance_variable_definitions};                                                                    \n" +
+"                                                                                                        \n" +
+"    // HTML Processing                                                                                  \n" +
+"    container = container || {document}.createElement({tagName});                                       \n" +
+"    var startIndex = container.childElementCount;                                                       \n" +
+"    " + trim(indent(4, renderImplMainCodePrefixTemplate)) + "                                           \n" +
+"                                                                                                        \n" +
+"    " + trim(indent(4, renderImplAsyncControlAndBindingProcessing)) + "                                 \n" +
+"    " + trim(indent(4, renderImplMainCodeSuffixTemplate)) + "                                           \n" +
+"                                                                                                        \n" +
+"    {writeProfilerMark}({profilerMarkIdentifierStop});                                                  \n" +
+"                                                                                                        \n" +
+"    return result;                                                                                      \n" +
+"}}                                                                                                      \n" 
+);
 
-            var renderItemImplCodeTemplate = trimLinesRight("\
-function renderItem(itemPromise) {{                                                                     \n\
-    {debug_break}                                                                                       \n\
-    // Declarations                                                                                     \n\
-    var {instance_variable_declarations};                                                               \n\
-    var element, renderComplete, data, returnedElement;                                                 \n\
-                                                                                                        \n\
-    element = itemPromise.then(function renderItem(item) {{                                             \n\
-        if (typeof item.data === \"object\" && typeof item.data.then === \"function\") {{               \n\
-            return {cancelBlocker}(item.data).then(function (data) {{ return renderItem({{ data: data }}); }});\n\
-        }}                                                                                              \n\
-                                                                                                        \n\
-        {writeProfilerMark}({profilerMarkIdentifierStart});                                             \n\
-                                                                                                        \n\
-        // Global Definitions                                                                           \n\
-        {global_definitions};                                                                           \n\
-                                                                                                        \n\
-        // Data Definitions                                                                             \n\
-        data = item.data;                                                                               \n\
-        data = (data === {global} ? data : {requireSupportedForProcessing}(data));                      \n\
-        {data_definitions};                                                                             \n\
-                                                                                                        \n\
-        // Instance Variable Definitions                                                                \n\
-        {instance_variable_definitions};                                                                \n\
-                                                                                                        \n\
-        // HTML Processing                                                                              \n\
-        var container = {document}.createElement({tagName});                                            \n\
-        var startIndex = 0;                                                                             \n\
-        " + trim(indent(8, renderImplMainCodePrefixTemplate)) + "                                       \n\
-                                                                                                        \n\
-        " + trim(indent(8, renderImplControlAndBindingProcessing)) + "                                  \n\
-        " + trim(indent(8, renderItemImplMainCodeSuffixTemplate)) + "                                   \n\
-                                                                                                        \n\
-        {writeProfilerMark}({profilerMarkIdentifierStop});                                              \n\
-                                                                                                        \n\
-        return result;                                                                                  \n\
-    }});                                                                                                \n\
-    {renderComplete};                                                                                   \n\
-    return {{                                                                                           \n\
-        element: element,                                                                               \n\
-        renderComplete: renderComplete || element,                                                      \n\
-    }};                                                                                                 \n\
-}}                                                                                                      \n\
-");
+            var renderItemImplMainCodeSuffixTemplate = trimLinesRight(
+"{markDisposable}(returnedElement, function () {{ {disposeInstance}(returnedElement, result, renderComplete); }});\n" +
+"{suffix_statements};                                                                                    \n"
+);
 
-            var renderItemImplRenderCompleteTemplate = trimLinesRight("\
-renderComplete = element.then(function () {{                                                            \n\
-    return itemPromise;                                                                                 \n\
-}}).then(function (item) {{                                                                             \n\
-    return item.ready || item;                                                                          \n\
-}}).then(function (item) {{                                                                             \n\
-    {delayed_binding_processing};                                                                       \n\
-    return element;                                                                                     \n\
-}});                                                                                                    \n\
-");
+            var renderItemImplCodeTemplate = trimLinesRight(
+"function renderItem(itemPromise) {{                                                                     \n" +
+"    {debug_break}                                                                                       \n" +
+"    // Declarations                                                                                     \n" +
+"    var {instance_variable_declarations};                                                               \n" +
+"    var element, renderComplete, data, returnedElement;                                                 \n" +
+"                                                                                                        \n" +
+"    element = itemPromise.then(function renderItem(item) {{                                             \n" +
+"        if (typeof item.data === \"object\" && typeof item.data.then === \"function\") {{               \n" +
+"            return {cancelBlocker}(item.data).then(function (data) {{ return renderItem({{ data: data }}); }});\n" +
+"        }}                                                                                              \n" +
+"                                                                                                        \n" +
+"        {writeProfilerMark}({profilerMarkIdentifierStart});                                             \n" +
+"                                                                                                        \n" +
+"        // Global Definitions                                                                           \n" +
+"        {global_definitions};                                                                           \n" +
+"                                                                                                        \n" +
+"        // Data Definitions                                                                             \n" +
+"        data = item.data;                                                                               \n" +
+"        data = (data === {global} ? data : {requireSupportedForProcessing}(data));                      \n" +
+"        {data_definitions};                                                                             \n" +
+"                                                                                                        \n" +
+"        // Instance Variable Definitions                                                                \n" +
+"        {instance_variable_definitions};                                                                \n" +
+"                                                                                                        \n" +
+"        // HTML Processing                                                                              \n" +
+"        var container = {document}.createElement({tagName});                                            \n" +
+"        var startIndex = 0;                                                                             \n" +
+"        " + trim(indent(8, renderImplMainCodePrefixTemplate)) + "                                       \n" +
+"                                                                                                        \n" +
+"        " + trim(indent(8, renderImplControlAndBindingProcessing)) + "                                  \n" +
+"        " + trim(indent(8, renderItemImplMainCodeSuffixTemplate)) + "                                   \n" +
+"                                                                                                        \n" +
+"        {writeProfilerMark}({profilerMarkIdentifierStop});                                              \n" +
+"                                                                                                        \n" +
+"        return result;                                                                                  \n" +
+"    }});                                                                                                \n" +
+"    {renderComplete};                                                                                   \n" +
+"    return {{                                                                                           \n" +
+"        element: element,                                                                               \n" +
+"        renderComplete: renderComplete || element,                                                      \n" +
+"    }};                                                                                                 \n" +
+"}}                                                                                                      \n"
+);
 
-            var renderItemImplCodeAsyncTemplate = trimLinesRight("\
-function renderItem(itemPromise) {{                                                                     \n\
-    {debug_break}                                                                                       \n\
-    // Declarations                                                                                     \n\
-    var {instance_variable_declarations};                                                               \n\
-    var element, renderComplete, data, returnedElement;                                                 \n\
-                                                                                                        \n\
-    element = itemPromise.then(function renderItem(item) {{                                             \n\
-        if (typeof item.data === \"object\" && typeof item.data.then === \"function\") {{               \n\
-            return {cancelBlocker}(item.data).then(function (data) {{ return renderItem({{ data: data }}); }});\n\
-        }}                                                                                              \n\
-                                                                                                        \n\
-        {writeProfilerMark}({profilerMarkIdentifierStart});                                             \n\
-                                                                                                        \n\
-        // Global Definitions                                                                           \n\
-        {global_definitions};                                                                           \n\
-                                                                                                        \n\
-        // Data Definitions                                                                             \n\
-        data = item.data;                                                                               \n\
-        data = (data === {global} ? data : {requireSupportedForProcessing}(data));                      \n\
-        {data_definitions};                                                                             \n\
-                                                                                                        \n\
-        // Instance Variable Definitions                                                                \n\
-        {instance_variable_definitions};                                                                \n\
-                                                                                                        \n\
-        // HTML Processing                                                                              \n\
-        var container = {document}.createElement({tagName});                                            \n\
-        var startIndex = 0;                                                                             \n\
-        " + trim(indent(8, renderImplMainCodePrefixTemplate)) + "                                       \n\
-                                                                                                        \n\
-        " + trim(indent(8, renderImplAsyncControlAndBindingProcessing)) + "                             \n\
-        " + trim(indent(8, renderItemImplMainCodeSuffixTemplate)) + "                                   \n\
-                                                                                                        \n\
-        {writeProfilerMark}({profilerMarkIdentifierStop});                                              \n\
-                                                                                                        \n\
-        return result;                                                                                  \n\
-    }});                                                                                                \n\
-    {renderComplete};                                                                                   \n\
-    return {{                                                                                           \n\
-        element: element,                                                                               \n\
-        renderComplete: renderComplete || element,                                                      \n\
-    }};                                                                                                 \n\
-}}                                                                                                      \n\
-");
+            var renderItemImplRenderCompleteTemplate = trimLinesRight(
+"renderComplete = element.then(function () {{                                                            \n" +
+"    return itemPromise;                                                                                 \n" +
+"}}).then(function (item) {{                                                                             \n" +
+"    return item.ready || item;                                                                          \n" +
+"}}).then(function (item) {{                                                                             \n" +
+"    {delayed_binding_processing};                                                                       \n" +
+"    return element;                                                                                     \n" +
+"}});                                                                                                    \n" 
+);
 
-            var linkerCodeTemplate = trimLinesRight("\
-\"use strict\";                                                                                         \n\
-                                                                                                        \n\
-// statics                                                                                              \n\
-var {static_variable_declarations};                                                                     \n\
-{static_variable_definitions};                                                                          \n\
-                                                                                                        \n\
-// generated template rendering function                                                                \n\
-return {body};                                                                                          \n\
-");
+            var renderItemImplCodeAsyncTemplate = trimLinesRight(
+"function renderItem(itemPromise) {{                                                                     \n" +
+"    {debug_break}                                                                                       \n" +
+"    // Declarations                                                                                     \n" +
+"    var {instance_variable_declarations};                                                               \n" +
+"    var element, renderComplete, data, returnedElement;                                                 \n" +
+"                                                                                                        \n" +
+"    element = itemPromise.then(function renderItem(item) {{                                             \n" +
+"        if (typeof item.data === \"object\" && typeof item.data.then === \"function\") {{               \n" +
+"            return {cancelBlocker}(item.data).then(function (data) {{ return renderItem({{ data: data }}); }});\n" +
+"        }}                                                                                              \n" +
+"                                                                                                        \n" +
+"        {writeProfilerMark}({profilerMarkIdentifierStart});                                             \n" +
+"                                                                                                        \n" +
+"        // Global Definitions                                                                           \n" +
+"        {global_definitions};                                                                           \n" +
+"                                                                                                        \n" +
+"        // Data Definitions                                                                             \n" +
+"        data = item.data;                                                                               \n" +
+"        data = (data === {global} ? data : {requireSupportedForProcessing}(data));                      \n" +
+"        {data_definitions};                                                                             \n" +
+"                                                                                                        \n" +
+"        // Instance Variable Definitions                                                                \n" +
+"        {instance_variable_definitions};                                                                \n" +
+"                                                                                                        \n" +
+"        // HTML Processing                                                                              \n" +
+"        var container = {document}.createElement({tagName});                                            \n" +
+"        var startIndex = 0;                                                                             \n" +
+"        " + trim(indent(8, renderImplMainCodePrefixTemplate)) + "                                       \n" +
+"                                                                                                        \n" +
+"        " + trim(indent(8, renderImplAsyncControlAndBindingProcessing)) + "                             \n" +
+"        " + trim(indent(8, renderItemImplMainCodeSuffixTemplate)) + "                                   \n" +
+"                                                                                                        \n" +
+"        {writeProfilerMark}({profilerMarkIdentifierStop});                                              \n" +
+"                                                                                                        \n" +
+"        return result;                                                                                  \n" +
+"    }});                                                                                                \n" +
+"    {renderComplete};                                                                                   \n" +
+"    return {{                                                                                           \n" +
+"        element: element,                                                                               \n" +
+"        renderComplete: renderComplete || element,                                                      \n" +
+"    }};                                                                                                 \n" +
+"}}                                                                                                      \n"
+);
+
+            var linkerCodeTemplate = trimLinesRight(
+"\"use strict\";                                                                                         \n" + 
+"                                                                                                        \n" + 
+"// statics                                                                                              \n" + 
+"var {static_variable_declarations};                                                                     \n" + 
+"{static_variable_definitions};                                                                          \n" + 
+"                                                                                                        \n" + 
+"// generated template rendering function                                                                \n" + 
+"return {body};                                                                                          \n"
+);          
 
             //
             // End Templates

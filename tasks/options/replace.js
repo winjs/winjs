@@ -63,5 +63,5 @@
             match: /\$\(TESTDATA\)\//g,
             replacement: "../TestData/"
         });
-    };
+    }
 })();
