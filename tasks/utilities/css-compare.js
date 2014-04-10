@@ -4,9 +4,7 @@
     "use strict";
 
     var cssparse = require("css-parse");
-    var fs = require("fs");
     var Color = require("color");
-    var chalk = require("chalk");
 
     var Stylesheet = function()
     {
@@ -56,12 +54,12 @@
             for (selector in this.styles)
             {
                 if (!stylesheet.styles[selector])
-                    diff[selector] = "Selector not found in new stylesheet";
+                    diff[selector] = "Selector not found in test stylesheet";
             }
             for (selector in stylesheet.styles)
             {
                 if (!this.styles[selector])
-                    diff[selector] = "Selector not found in old stylesheet";
+                    diff[selector] = "Selector not found in model stylesheet";
             }
 
             // Search deeper in the style object
@@ -90,7 +88,7 @@
                         }
                     }
                     if (!ruleB)
-                        diff[selector][rulesA[i].property] = "Property not found in new stylesheet";
+                        diff[selector][rulesA[i].property] = "Property not found in test stylesheet";
                 }
                 for (i = 0; i < rulesB.length; ++i)
                 {
@@ -104,7 +102,7 @@
                         }
                     }
                     if (!ruleA)
-                        diff[selector][rulesB[i].property] = "Property not found in old stylesheet";
+                        diff[selector][rulesB[i].property] = "Property not found in model stylesheet";
                 }
 
                 // Compare rule values
@@ -175,44 +173,14 @@
         return stylesheet;
     }
 
-    module.exports = function(grunt) {
-        grunt.registerTask("csstest", function () {
-            var i;
-            var args = [];
-            for (i = 0; i < arguments.length; ++i)
-                args.push(arguments[i]);
+    module.exports = function(cssModel, cssTest) {
+        var outputA = cssparse(cssModel, {position: true});
+        var outputB = cssparse(cssTest, {position: true});
 
-            var cssA = fs.readFileSync("csstest/css-model.css", {encoding: "utf-8"});
-            var cssB = fs.readFileSync("csstest/css-test.css", {encoding: "utf-8"});
+        var stylesA = buildStyleSheet(outputA.stylesheet);
+        var stylesB = buildStyleSheet(outputB.stylesheet);
 
-            var outputA = cssparse(cssA, {position: true});
-            var outputB = cssparse(cssB, {position: true});
-
-            var stylesA = buildStyleSheet(outputA.stylesheet);
-            var stylesB = buildStyleSheet(outputB.stylesheet);
-
-            var diff = stylesA.compareWith(stylesB);
-
-            var errorCount = 0;
-            for (i in diff)
-            {
-                if (diff[i].substr)
-                {
-                    grunt.log.error(chalk.green(i) + ": " + diff[i]);
-                    ++errorCount;
-                    continue;
-                }
-
-                for (var j in diff[i])
-                {
-                    grunt.log.error(chalk.green(i) + ": " + chalk.cyan(j) + ": " + diff[i][j]);
-                    ++errorCount;
-                }
-            }
-
-            if (errorCount > 0)
-                grunt.warn(errorCount + " diffs found between styles.");
-        });
+        return stylesA.compareWith(stylesB);
     };
 
 })();
