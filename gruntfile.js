@@ -38,7 +38,7 @@
         // Register external tasks
         grunt.loadTasks("tasks/");
 
-        // Task alias's
+        // Task aliases
         grunt.registerTask("default", ["clean", "less", "concat", "copy", "replace"]);
         grunt.registerTask("release", ["jshint", "default", "uglify"]);
         grunt.registerTask("css", ["less"]);
