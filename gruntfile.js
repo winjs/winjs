@@ -40,10 +40,11 @@
 
         // Task alias's
         grunt.registerTask("default", ["clean", "less", "concat", "copy", "replace"]);
-        grunt.registerTask("release", ["default", "uglify"]);
+        grunt.registerTask("release", ["jshint", "test", "uglify"]);
         grunt.registerTask("css", ["less"]);
         grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
         grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
         grunt.registerTask("lint", ["jshint"]);
+        grunt.registerTask("minify", ["uglify"]);
     };
 })();
