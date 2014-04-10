@@ -108,7 +108,7 @@ module.exports = function (grunt) {
 @@TESTREFERENCES                                                                                                            \r\n\
 </head>                                                                                                                     \r\n\
 <body>                                                                                                                      \r\n\
-    <div id="qunit" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; overflow-y: scroll;"></div>  \r\n\
+    <div id="qunit" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; overflow-y: scroll; -moz-user-select: text; -webkit-user-select: text; -khtml-user-select: text; -ms-user-select: text;"></div>  \r\n\
     <div id="qunit-fixture"></div>                                                                                          \r\n\
 </body>                                                                                                                     \r\n\
 </html>'.replace(/@@TARGETFRAMEWORK/g, config.targetFramework);
