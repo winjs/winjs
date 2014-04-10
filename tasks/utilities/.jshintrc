@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 {
         /*
           ENFORCING Options: When set to true, (or in some cases an integer value) these options will make JSHint produce more warnings about your code.
@@ -64,6 +65,7 @@
 
         /*
           SUPPRESS specific JSHint warnings that have no corresponding option flags.
+		  http://www.jshint.com/docs/
         */
         "-W053": true, // Ignore (W053)  Do not use String as a constructor.
         "-W018": true, // Ignore (W018)  Confusing use of '!'.       
@@ -87,5 +89,14 @@
         "rhino": false, // Defines globals available when your code is running inside of the Rhino runtime environment.
         "worker": false, // Defines globals available when your code is running inside of a Web Worker.
         "wsh": false, // Defines globals available when your code is running as a script for the Windows Script Host.
-        "yui": false // Defines globals exposed by the YUI JavaScript framework
+        "yui": false, // Defines globals exposed by the YUI JavaScript framework.
+
+		/* 
+          GLOBAL WinJS enviornment variables: Tells JSHint about global variables used by WinJS that are defined elsewhere. If a value is false, JSHint will consider that variable as read-only.
+          https://www.npmjs.org/package/grunt-contrib-jshint
+        */
+		"globals": {
+			"WinJS": true,
+			"Windows": false
+		}
 }
