@@ -1,3 +1,7 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+/* 
+   WinJS JSHint Ignored Files: This file needs to be kept in the project root to work.
+*/
 src/js/en-US/base.prefix.js
 src/js/en-US/ui.prefix.js
 src/js/library/stringsBlockFooter.js
