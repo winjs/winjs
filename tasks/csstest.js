@@ -98,6 +98,7 @@
                     if (!ruleA)
                         diff[selector][rulesB[i].property] = "Property not found in old stylesheet";
                 }
+
                 // Compare rule values
                 for (i = 0; i < rulesA.length; ++i)
                 {
@@ -178,7 +179,8 @@
             var outputA = cssparse(cssA, {position: true});
             var outputB = cssparse(cssB, {position: true});
 
-
+            console.log(JSON.stringify(outputA, null, 2));
+            return;
             var stylesA = buildStyleSheet(outputA.stylesheet);
             var stylesB = buildStyleSheet(outputB.stylesheet);
 
