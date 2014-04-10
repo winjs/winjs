@@ -60,10 +60,19 @@ module WinJS {
     // listeners of the state transition, until leaf notes are reached.
     //
 
+    interface IExtendedPromiseStateMachine extends _PromiseStateMachine<any> {
+        _cancelAction();
+        _cleanupAction();
+    }
+
+    interface IPromiseDebug {
+        _getStack();
+    }
+
     interface IState {
         name: string;
-        enter(promise:_PromiseStateMachine<any>):void;
-        cancel(promise:_PromiseStateMachine<any>):void;
+        enter(promise: IExtendedPromiseStateMachine):void;
+        cancel(promise: IExtendedPromiseStateMachine):void;
         done(promise, onComplete, onError, onProgress):void;
         then(promise, onComplete, onError, onProgress):void;
         _completed(promise, value):void;
@@ -357,7 +366,7 @@ module WinJS {
     // would have to remember to do things like pumping the state machine to catch state transitions.
     //
 
-    export class _PromiseStateMachine<T> implements IPromise<T> {
+    class _PromiseStateMachine<T> implements IPromise<T> {
 
         static supportedForProcessing = false;
 
@@ -369,7 +378,7 @@ module WinJS {
 
         constructor() {
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
-                this._stack = WinJS.Promise._getStack();
+                this._stack = (<IPromiseDebug><any>WinJS.Promise)._getStack();
             }
         }
 
@@ -505,14 +514,6 @@ module WinJS {
                 this._nextState = null;
                 this._state.enter(this);
             }
-        }
-
-        public _cancelAction() { 
-            /* override in child class */
-        }
-
-        public _cleanupAction() { 
-            /* override in child class */
         }
     }
 
@@ -776,7 +777,7 @@ module WinJS {
         constructor(value, errorFunc = detailsForError) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
-                this._stack = WinJS.Promise._getStack();
+                this._stack = (<IPromiseDebug><any>WinJS.Promise)._getStack();
             }
 
             this._value = value;
@@ -916,7 +917,7 @@ module WinJS {
         constructor(value) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
-                this._stack = WinJS.Promise._getStack();
+                this._stack = (<IPromiseDebug><any>WinJS.Promise)._getStack();
             }
 
             if (value && typeof value === "object" && typeof value.then === "function") {
@@ -1055,8 +1056,9 @@ module WinJS {
         value: V;
     }
 
-    export class Promise<T> extends _PromiseStateMachine<T> {
+    export class Promise<T> implements IPromise<T> {
 
+        private _stack = null;
         private _oncancel = null;
 
         constructor(init: (c: (result?: T) => void, e: (error?) => void, p: (progress?) => void) => any, oncancel?: Function) {
@@ -1078,29 +1080,52 @@ module WinJS {
             /// </param>
             /// </signature>
 
-            super();
+            if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
+                this._stack = (<IPromiseDebug><any>WinJS.Promise)._getStack();
+            }
 
             this._oncancel = oncancel;
-            this._setState(state_created);
-            this._run();
+
+            var privateThis: _PromiseStateMachine<T> = <any> this;
+            privateThis._setState(state_created);
+            privateThis._run();
 
             try {
-                var complete = this._completed.bind(this);
-                var error = this._error.bind(this);
-                var progress = this._progress.bind(this);
+                var complete = privateThis._completed.bind(this);
+                var error = privateThis._error.bind(this);
+                var progress = privateThis._progress.bind(this);
                 init(complete, error, progress);
             } catch (ex) {
-                this._setExceptionValue(ex);
+                privateThis._setExceptionValue(ex);
             }
         }
 
-        public _cancelAction() {
+        public cancel() {
+            /* defined in _PromiseStateMachine */
+        }
+
+        public done(onComplete?: (result: T) => any, onError?: (error) => any, onProgress?: (prog: any) => any) {
+            /* defined in _PromiseStateMachine */
+        }
+
+        public then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => IPromise<U>): IPromise<U>;
+        public then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => U): IPromise<U>;
+        public then<U>(complete: (result: T) => IPromise<U>, error?: (error: any) => void): IPromise<U>;
+        public then<U>(complete: (result: T) => U, error?: (error: any) => IPromise<U>): IPromise<U>;
+        public then<U>(complete: (result: T) => U, error?: (error: any) => U): IPromise<U>;
+        public then<U>(complete: (result: T) => U, error?: (error: any) => void): IPromise<U>;
+        public then<U>(onComplete?, onError?, onProgress?): IPromise<U> {
+            /* defined in _PromiseStateMachine */
+            return;
+        }
+
+        private _cancelAction() {
             if (this._oncancel) {
                 try { this._oncancel(); } catch (ex) { }
             }
         }
 
-        public _cleanupAction() { 
+        private _cleanupAction() { 
             this._oncancel = null; 
         }
          
@@ -1457,13 +1482,13 @@ module WinJS {
         }
         private static _veryExpensiveTagWithStack_tag = tag;
 
-        public static _getStack() {
+        private static _getStack() {
             if (global.Debug && Debug.debuggerEnabled) {
                 try { throw new Error(); } catch (e) { return e.stack; }
             }
         }
 
-        public static _cancelBlocker(input) {
+        private static _cancelBlocker(input) {
             //
             // Returns a promise which on cancelation will still result in downstream cancelation while
             //  protecting the promise 'input' from being  canceled which has the effect of allowing 
@@ -1495,7 +1520,16 @@ module WinJS {
     }
     Object.defineProperties(Promise, WinJS.Utilities.createEventProperties(errorET));
 
-    export class _SignalPromise<T> extends _PromiseStateMachine<T> {
+    // TypeScript doesn't currently support its own mixins
+    function mixin(derivedCtor: any, baseCtor: any) {
+        Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
+            derivedCtor.prototype[name] = baseCtor.prototype[name];
+        })
+    }
+    // inherit all prototype members from _PromiseStateMachine without exposing them
+    mixin(Promise, _PromiseStateMachine);
+
+    class _SignalPromise<T> extends _PromiseStateMachine<T> {
         static supportedForProcessing = false;
 
         private _oncancel;
@@ -1522,7 +1556,7 @@ module WinJS {
         constructor(oncancel) {
             this._promise = new _SignalPromise<T>(oncancel);
         }
-        public get promise() { 
+        public get promise():IPromise<T> { 
             return this._promise; 
         }
 

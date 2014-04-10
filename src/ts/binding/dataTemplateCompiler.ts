@@ -18,7 +18,7 @@
 
             var Signal = WinJS._Signal;
             var Promise = WinJS.Promise;
-            var cancelBlocker = Promise._cancelBlocker;
+            var cancelBlocker = (<any>Promise)._cancelBlocker;
 
             // Eagerly bind to stuff that will be needed by the compiler
             //
