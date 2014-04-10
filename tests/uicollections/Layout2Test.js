@@ -315,9 +315,14 @@ var WinJSTests = WinJSTests || {};
             this["testInitialize_" + orientation] = function () {
                 [true, false].forEach(function (groupsEnabled) {
                     var layout = new WinJS.UI.ListLayout({ orientation: orientation }),
+                        viewport = document.createElement("div"),
                         surface = document.createElement("div");
 
-                    layout.initialize({ surface: surface, _writeProfilerMark: function () { } }, groupsEnabled);
+                    layout.initialize({
+                        viewport: viewport,
+                        surface: surface,
+                        _writeProfilerMark: function () { }
+                    }, groupsEnabled);
                     LiveUnit.Assert.areEqual(orientation || WinJS.UI.Orientation.vertical, layout.orientation,
                         "ListLayout's orientation should match the option passed in the constructor or default to horizontal");
                     LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(surface, WinJS.UI._listLayoutClass),
@@ -642,9 +647,14 @@ var WinJSTests = WinJSTests || {};
                 [true, false].forEach(function (groupsEnabled) {
                     var layoutOptions = orientation ? { orientation: orientation } : {},
                         layout = new WinJS.UI.GridLayout(layoutOptions),
+                        viewport = document.createElement("div"),
                         surface = document.createElement("div");
 
-                    layout.initialize({ surface: surface, _writeProfilerMark: function () { } }, groupsEnabled);
+                    layout.initialize({
+                        viewport: viewport,
+                        surface: surface,
+                        _writeProfilerMark: function () { }
+                    }, groupsEnabled);
                     LiveUnit.Assert.areEqual(orientation || "horizontal", layout.orientation,
                         "Uniform GridLayout's initialize should return 'horizontal");
                     LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(surface, WinJS.UI._gridLayoutClass),
@@ -1051,14 +1061,19 @@ var WinJSTests = WinJSTests || {};
         // - Adds the gridlayout CSS class to the surface
         this.testInitialize = function () {
             [true, false].forEach(function (groupsEnabled) {
-                var surface = document.createElement("div"),
+                var viewport = document.createElement("div"),
+                    surface = document.createElement("div"),
                     itemSizes = itemSizesSimple,
                     layout = new WinJS.UI.CellSpanningLayout({
                         groupInfo: groupInfo,
                         itemInfo: itemInfoForPattern("b mmm ssssss", itemSizes)
                     });
 
-                layout.initialize({ surface: surface, _writeProfilerMark: function () { } }, groupsEnabled);
+                layout.initialize({
+                    viewport: viewport,
+                    surface: surface,
+                    _writeProfilerMark: function () { }
+                }, groupsEnabled);
                 LiveUnit.Assert.areEqual("horizontal", layout.orientation,
                     "Uniform GridLayout's initialize should return 'horizontal");
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(surface, WinJS.UI._gridLayoutClass),

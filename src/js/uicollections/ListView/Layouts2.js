@@ -167,6 +167,49 @@
         }
         return itemsCount;
     }
+    
+    var environmentDetails = null;
+    // getEnvironmentSupportInformation does one-time checks on several browser-specific environment details (both to check the existence of styles,
+    // and also to see if some environments have layout bugs the ListView needs to work around).
+    function getEnvironmentSupportInformation(site) {
+        if (!environmentDetails) {
+            var surface = document.createElement("div");
+            surface.style.width = "500px";
+            surface.style.visibility = "hidden";
+                                                  
+            // Set up the DOM
+            var flexRoot = document.createElement("div");
+            flexRoot.style.cssText += "width: 500px; height: 200px; display: -webkit-flex; display: flex";
+            flexRoot.innerHTML =
+                "<div style='height: 100%; display: -webkit-flex; display: flex; flex-flow: column wrap; align-content: flex-start'>" +
+                    "<div style='width: 100px; height: 100px'></div>" +
+                    "<div style='width: 100px; height: 100px'></div>" +
+                    "<div style='width: 100px; height: 100px'></div>" +
+                "</div>";
+            surface.appendChild(flexRoot);
+            
+            // Read from the DOM and detect the bugs
+            site.viewport.insertBefore(surface, site.viewport.firstChild);
+            var canMeasure = surface.offsetWidth > 0;
+            if (canMeasure) {
+                // If we can't measure now (e.g. ListView is display:none), leave environmentDetails as null
+                // so that we do the detection later when the app calls recalculateItemPosition/forceLayout.
+                
+                environmentDetails = {                    
+                    // Detects Chrome flex issue 345433: Incorrect sizing for nested flexboxes
+                    // https://code.google.com/p/chromium/issues/detail?id=345433
+                    // With nested flexboxes, the inner flexbox's width is proportional to the number of elements intead
+                    // of the number of columns.
+                    nestedFlexTooLarge: flexRoot.firstElementChild.offsetWidth > 200
+                };
+            }
+            
+            // Clean up the DOM
+            site.viewport.removeChild(surface);
+        }
+
+        return environmentDetails;
+    }
 
     WinJS.Namespace.define("WinJS.UI", {
         Layout: WinJS.Class.define(function Layout_ctor(options) {
@@ -207,6 +250,9 @@
                     if (!this._inListMode) {
                         Utilities.addClass(site.surface, WinJS.UI._gridLayoutClass);
                     }
+                    
+                    this._envInfo = getEnvironmentSupportInformation(site) || {};
+                    
                     if (this._backdropColorClassName) {
                         Utilities.addClass(site.surface, this._backdropColorClassName);
                     }
@@ -318,7 +364,8 @@
                                 that._viewportSizeChanged(that._getViewportCrossSize());
                             }
 
-                            if (allGroupsAreUniform()) {
+                            if (!that._envInfo.nestedFlexTooLarge && // Disabling structural nodes works around this issue
+                                    allGroupsAreUniform()) {
                                 that._usingStructuralNodes = WinJS.UI._LayoutCommon._barsPerItemsBlock > 0;
                                 return WinJS.UI._LayoutCommon._barsPerItemsBlock * that._itemsPerBar;
                             } else {

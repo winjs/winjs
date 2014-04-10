@@ -13,6 +13,7 @@
     "glob": "^3.2.9",
     "qunitjs": "~1.14.0",
     "minimist": "0.0.8",
+    "grunt-contrib-uglify": "^0.4.0",
     "color": "^0.5.0",
     "css-parse": "https://github.com/phosphoer/css-parse/tarball/master"
   }

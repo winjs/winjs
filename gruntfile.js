@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 module.exports = function (grunt) {
+    "use strict";
+
     var config = require("./config.js");
 
     // Make sure that Grunt doesn't remove BOM from our utf8 files
@@ -9,12 +11,12 @@ module.exports = function (grunt) {
 
     // Helper function to load the config file
     function loadConfig(path) {
-      var glob = require('glob');
+      var glob = require("glob");
       var object = {};
       var key;
 
-      glob.sync('*', {cwd: path}).forEach(function(option) {
-        key = option.replace(/\.js$/,'');
+      glob.sync("*", {cwd: path}).forEach(function(option) {
+        key = option.replace(/\.js$/,"");
         object[key] = require(path + option);
       });
 
@@ -22,11 +24,11 @@ module.exports = function (grunt) {
     }
 
     // Load task options
-    var gruntConfig = loadConfig('./tasks/options/');
+    var gruntConfig = loadConfig("./tasks/options/");
 
     // Package data
     gruntConfig.pkg = grunt.file.readJSON("package.json");
-    
+
     // Project config
     grunt.initConfig(gruntConfig);
 
@@ -38,7 +40,8 @@ module.exports = function (grunt) {
 
     // Task alias's
     grunt.registerTask("default", ["clean", "less", "concat", "copy", "replace"]);
+    grunt.registerTask("release", ["default", "uglify"]);
     grunt.registerTask("css", ["less"]);
     grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
     grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
-}
+};
