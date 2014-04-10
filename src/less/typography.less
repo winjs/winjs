@@ -63,6 +63,11 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: "Symbols";
+    src: url(..\..\fonts\Symbols.ttf);
+}
+
 //
 // Font size classes
 // Two versions of each size are defined, one is a regular mixin that will be
@@ -324,16 +329,19 @@
 .getLanguageString("Segoe") {
     @langString: "";
 }
+.getLanguageString("Symbols") {
+    @langString: "";
+}
 
 // RTL language strings
 @rtl: ar, dv, fa, he, ku-Arab, pa-Arab, prs, ps, sd-Arab, syr, ug, ur, qps-plocm;
 
 // List of language fonts to iterate over
 // Each of these fonts will be the first font in the font-family list for the relevant language
-@fonts: "Segoe", "Ebrima", "Nirmala UI", "Gadugi", "Meiryo UI", "Leelawadee UI", "Malgun Gothic", "Javanese Text", "Segoe UI Symbol", "Microsoft YaHei UI", "Microsoft JhengHei UI";
+@fonts: "Segoe", "Ebrima", "Nirmala UI", "Gadugi", "Meiryo UI", "Leelawadee UI", "Malgun Gothic", "Javanese Text", "Segoe UI Symbol", "Symbols", "Microsoft YaHei UI", "Microsoft JhengHei UI";
 
 // Static list of fallback fonts to be placed after the primary language font
-@fontFallbacks: "Segoe", "Ebrima", "Nirmala UI", "Gadugi", "Segoe UI Emoji", "Segoe UI Symbol", "Meiryo UI", "Leelawadee UI", "Microsoft YaHei UI", "Microsoft JhengHei UI", "Malgun Gothic", "Estrangelo Edessa", "Microsoft Himalaya", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Tai Le", "Microsoft Yi Baiti", "Mongolian Baiti", "MV Boli", "Myanmar Text", "Javanese Text", "Cambria Math";
+@fontFallbacks: "Segoe", "Ebrima", "Nirmala UI", "Gadugi", "Segoe UI Emoji", "Segoe UI Symbol", "Symbols", "Meiryo UI", "Leelawadee UI", "Microsoft YaHei UI", "Microsoft JhengHei UI", "Malgun Gothic", "Estrangelo Edessa", "Microsoft Himalaya", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Tai Le", "Microsoft Yi Baiti", "Mongolian Baiti", "MV Boli", "Myanmar Text", "Javanese Text", "Cambria Math";
 
 // This mixin is a special case for Segoe where no -ms-lang pseudo class is needed
 .fontFallBack(@index) when (@index = 1) {
