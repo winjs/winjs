@@ -179,8 +179,6 @@
             var outputA = cssparse(cssA, {position: true});
             var outputB = cssparse(cssB, {position: true});
 
-            console.log(JSON.stringify(outputA, null, 2));
-            return;
             var stylesA = buildStyleSheet(outputA.stylesheet);
             var stylesB = buildStyleSheet(outputB.stylesheet);
 
