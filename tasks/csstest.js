@@ -6,6 +6,7 @@
     var cssparse = require("css-parse");
     var fs = require("fs");
     var Color = require("color");
+    var chalk = require("chalk");
 
     var Stylesheet = function()
     {
@@ -15,6 +16,13 @@
         {
             if (property === "font-family")
                 return;
+
+            // Remove extraneous spaces around parenthesis in the selector
+            selector = selector.replace(/\(\s*/g, "(");
+            selector = selector.replace(/\s*\)/g, ")");
+
+            // Normalize '0' and '0px'
+            value = value.replace(/0px/g, "0");
 
             // Initialize styles for this selector
             if (!this.styles[selector])
@@ -158,7 +166,8 @@
                 for (var n = 0; n < rule.declarations.length; ++n)
                 {
                     var dec = rule.declarations[n];
-                    stylesheet.addRule(selector, dec.property, dec.value, dec.position.end.line);
+                    if (dec.type === "declaration")
+                        stylesheet.addRule(selector, dec.property, dec.value, dec.position.end.line);
                 }
             }
         }
@@ -189,14 +198,14 @@
             {
                 if (diff[i].substr)
                 {
-                    grunt.log.error(i + ": " + diff[i]);
+                    grunt.log.error(chalk.green(i) + ": " + diff[i]);
                     ++errorCount;
                     continue;
                 }
 
                 for (var j in diff[i])
                 {
-                    grunt.log.error(i + ": " + j + ": " + diff[i][j]);
+                    grunt.log.error(chalk.green(i) + ": " + chalk.cyan(j) + ": " + diff[i][j]);
                     ++errorCount;
                 }
             }
