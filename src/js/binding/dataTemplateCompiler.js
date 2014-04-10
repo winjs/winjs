@@ -282,7 +282,7 @@
                 var that = this;
                 this.compiler = compiler;
                 this.kind = kind;
-                this.base = "" + name;
+                this.base = new String(name);
                 this.tree = {
                     children: {},
                     parent: this.base,

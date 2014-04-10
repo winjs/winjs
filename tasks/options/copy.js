@@ -9,12 +9,12 @@
             files: [
                 { expand: true, cwd: "tests/", src: ["**"], dest: config.testsOutput }
             ]
-    },
-    
-    testDeps: {
-        files: [
-            { src: [config.desktopOutput + "/js/base.js"], dest: config.testsOutput + "base/source/base.js" }
-        ]
+        },
+
+        testDeps: {
+            files: [
+                { src: [config.desktopOutput + "/js/base.js"], dest: config.testsOutput + "base/source/base.js" }
+            ]
     },
 
     fonts: {

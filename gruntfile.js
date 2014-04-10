@@ -11,12 +11,12 @@
 
         // Helper function to load the config file
         function loadConfig(path) {
-      var glob = require("glob");
+            var glob = require("glob");
             var object = {};
             var key;
 
-      glob.sync("*", {cwd: path}).forEach(function(option) {
-        key = option.replace(/\.js$/,"");
+            glob.sync("*", { cwd: path }).forEach(function (option) {
+                key = option.replace(/\.js$/, "");
                 object[key] = require(path + option);
             });
 
@@ -24,7 +24,7 @@
         }
 
         // Load task options
-    var gruntConfig = loadConfig("./tasks/options/");
+        var gruntConfig = loadConfig("./tasks/options/");
 
         // Package data
         gruntConfig.pkg = grunt.file.readJSON("package.json");
@@ -40,7 +40,7 @@
 
         // Task alias's
         grunt.registerTask("default", ["clean", "less", "concat", "copy", "replace"]);
-    grunt.registerTask("release", ["default", "uglify"]);
+        grunt.registerTask("release", ["default", "uglify"]);
         grunt.registerTask("css", ["less"]);
         grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
         grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
