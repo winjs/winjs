@@ -783,7 +783,6 @@
                     document.body.addEventListener("DOMNodeRemoved", this._removeTooltip, false);
                     this._createTooltipDOM();
                     var pos = this._position(contactType);
-                    var that = this;
                     if (this._useAnimation) {
                         animation.fadeIn(this._domElement)
                             .then(this._onShowAnimationEnd.bind(this));

@@ -14,13 +14,13 @@ CorsicaTests.TimePicker = function () {
         TimePicker_Hour: "win-timepicker-hour",
         TimePicker_Minute: "win-timepicker-minute",
         TimePicker_Period: "win-timepicker-period"
-    },
+    };
 
     this.TimePickerQuery = {
         Hour: this.TimePickerClassName.TimePicker + " ." + this.TimePickerClassName.TimePicker_Hour,
         Minute: this.TimePickerClassName.TimePicker + " ." + this.TimePickerClassName.TimePicker_Minute,
         Period: this.TimePickerClassName.TimePicker + " ." + this.TimePickerClassName.TimePicker_Period
-    },
+    };
 
 
     this.testDefaultConstructor = function () {
@@ -28,7 +28,7 @@ CorsicaTests.TimePicker = function () {
         var t = new Date();
         var date1 = new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours(), t.getMinutes(), 0, 0);
         var control = new WinJS.UI.TimePicker(controlElement);
-        var t = new Date();
+        t = new Date();
         var date2 = new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours(), t.getMinutes(), 0, 0);
 
         LiveUnit.Assert.areEqual(controlElement, control._domElement);
@@ -36,7 +36,7 @@ CorsicaTests.TimePicker = function () {
         LiveUnit.Assert.isTrue(control.current.getMinutes() <= date2.getMinutes());
         LiveUnit.Assert.isTrue(control.current.getHours() >= date1.getHours());
         LiveUnit.Assert.isTrue(control.current.getMinutes() >= date1.getMinutes());
-        LiveUnit.Assert.isTrue(control.minuteIncrement == 1);
+        LiveUnit.Assert.isTrue(control.minuteIncrement === 1);
         LiveUnit.Assert.isTrue(!control.disabled);
     };
 
@@ -147,14 +147,14 @@ CorsicaTests.TimePicker = function () {
             document.body.removeChild(controlElement);
             document.body.removeChild(selectElement);
         }
-    }
+    };
 
     this.testEmptyOptions = function () {
         var controlElement = document.createElement("div");
         var t = new Date();
         var date1 = new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours(), t.getMinutes(), 0, 0);
         var control = new WinJS.UI.TimePicker(controlElement, {});
-        var t = new Date();
+        t = new Date();
         var date2 = new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours(), t.getMinutes(), 0, 0);
 
         LiveUnit.Assert.areEqual(controlElement, control._domElement);
@@ -162,7 +162,7 @@ CorsicaTests.TimePicker = function () {
         LiveUnit.Assert.isTrue(control.current.getMinutes() <= date2.getMinutes());
         LiveUnit.Assert.isTrue(control.current.getHours() >= date1.getHours());
         LiveUnit.Assert.isTrue(control.current.getMinutes() >= date1.getMinutes());
-        LiveUnit.Assert.isTrue(control.minuteIncrement == 1);
+        LiveUnit.Assert.isTrue(control.minuteIncrement === 1);
         LiveUnit.Assert.isTrue(!control.disabled);
     };
 
@@ -251,7 +251,7 @@ CorsicaTests.TimePicker = function () {
                 document.body.removeChild(controlElement);
             }
         }
-    }
+    };
 
 
 
@@ -277,9 +277,9 @@ CorsicaTests.TimePicker = function () {
         var control = new WinJS.UI.TimePicker(controlElement, { current: '3:30 PM' });
 
         LiveUnit.Assert.areEqual(controlElement, control._domElement);
-        LiveUnit.Assert.isTrue(control.current.getHours() == 15);
-        LiveUnit.Assert.isTrue(control.current.getMinutes() == 30);
-        LiveUnit.Assert.isTrue(control.minuteIncrement == 1);
+        LiveUnit.Assert.isTrue(control.current.getHours() === 15);
+        LiveUnit.Assert.isTrue(control.current.getMinutes() === 30);
+        LiveUnit.Assert.isTrue(control.minuteIncrement === 1);
         LiveUnit.Assert.isTrue(!control.disabled);
     };
 
@@ -313,16 +313,16 @@ CorsicaTests.TimePicker = function () {
             myAreEqual("hour of: " + item[dateString] + ", actual=" + control.current, item[hour], control.current.getHours());
             myAreEqual("minute of: " + item[dateString] + ", actual=" + control.current, item[minute], control.current.getMinutes());
         });
-    }
+    };
 
     this.testTime24HourString = function () {
         var controlElement = document.createElement("div");
         var control = new WinJS.UI.TimePicker(controlElement, { current: '22:30' });
 
         LiveUnit.Assert.areEqual(controlElement, control._domElement);
-        LiveUnit.Assert.isTrue(control.current.getHours() == 22);
-        LiveUnit.Assert.isTrue(control.current.getMinutes() == 30);
-        LiveUnit.Assert.isTrue(control.minuteIncrement == 1);
+        LiveUnit.Assert.isTrue(control.current.getHours() === 22);
+        LiveUnit.Assert.isTrue(control.current.getMinutes() === 30);
+        LiveUnit.Assert.isTrue(control.minuteIncrement === 1);
         LiveUnit.Assert.isTrue(!control.disabled);
     };
 
@@ -333,10 +333,10 @@ CorsicaTests.TimePicker = function () {
         var control = new WinJS.UI.TimePicker(controlElement, { current: date });
 
         LiveUnit.Assert.areEqual(controlElement, control._domElement);
-        LiveUnit.Assert.isTrue(control.current.getHours() == 1);
-        LiveUnit.Assert.isTrue(control.current.getMinutes() == 2);
-        LiveUnit.Assert.isTrue(control.current.getSeconds() == 0);
-        LiveUnit.Assert.isTrue(control.minuteIncrement == 1);
+        LiveUnit.Assert.isTrue(control.current.getHours() === 1);
+        LiveUnit.Assert.isTrue(control.current.getMinutes() === 2);
+        LiveUnit.Assert.isTrue(control.current.getSeconds() === 0);
+        LiveUnit.Assert.isTrue(control.minuteIncrement === 1);
         LiveUnit.Assert.isTrue(!control.disabled);
     };
 
@@ -458,15 +458,15 @@ CorsicaTests.TimePicker = function () {
         var date = new Date(2010, 5, 4, 14, 23);
         var control = new WinJS.UI.TimePicker(null, { current: date });
 
-        LiveUnit.Assert.isTrue(control.current.getHours() == 14);
-        LiveUnit.Assert.isTrue(control.current.getMinutes() == 23);
-        LiveUnit.Assert.isTrue(control.current.getSeconds() == 0);
+        LiveUnit.Assert.isTrue(control.current.getHours() === 14);
+        LiveUnit.Assert.isTrue(control.current.getMinutes() === 23);
+        LiveUnit.Assert.isTrue(control.current.getSeconds() === 0);
 
         control.minuteIncrement = 10;
 
-        LiveUnit.Assert.isTrue(control.current.getHours() == 14);
-        LiveUnit.Assert.isTrue(control.current.getMinutes() == 20);
-        LiveUnit.Assert.isTrue(control.current.getSeconds() == 0);
+        LiveUnit.Assert.isTrue(control.current.getHours() === 14);
+        LiveUnit.Assert.isTrue(control.current.getMinutes() === 20);
+        LiveUnit.Assert.isTrue(control.current.getSeconds() === 0);
 
         LiveUnit.Assert.areEqual(20, +(control.element.querySelector(".win-timepicker-minute").value), "UI should be updated to minute increment");
     };
@@ -482,17 +482,17 @@ CorsicaTests.TimePicker = function () {
             var childNodes = controlElement.childNodes;
             for (var i = 0; i < childNodes.length; i++) {
                 var child = childNodes[i];
-                if (child.className == that.TimePickerClassName.TimePicker_Hour + " win-order0") {
+                if (child.className === that.TimePickerClassName.TimePicker_Hour + " win-order0") {
                     LiveUnit.Assert.areEqual("Select Hour", child.getAttribute("aria-label"));
                     continue;
                 }
 
-                if (child.className == that.TimePickerClassName.TimePicker_Minute + " win-order1") {
+                if (child.className === that.TimePickerClassName.TimePicker_Minute + " win-order1") {
                     LiveUnit.Assert.areEqual("Select Minute", child.getAttribute("aria-label"));
                     continue;
                 }
 
-                if (child.className == that.TimePickerClassName.TimePicker_Period + " win-order2") {
+                if (child.className === that.TimePickerClassName.TimePicker_Period + " win-order2") {
                     LiveUnit.Assert.areEqual("Select A.M P.M", child.getAttribute("aria-label"));
                     continue;
                 }
@@ -519,23 +519,23 @@ CorsicaTests.TimePicker = function () {
         //cleanup
         WinJS.Utilities.disposeSubTree(controlElement);
         document.body.removeChild(controlElement);
-    }
-    
+    };
+
     this.testTimePickerDispose = function () {
         var tp = new WinJS.UI.TimePicker();
         LiveUnit.Assert.isTrue(tp.dispose);
         LiveUnit.Assert.isTrue(tp.element.classList.contains("win-disposable"));
         LiveUnit.Assert.isFalse(tp._disposed);
-        
+
         // Double dispose sentinel
         var sentinel = document.createElement("div");
         sentinel.disposed = false;
         WinJS.Utilities.addClass(sentinel, "win-disposable");
         tp.element.appendChild(sentinel);
-        
+
         tp.dispose();
         tp.dispose();
-    }
-}
+    };
+};
 
 LiveUnit.registerTestClass("CorsicaTests.TimePicker");

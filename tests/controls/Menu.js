@@ -5,18 +5,27 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="OverlayHelpers.js" />
 
 var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.MenuTests = function () {
     "use strict";
+
+    this.tearDown = function () {
+        LiveUnit.LoggingCore.logComment("In tearDown");
+
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
+    };
+
     // Test Menu Instantiation
     this.testMenuInstantiation = function () {
         // Get the Menu element from the DOM
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Menu element");
-        var MenuElement = document.createElement('div');
-        document.body.appendChild(MenuElement);
-        var Menu = new WinJS.UI.Menu(MenuElement, { commands: { type: 'separator', id: 'sep'} });
+        var menuElement = document.createElement('div');
+        document.body.appendChild(menuElement);
+        var Menu = new WinJS.UI.Menu(menuElement, { commands: { type: 'separator', id: 'sep' } });
         LiveUnit.LoggingCore.logComment("Menu has been instantiated.");
         LiveUnit.Assert.isNotNull(Menu, "Menu element should not be null when instantiated.");
 
@@ -34,6 +43,7 @@ CorsicaTests.MenuTests = function () {
         verifyFunction("hide");
         verifyFunction("addEventListener");
         verifyFunction("removeEventListener");
+        OverlayHelpers.disposeAndRemove(menuElement);
     }
     this.testMenuInstantiation["Owner"] = "shawnste";
     this.testMenuInstantiation["Priority"] = "0";
@@ -66,12 +76,19 @@ CorsicaTests.MenuTests = function () {
     this.testMenuMultipleInstantiation = function () {
         // Get the Menu element from the DOM
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Menu element");
-        var MenuElement = document.createElement('div');
-        document.body.appendChild(MenuElement);
-        var Menu = new WinJS.UI.Menu(MenuElement, { commands: { type: 'separator', id: 'sep'} });
+        var menuElement = document.createElement('div');
+        document.body.appendChild(menuElement);
+        var Menu = new WinJS.UI.Menu(menuElement, { commands: { type: 'separator', id: 'sep' } });
         LiveUnit.LoggingCore.logComment("Menu has been instantiated.");
         LiveUnit.Assert.isNotNull(Menu, "Menu element should not be null when instantiated.");
-        new WinJS.UI.Menu(MenuElement, { commands: { type: 'separator', id: 'sep'} });
+        try {
+            new WinJS.UI.Menu(menuElement, { commands: { type: 'separator', id: 'sep' } });
+            LiveUnit.Assert.fail("Expected WinJS.UI.Menu.DuplicateConstruction exception");
+        }
+        catch (e) {}
+        finally {
+            OverlayHelpers.disposeAndRemove(menuElement);
+        }
     }
     this.testMenuMultipleInstantiation["Owner"] = "shawnste";
     this.testMenuMultipleInstantiation["Priority"] = "1";
@@ -89,6 +106,7 @@ CorsicaTests.MenuTests = function () {
             document.body.appendChild(div);
             var Menu = new WinJS.UI.Menu(div, options);
             LiveUnit.Assert.isNotNull(Menu);
+            OverlayHelpers.disposeAndRemove(div);
         }
 
         function testBadInitOption(paramName, value, expectedName, expectedMessage) {
@@ -107,6 +125,7 @@ CorsicaTests.MenuTests = function () {
                 LiveUnit.Assert.isTrue(exception.name === expectedName);
                 LiveUnit.Assert.isTrue(exception.message === expectedMessage);
             }
+            OverlayHelpers.disposeAndRemove(div);
         }
 
         LiveUnit.LoggingCore.logComment("Testing anchor");
@@ -143,15 +162,16 @@ CorsicaTests.MenuTests = function () {
 
     this.testDefaultMenuParameters = function () {
         // Get the Menu element from the DOM
-        var MenuElement = document.createElement("div");
-        document.body.appendChild(MenuElement);
+        var menuElement = document.createElement("div");
+        document.body.appendChild(menuElement);
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Menu element");
-        var Menu = new WinJS.UI.Menu(MenuElement, { commands: { type: 'separator', id: 'sep'} });
+        var Menu = new WinJS.UI.Menu(menuElement, { commands: { type: 'separator', id: 'sep'} });
         LiveUnit.LoggingCore.logComment("Menu has been instantiated.");
         LiveUnit.Assert.isNotNull(Menu, "Menu element should not be null when instantiated.");
 
-        LiveUnit.Assert.areEqual(MenuElement, Menu.element, "Verifying that element is what we set it with");
+        LiveUnit.Assert.areEqual(menuElement, Menu.element, "Verifying that element is what we set it with");
         LiveUnit.Assert.isTrue(Menu.hidden, "Verifying that hidden is true");
+        OverlayHelpers.disposeAndRemove(menuElement);
     }
     this.testDefaultMenuParameters["Owner"] = "shawnste";
     this.testDefaultMenuParameters["Priority"] = "1";
@@ -161,15 +181,15 @@ CorsicaTests.MenuTests = function () {
     // Simple Function Tests
     this.testSimpleMenuTestsFunctions = function () {
         // Get the MenuTests element from the DOM
-        var MenuElement = document.createElement("div");
-        document.body.appendChild(MenuElement);
+        var menuElement = document.createElement("div");
+        document.body.appendChild(menuElement);
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Menu element");
-        var Menu = new WinJS.UI.Menu(MenuElement, { commands: { type: 'separator', id: 'sep'} });
+        var Menu = new WinJS.UI.Menu(menuElement, { commands: { type: 'separator', id: 'sep'} });
         LiveUnit.LoggingCore.logComment("Menu has been instantiated.");
         LiveUnit.Assert.isNotNull(Menu, "Menu element should not be null when instantiated.");
 
         LiveUnit.LoggingCore.logComment("show");
-        Menu.show(MenuElement);
+        Menu.show(menuElement);
 
         LiveUnit.LoggingCore.logComment("hide");
         Menu.hide();
@@ -179,6 +199,7 @@ CorsicaTests.MenuTests = function () {
 
         LiveUnit.LoggingCore.logComment("removeEventListener");
         Menu.removeEventListener();
+        OverlayHelpers.disposeAndRemove(menuElement);
     }
     this.testSimpleMenuTestsFunctions["Owner"] = "shawnste";
     this.testSimpleMenuTestsFunctions["Priority"] = "1";
@@ -224,7 +245,7 @@ CorsicaTests.MenuTests = function () {
         } catch (e) {
             LiveUnit.Assert.areEqual(WinJS.Resources._getWinJSString("ui/noAnchor").value, e.message);
         }
-
+        OverlayHelpers.disposeAndRemove(menuElement);
         complete();
     }
 }
