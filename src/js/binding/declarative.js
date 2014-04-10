@@ -666,6 +666,7 @@
         defaultBind: initializer(defaultBind),
         converter: converter,
         initializer: initializer,
+        getValue: getValue,
         setAttribute: initializer(setAttribute),
         setAttributeOneTime: initializer(setAttributeOneTime),
         addClassOneTime: initializer(addClassOneTime),
