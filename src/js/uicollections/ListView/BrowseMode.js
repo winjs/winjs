@@ -1367,7 +1367,7 @@
                 },
 
                 onTabExit: function (eventObject) {
-                    if (!this.site._supportsGroupHeaderKeyboarding || !this.site._groups.length()) {
+                    if (!this.site._supportsGroupHeaderKeyboarding || this.site._groups.length() === 0) {
                         return;
                     }
 

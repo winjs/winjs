@@ -15,7 +15,7 @@
 
         if (count < 4) {
             // Only 3 depth is supported in the innerHTML
-            if (!count) {
+            if (count === 0) {
                 if (rootElement.getAttribute) {
                     // Fragment-loaded root element isn't caught by querySelectorAll
                     var rootElementNode = rootElement.getAttribute('data-win-res');

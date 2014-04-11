@@ -462,12 +462,12 @@
                             getLength: function () { return 2; },
                             getValue: function (index) {
                                 var date = WinJS.UI.TimePicker._sentinelDate();
-                                if (!index) {
+                                if (index === 0) {
                                     date.setHours(1);
                                     var am = periodFormatter.format(date);
                                     return am;
                                 }
-                                if (index == 1) {
+                                if (index === 1) {
                                     date.setHours(13);
                                     var pm = periodFormatter.format(date);
                                     return pm;
