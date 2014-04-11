@@ -2361,6 +2361,41 @@ CorsicaTests.BindingDeclTests = function () {
            then(complete, errorHandler);
         
     };
+
+    this.testAddClassOneTimeWithArray = function (complete) {
+
+      var mydiv = document.createElement("div");
+      var cleanup = parent(mydiv);
+      mydiv.classList.add("originalClass");
+      mydiv.setAttribute("id", "mydiv");
+      mydiv.setAttribute("data-win-bind", "textContent:names WinJS.Binding.addClassOneTime");
+
+      var obj = WinJS.Binding.as({ names: ["Sally", "Nelly"] });
+      var bindingDone = WinJS.Binding.processAll(mydiv, obj);
+
+      bindingDone.
+         then(post).then(function () {
+           LiveUnit.Assert.areEqual("originalClass Sally Nelly", mydiv.className);
+         })
+         .then(null, errorHandler).
+         then(cleanup).
+         then(complete, errorHandler);
+
+    };
+    
+    this.testGetValue = function () {
+      var obj = {
+        title: "foo",
+        pages: {
+          page1: "bar"
+        }
+      }
+      LiveUnit.Assert.areEqual(WinJS.Binding.getValue(obj, "title", "foo"));
+      LiveUnit.Assert.areEqual(WinJS.Binding.getValue(obj, "pages.page1", "bar"));
+      LiveUnit.Assert.areEqual(WinJS.Binding.getValue(obj, "nonExisting", undefined));
+      LiveUnit.Assert.areEqual(WinJS.Binding.getValue(obj, "pages.page2", undefined));
+    }
+
 };
 
 LiveUnit.registerTestClass('CorsicaTests.BindingDeclTests');

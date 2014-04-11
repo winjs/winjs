@@ -10,8 +10,10 @@
     QUnit.breakOnAssertFail = false;
 
     var qunitDiv;
+    var qunitTestFixtureDiv;
     window.addEventListener("DOMContentLoaded", function () {
         qunitDiv = document.querySelector("#qunit");
+        qunitTestFixtureDiv = document.querySelector("#qunit-fixture");
 
         function addOptions() {
             var toolBar = document.querySelector("#qunit-testrunner-toolbar");
@@ -31,6 +33,8 @@
             toolBar.appendChild(span);
 
             var btn = document.createElement("button");
+            btn.style.borderColor = btn.style.color = "#5E740B";
+            btn.style.marginLeft = "4px";
             btn.innerHTML = "Start";
             btn.onclick = function () {
                 QUnit.start();
@@ -82,6 +86,14 @@
     function cleanUp() {
         WinJS.Utilities.disposeSubTree(document.body);
         qunitDiv.style.zIndex = 0;
+
+        document.body.removeChild(qunitDiv);
+        document.body.removeChild(qunitTestFixtureDiv);
+
+        document.body.innerHTML = "";
+
+        document.body.appendChild(qunitDiv);
+        document.body.appendChild(qunitTestFixtureDiv);
     }
 
     QUnit.testStart(function testStart() {

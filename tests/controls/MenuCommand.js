@@ -5,11 +5,20 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="OverlayHelpers.js" />
 
 var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.MenuCommandTests = function () {
     "use strict";
+
+    this.tearDown = function () {
+        LiveUnit.LoggingCore.logComment("In tearDown");
+
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
+    };
+
     // Test MenuCommand Instantiation
     this.testMenuCommandInstantiation = function () {
         // Get the MenuCommand element from the DOM
@@ -19,6 +28,7 @@ CorsicaTests.MenuCommandTests = function () {
         var menuCommand = new WinJS.UI.MenuCommand(menuCommandElement, { type: 'separator' });
         LiveUnit.LoggingCore.logComment("MenuCommand has been instantiated.");
         LiveUnit.Assert.isNotNull(menuCommand, "MenuCommand element should not be null when instantiated.");
+        OverlayHelpers.disposeAndRemove(menuCommandElement);
 
         // We have no functions
     }
@@ -47,7 +57,13 @@ CorsicaTests.MenuCommandTests = function () {
         var menuCommand = new WinJS.UI.MenuCommand(menuCommandElement, { type: 'separator' });
         LiveUnit.LoggingCore.logComment("MenuCommand has been instantiated.");
         LiveUnit.Assert.isNotNull(menuCommand, "MenuCommand element should not be null when instantiated.");
-        new WinJS.UI.MenuCommand(menuCommandElement, { type: 'separator' });
+        try {
+            new WinJS.UI.MenuCommand(menuCommandElement, { type: 'separator' });
+            LiveUnit.Assert.fail("Expected WinJS.UI.MenuCommand.DuplicateConstruction exception");
+        } catch (e) {}
+        finally {
+            OverlayHelpers.disposeAndRemove(menuCommandElement);
+        }
     }
     this.testMenuCommandMultipleInstantiation["Owner"] = "shawnste";
     this.testMenuCommandMultipleInstantiation["Priority"] = "1";
@@ -196,15 +212,15 @@ CorsicaTests.MenuCommandTests = function () {
     this.testHiddenProperty = function () {
         LiveUnit.LoggingCore.logComment("Attempt to test hidden property on menucommand");
         // Get the Menu element from the DOM
-        var MenuElement = document.createElement("div");
-        document.body.appendChild(MenuElement);
+        var menuElement = document.createElement("div");
+        document.body.appendChild(menuElement);
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Menu element");
-        var Menu = new WinJS.UI.Menu(MenuElement, { commands: { id: 'cmdA'} });
+        var Menu = new WinJS.UI.Menu(menuElement, { commands: { id: 'cmdA' } });
         Menu.hide();
         var cmd = Menu.getCommandById("cmdA");
         cmd.hidden = true;
         LiveUnit.Assert.areEqual(true, cmd.hidden, "verify the command is now hidden");
-        Menu.show(MenuElement);
+        Menu.show(menuElement);
         var result = false;
         try {
             cmd.hidden = false;
@@ -212,6 +228,7 @@ CorsicaTests.MenuCommandTests = function () {
             // we throw 
             result = true;
         }
+        OverlayHelpers.disposeAndRemove(menuElement);
         LiveUnit.Assert.areEqual(true, result, "verify the hidden property throw the exception");
     }
     this.testHiddenProperty["Owner"] = "tarekms";

@@ -1506,7 +1506,7 @@ PVLJSFunctionTests = function () {
         var promise = WinJS.UI.Animation.enterPage().then(onComplete, onError);
         LiveUnit.Assert.isTrue(result === null); //Verifty onComplete is not fired yet.
         
-        msSetImmediate(function () {
+        WinJS.Utilities._setImmediate(function () {
             promise.cancel();
             LiveUnit.Assert.isTrue(result);
             complete();

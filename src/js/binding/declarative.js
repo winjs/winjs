@@ -541,7 +541,7 @@
     function addClassOneTime(source, sourceProperties, dest) {
         /// <signature helpKeyword="WinJS.Binding.addClassOneTime">
         /// <summary locid="WinJS.Binding.addClassOneTime">
-        /// Adds a class on the destination element to the value of the source property
+        /// Adds a class or Array list of classes on the destination element to the value of the source property
         /// </summary>
         /// <param name="source" type="Object" locid="WinJS.Binding.addClassOneTime:source">
         /// The source object.
@@ -554,7 +554,12 @@
         /// </param>
         /// </signature>
         dest = requireSupportedForProcessing(dest);
-        dest.classList.add(getValue(source, sourceProperties));
+        var value = getValue(source, sourceProperties);
+        if (Array.isArray(value)) {
+            dest.classList.add.apply(dest.classList, value);
+        } else {
+            dest.classList.add(value);
+        }
     }
 
     var defaultBindImpl = converter(function defaultBind_passthrough(v) { return v; });
@@ -661,6 +666,7 @@
         defaultBind: initializer(defaultBind),
         converter: converter,
         initializer: initializer,
+        getValue: getValue,
         setAttribute: initializer(setAttribute),
         setAttributeOneTime: initializer(setAttributeOneTime),
         addClassOneTime: initializer(addClassOneTime),

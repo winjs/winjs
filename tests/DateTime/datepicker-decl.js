@@ -4,15 +4,17 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-"use strict";
 
 var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.DatePickerDecl = function () {
+    "use strict";
+    var glob;
+
     function process(root) {
         return WinJS.UI.processAll(root);
     }
-    var glob;
+
     function isWinRTEnabled() {
 
         if (window && window.Windows) {
@@ -22,6 +24,7 @@ CorsicaTests.DatePickerDecl = function () {
         return false;
 
     }
+
     function createPicker(options) {
         var wrt = WinJS.UI.DatePicker._getInformationWinRT;
         var js = WinJS.UI.DatePicker._getInformationJS;
@@ -229,6 +232,7 @@ CorsicaTests.DatePickerDecl = function () {
         picker.addEventListener("change", checkValues);
         return function () { picker.removeListener(picker, checkValues); };
     }
+
     function daysInMonth(y, m) {
         if (isWinRTEnabled()) {
             var c = new Windows.Globalization.Calendar();
@@ -238,6 +242,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         return new Date(y, m + 1, 0, 12, 0).getDate();
     }
+
     function lastDayInMonth(y, m) {
         if (isWinRTEnabled()) {
             var c = new Windows.Globalization.Calendar();
@@ -247,11 +252,13 @@ CorsicaTests.DatePickerDecl = function () {
         }
         return new Date(y, m + 1, 0, 12, 0).getDate();
     }
+
     //;
     // I am thinking of removing the check boolean
     // using the three functions help us mimic the user selection scenario
     // rather than just creating one function with all the changes in it
     //
+
     function setMonth(picker, m, notFire) {
         var selectMonthElement = monthElement(picker);
         monthBackEnd = m - 1;
@@ -265,6 +272,7 @@ CorsicaTests.DatePickerDecl = function () {
             fireOnchange(selectMonthElement);
         }
     }
+
     function setYear(picker, y, notFire) {
         var selectYearElement = yearElement(picker);
         yearBackEnd = y;
@@ -278,6 +286,7 @@ CorsicaTests.DatePickerDecl = function () {
             fireOnchange(selectYearElement);
         }
     }
+
     function setDate(picker, d, notFire) {
         var selectDayElement = dateElement(picker);
         dateBackEnd = d;
@@ -285,14 +294,14 @@ CorsicaTests.DatePickerDecl = function () {
         if (!notFire)
             fireOnchange(selectDayElement);
     }
-    function setValues() {
 
+    function setValues() {
         var dateObj = new Date();
         dateBackEnd = dateObj.getDate();
         monthBackEnd = dateObj.getMonth();
         yearBackEnd = dateObj.getFullYear();
-
     }
+
     function cleanupDatePicker() {
         try {
             WinJS.Utilities.disposeSubTree(elementToBeRemoved);
@@ -310,6 +319,7 @@ CorsicaTests.DatePickerDecl = function () {
             LiveUnit.Assert.fail("cleanupDatePicker() failed: " + e);
         }
     }
+
     this.xtestKnownDayWithIndependentStateofSamoa = function (complete) {
 
         var cleanup;
@@ -328,7 +338,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, unhandledTestError);
-    }
+    };
 
     this.testParameterOfChangeEvent = function (complete) {
         var cleanup;
@@ -347,7 +357,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
         .then(cleanupDatePicker)
         .then(complete, unhandledTestError);
-    }
+    };
 
     this.testMaxAndMinYearInGregorian = function (complete) {
         //BugID: 628192
@@ -370,7 +380,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testSpecialDayWithIndependentStateofSamoa = function (complete) {
 
         var cleanup;
@@ -402,7 +413,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testMaxAndMinYearInGregorian_temp = function (complete) {
         if (isWinRTEnabled()) {
 
@@ -422,7 +434,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testChangeEventParameterInNonLeapYear = function (complete) {
         // bug #436665
         var cleanup;
@@ -444,7 +457,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
         .then(cleanupDatePicker)
         .then(complete, unhandledTestError);
-    }
+    };
 
     this.testLeapYearParameter = function (complete) {
         // bug #436665
@@ -469,7 +482,8 @@ CorsicaTests.DatePickerDecl = function () {
         .then(cleanup)
         .then(cleanupDatePicker) //placed after the error handler to make sure it gets removed even if the test case failed
         .then(complete, unhandledTestError);
-    }
+    };
+
     this.testMonthChange = function (complete) {
 
         var cleanup;
@@ -495,7 +509,8 @@ CorsicaTests.DatePickerDecl = function () {
         .then(cleanup)
         .then(cleanupDatePicker) //placed after the error handler to make sure it gets removed even if the test case failed
         .then(complete, unhandledTestError);
-    }
+    };
+
     this.testSimpleDate = function (complete) {
         createPickerWithAppend({ calendar: 'GregorianCalendar' }).then(function (picker) {
             var today = new Date();
@@ -508,7 +523,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testDefaults = function (complete) {
         // validate datePicker defaults
@@ -530,7 +545,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testDefaultFormats = function (complete) {
         // validate datePicker default format
@@ -555,7 +570,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testSetCurrentFromDate = function (complete) {
         createPickerWithAppend({ calendar: 'GregorianCalendar' }).then(function (picker) {
@@ -566,7 +581,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.xtestSetCurrentFromString = function (complete) {
         // bug #426214 - resolved as won't fix
@@ -577,7 +592,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.xtestSetCurrentFromString2 = function (complete) {
         // bug #426214 - resolved as won't fix
@@ -589,7 +604,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
 
     this.testDisabled1 = function (complete) {
@@ -608,7 +623,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testDisabled2 = function (complete) {
         createPickerWithAppend({
@@ -625,27 +640,25 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testCustomDate = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
             current: 'February 3, 2005'
-        }
-        ).then(function (picker) {
+        }).then(function (picker) {
             verifyDate(picker, { day: 3, month: 2, year: 2005 });
         })
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testLeapYear = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
             current: 'February 29, 2000'
-        }
-        ).then(function (picker) {
+        }).then(function (picker) {
             verifyDate(picker, { day: 29, month: 2, year: 2000 });
         })
         // handle any errors encountered in createPickerWithAppend() through the unhandledTestError
@@ -659,20 +672,19 @@ CorsicaTests.DatePickerDecl = function () {
         // when actually complete (no errors) or if there was an error in the previous
         // then() statement's error handler.
         .then(complete, complete);
-    }
+    };
 
     this.testNonLeapYear = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
             current: 'February 29, 2001'
-        }
-        ).then(function (picker) {
+        }).then(function (picker) {
             verifyDate(picker, { day: 1, month: 3, year: 2001 });
         })
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     // adjust current year to minYear if current year < minYear
     this.testMinYear = function (complete) {
@@ -687,7 +699,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMaxYear = function (complete) {
         createPickerWithAppend({
@@ -700,7 +712,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMaxYear2 = function (complete) {
         // use current date, apply max year < current date
@@ -710,16 +722,12 @@ CorsicaTests.DatePickerDecl = function () {
             maxYear: 2011,
             current: 'January 2, 2121',
         }).then(function (picker) {
-            verifyDate(picker, {
-                day: 2,
-                month: 1,
-                year: 2011
-            })
+            verifyDate(picker, { day: 2, month: 1, year: 2011 });
         })
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testYearRange1 = function (complete) {
         // verify year > range snaps to maxYear
@@ -734,7 +742,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testYearRange1 = function (complete) {
         // verify year < range snaps to min year
@@ -749,7 +757,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testYearRange2 = function (complete) {
         // verify if minyear > maxyear, maxyear == minyear
@@ -764,7 +772,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testYearRange3 = function (complete) {
         // verify if minyear > maxyear, minyear == maxyear, different attribute order
@@ -779,7 +787,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testYearRange4 = function (complete) {
         // verify when minyear == maxyear, year snaps to minyear
@@ -794,7 +802,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testYearRange5 = function (complete) {
         //BugID: 628192
@@ -810,7 +818,8 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
+
     this.testYearRange5_temp = function (complete) {
 
         // verify invalid input, minyear && maxyear are ignored
@@ -825,7 +834,8 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
+
     this.testYearRange6 = function (complete) {
         // verify min/max adjustment sequence of squirrely-ness
         createPickerWithAppend({
@@ -867,7 +877,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testYearRange7 = function (complete) {
         // verify min year only, year snaps to minyear
@@ -881,7 +891,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testYearRange8 = function (complete) {
         // verify max year only, year doesn't go beyond maxyear
@@ -901,7 +911,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.xtestDayFormatting = function (complete) {
         // bug: win8TFS:245862 - consume real WinJS.Glob formatting not yet implemented
@@ -935,7 +945,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
 
     this.xtestMonthFormatting = function (complete) {
@@ -977,7 +987,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.xtestYearFormatting = function (complete) {
         // bug: win8TFS:245862 - consume real WinJS.Glob formatting not yet implemented
@@ -1012,8 +1022,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
-
+    };
 
     var changeHit,
         datechangeHit,
@@ -1031,7 +1040,7 @@ CorsicaTests.DatePickerDecl = function () {
         changeHit++;
         LiveUnit.Assert.areEqual(e.type, changeType);
         logEventHits(e);
-    }
+    };
 
     function attachEventListeners(picker) {
         changeHit = datechangeHit = monthchangeHit = yearchangeHit = 0;
@@ -1065,7 +1074,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testFireDatechangeEvent = function (complete) {
         createPickerWithAppend({
@@ -1080,7 +1089,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testFireYearchangeEvent = function (complete) {
         createPickerWithAppend({
@@ -1095,7 +1104,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testFireAllEventsAndRemove = function (complete) {
         createPickerWithAppend({
@@ -1129,7 +1138,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testFireMultipleChangeEvents = function (complete) {
         createPickerWithAppend({
@@ -1149,7 +1158,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testSettingDateObject = function (complete) {
         // BUG: win8TFS: 245862 - consume real WinJS.Glob
@@ -1166,7 +1175,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testdatechangeEvent = function (complete) {
         createPickerWithAppend({
@@ -1184,7 +1193,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testmonthchangeEvent = function (complete) {
         createPickerWithAppend({
@@ -1203,7 +1212,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testyearchangeEvent = function (complete) {
         // BUG: 266243 datePicker needs to use Date.getDate() to compare dates instead of Date.getDay() - day of week
@@ -1223,7 +1232,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testCurrentAttribute = function (complete) {
         createPickerWithAppend({
@@ -1236,7 +1245,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testCurrentAttributeWithAbbreviatedMonth = function (complete) {
         createPickerWithAppend({
@@ -1249,7 +1258,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testThreeEventsAndRemove = function (complete) {
         createPickerWithAppend({
@@ -1273,7 +1282,7 @@ CorsicaTests.DatePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupDatePicker)
         .then(complete, complete);
-    }
+    };
 
     var dateObjectUI, dataObjectBackEnd;
     var supportedCalenders = ["GregorianCalendar", "HijriCalendar", "HebrewCalendar", "JapaneseCalendar", "KoreanCalendar", "ThaiCalendar", "TaiwanCalendar", "UmAlQuraCalendar", "JulianCalendar"];
@@ -1284,7 +1293,7 @@ CorsicaTests.DatePickerDecl = function () {
             monthPos,
             yearPos;
         for (var i = 0; i < 3; i++) {
-            var elem = domElement.childNodes[i].className
+            var elem = domElement.childNodes[i].className;
             if (elem.indexOf('picker-date') !== -1) {
                 datePos = i;
             }
@@ -1339,7 +1348,7 @@ CorsicaTests.DatePickerDecl = function () {
     function checkGlobValues(e) {
         var d = new Date(datePicker.winControl.current);
         var month = monthElement(datePicker);
-        var year = yearElement(datePicker);;
+        var year = yearElement(datePicker);
         var day = dateElement(datePicker);
         var temp = currentCalendar || '';
 
@@ -1379,7 +1388,7 @@ CorsicaTests.DatePickerDecl = function () {
         var pattern = formatter.patterns[0];
         var era = '';
         if (pattern.indexOf("era") !== -1)
-            era = " " + myCalendar.eraAsString()
+            era = " " + myCalendar.eraAsString();
         dateObjectUI = {
             yearUI: myCalendar.yearAsString() + era,
             monthUI: myCalendar.monthAsString(),
@@ -1399,9 +1408,9 @@ CorsicaTests.DatePickerDecl = function () {
                 year = parseInt(year);
                 //c.addYears(year - c.year);
                 myCalendar = new glob.Calendar(c.languages, calendarName, c.getClock());
-                myCalendar.addMonths(monthSelect.selectedIndex + 1 - myCalendar.month)
+                myCalendar.addMonths(monthSelect.selectedIndex + 1 - myCalendar.month);
                 myCalendar.month = monthSelect.selectedIndex + 1;
-                myCalendar.addYears(year - myCalendar.year)
+                myCalendar.addYears(year - myCalendar.year);
                 myCalendar.day = selectControls.dateSelect.selectedIndex + 1;
                 //myCalendar.addYears(year - myCalendar.year);
             }
@@ -1454,7 +1463,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testUpdateDatePickerToHijriCalendar = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -1475,7 +1485,7 @@ CorsicaTests.DatePickerDecl = function () {
                 calendarType = "HijriCalendar";
                 picker.winControl.calendar = calendarType;
                 myCalendar.changeCalendarSystem(calendarType);
-                LiveUnit.Assert.areEqual(getExpectedOrder(calendarType), getActualUIOrder(), "Incorrect UI order for HijriCalendar")
+                LiveUnit.Assert.areEqual(getExpectedOrder(calendarType), getActualUIOrder(), "Incorrect UI order for HijriCalendar");
             })
             .then(null, unhandledTestError)
             .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
@@ -1484,12 +1494,14 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     function hijriLeapYear(year) {
         var yearValue = parseInt(year);
         var r = yearValue % 30;
         return (r === 2 || r === 5 || r === 7 || r === 10 || r === 13 || r === 16 || r === 18 || r === 21 || r === 24 || r === 26 || r === 29);
     }
+
     this.testHijriCalenderLeapDays = function (complete) {
         if (isWinRTEnabled()) {
             var calendarType = 'HijriCalendar';
@@ -1521,7 +1533,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testHijriCalenderLeapDaysInLeapYears = function (complete) {
         if (isWinRTEnabled()) {
             var calendarType = 'HijriCalendar';
@@ -1553,12 +1566,14 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     function isHebrewLeapYear(year) {
         var yearValue = parseInt(year);
         var r = yearValue % 19;
         return (r === 3 || r === 6 || r === 8 || r === 11 || r === 14 || r === 17 || r === 19);
     }
+
     function validateMonth(month, isLeap, numOfDays) {
         var val = -1;
         switch (month) {
@@ -1615,13 +1630,14 @@ CorsicaTests.DatePickerDecl = function () {
                 val = 29;
 
         }
+
         if (val !== -1)
             LiveUnit.Assert.areEqual(val, numOfDays, "incorrect number of days in month " + month);
         else
             if (numOfDays !== 29 && numOfDays !== 30)
                 LiveUnit.Assert.areEqual(numOfDays, "incorrect number of days in month " + month);
-
     }
+
     function getMaxDay(selectControl) {
         var max = -1;
         for (var i = 0 ; i < selectControl.length; i++) {
@@ -1631,6 +1647,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         return max;
     }
+
     this.testSpecialHebrewCalendarScenario = function (complete) {
         if (isWinRTEnabled()) {
             var calendarType = 'HebrewCalendar';
@@ -1664,10 +1681,11 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testSpecialHebrewCalendar = function (complete) {
         if (isWinRTEnabled()) {
-            var calendarType = 'HebrewCalendar'
+            var calendarType = 'HebrewCalendar';
             createPickerWithAppend({
                 calendar: calendarType,
             }).then(function (picker) {
@@ -1680,6 +1698,7 @@ CorsicaTests.DatePickerDecl = function () {
                 var totalNumOfDays = 30;
                 var years = ["5784", "5785"]; //first is a leap year and second is not leap year
                 var gregorianYears = [2024, 2025]; //Gregorian Years
+                var numOfmonths;
 
                 var selectControls = getControls(picker);
                 LiveUnit.Assert.areEqual(getExpectedOrder(calendar), getActualUIOrder(), "Incorrect UI order");
@@ -1688,11 +1707,11 @@ CorsicaTests.DatePickerDecl = function () {
                     var currentYear = d.getFullYear();
 
                     selectControls.yearSelect.selectedIndex = selectControls.yearSelect.selectedIndex + (parseInt(years[j]) - myCalendar.year); //selectControls.yearSelect.selectedIndex + (gregorianYears[j] - currentYear);
-                    myCalendar.year = parseInt(years[j]);  // Update local calendar to stay in sync with DatePicker's private calendar 
+                    myCalendar.year = parseInt(years[j]);  // Update local calendar to stay in sync with DatePicker's private calendar
 
                     fireOnchange(selectControls.yearSelect);
                     checkMonthNames(selectControls, calendar, years[j]);
-                    var numOfmonths = 12;
+                    numOfmonths = 12;
                     var isLeap = isHebrewLeapYear(years[j]);
                     if (isLeap)
                         numOfmonths = 13;
@@ -1701,11 +1720,10 @@ CorsicaTests.DatePickerDecl = function () {
                     for (var i = 0; i < numOfmonths; i++) {
                         selectControls.monthSelect.selectedIndex = i;
                         fireOnchange(selectControls.monthSelect);
-                        validateMonth(i + 1, isLeap, selectControls.dateSelect.length)
+                        validateMonth(i + 1, isLeap, selectControls.dateSelect.length);
                     }
                 }
                 LiveUnit.Assert.areEqual(numOfmonths, selectControls.monthSelect.length, "Error in the number of months in the Hebrew calendar");
-
             })
             .then(null, unhandledTestError)
             .then(cleanupDatePicker)
@@ -1713,7 +1731,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
 
     this.testNonLeapYearInGregorianCalendar = function (complete) {
         if (isWinRTEnabled()) {
@@ -1744,7 +1762,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testLeapYearInGregorianCalendar = function (complete) {
         if (isWinRTEnabled()) {
             var cleanup;
@@ -1772,11 +1791,13 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     function isGregorianLeapYear(year) {
         var val = praseInt(year);
         return ((val % 4 === 0 && val % 100 !== 0) || val % 400 === 0);
     }
+
     function convertFromKoreanToGreogrianYear(year) {
         return year - (4334 - 2001);
     }
@@ -1817,7 +1838,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
 
     this.testKnownDayInThai = function (complete) {
         //BugID: 449918
@@ -1846,7 +1867,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     function numInYear(year) {
         var actualYear = '';
         for (var i = 0; i < year.length; i++) {
@@ -1859,9 +1881,11 @@ CorsicaTests.DatePickerDecl = function () {
         }
         return actualYear;
     }
+
     function convertFromThaiToGreogrianYear(year) {
         return year - (2544 - 2001);
     }
+
     this.testNumOfDaysInThaiCalendar = function (complete) {
         //BugID: 651414
         if (isWinRTEnabled()) {
@@ -1895,7 +1919,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
 
     this.testJapaneseCalendarKnownDate = function (complete) {
         //BugID: 628192
@@ -1923,7 +1947,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testJapaneseCalendarKnownBuggyDate = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -1947,7 +1972,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testJapaneseCalendarKnownDate_temp = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -1976,7 +2002,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testNumOfDaysInJapaneseCalendar = function (complete) {
         //WinRT bug
         if (isWinRTEnabled()) {
@@ -2019,7 +2046,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testMinAndMaxYearGlob = function (complete) {
         //BugID: 450489
         if (isWinRTEnabled()) {
@@ -2039,7 +2067,6 @@ CorsicaTests.DatePickerDecl = function () {
                 var selectControls = getControls(picker);
                 LiveUnit.Assert.areEqual(getExpectedOrder(calendar), getActualUIOrder(), "Incorrect UI order");
                 checkMonthNames(selectControls, calendar);
-                selectControls.yearSelect
                 LiveUnit.Assert.areEqual(minYearValue + '', selectControls.yearSelect[0].value, "Error in the specified minimum year");
                 LiveUnit.Assert.areEqual(maxYearValue + '', selectControls.yearSelect[selectControls.yearSelect.length - 1].value, "Error in the specified maximum year");
 
@@ -2050,7 +2077,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testJulianCalendarKnownDay = function (complete) {
         //not working because of a problem with WinRT Glob
         if (isWinRTEnabled()) {
@@ -2077,10 +2105,12 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     function isJulianLeapYear(year) {
         return (year % 4 === 0);
     }
+
     this.testJulianCalendarNumOfDays = function (complete) {
         //not working because of a problem with WinRT Glob
         if (isWinRTEnabled()) {
@@ -2123,7 +2153,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testTaiwanKnownDate = function (complete) {
         //BugID: 628192
         //BugID: 449809
@@ -2151,7 +2182,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testTaiwanKnownDate_temp = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -2180,11 +2212,13 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     function convertFromTaiwanToGreogrianYear(year) {
         return year + (2001 - 90); //because 2001 represents 90
 
     }
+
     this.testTaiwanCalendarNumOfDays = function (complete) {
         //BugID: 628192
         if (isWinRTEnabled()) {
@@ -2219,7 +2253,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testTaiwanCalendarNumOfDays_temp = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -2256,11 +2291,13 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     //These are stubs until replaced with the ABI
     function getSeed() {
         return 100;
     }
+
     function getCount() {
         return 2;
     }
@@ -2295,7 +2332,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     var currentCalendar;
     function randomTest(calendarType) {
 
@@ -2368,7 +2406,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
 
     this.xtestRandomHijriCalendar = function (complete) {
         if (isWinRTEnabled()) {
@@ -2376,8 +2414,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-
-    }
+    };
 
     this.xtestRandomHebrewCalendar = function (complete) {
         if (isWinRTEnabled()) {
@@ -2385,8 +2422,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-
-    }
+    };
 
     this.xtestRandomJapaneseCalendar = function (complete) {
         if (isWinRTEnabled()) {
@@ -2394,8 +2430,7 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-
-    }
+    };
 
     this.xtestRandomKoreanCalendar = function (complete) {
         if (isWinRTEnabled()) {
@@ -2403,24 +2438,24 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
+    };
 
-    }
     this.xtestRandomThaiCalendar = function (complete) {
         if (isWinRTEnabled()) {
             randomTest('ThaiCalendar').then(complete);
         }
         else
             complete();
+    };
 
-    }
     this.xtestRandomThaiCalendar = function (complete) {
         if (isWinRTEnabled()) {
             randomTest('TaiwanCalendar').then(complete);
         }
         else
             complete();
+    };
 
-    }
     //not included because there is a problem with UmAlQura, Taiwan and Julian Calendars
     this.xtestRandomUmAlQuraCalendar = function (complete) {
         if (isWinRTEnabled()) {
@@ -2428,24 +2463,24 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
+    };
 
-    }
     this.xtestRandomJulianCalendar = function (complete) {
         if (isWinRTEnabled()) {
             randomTest('JulianCalendar').then(complete);
         }
         else
             complete();
+    };
 
-    }
     this.xtestRandomTaiwanCalendar = function (complete) {
         if (isWinRTEnabled()) {
             randomTest('TaiwanCalendar').then(complete);
         }
         else
             complete();
+    };
 
-    }
     this.xtestRandomChangeEventsOnAllCalendars = function (complete) {
         if (isWinRTEnabled()) {
             var cleanup, randomMonth, randomDay, randomYear, minYear, maxYear;
@@ -2502,19 +2537,17 @@ CorsicaTests.DatePickerDecl = function () {
                                 fireOnchange(selectControls.yearSelect);
                                 break;
                         }
-
                     }
                     currentCalendar = null;
-                })
-                    .then(null, unhandledTestError)
-                    .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
-                    .then(cleanupDatePicker)
+                }).then(null, unhandledTestError)
+                  .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
+                  .then(cleanupDatePicker);
             }
             WinJS.Promise.join(p).then(complete, unhandledTestError);
         }
         else
             complete();
-    }
+    };
 
     function verifyDatePickerContent(picker, date) {
 
@@ -2558,7 +2591,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testDateWithAbbreviatedNameFormat = function (complete) {
         //BugID: 538276
         if (isWinRTEnabled()) {
@@ -2581,7 +2615,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testDateWithAbbreviatedFormat = function (complete) {
         //BugID: 538276
         if (isWinRTEnabled()) {
@@ -2606,7 +2641,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testDateWithSoloFormats = function (complete) {
         //BugID: 628192
         //BugID: 538276
@@ -2631,7 +2667,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testDateWithSoloFormats_temp = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -2657,7 +2694,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testDateWithSoloAbbreviatedFormats = function (complete) {
         //BugID: 628192
         //BugID: 538276
@@ -2683,7 +2721,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testDateWithSoloAbbreviatedFormats_temp = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -2710,7 +2749,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testCreateMutipleDatePickersOneWithPatternAndOneWithout = function (complete) {
         //BugID: 628192
         //BugID: 538276
@@ -2727,27 +2767,27 @@ CorsicaTests.DatePickerDecl = function () {
                 // change the day
                 picker.winControl.current = 'July 26, 2019';
                 verifyDatePickerContent(picker, { day: 'day Fr', month: 'month Jul', year: 'example 19' });
-            }).
-                then(null, unhandledTestError).
-                then(cleanupDatePicker).
-                then(function () {
+            })
+            .then(null, unhandledTestError)
+            .then(cleanupDatePicker)
+            .then(function () {
 
-                    createPickerWithAppend({
-                        current: 'October 30, 2011',
-                        calendar: 'GregorianCalendar',
-                    }).then(function (picker) {
-                        verifyDatePickerContent(picker, { day: '30', month: 'October', year: '2011' });
+                createPickerWithAppend({
+                    current: 'October 30, 2011',
+                    calendar: 'GregorianCalendar',
+                }).then(function (picker) {
+                    verifyDatePickerContent(picker, { day: '30', month: 'October', year: '2011' });
 
-                    }).
-                    then(null, unhandledTestError).
-                    then(cleanupDatePicker);
                 })
-                .then(complete, complete);
+                .then(null, unhandledTestError)
+                .then(cleanupDatePicker);
+            })
+            .then(complete, complete);
         }
         else {
             complete();
         }
-    }
+    };
 
     this.xtestVerifyCSSVerticalLayout = function (complete) {
         /* bug #555425, test passes in IE and wwahost if you comment out these lines in the ui-dark.css file:
@@ -2808,16 +2848,17 @@ CorsicaTests.DatePickerDecl = function () {
 
                 prevTop = currTop;
             }
-        }).
-            then(null, unhandledTestError).
-            then(function () {
-                if (targetStyleSheet) {
-                    targetStyleSheet.removeRule(newRuleIndex);
-                }
-                cleanupDatePicker();
-            }).
-            then(complete, complete);
-    }
+        })
+        .then(null, unhandledTestError)
+        .then(function () {
+            if (targetStyleSheet) {
+                targetStyleSheet.removeRule(newRuleIndex);
+            }
+            cleanupDatePicker();
+        })
+        .then(complete, complete);
+    };
+
     var numofCalls;
     var getInformationJS = function (startDate, endDate) {
 
@@ -2872,7 +2913,6 @@ CorsicaTests.DatePickerDecl = function () {
 
         return {
             order: ["date", "year", "month"],
-
             getDate: function (index) {
                 var year = yearSource.getValue(index.year);
                 var month = monthSource(index.year).getMonthNumber(index.month) * 2;
@@ -2882,11 +2922,7 @@ CorsicaTests.DatePickerDecl = function () {
                 var day = (index.date + 1 > numOfDaysInPreviousMonth) ? index.date + 1 - numOfDaysInPreviousMonth : index.date + 1;
                 day = Math.min(day, (new Date(year, month + 1, 0).getDate()));
 
-                return new Date(
-                                year,
-                                month,
-                                day
-                            );
+                return new Date(year, month, day);
             },
             getIndex: function (date) {
                 numofCalls++;
@@ -2929,7 +2965,8 @@ CorsicaTests.DatePickerDecl = function () {
         this.startY = y;
         this.width = w;
         this.height = h;  //to be used later if we decided to change the snap view shape of controls
-    }
+    };
+
     function checkCorrectCSS(controlsPosition) {
         for (var i = 0; i < controlsPosition.length - 1; i++) {
             if (controlsPosition[i].startY === controlsPosition[i + 1].startY) {   // to protect against snap view
@@ -2937,6 +2974,7 @@ CorsicaTests.DatePickerDecl = function () {
             }
         }
     }
+
     function checkDayCount(controls) {
         var year = parseInt(controls.yearSelect.value);
         var month = controls.monthSelect.selectedIndex;
@@ -2992,7 +3030,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testGetInformationCheckValidityOfControls = function (complete) {
 
         if (!isWinRTEnabled()) {
@@ -3018,15 +3057,16 @@ CorsicaTests.DatePickerDecl = function () {
                     }
                 }
             })
-                .then(null, unhandledTestError)
-                .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
-                .then(cleanupDatePicker)
-                .then(complete, unhandledTestError);
+            .then(null, unhandledTestError)
+            .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
+            .then(cleanupDatePicker)
+            .then(complete, unhandledTestError);
         }
         else {
             complete();
         }
-    }
+    };
+
     this.testSpecialCustomCalendarCasesWithChangeEvents = function (complete) {
         if (!isWinRTEnabled()) {
             var cleanup;
@@ -3066,16 +3106,16 @@ CorsicaTests.DatePickerDecl = function () {
                 LiveUnit.Assert.areEqual("60", selectControls.dateSelect.value, "checking the correctness of the selected day");
                 LiveUnit.Assert.areEqual("2012", selectControls.yearSelect.value, "checking the correctness of the selected year");
             })
-
-                .then(null, unhandledTestError)
-                .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
-                .then(cleanupDatePicker)
-                .then(complete, unhandledTestError);
+            .then(null, unhandledTestError)
+            .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
+            .then(cleanupDatePicker)
+            .then(complete, unhandledTestError);
         }
         else {
             complete();
         }
-    }
+    };
+
     this.xtestCountNumberOfCalls = function (complete) {
         //BugID: 558269 -  resolved as won't fix
         if (!isWinRTEnabled()) {
@@ -3096,7 +3136,8 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
+
     this.testUmAlQuaraCalenderKnownDate = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -3136,7 +3177,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testMaxAndMinInUmAlQuraCalender = function (complete) {
         //BugID: 566405
         //UmAlquara calendar supports up to 2029
@@ -3159,7 +3201,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testMaxAndMinInHijriCalender = function (complete) {
         //BugID: 628192
         if (isWinRTEnabled()) {
@@ -3180,7 +3223,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testMaxAndMinYearInGregorianWithZeroMinYear = function (complete) {
         //BugID: 566275
         if (isWinRTEnabled()) {
@@ -3201,7 +3245,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testMaxAndMinYearInGregorianWithNegativeMinYear = function (complete) {
         //BugID: 628192
         if (isWinRTEnabled()) {
@@ -3222,7 +3267,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testTaiwanLeapMinYears = function (complete) {
         //BugID: 628192
         if (isWinRTEnabled()) {
@@ -3248,7 +3294,8 @@ CorsicaTests.DatePickerDecl = function () {
         }
         else
             complete();
-    }
+    };
+
     this.testDateWithAbbreviatedWithSpecialCharacters = function (complete) {
         if (isWinRTEnabled()) {
             createPickerWithAppend({
@@ -3272,7 +3319,7 @@ CorsicaTests.DatePickerDecl = function () {
         else {
             complete();
         }
-    }
+    };
 
     this.testConstructionWithEventHandlerInOptions = function(complete) {
         var handler = function() {
@@ -3280,11 +3327,11 @@ CorsicaTests.DatePickerDecl = function () {
         };
         var dp = new WinJS.UI.DatePicker(null, { onchange: handler});
         document.body.appendChild(dp.element);
-        
+
         var evnt = document.createEvent("UIEvents");
         evnt.initUIEvent("change", false, false, window, 0);
         dp.element.dispatchEvent(evnt);
     };
-}
+};
 
 LiveUnit.registerTestClass("CorsicaTests.DatePickerDecl");

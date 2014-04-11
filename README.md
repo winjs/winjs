@@ -1,6 +1,7 @@
 Windows Library for JavaScript (WinJS)
 =====
-
+ [![Build Status](https://travis-ci.org/winjs/winjs.svg?branch=master)](https://travis-ci.org/winjs/winjs)
+ 
 This project is actively developed by the WinJS developers working for Microsoft Open Technologies, in collaboration with the community of open source developers. Together we are dedicated to creating the best possible solution for HTML/JS/CSS application development.
 
 WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology forged with the following principles in mind:
@@ -8,10 +9,10 @@ WinJS is a set of JavaScript toolkits that allow developers to build application
 * Provide developers with a distinctive set of UI controls with high polish and performance with fundamental support for touch, mouse, keyboard and accessibility
 * Provide developers with a cohesive set of components and utilities to build the scaffolding and infrastructure of their applications
 
-This is a first step for the WinJS project and there is still a lot of work that needs to be done. So please check out the [roadmap](https://github.com/winjs/winjs/wiki/Roadmap) to see where the project is headed or participate by [contributing](https://github.com/winjs/winjs/wiki/Contribute) along the way. 
+This is a first step for the WinJS project and there is still a lot of work that needs to be done. So please check out the [roadmap](https://github.com/winjs/winjs/wiki/Roadmap) to see where the project is headed or participate by [contributing](https://github.com/winjs/winjs/wiki/Contribute) along the way.
 
 # Contribute
-There are many of ways to [contribute](https://github.com/winjs/winjs/wiki/Contribute) to the project.
+There are many ways to [contribute](https://github.com/winjs/winjs/wiki/Contribute) to the project.
 
 You can contribute by reviewing and sending feedback on code checkins, suggesting and trying out new features as they are implemented, submitting bugs and helping us verify fixes as they are checked in, as well as submitting code fixes or code contributions of your own.
 
@@ -38,7 +39,7 @@ Install the [grunt command-line interface](https://github.com/gruntjs/grunt-cli)
 npm install -g grunt-cli
 ```
 
-Grunt dependencies are installed separately in each cloned git repo and install the dependencies with:
+Grunt dependencies are installed separately in each cloned git repo. Install the dependencies with:
 ```
 npm install
 ```

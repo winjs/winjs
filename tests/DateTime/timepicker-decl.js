@@ -4,11 +4,11 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-"use strict";
 
 var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.TimePickerDecl = function () {
+    "use strict";
     var glob;
 
     function isWinRTEnabled() {
@@ -173,7 +173,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.xtestBackEndAtNoon = function (complete) {
         //Bug # 437064
@@ -191,7 +191,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     // time object can contain values for 'hour', 'minute', 'period'.  If any of these values
     // is not present, function will expect querySelector to return null for that cell.
@@ -267,7 +267,7 @@ CorsicaTests.TimePickerDecl = function () {
 
             var periodControl = isPeriodControl();
             // workaround date object defaulting to 24h format.
-            if (expectedHour > 12 && periodControl) { expectedHour -= 12 };
+            if (expectedHour > 12 && periodControl) { expectedHour -= 12; }
             if (expectedHour === 0) { expectedHour = 12; }
 
             verifyTime(picker, {
@@ -279,7 +279,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testDefaults = function (complete) {
         // validate timePicker defaults
@@ -298,7 +298,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testDefaultFormats = function (complete) {
         // validate datePicker default format
@@ -315,7 +315,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testSetCurrentFromDate = function (complete) {
         createPickerWithAppend().then(function (picker) {
@@ -326,7 +326,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.xtestSetCurrentFromString = function (complete) {
         // bug #426214
@@ -337,7 +337,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.xtestSetCurrentFromString2 = function (complete) {
         // bug #426214
@@ -349,7 +349,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testDisabled1 = function (complete) {
         createPickerWithAppend({
@@ -366,7 +366,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testDisabled2 = function (complete) {
         createPickerWithAppend({
@@ -383,7 +383,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement1 = function (complete) {
         // verify time snaps backward to last valid increment
@@ -396,7 +396,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement2 = function (complete) {
         // verify time snaps backward to last valid increment
@@ -409,7 +409,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement3 = function (complete) {
         // verify time snaps backward to last valid increment
@@ -422,7 +422,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement4 = function (complete) {
         // verify time snaps backward to last valid increment not evenly divisible
@@ -435,7 +435,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement_boundary1 = function (complete) {
         // verify time not changed for 0 increment
@@ -448,7 +448,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement_boundary2 = function (complete) {
         // verify time not changed for increment == 60
@@ -461,7 +461,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement_boundary3 = function (complete) {
         // verify time not changed for increment > 60
@@ -474,7 +474,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement_boundary4 = function (complete) {
         // verify time not changed for increment < 0
@@ -487,7 +487,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testMinuteIncrement_boundary5 = function (complete) {
         // verify increment > 60 == increment mod 60
@@ -501,7 +501,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testCustomTimePM = function (complete) {
         // bug WIN8 250170:  Expected '"05"' but actual was '"5"'
@@ -511,7 +511,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testCustomTimeAM = function (complete) {
         createPickerWithAppend({ current: '0:53:15' }).then(function (picker) {
@@ -520,7 +520,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testCustomTimeNoon = function (complete) {
         // UNDONE: This may actually be 'AM' in certain locales.
@@ -531,7 +531,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testCustomTimeNoonPlus = function (complete) {
         createPickerWithAppend({ current: '12:01:00' }).then(function (picker) {
@@ -540,7 +540,7 @@ CorsicaTests.TimePickerDecl = function () {
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     // developer formatting tests
 
@@ -593,7 +593,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.xtestMinuteFormatting = function (complete) {
         // BUG: win8TFS: 245862 - formatting not implemented, consume real WinJS.Glob
@@ -614,7 +614,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         })
         .then(null, unhandledTestError)
         .then(complete, complete);
-    }
+    };
 
     // basic event tests
     var changeHit = 0;
@@ -629,7 +629,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         changeHit++;
         LiveUnit.Assert.areEqual(e.type, changeType);
         logEventHits(e);
-    }
+    };
 
     function attachEventListeners(picker) {
         changeHit = 0;
@@ -650,7 +650,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
        .then(null, unhandledTestError)
        .then(cleanupTimePicker)
        .then(complete, complete);
-    }
+    };
 
     // fire a 'change' event on the provided target element
     function fireOnchange(targetElement) {
@@ -674,7 +674,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, unhandledTestError);
-    }
+    };
 
     this.testFireMinutechangeEvent = function (complete) {
         var cleanup;
@@ -691,7 +691,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testFirePeriodchangeEvent = function (complete) {
         var cleanup;
@@ -710,7 +710,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testFireAllEventsAndRemove = function (complete) {
         var cleanup;
@@ -750,7 +750,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(null, unhandledTestError)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testFireMultipleChangeEvents = function (complete) {
         var cleanup;
@@ -778,7 +778,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testhourchangeEvent = function (complete) {
         var cleanup;
@@ -798,7 +798,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testminutechangeEvent = function (complete) {
         var cleanup;
@@ -818,7 +818,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testPeriodChangeEvent = function (complete) {
         var cleanup;
@@ -838,7 +838,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.testChangeThreeEventsAndRemove = function (complete) {
         var cleanup;
@@ -862,7 +862,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     this.test24Format = function (complete) {
         var cleanup;
@@ -889,7 +889,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
+
     this.test12Format = function (complete) {
         //BUGID: 729979
         var cleanup;
@@ -917,7 +918,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
+
     function checkPeriodControlValue(expectedValue, control, force) {
         if (force || isPeriodControl()) {
             LiveUnit.Assert.areEqual(expectedValue, control.value, "period element was set incorrectly");
@@ -926,6 +928,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
             LiveUnit.Assert.areEqual(null, control, "period element should not be there");
         }
     }
+
     this.testImplicit12Format = function (complete) {
         var cleanup;
         createPickerWithAppend(
@@ -952,7 +955,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
+
     this.xtestTimeCurrentFormat = function (complete) {
         //BUGID: 460303
         var cleanup;
@@ -979,13 +983,13 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         .then(cleanup)
         .then(cleanupTimePicker)
         .then(complete, complete);
-    }
+    };
 
     function getActualUIOrder(selectControls) {
         var minutePos, periodPos, hourPos;
         var domElement = document.getElementsByClassName('win-timepicker')[0];
         for (var i = 0; i < domElement.children.length; i++) {
-            var elem = domElement.childNodes[i].className
+            var elem = domElement.childNodes[i].className;
             if (elem.indexOf('picker-hour') !== -1) {
                 hourPos = i;
             }
@@ -999,6 +1003,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         return getOrder(hourPos, minutePos, periodPos);
 
     }
+
     function getOrder(hourPos, minutePos, periodPos) {
         if (!periodPos && periodPos !== 0) {
             if (hourPos < minutePos) {
@@ -1031,6 +1036,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
             }
         }
     }
+
     function getExpectedOrder(calendar, clock) {
         var dtf = Windows.Globalization.DateTimeFormatting;
         var s = "hour minute";
@@ -1046,6 +1052,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         return getOrder(hourIndex, minuteIndex, periodIndex);
     }
+
     function getControls(picker) {
         return { hourSelect: hourElement(picker), minuteSelect: minuteElement(picker), periodSelect: periodElement(picker) };
     }
@@ -1085,7 +1092,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
 
     this.testTimePicker24HourClockGlobalization = function (complete) {
         if (isWinRTEnabled()) {
@@ -1124,7 +1131,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
 
     this.testtimePickerExplicit12HourClockGlobalization = function (complete) {
         //BUGID: 729979
@@ -1166,7 +1173,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
+
     this.testTimePickerGlobalizationWithCornerCaseCurrnet = function (complete) {
         if (isWinRTEnabled()) {
             var cleanup;
@@ -1202,7 +1210,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
 
     this.testCorrectBackEndValueWith24HourClock = function (complete) {
 
@@ -1226,7 +1234,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
+
     this.testDirectPatternDeclaratively = function (complete) {
         //BugID: 538276
         if (isWinRTEnabled()) {
@@ -1253,7 +1262,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
+
     this.testPatternWithSmallIntegersDeclaratively = function (complete) {
         //BugID: 538276
         if (isWinRTEnabled()) {
@@ -1282,7 +1292,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
+
     this.testPatternWithInvalidPatternDeclaratively = function (complete) {
         //BugID: 538276
         if (isWinRTEnabled()) {
@@ -1316,7 +1327,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
+
     this.testPatternWithIntegerAndAdditionPatternDeclaratively = function (complete) {
         //BugID: 538276
         if (isWinRTEnabled()) {
@@ -1376,7 +1388,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
+
     this.testTwoTimePickerOneWithPatternAndOneWithout = function (complete) {
         //BugID: 538276
         if (isWinRTEnabled()) {
@@ -1427,12 +1440,13 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         else {
             complete();
         }
-    }
+    };
+
     var getInformationJS = function (clock, minuteIncrement) {
         var hours = ["twelve", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven"];
 
-        var minutes = new Object();
-        minutes.getLength = function () { return 60 / minuteIncrement; }
+        var minutes = {};
+        minutes.getLength = function () { return 60 / minuteIncrement; };
         minutes.getValue = function (index) {
             var display = index * minuteIncrement;
             if (display < 10) {
@@ -1451,14 +1465,15 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
 
         return { minutes: minutes, hours: hours, clock: clock || "12HourClock", periods: ["AM", "PM"], order: order };
-    }
+    };
+
     this.testCustomInformationProvider12HourClock = function (complete) {
         if (!isWinRTEnabled()) {
             var old = WinJS.UI.TimePicker.getInformation;
             var newComplete = function () {
                 WinJS.UI.TimePicker.getInformation = old;
                 complete();
-            }
+            };
 
             WinJS.UI.TimePicker.getInformation = getInformationJS;
             createPickerWithAppend({
@@ -1485,14 +1500,15 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         else {
             complete();
         }
-    }
+    };
+
     this.testCustomInformationProvider24HourClock = function (complete) {
         if (!isWinRTEnabled()) {
             var old = WinJS.UI.TimePicker.getInformation;
             var newComplete = function () {
                 WinJS.UI.TimePicker.getInformation = old;
                 complete();
-            }
+            };
             WinJS.UI.TimePicker.getInformation = getInformationJS;
 
             createPickerWithAppend({
@@ -1520,14 +1536,16 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         else {
             complete();
         }
-    }
+    };
+
     this.testCustomInformationProvider24HourClockWithDifferentIncrements = function (complete) {
         if (!isWinRTEnabled()) {
             var old = WinJS.UI.TimePicker.getInformation;
             var newComplete = function () {
                 WinJS.UI.TimePicker.getInformation = old;
                 complete();
-            }
+            };
+
             WinJS.UI.TimePicker.getInformation = getInformationJS;
 
             createPickerWithAppend({
@@ -1556,7 +1574,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         else {
             complete();
         }
-    }
+    };
+
     this.testChangingClockFormat = function (complete) {
         //BUGID: 729979
         var cleanup;
@@ -1571,7 +1590,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
                 var clock = "12HourClock";
                 var calendar = new glob.Calendar();
                 calendar.changeClock(clock);
-                var clock = calendar.getClock();
+                clock = calendar.getClock();
                 var expectedCount = 12;
                 var definedPeriod = true;
 
@@ -1589,16 +1608,16 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
                 calendar.changeClock(clock);
                 picker.winControl.clock = clock;
                 picker.winControl.minuteIncrement = "15";
-                var clock = calendar.getClock();
-                var expectedCount = 24;
+                clock = calendar.getClock();
+                expectedCount = 24;
                 definedPeriod = false;
 
 
-                var actualOrder = getExpectedOrder(calendar.getCalendarSystem(), clock);
-                var selectControls = getControls(picker);
+                actualOrder = getExpectedOrder(calendar.getCalendarSystem(), clock);
+                selectControls = getControls(picker);
                 LiveUnit.Assert.areEqual(expectedCount, selectControls.hourSelect.length, "wrong number of hour elements");
                 LiveUnit.Assert.areEqual(definedPeriod, !!selectControls.periodSelect, "Not expected behavior of period control for 24 hour clock");
-                var UIOrder = getActualUIOrder(selectControls);
+                UIOrder = getActualUIOrder(selectControls);
 
                 LiveUnit.Assert.areEqual(actualOrder, UIOrder, "Order is not corrrect on 12HourClock");
                 LiveUnit.Assert.areEqual("13", selectControls.hourSelect.value, "Expected Value for hourControl in 24HourClock is not correct");
@@ -1611,7 +1630,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
+
     this.testPatternWithSpecialCharacters = function (complete) {
 
         if (isWinRTEnabled()) {
@@ -1654,7 +1674,8 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
+
     this.testMinuteIncrement = function (complete) {
         if (isWinRTEnabled()) {
 
@@ -1681,7 +1702,7 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         }
         else
             complete();
-    }
+    };
 
     this.testConstructionWithEventHandlerInOptions = function(complete) {
         var handler = function() {
@@ -1689,11 +1710,11 @@ mm    The minute with a leading 0 if before 10, 0-59   *DEFAULT
         };
         var dp = new WinJS.UI.TimePicker(null, { onchange: handler});
         document.body.appendChild(dp.element);
-        
+
         var evnt = document.createEvent("UIEvents");
         evnt.initUIEvent("change", false, false, window, 0);
         dp.element.dispatchEvent(evnt);
     };
-}
+};
 
 LiveUnit.registerTestClass("CorsicaTests.TimePickerDecl");
