@@ -42,11 +42,6 @@
                 stdout: true,
                 stderr: true
             }
-        },
-        openQUnitTestPage: {
-            command: function () {
-                return (process.platform === "win32" ? "start" : "open") + " bin/tests/tests.html";
-            }
         }
     };
 })();

@@ -6,7 +6,7 @@ module.exports = function (grunt) {
         if (config.inRazzle) {
             grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
         } else {
-            grunt.task.run(["default", "shell:openQUnitTestPage"]);
+            grunt.task.run(["default", "connect"]);
         }
     });
 

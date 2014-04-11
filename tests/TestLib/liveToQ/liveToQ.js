@@ -59,7 +59,9 @@
             }
             var handled = false;
             for (var i = 0; i < expectedException.length; i++) {
-                if (expectedException[i].message === error) {
+                var message = expectedException[i].message
+                // Chrome prefixes with "Uncaught Error". Firefox prefixes with "Error"
+                if (message === error || ("Uncaught Error: " + message) === error || ("Error: " + message) === error) {
                     handled = true;
                     break;
                 }
