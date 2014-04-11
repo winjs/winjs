@@ -7,7 +7,7 @@
 
         grunt.registerTask("test", function () {
             if (config.inRazzle) {
-            grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
+                grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
             } else {
             grunt.task.run(["default", "connect"]);
             }
@@ -66,8 +66,8 @@
             return -1;
         }
 
-    var testMenuTemplate =
-    '<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
+        var testMenuTemplate =
+        '<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
 <!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\
 <head>                                                                                                                      \r\n\
@@ -170,7 +170,7 @@
                             return;
                         }
                         if (dep.indexOf(".css") >= 0) {
-                        if (arrayIndexOf(csss, dep) < 0) {
+                            if (arrayIndexOf(csss, dep) < 0) {
                                 csss.push(dep);
                             }
                         } else {
