@@ -12,9 +12,6 @@
 
         this.addRule = function(selector, property, value, line)
         {
-            if (property === "font-family")
-                return;
-
             // Remove extraneous spaces around parenthesis in the selector
             selector = selector.replace(/\(\s*/g, "(");
             selector = selector.replace(/\s*\)/g, ")");
@@ -122,6 +119,9 @@
 
                     // Skip if the property doesn't exist
                     if (diff[selector][ruleA.property])
+                        continue;
+
+                    if (ruleA.property === "font-family")
                         continue;
 
                     // Compare the value

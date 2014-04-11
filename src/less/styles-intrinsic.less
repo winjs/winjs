@@ -38,9 +38,9 @@ select, option {
     letter-spacing: 0.02em;
 }
 
-/*
-   Text input
-*/
+//
+// Text input
+//
 input[type=text], input[type=password], input[type=email], input[type=number],
 input[type=tel], input[type=url], input[type=search] {
     -ms-user-select: element;
@@ -394,11 +394,61 @@ legend {
     margin: 0px 0px 10px 0px;
     padding: 0px;
     color: inherit;
+    .win-type-small-internal();
 }
 
+//
+// Code tags
+//
 code, pre, samp {
     font-family: "Consolas";
+    .win-type-medium-internal();
 }
+
+//
+// Caption
+//
+caption, figcaption, small {
+    .win-type-xx-small-internal();
+}
+
+//
+// Ellipsis
+//
+.win-type-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+h1.win-type-ellipsis, .win-type-xx-large.win-type-ellipsis {
+    line-height: 1.4286;
+}
+
+h2.win-type-ellipsis, .win-type-x-large.win-type-ellipsis {
+    line-height: 1.5;
+}
+
+//
+// Description list and other things
+//
+dt, th {
+    // Not using a win-type mixin because this is a unique combination of
+    // font size, weight, and line height that is not covered.
+    font-size: 11pt;
+    font-weight: 700;
+    line-height: 1.3636;
+}
+abbr, acronym, address, blockquote, cite, dl, dd, li, ol, p, q, td, tr {
+    font-weight: 300;
+}
+b, strong {
+    font-weight: 700;
+}
+em {
+    font-style: italic;
+}
+
 
 //
 // Headers
