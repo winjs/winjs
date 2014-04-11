@@ -2,6 +2,7 @@
 (function animationsInit(WinJS) {
     "use strict";
 
+// Extra comment
     var thisWinUI = WinJS.UI;
     var transformNames = WinJS.Utilities._browserStyleEquivalents["transform"];
 
