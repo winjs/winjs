@@ -50,9 +50,4 @@ var AnimationCollection = {
                 { "name": "UpdateBadge", "duration": 1333, "hasStagger": false, "animationCheckPoint": 300 },
                 { "name": "Peek", "duration": 2000, "hasStagger": false, "animationCheckPoint": 1000 }
 		]
-}
-
-
- 
-
-
+};
