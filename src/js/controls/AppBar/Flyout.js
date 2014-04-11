@@ -522,12 +522,7 @@
                             break;
                         case "auto":
                             // Auto, if the anchor was in the vertical center of the display would we fit above it?
-                            if (this._sometimesFitsAbove(anchor, flyout)) {
-                                // It will fit above or below the anchor
-                                if (!this._fitTop(anchor, flyout)) {
-                                    // Didn't fit above (preferred), so go below.
-                                    this._fitBottom(anchor, flyout);
-                                }
+                            if ((this._sometimesFitsAbove(anchor, flyout) && this._fitTop(anchor, flyout)) || this._fitBottom(anchor, flyout)) {
                                 this._centerHorizontally(anchor, flyout, this._currentAlignment);
                             } else {
                                 // Won't fit above or below, try a side
