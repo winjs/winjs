@@ -12,5 +12,11 @@ module.exports = {
         files: [
             { src: [config.desktopOutput + "/js/base.js"], dest: config.testsOutput + "base/source/base.js" }
         ]
+    },
+
+    fonts: {
+        files: [
+            { expand: true, cwd: "src/fonts/", src: ["**"], dest: config.desktopOutput + "fonts/" }
+        ]
     }
 };
