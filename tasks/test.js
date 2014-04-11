@@ -71,16 +71,24 @@ module.exports = function (grunt) {
     <title>WinJS Tests</title>                                                                                              \r\n\
     <style>                                                                                                                 \r\n\
         body {                                                                                                              \r\n\
-            background-color: #323232;                                                                                      \r\n\
+            background-color: rgba(38, 0, 52, .9);                                                                          \r\n\
             color: white;                                                                                                   \r\n\
+            font-family: "Segoe UI Light", "Helvetica";                                                                     \r\n\
         }                                                                                                                   \r\n\
-        a:visited {                                                                                                         \r\n\
+        a, a:active, a:hover, a:visited, a:hover:active {                                                                   \r\n\
             color: white;                                                                                                   \r\n\
+            text-decoration: none;                                                                                          \r\n\
+        }                                                                                                                   \r\n\
+        li {                                                                                                                \r\n\
+            text-transform: capitalize;                                                                                     \r\n\
         }                                                                                                                   \r\n\
     </style>                                                                                                                \r\n\
 </head>                                                                                                                     \r\n\
 <body>                                                                                                                      \r\n\
+  <img src="http://try.buildwinjs.com/images/winjs-logo.png" alt="WinJS Tests"/>                                            \r\n\
+  <ul>                                                                                                                      \r\n\
 @@TESTS                                                                                                                     \r\n\
+  <ul>                                                                                                                      \r\n\
 </body>                                                                                                                     \r\n\
 </html>';
 
@@ -196,7 +204,7 @@ module.exports = function (grunt) {
             fs.mkdirSync(testFolder);
         }
         fs.writeFileSync(testFolder + "/test.html", html);
-        tests += '    <h2><a href="' + dir + '/test.html">' + dir + " tests</a></h2>\r\n";
+        tests += '      <li><a href="' + dir + '/test.html" target="_blank">' + dir + " tests</a></li>\r\n";
     });
     tests = tests.substr(0, tests.length - 2);
     fs.writeFileSync("./bin/tests/tests.html", testMenuTemplate.replace("@@TESTS", tests));
