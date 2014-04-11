@@ -148,9 +148,9 @@
             fail: function (message) {
                 if (QUnit.breakOnAssertFail) {
                     debugger;
-                    testError = testError || message;
-                    testFailed = true;
                 }
+                testError = testError || message;
+                testFailed = true;
             },
 
             isFalse: function (falsy, message) {
@@ -174,6 +174,7 @@
             },
 
             isNull: function (obj, message) {
+                // LiveUnit's null assert also accepts undefined
                 var pass = obj === null || obj === undefined;
                 if (!pass) {
                     if (QUnit.breakOnAssertFail) {
