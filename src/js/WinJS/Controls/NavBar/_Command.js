@@ -397,7 +397,7 @@
 
                 _handleButtonClick: function NavBarCommand_handleButtonClick(ev) {
                     var srcElement = ev.target;
-                    if (!srcElement.msMatchesSelector(".win-interactive, .win-interactive *")) {
+                    if (!WinJS.Utilities._matchesSelector(srcElement, ".win-interactive, .win-interactive *")) {
                         if (this.location) {
                             WinJS.Navigation.navigate(this.location, this.state);
                         }

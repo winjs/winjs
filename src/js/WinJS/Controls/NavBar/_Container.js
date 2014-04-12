@@ -969,7 +969,7 @@
                             }
                             that._updatePageUI();
 
-                            if (!that._zooming && this._currentManipulationState === MS_MANIPULATION_STATE_STOPPED) {
+                            if (!that._zooming && that._currentManipulationState === MS_MANIPULATION_STATE_STOPPED) {
                                 that._updateCurrentIndexIfPageChanged();
                             }
                         });
