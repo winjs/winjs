@@ -22,10 +22,15 @@
     height: 4px;
     margin: 5px 2.5px 11px 2.5px;
 }
+.win-navbarcontainer-horizontal .win-navbarcontainer-viewport::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
 .win-navbarcontainer-horizontal .win-navbarcontainer-viewport {
     padding: 15px 0;
     overflow-x: auto;
     overflow-y: hidden;
+    overflow: -moz-scrollbars-none;
     -ms-scroll-snap-type: mandatory;
     -ms-scroll-snap-points-x: snapInterval(0%, 100%);
     -ms-overflow-style: none;
