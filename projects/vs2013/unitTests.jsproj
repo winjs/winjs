@@ -72,185 +72,110 @@
     <Content Include="..\..\tests\animations\SetAnimationsTests.js">
       <Link>animations\SetAnimationsTests.js</Link>
     </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\AppBar-phone.js">
+      <Link>AppBarAndFlyouts\AppBar-phone.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\AppBar.js">
+      <Link>AppBarAndFlyouts\AppBar.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\AppBarCommand-phone.js">
+      <Link>AppBarAndFlyouts\AppBarCommand-phone.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\AppBarCommand.js">
+      <Link>AppBarAndFlyouts\AppBarCommand.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\AppBarScalability.js">
+      <Link>AppBarAndFlyouts\AppBarScalability.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\flyout.js">
+      <Link>AppBarAndFlyouts\flyout.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\Menu.js">
+      <Link>AppBarAndFlyouts\Menu.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\MenuCommand.js">
+      <Link>AppBarAndFlyouts\MenuCommand.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\overlay.js">
+      <Link>AppBarAndFlyouts\overlay.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\OverlayHelpers.js">
+      <Link>AppBarAndFlyouts\OverlayHelpers.js</Link>
+    </Content>
+    <Content Include="..\..\tests\AppBarAndFlyouts\settingsflyout.js">
+      <Link>AppBarAndFlyouts\settingsflyout.js</Link>
+    </Content>
     <Content Include="..\..\tests\base\asyncCausalityChain.js">
-      <Link>base\asyncCausalityChain.js</Link>
+      <Link>Base\asyncCausalityChain.js</Link>
     </Content>
     <Content Include="..\..\tests\base\base.js">
-      <Link>base\base.js</Link>
+      <Link>Base\base.js</Link>
     </Content>
     <Content Include="..\..\tests\base\dispose.js">
-      <Link>base\dispose.js</Link>
+      <Link>Base\dispose.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Base\download.js">
+      <Link>Base\download.js</Link>
     </Content>
     <Content Include="..\..\tests\base\events.js">
-      <Link>base\events.js</Link>
+      <Link>Base\events.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Base\locid.js">
+      <Link>Base\locid.js</Link>
     </Content>
     <Content Include="..\..\tests\base\log.js">
-      <Link>base\log.js</Link>
-    </Content>
-    <Content Include="..\..\tests\base\promise.js">
-      <Link>base\promise.js</Link>
+      <Link>Base\log.js</Link>
     </Content>
     <Content Include="..\..\tests\base\queue.js">
-      <Link>base\queue.js</Link>
+      <Link>Base\queue.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Base\res.js">
+      <Link>Base\res.js</Link>
     </Content>
     <Content Include="..\..\tests\base\resources.js">
-      <Link>base\resources.js</Link>
+      <Link>Base\resources.js</Link>
     </Content>
     <Content Include="..\..\tests\base\safeHTML.js">
-      <Link>base\safeHTML.js</Link>
+      <Link>Base\safeHTML.js</Link>
     </Content>
-    <Content Include="..\..\tests\base\scheduler.js">
-      <Link>base\scheduler.js</Link>
+    <Content Include="..\..\tests\Base\strings_validation.js">
+      <Link>Base\strings_validation.js</Link>
     </Content>
     <Content Include="..\..\tests\base\utilities.js">
-      <Link>base\utilities.js</Link>
+      <Link>Base\utilities.js</Link>
     </Content>
     <Content Include="..\..\tests\base\webworkervalidation.js">
-      <Link>base\webworkervalidation.js</Link>
+      <Link>Base\webworkervalidation.js</Link>
     </Content>
     <Content Include="..\..\tests\base\xhr.js">
-      <Link>base\xhr.js</Link>
+      <Link>Base\xhr.js</Link>
     </Content>
     <Content Include="..\..\tests\binding\binding-decl.js">
-      <Link>binding\binding-decl.js</Link>
+      <Link>Binding\binding-decl.js</Link>
     </Content>
     <Content Include="..\..\tests\binding\binding.js">
-      <Link>binding\binding.js</Link>
+      <Link>Binding\binding.js</Link>
     </Content>
     <Content Include="..\..\tests\binding\bindingParser.js">
-      <Link>binding\bindingParser.js</Link>
+      <Link>Binding\bindingParser.js</Link>
     </Content>
     <Content Include="..\..\tests\binding\DOMWeakRefTable.js">
-      <Link>binding\DOMWeakRefTable.js</Link>
+      <Link>Binding\DOMWeakRefTable.js</Link>
     </Content>
     <Content Include="..\..\tests\binding\List.js">
-      <Link>binding\List.js</Link>
+      <Link>Binding\List.js</Link>
     </Content>
     <Content Include="..\..\tests\binding\nonCompatTemplate.html">
-      <Link>binding\nonCompatTemplate.html</Link>
+      <Link>Binding\nonCompatTemplate.html</Link>
     </Content>
     <Content Include="..\..\tests\binding\templateQuery.js">
-      <Link>binding\templateQuery.js</Link>
+      <Link>Binding\templateQuery.js</Link>
     </Content>
     <Content Include="..\..\tests\binding\templates.js">
-      <Link>binding\templates.js</Link>
+      <Link>Binding\templates.js</Link>
     </Content>
     <Content Include="..\..\tests\binding\templatesOptimizer.js">
-      <Link>binding\templatesOptimizer.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\AppBar-phone.js">
-      <Link>controls\AppBar-phone.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\AppBar.js">
-      <Link>controls\AppBar.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\AppBarCommand-phone.js">
-      <Link>controls\AppBarCommand-phone.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\AppBarCommand.js">
-      <Link>controls\AppBarCommand.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\AppBarScalability.js">
-      <Link>controls\AppBarScalability.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\BackButton.js">
-      <Link>controls\BackButton.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\controlPatterns.js">
-      <Link>controls\controlPatterns.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\flyout.js">
-      <Link>controls\flyout.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\Menu.js">
-      <Link>controls\Menu.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\MenuCommand.js">
-      <Link>controls\MenuCommand.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\overlay.js">
-      <Link>controls\overlay.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\rating.js">
-      <Link>controls\rating.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\RatingInstantiationTests.js">
-      <Link>controls\RatingInstantiationTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\RatingKeyboardTests.js">
-      <Link>controls\RatingKeyboardTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\RatingMouseTests.js">
-      <Link>controls\RatingMouseTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\RatingOptionTests.js">
-      <Link>controls\RatingOptionTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\RatingTouchTests.js">
-      <Link>controls\RatingTouchTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\RatingUtils.js">
-      <Link>controls\RatingUtils.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\settingsflyout.js">
-      <Link>controls\settingsflyout.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\toggle.js">
-      <Link>controls\toggle.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\ToggleInstantiationTests.js">
-      <Link>controls\ToggleInstantiationTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\ToggleOptionTests.js">
-      <Link>controls\ToggleOptionTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\ToggleUtils.js">
-      <Link>controls\ToggleUtils.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\Tooltip.css">
-      <Link>controls\Tooltip.css</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\tooltip.js">
-      <Link>controls\tooltip.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipAccessibilityTests.js">
-      <Link>controls\TooltipAccessibilityTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipAlignmentTests.js">
-      <Link>controls\TooltipAlignmentTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipBasicTests.js">
-      <Link>controls\TooltipBasicTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipcontentElementTests.js">
-      <Link>controls\TooltipcontentElementTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipDisplayingTests.js">
-      <Link>controls\TooltipDisplayingTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipDistanceTests.js">
-      <Link>controls\TooltipDistanceTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipHidingTests.js">
-      <Link>controls\TooltipHidingTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipInfotipTests.js">
-      <Link>controls\TooltipInfotipTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipPlacementTests.js">
-      <Link>controls\TooltipPlacementTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipPositionTests.js">
-      <Link>controls\TooltipPositionTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\TooltipUtils.js">
-      <Link>controls\TooltipUtils.js</Link>
-    </Content>
-    <Content Include="..\..\tests\controls\viewBox.js">
-      <Link>controls\viewBox.js</Link>
-    </Content>
-    <Content Include="..\..\tests\customer\download.js">
-      <Link>customer\download.js</Link>
+      <Link>Binding\templatesOptimizer.js</Link>
     </Content>
     <Content Include="..\..\tests\DateTime\datepicker-decl.js">
       <Link>DateTime\datepicker-decl.js</Link>
@@ -258,17 +183,14 @@
     <Content Include="..\..\tests\DateTime\datePicker.js">
       <Link>DateTime\datePicker.js</Link>
     </Content>
-    <Content Include="..\..\tests\DateTime\timepicker-decl.js">
-      <Link>DateTime\timepicker-decl.js</Link>
-    </Content>
-    <Content Include="..\..\tests\DateTime\timePicker.js">
-      <Link>DateTime\timePicker.js</Link>
-    </Content>
     <Content Include="..\..\tests\FlipView\FlipperDSTests.js">
       <Link>FlipView\FlipperDSTests.js</Link>
     </Content>
     <Content Include="..\..\tests\FlipView\FlipperEventsTests.js">
       <Link>FlipView\FlipperEventsTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\FlipView\FlipperHelpers.js">
+      <Link>FlipView\FlipperHelpers.js</Link>
     </Content>
     <Content Include="..\..\tests\FlipView\FlipperInstantiationTests.js">
       <Link>FlipView\FlipperInstantiationTests.js</Link>
@@ -290,6 +212,21 @@
     </Content>
     <Content Include="..\..\tests\FlipView\FlipperUtils.js">
       <Link>FlipView\FlipperUtils.js</Link>
+    </Content>
+    <Content Include="..\..\tests\FlipView\FlipViewBindingList.js">
+      <Link>FlipView\FlipViewBindingList.js</Link>
+    </Content>
+    <Content Include="..\..\tests\FlipView\FlipViewDataSourceTest.js">
+      <Link>FlipView\FlipViewDataSourceTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\FlipView\FlipViewEventsTest.js">
+      <Link>FlipView\FlipViewEventsTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\FlipView\FlipViewInitTests.js">
+      <Link>FlipView\FlipViewInitTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\FlipView\FlipViewNavigationTest.js">
+      <Link>FlipView\FlipViewNavigationTest.js</Link>
     </Content>
     <Content Include="..\..\tests\Hub\HubBasicTests.js">
       <Link>Hub\HubBasicTests.js</Link>
@@ -330,8 +267,101 @@
     <Content Include="..\..\tests\Itemsmanager\VirtualizedDataSourceTest.js">
       <Link>Itemsmanager\VirtualizedDataSourceTest.js</Link>
     </Content>
-    <Content Include="..\..\tests\locid\locid.js">
-      <Link>locid\locid.js</Link>
+    <Content Include="..\..\tests\ListViewIntegration\apitest.datasources.js">
+      <Link>ListViewIntegration\apitest.datasources.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListViewIntegration\DragDropTest.js">
+      <Link>ListViewIntegration\DragDropTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListViewIntegration\ListViewBindingList.js">
+      <Link>ListViewIntegration\ListViewBindingList.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListViewIntegration\MoSkyIntegrationTests.js">
+      <Link>ListViewIntegration\MoSkyIntegrationTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListViewIntegration\NonDragAndSelectTests.js">
+      <Link>ListViewIntegration\NonDragAndSelectTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListViewIntegration\PhotosAppScenarios.js">
+      <Link>ListViewIntegration\PhotosAppScenarios.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListViewIntegration\regressionTests.js">
+      <Link>ListViewIntegration\regressionTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\Animation2Test.js">
+      <Link>ListView\Animation2Test.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\AnimationTest.js">
+      <Link>ListView\AnimationTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\AriaTest.js">
+      <Link>ListView\AriaTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\BackdropTest.js">
+      <Link>ListView\BackdropTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\BrowseModeTest.js">
+      <Link>ListView\BrowseModeTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\CommonLayout2Tests.js">
+      <Link>ListView\CommonLayout2Tests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\ConfigurationTest.js">
+      <Link>ListView\ConfigurationTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\GroupFocusCache.js">
+      <Link>ListView\GroupFocusCache.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\GroupListEditorTest.js">
+      <Link>ListView\GroupListEditorTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\GroupsTest.js">
+      <Link>ListView\GroupsTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\HorizontalListTest.js">
+      <Link>ListView\HorizontalListTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\InitializationTest.js">
+      <Link>ListView\InitializationTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\Layout2Test.js">
+      <Link>ListView\Layout2Test.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\LayoutTest.js">
+      <Link>ListView\LayoutTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\ListEditorTest.js">
+      <Link>ListView\ListEditorTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\listView.js">
+      <Link>ListView\listView.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\ListViewCancel.js">
+      <Link>ListView\ListViewCancel.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\ListViewEventsTest.js">
+      <Link>ListView\ListViewEventsTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\MultisizeTest.js">
+      <Link>ListView\MultisizeTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\PropertyTest.js">
+      <Link>ListView\PropertyTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\ReuseTest.js">
+      <Link>ListView\ReuseTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\SelectionManagerTest.js">
+      <Link>ListView\SelectionManagerTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\SelectionModeTest.js">
+      <Link>ListView\SelectionModeTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\VerticalGridTest.js">
+      <Link>ListView\VerticalGridTest.js</Link>
+    </Content>
+    <Content Include="..\..\tests\ListView\VirtualizeContentsViewTest.js">
+      <Link>ListView\VirtualizeContentsViewTest.js</Link>
     </Content>
     <Content Include="..\..\tests\NavBar\NavBarCommandTests.js">
       <Link>NavBar\NavBarCommandTests.js</Link>
@@ -345,20 +375,35 @@
     <Content Include="..\..\tests\NavBar\NavBarTests.js">
       <Link>NavBar\NavBarTests.js</Link>
     </Content>
+    <Content Include="..\..\tests\Navigation\BackButton.js">
+      <Link>Navigation\BackButton.js</Link>
+    </Content>
     <Content Include="..\..\tests\navigation\backButtonTests.js">
-      <Link>navigation\backButtonTests.js</Link>
+      <Link>Navigation\backButtonTests.js</Link>
     </Content>
     <Content Include="..\..\tests\navigation\navigationUtils.js">
-      <Link>navigation\navigationUtils.js</Link>
+      <Link>Navigation\navigationUtils.js</Link>
     </Content>
     <Content Include="..\..\tests\navigation\navigator.js">
-      <Link>navigation\navigator.js</Link>
+      <Link>Navigation\navigator.js</Link>
     </Content>
     <Content Include="..\..\tests\navigation\page.html">
-      <Link>navigation\page.html</Link>
+      <Link>Navigation\page.html</Link>
     </Content>
     <Content Include="..\..\tests\navigation\page.js">
-      <Link>navigation\page.js</Link>
+      <Link>Navigation\page.js</Link>
+    </Content>
+    <Content Include="..\..\tests\PageControl\fragmentControl.js">
+      <Link>PageControl\fragmentControl.js</Link>
+    </Content>
+    <Content Include="..\..\tests\PageControl\fragmentErrorConditions.js">
+      <Link>PageControl\fragmentErrorConditions.js</Link>
+    </Content>
+    <Content Include="..\..\tests\PageControl\fragments.js">
+      <Link>PageControl\fragments.js</Link>
+    </Content>
+    <Content Include="..\..\tests\PageControl\fragmentTestNoExtension.js">
+      <Link>PageControl\fragmentTestNoExtension.js</Link>
     </Content>
     <Content Include="..\..\tests\Pivot\PivotItemTests.js">
       <Link>Pivot\PivotItemTests.js</Link>
@@ -366,26 +411,50 @@
     <Content Include="..\..\tests\Pivot\PivotTests.js">
       <Link>Pivot\PivotTests.js</Link>
     </Content>
+    <Content Include="..\..\tests\Promise\promise.js">
+      <Link>Promise\promise.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Rating\rating.js">
+      <Link>Rating\rating.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Rating\RatingInstantiationTests.js">
+      <Link>Rating\RatingInstantiationTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Rating\RatingKeyboardTests.js">
+      <Link>Rating\RatingKeyboardTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Rating\RatingMouseTests.js">
+      <Link>Rating\RatingMouseTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Rating\RatingOptionTests.js">
+      <Link>Rating\RatingOptionTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Rating\RatingTouchTests.js">
+      <Link>Rating\RatingTouchTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\Rating\RatingUtils.js">
+      <Link>Rating\RatingUtils.js</Link>
+    </Content>
     <Content Include="..\..\tests\repeater\RepeaterEditingTests.js">
-      <Link>repeater\RepeaterEditingTests.js</Link>
+      <Link>Repeater\RepeaterEditingTests.js</Link>
     </Content>
     <Content Include="..\..\tests\repeater\RepeaterInitTests.js">
-      <Link>repeater\RepeaterInitTests.js</Link>
+      <Link>Repeater\RepeaterInitTests.js</Link>
     </Content>
     <Content Include="..\..\tests\repeater\RepeaterIntegrationTests.js">
-      <Link>repeater\RepeaterIntegrationTests.js</Link>
+      <Link>Repeater\RepeaterIntegrationTests.js</Link>
     </Content>
     <Content Include="..\..\tests\repeater\RepeaterPropertyTests.js">
-      <Link>repeater\RepeaterPropertyTests.js</Link>
+      <Link>Repeater\RepeaterPropertyTests.js</Link>
     </Content>
     <Content Include="..\..\tests\repeater\RepeaterSetPromiseTests.js">
-      <Link>repeater\RepeaterSetPromiseTests.js</Link>
+      <Link>Repeater\RepeaterSetPromiseTests.js</Link>
     </Content>
     <Content Include="..\..\tests\repeater\repeaterUtils.js">
-      <Link>repeater\repeaterUtils.js</Link>
+      <Link>Repeater\repeaterUtils.js</Link>
     </Content>
-    <Content Include="..\..\tests\res\res.js">
-      <Link>res\res.js</Link>
+    <Content Include="..\..\tests\Scheduler\scheduler.js">
+      <Link>Scheduler\scheduler.js</Link>
     </Content>
     <Content Include="..\..\tests\SearchBox\SearchBoxBasicTests.js">
       <Link>SearchBox\SearchBoxBasicTests.js</Link>
@@ -393,8 +462,11 @@
     <Content Include="..\..\tests\SearchBox\SearchBoxWebOnlyTests.js">
       <Link>SearchBox\SearchBoxWebOnlyTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\strings_validation\strings_validation.js">
-      <Link>strings_validation\strings_validation.js</Link>
+    <Content Include="..\..\tests\SemanticZoom\SemanticZoomTests.js">
+      <Link>SemanticZoom\SemanticZoomTests.js</Link>
+    </Content>
+    <Content Include="..\..\tests\SemanticZoom\SemanticZoomWithListViewTests.js">
+      <Link>SemanticZoom\SemanticZoomWithListViewTests.js</Link>
     </Content>
     <Content Include="..\..\tests\TestData\Fragment2WinJSControls.html">
       <Link>TestData\Fragment2WinJSControls.html</Link>
@@ -591,197 +663,135 @@
     <Content Include="..\..\tests\TestLib\util.js">
       <Link>TestLib\util.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\Animation2Test.js">
-      <Link>uicollections\Animation2Test.js</Link>
+    <Content Include="..\..\tests\TimePicker\timepicker-decl.js">
+      <Link>TimePicker\timepicker-decl.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\AnimationTest.js">
-      <Link>uicollections\AnimationTest.js</Link>
+    <Content Include="..\..\tests\TimePicker\timePicker.js">
+      <Link>TimePicker\timePicker.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\apitest.datasources.js">
-      <Link>uicollections\apitest.datasources.js</Link>
+    <Content Include="..\..\tests\Toggle\toggle.js">
+      <Link>Toggle\toggle.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\AriaTest.js">
-      <Link>uicollections\AriaTest.js</Link>
+    <Content Include="..\..\tests\Toggle\ToggleInstantiationTests.js">
+      <Link>Toggle\ToggleInstantiationTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\BackdropTest.js">
-      <Link>uicollections\BackdropTest.js</Link>
+    <Content Include="..\..\tests\Toggle\ToggleOptionTests.js">
+      <Link>Toggle\ToggleOptionTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\BrowseModeTest.js">
-      <Link>uicollections\BrowseModeTest.js</Link>
+    <Content Include="..\..\tests\Toggle\ToggleUtils.js">
+      <Link>Toggle\ToggleUtils.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\CommonLayout2Tests.js">
-      <Link>uicollections\CommonLayout2Tests.js</Link>
+    <Content Include="..\..\tests\Tooltip\Tooltip.css">
+      <Link>Tooltip\Tooltip.css</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\ConfigurationTest.js">
-      <Link>uicollections\ConfigurationTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\tooltip.js">
+      <Link>Tooltip\tooltip.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\DragDropTest.js">
-      <Link>uicollections\DragDropTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipAccessibilityTests.js">
+      <Link>Tooltip\TooltipAccessibilityTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\FlipperHelpers.js">
-      <Link>uicollections\FlipperHelpers.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipAlignmentTests.js">
+      <Link>Tooltip\TooltipAlignmentTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\FlipViewDataSourceTest.js">
-      <Link>uicollections\FlipViewDataSourceTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipBasicTests.js">
+      <Link>Tooltip\TooltipBasicTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\FlipViewEventsTest.js">
-      <Link>uicollections\FlipViewEventsTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipcontentElementTests.js">
+      <Link>Tooltip\TooltipcontentElementTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\FlipViewInitTests.js">
-      <Link>uicollections\FlipViewInitTests.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipDisplayingTests.js">
+      <Link>Tooltip\TooltipDisplayingTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\FlipViewNavigationTest.js">
-      <Link>uicollections\FlipViewNavigationTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipDistanceTests.js">
+      <Link>Tooltip\TooltipDistanceTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\GroupFocusCache.js">
-      <Link>uicollections\GroupFocusCache.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipHidingTests.js">
+      <Link>Tooltip\TooltipHidingTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\GroupListEditorTest.js">
-      <Link>uicollections\GroupListEditorTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipInfotipTests.js">
+      <Link>Tooltip\TooltipInfotipTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\GroupsTest.js">
-      <Link>uicollections\GroupsTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipPlacementTests.js">
+      <Link>Tooltip\TooltipPlacementTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\HorizontalListTest.js">
-      <Link>uicollections\HorizontalListTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipPositionTests.js">
+      <Link>Tooltip\TooltipPositionTests.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\InitializationTest.js">
-      <Link>uicollections\InitializationTest.js</Link>
+    <Content Include="..\..\tests\Tooltip\TooltipUtils.js">
+      <Link>Tooltip\TooltipUtils.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\Layout2Test.js">
-      <Link>uicollections\Layout2Test.js</Link>
+    <Content Include="..\..\tests\UI\control.js">
+      <Link>UI\control.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\LayoutTest.js">
-      <Link>uicollections\LayoutTest.js</Link>
+    <Content Include="..\..\tests\UI\controlPatterns.js">
+      <Link>UI\controlPatterns.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\ListEditorTest.js">
-      <Link>uicollections\ListEditorTest.js</Link>
+    <Content Include="..\..\tests\UI\declarativeControls.js">
+      <Link>UI\declarativeControls.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\listView.js">
-      <Link>uicollections\listView.js</Link>
+    <Content Include="..\..\tests\UI\optionsParser.js">
+      <Link>UI\optionsParser.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\ListViewCancel.js">
-      <Link>uicollections\ListViewCancel.js</Link>
+    <Content Include="..\..\tests\UI\ParallelWorkQueue.js">
+      <Link>UI\ParallelWorkQueue.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\ListViewEventsTest.js">
-      <Link>uicollections\ListViewEventsTest.js</Link>
+    <Content Include="..\..\tests\UI\styles-uidark.js">
+      <Link>UI\styles-uidark.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\MoSkyIntegrationTests.js">
-      <Link>uicollections\MoSkyIntegrationTests.js</Link>
+    <Content Include="..\..\tests\UI\styles-uilight.js">
+      <Link>UI\styles-uilight.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\MultisizeTest.js">
-      <Link>uicollections\MultisizeTest.js</Link>
+    <Content Include="..\..\tests\UI\stylesCollection.js">
+      <Link>UI\stylesCollection.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\NonDragAndSelectTests.js">
-      <Link>uicollections\NonDragAndSelectTests.js</Link>
+    <Content Include="..\..\tests\UI\stylesTestHelper.js">
+      <Link>UI\stylesTestHelper.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\ParallelWorkQueue.js">
-      <Link>uicollections\ParallelWorkQueue.js</Link>
+    <Content Include="..\..\tests\UI\TabManager.js">
+      <Link>UI\TabManager.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\PhotosAppScenarios.js">
-      <Link>uicollections\PhotosAppScenarios.js</Link>
+    <Content Include="..\..\tests\UI\uiutilities.js">
+      <Link>UI\uiutilities.js</Link>
     </Content>
-    <Content Include="..\..\tests\uicollections\PropertyTest.js">
-      <Link>uicollections\PropertyTest.js</Link>
-    </Content>
-    <Content Include="..\..\tests\uicollections\regressionTests.js">
-      <Link>uicollections\regressionTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\uicollections\ReuseTest.js">
-      <Link>uicollections\ReuseTest.js</Link>
-    </Content>
-    <Content Include="..\..\tests\uicollections\SelectionManagerTest.js">
-      <Link>uicollections\SelectionManagerTest.js</Link>
-    </Content>
-    <Content Include="..\..\tests\uicollections\SelectionModeTest.js">
-      <Link>uicollections\SelectionModeTest.js</Link>
-    </Content>
-    <Content Include="..\..\tests\uicollections\SemanticZoomTests.js">
-      <Link>uicollections\SemanticZoomTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\uicollections\SemanticZoomWithListViewTests.js">
-      <Link>uicollections\SemanticZoomWithListViewTests.js</Link>
-    </Content>
-    <Content Include="..\..\tests\uicollections\VerticalGridTest.js">
-      <Link>uicollections\VerticalGridTest.js</Link>
-    </Content>
-    <Content Include="..\..\tests\uicollections\VirtualizeContentsViewTest.js">
-      <Link>uicollections\VirtualizeContentsViewTest.js</Link>
-    </Content>
-    <Content Include="..\..\tests\UIListBinding\FlipViewBindingList.js">
-      <Link>UIListBinding\FlipViewBindingList.js</Link>
-    </Content>
-    <Content Include="..\..\tests\UIListBinding\ListViewBindingList.js">
-      <Link>UIListBinding\ListViewBindingList.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\control.js">
-      <Link>ui\control.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\declarativeControls.js">
-      <Link>ui\declarativeControls.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\fragmentControl.js">
-      <Link>ui\fragmentControl.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\fragmentErrorConditions.js">
-      <Link>ui\fragmentErrorConditions.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\fragments.js">
-      <Link>ui\fragments.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\fragmentTestNoExtension.js">
-      <Link>ui\fragmentTestNoExtension.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\optionsParser.js">
-      <Link>ui\optionsParser.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\styles-uidark.js">
-      <Link>ui\styles-uidark.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\styles-uilight.js">
-      <Link>ui\styles-uilight.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\stylesCollection.js">
-      <Link>ui\stylesCollection.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\stylesTestHelper.js">
-      <Link>ui\stylesTestHelper.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\TabManager.js">
-      <Link>ui\TabManager.js</Link>
-    </Content>
-    <Content Include="..\..\tests\ui\uiutilities.js">
-      <Link>ui\uiutilities.js</Link>
+    <Content Include="..\..\tests\ViewBox\viewBox.js">
+      <Link>ViewBox\viewBox.js</Link>
     </Content>
     <Content Include="..\..\tests\wwaapp\application.js">
-      <Link>wwaapp\application.js</Link>
+      <Link>WWA\application.js</Link>
     </Content>
     <Content Include="..\..\tests\wwaapp\navigation.js">
-      <Link>wwaapp\navigation.js</Link>
+      <Link>WWA\navigation.js</Link>
     </Content>
     <Content Include="..\..\tests\wwaapp\state.js">
-      <Link>wwaapp\state.js</Link>
+      <Link>WWA\state.js</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="animations\" />
-    <Folder Include="base\" />
-    <Folder Include="binding\" />
-    <Folder Include="controls\" />
-    <Folder Include="customer\" />
+    <Folder Include="Base\" />
+    <Folder Include="Binding\" />
     <Folder Include="DateTime\" />
     <Folder Include="FlipView\" />
     <Folder Include="Hub\" />
     <Folder Include="ItemContainer\" />
     <Folder Include="Itemsmanager\" />
-    <Folder Include="locid\" />
     <Folder Include="NavBar\" />
-    <Folder Include="navigation\" />
+    <Folder Include="Navigation\" />
+    <Folder Include="AppBarAndFlyouts\" />
+    <Folder Include="ListView\" />
+    <Folder Include="ListViewIntegration\" />
+    <Folder Include="ViewBox\" />
+    <Folder Include="Tooltip\" />
+    <Folder Include="Toggle\" />
+    <Folder Include="TimePicker\" />
+    <Folder Include="SemanticZoom\" />
+    <Folder Include="Scheduler\" />
+    <Folder Include="Rating\" />
+    <Folder Include="Promise\" />
+    <Folder Include="PageControl\" />
     <Folder Include="Pivot\" />
-    <Folder Include="repeater\" />
-    <Folder Include="res\" />
+    <Folder Include="Repeater\" />
     <Folder Include="SearchBox\" />
-    <Folder Include="strings_validation\" />
     <Folder Include="TestData\Subdirectory\" />
     <Folder Include="TestLib\animations\" />
     <Folder Include="TestLib\Hub\" />
@@ -791,10 +801,8 @@
     <Folder Include="TestLib\NavBar\" />
     <Folder Include="TestLib\liveToQ\" />
     <Folder Include="TestLib\SemanticZoom\" />
-    <Folder Include="uicollections\" />
-    <Folder Include="UIListBinding\" />
-    <Folder Include="ui\" />
-    <Folder Include="wwaapp\" />
+    <Folder Include="UI\" />
+    <Folder Include="WWA\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
   <Target Name="BeforeBuild">
