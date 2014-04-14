@@ -22,7 +22,8 @@
 
     var keyframeCounter = 0;
     function getUniqueKeyframeName() {
-        return "WinJSUIAnimation" + ++keyframeCounter;
+        ++keyframeCounter;
+        return "WinJSUIAnimation" + keyframeCounter;
     }
     function isUniqueKeyframeName(s) {
         return "WinJSUIAnimation" === s.substring(0, 16);

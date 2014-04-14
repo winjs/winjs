@@ -1,0 +1,15 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+var config = require("../../config.js");
+
+module.exports = {
+    server: { 
+        options: {
+            port: 9666,
+            keepalive: true,
+            open: {
+                target : 'http://localhost:9666/bin/tests/tests.html'
+            },
+            hostname: 'localhost'
+        }
+    }
+}

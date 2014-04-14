@@ -1,6 +1,7 @@
 Windows Library for JavaScript (WinJS) [![Build Status](https://travis-ci.org/banguero/winjs.svg?branch=master)](https://travis-ci.org/banguero/winjs)
 =====
-
+ [![Build Status](https://travis-ci.org/winjs/winjs.svg?branch=master)](https://travis-ci.org/winjs/winjs)
+ 
 This project is actively developed by the WinJS developers working for Microsoft Open Technologies, in collaboration with the community of open source developers. Together we are dedicated to creating the best possible solution for HTML/JS/CSS application development.
 
 WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology forged with the following principles in mind:

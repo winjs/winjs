@@ -38,7 +38,7 @@
                     return new dtf.DateTimeFormatter(pattern, c.languages, c.geographicRegion, calendar, c.clock);
                 }
                 return c;
-            };
+            }
 
             function formatCacheLookup(pattern, calendar, defaultPattern) {
                 var pat = yearFormatCache[pattern];
@@ -91,7 +91,7 @@
                     return new glob.Calendar(c.languages, calendar, c.getClock());
                 }
                 return c;
-            };
+            }
 
             function yearDiff(start, end) {
                 var yearCount = 0;
@@ -493,7 +493,7 @@
                     var maxDateTime = tempCal.getDateTime();
 
                     function clamp(date) {
-                        return new Date(Math.min(new Date(Math.max(minDateTime, date)), maxDateTime));;
+                        return new Date(Math.min(new Date(Math.max(minDateTime, date)), maxDateTime));
                     }
 
                     tempCal.hour = 12;

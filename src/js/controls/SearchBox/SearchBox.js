@@ -910,7 +910,7 @@
 
                         // Keep the previous composition cache up to date, execpt when composition ended with no text change and alternatives are kept.
                         // In that case, we need to use the cached values to correctly generate the query prefix/suffix for substituting alternatives, but still report to the client that the composition has ended (via start & length of composition of 0)
-                        if ((this._inputElement.value !== this._prevQueryText) || (this._prevCompositionLength == 0) || (linguisticDetails.queryTextCompositionLength > 0)) {
+                        if ((this._inputElement.value !== this._prevQueryText) || (this._prevCompositionLength === 0) || (linguisticDetails.queryTextCompositionLength > 0)) {
                             this._prevCompositionStart = linguisticDetails.queryTextCompositionStart;
                             this._prevCompositionLength = linguisticDetails.queryTextCompositionLength;
                         }
@@ -994,7 +994,7 @@
                             compositionStartOffset = context.compositionStartOffset;
                             compositionLength = context.compositionEndOffset - context.compositionStartOffset;
 
-                            if ((this._inputElement.value !== this._prevQueryText) || (this._prevCompositionLength == 0) || (compositionLength > 0)) {
+                            if ((this._inputElement.value !== this._prevQueryText) || (this._prevCompositionLength === 0) || (compositionLength > 0)) {
                                 queryTextPrefix = this._inputElement.value.substring(0, compositionStartOffset);
                                 queryTextSuffix = this._inputElement.value.substring(compositionStartOffset + compositionLength);
                             }

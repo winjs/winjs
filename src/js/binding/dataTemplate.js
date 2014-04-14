@@ -130,11 +130,13 @@
                         if (timeout) {
                             if (timeout < 0) { timeout = 0; }
                             return WinJS.Promise.timeout(timeout).then(function () {
-                                return workPromise = complete();
+                                workPromise = complete();
+                                return workPromise;
                             });
                         }
                         else {
-                            return workPromise = complete();
+                            workPromise = complete();
+                            return workPromise;
                         }
                     }).then(done, function (err) { done(); return WinJS.Promise.wrapError(err); });
 

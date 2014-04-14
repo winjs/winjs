@@ -298,8 +298,8 @@
                 /// </signature>
                 var supportedForProcessing = true;
 
-                supportedForProcessing = supportedForProcessing && !(value === global);
-                supportedForProcessing = supportedForProcessing && !(value === global.location);
+                supportedForProcessing = supportedForProcessing && value !== global;
+                supportedForProcessing = supportedForProcessing && value !== global.location;
                 supportedForProcessing = supportedForProcessing && !(value instanceof HTMLIFrameElement);
                 supportedForProcessing = supportedForProcessing && !(typeof value === "function" && !value.supportedForProcessing);
 
@@ -308,12 +308,12 @@
                         break;
 
                     case 1:
-                        supportedForProcessing = supportedForProcessing && !(value === global.frames[0]);
+                        supportedForProcessing = supportedForProcessing && value !== global.frames[0];
                         break;
 
                     default:
                         for (var i = 0, len = global.frames.length; supportedForProcessing && i < len; i++) {
-                            supportedForProcessing = supportedForProcessing && !(value === global.frames[i]);
+                            supportedForProcessing = supportedForProcessing && value !== global.frames[i];
                         }
                         break;
                 }

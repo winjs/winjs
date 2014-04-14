@@ -47,7 +47,7 @@
             fragment.addEventListener("beforeactivate", beforeActivateHandler);
             fragment.setAttribute("aria-hidden", true);
             return fragment;
-        };
+        }
 
         var parent = element.parentNode;
 
