@@ -1,4 +1,4 @@
-Windows Library for JavaScript (WinJS) [![Build Status](https://travis-ci.org/banguero/winjs.svg?branch=master)](https://travis-ci.org/banguero/winjs)
+Windows Library for JavaScript (WinJS)
 =====
  [![Build Status](https://travis-ci.org/winjs/winjs.svg?branch=master)](https://travis-ci.org/winjs/winjs)
  
