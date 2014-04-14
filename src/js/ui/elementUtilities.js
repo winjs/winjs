@@ -26,7 +26,7 @@
         else {
             return name.baseVal || "";
         }
-    };
+    }
     function setClassName(e, value) {
         // SVG elements (which use e.className.baseVal) are never undefined,
         // so this logic makes the comparison a bit more compact.
@@ -39,7 +39,7 @@
             e.className.baseVal = value;
         }
         return e;
-    };
+    }
     function getDimension(element, property) {
         return WinJS.Utilities.convertToPixels(element, window.getComputedStyle(element, null)[property]);
     }

@@ -2598,7 +2598,7 @@
                             index: -1,
                             insertAfterIndex: -1
                         };
-                    };
+                    }
                 },
 
                 _createTreeBuildingSignal: function VirtualizeContentsView__createTreeBuildingSignal() {

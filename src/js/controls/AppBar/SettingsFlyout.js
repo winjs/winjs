@@ -56,7 +56,7 @@
                 } else {
                     return false;
                 }
-            };
+            }
 
             // Get the settings control by matching the settingsCommandId
             // if no match we'll try to match element id

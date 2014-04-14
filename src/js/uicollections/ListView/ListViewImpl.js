@@ -2773,7 +2773,7 @@
                         if (this._mode.inboundFocusHandled) {
                             this._mode.inboundFocusHandled = false;
                             return
-                        };
+                        }
 
                         this._tabEventsHelper.childFocus = null;
                         // In the event that .focus() is explicitly called on an element, we need to figure out what item got focus and set our state appropriately.

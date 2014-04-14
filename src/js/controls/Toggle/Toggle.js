@@ -55,7 +55,7 @@
             function reloadChangeHandler(list) {
                 var that = list[0].target.winControl;
                 that.checked = that._switchElement.valueAsNumber;
-            };
+            }
 
             WinJS.Class.mix(Control, WinJS.UI.DOMEventMixin);
 
@@ -138,7 +138,7 @@
                     set: function (value) {
                         var disabled = !!value; // Sanitize for a bool
                         this._switchElement.disabled = disabled; // This is necessary to apply the css to the toggle 'switch' 
-                        if (disabled == true) { // This is necessary to apply the css to the toggle 'label' and 'title' 
+                        if (disabled) { // This is necessary to apply the css to the toggle 'label' and 'title' 
                             utilities.addClass(this._labelOnElement, msToggleDisabled);
                             utilities.addClass(this._labelOffElement, msToggleDisabled);
                             utilities.addClass(this._titleElement, msToggleDisabled);

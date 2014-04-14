@@ -177,7 +177,7 @@
                 startOffsetArray.push(startOffset);
                 endOffsetArray.push(endOffset);
             }
-        };
+        }
         var horizontalOffset = 200,
             startOffset = (start !== 0 ? (start < 0 ? -horizontalOffset : horizontalOffset) : 0),
             endOffset = (end !== 0 ? (end < 0 ? -horizontalOffset : horizontalOffset) : 0);

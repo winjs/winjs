@@ -73,7 +73,7 @@
                 inline: inline,
             };
         }
-    };
+    }
 
     function addStyle(styleTag, fragmentHref, position) {
         var src = (fragmentHref + "script[" + position + "]").toLowerCase();
@@ -81,7 +81,7 @@
             styles[src] = true;
             head.appendChild(styleTag.cloneNode(true));
         }
-    };
+    }
 
     function addLink(styleTag) {
         var src = styleTag.href.toLowerCase();
@@ -91,7 +91,7 @@
             n.href = styleTag.href;
             head.appendChild(n);
         }
-    };
+    }
 
     function getStateRecord(href, removeFromCache) {
         if (typeof href === "string") {
@@ -105,7 +105,7 @@
                 var fragment = document.createDocumentFragment();
                 while (href.childNodes.length > 0) {
                     fragment.appendChild(href.childNodes[0]);
-                };
+                }
                 state.docfrag = WinJS.Utilities.data(href).docFragment = fragment;
                 href.setAttribute("data-win-hasfragment", "");
             }
@@ -234,7 +234,7 @@
 
             return state;
         });
-    };
+    }
 
     function initialize() {
         if (initialized) { return; }
@@ -249,7 +249,7 @@
         forEach(head.querySelectorAll('link[rel="stylesheet"], link[type="text/css"]'), function (e) {
             links[e.href.toLowerCase()] = true;
         });
-    };
+    }
 
     function renderCopy(href, target) {
         /// <signature helpKeyword="WinJS.UI.Fragments.renderCopy">
@@ -270,7 +270,7 @@
         /// </signature>
 
         return renderImpl(href, target, true);
-    };
+    }
 
     function renderImpl(href, target, copy) {
         var profilerMarkIdentifier = (href instanceof HTMLElement ? WinJS.Utilities._getProfilerMarkIdentifier(href) : " href='" + href + "'") + "[" + (++uniqueId) + "]";
@@ -302,7 +302,7 @@
             WinJS.Utilities._writeProfilerMark("WinJS.UI.Fragments:render" + profilerMarkIdentifier + ",StopTM");
             return retVal;
         });
-    };
+    }
 
     function render(href, target) {
         /// <signature helpKeyword="WinJS.UI.Fragments.render">
@@ -323,7 +323,7 @@
         /// </signature>
 
         return renderImpl(href, target, false);
-    };
+    }
 
     function cache(href) {
         /// <signature helpKeyword="WinJS.UI.Fragments.cache">
@@ -340,7 +340,7 @@
         /// </signature>
         initialize();
         return getStateRecord(href).then(function (state) { return state.docfrag; });
-    };
+    }
 
     function clearCache(href) {
         /// <signature helpKeyword="WinJS.UI.Fragments.clearCache">
@@ -363,7 +363,7 @@
             delete WinJS.Utilities.data(href).docFragment;
             href.removeAttribute("data-win-hasfragment");
         }
-    };
+    }
 
     function forceLocal(uri) {
         if (WinJS.Utilities.hasWinRT) {
@@ -422,7 +422,7 @@
             delete state.iframe;
             delete state.domContentLoaded;
         }
-    };
+    }
 
     function populateDocumentIFrame(state, href) {
         return new WinJS.Promise(function (c, e, p) {
@@ -444,14 +444,14 @@
             };
             temp.contentDocument.addEventListener("DOMContentLoaded", state.domContentLoaded, false);
         });
-    };
+    }
 
     function cleanupDocumentXHR(state) {
         if (state.document) {
             delete state.document;
         }
         return WinJS.Promise.as();
-    };
+    }
 
     function populateDocumentXHR(state, href) {
         // Because we later use "setInnerHTMLUnsafe" ("Unsafe" is the magic word here), we 
@@ -474,7 +474,7 @@
             WinJS.Utilities.setInnerHTMLUnsafe(htmlDoc.documentElement, req.responseText);
             htmlDoc.head.appendChild(base);
         });
-    };
+    }
         
     if (global.document && document.implementation.createHTMLDocument && document.location.protocol !== "file:") {
         WinJS.Namespace.define("WinJS.UI.Fragments", {

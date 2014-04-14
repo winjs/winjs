@@ -937,7 +937,7 @@
                         headerAnimation = WinJS.Promise.wrap();
                     }
 
-                    this._slideHeadersAnimation = headerAnimation.then(headerCleanup, headerCleanup);;
+                    this._slideHeadersAnimation = headerAnimation.then(headerCleanup, headerCleanup);
                 },
 
                 _loadItem: function pivot_loadItem(index) {
