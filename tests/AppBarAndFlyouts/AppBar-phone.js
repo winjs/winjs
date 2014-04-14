@@ -5,7 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 
 if (WinJS.Utilities.isPhone) {
     var CorsicaTests = CorsicaTests || {};
@@ -188,7 +188,7 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.isTrue(AppBar.hidden, "Verifying that hidden is true");
             LiveUnit.Assert.isFalse(commandBar.isOpen, "Verifying that hidden syncs with isOpen");
             LiveUnit.Assert.areEqual(commandBar.primaryCommands[0].label, AppBar.getCommandById('btn1')._commandBarIconButton.label, "Verifying global commands sync with primaryCommands");
-            LiveUnit.Assert.areEqual(commandBar.secondaryCommands[0].label, AppBar.getCommandById('btn2')._commandBarIconButton.label, "Verifying selection commands sync with secondaryCommands");            
+            LiveUnit.Assert.areEqual(commandBar.secondaryCommands[0].label, AppBar.getCommandById('btn2')._commandBarIconButton.label, "Verifying selection commands sync with secondaryCommands");
         }
         this.testDefaultAppBarParameters["Description"] = "Test default AppBar parameters";
 
@@ -246,7 +246,7 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Test: " + msg);
 
-            // Push two extra WinRT comandBarButtons into the commandBar primary and secondary commands.             
+            // Push two extra WinRT comandBarButtons into the commandBar primary and secondary commands.
             var extraButton1 = new core.WebUICommandBarIconButton();
             var extraButton2 = new core.WebUICommandBarIconButton();
             commandBar.primaryCommands.push(extraButton1);
@@ -254,7 +254,7 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.areEqual(commandBar.primaryCommands.length, 2);
             LiveUnit.Assert.areEqual(commandBar.secondaryCommands.length, 2);
 
-            // AppBar doesn't know about the extra buttons. 
+            // AppBar doesn't know about the extra buttons.
             // Make sure disposing the AppBar doesn't remove the extra buttons from the CommandBar.
             AppBar.dispose();
 
@@ -365,7 +365,7 @@ if (WinJS.Utilities.isPhone) {
         };
 
         this.testMultipleAppBars = function (complete) {
-            // Whenever an AppBar is created, re-enabled or sets its .commands property; then that AppBar should 
+            // Whenever an AppBar is created, re-enabled or sets its .commands property; then that AppBar should
             // replace all contents currently in the WinRT WebUICommandBar with its own commands.
             //
             function verifyCommandsInAppBar(commands, AppBarCommands, varName) {
@@ -522,7 +522,7 @@ if (WinJS.Utilities.isPhone) {
         }
 
         this.testDynamicColorChange = function (complete) {
-            // Setting these properties or invoking these methods should trigger a recompute of the CommandBar background and foreground colors. 
+            // Setting these properties or invoking these methods should trigger a recompute of the CommandBar background and foreground colors.
             // Seting the AppBar.commands property.
             // AppBar.hideCommands()
             // AppBar.showCommands()
@@ -816,13 +816,13 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Test: " + msg);
 
-            // Push an extra WinRT comandBarButton into the commandBar.             
+            // Push an extra WinRT comandBarButton into the commandBar.
             var extraButton = new core.WebUICommandBarIconButton();
             LiveUnit.Assert.isFalse(commandBar.primaryCommands.indexOf(extraButton).returnValue)
             commandBar.primaryCommands.push(extraButton);
             LiveUnit.Assert.isTrue(commandBar.primaryCommands.indexOf(extraButton).returnValue, "extraButton should be among the primaryCommands in the commandBar");
 
-            // AppBar doesn't know about extraButton. 
+            // AppBar doesn't know about extraButton.
             // If AppBar commands get reloaded, extraButton will be absent from the commandBar.
             AppBar.disabled = false;
             LiveUnit.Assert.isTrue(commandBar.primaryCommands.indexOf(extraButton).returnValue, msg)
@@ -841,7 +841,7 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.areEqual(commandBar.closedDisplayMode, core.WebUICommandBarClosedDisplayMode.compact, "closedDisplayMode should project to commandBar.closedDisplayMode");
 
             complete();
-        }       
+        }
     }
 
     // register the object as a test class by passing in the name

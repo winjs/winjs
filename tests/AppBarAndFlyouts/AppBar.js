@@ -5,7 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="../TestLib/util.js" />
 /// <reference path="OverlayHelpers.js" />
 
@@ -26,12 +26,12 @@ CorsicaTests.AppBarTests = function () {
             element.parentElement && element.parentElement.removeChild(element);
         }
     }
-    
+
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
         var AppBarElement = document.createElement('div');
         AppBarElement.id = "appBarDiv";
-        document.body.appendChild(AppBarElement);        
+        document.body.appendChild(AppBarElement);
         this._element = AppBarElement;
     };
 
@@ -39,11 +39,11 @@ CorsicaTests.AppBarTests = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
         disposeAndRemove(document.getElementById("appBarDiv"));
         this._element = null;
-        
+
         disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
         disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
     };
-    
+
     var that = this;
     // Test AppBar Instantiation
     this.testAppBarInstantiation = function () {
@@ -64,7 +64,7 @@ CorsicaTests.AppBarTests = function () {
         verifyFunction("show");
         verifyFunction("hide");
         verifyFunction("addEventListener");
-        verifyFunction("removeEventListener");        
+        verifyFunction("removeEventListener");
     }
     this.testAppBarInstantiation["Description"] = "Test AppBar instantiation + function presence";
 
@@ -95,7 +95,7 @@ CorsicaTests.AppBarTests = function () {
             new WinJS.UI.AppBar(that._element, { commands: { type: 'separator', id: 'sep' } });
         } catch (e) {
             error = e;
-        } finally {           
+        } finally {
             throw error;
         }
     }
@@ -110,7 +110,7 @@ CorsicaTests.AppBarTests = function () {
             var options = { commands: { type: 'separator', id: 'sep' } };
             options[paramName] = value;
             document.body.appendChild(div);
-            var AppBar = new WinJS.UI.AppBar(div, options);            
+            var AppBar = new WinJS.UI.AppBar(div, options);
             LiveUnit.Assert.isNotNull(AppBar);
             document.body.removeChild(div);
         }
@@ -122,7 +122,7 @@ CorsicaTests.AppBarTests = function () {
             var options = { commands: { type: 'separator', id: 'sep' } };
             options[paramName] = value;
             try {
-                new WinJS.UI.AppBar(div, options);                
+                new WinJS.UI.AppBar(div, options);
                 LiveUnit.Assert.fail("Expected creating AppBar with " + paramName + "=" + value + " to throw an exception");
             } catch (e) {
                 var exception = e;
@@ -174,7 +174,7 @@ CorsicaTests.AppBarTests = function () {
     }
     this.testAppBarParams["Description"] = "Test initializing a AppBar with good and bad initialization options";
 
-    this.testDefaultAppBarParameters = function () {        
+    this.testDefaultAppBarParameters = function () {
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBar element");
         var AppBar = new WinJS.UI.AppBar(that._element, { commands: { type: 'separator', id: 'sep' } });
         LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
@@ -184,12 +184,12 @@ CorsicaTests.AppBarTests = function () {
         LiveUnit.Assert.areEqual("bottom", AppBar.placement, "Verifying that position is 'bottom'");
         LiveUnit.Assert.isFalse(AppBar.sticky, "Verifying that sticky is false");
         LiveUnit.Assert.isFalse(AppBar.disabled, "Verifying that disabled is false");
-        LiveUnit.Assert.isTrue(AppBar.hidden, "Verifying that hidden is true");        
+        LiveUnit.Assert.isTrue(AppBar.hidden, "Verifying that hidden is true");
     }
     this.testDefaultAppBarParameters["Description"] = "Test default AppBar parameters";
 
     // Simple Function Tests
-    this.testSimpleAppBarTestsFunctions = function () {        
+    this.testSimpleAppBarTestsFunctions = function () {
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBar element");
         var AppBar = new WinJS.UI.AppBar(that._element, { commands: { type: 'separator', id: 'sep' } });
         LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
@@ -225,7 +225,7 @@ CorsicaTests.AppBarTests = function () {
 
         LiveUnit.LoggingCore.logComment("show");
         AppBar.show();
-        AppBar.hide();        
+        AppBar.hide();
     }
     this.testSimpleAppBarTestsFunctions["Description"] = "Test default overlay parameters";
 
@@ -246,12 +246,12 @@ CorsicaTests.AppBarTests = function () {
     }
     this.testAppBarDispose["Description"] = "Unit test for dispose requirements.";
 
-    this.testAppBarThrowsWhenPlacementIsSetAndAppBarVisible = function () {        
+    this.testAppBarThrowsWhenPlacementIsSetAndAppBarVisible = function () {
         var AppBar = new WinJS.UI.AppBar(that._element);
         LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
         LiveUnit.Assert.isNotNull(AppBar, "AppBar element should not be null when instantiated.");
         AppBar.show();
-        AppBar.placement = true;       
+        AppBar.placement = true;
     }
     // This is the exception that is expected
     this.testAppBarThrowsWhenPlacementIsSetAndAppBarVisible["LiveUnit.ExpectedException"] = {
@@ -293,7 +293,7 @@ CorsicaTests.AppBarTests = function () {
         /* Tabstops in visual order (separators and hidden buttons are not tabstops)
             Selection:
                 0) Button 2
-                1) Button 4               
+                1) Button 4
             Global:
                 2) Button 0
                 3) Button 1
@@ -358,7 +358,7 @@ CorsicaTests.AppBarTests = function () {
     this.testFocusMovesBeforeAnimationEnds = function (complete) {
         var htmlString = "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"global\"}'></button>" +
             "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>";
-            
+
         that._element.innerHTML = htmlString;
         var AppBar = new WinJS.UI.AppBar(that._element);
         LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
@@ -368,12 +368,12 @@ CorsicaTests.AppBarTests = function () {
         var cmds = that._element.querySelectorAll(".win-command");
         var firstCmd = cmds[0],
             secondCmd = cmds[1];
-        
+
         LiveUnit.Assert.areEqual(firstCmd, document.activeElement, "The focus should be on the first AppBarCommand");
         // Don't wait for the aftershow event to fire to perform the action
         CommonUtilities.keydown(that._element, Key.rightArrow);
         LiveUnit.Assert.areEqual(secondCmd, document.activeElement, "The focus should be on the Second AppBarCommand");
-        complete();        
+        complete();
     };
 
 
@@ -402,11 +402,11 @@ CorsicaTests.AppBarTests = function () {
             LiveUnit.Assert.areEqual(that._element, document.activeElement, "The focused element should be the AppBar itself");
             complete();
         });
-    };    
+    };
 
     this.testKeyboardingWithContentCommands = function (complete) {
-        /* 
-        Tests: 
+        /*
+        Tests:
         win-interactive: left/right/home/end are ignored when focus is on an element with the win-interactive class.
         tabindex of -1 on container and default values for command.firstElementFocus & command.LastElementFocus causes the content command to be skipped by arrows and home/end keys.
         tabindex of -1 on a container but setting the first/last ElementFocus properties allow you to navigate to them instead of the container them.
@@ -415,7 +415,7 @@ CorsicaTests.AppBarTests = function () {
         Home key to content command places you on firstElementFocus.
         End key to content command places you on lastElementFocus.
         */
-        LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBar element");          
+        LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBar element");
         var htmlString = "" +
 
          "<div style=\"font-size: 14px;\" data-win-control=\"WinJS.UI.AppBarCommand\" data-win-options=\"{id:'progress', section:'global',type:'content'}\">Download progress...<progress></progress></div>" +
@@ -436,7 +436,7 @@ CorsicaTests.AppBarTests = function () {
         "<div id='rangeContainer' tabindex='-1' data-win-control='WinJS.UI.AppBarCommand' data-win-options=\"{id:'rangeContainer', section:'global',type:'content', firstElementFocus:select('input[type=range]'), lastElementFocus:select('input[type=range]')}\">" +
         "<span>Your dog's age in human years:</span><br /><input id='range' class='win-interactive' type='range' min='0' max='10'/></div>" +
 
-        // firstElementFocus is default and lastElementFocus is set to #adele. 
+        // firstElementFocus is default and lastElementFocus is set to #adele.
         "<div data-win-control='WinJS.UI.AppBarCommand' data-win-options=\"{id:'x8', section:'global',type:'content', lastElementFocus:select('#adele')}\"><img id='adele' tabindex='0' src='images/adele.png' />" +
         "<div> <span id=\"nowplaying\">Now Playing</span><span id=\"songtitle\">Rumour Has It</span><span id=\"albumtitle\">21 (Deluxe Edition) By Adele</span></div></div>";
 
@@ -444,11 +444,11 @@ CorsicaTests.AppBarTests = function () {
         /* Left Right Home End key focusable commands in visual order
             Selection:
                 0) "buttons" Content Command: "orange"<->"yellow" (firstElementFocus is set to #orange and lastElementFocus is set to #yellow)
-                 
+
             Global:
                 1) "progress" Content Command: "progress"
                 2) "rangeContainer" Content Command: "rangeContainer" (firstElementFocus and lastElementFocus are set to the <input type="range"/> element.
-                3) "x8" Content Command: "adele" (firstElementFocus is default and lastElementFocus is set to #adele.)               
+                3) "x8" Content Command: "adele" (firstElementFocus is default and lastElementFocus is set to #adele.)
         */
         var AppBar = new WinJS.UI.AppBar(that._element);
         LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
@@ -457,7 +457,7 @@ CorsicaTests.AppBarTests = function () {
         that._element.addEventListener('aftershow', function () {
             var commandsInVisualOrder = [];
             commandsInVisualOrder.push(AppBar.getCommandById("buttons"));
-            commandsInVisualOrder.push(AppBar.getCommandById("progress")); // progress is the first command element in DOM order. 
+            commandsInVisualOrder.push(AppBar.getCommandById("progress")); // progress is the first command element in DOM order.
             commandsInVisualOrder.push(AppBar.getCommandById("rangeContainer")); // Contains #range element which has the .win-interactive class.
             commandsInVisualOrder.push(AppBar.getCommandById("x8"));
 
@@ -520,10 +520,10 @@ CorsicaTests.AppBarTests = function () {
 
             complete();
         });
-    };   
+    };
 
     this.testMultiplePressesOFHomeAndEndKeys = function (complete) {
-        /* 
+        /*
         Regression Test for WinBlue 238117: Pressing "home" or "end" key twice shouldn't move the focus to a different element
         */
         var htmlString = "" +
@@ -537,7 +537,7 @@ CorsicaTests.AppBarTests = function () {
         /* Left Right Home End key focusable commands in visual order
             Selection:
                 N/A
-                 
+
             Global:
                 1) "progressCmd" Content Command: "progress" (firstElementFocus is set to "#progress" and lastElementFocus is default)
                 2) "x8" Content Command: "adele" (firstElementFocus is default and lastElementFocus is set to #adele)
@@ -605,7 +605,7 @@ CorsicaTests.AppBarTests = function () {
             }, WinJS.Utilities.Scheduler.Priority.idle);
         });
     };
-    
+
     this.testDismissesWhenLosingFocus = function (complete) {
         var root = document.getElementById("appBarDiv");
         root.innerHTML =
@@ -617,13 +617,13 @@ CorsicaTests.AppBarTests = function () {
             "</div>";
         var outsideAppBar = root.querySelector("#outsideAppBar");
         var appBar = new WinJS.UI.AppBar(root.querySelector("#appBar"));
-        
+
         OverlayHelpers.Assert.dismissesWhenLosingFocus({
             overlay:appBar,
             focusTo: outsideAppBar
         }).then(complete);
     };
-    
+
     this.testRemainsVisibleWhenMovingFocusInternally = function (complete) {
         var root = document.getElementById("appBarDiv");
         root.innerHTML =
@@ -639,7 +639,7 @@ CorsicaTests.AppBarTests = function () {
             focusTo: appBar.getCommandById("Button1").element
         }).then(complete);
     };
-    
+
     // Creates a Menu within an AppBar, opens them both, and then gives focus to the Menu.
     // Returns a promise which completes when the AppBar and Menu controls are in this state.
     function createMenuInAppBar() {
@@ -659,7 +659,7 @@ CorsicaTests.AppBarTests = function () {
                         "{id:\"MenuB\",label:\"Four\",type:\"toggle\"}" +
                     "]}'" +
                 "</div>";
-            
+
             WinJS.UI.processAll(root).then(function () {
                 var appBar = root.querySelector("#appBar").winControl;
                 var button0 = appBar.getCommandById("Button0").element;
@@ -667,58 +667,58 @@ CorsicaTests.AppBarTests = function () {
                 var menuButton = appBar.getCommandById("MenuButton").element;
                 var menu = root.querySelector("#myMenu").winControl;
                 var menuItemB = menu.element.querySelector("#MenuB");
-                
+
                 OverlayHelpers.show(appBar).then(function () {
                     LiveUnit.Assert.isTrue(appBar.element.contains(document.activeElement), "Focus should initially be within the AppBar");
                     LiveUnit.Assert.isFalse(appBar.hidden, "AppBar should initially be visible");
-                    
+
                     return Helper.waitForFocus(menu.element, function () { menuButton.click() })
-                }).then(function() {                        
+                }).then(function() {
                     LiveUnit.Assert.isTrue(menu.element.contains(document.activeElement), "After opening the menu, focus should be within it");
                     LiveUnit.Assert.isFalse(menu.hidden, "Menu should be visible");
                     LiveUnit.Assert.isFalse(appBar.hidden, "AppBar should have remained visible when opening a menu within it");
-                    
+
                     return Helper.focus(menuItemB);
                 }).then(function() {
                     LiveUnit.Assert.areEqual(menuItemB, document.activeElement, "MenuB should have focus");
                     LiveUnit.Assert.isFalse(menu.hidden, "Menu should have remained visible");
                     LiveUnit.Assert.isFalse(appBar.hidden, "AppBar should have remained visible when moving focus within the menu");
-                    
+
                     complete();
                 });
             });
         });
     }
-    
+
     this.testMoveFocusFromMenuToAppBar = function (complete) {
         createMenuInAppBar().then(function () {
             var root = document.querySelector("#appBarDiv");
             var appBar = root.querySelector("#appBar").winControl;
             var menu = root.querySelector("#myMenu").winControl;
             var button1 = appBar.getCommandById("Button1").element;
-            
+
             Helper.focus(button1).then(function () {
                 LiveUnit.Assert.areEqual(button1, document.activeElement, "button1 should have focus");
                 LiveUnit.Assert.isTrue(menu.hidden, "Menu should have dismissed when losing focus");
                 LiveUnit.Assert.isFalse(appBar.hidden, "AppBar should have remained visible when moving focus from the menu to the AppBar");
-                
+
                 complete();
             });
         });
     };
-    
+
     this.testFocusLeavesMenuAndAppBar = function (complete) {
         createMenuInAppBar().then(function () {
             var root = document.querySelector("#appBarDiv");
             var outsideAppBar = root.querySelector("#outsideAppBar");
             var appBar = root.querySelector("#appBar").winControl;
             var menu = root.querySelector("#myMenu").winControl;
-            
+
             Helper.focus(outsideAppBar).then(function () {
                 LiveUnit.Assert.areEqual(outsideAppBar, document.activeElement, "Focus should have moved outside of the AppBar");
                 LiveUnit.Assert.isTrue(menu.hidden, "Menu should have dismissed when losing focus");
                 LiveUnit.Assert.isTrue(appBar.hidden, "AppBar should have dismissed when losing focus");
-                
+
                 complete();
             });
         });

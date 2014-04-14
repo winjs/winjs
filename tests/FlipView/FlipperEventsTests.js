@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="FlipperUtils.js"/>
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 
@@ -42,7 +42,7 @@ var eventTestsObject;
                     passId: false,              // Set to true if the event contains correct id (used for simpler validation).
                     iteration: 0,               // Incremented each time this event is fired.
                     expectedIteration: 0,       // Expected number of time this event is fired.
-                    id: null                    // Expected element ID setup by test for the visible item.                    
+                    id: null                    // Expected element ID setup by test for the visible item.
                 },
                 pageInvisible: {
                     event: false,               // Set to true if pagevisibilitychanged event is detected for page that is visible.
@@ -50,7 +50,7 @@ var eventTestsObject;
                     passId: false,              // Set to true if the event contains correct id (used for simpler validation).
                     iteration: 0,               // Incremented each time this event is fired.
                     expectedIteration: 0,       // Expected number of time this event is fired.
-                    id: null                    // Expected element ID setup by test for the visible item.                    
+                    id: null                    // Expected element ID setup by test for the visible item.
                 },
                 pageSelected: {
                     event: false,               // Set to true if pagevisibilitychanged event is detected for page that is visible.
@@ -58,7 +58,7 @@ var eventTestsObject;
                     passId: false,              // Set to true if the event contains correct id (used for simpler validation).
                     iteration: 0,               // Incremented each time this event is fired.
                     expectedIteration: 0,       // Expected number of time this event is fired.
-                    id: null                    // Expected element ID setup by test for the visible item.                    
+                    id: null                    // Expected element ID setup by test for the visible item.
                 },
                 datasourceCountChanged: {
                     eventCount: 0,              // Incremented each time by test when an event should occur.
@@ -107,7 +107,7 @@ var eventTestsObject;
                 eventTestsObject.verifyEventObject();
                 signalTestCaseCompleted();
             }));
-            flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());            
+            flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
         }
 
         //
@@ -133,12 +133,12 @@ var eventTestsObject;
                 signalTestCaseCompleted();
             }), NAVIGATION_TIMEOUT);
         }
-        
+
         this.testFlipperEventsChangeTemplate = function(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("page1", "page1");
             this.setVerifyPageSelectedInfoObject("page1");
-            this.setEventHandlers(flipperUtils.basicFlipperID());            
+            this.setEventHandlers(flipperUtils.basicFlipperID());
             var newClass = "newTemplate",
                 flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID()),
@@ -163,14 +163,14 @@ var eventTestsObject;
                     // Verify the new template
                     if (flipper) {
                         LiveUnit.LoggingCore.logComment("Flipper currentPage is: " + flipper.currentPage);
-                        LiveUnit.Assert.isTrue(flipper.currentPage === verifyObject.currentPage, 
+                        LiveUnit.Assert.isTrue(flipper.currentPage === verifyObject.currentPage,
                             "Flipper currentPage is not " + verifyObject.currentPage);
 
                         var element = flipper._pageManager._currentPage.element.firstElementChild;
                         LiveUnit.LoggingCore.logComment("currentPage.id: " + element.id);
-                        LiveUnit.Assert.isTrue(element.id === verifyObject.newID, 
+                        LiveUnit.Assert.isTrue(element.id === verifyObject.newID,
                             "Flipper pageManager is not showing data at current position.");
-                        LiveUnit.Assert.isTrue(element.className === newClass, 
+                        LiveUnit.Assert.isTrue(element.className === newClass,
                             "Flipper item doesn't have the expected class applied to it.");
                     }
                     else {
@@ -183,11 +183,11 @@ var eventTestsObject;
                 }));
                 flipper.itemTemplate = newTemplate;
             });
-            flipperDiv.addEventListener(pageSelectedEvent, verify);            
+            flipperDiv.addEventListener(pageSelectedEvent, verify);
 
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
         },
-        
+
         //
         // Test: testFlipperEventsFlipToNext
         //
@@ -198,7 +198,7 @@ var eventTestsObject;
             this.setEventHandlers(flipperUtils.basicFlipperID());
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
-                            
+
             var nextCompleted = LiveUnit.GetWrappedCallback(function() {
                 eventTestsObject.verifyEventObject();
                 signalTestCaseCompleted();
@@ -214,7 +214,7 @@ var eventTestsObject;
 
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
         }
-        
+
         //
         // Test: testFlipperEventsFlipToPrevious
         //
@@ -237,11 +237,11 @@ var eventTestsObject;
                     LiveUnit.Assert.fail("Unable to flipToPrevious.");
                 }
             });
-            flipperDiv.addEventListener(pageSelectedEvent, verify);            
+            flipperDiv.addEventListener(pageSelectedEvent, verify);
 
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), { currentPage: 2 });
         }
-        
+
         //
         // Test: testFlipperEventsFlipToPage via setting currentPage
         //
@@ -252,11 +252,11 @@ var eventTestsObject;
             this.setEventHandlers(flipperUtils.basicFlipperID());
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
-            
+
             var currentPageCompleted = LiveUnit.GetWrappedCallback(function() {
                 eventTestsObject.verifyEventObject();
                 signalTestCaseCompleted();
-            });           
+            });
 
             var verify = LiveUnit.GetWrappedCallback(function () {
                 flipper.removeEventListener(pageSelectedEvent, verify);
@@ -266,7 +266,7 @@ var eventTestsObject;
 
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
         }
-        
+
         //
         // Test: testFlipperEventsFlipToSamePage via setting currentPage
         //
@@ -276,8 +276,8 @@ var eventTestsObject;
             this.setVerifyPageSelectedInfoObject("page1");
             this.setEventHandlers(flipperUtils.basicFlipperID());
             var flipper,
-                flipperDiv = document.getElementById(flipperUtils.basicFlipperID()); 
-            
+                flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
+
             var currentPageEventFired = LiveUnit.GetWrappedCallback(function () {
                 flipper.removeEventListener(pageSelectedEvent, currentPageEventFired);
 
@@ -295,7 +295,7 @@ var eventTestsObject;
                 signalTestCaseCompleted();
             }), NAVIGATION_TIMEOUT);
         }
-        
+
         //
         // Test: testFlipperEventsFlipToNextBorder
         //
@@ -306,7 +306,7 @@ var eventTestsObject;
             this.setEventHandlers(flipperUtils.basicFlipperID());
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
-            
+
             var nextCompleted = LiveUnit.GetWrappedCallback(function() {
                 eventTestsObject.verifyEventObject();
                 signalTestCaseCompleted();
@@ -323,7 +323,7 @@ var eventTestsObject;
 
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), { currentPage: 6 });
         }
-        
+
         //
         // Test: testFlipperEventsFlipToPreviousBorder
         //
@@ -334,7 +334,7 @@ var eventTestsObject;
             this.setEventHandlers(flipperUtils.basicFlipperID());
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
-                        
+
             var previousCompleted = LiveUnit.GetWrappedCallback(function() {
                 eventTestsObject.verifyEventObject();
                 signalTestCaseCompleted();
@@ -344,11 +344,11 @@ var eventTestsObject;
                 flipper.removeEventListener(pageSelectedEvent, verify);
                 flipperUtils.ensurePrevious(flipper, previousCompleted);
             });
-            flipperDiv.addEventListener(pageSelectedEvent, verify);            
+            flipperDiv.addEventListener(pageSelectedEvent, verify);
 
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
         }
-        
+
         //
         // Test: testFlipperEventsInvalidFlipToPage via currentPage
         //
@@ -375,7 +375,7 @@ var eventTestsObject;
 
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
         }
-        
+
         //
         // Test: testFlipperEventsInsertAtStart
         //
@@ -393,7 +393,7 @@ var eventTestsObject;
             });
             flipperUtils.insertItem("InsertAtStart", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsInsertAtEnd
         //
@@ -411,7 +411,7 @@ var eventTestsObject;
             });
             flipperUtils.insertItem("InsertAtEnd", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsInsertBefore
         //
@@ -429,7 +429,7 @@ var eventTestsObject;
             });
             flipperUtils.insertItem("InsertBefore", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsInsertAfter
         //
@@ -447,7 +447,7 @@ var eventTestsObject;
             });
             flipperUtils.insertItem("InsertAfter", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsMoveToStart using array data source
         //
@@ -465,7 +465,7 @@ var eventTestsObject;
             });
             flipperUtils.moveItem("MoveToStart", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsMoveToEnd using array data source
         //
@@ -483,7 +483,7 @@ var eventTestsObject;
             });
             flipperUtils.moveItem("MoveToEnd", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsMoveBefore using array data source
         //
@@ -501,7 +501,7 @@ var eventTestsObject;
             });
             flipperUtils.moveItem("MoveBefore", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsMoveAfter using array data source
         //
@@ -519,7 +519,7 @@ var eventTestsObject;
             });
             flipperUtils.moveItem("MoveAfter", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         /* Disabling these tests as they have to be updated to account for the new event pagecompleted and change
          * 806940
         //
@@ -540,7 +540,7 @@ var eventTestsObject;
             });
             flipperUtils.removeItem("RemoveFromStart", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsRemoveFromEnd using array data source
         //
@@ -558,7 +558,7 @@ var eventTestsObject;
             });
             flipperUtils.removeItem("RemoveFromEnd", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsRemoveFromMiddle using array data source
         //
@@ -576,7 +576,7 @@ var eventTestsObject;
             });
             flipperUtils.removeItem("RemoveFromMiddle", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsChangeAtStart using array data source
         //
@@ -594,7 +594,7 @@ var eventTestsObject;
             });
             flipperUtils.changeItem("ChangeAtStart", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsChangeAtEnd using array data source
         //
@@ -612,7 +612,7 @@ var eventTestsObject;
             });
             flipperUtils.changeItem("ChangeAtEnd", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsChangeAtMiddle using array data source
         //
@@ -630,7 +630,7 @@ var eventTestsObject;
             });
             flipperUtils.changeItem("ChangeAtMiddle", onSuccess, onError, this.setEventHandlers);
         }
-        
+
         //
         // Test: testFlipperEventsChangeInvalid using array data source
         //
@@ -723,7 +723,7 @@ var eventTestsObject;
             // Verify srcElement.id
             LiveUnit.Assert.isTrue(validateObject.id !== "undefined", "verifyInfo.id is undefined");
             LiveUnit.LoggingCore.logComment("verifyInfo.id: " + validateObject.id);
-            LiveUnit.Assert.isTrue(eventInfo.target.firstElementChild.id !== "undefined", 
+            LiveUnit.Assert.isTrue(eventInfo.target.firstElementChild.id !== "undefined",
                     "eventInfo.target.id is undefined");
             LiveUnit.LoggingCore.logComment("eventInfo.target.id: " + eventInfo.target.firstElementChild.id);
 
@@ -747,7 +747,7 @@ var eventTestsObject;
             LiveUnit.LoggingCore.logComment("Event detected: " + datasourceCountChangedEvent);
             eventValidationObject.datasourceCountChanged.callbackCount++;
         };
-        
+
         this.pageselectedEventHandler = function(eventInfo) {
             LiveUnit.LoggingCore.logComment("Event detected: " + pageSelectedEvent);
             LiveUnit.LoggingCore.logComment("Page selected: " + eventInfo.target.id);
@@ -763,21 +763,21 @@ var eventTestsObject;
             if (eventValidationObject.pageInvisible.id) {
                 var expectedIteration = eventValidationObject.pageInvisible.expectedIteration;
                 LiveUnit.LoggingCore.logComment("'" + pageVisibilityEvent + "' event expected to fire for an invisible page...");
-                LiveUnit.Assert.isTrue(eventValidationObject.pageInvisible.event, "Did not detect the '" + 
+                LiveUnit.Assert.isTrue(eventValidationObject.pageInvisible.event, "Did not detect the '" +
                     pageVisibilityEvent + "' event for the invisible page.");
-                LiveUnit.Assert.isTrue(eventValidationObject.pageInvisible.passId, "Event verification for '" + 
+                LiveUnit.Assert.isTrue(eventValidationObject.pageInvisible.passId, "Event verification for '" +
                     pageVisibilityEvent + "' failed for invisible page.");
                 if (!simpleIdCheck) {
-                    LiveUnit.Assert.isTrue(eventValidationObject.pageInvisible.pass, "Event verification for '" + 
+                    LiveUnit.Assert.isTrue(eventValidationObject.pageInvisible.pass, "Event verification for '" +
                         pageVisibilityEvent + "' failed for invisible page.");
                 }
-                LiveUnit.Assert.isTrue(eventValidationObject.pageInvisible.iteration === expectedIteration, 
-                    pageVisibilityEvent + " event was detected " + eventValidationObject.pageInvisible.iteration + 
+                LiveUnit.Assert.isTrue(eventValidationObject.pageInvisible.iteration === expectedIteration,
+                    pageVisibilityEvent + " event was detected " + eventValidationObject.pageInvisible.iteration +
                     " times for invisible page. It should have fired exactly once.");
             }
             else {
                 LiveUnit.LoggingCore.logComment("'" + pageVisibilityEvent + "' event NOT expected to fire for invisible page...");
-                LiveUnit.Assert.isFalse(eventValidationObject.pageInvisible.event, "'" + pageVisibilityEvent + 
+                LiveUnit.Assert.isFalse(eventValidationObject.pageInvisible.event, "'" + pageVisibilityEvent +
                     "' event was detected and shouldn't have been.");
             }
 
@@ -785,43 +785,43 @@ var eventTestsObject;
             if (eventValidationObject.pageVisible.id) {
                 var expectedIteration = eventValidationObject.pageVisible.expectedIteration;
                 LiveUnit.LoggingCore.logComment("'" + pageVisibilityEvent + "' event expected to fire for a visible page...");
-                LiveUnit.Assert.isTrue(eventValidationObject.pageVisible.event, "Did not detect the '" + 
+                LiveUnit.Assert.isTrue(eventValidationObject.pageVisible.event, "Did not detect the '" +
                     pageVisibilityEvent + "' event for the visible page.");
-                LiveUnit.Assert.isTrue(eventValidationObject.pageVisible.passId, "Event verification for '" + 
+                LiveUnit.Assert.isTrue(eventValidationObject.pageVisible.passId, "Event verification for '" +
                     pageVisibilityEvent + "' failed for visible page.");
                 if (!simpleIdCheck) {
-                    LiveUnit.Assert.isTrue(eventValidationObject.pageVisible.pass, "Event verification for '" + 
+                    LiveUnit.Assert.isTrue(eventValidationObject.pageVisible.pass, "Event verification for '" +
                         pageVisibilityEvent + "' failed for visible page.");
                 }
-                LiveUnit.Assert.isTrue(eventValidationObject.pageVisible.iteration === expectedIteration, 
-                    pageVisibilityEvent + " event was detected " + eventValidationObject.pageVisible.iteration + 
+                LiveUnit.Assert.isTrue(eventValidationObject.pageVisible.iteration === expectedIteration,
+                    pageVisibilityEvent + " event was detected " + eventValidationObject.pageVisible.iteration +
                     " times for visible page. It should have fired exactly once.");
             }
             else {
                 LiveUnit.LoggingCore.logComment("'" + pageVisibilityEvent + "' event NOT expected to fire for visible page...");
-                LiveUnit.Assert.isFalse(eventValidationObject.pageVisible.event, "'" + pageVisibilityEvent + 
+                LiveUnit.Assert.isFalse(eventValidationObject.pageVisible.event, "'" + pageVisibilityEvent +
                     "' event was detected and shouldn't have been.");
             }
             LiveUnit.LoggingCore.logComment("Done verifying '" + pageVisibilityEvent + "' event.");
-            
+
             // Validate datasourcecountchanged event
             LiveUnit.LoggingCore.logComment("Verifying '" + datasourceCountChangedEvent + "' event...");
             if (eventValidationObject.datasourceCountChanged.eventCount > 0) {
                 LiveUnit.LoggingCore.logComment("datasourceCountChanged event should have occurred.  Validating that it did.");
-                LiveUnit.LoggingCore.logComment("Times event should have been fired: " + 
+                LiveUnit.LoggingCore.logComment("Times event should have been fired: " +
                     eventValidationObject.datasourceCountChanged.eventCount);
-                LiveUnit.LoggingCore.logComment("Times event actually fired: " + 
+                LiveUnit.LoggingCore.logComment("Times event actually fired: " +
                     eventValidationObject.datasourceCountChanged.callbackCount);
-                
+
                 var expected = eventValidationObject.datasourceCountChanged.eventCount,
                     actual = eventValidationObject.datasourceCountChanged.callbackCount;
 
-                LiveUnit.Assert.isTrue(actual === expected, datasourceCountChangedEvent + " event was not fired " + 
+                LiveUnit.Assert.isTrue(actual === expected, datasourceCountChangedEvent + " event was not fired " +
                     " expected number of times: " + expected);
             }
             else if (eventValidationObject.datasourceCountChanged.callbackCount > 0) {
                 LiveUnit.LoggingCore.logComment("'" + datasourceCountChangedEvent + "' event NOT expected to fire.");
-                LiveUnit.Assert.fail("'" + datasourceCountChangedEvent + "' event was detected " + 
+                LiveUnit.Assert.fail("'" + datasourceCountChangedEvent + "' event was detected " +
                     eventValidationObject.datasourceCountChanged.callbackCount + " times and shouldn't have been.");
             }
             else {
@@ -834,21 +834,21 @@ var eventTestsObject;
             var expectedIteration = eventValidationObject.pageSelected.expectedIteration;
             if (eventValidationObject.pageSelected.id) {
                 LiveUnit.LoggingCore.logComment("'" + pageSelectedEvent + "' event expected to fire...");
-                LiveUnit.Assert.isTrue(eventValidationObject.pageSelected.event, "Did not detect the '" + 
+                LiveUnit.Assert.isTrue(eventValidationObject.pageSelected.event, "Did not detect the '" +
                     pageSelectedEvent + "' event.");
-                LiveUnit.Assert.isTrue(eventValidationObject.pageSelected.passId, "Event verification for '" + 
+                LiveUnit.Assert.isTrue(eventValidationObject.pageSelected.passId, "Event verification for '" +
                     pageSelectedEvent + "' failed.");
                 if (!simpleIdCheck) {
-                    LiveUnit.Assert.isTrue(eventValidationObject.pageSelected.pass, "Event verification for '" + 
+                    LiveUnit.Assert.isTrue(eventValidationObject.pageSelected.pass, "Event verification for '" +
                         pageSelectedEvent + "' failed.");
                 }
                 var actualIteration = eventValidationObject.pageSelected.iteration;
-                LiveUnit.Assert.isTrue(actualIteration === expectedIteration, "'" + pageSelectedEvent + 
+                LiveUnit.Assert.isTrue(actualIteration === expectedIteration, "'" + pageSelectedEvent +
                     "' event was detected " + actualIteration + " times. Expected times to fire: " + expectedIteration);
             }
             else {
                 LiveUnit.LoggingCore.logComment("'" + pageSelectedEvent + "' event NOT expected to fire...");
-                LiveUnit.Assert.isFalse(eventValidationObject.pageSelected.event, "'" + pageSelectedEvent + 
+                LiveUnit.Assert.isFalse(eventValidationObject.pageSelected.event, "'" + pageSelectedEvent +
                     "' event was detected and shouldn't have been.");
             }
 

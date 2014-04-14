@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="FlipperUtils.js"/>
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 
@@ -39,37 +39,37 @@ var ParamTests = null;
         this.testFlipperValidCurrentPageParam = function() {
             flipperUtils.instantiate(flipperUtils.basicFlipperID(), { currentPage: 5 });
         }
-        
+
         //
         // Test: testFlipperNullCurrentPageParam
         //
         this.testFlipperNullCurrentPageParam = function() {
             var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), { currentPage: null });
-            LiveUnit.Assert.isTrue(flipper.currentPage === 0, "Flipper didn't default to 0 for currentPage " + 
+            LiveUnit.Assert.isTrue(flipper.currentPage === 0, "Flipper didn't default to 0 for currentPage " +
                 " when instatiated with null value.");
         }
-        
+
         //
         // Test: testFlipperOutOfBoundsCurrentPageParam
         //
         this.testFlipperOutOfBoundsCurrentPageParam = function() {
             flipperUtils.instantiate(flipperUtils.basicFlipperID(), { currentPage: 100 });
         }
-        
+
         //
         // Test: testFlipperVerticalAxisParam
         //
         this.testFlipperVerticalAxisParam = function() {
             flipperUtils.instantiate(flipperUtils.basicFlipperID(), { orientation: "vertical" });
         }
-        
+
         //
         // Test: testFlipperHorizontalAxisParam
         //
         this.testFlipperHorizontalAxisParam = function() {
             flipperUtils.instantiate(flipperUtils.basicFlipperID(), { orientation: "horizontal" });
         }
-        
+
         //
         // Test: testParentHorizontalChildHorizontal
         //
@@ -77,10 +77,10 @@ var ParamTests = null;
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate Parent Horizontal Flipper + Child Horizontal Flipper.");
             var childPageInsert = 0;
             LiveUnit.LoggingCore.logComment("Child Flipper at page: " + childPageInsert);
-            var parentFlipper = flipperUtils.create2DFlipper(childPageInsert, { orientation: "horizontal" }, 
+            var parentFlipper = flipperUtils.create2DFlipper(childPageInsert, { orientation: "horizontal" },
                 { orientation: "horizontal" });
         }
-        
+
         //
         // Test: testParentVerticalChildHorizontal
         //
@@ -88,10 +88,10 @@ var ParamTests = null;
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate Parent Vertical Flipper + Child Horizontal Flipper.");
             var childPageInsert = 1;
             LiveUnit.LoggingCore.logComment("Child Flipper at page: " + childPageInsert);
-            var parentFlipper = flipperUtils.create2DFlipper(childPageInsert, { orientation: "vertical" }, 
+            var parentFlipper = flipperUtils.create2DFlipper(childPageInsert, { orientation: "vertical" },
                 { orientation: "horizontal" });
         }
-        
+
         //
         // Test: testParentHorizontalChildVertical
         //
@@ -99,10 +99,10 @@ var ParamTests = null;
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate Parent Horizontal Flipper + Child Vertical Flipper.");
             var childPageInsert = 2;
             LiveUnit.LoggingCore.logComment("Child Flipper at page: " + childPageInsert);
-            var parentFlipper = flipperUtils.create2DFlipper(childPageInsert, { orientation: "horizontal" }, 
+            var parentFlipper = flipperUtils.create2DFlipper(childPageInsert, { orientation: "horizontal" },
                 { orientation: "vertical" });
         }
-        
+
         //
         // Test: testParentVerticalChildVertical
         //
@@ -110,10 +110,10 @@ var ParamTests = null;
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate Parent Vertical Flipper + Child Vertical Flipper.");
             var childPageInsert = 3;
             LiveUnit.LoggingCore.logComment("Child Flipper at page: " + childPageInsert);
-            var parentFlipper = flipperUtils.create2DFlipper(childPageInsert, { orientation: "vertical" }, 
+            var parentFlipper = flipperUtils.create2DFlipper(childPageInsert, { orientation: "vertical" },
                 { orientation: "vertical" });
         }
-        
+
         //
         // Test: testFlipperCurrentPageParam
         //
@@ -125,7 +125,7 @@ var ParamTests = null;
             LiveUnit.LoggingCore.logComment("flipper.currentPage = " + flipper.currentPage);
             LiveUnit.Assert.areEqual(startPage, flipper.currentPage, "flipper.currentPage = " + flipper.currentPage);
         }
-        
+
         //
         // Test: testFlipperItemSpacingParam
         //
@@ -134,7 +134,7 @@ var ParamTests = null;
             var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), { itemSpacing: 5 });
             LiveUnit.Assert.isNotNull(flipper, "Flipper should not have been instantiated.");
         }
-        
+
         //---------------------------------------------------------------------
         // Test Helper Functions and Globals
         //---------------------------------------------------------------------

@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="../TestLib/NavBar/NavBarUtils.js"/>
 
 var WinJSTests = WinJSTests || {};
@@ -104,7 +104,7 @@ WinJSTests.NavBarLayoutTests = function () {
 
                 // Verify label dimensions
 
-                // WinBlue: 163558 - The bug will probably be won't fixed        
+                // WinBlue: 163558 - The bug will probably be won't fixed
                 // Should probably update the test to verify the current values
                 //var labelEl = firstNavCmdEl.querySelector(".win-navbarcommand-label");
                 //LiveUnit.Assert.areEqual(NavBarCommandSize.labelWidthNoSplitButton, labelEl.offsetWidth,
@@ -160,7 +160,7 @@ WinJSTests.NavBarLayoutTests = function () {
                     "Incorrect NavBarCommand icon height");
 
                 // Verify label dimensions
-                // WinBlue: 163558 - The bug will probably be won't fixed        
+                // WinBlue: 163558 - The bug will probably be won't fixed
                 // Should probably update the test to verify the current values
                 //var labelEl = firstNavCmdEl.querySelector(".win-navbarcommand-label");
                 //LiveUnit.Assert.areEqual(NavBarCommandSize.labelWidthWithSplitButton, labelEl.offsetWidth,
@@ -250,7 +250,7 @@ WinJSTests.NavBarLayoutTests = function () {
                         LiveUnit.Assert.areEqual(expectedOffsetTop, navbarCmds[i].offsetTop, "Incorrect offsetTop");
                     }
                 } else {
-                    // RTL                
+                    // RTL
                     var rtlConstant = -(3 * pageWidth);
                     for (var i = navbarCmds.length - 1; i >= 0; i--) {
                         // Zero based
@@ -347,7 +347,7 @@ WinJSTests.NavBarLayoutTests = function () {
                             LiveUnit.Assert.areEqual(expectedOffsetTop, navbarCmds[i].offsetTop, "Incorrect offsetTop");
                         }
                     } else {
-                        // RTL                
+                        // RTL
                         var rtlConstant = -(3 * pageWidth);
                         for (var i = navbarCmds.length - 1; i >= 0; i--) {
                             // Zero based
@@ -424,7 +424,7 @@ WinJSTests.NavBarLayoutTests = function () {
                         LiveUnit.Assert.areEqual(expectedOffsetTop, navbarCmds[i].offsetTop, "Incorrect offsetTop");
                     }
                 } else {
-                    // RTL                
+                    // RTL
                     var rtlConstant = -(3 * pageWidth);
                     for (var i = navbarCmds.length - 1; i >= 0; i--) {
                         // Zero based
@@ -447,7 +447,7 @@ WinJSTests.NavBarLayoutTests = function () {
         that["testNavBarContainerLayoutSingleRow_LTR"] = generateTest(false);
         that["testNavBarContainerLayoutSingleRow_RTL"] = generateTest(true);
     })();
-    
+
     (function () {
         function generateTest(rtl) {
             return function (complete) {
@@ -466,7 +466,7 @@ WinJSTests.NavBarLayoutTests = function () {
                 that._element.style.width = "700px";
                 viewportWidth = 700;
 
-                // Wait for the resize event to fire 
+                // Wait for the resize event to fire
                 WinJS.Promise.timeout(50).then(function () {
                     var rows = 1,
                         cols = 2,
@@ -506,7 +506,7 @@ WinJSTests.NavBarLayoutTests = function () {
                             LiveUnit.Assert.areEqual(expectedOffsetTop, navbarCmds[i].offsetTop, "Incorrect offsetTop");
                         }
                     } else {
-                        // RTL                
+                        // RTL
                         var rtlConstant = -(3 * pageWidth);
                         for (var i = navbarCmds.length - 1; i >= 0; i--) {
                             // Zero based
@@ -634,7 +634,7 @@ WinJSTests.NavBarLayoutTests = function () {
                 " Actual: " + value);
         }
 
-        // Verify the NavBarContainer aria properties 
+        // Verify the NavBarContainer aria properties
         var viewportEl = navbarContainerEl.querySelector(".win-navbarcontainer-viewport");
         checkAttribute(viewportEl, "role", "group");
         checkAttribute(viewportEl, "aria-label", WinJS.Resources._getWinJSString("ui/navBarContainerViewportAriaLabel").value);

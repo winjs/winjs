@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="FlipperUtils.js"/>
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 
@@ -54,14 +54,14 @@ var PropertyTests = null;
                 signalTestCaseCompleted();
             });
 
-            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), { 
-                itemDataSource: commonUtils.simpleArrayDataSource(numOfItems), 
-                itemTemplate: commonUtils.simpleArrayRenderer 
+            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), {
+                itemDataSource: commonUtils.simpleArrayDataSource(numOfItems),
+                itemTemplate: commonUtils.simpleArrayRenderer
             });
             flipper.count().then(countCompleted, countError).
                             then(null, countError);
         }
-        
+
 
         //
         // Test: testFlipperItemSpacingProperty
@@ -79,10 +79,10 @@ var PropertyTests = null;
             flipper.itemSpacing = setAmount;
             var newAmount = flipper.itemSpacing;
             LiveUnit.LoggingCore.logComment("flipper.itemSpacing after set: " + newAmount);
-            LiveUnit.Assert.isTrue(newAmount == setAmount, "flipper.itemSpacing was set to " + 
+            LiveUnit.Assert.isTrue(newAmount == setAmount, "flipper.itemSpacing was set to " +
                 setAmount + " but is " + newAmount);
         }
-        
+
         //
         // Test: testFlipperDataSourceProperty
         //
@@ -110,10 +110,10 @@ var PropertyTests = null;
             var firstPage = 0;
             var secondSource = "SecondSource";
             var secondPage = 9;
-            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), { 
-                currentPage: firstPage, 
-                itemDataSource: SimpleDataSource(firstSource), 
-                itemTemplate: SimpleRenderer 
+            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), {
+                currentPage: firstPage,
+                itemDataSource: SimpleDataSource(firstSource),
+                itemTemplate: SimpleRenderer
             });
             var currentPageCompleted = LiveUnit.GetWrappedCallback(function() {
                 flipper.itemDataSource = SimpleDataSource(secondSource);
@@ -131,7 +131,7 @@ var PropertyTests = null;
 
             VerifyCurrentPageTextFromFlipper(flipper, firstSource + firstPage);
             flipperUtils.ensureCurrentPage(flipper, secondPage, currentPageCompleted)
-           
+
             function VerifyCurrentPageTextFromFlipper(flipper, text) {
                 LiveUnit.LoggingCore.logComment("Verify that " + text + " matches the flipper's currentPage textContent.");
                 var element = flipper._pageManager._currentPage.element.firstElementChild;
@@ -143,7 +143,7 @@ var PropertyTests = null;
                 LiveUnit.Assert.isTrue(text === document.getElementById(elementId).textContent, "Text wasn't found in the DOM.");
             }
         }
-        
+
         //
         // Test: testFlipperCurrentPageProperty
         //
@@ -159,7 +159,7 @@ var PropertyTests = null;
             flipper.currentPage = setAmount;
             var newAmount = flipper.currentPage;
             LiveUnit.LoggingCore.logComment("flipper.currentPage after set: " + newAmount);
-            LiveUnit.Assert.isTrue(newAmount == setAmount, "flipper.currentPage was set to " + setAmount + 
+            LiveUnit.Assert.isTrue(newAmount == setAmount, "flipper.currentPage was set to " + setAmount +
                 " but is " + newAmount);
         }
     }

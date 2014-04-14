@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 
 var WinJSTests = WinJSTests || {};
 
@@ -57,7 +57,7 @@ WinJSTests.NavBarCommandTests = function () {
             // Verify icon
             var iconEl = buttonEl.querySelector(".win-navbarcommand-icon");
             LiveUnit.Assert.isTrue(iconEl, "win-navbarcommand-icon class not present");
-            // Verify label 
+            // Verify label
             var labelEl = buttonEl.querySelector(".win-navbarcommand-label");
             LiveUnit.Assert.isTrue(labelEl, "win-navbarcommand-label class not present");
             // Verify label and icon elements are not same
@@ -99,7 +99,7 @@ WinJSTests.NavBarCommandTests = function () {
         document.body.appendChild(element4);
         navbarCommand = new WinJS.UI.NavBarCommand(element4);
         LiveUnit.Assert.areEqual("", navbarCommand.element.title);
-        
+
 
         // Dynamic updates:
         navbarCommand.tooltip = "abc";
