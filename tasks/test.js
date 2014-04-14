@@ -6,10 +6,17 @@
         var config = require("../config.js");
 
         grunt.registerTask("test", function () {
+            var parseArgs = require("minimist");
+            var args = parseArgs(process.argv);
+
             if (config.inRazzle) {
                 grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
             } else {
-            grunt.task.run(["default", "connect"]);
+                if (args.saucelabs) {
+                    grunt.task.run(["default", "connect:saucelabs", "saucelabs-qunit"]);
+                } else {
+                    grunt.task.run(["default", "connect:localhost"]);
+                }
             }
         });
 
@@ -35,7 +42,7 @@
         function extractDependencies(fileContents) {
             var deps = [];
 
-            var lines = fileContents.split("\r\n");
+            var lines = fileContents.split("\n");
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i];
                 var processedOne = false;

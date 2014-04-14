@@ -2,14 +2,20 @@
 var config = require("../../config.js");
 
 module.exports = {
-    server: { 
+    localhost: {
         options: {
             port: 9666,
             keepalive: true,
             open: {
-                target : 'http://localhost:9666/bin/tests/tests.html'
+                target: 'http://localhost:9666/bin/tests/tests.html'
             },
             hostname: 'localhost'
+        }
+    },
+    saucelabs: {
+        options: {
+            base: "",
+            port: 9999
         }
     }
 }
