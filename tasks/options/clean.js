@@ -24,6 +24,9 @@
             config.phoneOutput + "js/ui.js",
             config.phoneOutput + "js/" + config.localeFolder + "/ui.strings.js",
         ],
+        tests: [
+            config.testsOutput
+        ],
         qunit: [
             config.testsOutput + "TestLib/liveToQ/*.*"
         ]

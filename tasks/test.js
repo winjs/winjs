@@ -6,32 +6,16 @@
         var config = require("../config.js");
 
         grunt.registerTask("test", function () {
-            grunt.task.run("build-qunit");
             if (config.inRazzle) {
                 grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
             } else {
-            grunt.task.run(["default", "connect"]);
+                grunt.task.run(["default", "connect"]);
             }
         });
 
         // Generate QUnit test pages
         grunt.registerTask("build-qunit", function () {
             var fs = require("fs");
-
-            function clean(path) {
-                var files = [];
-                if (fs.existsSync(path)) {
-                    files = fs.readdirSync(path);
-                    files.forEach(function (file, index) {
-                        var curPath = path + "/" + file;
-                        if (fs.lstatSync(curPath).isDirectory()) {
-                            clean(curPath);
-                        } else {
-                            fs.unlinkSync(curPath);
-                        }
-                    });
-                }
-            }
 
             function extractDependencies(fileContents) {
                 var deps = [];
@@ -125,7 +109,6 @@
 </body>                                                                                                                     \r\n\
 </html>'.replace(/@@TARGETFRAMEWORK/g, config.targetFramework);
 
-            clean("./bin");
             if (!fs.existsSync("./bin")) {
                 fs.mkdirSync("./bin");
             }
