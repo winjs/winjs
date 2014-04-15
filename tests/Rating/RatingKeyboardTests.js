@@ -21,8 +21,8 @@
 RatingKeyboardTests = function () {
     var ratingUtils = new RatingUtils();
 
-    this.setUp = function () {
-        ratingUtils.setUp();
+    this.setUp = function (complete) {
+        ratingUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -3177,7 +3177,7 @@ RatingKeyboardTests = function () {
             1: {
                 action: function (newAriaValueNow) {
                     return function () { document.getElementById("rating").setAttribute("aria-valuenow", newAriaValueNow); };
-                } (newRating),
+                }(newRating),
                 expectedEvents: { previewchange: 0, change: (rating.userRating !== newRating) ? 1 : 0, cancel: 0 },
                 tentativeRatingExpected: newRating,
                 userRatingExpected: newRating

@@ -58,14 +58,14 @@ ToggleUtils.prototype = (function () {
         defaultDisabled: false,
 
         //-----------------------------------------------------------------------------------
-        setUp: function () {
+        setUp: function (complete) {
             /// <summary>
             ///  Test setup to run prior to every test case.
             /// </summary>
             LiveUnit.LoggingCore.logComment("In setup");
             commonUtils.addTag("div", "toggle");
             if (typeof (WebUnit) === 'undefined') {
-                commonUtils.addCss("ui-dark.css");
+                commonUtils.addCss("ui-dark.css").then(complete);
             }
         },
 

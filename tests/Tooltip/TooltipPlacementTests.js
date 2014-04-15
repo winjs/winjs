@@ -23,8 +23,8 @@ TooltipPlacementTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -70,7 +70,7 @@ TooltipPlacementTests = function () {
 
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
                     testComplete = true;
-                break;
+                    break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);

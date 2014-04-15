@@ -20,8 +20,8 @@
 TooltipBasicTests = function () {
     var tooltipUtils = new TooltipUtils();
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {

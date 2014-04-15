@@ -104,7 +104,7 @@ RatingUtils.prototype = (function () {
         cancelListener: null,
 
         //-----------------------------------------------------------------------------------
-        setUp: function () {
+        setUp: function (complete) {
             /// <summary>
             ///  Test setup to run prior to every test case.
             /// </summary>
@@ -114,10 +114,10 @@ RatingUtils.prototype = (function () {
             // Randomly included one of the WWA stylesheets.
             if (typeof (WebUnit) === 'undefined') {
                 if (Math.floor(Math.random() * 2)) {
-                    commonUtils.addCss("ui-light.css");
+                    commonUtils.addCss("ui-light.css").then(complete);
                     this.currentTheme = "light";
                 } else {
-                    commonUtils.addCss("ui-dark.css");
+                    commonUtils.addCss("ui-dark.css").then(complete);
                     this.currentTheme = "dark";
                 }
             }

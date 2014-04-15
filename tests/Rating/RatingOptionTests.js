@@ -22,8 +22,8 @@
 var OptionTests = function () {
     var ratingUtils = new RatingUtils();
 
-    this.setUp = function () {
-        ratingUtils.setUp();
+    this.setUp = function (complete) {
+        ratingUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -756,7 +756,7 @@ var OptionTests = function () {
                 "It was Okay",
                 "I liked it.",
                 "I loved it!"
-            ];
+        ];
 
         ratingUtils.instantiate("rating");
 
@@ -776,7 +776,7 @@ var OptionTests = function () {
                 "It was Okay",
                 "I liked it.",
                 "I loved it!"
-            ];
+        ];
 
         var rating = ratingUtils.instantiate("rating");
 
@@ -857,7 +857,7 @@ var OptionTests = function () {
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true),
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true),
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true)
-            ];
+        ];
 
         ratingUtils.instantiate("rating");
 
@@ -908,7 +908,7 @@ var OptionTests = function () {
     //-----------------------------------------------------------------------------------
 
     this.testRating_Options_tooltipStrings_NullStrings_DefaultMax = function () {
-        var tooltipStrings = [ null, null, null, null, null, null ];
+        var tooltipStrings = [null, null, null, null, null, null];
 
         ratingUtils.instantiate("rating");
 

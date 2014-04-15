@@ -18,20 +18,20 @@
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="ToggleUtils.js"/>
 
-ToggleInstantiationTests = function() {
+ToggleInstantiationTests = function () {
     var toggleUtils = new ToggleUtils();
 
-    this.setUp = function() {
-        toggleUtils.setUp();
+    this.setUp = function (complete) {
+        toggleUtils.setUp(complete);
     };
 
-    this.tearDown = function() {
+    this.tearDown = function () {
         toggleUtils.cleanUp();
     };
 
     //-----------------------------------------------------------------------------------
 
-    this.testToggle_Instantiation = function() {
+    this.testToggle_Instantiation = function () {
         var toggle = toggleUtils.instantiate("toggle");
 
         toggleUtils.verifyFunction(toggle, "addEventListener");
@@ -45,7 +45,7 @@ ToggleInstantiationTests = function() {
     this.testToggle_Instantiation["Category"] = "Instantiation";
 
     //-----------------------------------------------------------------------------------
-    this.testToggle_Instantiation_WithOptions = function() {
+    this.testToggle_Instantiation_WithOptions = function () {
         toggleUtils.instantiate("toggle", { labelOn: "Yes", labelOff: "No", title: "Do you like waffles?", checked: true, disabled: true });
     };
     this.testToggle_Instantiation_WithOptions["Owner"] = "michabol";
@@ -54,7 +54,7 @@ ToggleInstantiationTests = function() {
     this.testToggle_Instantiation_WithOptions["Category"] = "Instantiation";
 
     //-----------------------------------------------------------------------------------
-    this.testToggle_Instantiation_Multiple = function() {
+    this.testToggle_Instantiation_Multiple = function () {
         var toggle = toggleUtils.instantiate("toggle", { labelOn: "Yes", labelOff: "No", title: "Do you like waffles?", checked: true, disabled: true });
 
         // Test multiple toggle instantiation on same toggle element
@@ -75,7 +75,7 @@ ToggleInstantiationTests = function() {
     this.testToggle_Instantiation_Multiple["Category"] = "Instantiation";
 
     //-----------------------------------------------------------------------------------
-    this.testToggle_Instantiation_Span = function() {
+    this.testToggle_Instantiation_Span = function () {
         toggleUtils.addTag("span", "toggleSpan");
         var toggle = toggleUtils.instantiate("toggleSpan");
         toggleUtils.removeElementById("toggleSpan");
@@ -86,7 +86,7 @@ ToggleInstantiationTests = function() {
     this.testToggle_Instantiation_Span["Category"] = "Instantiation";
 
     //-----------------------------------------------------------------------------------
-    this.testToggle_dir_LTR = function() {
+    this.testToggle_dir_LTR = function () {
         document.getElementById("toggle").setAttribute("dir", "ltr");
         var toggle = toggleUtils.instantiate("toggle");
     };
@@ -96,7 +96,7 @@ ToggleInstantiationTests = function() {
     this.testToggle_dir_LTR["Category"] = "Instantiation";
 
     //-----------------------------------------------------------------------------------
-    this.testToggle_dir_RTL = function() {
+    this.testToggle_dir_RTL = function () {
         document.getElementById("toggle").setAttribute("dir", "rtl");
         var toggle = toggleUtils.instantiate("toggle");
     };
@@ -106,7 +106,7 @@ ToggleInstantiationTests = function() {
     this.testToggle_dir_RTL["Category"] = "Instantiation";
 
     //-----------------------------------------------------------------------------------
-    this.testToggle_dir_RTL_Disabled = function() {
+    this.testToggle_dir_RTL_Disabled = function () {
         document.getElementById("toggle").setAttribute("dir", "rtl");
         var toggle = toggleUtils.instantiate("toggle", { checked: false, disabled: true });
 
@@ -119,13 +119,13 @@ ToggleInstantiationTests = function() {
     this.testToggle_dir_RTL_Disabled["Category"] = "Instantiation";
 
     //-----------------------------------------------------------------------------------
-    this.testToggle_dir_Swap = function() {
+    this.testToggle_dir_Swap = function () {
         var toggleElem = document.getElementById("toggle");
 
         var toggle = toggleUtils.instantiate("toggle", { checked: false });
         // swap dir 10 times
         for (var i = 0; i < 10; ++i) {
-            LiveUnit.LoggingCore.logComment("Swapping direction to "+((toggleElem.dir === "rtl") ? "ltr" : "rtl")+".");
+            LiveUnit.LoggingCore.logComment("Swapping direction to " + ((toggleElem.dir === "rtl") ? "ltr" : "rtl") + ".");
             toggleElem.dir = (toggleElem.dir === "rtl") ? "ltr" : "rtl";
             toggleUtils.verifyLayout("toggle");
 

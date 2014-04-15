@@ -21,8 +21,8 @@
 RatingMouseTests = function () {
     var ratingUtils = new RatingUtils();
 
-    this.setUp = function () {
-        ratingUtils.setUp();
+    this.setUp = function (complete) {
+        ratingUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -689,7 +689,7 @@ RatingMouseTests = function () {
                     newRating = Math.round(i / 4) + 1;
                     starToClick = rating.element.childNodes[newRating - 1];
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.mouseOver(null, star); }; } (starToClick),
+                        action: function (star) { return function () { ratingUtils.mouseOver(null, star); }; }(starToClick),
                         expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         styleExpected: "tentative",
@@ -698,13 +698,13 @@ RatingMouseTests = function () {
                     break;
                 case 2:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.mouseDown(star); }; } (starToClick),
+                        action: function (star) { return function () { ratingUtils.mouseDown(star); }; }(starToClick),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
                 case 3:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.mouseUp(star); }; } (starToClick),
+                        action: function (star) { return function () { ratingUtils.mouseUp(star); }; }(starToClick),
                         expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         userRatingExpected: newRating
@@ -712,7 +712,7 @@ RatingMouseTests = function () {
                     break;
                 case 4:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.mouseOver(star, null); }; } (starToClick),
+                        action: function (star) { return function () { ratingUtils.mouseOver(star, null); }; }(starToClick),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
@@ -749,7 +749,7 @@ RatingMouseTests = function () {
                     starToClick = rating.element.childNodes[newRating - 1];
 
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.mouseOver(null, star); }; } (starToClick),
+                        action: function (star) { return function () { ratingUtils.mouseOver(null, star); }; }(starToClick),
                         expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         styleExpected: "tentative",
@@ -758,13 +758,13 @@ RatingMouseTests = function () {
                     break;
                 case 2:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.mouseDown(star); }; } (starToClick),
+                        action: function (star) { return function () { ratingUtils.mouseDown(star); }; }(starToClick),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
                 case 3:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.mouseUp(star); }; } (starToClick),
+                        action: function (star) { return function () { ratingUtils.mouseUp(star); }; }(starToClick),
                         expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         userRatingExpected: newRating
@@ -772,7 +772,7 @@ RatingMouseTests = function () {
                     break;
                 case 4:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.mouseOver(star, null); }; } (starToClick),
+                        action: function (star) { return function () { ratingUtils.mouseOver(star, null); }; }(starToClick),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
@@ -1216,7 +1216,7 @@ RatingMouseTests = function () {
                         event.initPointerEvent("pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 0,
                 styleExpected: "tentative",
@@ -1232,7 +1232,7 @@ RatingMouseTests = function () {
                         event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                 tentativeRatingExpected: 0,
                 styleExpected: "user",
@@ -1308,7 +1308,7 @@ RatingMouseTests = function () {
                             window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // Release off left side of control, this should set the value to 1 and throw a change
@@ -1321,7 +1321,7 @@ RatingMouseTests = function () {
                         event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                 tentativeRatingExpected: 1,
                 styleExpected: "user",
@@ -1365,7 +1365,7 @@ RatingMouseTests = function () {
             },
             // Throw an pointercancel.  This should throw a 'cancel' and leave the value set to '3'
             3: {
-                action: function (star) { return function () { ratingUtils.touchCancel(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchCancel(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 1 },
                 tentativeRatingExpected: null,
                 styleExpected: "user",
@@ -1418,7 +1418,7 @@ RatingMouseTests = function () {
             },
             // Throw an pointercancel.  This should throw a 'cancel' and leave the value set to '4'
             4: {
-                action: function (star) { return function () { ratingUtils.touchCancel(star); }; } (rating.element.childNodes[2]),
+                action: function (star) { return function () { ratingUtils.touchCancel(star); }; }(rating.element.childNodes[2]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 1 },
                 tentativeRatingExpected: null,
                 styleExpected: "user",

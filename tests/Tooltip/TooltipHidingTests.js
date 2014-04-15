@@ -24,8 +24,8 @@ TooltipHidingTests = function () {
     var commonUtils = new CommonUtils();
     var Key = WinJS.Utilities.Key;
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {
