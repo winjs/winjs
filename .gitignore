@@ -12,3 +12,5 @@ $RECYCLE.BIN/
 .DS_Store
 projects/vs2013/bld/
 *.sublime-workspace
+sauce_connect.log
+npm-debug.log

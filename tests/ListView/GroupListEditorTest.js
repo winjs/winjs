@@ -3,7 +3,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/Itemsmanager/TestDataSource.js" />
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
 /// <deploy src="../TestData/" />
 
 var WinJSTests = WinJSTests || {};

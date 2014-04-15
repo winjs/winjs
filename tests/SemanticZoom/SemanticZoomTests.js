@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
-/// <reference path="../TestLib/Itemsmanager/TestDataSource.js"/>
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 /// <reference path="../TestLib/util.js" />
 /// <deploy src="../TestData/ListView.css" />
 

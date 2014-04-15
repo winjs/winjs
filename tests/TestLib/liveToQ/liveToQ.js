@@ -6,14 +6,15 @@
     var testFailed = false;
     var testError = "";
     var verboseLog = "";
+    var log = [];
 
     QUnit.config.autostart = false;
-    QUnit.config.testTimeout = 20000;
+    QUnit.config.testTimeout = 30000;
     QUnit.breakOnAssertFail = false;
 
     var qunitDiv;
     var qunitTestFixtureDiv;
-    window.addEventListener("DOMContentLoaded", function () {
+    window.addEventListener("load", function () {
         qunitDiv = document.querySelector("#qunit");
         qunitTestFixtureDiv = document.querySelector("#qunit-fixture");
 
@@ -42,6 +43,10 @@
                 QUnit.start();
             };
             toolBar.appendChild(btn);
+
+            if (document.location.search.substr(1, 10) === "autostart") {
+                btn.click();
+            }
         }
         addOptions();
     });
@@ -96,8 +101,14 @@
         qunitDiv.style.zIndex = 0;
     }
 
-    QUnit.testStart(function testStart() {
+    QUnit.testStart(function testStart(testDetails) {
         qunitDiv.style.zIndex = -1;
+        QUnit.log = function (details) {
+            if (!details.result) {
+                details.name = testDetails.name;
+                log.push(details);
+            }
+        }
     });
 
     QUnit.testDone(function testDone(args) {
@@ -121,6 +132,21 @@
                 document.body.removeChild(child);
             }
         }
+    });
+
+    QUnit.done(function (test_results) {
+        var tests = log.map(function (details) {
+            return {
+                name: details.name,
+                result: details.result,
+                expected: details.expected,
+                actual: details.actual,
+                source: details.source
+            }
+        });
+        test_results.tests = tests;
+
+        window.global_test_results = test_results;
     });
 
     window.LiveUnit = {
