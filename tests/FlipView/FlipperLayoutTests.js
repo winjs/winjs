@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="FlipperUtils.js"/>
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 
@@ -95,9 +95,9 @@ var LayoutTests = null;
                     var parentWidth = parentNode.offsetWidth;
                     LiveUnit.LoggingCore.logComment("Parent Height: " + parentHeight);
                     LiveUnit.LoggingCore.logComment("Parent Width: " + parentWidth);
-                    LiveUnit.Assert.isTrue(parentHeight === flipperHeight, "Parent height of large item should " + 
+                    LiveUnit.Assert.isTrue(parentHeight === flipperHeight, "Parent height of large item should " +
                         " be the same as flipper height but is not.");
-                    LiveUnit.Assert.isTrue(parentWidth === flipperWidth, "Parent width of large item should be " + 
+                    LiveUnit.Assert.isTrue(parentWidth === flipperWidth, "Parent width of large item should be " +
                         " the same as flipper width but is not.");
                 }
 
@@ -109,7 +109,7 @@ var LayoutTests = null;
                 }
             };
         }
-        
+
         //
         // Test: testFlipperSmallContent
         // Ensure that the small content is centered in the flipper region.
@@ -142,8 +142,8 @@ var LayoutTests = null;
                 if (currentIndex < basicIds.length) {
                     flipperUtils.ensureCurrentPage(flipper, currentIndex, callback);
                 }
-            });            
-            
+            });
+
             var verifyLayout = function (index) {
                 var pageID = basicIds[index];
                 var pageDiv = document.getElementById(pageID);
@@ -184,7 +184,7 @@ var LayoutTests = null;
                     LiveUnit.LoggingCore.logComment("Parent Width: " + parentWidth);
                     LiveUnit.Assert.isTrue(parentHeight === flipperHeight, "Parent height of small item should " +
                         " be the same as flipper height but is not.");
-                    LiveUnit.Assert.isTrue(parentWidth === flipperWidth, "Parent width of small item should be " + 
+                    LiveUnit.Assert.isTrue(parentWidth === flipperWidth, "Parent width of small item should be " +
                         " the same as flipper width but is not.");
                 }
 

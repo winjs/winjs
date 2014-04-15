@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
+/// <reference path="../TestLib/ListView/Helpers.js"/>
 /// <deploy src="../TestData/" />
 
 var CorsicaTests = CorsicaTests || {};
@@ -12,8 +13,8 @@ CorsicaTests.Utilities = function () {
         holder.appendChild(document.createElement("div"));
         holder.appendChild(document.createElement("div"));
         var c = 0;
-        WinJS.Utilities.QueryCollection.prototype.qq = function() {
-            this.forEach(function(item) {
+        WinJS.Utilities.QueryCollection.prototype.qq = function () {
+            this.forEach(function (item) {
                 c++;
             });
         };
@@ -27,8 +28,8 @@ CorsicaTests.Utilities = function () {
         holder.appendChild(document.createElement("div"));
         holder.appendChild(document.createElement("div"));
         var c = 0;
-        WinJS.Utilities.QueryCollection.prototype.qq = function() {
-            this.forEach(function(item) {
+        WinJS.Utilities.QueryCollection.prototype.qq = function () {
+            this.forEach(function (item) {
                 c++;
             });
             return c;
@@ -176,7 +177,7 @@ CorsicaTests.Utilities = function () {
         LiveUnit.Assert.areEqual(holder.className, "a");
         WinJS.Utilities.toggleClass(holder, "a");
         LiveUnit.Assert.areEqual(holder.className, "");
-        
+
         var holder = document.createElementNS('http://www.w3.org/2000/svg', "g");
         WinJS.Utilities.addClass(holder, "a");
         LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(holder, "a"));
@@ -311,7 +312,7 @@ CorsicaTests.Utilities = function () {
     this.testQueryStyle = function () {
         var holder = document.createElement("div");
         holder.innerHTML = "<div class='a'></div><div class='b'></div><div class='b'></div><div class='c'></div>";
-            
+
         var result = WinJS.Utilities.query(".b", holder);
         LiveUnit.Assert.areEqual(result.length, 2);
 
@@ -354,71 +355,71 @@ CorsicaTests.Utilities = function () {
             result++;
         });
         LiveUnit.Assert.areEqual(result, 2, "counting the number of c classes");
-        
+
     }
 
     // A small do-nothing control used to test manipulation of controls by the QueryCollection
-    
+
     var DummyControl = WinJS.Class.define(function DummyControl(element, options) {
         this.element = element;
         element.winControl = this;
         WinJS.UI.setOptions(this, options);
     });
-    
+
     this.testCanCreateSingleControl = function () {
         var holder = document.createElement("div");
         holder.innerHTML = "<div class='target'></div>";
-        
-        WinJS.Utilities.query(".target", holder).control(DummyControl, {a: 1});
-        
+
+        WinJS.Utilities.query(".target", holder).control(DummyControl, { a: 1 });
+
         var target = holder.querySelector(".target");
         LiveUnit.Assert.isTrue(target.winControl);
         LiveUnit.Assert.areEqual(1, target.winControl.a);
         LiveUnit.Assert.isTrue(target.winControl instanceof DummyControl);
     }
-    
+
     this.testCanCreateMultipleControls = function () {
         var holder = document.createElement("div");
         holder.innerHTML = "<div class='target'></div><span>Some Text Here</span><div class='target'></div>";
-        
-        WinJS.Utilities.query(".target", holder).control(DummyControl, {b: 2});
-        
+
+        WinJS.Utilities.query(".target", holder).control(DummyControl, { b: 2 });
+
         var targets = holder.querySelectorAll(".target");
-        
+
         var controls = [];
-        for(var i = 0, len = targets.length; i < len; ++i) {
+        for (var i = 0, len = targets.length; i < len; ++i) {
             controls.push(targets[i].winControl);
         }
-        
+
         LiveUnit.Assert.areEqual(2, controls.length);
         controls.forEach(function (control) {
             LiveUnit.Assert.areEqual(2, control.b);
         });
     }
-    
+
     this.testControlFunctionOverwritesExistingControl = function () {
         var holder = document.createElement("div");
         holder.innerHTML = "<div class='target'></div>";
-    
+
         var target = holder.querySelector(".target");
-        var original = new DummyControl(target, {a: 1});
-        
-        WinJS.Utilities.query(".target", holder).control(DummyControl, {c: "new control"});
-        
+        var original = new DummyControl(target, { a: 1 });
+
+        WinJS.Utilities.query(".target", holder).control(DummyControl, { c: "new control" });
+
         var currentControl = target.winControl;
         LiveUnit.Assert.isFalse(currentControl.a);
         LiveUnit.Assert.areEqual("new control", currentControl.c);
     }
-    
+
     this.testCanUpdateControl = function () {
         var holder = document.createElement("div");
         holder.innerHTML = "<div class='target'></div>";
-    
-        var target = holder.querySelector(".target");
-        var control = new DummyControl(target, {a: 1});
 
-        WinJS.Utilities.query(".target", holder).control({b: 3});
-        
+        var target = holder.querySelector(".target");
+        var control = new DummyControl(target, { a: 1 });
+
+        WinJS.Utilities.query(".target", holder).control({ b: 3 });
+
         LiveUnit.Assert.areEqual(1, control.a);
         LiveUnit.Assert.areEqual(3, control.b);
     }
@@ -426,36 +427,36 @@ CorsicaTests.Utilities = function () {
     this.testCanChainAfterControlMethod = function () {
         var holder = document.createElement("div");
         holder.innerHTML = "<div class='target'></div><span>Some Text Here</span><div class='target'></div>";
-        
-        WinJS.Utilities.query(".target", holder).control(DummyControl, {b: 2})
+
+        WinJS.Utilities.query(".target", holder).control(DummyControl, { b: 2 })
             .addClass("chained");
-        
+
         var chained = holder.querySelectorAll(".chained");
-        
+
         LiveUnit.Assert.areEqual(2, chained.length);
-        
-        for(var i = 0, len = chained.length; i < len; ++i) {
+
+        for (var i = 0, len = chained.length; i < len; ++i) {
             var element = chained[i];
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(element, "target"));
             LiveUnit.Assert.isTrue(element.winControl);
             LiveUnit.Assert.areEqual(2, element.winControl.b);
         }
     }
-    
+
     this.testCanUpdateDeclarativeControl = function () {
         window.QueryCollectionTest = { DummyControl: DummyControl };
-        
+
         var holder = document.createElement("div");
         holder.innerHTML = "<div class='target' data-win-control='QueryCollectionTest.DummyControl' data-win-options='{a: 5}'></div>";
-        
-        WinJS.Utilities.query(".target", holder).control({c: "new value"});
-        
+
+        WinJS.Utilities.query(".target", holder).control({ c: "new value" });
+
         var control = holder.querySelector(".target").winControl;
         LiveUnit.Assert.isTrue(control);
         LiveUnit.Assert.areEqual(5, control.a);
         LiveUnit.Assert.areEqual("new value", control.c);
     }
-    
+
     this.testInclude = function () {
         var holder = document.createElement("div");
         holder.innerHTML = "<div class='a'></div><div class='a'></div><div class='b'></div><div class='b'></div>";
@@ -534,7 +535,7 @@ CorsicaTests.Utilities = function () {
         LiveUnit.Assert.areEqual(10, offset);
     }
 
-    this.testMetrics = function () {
+    this.testMetrics = function (complete) {
 
         function verify(selector, dimensions) {
             var utils = WinJS.Utilities;
@@ -552,29 +553,32 @@ CorsicaTests.Utilities = function () {
         s.setAttribute("href", "$(TESTDATA)/metrics.css");
         document.head.appendChild(s);
 
-        var newNode = document.createElement("div");
-        newNode.id = "MetricsTests";
-        newNode.innerHTML =
-            "<div id='defaults'></div>" +
-            "<div id='one'></div>" +
-            "<div id='two'></div>" +
-            "<div id='three'></div>" +
-            "<div id='four'></div>" +
-            "<div id='five'></div>";
-        document.body.appendChild(newNode);
+        waitForCSSFile("metrics.css").then(function () {
+            var newNode = document.createElement("div");
+            newNode.id = "MetricsTests";
+            newNode.innerHTML =
+                "<div id='defaults'></div>" +
+                "<div id='one'></div>" +
+                "<div id='two'></div>" +
+                "<div id='three'></div>" +
+                "<div id='four'></div>" +
+                "<div id='five'></div>";
+            document.body.appendChild(newNode);
 
-        verify("defaults", [10, 10, 10, 20, 20, 20]);
-        verify("one", [10, 10, 10, 20, 20, 20]);
-        verify("two", [10, 16, 16, 20, 24, 24]);
-        verify("three", [10, 22, 22, 20, 28, 28]);
-        verify("four", [10, 22, 52, 20, 28, 48]);
-        verify("five", [10, 298, 394, 20, 308, 404]);
+            verify("defaults", [10, 10, 10, 20, 20, 20]);
+            verify("one", [10, 10, 10, 20, 20, 20]);
+            verify("two", [10, 16, 16, 20, 24, 24]);
+            verify("three", [10, 22, 22, 20, 28, 28]);
+            verify("four", [10, 22, 52, 20, 28, 48]);
+            verify("five", [10, 298, 394, 20, 308, 404]);
 
-        document.body.removeChild(newNode);
+            document.body.removeChild(newNode);
 
-        if (s) {
-            document.head.removeChild(s);
-        }
+            if (s) {
+                document.head.removeChild(s);
+            }
+            complete();
+        });
     };
 
     this.testPositon = function () {

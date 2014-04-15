@@ -66,7 +66,7 @@ if (typeof (WinJS) !== "undefined") {
 
     function waitForCSSFile(cssFile) {
         for (var i = 0, len = document.styleSheets.length; i < len; i++) {
-            if (endsWith(document.styleSheets[i].href, cssFile)) {
+            if (endsWith(document.styleSheets[i].href, cssFile) && document.styleSheets[i].rules.length > 0) {
                 return WinJS.Promise.wrap();
             }
         }

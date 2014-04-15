@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="FlipperUtils.js"/>
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 
@@ -50,9 +50,9 @@ var NavigationTests = null;
                     LiveUnit.Assert.fail("Unable to flip to next.");
                 }
             });
-            flipper.addEventListener(pageSelectedEvent, verify);            
+            flipper.addEventListener(pageSelectedEvent, verify);
         }
-        
+
         //
         // Test: testFlipperPrevious
         //
@@ -60,7 +60,7 @@ var NavigationTests = null;
             var startPage = 5;
             var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), { currentPage: startPage });
             var currentPage = flipper.currentPage;
-            LiveUnit.Assert.areEqual(currentPage, startPage, "Failed to instantiate flipper with " + 
+            LiveUnit.Assert.areEqual(currentPage, startPage, "Failed to instantiate flipper with " +
                 " a start page of " + startPage);
             LiveUnit.LoggingCore.logComment("Current Page Before Previous: " + currentPage);
 
@@ -70,9 +70,9 @@ var NavigationTests = null;
                     LiveUnit.Assert.fail("Unable to flip to previous.");
                 }
             });
-            flipper.addEventListener(pageSelectedEvent, verify);            
+            flipper.addEventListener(pageSelectedEvent, verify);
         }
-        
+
         //
         // Test: testFlipperCurrentPage via setting currentPage
         //
@@ -85,39 +85,39 @@ var NavigationTests = null;
 
             var verify = LiveUnit.GetWrappedCallback(function () {
                 flipper.removeEventListener(pageSelectedEvent, verify);
-                flipperUtils.ensureCurrentPage(flipper, cachedPage, 
+                flipperUtils.ensureCurrentPage(flipper, cachedPage,
                     LiveUnit.GetWrappedCallback(TestCurrentPageInitial));
             });
-            flipper.addEventListener(pageSelectedEvent, verify);            
+            flipper.addEventListener(pageSelectedEvent, verify);
 
             function TestCurrentPageInitial() {
                 currentPage = flipper.currentPage;
                 LiveUnit.LoggingCore.logComment("Current page after flip: " + currentPage);
                 LiveUnit.Assert.areEqual(cachedPage, flipper.currentPage, "Page after flip should be: " + cachedPage);
                 LiveUnit.LoggingCore.logComment("Attempt to flip to adjacent page...");
-                flipperUtils.ensureCurrentPage(flipper, cachedPage + 1, 
+                flipperUtils.ensureCurrentPage(flipper, cachedPage + 1,
                     LiveUnit.GetWrappedCallback(TestCurrentPageAdjacent));
 
                 function TestCurrentPageAdjacent() {
                     currentPage = flipper.currentPage;
                     var notCachedPage = currentPage - (cachedPage + 1);
                     LiveUnit.LoggingCore.logComment("Current page after flip: " + currentPage);
-                    LiveUnit.Assert.areEqual(cachedPage + 1, currentPage, "Page after flip should be: " + 
+                    LiveUnit.Assert.areEqual(cachedPage + 1, currentPage, "Page after flip should be: " +
                         (cachedPage + 1));
                     LiveUnit.LoggingCore.logComment("Attempt to flip to page outside of cache: " + notCachedPage);
-                    flipperUtils.ensureCurrentPage(flipper, notCachedPage, 
+                    flipperUtils.ensureCurrentPage(flipper, notCachedPage,
                         LiveUnit.GetWrappedCallback(TestCurrentPageNotCached));
 
                     function TestCurrentPageNotCached() {
                         LiveUnit.LoggingCore.logComment("Current page after flip: " + flipper.currentPage);
-                        LiveUnit.Assert.areEqual(notCachedPage, flipper.currentPage, "Page after flip should be: " + 
+                        LiveUnit.Assert.areEqual(notCachedPage, flipper.currentPage, "Page after flip should be: " +
                             notCachedPage);
                         signalTestCaseCompleted();
                     }
                 }
             }
         }
-        
+
         //
         // Test: testFlipperJumpToSamePage via setting currentPage
         //
@@ -132,7 +132,7 @@ var NavigationTests = null;
                 LiveUnit.LoggingCore.logComment("Tried to jump to page " + page);
                 LiveUnit.LoggingCore.logComment("Event for pagevisibility was fired which should not have occured.");
             });
-            
+
             var verify = LiveUnit.GetWrappedCallback(function () {
                 flipper.removeEventListener(pageSelectedEvent, verify);
                 LiveUnit.LoggingCore.logComment("Attempting to flip to same page (same as current): " + page);
@@ -140,20 +140,20 @@ var NavigationTests = null;
                 flipper.currentPage = page;
             });
             flipper.addEventListener(pageSelectedEvent, verify);
-            
+
             setTimeout(LiveUnit.GetWrappedCallback(function() {
                 flipper.removeEventListener("pagevisibilitychanged", pageVisibilityEventTriggered, false);
                 if (eventTriggered) {
                     LiveUnit.Assert.fail("Event for pagevisibility was fired which should not have occured.");
                 }
                 else {
-                    LiveUnit.LoggingCore.logComment("It appears that currentPage did not trigger the " + 
+                    LiveUnit.LoggingCore.logComment("It appears that currentPage did not trigger the " +
                         " pagevisibility event as expected.");
                     signalTestCaseCompleted();
                 }
-            }), NAVIGATION_TIMEOUT);            
+            }), NAVIGATION_TIMEOUT);
         }
-        
+
         //
         // Test: testFlipperNextBorder
         //
@@ -199,9 +199,9 @@ var NavigationTests = null;
                     LiveUnit.LoggingCore.logComment("SUCCESS: Unable to flip to Next page.");
                     signalTestCaseCompleted();
                 }
-            }), NAVIGATION_TIMEOUT);            
+            }), NAVIGATION_TIMEOUT);
         }
-        
+
         //
         // Test: testFlipperPreviousBorder
         //
@@ -221,7 +221,7 @@ var NavigationTests = null;
                 flipper.removeEventListener(pageSelectedEvent, verify);
                 LiveUnit.LoggingCore.logComment("Current Page Before flipping to Previous page: " + curPage);
                 flipper.addEventListener("pagevisibilitychanged", pageVisibilityEventTriggered, false);
-                returnValue = flipper.previous();                
+                returnValue = flipper.previous();
             });
             flipper.addEventListener(pageSelectedEvent, verify);
 
@@ -243,9 +243,9 @@ var NavigationTests = null;
                     LiveUnit.LoggingCore.logComment("SUCCESS: Unable to flip to Previous page.");
                     signalTestCaseCompleted();
                 }
-            }), NAVIGATION_TIMEOUT);            
+            }), NAVIGATION_TIMEOUT);
         }
-        
+
         //
         // Test: testFlipperJumpToInvalidPage via currentPage
         //
@@ -266,7 +266,7 @@ var NavigationTests = null;
                 flipper.addEventListener("pagevisibilitychanged", pageVisibilityEventTriggered, false);
                 LiveUnit.LoggingCore.logComment("Attempt to set currentPage: " + page);
                 LiveUnit.LoggingCore.logComment("Current Page Before Flip: " + flipper.currentPage);
-                flipper.currentPage = page;            
+                flipper.currentPage = page;
             });
             flipper.addEventListener(pageSelectedEvent, verify);
 
@@ -280,13 +280,13 @@ var NavigationTests = null;
                     signalTestCaseCompleted();
                 }
                 else {
-                    LiveUnit.LoggingCore.logComment("It appears that setting the currentPage to " + page + 
+                    LiveUnit.LoggingCore.logComment("It appears that setting the currentPage to " + page +
                         " did not trigger the pagevisibility event as expected");
                     LiveUnit.LoggingCore.logComment("Current Page After Attempt To Flip: " + flipper.currentPage);
                 }
-            }), NAVIGATION_TIMEOUT);            
+            }), NAVIGATION_TIMEOUT);
         }
-        
+
         //
         // Test: testFlipperJumpToRandom
         //
@@ -296,7 +296,7 @@ var NavigationTests = null;
             var jumpCount = 0;
             var oldPage = flipper.currentPage;
             var pageToJumpTo = pseudorandom(flipperSize);
-            
+
             function pseudorandom(upto) {
                 return Math.floor(Math.random() * upto);
             }
@@ -322,14 +322,14 @@ var NavigationTests = null;
                 LiveUnit.Assert.areEqual(flipper.currentPage, 0, "Flipper started at current page");
                 LiveUnit.LoggingCore.logComment("Jumping from " + oldPage + " to " + pageToJumpTo);
 
-                while(pageToJumpTo === oldPage) { 
+                while(pageToJumpTo === oldPage) {
                     pageToJumpTo = pseudorandom(flipperSize);
                 }
-                flipperUtils.ensureCurrentPage(flipper, pageToJumpTo, nextJumpCallBack);                
+                flipperUtils.ensureCurrentPage(flipper, pageToJumpTo, nextJumpCallBack);
             });
-            flipper.addEventListener(pageSelectedEvent, verify);            
+            flipper.addEventListener(pageSelectedEvent, verify);
         }
-        
+
         //
         // Test: testFlipperItemVisible
         //
@@ -340,7 +340,7 @@ var NavigationTests = null;
             var checkVisibleItems = LiveUnit.GetWrappedCallback(function(flipDir) {
                 var currentPage = flipper.currentPage;
                 LiveUnit.LoggingCore.logComment("Current Page After Flip " + flipDir + ": " + currentPage);
-                LiveUnit.LoggingCore.logComment("Check all pages, ensure " + pages[currentPage] + 
+                LiveUnit.LoggingCore.logComment("Check all pages, ensure " + pages[currentPage] +
                     " is the only page that is visible via DOM.");
                 for (var pageIndex in pages) {
                     LiveUnit.LoggingCore.logComment("Testing " + pages[pageIndex] + " vs. " + pages[currentPage]);
@@ -403,9 +403,9 @@ var NavigationTests = null;
                 }
                 else {
                     LiveUnit.Assert.fail("Flip to next page failed.");
-                }                
+                }
             });
-            flipper.addEventListener(pageSelectedEvent, verify);           
+            flipper.addEventListener(pageSelectedEvent, verify);
         }
     }
     // Register the object as a test class by passing in the name

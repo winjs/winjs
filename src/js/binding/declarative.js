@@ -556,8 +556,10 @@
         dest = requireSupportedForProcessing(dest);
         var value = getValue(source, sourceProperties);
         if (Array.isArray(value)) {
-            dest.classList.add.apply(dest.classList, value);
-        } else {
+            value.forEach(function(className) {
+                dest.classList.add(className);
+            });
+        } else if (value) {
             dest.classList.add(value);
         }
     }

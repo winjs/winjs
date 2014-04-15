@@ -2268,9 +2268,9 @@ CorsicaTests.BindingDeclTests = function () {
             function (e) {
                 LiveUnit.Assert.areEqual("WinJS.Utilities.requireSupportedForProcessing", e.name);
             }
-        )
-            .then(null, errorHandler)
-            .then(complete);
+        ).
+        then(null, errorHandler).
+        then(complete);
     }
 
     this.testUsingNotSupportedForProcessingBindingLHS_StrictProcessing = function (complete) {
@@ -2283,9 +2283,9 @@ CorsicaTests.BindingDeclTests = function () {
             function (e) {
                 LiveUnit.Assert.areEqual("WinJS.Utilities.requireSupportedForProcessing", e.name);
             }
-        )
-            .then(null, errorHandler)
-            .then(complete);
+        ).
+        then(null, errorHandler).
+        then(complete);
     }
 
     this.testUsingNotSupportedForProcessingBindingInitializer_StrictProcessing = function (complete) {
@@ -2315,8 +2315,8 @@ CorsicaTests.BindingDeclTests = function () {
         bindingDone.
            then(post).then(function () {
                LiveUnit.Assert.areEqual("Sally", mydiv.textContent);
-           })
-           .then(null, errorHandler).
+           }).
+           then(null, errorHandler).
            then(cleanup).
            then(complete, errorHandler);
     };
@@ -2335,8 +2335,8 @@ CorsicaTests.BindingDeclTests = function () {
         bindingDone.
            then(post).then(function () {
                LiveUnit.Assert.areEqual("Third", mydiv.innerHTML);
-           })
-           .then(null, errorHandler).
+           }).
+           then(null, errorHandler).
            then(cleanup).
            then(complete, errorHandler);
     };
@@ -2355,11 +2355,32 @@ CorsicaTests.BindingDeclTests = function () {
         bindingDone.
            then(post).then(function () {
                LiveUnit.Assert.areEqual("originalClass Sally", mydiv.className);
-           })
-           .then(null, errorHandler).
+           }).
+           then(null, errorHandler).
            then(cleanup).
            then(complete, errorHandler);
         
+    };
+
+    this.testAddClassOneTimeWithEmptyBinding = function (complete) {
+
+      var mydiv = document.createElement("div");
+      var cleanup = parent(mydiv);
+      mydiv.classList.add("originalClass");
+      mydiv.setAttribute("id", "mydiv");
+      mydiv.setAttribute("data-win-bind", "textContent:name WinJS.Binding.addClassOneTime");
+
+      var obj = WinJS.Binding.as({ name: "" });
+      var bindingDone = WinJS.Binding.processAll(mydiv, obj);
+
+      bindingDone.
+         then(post).then(function () {
+           LiveUnit.Assert.areEqual("originalClass", mydiv.className);
+         }).
+         then(null, errorHandler).
+         then(cleanup).
+         then(complete, errorHandler);
+
     };
 
     this.testAddClassOneTimeWithArray = function (complete) {
@@ -2376,8 +2397,8 @@ CorsicaTests.BindingDeclTests = function () {
       bindingDone.
          then(post).then(function () {
            LiveUnit.Assert.areEqual("originalClass Sally Nelly", mydiv.className);
-         })
-         .then(null, errorHandler).
+         }).
+         then(null, errorHandler).
          then(cleanup).
          then(complete, errorHandler);
 

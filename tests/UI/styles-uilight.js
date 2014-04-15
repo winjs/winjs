@@ -1,29 +1,38 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="ms-appx://$(TargetFramework)/css/ui-light.css" />
 /// <reference path="../TestLib/util.js" />
 /// <reference path="stylesCollection.js"/>
 /// <reference path="stylesTestHelper.js"/>
+/// <reference path="../TestLib/ListView/Helpers.js"/>
 
 var CorsicaTests = CorsicaTests || {};
 
-CorsicaTests.StylesUIDark = function () {
+CorsicaTests.StylesUILight = function () {
+    var css = document.createElement("link");
+    css.href = "../../$(TargetFramework)/css/ui-light.css";
+    css.type = "text/css";
+    css.rel = "stylesheet";
+
+    var isDarkTest = false;		
+    var testHelper = new StylesTestHelper(isDarkTest);
     
-    var isDarkTest = true;
-    var testHelper = new StylesTestHelper(isDarkTest);		
-    
-    this.setUp = function () {
-        Helper.disableStyleSheets("/ui-light.css");
+    this.setUp = function (complete) {
+        Helper.disableStyleSheets("ui-dark.css");
         var newNode = document.createElement("div");
         newNode.id = "host";
         newNode.style.width = "500px";
         document.body.appendChild(newNode);
         this._element = newNode;
+
+        document.head.appendChild(css);
+        waitForCSSFile("ui-light.css").then(complete);
     };
-    
+
     this.tearDown = function () {
-        Helper.enableStyleSheets("/ui-light.css");
+        document.head.removeChild(css);
+        Helper.enableStyleSheets("ui-dark.css");
         if (this._element) {
             WinJS.Utilities.disposeSubTree(this._element);
             document.body.removeChild(this._element);
@@ -61,4 +70,4 @@ CorsicaTests.StylesUIDark = function () {
    
 };   
    
-LiveUnit.registerTestClass("CorsicaTests.StylesUIDark");
+LiveUnit.registerTestClass("CorsicaTests.StylesUILight");
