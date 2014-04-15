@@ -31,58 +31,10 @@
     config.baseJSFiles = [
         "src/js/build/Copyright.js",
         "src/js/build/writeProfilerMark.js",
-        "src/js/build/startbase.js",
-        "src/js/base/references.js",
-        "src/js/base/base.js",
-        "src/js/base/baseutils.js",
-        "src/js/base/log.js",
-        "src/js/base/events.js",
-        "src/js/base/resources.js",
-        "src/js/base/promise.js",
-        "src/js/base/scheduler.js",
-        "src/js/base/errors.js",
-        "src/js/base/xhr.js",
-        "src/js/base/safehtml.js",
-        "src/js/base/getwinjsstring.js",
-        "src/js/base/dispose.js",
-
-        "src/js/ui/control.js",
-        "src/js/ui/declarativecontrols.js",
-        "src/js/ui/elementlistutilities.js",
-        "src/js/ui/elementutilities.js",
-        "src/js/ui/fragmentcontrol.js",
-        "src/js/ui/fragmentloader.js",
-        "src/js/ui/optionslexer.js",
-        "src/js/ui/optionsparser.js",
-        "src/js/ui/tabmanager.js",
-        "src/js/ui/transitionanimation.js",
-        "src/js/ui/utilities.js",
-
-        "src/js/wwa-app/application.js",
-        "src/js/wwa-app/navigation2.js",
-        "src/js/wwa-app/state.js",
-
-        "src/js/binding/bindingparser.js",
-        "src/js/binding/data.js",
-        "src/js/binding/datatemplate.js",
-        "src/js/binding/declarative.js",
-        "src/js/binding/domweakreftable.js",
-        "src/js/binding/list.js",
-        "src/js/binding/datatemplatecompiler.js",
-
-        "src/js/res/res.js",
-
-        "src/js/build/endbase.js"
-    ];
-
-    config.baseJSFilesPhone = [
-        "src/js/build/Copyright.js",
-        "src/js/build/writeProfilerMark.js",
         "src/js/build/startBase.js",
         "src/js/base/references.js",
         "src/js/base/base.js",
         "src/js/base/baseUtils.js",
-        "src/js/base/baseUtils-phone.js",
         "src/js/base/log.js",
         "src/js/base/events.js",
         "src/js/base/resources.js",
@@ -91,7 +43,7 @@
         "src/js/base/errors.js",
         "src/js/base/xhr.js",
         "src/js/base/safeHTML.js",
-        "src/js/base/getwinjsstring.js",
+        "src/js/base/getWinJSString.js",
         "src/js/base/dispose.js",
 
         "src/js/ui/control.js",
@@ -120,7 +72,55 @@
 
         "src/js/res/res.js",
 
-        "src/js/build/endbase.js"
+        "src/js/build/endBase.js"
+    ];
+
+    config.baseJSFilesPhone = [
+        "src/js/build/Copyright.js",
+        "src/js/build/writeProfilerMark.js",
+        "src/js/build/startBase.js",
+        "src/js/base/references.js",
+        "src/js/base/base.js",
+        "src/js/base/baseUtils.js",
+        "src/js/base/baseUtils-phone.js",
+        "src/js/base/log.js",
+        "src/js/base/events.js",
+        "src/js/base/resources.js",
+        "src/js/base/promise.js",
+        "src/js/base/scheduler.js",
+        "src/js/base/errors.js",
+        "src/js/base/xhr.js",
+        "src/js/base/safeHTML.js",
+        "src/js/base/getWinJSString.js",
+        "src/js/base/dispose.js",
+
+        "src/js/ui/control.js",
+        "src/js/ui/declarativeControls.js",
+        "src/js/ui/elementListUtilities.js",
+        "src/js/ui/elementUtilities.js",
+        "src/js/ui/fragmentControl.js",
+        "src/js/ui/fragmentLoader.js",
+        "src/js/ui/optionsLexer.js",
+        "src/js/ui/optionsParser.js",
+        "src/js/ui/tabManager.js",
+        "src/js/ui/transitionAnimation.js",
+        "src/js/ui/utilities.js",
+
+        "src/js/wwa-app/application.js",
+        "src/js/wwa-app/navigation2.js",
+        "src/js/wwa-app/state.js",
+
+        "src/js/binding/bindingParser.js",
+        "src/js/binding/data.js",
+        "src/js/binding/dataTemplate.js",
+        "src/js/binding/declarative.js",
+        "src/js/binding/DOMWeakRefTable.js",
+        "src/js/binding/list.js",
+        "src/js/binding/dataTemplateCompiler.js",
+
+        "src/js/res/res.js",
+
+        "src/js/build/endBase.js"
     ];
 
     config.baseStringsFiles = [
