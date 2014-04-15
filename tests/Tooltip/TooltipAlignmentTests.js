@@ -14,8 +14,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="tooltiputils.js"/>
-/// <reference path="tooltip.css"/>
+/// <reference path="TooltipUtils.js"/>
+/// <reference path="Tooltip.css"/>
 
 TooltipAlignmentTests = function () {
     var tooltipUtils = new TooltipUtils();

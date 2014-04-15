@@ -14,8 +14,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="tooltiputils.js"/>
-/// <reference path="tooltip.css"/>
+/// <reference path="TooltipUtils.js"/>
+/// <reference path="Tooltip.css"/>
 
 TooltipDisplayingTests = function () {
     var tooltipUtils = new TooltipUtils();
@@ -422,7 +422,7 @@ TooltipDisplayingTests = function () {
                     // them to verify the styles in .win-tooltip class are getting through.
                     LiveUnit.Assert.areNotEqual(tooltipClass.indexOf("tooltip-test-css"), -1);
 
-                    // See tooltip.css for the values
+                    // See Tooltip.css for the values
                     var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
 
                     // fontFamily is in the default stylesheet, but not specifically the tooltip section.
