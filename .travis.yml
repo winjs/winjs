@@ -6,6 +6,7 @@ before_script:
 - git submodule update --init --recursive
 script:
 - grunt
+- grunt test --saucelabs
 env:
   global:
   - secure: f84hCuL/s5uMpUfKfBN8lzSgrulm89R53YwLyRlx5OoOs9uVOqj380HITV6Hho8T3n/22INDSMHWz5SQay0n5cVHuCMsu44jr6NWFza/KICppZzbrC11U0bPrGr6NX0c7Q20s6IlmD1BQhpj9VGyiPy4zeC2chr/qbF5i0Ric3I=
