@@ -9,7 +9,7 @@
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="../TestLib/ListView/listviewutils.js"/>
 /// <reference path="../TestLib/ListView/listviewverify.js"/>
-/// <reference path="../TestLib/Itemsmanager/TestDataSource.js"/>
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 /// <deploy src="../TestData/" />
 
 var WinJSTests = WinJSTests || {};

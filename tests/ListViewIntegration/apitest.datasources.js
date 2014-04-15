@@ -15,9 +15,9 @@
 /// <reference path="../TestLib/ListView/Helpers.js"/>
 /// <reference path="../TestLib/ListView/globals.js"/>
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="../TestLib/ListView/ListViewUtils.js"/>
+/// <reference path="../TestLib/ListView/listviewutils.js"/>
 /// <reference path="../TestLib/ListView/listviewverify.js"/>
-/// <reference path="../TestLib/Itemsmanager/TestDataSource.js"/>
+/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 /// <deploy src="../TestData/" />
 
 // Tests for ListView Api
