@@ -150,6 +150,21 @@
     <Content Include="..\..\tests\base\xhr.js">
       <Link>Base\xhr.js</Link>
     </Content>
+    <Content Include="..\..\tests\BindingList\List.js">
+      <Link>BindingList\List.js</Link>
+    </Content>
+    <Content Include="..\..\tests\BindingTemplate\nonCompatTemplate.html">
+      <Link>BindingTemplate\nonCompatTemplate.html</Link>
+    </Content>
+    <Content Include="..\..\tests\BindingTemplate\templateQuery.js">
+      <Link>BindingTemplate\templateQuery.js</Link>
+    </Content>
+    <Content Include="..\..\tests\BindingTemplate\templates.js">
+      <Link>BindingTemplate\templates.js</Link>
+    </Content>
+    <Content Include="..\..\tests\BindingTemplate\templatesOptimizer.js">
+      <Link>BindingTemplate\templatesOptimizer.js</Link>
+    </Content>
     <Content Include="..\..\tests\binding\binding-decl.js">
       <Link>Binding\binding-decl.js</Link>
     </Content>
@@ -161,21 +176,6 @@
     </Content>
     <Content Include="..\..\tests\binding\DOMWeakRefTable.js">
       <Link>Binding\DOMWeakRefTable.js</Link>
-    </Content>
-    <Content Include="..\..\tests\binding\List.js">
-      <Link>Binding\List.js</Link>
-    </Content>
-    <Content Include="..\..\tests\binding\nonCompatTemplate.html">
-      <Link>Binding\nonCompatTemplate.html</Link>
-    </Content>
-    <Content Include="..\..\tests\binding\templateQuery.js">
-      <Link>Binding\templateQuery.js</Link>
-    </Content>
-    <Content Include="..\..\tests\binding\templates.js">
-      <Link>Binding\templates.js</Link>
-    </Content>
-    <Content Include="..\..\tests\binding\templatesOptimizer.js">
-      <Link>Binding\templatesOptimizer.js</Link>
     </Content>
     <Content Include="..\..\tests\DateTime\datepicker-decl.js">
       <Link>DateTime\datepicker-decl.js</Link>
@@ -756,14 +756,14 @@
     <Content Include="..\..\tests\ViewBox\viewBox.js">
       <Link>ViewBox\viewBox.js</Link>
     </Content>
-    <Content Include="..\..\tests\wwaapp\application.js">
-      <Link>WWA\application.js</Link>
+    <Content Include="..\..\tests\WWA-Application\application.js">
+      <Link>WWA-Application\application.js</Link>
     </Content>
-    <Content Include="..\..\tests\wwaapp\navigation.js">
-      <Link>WWA\navigation.js</Link>
+    <Content Include="..\..\tests\WWA-Application\navigation.js">
+      <Link>WWA-Application\navigation.js</Link>
     </Content>
-    <Content Include="..\..\tests\wwaapp\state.js">
-      <Link>WWA\state.js</Link>
+    <Content Include="..\..\tests\WWA-Application\state.js">
+      <Link>WWA-Application\state.js</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -780,6 +780,8 @@
     <Folder Include="AppBarAndFlyouts\" />
     <Folder Include="ListView\" />
     <Folder Include="ListViewIntegration\" />
+    <Folder Include="BindingList\" />
+    <Folder Include="BindingTemplate\" />
     <Folder Include="ViewBox\" />
     <Folder Include="Tooltip\" />
     <Folder Include="Toggle\" />
@@ -802,7 +804,7 @@
     <Folder Include="TestLib\liveToQ\" />
     <Folder Include="TestLib\SemanticZoom\" />
     <Folder Include="UI\" />
-    <Folder Include="WWA\" />
+    <Folder Include="WWA-Application\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
   <Target Name="BeforeBuild">

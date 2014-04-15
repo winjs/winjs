@@ -559,7 +559,7 @@
             value.forEach(function(className) {
                 dest.classList.add(className);
             });
-        } else {
+        } else if (value) {
             dest.classList.add(value);
         }
     }

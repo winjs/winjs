@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="../TestLib/NavBar/NavBarUtils.js"/>
 /// <reference path="../TestLib/util.js"/>
 /// <reference path="../TestData/NavBar.css" />
@@ -595,7 +595,7 @@ WinJSTests.NavBarContainerTests = function () {
             splitToggleFired = false,
             firstNavItem;
 
-        function loop(action) {            
+        function loop(action) {
             firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
 
             navbarContainerEl.addEventListener(eventName, function handler(e) {
@@ -609,7 +609,7 @@ WinJSTests.NavBarContainerTests = function () {
             LiveUnit.Assert.isTrue(firstNavItem.splitOpened);
 
             action();
-            
+
             LiveUnit.Assert.isTrue(splitToggleFired);
             splitToggleFired = false;
             LiveUnit.Assert.isFalse(firstNavItem.splitOpened);
@@ -633,7 +633,7 @@ WinJSTests.NavBarContainerTests = function () {
             navbarContainer.data = navUtils.getNavBarCommandsData(8, true, true, true, true, true, true);
         });
 
-        // Update fixedSize 
+        // Update fixedSize
         actions.push(function () {
             navbarContainer.fixedSize = true;
         });
@@ -641,14 +641,14 @@ WinJSTests.NavBarContainerTests = function () {
         // Update maxrows
         actions.push(function () {
             navbarContainer.maxRows = 2;
-        });        
+        });
 
         // Update layout
         actions.push(function () {
             navbarContainer.layout = WinJS.UI.Orientation.vertical;
         });
 
-        // Update currentIndex 
+        // Update currentIndex
         actions.push(function () {
             navbarContainer.currentIndex = 3;
         });

@@ -152,7 +152,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || message;
+                    testError = testError || ("areEqual - " + (message || ("expected: " + expected + ", actual: " + actual)));
                     testFailed = true;
                 }
             },
@@ -162,7 +162,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || message;
+                    testError = testError || ("areNotEqual - " + (message || ("not expected: " + left)));
                     testFailed = true;
                 }
             },
@@ -171,7 +171,7 @@
                 if (QUnit.breakOnAssertFail) {
                     debugger;
                 }
-                testError = testError || message;
+                testError = testError || ("fail - " + message);
                 testFailed = true;
             },
 
@@ -180,7 +180,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || message;
+                    testError = testError || ("isFalse - " + (message || ("expected: falsy" + expected + ", actual: " + falsy)));
                     testFailed = true;
                 }
             },
@@ -190,7 +190,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || message;
+                    testError = testError || ("isTrue - " + (message || ("expected: truthy" + expected + ", actual: " + truthy)));
                     testFailed = true;
                 }
             },
@@ -202,7 +202,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || message;
+                    testError = testError || ("isNull - " + (message || ("expected: null or undefined" + expected + ", actual: " + obj)));
                     testFailed = true;
                 }
             },
@@ -214,7 +214,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || message;
+                    testError = testError || ("isNotNull - " + (message || ("not expected: null or undefined" + expected + ", actual: " + obj)));
                     testFailed = true;
                 }
             },

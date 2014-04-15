@@ -14,7 +14,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js"/>
 /// <reference path="../TestLib/ListView/globals.js"/>
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="../TestLib/ListView/listviewutils.js"/>
 /// <reference path="../TestLib/ListView/listviewverify.js"/>
 /// <reference path="../TestLib/Itemsmanager/TestDataSource.js"/>

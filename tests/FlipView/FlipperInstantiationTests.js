@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="FlipperUtils.js"/>
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 
@@ -48,7 +48,7 @@ var InstantiationTests = null;
             var flipper2 = document.getElementById(flipperUtils.basicFlipperID()).winControl;
             LiveUnit.LoggingCore.logComment("Flipper2 has been instantiated.");
             LiveUnit.Assert.isNotNull(flipper2, "Flipper2 element should not be null when instantiated.");
-            LiveUnit.Assert.areEqual(flipper, flipper2, "Multiple calls to WinJS.UI.FlipView() on the same " + 
+            LiveUnit.Assert.areEqual(flipper, flipper2, "Multiple calls to WinJS.UI.FlipView() on the same " +
                 " element should return the same flipper object");
 
             function verifyFunction(functionName) {
@@ -58,7 +58,7 @@ var InstantiationTests = null;
                 }
 
                 LiveUnit.Assert.isNotNull(flipper[functionName]);
-                LiveUnit.Assert.isTrue(typeof (flipper[functionName]) === "function", functionName + 
+                LiveUnit.Assert.isTrue(typeof (flipper[functionName]) === "function", functionName +
                     " exists on flipper, but it isn't a function");
             }
 
@@ -69,7 +69,7 @@ var InstantiationTests = null;
             verifyFunction("addEventListener");
             verifyFunction("removeEventListener");
         }
-        
+
         //
         // Test: testFlipperNullInstantiation
         //
@@ -78,7 +78,7 @@ var InstantiationTests = null;
             var flipper = new WinJS.UI.FlipView(null);
             LiveUnit.Assert.isNotNull(flipper, "Flipper instantiation was not null when sent a null flipper element.");
         }
-        
+
         //
         // Test: testFlipperUndefinedInstantiation
         //
@@ -87,7 +87,7 @@ var InstantiationTests = null;
             var flipper = new WinJS.UI.FlipView(undefined);
             LiveUnit.Assert.isNotNull(flipper, "Flipper insantiation was not undefined when sent an undefined flipper element.");
         }
-        
+
         //
         // Test: testFlipperAriaLabel
         //
@@ -115,7 +115,7 @@ var InstantiationTests = null;
                 LiveUnit.LoggingCore.logComment("Unable to instantiate Flipper.");
             }
         }
-        
+
         //
         // Test: testFlipperChildInstantiation
         //

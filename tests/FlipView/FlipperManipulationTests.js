@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="FlipperUtils.js"/>
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 
@@ -42,114 +42,114 @@ var ManipulationTests = null;
         // Test: testFlipperInsertAtStart using array data source
         //
         this.testFlipperInsertAtStart = function(signalTestCaseCompleted) {
-            flipperUtils.insertItem("InsertAtStart", signalTestCaseCompleted, 
+            flipperUtils.insertItem("InsertAtStart", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperInsertAtEnd using array data source
         //
         this.testFlipperInsertAtEnd = function(signalTestCaseCompleted) {
-            flipperUtils.insertItem("InsertAtEnd", signalTestCaseCompleted, 
+            flipperUtils.insertItem("InsertAtEnd", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperInsertBefore using array data source
         //
         this.testFlipperInsertBefore = function(signalTestCaseCompleted) {
-            flipperUtils.insertItem("InsertBefore", signalTestCaseCompleted, 
+            flipperUtils.insertItem("InsertBefore", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperInsertAfter using array data source
         //
         this.testFlipperInsertAfter = function(signalTestCaseCompleted) {
-            flipperUtils.insertItem("InsertAfter", signalTestCaseCompleted, 
+            flipperUtils.insertItem("InsertAfter", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperMoveToStart using array data source
         //
         this.testFlipperMoveToStart = function(signalTestCaseCompleted) {
-            flipperUtils.moveItem("MoveToStart", signalTestCaseCompleted, 
+            flipperUtils.moveItem("MoveToStart", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperMoveToEnd using array data source
         //
         this.testFlipperMoveToEnd = function(signalTestCaseCompleted) {
-            flipperUtils.moveItem("MoveToEnd", signalTestCaseCompleted, 
+            flipperUtils.moveItem("MoveToEnd", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperMoveBefore using array data source
         //
         this.testFlipperMoveBefore = function(signalTestCaseCompleted) {
-            flipperUtils.moveItem("MoveBefore", signalTestCaseCompleted, 
+            flipperUtils.moveItem("MoveBefore", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperMoveAfter using array data source
         //
         this.testFlipperMoveAfter = function(signalTestCaseCompleted) {
-            flipperUtils.moveItem("MoveAfter", signalTestCaseCompleted, 
+            flipperUtils.moveItem("MoveAfter", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperRemoveFromStart using array data source
         //
         this.testFlipperRemoveFromStart = function(signalTestCaseCompleted) {
-            flipperUtils.removeItem("RemoveFromStart", signalTestCaseCompleted, 
+            flipperUtils.removeItem("RemoveFromStart", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperRemoveFromEnd using array data source
         //
         this.testFlipperRemoveFromEnd = function(signalTestCaseCompleted) {
-            flipperUtils.removeItem("RemoveFromEnd", signalTestCaseCompleted, 
+            flipperUtils.removeItem("RemoveFromEnd", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperRemoveFromMiddle using array data source
         //
         this.testFlipperRemoveFromMiddle = function(signalTestCaseCompleted) {
-            flipperUtils.removeItem("RemoveFromMiddle", signalTestCaseCompleted, 
+            flipperUtils.removeItem("RemoveFromMiddle", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperChangeAtStart using array data source
         //
         this.testFlipperChangeAtStart = function(signalTestCaseCompleted) {
-            flipperUtils.changeItem("ChangeAtStart", signalTestCaseCompleted, 
+            flipperUtils.changeItem("ChangeAtStart", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperChangeAtEnd using array data source
         //
         this.testFlipperChangeAtEnd = function(signalTestCaseCompleted) {
-            flipperUtils.changeItem("ChangeAtEnd", signalTestCaseCompleted, 
+            flipperUtils.changeItem("ChangeAtEnd", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperChangeAtMiddle using array data source
         //
         this.testFlipperChangeAtMiddle = function(signalTestCaseCompleted) {
-            flipperUtils.changeItem("ChangeAtMiddle", signalTestCaseCompleted, 
+            flipperUtils.changeItem("ChangeAtMiddle", signalTestCaseCompleted,
                 LiveUnit.GetWrappedCallback(function(error) { LiveUnit.Assert.fail(error) }));
         }
-        
+
         //
         // Test: testFlipperChangeInvalid using array data source
         //
