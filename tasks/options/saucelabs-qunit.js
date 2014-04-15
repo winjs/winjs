@@ -20,8 +20,7 @@
         all: {
             options: {
                 urls: [
-                    "http://127.0.0.1:9999/bin/tests/Promise/test.html?autostart",
-                    "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?autostart"
+                    "http://127.0.0.1:9999/bin/tests/Promise/test.html?autostart"
                 ],
                 tunnelTimeout: 5,
                 build: process.env.TRAVIS_JOB_ID,
