@@ -307,8 +307,6 @@
                 // cancel in the middle of processing it. That's a pretty
                 // subtle contract.
                 //
-
-
                 // IE has a bug where readonly properties will not throw,
                 // even in strict mode, when set using a string accessor.
                 // To be consistent across browsers, only notify if the
