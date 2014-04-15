@@ -83,7 +83,7 @@
                 error(err);
             }
         });
-    };
+    }
 
     function processAllImpl(rootElement, skipRootElement) {
         return new WinJS.Promise(function processAllImpl2(complete, error) {
@@ -158,7 +158,7 @@
 
             checkAllComplete();
         });
-    };
+    }
 
     function getControlHandler(element) {
         if (element.getAttribute) {
@@ -167,7 +167,7 @@
                 return WinJS.Utilities._getMemberFiltered(evaluator.trim(), global, requireSupportedForProcessing);
             }
         }
-    };
+    }
 
     WinJS.Namespace.define("WinJS.UI", {
 

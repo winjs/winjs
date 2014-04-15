@@ -670,19 +670,20 @@
 
                 _updateCommandBarColors: function AppBar_updateCommandBarColors() {
 
-                    if (!this.disabled) {
-                        function extractColorValue(colorString) {
-                            // colorString is in the form of "rgb(r,g,b)", "rgba(r,g,b,a)" 
-                            // Remove the left paren, right paren, and commas.
-                            var colorsArray = colorString.split("(")[1].split(")")[0].split(",");
+                    function extractColorValue(colorString) {
+                        // colorString is in the form of "rgb(r,g,b)", "rgba(r,g,b,a)" 
+                        // Remove the left paren, right paren, and commas.
+                        var colorsArray = colorString.split("(")[1].split(")")[0].split(",");
 
-                            return {
-                                r: parseInt(colorsArray[0]),
-                                g: parseInt(colorsArray[1]),
-                                b: parseInt(colorsArray[2]),
-                                a: colorsArray[3] ? parseFloat(colorsArray[3]) : 1,
-                            };
-                        }
+                        return {
+                            r: parseInt(colorsArray[0]),
+                            g: parseInt(colorsArray[1]),
+                            b: parseInt(colorsArray[2]),
+                            a: colorsArray[3] ? parseFloat(colorsArray[3]) : 1,
+                        };
+                    }
+
+                    if (!this.disabled) {
 
                         // Use AppBar element backgroundColor (RGBA) to set the new WebUICommandBar.backgroundColor and WebUICommandBar.opacity values
                         var bgColorString = getComputedStyle(this.element).backgroundColor;

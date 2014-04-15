@@ -5,7 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/commonutils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 
 var SearchBoxTests = SearchBoxTests || {};
 
@@ -42,7 +42,7 @@ SearchBoxTests.BasicTests = function () {
         // verify searchbox element
         LiveUnit.Assert.isNotNull(searchBox.element);
 
-        // verify input element        
+        // verify input element
         LiveUnit.Assert.isNotNull(searchBox._inputElement);
 
         // verify search glyph
@@ -308,7 +308,7 @@ SearchBoxTests.BasicTests = function () {
         inputElement.dispatchEvent(createCustomEvent("compositionend"));
 
         LiveUnit.Assert.areEqual(2, eventsCalled.length, "queryChanged was called more than twice");
-    };    
+    };
 
     // Korean keyboarding - IME will finalize on keydown for up/down/enter/tab so make sure we discard the composition end event
     this.testKoreanIMEKeyboarding = function searchBoxTest_KoreanIMEKeyboarding() {
@@ -558,7 +558,7 @@ SearchBoxTests.BasicTests = function () {
         LiveUnit.Assert.areEqual("f", eventQueryText);
         verifyLinguisticDetails(eventLinguisticDetails, 0, 1, []);
 
-        inputElement.value = 'f'; 
+        inputElement.value = 'f';
         mockInputContext(inputElement, 0, 0, []); // composition ended
         eventFired = false;
         inputElement.dispatchEvent(createCustomEvent("compositionend"));

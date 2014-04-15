@@ -142,7 +142,7 @@
                 }
             }
         });
-    };
+    }
 
     function initWithStub() {
         var InMemoryHelper = WinJS.Class.define(
