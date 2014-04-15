@@ -15,7 +15,8 @@ module.exports = {
     saucelabs: {
         options: {
             base: "",
-            port: 9999
+            port: 9999,
+            hostname: 'localhost'
         }
     }
-}
+};
