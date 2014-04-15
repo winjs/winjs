@@ -13,55 +13,54 @@ CorsicaTests.BaseUtilities = function () {
     };
 
     this.testRequireSupportedForProcessingOnFunctionFromIFrame = function () {
-        var i = document.createElement("iframe");
-        i.id = "someframe";
-        document.body.appendChild(i);
+        var iframe = document.createElement("iframe");
+        iframe.id = "someframe";
+        document.body.appendChild(iframe);
         try {
             var thrown = false;
             try {
-                WinJS.Utilities.requireSupportedForProcessing(someframe.eval);
+                WinJS.Utilities.requireSupportedForProcessing(iframe.contentWindow.eval);
             } catch (e) {
                 thrown = true;
             }
             LiveUnit.Assert.isTrue(thrown, "Exception should be thrown");
         } finally {
-            document.body.removeChild(i);
+            document.body.removeChild(iframe);
         }
     };
 
     this.testRequireSupportedForProcessingOnIFrameWindow = function () {
-        var i = document.createElement("iframe");
-        i.id = "someframe";
-        document.body.appendChild(i);
+        var iframe = document.createElement("iframe");
+        iframe.id = "someframe";
+        document.body.appendChild(iframe);
         try {
             var thrown = false;
             try {
-                WinJS.Utilities.requireSupportedForProcessing(someframe);
+                WinJS.Utilities.requireSupportedForProcessing(iframe.contentWindow);
             } catch (e) {
                 thrown = true;
             }
             LiveUnit.Assert.isTrue(thrown, "Exception should be thrown");
         } finally {
-            document.body.removeChild(i);
+            document.body.removeChild(iframe);
         }
     };
 
     this.testRequireSupportedForProcessingOnIFrameElement = function () {
-        var i = document.createElement("iframe");
-        i.id = "someframe";
-        document.body.appendChild(i);
+        var iframe = document.createElement("iframe");
+        iframe.id = "someframe";
+        document.body.appendChild(iframe);
         try {
-            LiveUnit.Assert.areNotEqual(someframe, document.querySelector("#someframe"), "For some (probably historical) reason frame id's show up bound to their window instances instead of their elements");
 
             var thrown = false;
             try {
-                WinJS.Utilities.requireSupportedForProcessing(document.querySelector("#someframe"));
+                WinJS.Utilities.requireSupportedForProcessing(iframe);
             } catch (e) {
                 thrown = true;
             }
             LiveUnit.Assert.isTrue(thrown, "Exception should be thrown");
         } finally {
-            document.body.removeChild(i);
+            document.body.removeChild(iframe);
         }
     };
 
