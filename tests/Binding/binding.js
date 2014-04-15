@@ -248,53 +248,49 @@ CorsicaTests.BindingTests = function () {
             });
             var expected = 10;
             var count = 0;
+            var next = step1;
 
             b.bind(value, { 
                 rect: {
                     point: {
                         x: function (v) { 
                             LiveUnit.Assert.areEqual(expected, v);
-                            count++; 
+                            count++;
+                            next();
                         }
                     }
                 }
             });
 
-            var initialWait = setInterval(function() {
-                if (count == 1) {
-                    clearInterval(initialWait);
+            function step1() {
+                next = step2;
+                expected = 20;
+                value.rect.point.x = 20;
+            }
 
-                    expected = 20;
-                    value.rect.point.x = 20;
+            function step2() {
+                next = step3;
+                LiveUnit.Assert.areEqual(2, count);
 
-                    WinJS.Promise.timeout().then(function() {
-                        LiveUnit.Assert.areEqual(2, count);
+                expected = 30;
+                value.rect.point = b.as({x:30, y:10});
+            }
 
-                        expected = 30;
-                        value.rect.point = b.as({x:30, y:10});
+            function step3() {
+                next = step4;
+                LiveUnit.Assert.areEqual(3, count);
 
-                        // UNDONE: because we are n levels deep, we can't guarantee
-                        // when the listener is invoked
-                        //
-                        WinJS.Promise.timeout().then(post).then(function() {
-                            LiveUnit.Assert.areEqual(3, count);
+                expected = 40;
+                value.rect = b.as({
+                    point: b.as({x:40, y:10})
+                });
+            }
 
-                            expected = 40;
-                            value.rect = b.as({
-                                point: b.as({x:40, y:10})
-                            });
-
-                            // UNDONE: because we are n levels deep, we can't guarantee
-                            // when the listener is invoked
-                            //
-                            WinJS.Promise.timeout().then(post).then(post).then(function() {
-                                LiveUnit.Assert.areEqual(4, count);
-                            }).
-                            then(null, errorHandler).then(complete);
-                        });
-                    });
-                }
-            }, 16);
+            function step4() {
+                next = null;
+                LiveUnit.Assert.areEqual(4, count);
+                complete();
+            }
         });
     };
 
@@ -1129,7 +1125,7 @@ CorsicaTests.BindingTests = function () {
 
     this.testBindingToNonWritableProperty = function(complete){
         var count = 0;
-        var expected = 2;
+        var expected = 1;
         var obj2 = {};
         Object.defineProperty(obj2, "x", 
         {
@@ -1147,7 +1143,14 @@ CorsicaTests.BindingTests = function () {
                 count++;
             }
         }).then(post).then(post)
-            .then(function(){obj.x = 20;})
+            .then(function(){
+                try {
+                    obj.x = 20;
+                }
+                catch(e) {
+                    // trying to set readonly property should throw
+                }
+            })
             .then(post)
             .then(function(){
                 

@@ -307,7 +307,15 @@
                 // cancel in the middle of processing it. That's a pretty
                 // subtle contract.
                 //
-                return this.notify(name, newValue, oldValue);
+
+
+                // IE has a bug where readonly properties will not throw,
+                // even in strict mode, when set using a string accessor.
+                // To be consistent across browsers, only notify if the
+                // set succeeded.
+                if(this._backingData[name] === newValue) {
+                    return this.notify(name, newValue, oldValue);
+                }
             }
             return WinJS.Promise.as();
         },
