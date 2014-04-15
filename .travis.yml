@@ -8,5 +8,5 @@ script:
 - grunt test --saucelabs
 env:
   global:
-  - secure: NOJ2XobEaYEd//HAK2XTn55Vey/x5YCkkxgXDyiCnyUTrG9Zyp/C0jownCwcoqE630Dz512xOUH07rvbRv9h6xMrtzHTQKt47+jqO3zTseN3rP3/jk5EbBKoHW4AEwvswNNmOnsw6ZQGAyjGdTcd7yZ90bgXgKGhuOT9pJxR6lw=
-  - secure: hSBcfY9LLzB0f0yOFLtmhLH30oWc28djNskwhsOmg7mZLI9SGQMStVsJ/n0C12XNLmjSBdS0d/xHTSOqVmMcNkgM9NnjjJsFYLMjFVUgIIzoHJWbtJO530m3TEYCkednbf8YbamWWbpmJ07Yz9dHTzAokdr2EVvmAPmiMqJigZM=
+    - SAUCE_USERNAME=winjs
+    - SAUCE_ACCESS_KEY=26c17025-4f79-4313-ab42-c5f77a7ece4b
