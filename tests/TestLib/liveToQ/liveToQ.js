@@ -8,6 +8,7 @@
     var verboseLog = "";
     var log = [];
 
+    console.log("top of livetoq QUnit: " + window.QUnit);
     QUnit.config.autostart = document.location.search.substr(1, 10) === "autostart";
     QUnit.config.testTimeout = 30000;
     QUnit.breakOnAssertFail = false;
@@ -233,6 +234,7 @@
         registerTestClass: function (moduleName) {
             function runSetupTeardownFunc(func) {
                 if (func.length) {
+                    console.log("in regclass QUnit: " + window.QUnit);
                     QUnit.stop();
                     func(function () {
                         QUnit.start();
