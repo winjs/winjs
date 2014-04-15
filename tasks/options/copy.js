@@ -18,7 +18,7 @@
             files: [{
                 expand: true,
                 cwd: "src/fonts/",
-                src: ["**"],
+                src: ["**.ttf"],
                 dest: config.desktopOutput + "fonts/"
             }]
         }
