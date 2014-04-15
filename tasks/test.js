@@ -27,7 +27,7 @@
             function extractDependencies(fileContents) {
                 var deps = [];
 
-                var lines = fileContents.split("\r");
+                var lines = fileContents.split("\n");
                 for (var i = 0; i < lines.length; i++) {
                     var line = lines[i];
                     var processedOne = false;
