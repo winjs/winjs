@@ -105,7 +105,7 @@
     <!-- Test framework references -->                                                                                      \r\n\
     <link type="text/css" rel="stylesheet" href="../../../node_modules/qunitjs/qunit/qunit.css" />                          \r\n\
     <script src="../../../node_modules/qunitjs/qunit/qunit.js"></script>                                                    \r\n\
-    <script src="../TestLib/liveToQ/livetoQ.js"></script>                                                                   \r\n\
+    <script src="../TestLib/liveToQ/liveToQ.js"></script>                                                                   \r\n\
                                                                                                                             \r\n\
     <!-- Test references -->                                                                                                \r\n\
 @@TESTREFERENCES                                                                                                            \r\n\
