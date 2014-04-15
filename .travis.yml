@@ -8,6 +8,5 @@ script:
 - grunt test --saucelabs
 env:
   global:
-  - secure: GVb/9xtK1R5i1Bylu84SxXEDHQJotJwEjXapvUsSfssvDgBWC1L4J95sSJNQrshMOMU2h5RYC2I4LwaNa+6u+CeEPxeyeQTLltGgg9KJPRCQIXwQoTzVFm3pg8DyIL6LvC5cC0UUQDKZPv4rDSGnPFOQfAd2Hd9hh8xq+358Rng=
-  - secure: KfUVdmSzJvVi3KqCoCsV7YwIrvXu96hnaENqFV3yeLwIrbQpYKwgtRBDOfX0mKrKwQVKTWajCRjaqNCXYDraGLpmqsk/VmT5Y56zgEtjzBDbwpFSNFw1BHozwj7CXO9jEuKcE5KVEhzPsviZv8+WNX/Nx1zF2k7koFX2jvs1fAk=
-
+  - secure: lbskRBYBw8qC8ewCYsaXu6soAJr7zsGVrTptDxyIfnDMSjeKGBI12pPoJSbp4r2ZoA5+QPDR0r1v6O0gBqwtYGxUCjQzw+uNPD1PdGZKRy9sdVXn3ZmeVQlsPan8GQ1ObrX1zNm5P/V+2xNkTnNUstCMvRV0IGGkYFXpvZXAubo=
+  - secure: Ywvn7bdtN4t+qskZd5dzQi6Aoq5taeV4EFdbjeiLpoe8Cjyg0xuZKgAAMIbdaE0JE+KnEnxM5w518T96ZC+JwCBgNy7Cq3luUcYbIrD18C4ZhBEaNy6y06DBJ9e3X7oCLTzjUUAPY6aheXADgJcW8804VVkAkhbVkSiFP6YQYQw=
