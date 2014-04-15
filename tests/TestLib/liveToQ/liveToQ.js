@@ -8,14 +8,13 @@
     var verboseLog = "";
     var log = [];
 
-    console.log("top of livetoq QUnit: " + window.QUnit);
-    QUnit.config.autostart = document.location.search.substr(1, 10) === "autostart";
+    QUnit.config.autostart = false;
     QUnit.config.testTimeout = 30000;
     QUnit.breakOnAssertFail = false;
 
     var qunitDiv;
     var qunitTestFixtureDiv;
-    window.addEventListener("DOMContentLoaded", function () {
+    window.addEventListener("load", function () {
         qunitDiv = document.querySelector("#qunit");
         qunitTestFixtureDiv = document.querySelector("#qunit-fixture");
 
@@ -44,6 +43,10 @@
                 QUnit.start();
             };
             toolBar.appendChild(btn);
+
+            if (document.location.search.substr(1, 10) === "autostart") {
+                btn.click();
+            }
         }
         addOptions();
     });
@@ -234,7 +237,6 @@
         registerTestClass: function (moduleName) {
             function runSetupTeardownFunc(func) {
                 if (func.length) {
-                    console.log("in regclass QUnit: " + window.QUnit);
                     QUnit.stop();
                     func(function () {
                         QUnit.start();
