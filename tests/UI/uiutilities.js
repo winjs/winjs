@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
-/// <reference path="../TestLib/ListView/Helpers.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <deploy src="../TestData/" />
 
 var CorsicaTests = CorsicaTests || {};
@@ -550,10 +550,10 @@ CorsicaTests.Utilities = function () {
 
         var s = document.createElement("link");
         s.setAttribute("rel", "stylesheet");
-        s.setAttribute("href", "$(TESTDATA)/metrics.css");
+        s.setAttribute("href", "$(TESTDATA)/Metrics.css");
         document.head.appendChild(s);
 
-        waitForCSSFile("metrics.css").then(function () {
+        CommonUtilities.waitForCSSFile("Metrics.css").then(function () {
             var newNode = document.createElement("div");
             newNode.id = "MetricsTests";
             newNode.innerHTML =
