@@ -5,7 +5,6 @@ before_script:
 - npm install -g grunt-cli
 - git submodule update --init --recursive
 script:
-- grunt
 - grunt test --saucelabs
 env:
   global:
