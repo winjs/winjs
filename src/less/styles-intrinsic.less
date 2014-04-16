@@ -121,7 +121,7 @@ textarea, .win-textarea {
 //
 // Button
 //
-button, input[type=button], input[type=reset], input[type=submit] {
+button, input[type=button], input[type=reset], input[type=submit], button[type=submit] {
     border-style: solid;
     background-clip: padding-box;
     min-height: 32px;
@@ -131,7 +131,7 @@ button, input[type=button], input[type=reset], input[type=submit] {
     .win-type-large-internal();
 }
 
-input[type=submit] {
+input[type=submit], button[type=submit] {
     background-clip: border-box;
 }
 
@@ -204,10 +204,6 @@ select {
         padding-left: 6px;
         padding-right: 6px;
     }
-}
-
-option {
-    .win-type-medium-internal();
 }
 
 //
