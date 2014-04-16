@@ -70,7 +70,7 @@
         "src/js/binding/list.js",
         "src/js/binding/dataTemplateCompiler.js",
 
-        "src/js/res/res.js",
+        "src/js/res/Res.js",
 
         "src/js/build/endBase.js"
     ];
@@ -118,7 +118,7 @@
         "src/js/binding/list.js",
         "src/js/binding/dataTemplateCompiler.js",
 
-        "src/js/res/res.js",
+        "src/js/res/Res.js",
 
         "src/js/build/endBase.js"
     ];
