@@ -163,7 +163,7 @@
         "src/js/controls/DatePicker/datePicker.js",
         "src/js/controls/TimePicker/timePicker.js",
         "src/js/controls/Select/select.js",
-        "src/js/controls/BackButton/backButton.js",
+        "src/js/controls/BackButton/BackButton.js",
         "src/js/controls/Rating/rating.js",
         "src/js/controls/Toggle/Toggle.js",
         "src/js/controls/SemanticZoom/SemanticZoom.js",
