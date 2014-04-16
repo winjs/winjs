@@ -152,10 +152,13 @@
     function formatString(string) {
         var args = arguments;
         if (args.length > 1) {
-            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g, function (unused, left, right, index, illegalLeft, illegalRight) {
-                if (illegalLeft || illegalRight) { throw new Error(formatString("Malformed string input: {0}", illegalLeft || illegalRight)); }
-                return (left && "{") || (right && "}") || args[(index | 0) + 1];
-            });
+            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g, 
+                function (unused, left, right, index, illegalLeft, illegalRight) {
+                    if (illegalLeft || illegalRight) { 
+                        throw new Error(formatString("Malformed string input: {0}", illegalLeft || illegalRight)); 
+                    }
+                    return (left && "{") || (right && "}") || args[(index | 0) + 1];
+                });
         }
         return string;
     }
@@ -167,7 +170,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("areEqual - {0} (expected: {1}, actual: {2})", message, expected, actual);
+                    testError = testError || formatString("areEqual - {0} (expected: {1}, actual: {2})", message || "", expected, actual);
                     testFailed = true;
                 }
             },
@@ -177,7 +180,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("areNotEqual - {0} (both equal: {1})", message, left);
+                    testError = testError || formatString("areNotEqual - {0} (both equal: {1})", message || "", left);
                     testFailed = true;
                 }
             },
@@ -186,7 +189,7 @@
                 if (QUnit.breakOnAssertFail) {
                     debugger;
                 }
-                testError = testError || formatString("fail - {0}", message);
+                testError = testError || formatString("fail - {0}", message || "");
                 testFailed = true;
             },
 
@@ -195,7 +198,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("isFalse - {0} (expected: falsy, actual: {1})", message, falsy);
+                    testError = testError || formatString("isFalse - {0} (expected: falsy, actual: {1})", message || "", falsy);
                     testFailed = true;
                 }
             },
@@ -205,7 +208,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("isTrue - {0} (expected: truthy, actual: {1})", message, truthy);
+                    testError = testError || formatString("isTrue - {0} (expected: truthy, actual: {1})", message || "", truthy);
                     testFailed = true;
                 }
             },
@@ -217,7 +220,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("isNull - {0} (expected: null or undefined, actual: {1})", message, obj);
+                    testError = testError || formatString("isNull - {0} (expected: null or undefined, actual: {1})", message || "", obj);
                     testFailed = true;
                 }
             },
@@ -229,7 +232,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("isNotNull - {0} (expected: not null and not undefined, actual: {1})", message, obj);
+                    testError = testError || formatString("isNotNull - {0} (expected: not null and not undefined, actual: {1})", message || "", obj);
                     testFailed = true;
                 }
             },
