@@ -22,6 +22,15 @@ CorsicaTests.BindingDeclTests = function () {
         return WinJS.Utilities.Scheduler.schedulePromiseNormal().then(function () { return v; });
     }
 
+    function assertIsUndefinedString(v) {
+        // When setting undefined as the value of textContent:
+        // Firefox coerces undefined to empty string  [Bug]
+        // IE & Chrome coerce it to the string "undefined" [Expected]
+        if(v !== "undefined" && v !== "") {
+            LiveUnit.Assert.fail("Value should be empty or undefined, but instead is " + v);
+        }
+    }
+
     function findElement(root, id) {
         if (root.id === id) { return root; }
         else { return root.querySelector("#" + id); }
@@ -43,7 +52,7 @@ CorsicaTests.BindingDeclTests = function () {
 
         bindingDone.
             then(function () {
-                LiveUnit.Assert.areEqual("undefined", mydiv.innerHTML);
+                assertIsUndefinedString(mydiv.innerHTML);
             }).
             then(null, errorHandler).
             then(cleanup).
@@ -61,7 +70,7 @@ CorsicaTests.BindingDeclTests = function () {
 
         bindingDone.
             then(function () {
-                LiveUnit.Assert.areEqual("undefined", mydiv.innerHTML);
+                assertIsUndefinedString(mydiv.innerHTML);
             }).
             then(null, errorHandler).
             then(cleanup).
@@ -1027,10 +1036,10 @@ CorsicaTests.BindingDeclTests = function () {
             then(function () {
                 LiveUnit.Assert.areEqual(obj.name.first + ' ' + obj.name.last, text('name'));
                 LiveUnit.Assert.areEqual(obj.height, text('height'));
-                LiveUnit.Assert.areEqual("undefined", text('street'));
-                LiveUnit.Assert.areEqual("undefined", text('city'));
-                LiveUnit.Assert.areEqual("undefined", text('state'));
-                LiveUnit.Assert.areEqual("undefined", text('zip'));
+                assertIsUndefinedString(text('street'));
+                assertIsUndefinedString(text('city'));
+                assertIsUndefinedString(text('state'));
+                assertIsUndefinedString(text('zip'));
                 obj.addProperty("address", {
                     street: '1234 Microsoft Way',
                     city: 'Redmond',
@@ -1389,7 +1398,7 @@ CorsicaTests.BindingDeclTests = function () {
         }
 
         function verify() {
-            LiveUnit.Assert.areEqual('undefined', text('name'));
+            assertIsUndefinedString(text('name'));
         }
 
         function cleanup() {
@@ -1403,13 +1412,13 @@ CorsicaTests.BindingDeclTests = function () {
             then(post).
             then(post).
             then(function () {
-                LiveUnit.Assert.areEqual('undefined', text('name'));
+                assertIsUndefinedString(text('name'));
             }).
             then(function () { simpleds.name.first = 'Mr.'; }).
             then(post).
             then(function () {
                 LiveUnit.Assert.areEqual(obj.name.first, 'Mr.');
-                LiveUnit.Assert.areEqual('undefined', text('name'));
+                assertIsUndefinedString(text('name'));
             }).
             then(function () { simpleds.name = { first: 'lotta', last: 'code' }; }).
             then(post).
@@ -1417,7 +1426,7 @@ CorsicaTests.BindingDeclTests = function () {
             then(function () {
                 LiveUnit.Assert.areEqual(obj.name.first, 'lotta');
                 LiveUnit.Assert.areEqual(obj.name.last, 'code');
-                LiveUnit.Assert.areEqual('undefined', text('name'));
+                assertIsUndefinedString(text('name'));
             }).
             then(null, errorHandler).
             then(cleanup).
@@ -1974,9 +1983,9 @@ CorsicaTests.BindingDeclTests = function () {
 
         bindingDone.
             then(function () {
-                LiveUnit.Assert.areEqual("undefined", text('name'));
+                assertIsUndefinedString(text('name'));
                 LiveUnit.Assert.areEqual(obj.height, text('height'));
-                LiveUnit.Assert.areEqual("undefined", text('street'));
+                assertIsUndefinedString(text('street'));
             }).
             then(null, errorHandler).
             then(cleanup2).
