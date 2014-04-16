@@ -16,6 +16,9 @@
             selector = selector.replace(/\(\s*/g, "(");
             selector = selector.replace(/\s*\)/g, ")");
 
+            // Remove double spaces
+            selector = selector.replace(/\s\s/g, " ");
+
             // Normalize '0' and '0px'
             value = value.replace(/0px/g, "0");
 
