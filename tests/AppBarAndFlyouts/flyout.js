@@ -14,17 +14,6 @@ var CorsicaTests = CorsicaTests || {};
 CorsicaTests.FlyoutTests = function () {
     "use strict";
 
-    function disposeAndRemove(element) {
-        if (element) {
-            if (element.dispose) {
-                element.dispose();
-            } else {
-                WinJS.Utilities.disposeSubTree(element);
-            }
-            element.parentElement && element.parentElement.removeChild(element);
-        }
-    }
-
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
         var flyoutElement = document.createElement('div');
@@ -36,14 +25,14 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
         var flyouts = document.querySelectorAll(".win-flyout");
         Array.prototype.forEach.call(flyouts, function(element){
-            disposeAndRemove(element);
+            OverlayHelpers.disposeAndRemove(element);
             element = null;
         });
-        disposeAndRemove(this._element);
+        OverlayHelpers.disposeAndRemove(this._element);
         this._element = null;
 
-        disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-        disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
     };
     var that = this;
     // Test flyout Instantiation

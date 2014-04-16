@@ -6,7 +6,7 @@ var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.Promise = function () {
     "use strict";
-    var timeoutMax = 33 * 2;    // expected duration for use with timeout() or timeout(0), 33ms was not always reliable
+    var timeoutMax = 33 * 2;  // expected duration for use with timeout() or timeout(0), 33ms was not always reliable
 
     var AsyncWorkQueue = function () {
         this._queue = [];

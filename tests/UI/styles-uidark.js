@@ -5,15 +5,12 @@
 /// <reference path="../TestLib/util.js" />
 /// <reference path="stylesCollection.js"/>
 /// <reference path="stylesTestHelper.js"/>
-/// <reference path="../TestLib/ListView/Helpers.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 
 var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.StylesUIDark = function () {
-    var css = document.createElement("link");
-    css.href = "../../$(TargetFramework)/css/ui-dark.css";
-    css.type = "text/css";
-    css.rel = "stylesheet";
+    var link = null;
 
     var isDarkTest = true;
     var testHelper = new StylesTestHelper(isDarkTest);		
@@ -26,12 +23,14 @@ CorsicaTests.StylesUIDark = function () {
         document.body.appendChild(newNode);
         this._element = newNode;
 
-        document.head.appendChild(css);
-        waitForCSSFile("ui-dark.css").then(complete);
+        CommonUtilities.addCss("ui-dark.css").then(function (style) {
+            link = style;
+            complete();
+        });
     };
     
     this.tearDown = function () {
-        document.head.removeChild(css);
+        document.head.removeChild(link);
         Helper.enableStyleSheets("ui-light.css");
         if (this._element) {
             WinJS.Utilities.disposeSubTree(this._element);

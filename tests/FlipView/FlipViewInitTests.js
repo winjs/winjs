@@ -6,7 +6,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
 /// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="flipperhelpers.js" />
+/// <reference path="FlipperHelpers.js" />
 /// <reference path="../TestLib/util.js" />
 
 var WinJSTests = WinJSTests || {};

@@ -14,8 +14,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="tooltiputils.js"/>
-/// <reference path="tooltip.css"/>
+/// <reference path="TooltipUtils.js"/>
+/// <reference path="Tooltip.css"/>
 
 function TooltipUtils() {
 }
@@ -51,7 +51,7 @@ TooltipUtils.prototype = (function () {
         RESHOW_THRESHOLD: 200,
 
         //-----------------------------------------------------------------------------------
-        setUp: function (id) {
+        setUp: function (complete) {
             /// <summary>
             ///  Test setup to run prior to every test case.
             /// </summary>
@@ -62,14 +62,15 @@ TooltipUtils.prototype = (function () {
             if (typeof (WebUnit) === 'undefined') {
                 // We could use the "light style" too
                 // commonUtils.addCss("ui-light.css");
-                commonUtils.addCss("ui-dark.css");
-                commonUtils.addCss("tooltip.css", true);
+                var dark = commonUtils.addCss("ui-dark.css");
+                var tooltip = commonUtils.addCss("Tooltip.css", true);
+                WinJS.Promise.join([dark, tooltip]).then(complete);
             }
             // Create a default "anchor/trigger" element the tooltip will be attached to
             // and give it a border and default text so it's easier to see when visually
             // watching the tests.
-            commonUtils.addTag("span", (id ? id : this.defaultElementID));
-            var element = document.getElementById(id ? id : this.defaultElementID);
+            commonUtils.addTag("span", (this.defaultElementID));
+            var element = document.getElementById(this.defaultElementID);
             element.style.position = "absolute";
             element.textContent = "element";
             element.style.border = "solid 1px";
@@ -100,7 +101,7 @@ TooltipUtils.prototype = (function () {
             commonUtils.removeElementById(id ? id : this.defaultElementID);
             if (typeof (WebUnit) === 'undefined') {
                 commonUtils.removeCss("ui-dark.css");
-                commonUtils.removeCss("tooltip.css");
+                commonUtils.removeCss("Tooltip.css");
             }
             // Due to bug 266432, sometimes the tooltip doesn't get removed from the screen, so get rid of any leftover tooltips
             var allTooltips = document.body.getElementsByClassName("win-tooltip");

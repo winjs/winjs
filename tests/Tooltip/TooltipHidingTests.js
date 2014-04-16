@@ -16,16 +16,16 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="tooltiputils.js"/>
-/// <reference path="tooltip.css"/>
+/// <reference path="TooltipUtils.js"/>
+/// <reference path="Tooltip.css"/>
 
 TooltipHidingTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
     var Key = WinJS.Utilities.Key;
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {

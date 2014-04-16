@@ -389,8 +389,9 @@ SearchBoxTests.BasicTests = function () {
         }
     };
 
+    // GitHub issue #150
     // Ensure after a focus loss on tab/enter that we still get query change events
-    this.testQueryChangeAfterFocusLoss = function searchBoxTest_QueryChangeAfterFocusLoss() {
+    this.xtestQueryChangeAfterFocusLoss = function searchBoxTest_QueryChangeAfterFocusLoss() {
         var searchBox = document.getElementById("SearchBoxID").winControl;
         var inputElement = searchBox.element.querySelector("input");
         var that = this;

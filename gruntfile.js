@@ -5,6 +5,11 @@
     module.exports = function (grunt) {
         var config = require("./config.js");
 
+        // Fail when warnings are logged. 
+        // This is to make concat cause a build break when files
+        // do not exist.
+        grunt.log.warn = grunt.fail.warn;
+
         // Make sure that Grunt doesn't remove BOM from our utf8 files
         // on read
         grunt.file.preserveBOM = true;

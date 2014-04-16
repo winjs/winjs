@@ -15,8 +15,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="tooltiputils.js"/>
-/// <reference path="tooltip.css"/>
+/// <reference path="TooltipUtils.js"/>
+/// <reference path="Tooltip.css"/>
 
 TooltipDistanceTests = function () {
     var tooltipUtils = new TooltipUtils();
@@ -25,8 +25,8 @@ TooltipDistanceTests = function () {
     // Since distances can be off due to rounding errors, use this tolerance for our comparisons.
     var DISTANCE_TOLERANCE = 1;
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {

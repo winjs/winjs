@@ -21,8 +21,8 @@
 RatingInstantiationTests = function () {
     var ratingUtils = new RatingUtils();
 
-    this.setUp = function () {
-        ratingUtils.setUp();
+    this.setUp = function (complete) {
+        ratingUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -805,7 +805,7 @@ RatingInstantiationTests = function () {
                 "It was Okay",
                 "I liked it.",
                 "I loved it!"
-            ];
+        ];
 
         ratingUtils.instantiate("rating", { tooltipStrings: tooltipStrings });
     };
@@ -846,7 +846,7 @@ RatingInstantiationTests = function () {
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true),
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true),
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true)
-            ];
+        ];
 
         ratingUtils.instantiate("rating", { tooltipStrings: tooltipStrings });
     };

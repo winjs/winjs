@@ -20,8 +20,8 @@
 RatingTouchTests = function () {
     var ratingUtils = new RatingUtils();
 
-    this.setUp = function () {
-        ratingUtils.setUp();
+    this.setUp = function (complete) {
+        ratingUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -373,13 +373,13 @@ RatingTouchTests = function () {
                     newRating = Math.round(i / 4) + 1;
                     starToTap = rating.element.childNodes[newRating - 1];
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
                 case 2:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchDown(star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchDown(star); }; }(starToTap),
                         expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         styleExpected: "tentative",
@@ -388,7 +388,7 @@ RatingTouchTests = function () {
                     break;
                 case 3:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchUp(star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchUp(star); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         userRatingExpected: newRating
@@ -396,7 +396,7 @@ RatingTouchTests = function () {
                     break;
                 case 4:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchOver(star, null); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchOver(star, null); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
@@ -433,13 +433,13 @@ RatingTouchTests = function () {
                     starToTap = rating.element.childNodes[newRating - 1];
 
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
                 case 2:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchDown(star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchDown(star); }; }(starToTap),
                         expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         styleExpected: "tentative",
@@ -448,7 +448,7 @@ RatingTouchTests = function () {
                     break;
                 case 3:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchUp(star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchUp(star); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         userRatingExpected: newRating
@@ -456,7 +456,7 @@ RatingTouchTests = function () {
                     break;
                 case 4:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchOver(star, null); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchOver(star, null); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
@@ -572,12 +572,12 @@ RatingTouchTests = function () {
         var actions = {
             // touchOver star 2, expecting no event
             1: {
-                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // TouchDown on star 2, this should throw a preview
             2: {
-                action: function (star) { return function () { ratingUtils.touchDown(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchDown(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 2,
                 styleExpected: "tentative",
@@ -852,7 +852,7 @@ RatingTouchTests = function () {
                         event.initPointerEvent("pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 0,
                 styleExpected: "tentative",
@@ -868,7 +868,7 @@ RatingTouchTests = function () {
                         event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                 tentativeRatingExpected: 0,
                 styleExpected: "user",
@@ -890,7 +890,7 @@ RatingTouchTests = function () {
 
     this.testRating_Touch_Scrub_ClearRating_enableClear_false = function (signalTestCaseCompleted) {
         // Setup the page for test case
-        var rating = ratingUtils.instantiate("rating", { userRating: 6, maxRating: 8, enableClear: false});
+        var rating = ratingUtils.instantiate("rating", { userRating: 6, maxRating: 8, enableClear: false });
 
         // Register the test actions we will be taking
 
@@ -943,7 +943,7 @@ RatingTouchTests = function () {
                         event.initPointerEvent("pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // Release off left side of control, this should set the value to 1 and throw a change
@@ -956,7 +956,7 @@ RatingTouchTests = function () {
                         event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                 tentativeRatingExpected: 1,
                 styleExpected: "user",
@@ -985,12 +985,12 @@ RatingTouchTests = function () {
         var actions = {
             // touchOver star 2, expecting no event
             1: {
-                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // TouchDown on star 2, this should throw a preview
             2: {
-                action: function (star) { return function () { ratingUtils.touchDown(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchDown(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 2,
                 styleExpected: "tentative",
@@ -998,7 +998,7 @@ RatingTouchTests = function () {
             },
             // Throw an pointercancel.  This should throw a 'cancel' and leave the value set to '3'
             3: {
-                action: function (star) { return function () { ratingUtils.touchCancel(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchCancel(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 1 },
                 tentativeRatingExpected: null,
                 styleExpected: "user",
@@ -1027,12 +1027,12 @@ RatingTouchTests = function () {
         var actions = {
             // touchOver star 2, expecting no event
             1: {
-                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // TouchDown on star 2, this should throw a preview
             2: {
-                action: function (star) { return function () { ratingUtils.touchDown(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchDown(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 2,
                 styleExpected: "tentative",
@@ -1050,7 +1050,7 @@ RatingTouchTests = function () {
             },
             // Throw an pointercancel.  This should throw a 'cancel' and leave the value set to '4'
             4: {
-                action: function (star) { return function () { ratingUtils.touchCancel(star); }; } (rating.element.childNodes[2]),
+                action: function (star) { return function () { ratingUtils.touchCancel(star); }; }(rating.element.childNodes[2]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 1 },
                 tentativeRatingExpected: null,
                 styleExpected: "user",

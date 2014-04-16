@@ -17,8 +17,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="tooltiputils.js"/>
-/// <reference path="tooltip.css"/>
+/// <reference path="TooltipUtils.js"/>
+/// <reference path="Tooltip.css"/>
 
 TooltipPositionTests = function () {
     var tooltipUtils = new TooltipUtils();
@@ -27,7 +27,7 @@ TooltipPositionTests = function () {
     // Since distances can be off due to rounding errors, use this tolerance for our comparisons.
     var DISTANCE_TOLERANCE = 1;
 
-    this.setUp = function () {
+    this.setUp = function (complete) {
         // Add a sibling element before our element.  This helps us test static positioning.
         commonUtils.addTag("div", "siblingBeforeElement");
         var siblingBeforeElement = document.getElementById("siblingBeforeElement");
@@ -35,7 +35,7 @@ TooltipPositionTests = function () {
         // Add a parent element.  This helps us with scrolling the anchor element when inside a <span>
         commonUtils.addTag("span", "parentElement");
         var parentElement = document.getElementById("parentElement");
-        tooltipUtils.setUp();
+        tooltipUtils.setUp(complete);
         // Move the anchor element beneath a <span> so we can test scrolling the <span>
         var span1 = document.createElement("span");
         span1.innerHTML = "AAAAAAA BBBBBBB CCCCCCC DDDDDD";
