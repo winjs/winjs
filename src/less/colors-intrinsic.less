@@ -32,11 +32,11 @@
     //
     body {
         .mixin(dark) {
-            background: rgb(29, 29, 29);
+            background-color: rgb(29, 29, 29);
             color: rgb(255, 255, 255);
         }
         .mixin(light) {
-            background: rgb(255, 255, 255);
+            background-color: rgb(255, 255, 255);
             color: rgb(0, 0, 0);
         }
         .mixin(@theme);
@@ -70,6 +70,10 @@
                 background-color: transparent;
                 border-color: rgba(255, 255, 255, 0.4);
                 color: rgba(255, 255, 255, 0.4);
+
+                &:-ms-input-placeholder {
+                    color: rgba(255, 255, 255, 0.22);
+                }
             }
 
             &:-ms-input-placeholder {
@@ -94,6 +98,10 @@
                 background-color: rgba(202, 202, 202, 0.4);
                 border-color: rgba(0, 0, 0, 0.15);
                 color: rgba(0, 0, 0, 0.4);
+
+                &:-ms-input-placeholder {
+                    color: rgba(0, 0, 0, 0.22);
+                }
             }
 
             &:-ms-input-placeholder {
@@ -462,6 +470,20 @@
         }
     }
 
+    optgroup:disabled {
+        option:checked, option:checked:active {
+            .mixin(dark) {
+                background-color: rgba(255, 255, 255, 0.4);
+                color: rgba(0, 0, 0, 0.6) ;
+            }
+            .mixin(light) {
+                background-color: rgba(0, 0, 0, 0.55);
+                color: rgba(255, 255, 255, 0.6) ;
+            }
+            .mixin(@theme);
+        }
+    }
+
     //
     // Progress
     //
@@ -654,6 +676,7 @@
                 color: rgba(0, 0, 0, 0.8);
             }
         }
+        .mixin(@theme);
     }
 }
 
