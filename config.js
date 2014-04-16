@@ -179,7 +179,7 @@
         "src/js/controls/SearchBox/SearchBox.js",
         "src/js/controls/AppBar/SettingsFlyout.js",
         "src/js/controls/ItemContainer/itemContainer.js",
-        "src/js/controls/NavBar/keyboardBehavior.js",
+        "src/js/controls/NavBar/KeyboardBehavior.js",
         "src/js/controls/NavBar/NavBar.js",
         "src/js/controls/NavBar/NavBarContainer.js",
         "src/js/controls/NavBar/NavBarCommand.js",
