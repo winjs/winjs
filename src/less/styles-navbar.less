@@ -45,18 +45,17 @@
     touch-action: pan-y;
 }
 .win-navbarcontainer-horizontal .win-navbarcontainer-surface {
-    display: -ms-grid;
-    -ms-grid-columns: auto;
-    -ms-grid-rows: auto;
+    #flex > .display-flex();
+    #flex > .flex-flow(column; wrap);
+    #flex > .align-content(flex-start);
 }
 .win-navbarcontainer-navarrow {
     position: absolute;
     top: 0;
-    display: -webkit-flex;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    #flex > .display-flex();
+    #flex > .flex-direction(column);
+    #flex > .align-items(center);
+    #flex > .justify-content(center);
     font-family: "Segoe UI Symbol", "Symbols";
 
     height: ~"calc(100% - 40px)";
@@ -87,9 +86,8 @@
     NavBarCommand
 */
 .win-navbarcommand {
-    display: -ms-grid;
-    -ms-grid-columns: 1fr auto;
-    -ms-grid-rows: 1fr;
+    #flex > .display-flex();
+    #flex > .flex(@shrink: 0);
 }
 .win-navbarcontainer-horizontal .win-navbarcommand {
     margin: 5px;
@@ -99,43 +97,35 @@
     margin: 10px 30px;
 }
 .win-navbarcommand-button {
-    -ms-grid-column: 1;
-    -ms-grid-row: 1;
-    width: 100%;
+    #flex > .flex(@grow: 1);
     position: relative;
 }
 .win-navbarcommand-button-content {
     position: relative;
     padding: 5px 10px;
-    display: -ms-grid;
-    -ms-grid-columns: auto 1fr;
-    -ms-grid-rows: auto;
+    #flex > .display-flex();
 }
 .win-navbarcommand-button:focus {
     z-index: 1;
     outline: none;
 }
 .win-navbarcommand-icon {
-    -ms-grid-column: 1;
-    -ms-grid-row: 1;
     font-family: "Segoe UI Symbol", "Symbols";
     height: 40px;
     width: 40px;
     font-size: 20pt;
     margin-left: 0;
     margin-right: 10px;
-    display: -webkit-flex;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    #flex > .display-flex();
+    #flex > .align-items(center);
+    #flex > .justify-content(center);
 }
 .win-navbarcommand-icon:-ms-lang(@{rtl}) {
     margin-right: 0;
     margin-left: 10px;
 }
 .win-navbarcommand-label {
-    -ms-grid-column: 2;
-    -ms-grid-row: 1;
+    #flex > .flex(@grow: 1);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -143,13 +133,9 @@
     margin: 10px 0;
 }
 .win-navbarcommand-splitbutton {
-    -ms-grid-column: 2;
-    -ms-grid-row: 1;
-    display: -webkit-flex;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+    #flex > .display-flex();
+    #flex > .justify-content(center);
+    #flex > .align-items(center);
     width: 40px;
     font-family: "Segoe UI Symbol", "Symbols";
     font-size: 11pt;

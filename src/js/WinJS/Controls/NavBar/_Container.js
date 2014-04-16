@@ -1113,8 +1113,6 @@
 
                         var marginRight;
                         var marginLeft;
-                        var cssRow;
-                        var cssColumn;
                         var width = "";
 
                         if (this.layout === WinJS.UI.Orientation.horizontal) {
@@ -1130,9 +1128,7 @@
                                 var spaceToDistribute = sizes.extraSpace - (sizes.maxColumns - sizes.columnsPerPage) * sizes.itemWidth;
                                 width = (sizes.itemOffsetWidth + (spaceToDistribute / sizes.maxColumns)) + "px";
                             }
-
-                            cssRow = row + 1;
-                            cssColumn = column + 1;
+                            
                             var extraMarginRight;
                             var extraMarginLeft;
 
@@ -1147,18 +1143,10 @@
                             marginRight = extraMarginRight + sizes.itemMarginRight + "px";
                             marginLeft = extraMarginLeft + sizes.itemMarginLeft + "px";
                         } else {
-                            cssRow = "";
-                            cssColumn = "";
                             marginRight = "";
                             marginLeft = "";
                         }
-
-                        if (itemEl.style.msGridRow !== cssRow) {
-                            itemEl.style.msGridRow = cssRow;
-                        }
-                        if (itemEl.style.msGridColumn !== cssColumn) {
-                            itemEl.style.msGridColumn = cssColumn;
-                        }
+                        
                         if (itemEl.style.marginRight !== marginRight) {
                             itemEl.style.marginRight = marginRight;
                         }
