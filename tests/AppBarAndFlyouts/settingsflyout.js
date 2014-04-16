@@ -12,22 +12,11 @@ var CorsicaTests = CorsicaTests || {};
 CorsicaTests.SettingsFlyoutTests = function () {
     "use strict";
     
-    function disposeAndRemove(element) {
-        if (element) {
-            if (element.dispose) {
-                element.dispose();
-            } else {
-                WinJS.Utilities.disposeSubTree(element);
-            }
-            element.parentElement && element.parentElement.removeChild(element);
-        }
-    }
-    
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
-        disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-        disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
-        disposeAndRemove(document.querySelector(".win-settingsflyout"));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector(".win-settingsflyout"));
     };
     
     // Test settings flyout Instantiation

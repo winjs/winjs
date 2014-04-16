@@ -16,17 +16,6 @@ CorsicaTests.AppBarTests = function () {
 
     var Key = WinJS.Utilities.Key;
 
-    function disposeAndRemove(element) {
-        if (element) {
-            if (element.dispose) {
-                element.dispose();
-            } else {
-                WinJS.Utilities.disposeSubTree(element);
-            }
-            element.parentElement && element.parentElement.removeChild(element);
-        }
-    }
-
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
         var AppBarElement = document.createElement('div');
@@ -37,11 +26,11 @@ CorsicaTests.AppBarTests = function () {
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
-        disposeAndRemove(document.getElementById("appBarDiv"));
+        OverlayHelpers.disposeAndRemove(document.getElementById("appBarDiv"));
         this._element = null;
 
-        disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-        disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
     };
 
     var that = this;
