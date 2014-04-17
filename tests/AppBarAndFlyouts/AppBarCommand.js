@@ -9,7 +9,7 @@
 var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.AppBarCommandTests = function () {
-    "use strict";   
+    "use strict";
     // Test AppBarCommand Instantiation
     this.testAppBarCommandInstantiation = function () {
         // Get the AppBarCommand element from the DOM
@@ -24,10 +24,10 @@ CorsicaTests.AppBarCommandTests = function () {
 
         document.body.removeChild(AppBarCommandElement);
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test AppBarCommand Instantiation with null element
     this.testAppBarCommandNullInstantiation = function () {
@@ -35,10 +35,10 @@ CorsicaTests.AppBarCommandTests = function () {
         var AppBarCommand = new WinJS.UI.AppBarCommand(null, { type: 'separator' });
         LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand instantiation was null when sent a null AppBarCommand element.");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test AppBarCommand Instantiation with no options
     this.testAppBarCommandEmptyInstantiation = function () {
@@ -46,10 +46,10 @@ CorsicaTests.AppBarCommandTests = function () {
         var AppBarCommand = new WinJS.UI.AppBarCommand();
         LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand instantiation was null when sent a Empty AppBarCommand element.");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test multiple instantiation of the same AppBarCommand DOM element
     this.testAppBarCommandMultipleInstantiation = function () {
@@ -70,11 +70,12 @@ CorsicaTests.AppBarCommandTests = function () {
             throw error;
         }
     }
-    
-    
-    
-    
-    
+
+    this.testAppBarCommandMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+
+
+
+
 
     // Test AppBarCommand parameters
     this.testAppBarCommandParams = function () {
@@ -171,10 +172,10 @@ CorsicaTests.AppBarCommandTests = function () {
 
         LiveUnit.LoggingCore.logComment("Testing element");
     }
-    
-    
-    
-    
+
+
+
+
 
     this.testDefaultAppBarCommandParameters = function () {
         // Get the AppBarCommand element from the DOM
@@ -195,10 +196,10 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.isFalse(AppBarCommand.hidden, "Verifying that hidden is false");
         LiveUnit.Assert.isFalse(AppBarCommand.selected, "Verifying that selected is false");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Simple Property tests
     this.testSimpleAppBarCommandProperties = function () {
@@ -231,19 +232,19 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.areEqual("unique", fakeDomObject.id, "Verifying that id is set to 'unique' from uniqueID");
         LiveUnit.Assert.areEqual("unique", appBarCommand.element.getAttribute("aria-owns"), "Verifying that aria-owns is set by flyout setter");
     }
-    
-    
-    
-    
+
+
+
+
 
 
     // Hidden Property tests
     this.testHiddenProperty = function () {
-        LiveUnit.LoggingCore.logComment("Attempt to test hidden property on appbarcommand");                
+        LiveUnit.LoggingCore.logComment("Attempt to test hidden property on appbarcommand");
         var AppBarElement = document.createElement("div");
         document.body.appendChild(AppBarElement);
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBar element");
-        var AppBar = new WinJS.UI.AppBar(AppBarElement, { commands: { type: 'separator', id: 'sep' } });        
+        var AppBar = new WinJS.UI.AppBar(AppBarElement, { commands: { type: 'separator', id: 'sep' } });
         LiveUnit.LoggingCore.logComment("set commands");
         AppBar.commands = [{ id: 'cmdA', label: 'One', icon: 'back', section: 'global', tooltip: 'Test glyph by name' }];
         AppBar.hide();
@@ -255,7 +256,7 @@ CorsicaTests.AppBarCommandTests = function () {
         try {
             cmd.hidden = false;
         } catch (err) {
-            // we throw 
+            // we throw
             result = true;
         } finally {
             LiveUnit.Assert.areEqual(true, result, "verify the hidden property throw the exception");
@@ -263,10 +264,10 @@ CorsicaTests.AppBarCommandTests = function () {
             document.body.removeChild(AppBarElement);
         }
     }
-    
-    
-    
-    
+
+
+
+
 
 
     // Tests for dispose members and requirements
@@ -296,8 +297,8 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.isTrue(abc._tooltipControl._disposed);
         abc.dispose();
     };
-    
-    
+
+
 
     // Tests firstElementFocus and lastElementFocus properties of content type AppBarCommand
     this.testContentAppBarCommandFocusProperties = function () {
@@ -315,7 +316,7 @@ CorsicaTests.AppBarCommandTests = function () {
         var button2 = document.getElementById("button2");
         var button3 = document.getElementById("button3");
 
-        
+
         // Verify that both firstElementFocus and lastElementFocus properties return the containing contentCommand element by default.
         LiveUnit.Assert.areEqual(contentCommand.firstElementFocus, contentCommand.element, "By default, firstElementFocus returns to the container element");
         LiveUnit.Assert.areEqual(contentCommand.lastElementFocus, contentCommand.element, "By default, lastElementFocus returns to the container element");
@@ -331,10 +332,10 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.areEqual(contentCommand.element.getAttribute("tabindex"), "-1", "content command element should not be a tabstop when either of the content command's focus properties point to any other element");
 
 
-        // Verify that firstElementFocus and lastElementFocus return the elements they point to once they've been set. 
+        // Verify that firstElementFocus and lastElementFocus return the elements they point to once they've been set.
         contentCommand.lastElementFocus = button3;
         LiveUnit.Assert.areEqual(contentCommand.firstElementFocus, button1, "firstElementFocus should return the element it points to");
-        LiveUnit.Assert.areEqual(contentCommand.lastElementFocus, button3, "lastElementFocus should return the element it points to")       
+        LiveUnit.Assert.areEqual(contentCommand.lastElementFocus, button3, "lastElementFocus should return the element it points to")
         LiveUnit.Assert.areEqual(contentCommand.element.getAttribute("tabindex"), "-1", "content command element should not be a tabstop when either of the content command's focus properties point to any other element");
 
 
@@ -349,7 +350,7 @@ CorsicaTests.AppBarCommandTests = function () {
         contentCommand.lastElementFocus = null;
         LiveUnit.Assert.areEqual(contentCommand.firstElementFocus, contentCommand.element, "When not set, firstElementFocus returns the container element");
         LiveUnit.Assert.areEqual(contentCommand.lastElementFocus, contentCommand.element, "when not set, lastElementFocus returns the container element")
-        // Verify that the contentCommand element is a tabstop when neither focus property points to an HTML element other than the container element. 
+        // Verify that the contentCommand element is a tabstop when neither focus property points to an HTML element other than the container element.
         LiveUnit.Assert.areEqual(contentCommand.element.getAttribute("tabindex"), "0", "content command element should be a tabstop.");
 
 
@@ -364,8 +365,8 @@ CorsicaTests.AppBarCommandTests = function () {
 
         document.body.removeChild(contentCommand.element);
     };
-    
-    
+
+
 
     /// Tests that previous innerHTML is cleared when we instantiate a new button.
     this.testAppBarCommandButtonsRemoveOldInnerHTML = function () {
@@ -376,8 +377,8 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.isFalse(button.querySelector("#testAppBarCommandButtonsRemoveOldInnerHTML"), "AppBarCommand buttons should lose previous innerHTML on control Instantiation");
 
     }
-    
-    
+
+
 }
 
 // register the object as a test class by passing in the name
