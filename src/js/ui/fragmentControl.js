@@ -10,7 +10,7 @@
     function abs(uri) {
         var a = document.createElement("a");
         a.href = uri;
-        return a.href.toLowerCase();
+        return a.href;
     }
     var viewMap = {};
 

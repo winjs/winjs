@@ -35,12 +35,11 @@
         if (inline) {
             src = fragmentHref + "script[" + position + "]";
         }
-        src = src.toLowerCase();
 
-        if (!(src in scripts)) {
+        if (!(src.toLowerCase() in scripts)) {
             var promise = null;
 
-            scripts[src] = true;
+            scripts[src.toLowerCase()] = true;
             var n = document.createElement("script");
             if (scriptTag.language) {
                 n.setAttribute("language", "javascript");
