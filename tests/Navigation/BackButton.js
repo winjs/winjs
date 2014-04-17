@@ -18,7 +18,7 @@ CorsicaTests.BackButtonTests = function () {
 
     // Initial setup for each test to create the two backbuttons.
     // This function creates a BackButton element and an div contentHost to act as a fake fragment loader.
-    // A call is made to simulate navigation which then fakes loading a new fragment into the contentHost, 
+    // A call is made to simulate navigation which then fakes loading a new fragment into the contentHost,
     // this fragment contains only one additional BackButton control.
     this.setUp = function setup() {
         LiveUnit.LoggingCore.logComment("In setup");
@@ -56,7 +56,7 @@ CorsicaTests.BackButtonTests = function () {
             WinJS.Utilities.disposeSubTree(contentHost);
             document.body.removeChild(contentHost);
         }
-        
+
         // Unsubscribe
         nav.removeEventListener('navigating', navigatingHandler, false);
 
@@ -114,12 +114,12 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonInstantiation["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonInstantiation["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonInstantiation["Description"] = "Test BackButton Instantiation";
-    this.testBackButtonInstantiation["Category"] = "Instantiation";
 
-    // Test BackButton's Automatic Visibility Updates 
+
+
+
+
+    // Test BackButton's Automatic Visibility Updates
     this.testBackButtonAutomaticVisibilityUpdates = function (complete) {
         this.setupPromise.then(function () {
 
@@ -148,7 +148,7 @@ CorsicaTests.BackButtonTests = function () {
             LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === true, "Even after a manual refresh, Inner BackButton should be disabled on Home page");
             LiveUnit.Assert.isTrue(isVisible(innerButtonElement) === false, "Even after a manual refresh, Inner BackButton should be hidden while disabled");
 
-            // Navigate forward, grab reference to new instance of inner button. 
+            // Navigate forward, grab reference to new instance of inner button.
             LiveUnit.LoggingCore.logComment("Navigate away from Home page.");
             simulateNavigation().then(function () {
                 innerButtonElement = document.getElementById("innerButton");
@@ -197,10 +197,6 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonAutomaticVisibilityUpdates["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonAutomaticVisibilityUpdates["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonAutomaticVisibilityUpdates["Description"] = "Test BackButton Visibility. Ensures Buttons are disabled on home page, enabled after navigating away from home, and then disabled again when navigating back to home.";
-    this.testBackButtonAutomaticVisibilityUpdates["Category"] = "Visibility";
 
     // Test BackButton's refresh method.
     this.testBackButtonRefreshMethod = function (complete) {
@@ -222,10 +218,10 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonRefreshMethod["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonRefreshMethod["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonRefreshMethod["Description"] = "Test WinJS.UI.BackButton.refresh method.";
-    this.testBackButtonRefreshMethod["Category"] = "Visibility";
+
+
+
+
 
     // Test BackButton's aria-label attribute.
     this.testBackButtonAriaLabel = function (complete) {
@@ -243,10 +239,10 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonAriaLabel["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonAriaLabel["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonAriaLabel["Description"] = "Tests that WinJS.UI.BackButton._element's aria-label attribute is always set after construction.";
-    this.testBackButtonAriaLabel["Category"] = "Accessibility";
+
+
+
+
 
 
     // Test BackButton's singleton reference count used in dispose model
@@ -289,10 +285,10 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonReferenceCount["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonReferenceCount["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonReferenceCount["Description"] = "Tests that WinJS.UI.BackButton's internal Singleton object is keeping an accurate reference count of all the BackButtons controls that are alive.";
-    this.testBackButtonReferenceCount["Category"] = "Reference Counting";
+
+
+
+
 }
 
 // register the object as a test class by passing in the name

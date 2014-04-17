@@ -11,8 +11,8 @@ CorsicaTests.Base = function () {
         this.testRuntimeVersion = function () {
             LiveUnit.Assert.isTrue(ScriptEngineMajorVersion() >= 9, "Not using JScript9 or later, check registry keys for hosted WebOCs");
         };
-        this.testRuntimeVersion["Owner"] = "jeffish";
-        this.testRuntimeVersion["Description"] = "This sanity test verifies we are running in the EZE Runtime.";
+
+
     }
 
     if (document.documentMode) {

@@ -26,9 +26,9 @@ if (WinJS.Utilities.isPhone) {
 
             document.body.removeChild(AppBarCommandElement);
         }
-        this.testAppBarCommandInstantiation["Priority"] = "0";
-        this.testAppBarCommandInstantiation["Description"] = "Test AppBarCommand instantiation + function presence";
-        this.testAppBarCommandInstantiation["Category"] = "Instantiation";
+        
+        
+        
 
         // Test AppBarCommand Instantiation with null element
         this.testAppBarCommandNullInstantiation = function () {
@@ -36,9 +36,9 @@ if (WinJS.Utilities.isPhone) {
             var AppBarCommand = new WinJS.UI.AppBarCommand(null, { type: 'button' });
             LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand instantiation was null when sent a null AppBarCommand element.");
         }
-        this.testAppBarCommandNullInstantiation["Priority"] = "1";
-        this.testAppBarCommandNullInstantiation["Description"] = "Test AppBarCommand Instantiation with null AppBarCommand element";
-        this.testAppBarCommandNullInstantiation["Category"] = "Instantiation";
+        
+        
+        
 
         // Test AppBarCommand Instantiation with no options
         this.testAppBarCommandEmptyInstantiation = function () {
@@ -46,9 +46,9 @@ if (WinJS.Utilities.isPhone) {
             var AppBarCommand = new WinJS.UI.AppBarCommand();
             LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand instantiation was null when sent a Empty AppBarCommand element.");
         }
-        this.testAppBarCommandEmptyInstantiation["Priority"] = "1";
-        this.testAppBarCommandEmptyInstantiation["Description"] = "Test AppBarCommand Instantiation with Empty AppBarCommand element";
-        this.testAppBarCommandEmptyInstantiation["Category"] = "Instantiation";
+        
+        
+        
 
         // Test multiple instantiation of the same AppBarCommand DOM element
         this.testAppBarCommandMultipleInstantiation = function () {
@@ -146,9 +146,9 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Testing element");
         }
-        this.testAppBarCommandParams["Priority"] = "1";
-        this.testAppBarCommandParams["Description"] = "Test initializing a AppBarCommand with good and bad initialization options";
-        this.testAppBarCommandParams["Category"] = "Instantiation";
+        
+        
+        
 
         // Disabled for Windows Phone blue bug # 216095
         this.testDefaultAppBarCommandParameters = function () {
@@ -223,9 +223,9 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.areEqual("another", appBarCommand.extraClass, "Verifying that extraClass is 'another'");
             LiveUnit.Assert.isTrue(appBarCommand.element.classList.contains("another"), "Verifying that className is 'another'");
         }
-        this.testSimpleAppBarCommandProperties["Priority"] = "1";
-        this.testSimpleAppBarCommandProperties["Description"] = "Test default AppBarCommand parameters";
-        this.testSimpleAppBarCommandProperties["Category"] = "Instantiation";
+        
+        
+        
 
 
         // Hidden Property tests
@@ -254,10 +254,10 @@ if (WinJS.Utilities.isPhone) {
                 document.body.removeChild(AppBarElement);
             }
         }
-        this.testHiddenProperty["Owner"] = "tarekms";
-        this.testHiddenProperty["Priority"] = "1";
-        this.testHiddenProperty["Description"] = "AppBarCommand hidden property test";
-        this.testHiddenProperty["Category"] = "Instantiation";
+        
+        
+        
+        
 
         // Test symbol and image icons
         this.testIconProperty = function (complete) {
@@ -310,8 +310,8 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.isFalse(button.querySelector("#testAppBarCommandButtonsRemoveOldInnerHTML"), "AppBarCommand buttons should lose previous innerHTML on control Instantiation");
 
         }
-        this.testAppBarCommandButtonsRemoveOldInnerHTML["Owner"] = "jessesh";
-        this.testAppBarCommandButtonsRemoveOldInnerHTML["Description"] = "AppBarCommand buttons should lose previous innerHTML on control Instantiation";
+        
+        
     }
 
     // register the object as a test class by passing in the name

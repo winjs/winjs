@@ -72,11 +72,11 @@ TooltipAlignmentTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyAlignmentChangedText["Owner"] = "evanwi";
-    this.testTooltip_VerifyAlignmentChangedText["Priority"] = "feature";
-    this.testTooltip_VerifyAlignmentChangedText["Description"] = "Test if tooltip realigns/recenters itself if text changes while the tooltip is visible";
-    this.testTooltip_VerifyAlignmentChangedText["Category"] = "Alignment";
-    this.testTooltip_VerifyAlignmentChangedText["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyAlignmentChangedPlacement = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -123,11 +123,11 @@ TooltipAlignmentTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyAlignmentChangedPlacement["Owner"] = "evanwi";
-    this.testTooltip_VerifyAlignmentChangedPlacement["Priority"] = "feature";
-    this.testTooltip_VerifyAlignmentChangedPlacement["Description"] = "Test if tooltip realigns/recenters itself if placement changes while the tooltip is visible";
-    this.testTooltip_VerifyAlignmentChangedPlacement["Category"] = "Alignment";
-    this.testTooltip_VerifyAlignmentChangedPlacement["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     //-----------------------------------------------------------------------------------
     // Verify the tooltip appears aligned correctly
@@ -179,38 +179,38 @@ TooltipAlignmentTests = function () {
     this.testTooltip_VerifyAlignmentCenterTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "top", "horizontal center");
     };
-    this.testTooltip_VerifyAlignmentCenterTop["Owner"] = "evanwi";
-    this.testTooltip_VerifyAlignmentCenterTop["Priority"] = "feature";
-    this.testTooltip_VerifyAlignmentCenterTop["Description"] = "Test Alignment of the tooltip";
-    this.testTooltip_VerifyAlignmentCenterTop["Category"] = "Alignment";
-    this.testTooltip_VerifyAlignmentCenterTop["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_AlignmentCenterRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "right", "vertical center");
     };
-    this.testTooltip_AlignmentCenterRight["Owner"] = "evanwi";
-    this.testTooltip_AlignmentCenterRight["Priority"] = "feature";
-    this.testTooltip_AlignmentCenterRight["Description"] = "Test Alignment of the tooltip";
-    this.testTooltip_AlignmentCenterRight["Category"] = "Alignment";
-    this.testTooltip_AlignmentCenterRight["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_AlignmentCenterBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "bottom", "horizontal center");
     };
-    this.testTooltip_AlignmentCenterBottom["Owner"] = "evanwi";
-    this.testTooltip_AlignmentCenterBottom["Priority"] = "feature";
-    this.testTooltip_AlignmentCenterBottom["Description"] = "Test Alignment of the tooltip";
-    this.testTooltip_AlignmentCenterBottom["Category"] = "Alignment";
-    this.testTooltip_AlignmentCenterBottom["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_AlignmentCenterLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "left", "vertical center");
     };
-    this.testTooltip_AlignmentCenterLeft["Owner"] = "evanwi";
-    this.testTooltip_AlignmentCenterLeft["Priority"] = "feature";
-    this.testTooltip_AlignmentCenterLeft["Description"] = "Test Alignment of the tooltip";
-    this.testTooltip_AlignmentCenterLeft["Category"] = "Alignment";
-    this.testTooltip_AlignmentCenterLeft["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
 };
 
