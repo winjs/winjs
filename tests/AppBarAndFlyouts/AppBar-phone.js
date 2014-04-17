@@ -246,7 +246,7 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Test: " + msg);
 
-            // Push two extra WinRT comandBarButtons into the commandBar primary and secondary commands.
+            // Push two extra WinRT comandBarButtons into the commandBar primary and secondary commands.             
             var extraButton1 = new core.WebUICommandBarIconButton();
             var extraButton2 = new core.WebUICommandBarIconButton();
             commandBar.primaryCommands.push(extraButton1);
@@ -254,7 +254,7 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.areEqual(commandBar.primaryCommands.length, 2);
             LiveUnit.Assert.areEqual(commandBar.secondaryCommands.length, 2);
 
-            // AppBar doesn't know about the extra buttons.
+            // AppBar doesn't know about the extra buttons. 
             // Make sure disposing the AppBar doesn't remove the extra buttons from the CommandBar.
             AppBar.dispose();
 
@@ -364,9 +364,10 @@ if (WinJS.Utilities.isPhone) {
             })
         };
 
-        this.testMultipleAppBars = function (complete) {
-            // Whenever an AppBar is created, re-enabled or sets its .commands property; then that AppBar should
-            // replace all contents currently in the WinRT WebUICommandBar with its own commands.
+        this.testCorrectCommandBarUI_WhenUsingMultipleAppBars = function (complete) {
+            // Whenever an AppBar is enabled or re-enabled: that AppBar then becomes the "current AppBar" and
+            // take over both the presentation and control of the commandBar. The new current AppBar should replace all
+            // contents in the WinRT WebUICommandBar with its own commands, and also update the commandBar's closedDisplayMode.
             //
             function verifyCommandsInAppBar(commands, AppBarCommands, varName) {
                 LiveUnit.Assert.areEqual(commands.length, AppBarCommands.length, varName + " should still have the same commands it started with.");
@@ -403,14 +404,104 @@ if (WinJS.Utilities.isPhone) {
             verifyCommandsInAppBar(commands1, bar1._getCommands(), "bar1");
 
             LiveUnit.LoggingCore.logComment("Verify bar1 can reclaim the commandBar by setting the AppBar.disabled property to false");
-            bar2.disabled = true;
             bar1.disabled = false;
             verifyCommandsInCommandBar(bar1, commands1[0].id, commands1[1].id);
 
-            LiveUnit.LoggingCore.logComment("Verify bar2 still knows about its own internal commands, regardless of commandBar state");
+            // Verify that disabling an AppBar, that was not in, does not hide the commandBar.
+            LiveUnit.LoggingCore.logComment("Verify that disabling bar2 after bar1 has become the current AppBar does not hide the commandBar");
+            LiveUnit.Assert.isTrue(commandBar.visible, "precondition: commandBar is expected to be visible.")
+            bar2.disabled = true;
+            LiveUnit.Assert.isTrue(commandBar.visible, "Disabling an AppBar, that was not in control of the commandBar, should not hide the commandBar")
+
+            LiveUnit.LoggingCore.logComment("Verify bar2 still knows about its own internal commands, regardless of losing control of the commandBar to bar1");
             verifyCommandsInAppBar(commands2, bar2._getCommands(), "bar2");
 
             complete();
+        }
+
+        this.testCurrentAppBarId = function (complete) {
+            // Tests important scenarios regarding AppBar's ability to track which AppBar instance is currently in control of the commandBar.
+            // SCN 1 Verifies that AppBars which are ENABLED during construction, become registered as the current AppBar.
+            // SCN 2 Verifies that AppBars which are DISABLED during construction, DO NOT become registered as the current AppBar.
+            // SCN 3 Verifies that every AppBar gets a uniqueID.       
+            // SCN 4 Verifies that setting AppBar.disabled = "false" should register that AppBar as the current AppBar. 
+            // SCN 5 Verifies that disabling an AppBar that was not the current AppBar, has no impact on the currentAppBarId
+            // SCN 6 Verifies that disabling the current AppBar unregisters it from being 'current'.
+            // SCN 7 Verifies that unregistering the current AppBar resulted in no AppBars registered as 'current'.                      
+
+            var commands1 = [{ id: 'g1', label: "g1" }, { id: 's1', label: "s1", section: "selection" }];
+            var commands2 = [{ id: 'g2', label: "g2" }, { id: 's2', label: "s2", section: "selection" }];
+            var commands3 = [{ id: 'g3', label: "g3" }, { id: 's3', label: "s3", section: "selection" }];
+
+            // 1. Verify that AppBars which are ENABLED during construction, become registered as the current AppBar.
+            var msg = "Appbars which are ENABLED during construction, SHOULD become registered as the current AppBar."
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+
+            LiveUnit.LoggingCore.logComment("Create 1st AppBar");
+            var bar1 = new WinJS.UI.AppBar(that._element, { commands: commands1 });
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBar._currentAppBarId, bar1._uniqueId, "AppBar1 should be registered as 'current appbar'.");
+
+            LiveUnit.LoggingCore.logComment("Create 2nd AppBar");
+            var bar2 = new WinJS.UI.AppBar(null, { commands: commands2 });
+            document.body.appendChild(bar2.element);
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBar._currentAppBarId, bar2._uniqueId, "AppBar2 should be registered as 'current appbar'.");
+
+            // 2. Verify that AppBars which are DISABLED during construction, DO NOT become registered as the current AppBar.
+            msg = "AppBars which are DISABLED during construction, SHOULD NOT become registered as the current AppBar."
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.LoggingCore.logComment("Create disabled AppBar");
+            var bar3 = new WinJS.UI.AppBar(null, { commands: commands3, disabled: true });
+            document.body.appendChild(bar3.element);
+            LiveUnit.Assert.areNotEqual(WinJS.UI.AppBar._currentAppBarId, bar3._uniqueId, msg);
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBar._currentAppBarId, bar2._uniqueId, "AppBar2 should STILL be registered as 'current appbar'.");
+
+            // 3. Verify that every AppBar gets a uniqueID.
+            msg = "Every AppBar should have a unique ID.";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.areNotEqual(bar1._uniqueId, bar2._uniqueId, msg);
+            LiveUnit.Assert.areNotEqual(bar3._uniqueId, bar2._uniqueId, msg);
+            LiveUnit.Assert.areNotEqual(bar1._uniqueId, bar3._uniqueId, msg);
+
+            // 4. Verify that setting AppBar.disabled = "false" should register that AppBar as the current AppBar. 
+            msg = "Setting AppBar.disabled = 'false' should register that AppBar as the current AppBar";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+
+            //  i. Enable an AppBar that was already enabled and already registered as current AppBar.
+            bar2.disabled = false;
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBar._currentAppBarId, bar2._uniqueId, "AppBar2 should STILL be registered as 'current appbar'.");
+
+            //  ii. Enable an AppBar that was disabled.
+            bar3.disabled = false;
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBar._currentAppBarId, bar3._uniqueId, "AppBar3 should now be registered as 'current appbar'.");
+
+            //  iii. Enable an AppBar that was already enabled, but was not the current AppBar.
+            bar1.disabled = false;
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBar._currentAppBarId, bar1._uniqueId, "AppBar1 should now be registered as 'current appbar'.");
+
+            // 5. Verify that disabling an AppBar that was not the current AppBar, has no impact on the currentAppBarId
+            msg = "Disabling an AppBar that was not the current AppBar, Should not affect the currentAppBarId.";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+
+            var currentAppBarId = WinJS.UI.AppBar._currentAppBarId;
+            bar3.disabled = true;
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBar._currentAppBarId, currentAppBarId, msg);
+
+            // 6. Verify that disabling the current AppBar unregisters it from being 'current'.
+            msg = "Disabling the current AppBar should unregister  it from being 'current'."
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBar._currentAppBarId, bar1._uniqueId, "precondition: AppBar1 should be registered the 'current appbar'.");
+
+            bar1.disabled = true;
+            LiveUnit.Assert.areNotEqual(WinJS.UI.AppBar._currentAppBarId, bar1._uniqueId, "Disabling the current AppBar should unregister it from being 'current'");
+            LiveUnit.Assert.isFalse(commandBar.visible, "Disabling the current AppBar should hide the commandBar");
+
+            // 7. Verify that unregistering the current AppBar resulted in no AppBars registered as 'current'.
+            msg = "Unregistering the current AppBar should have resulted in no AppBar registered as 'current'."
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.isNull(WinJS.UI.AppBar._currentAppBarId, msg);
+
+            complete();
+
         }
 
         this.testDefaultColors = function (complete) {
@@ -522,7 +613,7 @@ if (WinJS.Utilities.isPhone) {
         }
 
         this.testDynamicColorChange = function (complete) {
-            // Setting these properties or invoking these methods should trigger a recompute of the CommandBar background and foreground colors.
+            // Setting these properties or invoking these methods should trigger a recompute of the CommandBar background and foreground colors. 
             // Seting the AppBar.commands property.
             // AppBar.hideCommands()
             // AppBar.showCommands()
@@ -746,17 +837,17 @@ if (WinJS.Utilities.isPhone) {
             commandBar.visible = true;
             LiveUnit.Assert.areEqual(commandBar.visible, AppBar.disabled, "Making CommandBar visible, should not change the value of AppBar.disabled");
 
-            // Verify that AppBar properties set during instantiations didn't sync to CommandBar since AppBar was disabled.
+            // Verify that AppBar properties set during instantiation, didn't sync to CommandBar since AppBar was disabled.
             LiveUnit.Assert.areEqual(commandBar.closedDisplayMode, core.WebUICommandBarClosedDisplayMode.compact, "commandBar.closedDisplayMode should be 'compact'");
             LiveUnit.Assert.areEqual("minimal", AppBar.closedDisplayMode, "closedDisplayMode shouldn't project to commandBar.closedDisplayMode when AppBar is disabled.");
 
-            LiveUnit.Assert.isTrue(AppBar._getCommands().length == 2, "AppBar should internally know about the two commands it has");
+            LiveUnit.Assert.isTrue(AppBar._getCommands().length === 2, "AppBar should internally know about the two commands it has");
             LiveUnit.Assert.isFalse(commandBar.primaryCommands.length, "Disabled AppBar should not have projected primaryCommands into CommandBar");
             LiveUnit.Assert.isFalse(commandBar.secondaryCommands.length, "Disabled AppBar should not have projected secondaryCommands into CommandBar");
 
             var msg;
             function eventFired(ev) {
-                LiveUnit.Assert.fail(msg + "AppBar should not fire events while disabled");
+                LiveUnit.Assert.fail(msg + " AppBar should not fire events while disabled");
             }
 
             AppBar.addEventListener('beforeshow', eventFired, false);
@@ -798,7 +889,13 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Verify re-disabling the AppBar sets its inline element height to 0.");
             AppBar.disabled = true;
-            LiveUnit.Assert.isFalse(parseFloat(AppBar.element.style.height), "AppBar element inline height(" + AppBar.element.style.height  + ") should be set to 0px, when that AppBar is disabled ");
+            LiveUnit.Assert.isFalse(parseFloat(AppBar.element.style.height), "AppBar element inline height(" + AppBar.element.style.height + ") should be set to 0px, when that AppBar is disabled ");
+
+            LiveUnit.LoggingCore.logComment("Verify that setting commands on a disabled AppBar, does not update commands in commandBar.");
+            AppBar.commands = [];
+            LiveUnit.Assert.areEqual(AppBar._getCommands().length, 0, "AppBar should know internally that is has 0 commands.");
+            LiveUnit.Assert.areEqual(commandBar.primaryCommands.length, 1, "Verifying commandBar primaryCommands were not affected by disabled AppBar commands change");
+            LiveUnit.Assert.areEqual(commandBar.secondaryCommands.length, 1, "Verifying commandBar secondaryCommands were not affected by disabled AppBar commands change");
 
             complete();
         }
@@ -816,13 +913,13 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Test: " + msg);
 
-            // Push an extra WinRT comandBarButton into the commandBar.
+            // Push an extra WinRT commandBarButton into the commandBar.             
             var extraButton = new core.WebUICommandBarIconButton();
             LiveUnit.Assert.isFalse(commandBar.primaryCommands.indexOf(extraButton).returnValue)
             commandBar.primaryCommands.push(extraButton);
             LiveUnit.Assert.isTrue(commandBar.primaryCommands.indexOf(extraButton).returnValue, "extraButton should be among the primaryCommands in the commandBar");
 
-            // AppBar doesn't know about extraButton.
+            // AppBar doesn't know about extraButton. 
             // If AppBar commands get reloaded, extraButton will be absent from the commandBar.
             AppBar.disabled = false;
             LiveUnit.Assert.isTrue(commandBar.primaryCommands.indexOf(extraButton).returnValue, msg)
