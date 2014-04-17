@@ -55,7 +55,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_MaxRating_Default["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_MaxRating_Random["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -98,7 +98,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_MaxRating_Invalid_0["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_MaxRating_Invalid_Null["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -122,7 +122,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_MaxRating_Invalid_Undefined["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -139,7 +139,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_MaxRating_Invalid_Negatives["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -156,7 +156,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_MaxRating_Invalid_NumbersAsStrings["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -173,7 +173,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_MaxRating_Invalid_Nonsense["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     // averageRating Tests
@@ -187,7 +187,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Integer_Default["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -204,7 +204,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Integer_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -217,7 +217,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Float_Default["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -234,7 +234,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Floats_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -244,7 +244,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_DefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -257,7 +257,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -269,7 +269,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_0["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -281,7 +281,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Invalid_Null["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -293,7 +293,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Invalid_GreaterThanDefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -306,7 +306,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Invalid_GreaterThanCustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -318,7 +318,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Invalid_Undefined["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -335,7 +335,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Invalid_Negatives["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -352,7 +352,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Invalid_NumbersAsStrings["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -369,7 +369,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_AverageRating_Invalid_Nonsense["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     // userRating tests
@@ -383,7 +383,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Default["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -400,7 +400,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -412,7 +412,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_DefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -425,7 +425,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -437,7 +437,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_0["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -455,7 +455,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_Null["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -467,7 +467,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_GreaterThanDefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -480,7 +480,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_GreaterThanCustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -492,7 +492,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_Float_Default["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -510,7 +510,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_Floats_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -522,7 +522,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_Undefined["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -539,7 +539,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_Negatives["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -556,7 +556,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_NumbersAsStrings["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -573,7 +573,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_UserRating_Invalid_Nonsense["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     // disabled tests
@@ -594,7 +594,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_disabled_true["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -613,7 +613,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_disabled_false["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -626,7 +626,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_disabled_Invalid_Numbers["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -639,7 +639,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_disabled_Invalid_Strings["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -656,7 +656,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_disabled_Invalid_Nonsense["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     // enableClear tests
@@ -679,7 +679,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_enableClear_true["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -700,7 +700,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_enableClear_false["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -713,7 +713,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_enableClear_Invalid_Numbers["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -726,7 +726,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_enableClear_Invalid_Strings["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -743,7 +743,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_enableClear_Invalid_Nonsense["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     // tooltipStrings tests
@@ -765,7 +765,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_PlainText_DefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -793,7 +793,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_PlainText_DefaultMax_UpdateIndividually["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -818,7 +818,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_PlainText_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -846,7 +846,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_PlainText_CustomMax_UpdateIndividually["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -866,7 +866,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_HTML_DefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -890,7 +890,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_HTML_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -902,7 +902,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_Null_DefaultMax["Category"] = "Options";
+    
 
 
     //-----------------------------------------------------------------------------------
@@ -917,7 +917,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_NullStrings_DefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -936,7 +936,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_NULL_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -950,7 +950,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_NullStrings_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -962,7 +962,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_TooFew_DefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -988,7 +988,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_TooFew_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -1000,7 +1000,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_TooMany_DefaultMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -1026,7 +1026,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_TooMany_CustomMax["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -1038,7 +1038,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_Invalid_Number["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -1050,7 +1050,7 @@ var OptionTests = function () {
     
     
     
-    this.testRating_Options_tooltipStrings_Invalid_String["Category"] = "Options";
+    
 };
 
 // Register the object as a test class by passing in the name

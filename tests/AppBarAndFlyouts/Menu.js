@@ -48,7 +48,7 @@ CorsicaTests.MenuTests = function () {
     
     
     
-    this.testMenuInstantiation["Category"] = "Instantiation";
+    
 
     // Test Menu Instantiation with null element
     this.testMenuNullInstantiation = function () {
@@ -59,7 +59,7 @@ CorsicaTests.MenuTests = function () {
     
     
     
-    this.testMenuNullInstantiation["Category"] = "Instantiation";
+    
 
     // Test Menu Instantiation with no options
     this.testMenuEmptyInstantiation = function () {
@@ -70,7 +70,7 @@ CorsicaTests.MenuTests = function () {
     
     
     
-    this.testMenuEmptyInstantiation["Category"] = "Instantiation";
+    
 
     // Test multiple instantiation of the same Menu DOM element
     this.testMenuMultipleInstantiation = function () {
@@ -93,8 +93,8 @@ CorsicaTests.MenuTests = function () {
     
     
     
-    this.testMenuMultipleInstantiation["Category"] = "Instantiation";
-    this.testMenuMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    
+    
 
     // Test Menu parameters
     this.testMenuParams = function () {
@@ -158,7 +158,7 @@ CorsicaTests.MenuTests = function () {
     
     
     
-    this.testMenuParams["Category"] = "Instantiation";
+    
 
     this.testDefaultMenuParameters = function () {
         // Get the Menu element from the DOM
@@ -176,7 +176,7 @@ CorsicaTests.MenuTests = function () {
     
     
     
-    this.testDefaultMenuParameters["Category"] = "Instantiation";
+    
 
     // Simple Function Tests
     this.testSimpleMenuTestsFunctions = function () {
@@ -204,7 +204,7 @@ CorsicaTests.MenuTests = function () {
     
     
     
-    this.testSimpleMenuTestsFunctions["Category"] = "Instantiation";
+    
     
     this.testMenuDispose = function () {
         var mc1 = new WinJS.UI.MenuCommand(document.createElement("button"), { label: "mc1" });

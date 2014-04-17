@@ -119,8 +119,8 @@ TooltipAccessibilityTests = function () {
     
     
     
-    this.testTooltip_VerifyARIA["Category"] = "Accessibility";
-    this.testTooltip_VerifyARIA["LiveUnit.IsAsync"] = true;
+    
+    
 };
 
 // Register the object as a test class by passing in the name

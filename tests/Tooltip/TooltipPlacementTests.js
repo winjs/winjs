@@ -84,8 +84,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementCenterTop["Category"] = "Placement";
-    this.testTooltip_PlacementCenterTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementCenterRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "center", "right", "right");
@@ -93,8 +93,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementCenterRight["Category"] = "Placement";
-    this.testTooltip_PlacementCenterRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementCenterBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "center", "bottom", "bottom");
@@ -102,8 +102,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementCenterBottom["Category"] = "Placement";
-    this.testTooltip_PlacementCenterBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementCenterLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "center", "left", "left");
@@ -111,8 +111,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementCenterLeft["Category"] = "Placement";
-    this.testTooltip_PlacementCenterLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Element at the top
 
@@ -122,8 +122,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopTop["Category"] = "Placement";
-    this.testTooltip_PlacementTopTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top", "right", "right");
@@ -132,8 +132,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopRight["Category"] = "Placement";
-    this.testTooltip_PlacementTopRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top", "bottom", "bottom");
@@ -141,8 +141,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopBottom["Category"] = "Placement";
-    this.testTooltip_PlacementTopBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top", "left", "left");
@@ -150,8 +150,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopLeft["Category"] = "Placement";
-    this.testTooltip_PlacementTopLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Element at the top right
 
@@ -161,8 +161,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopRightTop["Category"] = "Placement";
-    this.testTooltip_PlacementTopRightTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopRightRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top right", "right", "left");
@@ -170,8 +170,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopRightRight["Category"] = "Placement";
-    this.testTooltip_PlacementTopRightRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopRightBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top right", "bottom", "bottom");
@@ -179,8 +179,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopRightBottom["Category"] = "Placement";
-    this.testTooltip_PlacementTopRightBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopRightLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top right", "left", "left");
@@ -188,8 +188,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopRightLeft["Category"] = "Placement";
-    this.testTooltip_PlacementTopRightLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Element at the right
 
@@ -199,8 +199,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementRightTop["Category"] = "Placement";
-    this.testTooltip_PlacementRightTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementRightRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "right", "right", "left");
@@ -208,8 +208,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementRightRight["Category"] = "Placement";
-    this.testTooltip_PlacementRightRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementRightBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "right", "bottom", "bottom");
@@ -217,8 +217,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementRightBottom["Category"] = "Placement";
-    this.testTooltip_PlacementRightBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementRightLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "right", "left", "left");
@@ -226,8 +226,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementRightLeft["Category"] = "Placement";
-    this.testTooltip_PlacementRightLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Element at the bottom right
 
@@ -237,8 +237,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomRightTop["Category"] = "Placement";
-    this.testTooltip_PlacementBottomRightTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomRightRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom right", "right", "left");
@@ -246,8 +246,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomRightRight["Category"] = "Placement";
-    this.testTooltip_PlacementBottomRightRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomRightBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom right", "bottom", "top");
@@ -255,8 +255,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomRightBottom["Category"] = "Placement";
-    this.testTooltip_PlacementBottomRightBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomRightLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom right", "left", "left");
@@ -264,8 +264,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomRightLeft["Category"] = "Placement";
-    this.testTooltip_PlacementBottomRightLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Element at the bottom
 
@@ -275,8 +275,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomTop["Category"] = "Placement";
-    this.testTooltip_PlacementBottomTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom", "right", "right");
@@ -284,8 +284,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomRight["Category"] = "Placement";
-    this.testTooltip_PlacementBottomRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom", "bottom", "top");
@@ -293,8 +293,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomBottom["Category"] = "Placement";
-    this.testTooltip_PlacementBottomBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom", "left", "left");
@@ -302,8 +302,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomLeft["Category"] = "Placement";
-    this.testTooltip_PlacementBottomLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Element at the bottom left
 
@@ -313,8 +313,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomLeftTop["Category"] = "Placement";
-    this.testTooltip_PlacementBottomLeftTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomLeftRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom left", "right", "right");
@@ -322,8 +322,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomLeftRight["Category"] = "Placement";
-    this.testTooltip_PlacementBottomLeftRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomLeftBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom left", "bottom", "top");
@@ -331,8 +331,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomLeftBottom["Category"] = "Placement";
-    this.testTooltip_PlacementBottomLeftBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementBottomLeftLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom left", "left", "right");
@@ -340,8 +340,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementBottomLeftLeft["Category"] = "Placement";
-    this.testTooltip_PlacementBottomLeftLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Element at the left
 
@@ -351,8 +351,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementLeftTop["Category"] = "Placement";
-    this.testTooltip_PlacementLeftTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementLeftRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "left", "right", "right");
@@ -360,8 +360,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementLeftRight["Category"] = "Placement";
-    this.testTooltip_PlacementLeftRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementLeftBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "left", "bottom", "bottom");
@@ -369,8 +369,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementLeftBottom["Category"] = "Placement";
-    this.testTooltip_PlacementLeftBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementLeftLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "left", "left", "right");
@@ -378,8 +378,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementLeftLeft["Category"] = "Placement";
-    this.testTooltip_PlacementLeftLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Element at the top left
 
@@ -389,8 +389,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopLeftTop["Category"] = "Placement";
-    this.testTooltip_PlacementTopLeftTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopLeftRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top left", "right", "right");
@@ -398,8 +398,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopLeftRight["Category"] = "Placement";
-    this.testTooltip_PlacementTopLeftRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopLeftBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top left", "bottom", "bottom");
@@ -407,8 +407,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopLeftBottom["Category"] = "Placement";
-    this.testTooltip_PlacementTopLeftBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PlacementTopLeftLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top left", "left", "right");
@@ -416,8 +416,8 @@ TooltipPlacementTests = function () {
     
     
     
-    this.testTooltip_PlacementTopLeftLeft["Category"] = "Placement";
-    this.testTooltip_PlacementTopLeftLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
 };
 

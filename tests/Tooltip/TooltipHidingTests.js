@@ -151,8 +151,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_Blur["Category"] = "Automatic";
-    this.testTooltip_Mouse_Blur["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "close", true);
@@ -160,8 +160,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_Close["Category"] = "Automatic";
-    this.testTooltip_Mouse_Close["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseDown", true);
@@ -169,8 +169,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_MouseDown["Category"] = "Automatic";
-    this.testTooltip_Mouse_MouseDown["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseOut", true);
@@ -178,8 +178,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_MouseOut["Category"] = "Automatic";
-    this.testTooltip_Mouse_MouseOut["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseUp", true);
@@ -187,8 +187,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_MouseUp["Category"] = "Automatic";
-    this.testTooltip_Mouse_MouseUp["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "shiftTab", false);
@@ -196,8 +196,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_ShiftTab["Category"] = "Automatic";
-    this.testTooltip_Mouse_ShiftTab["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "tab", false);
@@ -205,8 +205,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_Tab["Category"] = "Automatic";
-    this.testTooltip_Mouse_Tab["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchCancel", false);
@@ -214,8 +214,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_TouchCancel["Category"] = "Automatic";
-    this.testTooltip_Mouse_TouchCancel["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchDown", false);
@@ -223,8 +223,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_TouchDown["Category"] = "Automatic";
-    this.testTooltip_Mouse_TouchDown["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchOut", false);
@@ -232,8 +232,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_TouchOut["Category"] = "Automatic";
-    this.testTooltip_Mouse_TouchOut["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouse_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchUp", false);
@@ -241,8 +241,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouse_TouchUp["Category"] = "Automatic";
-    this.testTooltip_Mouse_TouchUp["LiveUnit.IsAsync"] = true;
+    
+    
 
 
     this.testTooltip_Touch_Blur = function (signalTestCaseCompleted) {
@@ -251,8 +251,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_Blur["Category"] = "Automatic";
-    this.testTooltip_Touch_Blur["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "close", true);
@@ -260,8 +260,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_Close["Category"] = "Automatic";
-    this.testTooltip_Touch_Close["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseDown", false);
@@ -269,8 +269,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_MouseDown["Category"] = "Automatic";
-    this.testTooltip_Touch_MouseDown["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseOut", false);
@@ -278,8 +278,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_MouseOut["Category"] = "Automatic";
-    this.testTooltip_Touch_MouseOut["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseUp", false);
@@ -287,8 +287,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_MouseUp["Category"] = "Automatic";
-    this.testTooltip_Touch_MouseUp["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "shiftTab", false);
@@ -296,8 +296,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_ShiftTab["Category"] = "Automatic";
-    this.testTooltip_Touch_ShiftTab["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "tab", false);
@@ -305,8 +305,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_Tab["Category"] = "Automatic";
-    this.testTooltip_Touch_Tab["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchCancel", true);
@@ -314,8 +314,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_TouchCancel["Category"] = "Automatic";
-    this.testTooltip_Touch_TouchCancel["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchDown", false);
@@ -323,8 +323,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_TouchDown["Category"] = "Automatic";
-    this.testTooltip_Touch_TouchDown["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchOut", true);
@@ -332,8 +332,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_TouchOut["Category"] = "Automatic";
-    this.testTooltip_Touch_TouchOut["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchUp", true);
@@ -341,8 +341,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_TouchUp["Category"] = "Automatic";
-    this.testTooltip_Touch_TouchUp["LiveUnit.IsAsync"] = true;
+    
+    
 
 
     this.testTooltip_Keyboard_Blur = function (signalTestCaseCompleted) {
@@ -351,8 +351,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_Blur["Category"] = "Automatic";
-    this.testTooltip_Keyboard_Blur["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "close", true);
@@ -360,8 +360,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_Close["Category"] = "Automatic";
-    this.testTooltip_Keyboard_Close["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseDown", false);
@@ -369,8 +369,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_MouseDown["Category"] = "Automatic";
-    this.testTooltip_Keyboard_MouseDown["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseOut", false);
@@ -378,8 +378,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_MouseOut["Category"] = "Automatic";
-    this.testTooltip_Keyboard_MouseOut["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseUp", false);
@@ -387,8 +387,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_MouseUp["Category"] = "Automatic";
-    this.testTooltip_Keyboard_MouseUp["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "shiftTab", true);
@@ -396,8 +396,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_ShiftTab["Category"] = "Automatic";
-    this.testTooltip_Keyboard_ShiftTab["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "tab", true);
@@ -405,8 +405,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_Tab["Category"] = "Automatic";
-    this.testTooltip_Keyboard_Tab["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchCancel", false);
@@ -414,8 +414,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_TouchCancel["Category"] = "Automatic";
-    this.testTooltip_Keyboard_TouchCancel["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchDown", false);
@@ -423,8 +423,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_TouchDown["Category"] = "Automatic";
-    this.testTooltip_Keyboard_TouchDown["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchOut", false);
@@ -432,8 +432,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_TouchOut["Category"] = "Automatic";
-    this.testTooltip_Keyboard_TouchOut["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchUp", false);
@@ -441,8 +441,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_TouchUp["Category"] = "Automatic";
-    this.testTooltip_Keyboard_TouchUp["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Programmaticly opening the tooltip.
 
@@ -452,8 +452,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_Blur_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_Blur_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "close", true);
@@ -461,8 +461,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_Close_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_Close_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseDown", false);
@@ -470,8 +470,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_MouseDown_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_MouseDown_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseOut", false);
@@ -479,8 +479,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_MouseOut_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_MouseOut_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseUp", false);
@@ -488,8 +488,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_MouseUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "shiftTab", false);
@@ -497,8 +497,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_ShiftTab_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_ShiftTab_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "tab", false);
@@ -506,8 +506,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_Tab_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_Tab_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchCancel", false);
@@ -515,8 +515,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_TouchCancel_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_TouchCancel_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchDown", false);
@@ -524,8 +524,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_TouchDown_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_TouchDown_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchOut", false);
@@ -533,8 +533,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_TouchOut_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_TouchOut_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mouseover_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchUp", false);
@@ -542,8 +542,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mouseover_TouchUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mouseover_TouchUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     // We could have a large set of cases for _Mousedown_ but it's basically the same as _Default_
     // so just cover a few cases.
@@ -554,8 +554,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mousedown_Close_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mousedown_Close_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Mousedown_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mousedownProgrammatic", "mouseUp", false);
@@ -563,8 +563,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Mousedown_MouseUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Mousedown_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "blur", false);
@@ -572,8 +572,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_Blur_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_Blur_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "close", true);
@@ -581,8 +581,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_Close_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_Close_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseDown", false);
@@ -590,8 +590,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_MouseDown_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_MouseDown_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseOut", false);
@@ -599,8 +599,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_MouseOut_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_MouseOut_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseUp", false);
@@ -608,8 +608,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_MouseUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "shiftTab", false);
@@ -617,8 +617,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_ShiftTab_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_ShiftTab_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "tab", false);
@@ -626,8 +626,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_Tab_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_Tab_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchCancel", false);
@@ -635,8 +635,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_TouchCancel_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_TouchCancel_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchDown", false);
@@ -644,8 +644,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_TouchDown_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_TouchDown_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.xtestTooltip_Default_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchOut", false);
@@ -653,8 +653,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.xtestTooltip_Default_TouchOut_Programmatic["Category"] = "Programmatic";
-    this.xtestTooltip_Default_TouchOut_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Default_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchUp", false);
@@ -662,8 +662,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Default_TouchUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Default_TouchUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
 
     this.testTooltip_Touch_Blur_Programmatic = function (signalTestCaseCompleted) {
@@ -672,8 +672,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_Blur_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_Blur_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "close", true);
@@ -681,8 +681,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_Close_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_Close_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseDown", false);
@@ -690,8 +690,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_MouseDown_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_MouseDown_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseOut", false);
@@ -699,8 +699,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_MouseOut_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_MouseOut_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseUp", false);
@@ -708,8 +708,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_MouseUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "shiftTab", false);
@@ -717,8 +717,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_ShiftTab_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_ShiftTab_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "tab", false);
@@ -726,8 +726,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_Tab_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_Tab_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchCancel", false);
@@ -735,8 +735,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_TouchCancel_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_TouchCancel_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchDown", false);
@@ -744,8 +744,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_TouchDown_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_TouchDown_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchOut", false);
@@ -753,8 +753,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_TouchOut_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_TouchOut_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Touch_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchUp", false);
@@ -762,8 +762,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Touch_TouchUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Touch_TouchUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
 
     this.testTooltip_Keyboard_Blur_Programmatic = function (signalTestCaseCompleted) {
@@ -772,8 +772,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_Blur_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_Blur_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "close", true);
@@ -781,8 +781,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_Close_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_Close_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseDown", false);
@@ -790,8 +790,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_MouseDown_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_MouseDown_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseOut", false);
@@ -799,8 +799,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_MouseOut_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_MouseOut_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseUp", false);
@@ -808,8 +808,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_MouseUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "shiftTab", false);
@@ -817,8 +817,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_ShiftTab_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_ShiftTab_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "tab", false);
@@ -826,8 +826,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_Tab_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_Tab_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchCancel", false);
@@ -835,8 +835,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_TouchCancel_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_TouchCancel_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchDown", false);
@@ -844,8 +844,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_TouchDown_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_TouchDown_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchOut", false);
@@ -853,8 +853,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_TouchOut_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_TouchOut_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_Keyboard_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchUp", false);
@@ -862,8 +862,8 @@ TooltipHidingTests = function () {
     
     
     
-    this.testTooltip_Keyboard_TouchUp_Programmatic["Category"] = "Programmatic";
-    this.testTooltip_Keyboard_TouchUp_Programmatic["LiveUnit.IsAsync"] = true;
+    
+    
 
 };
 

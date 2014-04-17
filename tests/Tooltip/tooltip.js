@@ -62,7 +62,7 @@ CorsicaTests.TooltipTests = function () {
     
     
     
-    this.testTooltipInstantiation["Category"] = "Instantiation";
+    
 
     // Test Tooltip Instatiation with null anchor element
     this.testTooltipNullInstatiation = function () {
@@ -83,7 +83,7 @@ CorsicaTests.TooltipTests = function () {
     
     
     
-    this.testTooltipNullInstatiation["Category"] = "Instantiation";
+    
 
     // Test multiple instantiation of the same anchor element
     this.testTooltipMultipleInstantiation = function () {
@@ -103,7 +103,7 @@ CorsicaTests.TooltipTests = function () {
     
     
     
-    this.testTooltipMultipleInstantiation["Category"] = "Instantiation";
+    
 
     // Test tooltip parameters
     this.testTooltipParams = function () {
@@ -148,7 +148,7 @@ CorsicaTests.TooltipTests = function () {
     
     
     
-    this.testTooltipParams["Category"] = "Instantiation";
+    
 
 
     // Simple Function Tests
@@ -170,7 +170,7 @@ CorsicaTests.TooltipTests = function () {
     
     
     
-    this.testSimpleTooltipFunctions["Category"] = "Instantiation";
+    
     
     // Tests for dispose members and requirements
     this.testTooltipDispose = function () {

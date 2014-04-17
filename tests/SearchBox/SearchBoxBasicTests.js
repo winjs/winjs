@@ -64,7 +64,7 @@ SearchBoxTests.BasicTests = function () {
     
     
     
-    this.testSearchBoxNullInstantiation["Category"] = "Instantiation";
+    
 
     // Test multiple instantiation of the same searchbox DOM element
     this.testSearchBoxMultipleInstantiation = function () {
@@ -80,8 +80,8 @@ SearchBoxTests.BasicTests = function () {
     
     
     
-    this.testSearchBoxMultipleInstantiation["Category"] = "Instantiation";
-    this.testSearchBoxMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    
+    
 
     this.testPublicApiSurfaceFunctions = function () {
         // This test only verifies the API surface. It does not test the functionality.

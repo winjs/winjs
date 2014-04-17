@@ -44,7 +44,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Title_SetAtCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Title_SetAfterCreation = function() {
@@ -55,7 +55,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Title_SetAfterCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Title_SetToEmptyString = function() {
@@ -66,7 +66,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Title_SetToEmptyString["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Title_SetToLongString = function() {
@@ -76,7 +76,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Title_SetToLongString["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Title_SetToHTML = function() {
@@ -86,7 +86,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Title_SetToHTML["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Title_SetToNumber = function() {
@@ -99,7 +99,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Title_SetToNumber["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Title_SetToNull = function() {
@@ -110,7 +110,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Title_SetToNull["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Title_SetToUndefined = function() {
@@ -121,7 +121,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Title_SetToUndefined["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     //
@@ -135,7 +135,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOn_SetAtCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOn_SetAfterCreation = function() {
@@ -146,7 +146,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOn_SetAfterCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOn_SetToEmptyString = function() {
@@ -157,7 +157,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOn_SetToEmptyString["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOn_SetToLongString = function() {
@@ -167,7 +167,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOn_SetToLongString["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOn_SetToHTML = function() {
@@ -177,7 +177,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOn_SetToHTML["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOn_SetToNumber = function() {
@@ -187,7 +187,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOn_SetToNumber["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOn_SetToNull = function() {
@@ -197,7 +197,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOn_SetToNull["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOn_SetToUndefined = function() {
@@ -207,7 +207,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOn_SetToUndefined["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     //
@@ -221,7 +221,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOff_SetAtCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOff_SetAfterCreation = function() {
@@ -232,7 +232,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOff_SetAfterCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOff_SetToEmptyString = function() {
@@ -243,7 +243,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOff_SetToEmptyString["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOff_SetToLongString = function() {
@@ -253,7 +253,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOff_SetToLongString["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOff_SetToHTML = function() {
@@ -263,7 +263,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOff_SetToHTML["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOff_SetToNumber = function() {
@@ -273,7 +273,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOff_SetToNumber["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOff_SetToNull = function() {
@@ -283,7 +283,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOff_SetToNull["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_LabelOff_SetToUndefined = function() {
@@ -293,7 +293,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_LabelOff_SetToUndefined["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     //
@@ -306,7 +306,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Checked_SetAtCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Checked_SetTrueAfterCreation = function() {
@@ -316,7 +316,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Checked_SetTrueAfterCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Checked_SetFalseAfterCreation = function() {
@@ -326,7 +326,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Checked_SetFalseAfterCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Checked_SetToNumberZero = function() {
@@ -336,7 +336,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Checked_SetToNumberZero["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Checked_SetToNumberOne = function() {
@@ -346,7 +346,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Checked_SetToNumberOne["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Checked_SetToString = function() {
@@ -356,7 +356,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Checked_SetToString["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Checked_SetToNull = function() {
@@ -366,7 +366,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Checked_SetToNull["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Checked_SetToUndefined = function() {
@@ -376,7 +376,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Checked_SetToUndefined["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     //
@@ -391,7 +391,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Disabled_SetAtCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Disabled_SetTrueAfterCreation = function() {
@@ -401,7 +401,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Disabled_SetTrueAfterCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Disabled_SetFalseAfterCreation = function() {
@@ -411,7 +411,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Disabled_SetFalseAfterCreation["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Disabled_SetToNumberZero = function() {
@@ -421,7 +421,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Disabled_SetToNumberZero["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Disabled_SetToNumberOne = function() {
@@ -431,7 +431,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Disabled_SetToNumberOne["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Disabled_SetToString = function() {
@@ -441,7 +441,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Disabled_SetToString["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Disabled_SetToNull = function() {
@@ -451,7 +451,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Disabled_SetToNull["Category"] = "Options";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Options_Disabled_SetToUndefined = function() {
@@ -461,7 +461,7 @@ var ToggleOptionTests = function() {
     
     
     
-    this.testToggle_Options_Disabled_SetToUndefined["Category"] = "Options";
+    
 };
 
 // Register the object as a test class by passing in the name

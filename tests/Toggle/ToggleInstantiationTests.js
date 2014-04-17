@@ -42,7 +42,7 @@ ToggleInstantiationTests = function () {
     
     
     
-    this.testToggle_Instantiation["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Instantiation_WithOptions = function () {
@@ -51,7 +51,7 @@ ToggleInstantiationTests = function () {
     
     
     
-    this.testToggle_Instantiation_WithOptions["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Instantiation_Multiple = function () {
@@ -72,7 +72,7 @@ ToggleInstantiationTests = function () {
     
     
     
-    this.testToggle_Instantiation_Multiple["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_Instantiation_Span = function () {
@@ -83,7 +83,7 @@ ToggleInstantiationTests = function () {
     
     
     
-    this.testToggle_Instantiation_Span["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_dir_LTR = function () {
@@ -93,7 +93,7 @@ ToggleInstantiationTests = function () {
     
     
     
-    this.testToggle_dir_LTR["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_dir_RTL = function () {
@@ -103,7 +103,7 @@ ToggleInstantiationTests = function () {
     
     
     
-    this.testToggle_dir_RTL["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_dir_RTL_Disabled = function () {
@@ -116,7 +116,7 @@ ToggleInstantiationTests = function () {
     
     
     
-    this.testToggle_dir_RTL_Disabled["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     this.testToggle_dir_Swap = function () {
@@ -137,7 +137,7 @@ ToggleInstantiationTests = function () {
     
     
     
-    this.testToggle_dir_Swap["Category"] = "Instantiation";
+    
 };
 
 // Register the object as a test class by passing in the name

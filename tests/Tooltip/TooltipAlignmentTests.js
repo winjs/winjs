@@ -75,8 +75,8 @@ TooltipAlignmentTests = function () {
     
     
     
-    this.testTooltip_VerifyAlignmentChangedText["Category"] = "Alignment";
-    this.testTooltip_VerifyAlignmentChangedText["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyAlignmentChangedPlacement = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -126,8 +126,8 @@ TooltipAlignmentTests = function () {
     
     
     
-    this.testTooltip_VerifyAlignmentChangedPlacement["Category"] = "Alignment";
-    this.testTooltip_VerifyAlignmentChangedPlacement["LiveUnit.IsAsync"] = true;
+    
+    
 
     //-----------------------------------------------------------------------------------
     // Verify the tooltip appears aligned correctly
@@ -182,8 +182,8 @@ TooltipAlignmentTests = function () {
     
     
     
-    this.testTooltip_VerifyAlignmentCenterTop["Category"] = "Alignment";
-    this.testTooltip_VerifyAlignmentCenterTop["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_AlignmentCenterRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "right", "vertical center");
@@ -191,8 +191,8 @@ TooltipAlignmentTests = function () {
     
     
     
-    this.testTooltip_AlignmentCenterRight["Category"] = "Alignment";
-    this.testTooltip_AlignmentCenterRight["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_AlignmentCenterBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "bottom", "horizontal center");
@@ -200,8 +200,8 @@ TooltipAlignmentTests = function () {
     
     
     
-    this.testTooltip_AlignmentCenterBottom["Category"] = "Alignment";
-    this.testTooltip_AlignmentCenterBottom["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_AlignmentCenterLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "left", "vertical center");
@@ -209,8 +209,8 @@ TooltipAlignmentTests = function () {
     
     
     
-    this.testTooltip_AlignmentCenterLeft["Category"] = "Alignment";
-    this.testTooltip_AlignmentCenterLeft["LiveUnit.IsAsync"] = true;
+    
+    
 
 };
 

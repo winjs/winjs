@@ -74,7 +74,7 @@ CorsicaTests.RatingTests = function () {
     
     
     
-    this.testRatingInstantiation["Category"] = "Instantiation";
+    
 
     // Test Rating Instatiation with null element
     this.testRatingNullInstatiation = function () {
@@ -96,7 +96,7 @@ CorsicaTests.RatingTests = function () {
     
     
     
-    this.testRatingNullInstatiation["Category"] = "Instantiation";
+    
 
     // Test rating parameters
     this.testRatingParams = function () {
@@ -149,7 +149,7 @@ CorsicaTests.RatingTests = function () {
     
     
     
-    this.testRatingParams["Category"] = "Instantiation";
+    
 
     // Test maxRating,userRating & averageRating updates during runtime
     this.testRatingPropertiesUpdate = function (complete) {

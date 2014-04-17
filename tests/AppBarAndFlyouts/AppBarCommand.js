@@ -27,7 +27,7 @@ CorsicaTests.AppBarCommandTests = function () {
     
     
     
-    this.testAppBarCommandInstantiation["Category"] = "Instantiation";
+    
 
     // Test AppBarCommand Instantiation with null element
     this.testAppBarCommandNullInstantiation = function () {
@@ -38,7 +38,7 @@ CorsicaTests.AppBarCommandTests = function () {
     
     
     
-    this.testAppBarCommandNullInstantiation["Category"] = "Instantiation";
+    
 
     // Test AppBarCommand Instantiation with no options
     this.testAppBarCommandEmptyInstantiation = function () {
@@ -49,7 +49,7 @@ CorsicaTests.AppBarCommandTests = function () {
     
     
     
-    this.testAppBarCommandEmptyInstantiation["Category"] = "Instantiation";
+    
 
     // Test multiple instantiation of the same AppBarCommand DOM element
     this.testAppBarCommandMultipleInstantiation = function () {
@@ -73,8 +73,8 @@ CorsicaTests.AppBarCommandTests = function () {
     
     
     
-    this.testAppBarCommandMultipleInstantiation["Category"] = "Instantiation";
-    this.testAppBarCommandMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    
+    
 
     // Test AppBarCommand parameters
     this.testAppBarCommandParams = function () {
@@ -174,7 +174,7 @@ CorsicaTests.AppBarCommandTests = function () {
     
     
     
-    this.testAppBarCommandParams["Category"] = "Instantiation";
+    
 
     this.testDefaultAppBarCommandParameters = function () {
         // Get the AppBarCommand element from the DOM
@@ -198,7 +198,7 @@ CorsicaTests.AppBarCommandTests = function () {
     
     
     
-    this.testDefaultAppBarCommandParameters["Category"] = "Instantiation";
+    
 
     // Simple Property tests
     this.testSimpleAppBarCommandProperties = function () {
@@ -234,7 +234,7 @@ CorsicaTests.AppBarCommandTests = function () {
     
     
     
-    this.testSimpleAppBarCommandProperties["Category"] = "Instantiation";
+    
 
 
     // Hidden Property tests
@@ -266,7 +266,7 @@ CorsicaTests.AppBarCommandTests = function () {
     
     
     
-    this.testHiddenProperty["Category"] = "Instantiation";
+    
 
 
     // Tests for dispose members and requirements

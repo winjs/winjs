@@ -117,7 +117,7 @@ CorsicaTests.BackButtonTests = function () {
     
     
     
-    this.testBackButtonInstantiation["Category"] = "Instantiation";
+    
 
     // Test BackButton's Automatic Visibility Updates 
     this.testBackButtonAutomaticVisibilityUpdates = function (complete) {
@@ -200,7 +200,7 @@ CorsicaTests.BackButtonTests = function () {
     
     
     navigating back to home.";
-    this.testBackButtonAutomaticVisibilityUpdates["Category"] = "Visibility";
+    
 
     // Test BackButton's refresh method.
     this.testBackButtonRefreshMethod = function (complete) {
@@ -225,7 +225,7 @@ CorsicaTests.BackButtonTests = function () {
     
     
     
-    this.testBackButtonRefreshMethod["Category"] = "Visibility";
+    
 
     // Test BackButton's aria-label attribute.
     this.testBackButtonAriaLabel = function (complete) {
@@ -246,7 +246,7 @@ CorsicaTests.BackButtonTests = function () {
     
     
     
-    this.testBackButtonAriaLabel["Category"] = "Accessibility";
+    
 
 
     // Test BackButton's singleton reference count used in dispose model
@@ -292,7 +292,7 @@ CorsicaTests.BackButtonTests = function () {
     
     
     
-    this.testBackButtonReferenceCount["Category"] = "Reference Counting";
+    
 }
 
 // register the object as a test class by passing in the name

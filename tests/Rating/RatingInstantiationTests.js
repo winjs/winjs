@@ -42,7 +42,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_FromNull["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_WithOptions["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -76,7 +76,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_FromNull_WithOptions["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -100,7 +100,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_DynamicAdd["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_DynamicAdd_AverageRating1["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -135,7 +135,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_Span["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -146,7 +146,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_dir_LTR["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_dir_RTL["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -174,7 +174,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_dir_RTL_IncreasedMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -191,7 +191,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_dir_RTL_Readonly["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -222,7 +222,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_dir_Swap["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     // maxRating Tests
@@ -240,7 +240,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_MaxRating_Random["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -250,7 +250,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_MaxRating_Invalid_0["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -260,7 +260,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_MaxRating_Invalid_Null["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -270,7 +270,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_MaxRating_Invalid_Undefined["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -285,7 +285,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_MaxRating_Invalid_Negatives["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -300,7 +300,7 @@ RatingInstantiationTests = function () {
     
     
     API)";
-    this.testRating_Instantiation_MaxRating_Invalid_NumbersAsStrings["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -315,7 +315,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_MaxRating_Invalid_Nonsense["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     // averageRating Tests
@@ -327,7 +327,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Default["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -345,7 +345,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -355,7 +355,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Float_Default["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -372,7 +372,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Floats_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -382,7 +382,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_DefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -394,7 +394,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_CustomMax["Category"] = "Instantiation";
+    
 
 
     //-----------------------------------------------------------------------------------
@@ -405,7 +405,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_0["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -415,7 +415,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Invalid_Null["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -425,7 +425,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanDefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -437,7 +437,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanCustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -447,7 +447,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Invalid_Undefined["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -462,7 +462,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Invalid_Negatives["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -477,7 +477,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Invalid_NumbersAsStrings["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -492,7 +492,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_AverageRating_Invalid_Nonsense["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     // userRating tests
@@ -504,7 +504,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Default["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -521,7 +521,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -531,7 +531,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_DefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -543,7 +543,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -553,7 +553,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_0["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -563,7 +563,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_Null["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -573,7 +573,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanDefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -584,7 +584,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanCustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -594,7 +594,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_Float_Default["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -611,7 +611,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_Floats_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -621,7 +621,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_Undefined["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -636,7 +636,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_Negatives["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -651,7 +651,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_NumbersAsStrings["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -666,7 +666,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_UserRating_Invalid_Nonsense["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     // disabled tests
@@ -678,7 +678,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_disabled_true["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -688,7 +688,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_disabled_false["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -701,7 +701,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_disabled_Invalid_Numbers["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -714,7 +714,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_disabled_Invalid_Strings["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -729,7 +729,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_disabled_Invalid_Nonsense["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     // enableClear tests
@@ -741,7 +741,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_enableClear_true["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -751,7 +751,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_enableClear_false["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -764,7 +764,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_enableClear_Invalid_Numbers["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -777,7 +777,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_enableClear_Invalid_Strings["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -792,7 +792,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_enableClear_Invalid_Nonsense["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
     // tooltipStrings tests
@@ -812,7 +812,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_PlainText_DefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -835,7 +835,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_PlainText_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -853,7 +853,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_HTML_DefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -876,7 +876,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_HTML_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -886,7 +886,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_NULL_DefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -903,7 +903,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_NULL_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -913,7 +913,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_TooFew_DefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -937,7 +937,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_TooFew_CustomMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -947,7 +947,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_TooManyDefaultMax["Category"] = "Instantiation";
+    
 
     //-----------------------------------------------------------------------------------
 
@@ -971,7 +971,7 @@ RatingInstantiationTests = function () {
     
     
     
-    this.testRating_Instantiation_tooltipStrings_TooMany_CustomMax["Category"] = "Instantiation";
+    
 };
 
 // Register the object as a test class by passing in the name

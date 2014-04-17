@@ -42,7 +42,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation["Category"] = "Instantiation";
+    
 
     // Verify the properties can be set during initialization.  This is just a basic check
     // and these options are tested in other functions
@@ -63,7 +63,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation_options["Category"] = "Instantiation";
+    
 
     // Verify passing incorrect values for the DOM element causes failure
     this.testTooltip_Instantiation_element = function () {
@@ -102,7 +102,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation_element["Category"] = "Instantiation";
+    
 
     // Verify passing incorrect values for the element property causes failure.
     // This property is set AFTER the tooltip is created.
@@ -142,7 +142,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation_elementProperty["Category"] = "Instantiation";
+    
 
     // Verify tooltip either converts properties or throws an exception.
     // The only truly valid parameter to elementContent is an HTML element, but we don't throw any errors
@@ -172,7 +172,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation_elementContent["Category"] = "Instantiation";
+    
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_infotip = function () {
@@ -201,7 +201,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation_infotip["Category"] = "Instantiation";
+    
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_inner = function () {
@@ -236,7 +236,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation_inner["Category"] = "Instantiation";
+    
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_placement = function () {
@@ -266,7 +266,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation_placement["Category"] = "Instantiation";
+    
 
     // Verify tooltip either converts properties or throws an exception.
     // The only truly valid parameter to extraClass is a string, but we don't throw any errors
@@ -296,7 +296,7 @@ TooltipBasicTests = function () {
     
     
     
-    this.testTooltip_Instantiation_extraClass["Category"] = "Instantiation";
+    
 
 };
 

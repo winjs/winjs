@@ -194,8 +194,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticMouse["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteStaticBodyScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "static", "body", "mouse");
@@ -203,8 +203,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticBodyScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticBodyScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteStaticHtmlScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "static", "html", "mouse");
@@ -212,8 +212,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticHtmlScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticHtmlScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteAbsoluteParentScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "absolute", "parent", "mouse");
@@ -221,8 +221,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteAbsoluteParentScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteAbsoluteParentScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteStaticMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "static", "none", "mouseoverProgrammatic");
@@ -230,8 +230,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteStaticBodyScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "static", "body", "mouseoverProgrammatic");
@@ -239,8 +239,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticBodyScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticBodyScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteStaticHtmlScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "static", "html", "mouseoverProgrammatic");
@@ -248,8 +248,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticHtmlScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticHtmlScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteAbsoluteParentScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "absolute", "parent", "mouseoverProgrammatic");
@@ -257,8 +257,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteAbsoluteParentScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteAbsoluteParentScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteStaticKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "static", "none", "keyboard");
@@ -266,8 +266,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticKeyboard["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteStaticBodyScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "static", "body", "keyboard");
@@ -275,8 +275,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticBodyScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticBodyScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteStaticHtmlScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "static", "body", "keyboard");
@@ -284,8 +284,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteStaticHtmlScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteStaticHtmlScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionAbsoluteAbsoluteParentScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "absolute", "absolute", "parent", "keyboard");
@@ -293,8 +293,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionAbsoluteAbsoluteParentScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionAbsoluteAbsoluteParentScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Fixed Positioning
 
@@ -304,8 +304,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticMouse["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedStaticBodyScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "static", "body", "mouse");
@@ -313,8 +313,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticBodyScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticBodyScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedStaticHtmlScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "static", "html", "mouse");
@@ -322,8 +322,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticHtmlScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticHtmlScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedAbsoluteParentScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "absolute", "parent", "mouse");
@@ -331,8 +331,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedAbsoluteParentScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionFixedAbsoluteParentScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedStaticMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "static", "none", "mouseoverProgrammatic");
@@ -340,8 +340,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedStaticBodyScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "static", "body", "mouseoverProgrammatic");
@@ -349,8 +349,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticBodyScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticBodyScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedStaticHtmlScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "static", "html", "mouseoverProgrammatic");
@@ -358,8 +358,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticHtmlScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticHtmlScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedAbsoluteParentScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "absolute", "parent", "mouseoverProgrammatic");
@@ -367,8 +367,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedAbsoluteParentScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionFixedAbsoluteParentScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedStaticKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "static", "none", "keyboard");
@@ -376,8 +376,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticKeyboard["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedStaticBodyScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "static", "body", "keyboard");
@@ -385,8 +385,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticBodyScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticBodyScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedStaticHtmlScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "static", "html", "keyboard");
@@ -394,8 +394,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedStaticHtmlScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionFixedStaticHtmlScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionFixedAbsoluteParentScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "fixed", "absolute", "parent", "keyboard");
@@ -403,8 +403,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionFixedAbsoluteParentScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionFixedAbsoluteParentScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Relative Positioning
 
@@ -414,8 +414,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticMouse["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeStaticBodyScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "static", "body", "mouse");
@@ -423,8 +423,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticBodyScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticBodyScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeStaticHtmlScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "static", "html", "mouse");
@@ -432,8 +432,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticHtmlScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticHtmlScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeAbsoluteParentScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "absolute", "parent", "mouse");
@@ -441,8 +441,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeAbsoluteParentScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionRelativeAbsoluteParentScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeStaticMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "static", "none", "mouseoverProgrammatic");
@@ -450,8 +450,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeStaticBodyScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "static", "body", "mouseoverProgrammatic");
@@ -459,8 +459,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticBodyScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticBodyScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeStaticHtmlScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "static", "html", "mouseoverProgrammatic");
@@ -468,8 +468,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticHtmlScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticHtmlScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeAbsoluteParentScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "absolute", "parent", "mouseoverProgrammatic");
@@ -477,8 +477,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeAbsoluteParentScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionRelativeAbsoluteParentScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeStaticKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "static", "none", "keyboard");
@@ -486,8 +486,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticKeyboard["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeStaticBodyScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "static", "body", "keyboard");
@@ -495,8 +495,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticBodyScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticBodyScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeStaticHtmlScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "static", "html", "keyboard");
@@ -504,8 +504,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeStaticHtmlScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionRelativeStaticHtmlScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionRelativeAbsoluteParentScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "relative", "absolute", "parent", "keyboard");
@@ -513,8 +513,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionRelativeAbsoluteParentScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionRelativeAbsoluteParentScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     // Static Positioning
 
@@ -524,8 +524,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticMouse["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticStaticBodyScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "static", "body", "mouse");
@@ -533,8 +533,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticBodyScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticBodyScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticStaticHtmlScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "static", "html", "mouse");
@@ -542,8 +542,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticHtmlScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticHtmlScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticAbsoluteParentScrolledMouse = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "absolute", "parent", "mouse");
@@ -551,8 +551,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticAbsoluteParentScrolledMouse["Category"] = "Position";
-    this.testTooltip_PositionStaticAbsoluteParentScrolledMouse["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticStaticMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "static", "none", "mouseoverProgrammatic");
@@ -560,8 +560,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticStaticBodyScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "static", "body", "mouseoverProgrammatic");
@@ -569,8 +569,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticBodyScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticBodyScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticStaticHtmlScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "static", "html", "mouseoverProgrammatic");
@@ -578,8 +578,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticHtmlScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticHtmlScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticAbsoluteParentScrolledMouseProgrammatic = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "absolute", "parent", "mouseoverProgrammatic");
@@ -587,8 +587,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticAbsoluteParentScrolledMouseProgrammatic["Category"] = "Position";
-    this.testTooltip_PositionStaticAbsoluteParentScrolledMouseProgrammatic["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticStaticKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "static", "none", "keyboard");
@@ -596,8 +596,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticKeyboard["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticStaticBodyScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "static", "body", "keyboard");
@@ -605,8 +605,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticBodyScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticBodyScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticStaticHtmlScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "static", "html", "keyboard");
@@ -614,8 +614,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticStaticHtmlScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionStaticStaticHtmlScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_PositionStaticAbsoluteParentScrolledKeyboard = function (signalTestCaseCompleted) {
         testTooltip_VerifyPosition(signalTestCaseCompleted, "static", "absolute", "parent", "keyboard");
@@ -623,8 +623,8 @@ TooltipPositionTests = function () {
     
     
     
-    this.testTooltip_PositionStaticAbsoluteParentScrolledKeyboard["Category"] = "Position";
-    this.testTooltip_PositionStaticAbsoluteParentScrolledKeyboard["LiveUnit.IsAsync"] = true;
+    
+    
 };
 
 // Register the object as a test class by passing in the name

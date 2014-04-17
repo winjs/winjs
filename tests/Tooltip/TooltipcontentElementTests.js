@@ -73,8 +73,8 @@ TooltipContentElementTests = function () {
     
     
     
-    this.testTooltip_contentElement["Category"] = "ContentElement";
-    this.testTooltip_contentElement["LiveUnit.IsAsync"] = true;
+    
+    
 
 };
 

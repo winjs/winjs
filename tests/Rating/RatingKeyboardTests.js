@@ -53,8 +53,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Focus["Category"] = "Keyboard";
-    this.testRating_Focus["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Focus.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -86,8 +86,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Focus_ShowingUser["Category"] = "Keyboard";
-    this.testRating_Focus_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Focus_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -114,8 +114,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Focus_ShowingAverage["Category"] = "Keyboard";
-    this.testRating_Focus_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Focus_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -148,8 +148,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Blur["Category"] = "Keyboard";
-    this.testRating_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -187,8 +187,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Blur_ShowingUser["Category"] = "Keyboard";
-    this.testRating_Blur_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Blur_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -225,8 +225,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Blur_ShowingAverage["Category"] = "Keyboard";
-    this.testRating_Blur_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Blur_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -246,8 +246,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -267,8 +267,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -288,8 +288,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Default_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -307,8 +307,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Default_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -326,8 +326,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Default_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -345,8 +345,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Default_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -364,8 +364,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -383,8 +383,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -402,8 +402,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_AverageRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -421,8 +421,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_AverageRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -440,8 +440,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_UserRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -459,8 +459,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_UserRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -478,8 +478,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_UserRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -497,8 +497,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_UserRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -516,8 +516,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -535,8 +535,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -554,8 +554,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -573,8 +573,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -592,8 +592,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Disabled_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -611,8 +611,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Disabled_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -630,8 +630,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Disabled_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -649,8 +649,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Disabled_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -668,8 +668,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_NoClear_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_NoClear_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -687,8 +687,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_NoClear_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_NoClear_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -706,8 +706,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_NoClear_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_NoClear_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_NoClear_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -725,8 +725,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_NoClear_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_NoClear_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_NoClear_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -773,8 +773,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Multiple["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Multiple["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Multiple.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -822,8 +822,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Right_Multiple_CustomMax["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Right_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -843,8 +843,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Default_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -862,8 +862,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Default_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -881,8 +881,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Default_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -900,8 +900,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Default_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -919,8 +919,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -938,8 +938,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -957,8 +957,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_AverageRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -976,8 +976,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_AverageRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -995,8 +995,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_UserRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1014,8 +1014,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_UserRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1033,8 +1033,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_UserRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1052,8 +1052,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_UserRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1071,8 +1071,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1090,8 +1090,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1109,8 +1109,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1128,8 +1128,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1147,8 +1147,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Disabled_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1166,8 +1166,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Disabled_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1185,8 +1185,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Disabled_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1204,8 +1204,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Disabled_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1223,8 +1223,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_NoClear_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_NoClear_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1242,8 +1242,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_NoClear_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_NoClear_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1261,8 +1261,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_NoClear_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_NoClear_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_NoClear_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1280,8 +1280,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_NoClear_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_NoClear_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_NoClear_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1329,8 +1329,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Multiple["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Multiple["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Multiple.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1379,8 +1379,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Up_Multiple_CustomMax["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Up_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1400,8 +1400,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Default_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1419,8 +1419,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Default_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1438,8 +1438,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Default_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1457,8 +1457,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Default_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1476,8 +1476,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1495,8 +1495,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1514,8 +1514,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_AverageRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1533,8 +1533,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_AverageRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1552,8 +1552,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_UserRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1571,8 +1571,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_UserRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1590,8 +1590,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_UserRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1609,8 +1609,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_UserRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1628,8 +1628,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1647,8 +1647,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1666,8 +1666,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1685,8 +1685,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1704,8 +1704,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Disabled_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1723,8 +1723,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Disabled_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1742,8 +1742,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Disabled_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1761,8 +1761,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Disabled_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1780,8 +1780,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_NoClear_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_NoClear_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1799,8 +1799,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_NoClear_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_NoClear_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1818,8 +1818,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_NoClear_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_NoClear_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_NoClear_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1837,8 +1837,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_NoClear_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_NoClear_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_NoClear_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1889,8 +1889,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Multiple["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Multiple["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Multiple.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1942,8 +1942,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Left_Multiple_CustomMax["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Left_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1963,8 +1963,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Default_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1982,8 +1982,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Default_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2001,8 +2001,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Default_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2020,8 +2020,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Default_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2039,8 +2039,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2058,8 +2058,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2077,8 +2077,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_AverageRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2096,8 +2096,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_AverageRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2115,8 +2115,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_UserRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2134,8 +2134,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_UserRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2153,8 +2153,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_UserRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2172,8 +2172,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_UserRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2191,8 +2191,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2210,8 +2210,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2229,8 +2229,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2248,8 +2248,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2267,8 +2267,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Disabled_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2286,8 +2286,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Disabled_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2305,8 +2305,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Disabled_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2324,8 +2324,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Disabled_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2343,8 +2343,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_NoClear_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_NoClear_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2362,8 +2362,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_NoClear_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_NoClear_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2381,8 +2381,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_NoClear_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_NoClear_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_NoClear_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2400,8 +2400,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_NoClear_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_NoClear_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_NoClear_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2452,8 +2452,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Multiple["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Multiple["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Multiple.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2505,8 +2505,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Down_Multiple_CustomMax["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Down_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2534,8 +2534,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Default_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2561,8 +2561,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Default_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2588,8 +2588,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Default_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2615,8 +2615,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Default_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2642,8 +2642,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2669,8 +2669,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2696,8 +2696,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2723,8 +2723,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2750,8 +2750,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2777,8 +2777,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2804,8 +2804,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2831,8 +2831,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2858,8 +2858,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2885,8 +2885,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2912,8 +2912,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2939,8 +2939,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3003,8 +3003,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Multiple_Default["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Multiple_Default["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Multiple_Default.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3068,8 +3068,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_Multiple_CustomMax["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3089,8 +3089,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_0_enableClear_true["Category"] = "Keyboard";
-    this.testRating_Keyboard_Numbers_0_enableClear_true["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_0_enableClear_true.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3110,8 +3110,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_Numbers_0_enableClear_false["Category"] = "Keyboard";
-    this.testRating_Keyboard_Numbers_0_enableClear_false["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_Numbers_0_enableClear_false.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3153,8 +3153,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Keyboard_InvalidKey["Category"] = "Keyboard";
-    this.testRating_Keyboard_InvalidKey["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Keyboard_InvalidKey.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3190,8 +3190,8 @@ RatingKeyboardTests = function () {
     
     
     
-    this.testRating_Set_aria_valuenow_Random["Category"] = "Keyboard";
-    this.testRating_Set_aria_valuenow_Random["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Set_aria_valuenow_Random.timeout = 30000;
 };
 

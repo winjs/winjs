@@ -59,7 +59,7 @@ CorsicaTests.FlyoutTests = function () {
     
     
     
-    this.testFlyoutInstantiation["Category"] = "Instantiation";
+    
 
     // Test flyout Instantiation with null element
     this.testFlyoutNullInstantiation = function () {
@@ -70,7 +70,7 @@ CorsicaTests.FlyoutTests = function () {
     
     
     
-    this.testFlyoutNullInstantiation["Category"] = "Instantiation";
+    
 
     // Test multiple instantiation of the same flyout DOM element
     this.testFlyoutMultipleInstantiation = function () {
@@ -82,8 +82,8 @@ CorsicaTests.FlyoutTests = function () {
     
     
     
-    this.testFlyoutMultipleInstantiation["Category"] = "Instantiation";
-    this.testFlyoutMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    
+    
 
     // Test flyout parameters
     this.testFlyoutParams = function () {
@@ -147,7 +147,7 @@ CorsicaTests.FlyoutTests = function () {
     
     
     
-    this.testFlyoutParams["Category"] = "Instantiation";
+    
 
     // Test defaults
     this.testDefaultflyoutParameters = function () {
@@ -162,7 +162,7 @@ CorsicaTests.FlyoutTests = function () {
     
     
     
-    this.testDefaultflyoutParameters["Category"] = "Instantiation";
+    
 
     // Simple Function Tests
     this.testSimpleflyoutFunctions = function () {
@@ -185,7 +185,7 @@ CorsicaTests.FlyoutTests = function () {
     
     
     
-    this.testSimpleflyoutFunctions["Category"] = "Instantiation";
+    
 
     this.testFlyoutDispose = function () {
         var flyout = new WinJS.UI.Flyout();

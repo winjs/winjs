@@ -45,8 +45,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Lowest["Category"] = "touch";
-    this.testRating_Tap_Lowest["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Lowest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Lowest_ShowingAverage["Category"] = "touch";
-    this.testRating_Tap_Lowest_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Lowest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -87,8 +87,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Lowest_ShowingUser["Category"] = "touch";
-    this.testRating_Tap_Lowest_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Lowest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -115,8 +115,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Lowest_Disabled["Category"] = "touch";
-    this.testRating_Tap_Lowest_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Lowest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -136,8 +136,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Lowest_SetToMin["Category"] = "touch";
-    this.testRating_Tap_Lowest_SetToMin["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Lowest_SetToMin.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -165,8 +165,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Lowest_CustomMax["Category"] = "touch";
-    this.testRating_Tap_Lowest_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Lowest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -186,8 +186,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Highest["Category"] = "touch";
-    this.testRating_Tap_Highest["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Highest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -207,8 +207,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Highest_ShowingAverage["Category"] = "touch";
-    this.testRating_Tap_Highest_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Highest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -228,8 +228,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Highest_ShowingUser["Category"] = "touch";
-    this.testRating_Tap_Highest_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Highest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -256,8 +256,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Highest_Disabled["Category"] = "touch";
-    this.testRating_Tap_Highest_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Highest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -277,8 +277,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Highest_SetToMax["Category"] = "touch";
-    this.testRating_Tap_Highest_SetToMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Highest_SetToMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -301,8 +301,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Highest_CustomMax["Category"] = "touch";
-    this.testRating_Tap_Highest_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Highest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -322,8 +322,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_CurrentRating["Category"] = "mouse";
-    this.testRating_Tap_CurrentRating["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_CurrentRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -350,8 +350,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel["Category"] = "touch";
-    this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -409,8 +409,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_All_Increasing["Category"] = "touch";
-    this.testRating_Tap_All_Increasing["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_All_Increasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -469,8 +469,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_All_Decreasing["Category"] = "touch";
-    this.testRating_Tap_All_Decreasing["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_All_Decreasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -493,8 +493,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Random["Category"] = "touch";
-    this.testRating_Tap_Random["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Random.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -524,8 +524,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Random_Disabled["Category"] = "touch";
-    this.testRating_Tap_Random_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Random_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -555,8 +555,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Tap_Random_RemoveEventListener_Change["Category"] = "touch";
-    this.testRating_Tap_Random_RemoveEventListener_Change["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Tap_Random_RemoveEventListener_Change.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -632,8 +632,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Touch_Scrub_Forward["Category"] = "touch";
-    this.testRating_Touch_Scrub_Forward["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Touch_Scrub_Forward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -711,8 +711,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Touch_Scrub_Backward["Category"] = "touch";
-    this.testRating_Touch_Scrub_Backward["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Touch_Scrub_Backward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -791,8 +791,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Touch_Scrub_NoChange["Category"] = "touch";
-    this.testRating_Touch_Scrub_NoChange["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Touch_Scrub_NoChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -882,8 +882,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Touch_Scrub_ClearRating["Category"] = "touch";
-    this.testRating_Touch_Scrub_ClearRating["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Touch_Scrub_ClearRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -970,8 +970,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Touch_Scrub_ClearRating_enableClear_false["Category"] = "touch";
-    this.testRating_Touch_Scrub_ClearRating_enableClear_false["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Touch_Scrub_ClearRating_enableClear_false.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1012,8 +1012,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Touch_Tap_PointerCancel["Category"] = "touch";
-    this.testRating_Touch_Tap_PointerCancel["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Touch_Tap_PointerCancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1064,8 +1064,8 @@ RatingTouchTests = function () {
     
     
     
-    this.testRating_Touch_Scrub_PointerCancel["Category"] = "touch";
-    this.testRating_Touch_Scrub_PointerCancel["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Touch_Scrub_PointerCancel.timeout = 30000;
 };
 

@@ -69,7 +69,7 @@ CorsicaTests.ToggleSwitchTests = function () {
     
     
     
-    this.testToggleInstantiation["Category"] = "Instantiation";
+    
 
     // Test Toggle Instatiation with null anchor element
     this.testToggleNullInstatiation = function () {
@@ -89,7 +89,7 @@ CorsicaTests.ToggleSwitchTests = function () {
     
     
     
-    this.testToggleNullInstatiation["Category"] = "Instantiation";
+    
 
     // Test toggle parameters
     this.testToggleParams = function () {
@@ -137,7 +137,7 @@ CorsicaTests.ToggleSwitchTests = function () {
     
     
     
-    this.testToggleParams["Category"] = "Instantiation";
+    
 
     // Test that programmatic changes to the ToggleSwitch _checked property do not fire change events
     this.testToggleChangeToCheckedProperty = function () {
@@ -158,7 +158,7 @@ CorsicaTests.ToggleSwitchTests = function () {
     
     
     
-    this.testToggleChangeToCheckedProperty["Category"] = "Instantiation";
+    
     
     // Tests for dispose members and requirements
     this.testToggleSwitchDispose = function () {

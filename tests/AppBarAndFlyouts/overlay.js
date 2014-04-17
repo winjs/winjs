@@ -38,7 +38,7 @@ CorsicaTests.OverlayTests = function () {
     
     
     
-    this.testOverlayInstantiation["Category"] = "Instantiation";
+    
 
     // Test Overlay Instantiation with null element
     this.testOverlayNullInstantiation = function () {
@@ -49,7 +49,7 @@ CorsicaTests.OverlayTests = function () {
     
     
     
-    this.testOverlayNullInstantiation["Category"] = "Instantiation";
+    
 
     // Test multiple instantiation of the same overlay DOM element
     this.testOverlayMultipleInstantiation = function () {
@@ -65,8 +65,8 @@ CorsicaTests.OverlayTests = function () {
     
     
     
-    this.testOverlayMultipleInstantiation["Category"] = "Instantiation";
-    this.testOverlayMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    
+    
 
     // Test overlay parameters
     this.testOverlayParams = function () {
@@ -104,7 +104,7 @@ CorsicaTests.OverlayTests = function () {
     
     
     
-    this.testOverlayParams["Category"] = "Instantiation";
+    
 
     // Test defaults
     this.testDefaultOverlayParameters = function () {
@@ -123,7 +123,7 @@ CorsicaTests.OverlayTests = function () {
     
     
     
-    this.testDefaultOverlayParameters["Category"] = "Instantiation";
+    
 
     // Simple Function Tests
     this.testSimpleOverlayFunctions = function () {
@@ -150,7 +150,7 @@ CorsicaTests.OverlayTests = function () {
     
     
     
-    this.testSimpleOverlayFunctions["Category"] = "Instantiation";
+    
     
     this.testOverlayDispose = function () {
         var overlay = new WinJS.UI._Overlay();

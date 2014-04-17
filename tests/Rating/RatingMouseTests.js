@@ -46,8 +46,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Lowest["Category"] = "mouse";
-    this.testRating_Hover_Lowest["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Lowest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -67,8 +67,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Lowest_ShowingAverage["Category"] = "mouse";
-    this.testRating_Hover_Lowest_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Lowest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -93,8 +93,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Lowest_ShowingUser["Category"] = "mouse";
-    this.testRating_Hover_Lowest_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Lowest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -127,8 +127,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Lowest_Disabled["Category"] = "mouse";
-    this.testRating_Hover_Lowest_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Lowest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -148,8 +148,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Highest["Category"] = "mouse";
-    this.testRating_Hover_Highest["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Highest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -169,8 +169,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Highest_ShowingAverage["Category"] = "mouse";
-    this.testRating_Hover_Highest_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Highest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -190,8 +190,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Highest_ShowingUser["Category"] = "mouse";
-    this.testRating_Hover_Highest_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Highest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -211,8 +211,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Highest_IncreasedMax["Category"] = "mouse";
-    this.testRating_Hover_Highest_IncreasedMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Highest_IncreasedMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -239,8 +239,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Highest_Disabled["Category"] = "mouse";
-    this.testRating_Hover_Highest_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Highest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -268,8 +268,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Random["Category"] = "mouse";
-    this.testRating_Hover_Random["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Random.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -304,8 +304,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Random_RemoveEventListener_PreviewChange["Category"] = "mouse";
-    this.testRating_Hover_Random_RemoveEventListener_PreviewChange["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Random_RemoveEventListener_PreviewChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -340,8 +340,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Hover_Random_RemoveEventListener_Cancel["Category"] = "mouse";
-    this.testRating_Hover_Random_RemoveEventListener_Cancel["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Hover_Random_RemoveEventListener_Cancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -361,8 +361,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Lowest["Category"] = "mouse";
-    this.testRating_Click_Lowest["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Lowest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -382,8 +382,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Lowest_ShowingAverage["Category"] = "mouse";
-    this.testRating_Click_Lowest_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Lowest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -403,8 +403,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Lowest_ShowingUser["Category"] = "mouse";
-    this.testRating_Click_Lowest_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Lowest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -431,8 +431,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Lowest_Disabled["Category"] = "mouse";
-    this.testRating_Click_Lowest_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Lowest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -452,8 +452,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Lowest_SetToMin["Category"] = "mouse";
-    this.testRating_Click_Lowest_SetToMin["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Lowest_SetToMin.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -481,8 +481,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Lowest_CustomMax["Category"] = "mouse";
-    this.testRating_Click_Lowest_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Lowest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -502,8 +502,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Highest["Category"] = "mouse";
-    this.testRating_Click_Highest["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Highest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -523,8 +523,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Highest_ShowingAverage["Category"] = "mouse";
-    this.testRating_Click_Highest_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Highest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -544,8 +544,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Highest_ShowingUser["Category"] = "mouse";
-    this.testRating_Click_Highest_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Highest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -572,8 +572,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Highest_Disabled["Category"] = "mouse";
-    this.testRating_Click_Highest_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Highest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -593,8 +593,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Highest_SetToMax["Category"] = "mouse";
-    this.testRating_Click_Highest_SetToMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Highest_SetToMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -617,8 +617,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Highest_CustomMax["Category"] = "mouse";
-    this.testRating_Click_Highest_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Highest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -638,8 +638,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_CurrentRating["Category"] = "mouse";
-    this.testRating_Click_CurrentRating["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_CurrentRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -666,8 +666,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_CurrentRating_RemoveEventListener_Cancel["Category"] = "mouse";
-    this.testRating_Click_CurrentRating_RemoveEventListener_Cancel["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_CurrentRating_RemoveEventListener_Cancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -725,8 +725,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_All_Increasing["Category"] = "mouse";
-    this.testRating_Click_All_Increasing["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_All_Increasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -785,8 +785,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_All_Decreasing["Category"] = "mouse";
-    this.testRating_Click_All_Decreasing["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_All_Decreasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -806,8 +806,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Random["Category"] = "mouse";
-    this.testRating_Click_Random["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Random.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -830,8 +830,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Random_CustomMax["Category"] = "mouse";
-    this.testRating_Click_Random_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Random_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -859,8 +859,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Random_Disabled["Category"] = "mouse";
-    this.testRating_Click_Random_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Random_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -888,8 +888,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Random_RemoveEventListener_PreviewChange["Category"] = "mouse";
-    this.testRating_Click_Random_RemoveEventListener_PreviewChange["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Random_RemoveEventListener_PreviewChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -917,8 +917,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_Random_RemoveEventListener_Change["Category"] = "mouse";
-    this.testRating_Click_Random_RemoveEventListener_Change["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_Random_RemoveEventListener_Change.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -997,8 +997,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Scrub_Forward["Category"] = "mouse";
-    this.testRating_Scrub_Forward["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Scrub_Forward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1076,8 +1076,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Scrub_Backward["Category"] = "mouse";
-    this.testRating_Scrub_Backward["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Scrub_Backward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1155,8 +1155,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Scrub_NoChange["Category"] = "mouse";
-    this.testRating_Scrub_NoChange["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Scrub_NoChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1246,8 +1246,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Scrub_ClearRating["Category"] = "mouse";
-    this.testRating_Scrub_ClearRating["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Scrub_ClearRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1335,8 +1335,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Scrub_ClearRating_enableClear_false["Category"] = "mouse";
-    this.testRating_Scrub_ClearRating_enableClear_false["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Scrub_ClearRating_enableClear_false.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1379,8 +1379,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Click_PointerCancel["Category"] = "mouse";
-    this.testRating_Click_PointerCancel["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Click_PointerCancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1432,8 +1432,8 @@ RatingMouseTests = function () {
     
     
     
-    this.testRating_Scrub_PointerCancel["Category"] = "mouse";
-    this.testRating_Scrub_PointerCancel["LiveUnit.IsAsync"] = true;
+    
+    
     this.testRating_Scrub_PointerCancel.timeout = 30000;
 };
 

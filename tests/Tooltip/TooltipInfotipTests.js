@@ -134,8 +134,8 @@ TooltipInfotipTests = function () {
     
     
     
-    this.testTooltip_InfotipTrue["Category"] = "Infotip";
-    this.testTooltip_InfotipTrue["LiveUnit.IsAsync"] = true;
+    
+    
     this.testTooltip_InfotipTrue.timeout = 30000;
 
     this.testTooltip_InfotipFalse = function (signalTestCaseCompleted) {
@@ -144,8 +144,8 @@ TooltipInfotipTests = function () {
     
     
     
-    this.testTooltip_InfotipFalse["Category"] = "Infotip";
-    this.testTooltip_InfotipFalse["LiveUnit.IsAsync"] = true;
+    
+    
     this.testTooltip_InfotipFalse.timeout = 30000;
 
     this.testTooltip_InfotipTrueUsingTouch = function (signalTestCaseCompleted) {
@@ -154,8 +154,8 @@ TooltipInfotipTests = function () {
     
     
     
-    this.testTooltip_InfotipTrueUsingTouch["Category"] = "Infotip";
-    this.testTooltip_InfotipTrueUsingTouch["LiveUnit.IsAsync"] = true;
+    
+    
     this.testTooltip_InfotipTrueUsingTouch.timeout = 30000;
 
     this.testTooltip_InfotipFalseUsingTouch = function (signalTestCaseCompleted) {
@@ -164,8 +164,8 @@ TooltipInfotipTests = function () {
     
     
     
-    this.testTooltip_InfotipFalseUsingTouch["Category"] = "Infotip";
-    this.testTooltip_InfotipFalseUsingTouch["LiveUnit.IsAsync"] = true;
+    
+    
     this.testTooltip_InfotipFalseUsingTouch.timeout = 30000;
 
     this.testTooltip_InfotipTrueIDX = function (signalTestCaseCompleted) {
@@ -174,8 +174,8 @@ TooltipInfotipTests = function () {
     
     
     
-    this.testTooltip_InfotipTrueIDX["Category"] = "Infotip";
-    this.testTooltip_InfotipTrueIDX["LiveUnit.IsAsync"] = true;
+    
+    
     this.testTooltip_InfotipTrueIDX.timeout = 30000;
 
     this.testTooltip_InfotipFalseIDX = function (signalTestCaseCompleted) {
@@ -184,8 +184,8 @@ TooltipInfotipTests = function () {
     
     
     
-    this.testTooltip_InfotipFalseIDX["Category"] = "Infotip";
-    this.testTooltip_InfotipFalseIDX["LiveUnit.IsAsync"] = true;
+    
+    
     this.testTooltip_InfotipFalseIDX.timeout = 30000;
 
     this.testTooltip_InfotipTrueUsingTouchIDX = function (signalTestCaseCompleted) {
@@ -194,8 +194,8 @@ TooltipInfotipTests = function () {
     
     
     
-    this.testTooltip_InfotipTrueUsingTouchIDX["Category"] = "Infotip";
-    this.testTooltip_InfotipTrueUsingTouchIDX["LiveUnit.IsAsync"] = true;
+    
+    
     this.testTooltip_InfotipTrueUsingTouchIDX.timeout = 30000;
 
     this.testTooltip_InfotipFalseUsingTouchIDX = function (signalTestCaseCompleted) {
@@ -204,8 +204,8 @@ TooltipInfotipTests = function () {
     
     
     
-    this.testTooltip_InfotipFalseUsingTouchIDX["Category"] = "Infotip";
-    this.testTooltip_InfotipFalseUsingTouchIDX["LiveUnit.IsAsync"] = true;
+    
+    
     this.testTooltip_InfotipFalseUsingTouchIDX.timeout = 30000;
 };
 

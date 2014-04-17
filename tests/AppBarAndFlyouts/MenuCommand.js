@@ -35,7 +35,7 @@ CorsicaTests.MenuCommandTests = function () {
     
     
     
-    this.testMenuCommandInstantiation["Category"] = "Instantiation";
+    
 
     // Test MenuCommand Instantiation with null element
     this.testMenuCommandNullInstantiation = function () {
@@ -46,7 +46,7 @@ CorsicaTests.MenuCommandTests = function () {
     
     
     
-    this.testMenuCommandNullInstantiation["Category"] = "Instantiation";
+    
 
     // Test multiple instantiation of the same MenuCommand DOM element
     this.testMenuCommandMultipleInstantiation = function () {
@@ -68,8 +68,8 @@ CorsicaTests.MenuCommandTests = function () {
     
     
     
-    this.testMenuCommandMultipleInstantiation["Category"] = "Instantiation";
-    this.testMenuCommandMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    
+    
 
     // Test MenuCommand parameters
     this.testMenuCommandParams = function () {
@@ -148,7 +148,7 @@ CorsicaTests.MenuCommandTests = function () {
     
     
     
-    this.testMenuCommandParams["Category"] = "Instantiation";
+    
 
     this.testDefaultMenuCommandParameters = function () {
         // Get the MenuCommand element from the DOM
@@ -170,7 +170,7 @@ CorsicaTests.MenuCommandTests = function () {
     
     
     
-    this.testDefaultMenuCommandParameters["Category"] = "Instantiation";
+    
 
     // Simple Property tests
     this.testSimpleMenuCommandProperties = function () {
@@ -206,7 +206,7 @@ CorsicaTests.MenuCommandTests = function () {
     
     
     
-    this.testSimpleMenuCommandProperties["Category"] = "Instantiation";
+    
     
     // Hidden Property tests
     this.testHiddenProperty = function () {
@@ -234,7 +234,7 @@ CorsicaTests.MenuCommandTests = function () {
     
     
     
-    this.testHiddenProperty["Category"] = "Instantiation";
+    
     
     // Tests for dispose members and requirements
     this.testMenuCommandDispose = function () {

@@ -73,8 +73,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyTitleAttribute["Category"] = "Displaying";
-    this.testTooltip_VerifyTitleAttribute["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyTitleAttributeAfter = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -144,8 +144,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyTitleAttributeAfter["Category"] = "Displaying";
-    this.testTooltip_VerifyTitleAttributeAfter["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyCustomizationInnerHTML = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -225,8 +225,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyCustomizationInnerHTML["Category"] = "Displaying";
-    this.testTooltip_VerifyCustomizationInnerHTML["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyDefaultStyles = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -296,8 +296,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyDefaultStyles["Category"] = "Displaying";
-    this.testTooltip_VerifyDefaultStyles["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyPhantomDiv = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -378,8 +378,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyPhantomDiv["Category"] = "Displaying";
-    this.testTooltip_VerifyPhantomDiv["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyCustomizationStyles = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -451,8 +451,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyCustomizationStyles["Category"] = "Displaying";
-    this.testTooltip_VerifyCustomizationStyles["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyExtraClass = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -517,8 +517,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyExtraClass["Category"] = "Displaying";
-    this.testTooltip_VerifyExtraClass["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyExtraClassRemoved = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -578,8 +578,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyExtraClassRemoved["Category"] = "Displaying";
-    this.testTooltip_VerifyExtraClassRemoved["LiveUnit.IsAsync"] = true;
+    
+    
 
     function testTooltip_VerifyEvents(signalTestCaseCompleted, howAddEventListeners) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -678,8 +678,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyEvents["Category"] = "Displaying";
-    this.testTooltip_VerifyEvents["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyOnEvents = function (signalTestCaseCompleted) {
         testTooltip_VerifyEvents(signalTestCaseCompleted, "on");
@@ -687,8 +687,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyOnEvents["Category"] = "Displaying";
-    this.testTooltip_VerifyOnEvents["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyAnchorContainingChild = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -750,8 +750,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyAnchorContainingChild["Category"] = "Displaying";
-    this.testTooltip_VerifyAnchorContainingChild["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyNullInnerHTML = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -810,8 +810,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyNullInnerHTML["Category"] = "Displaying";
-    this.testTooltip_VerifyNullInnerHTML["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyFocusDoesntDisplayTooltip = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -870,8 +870,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyFocusDoesntDisplayTooltip["Category"] = "Displaying";
-    this.testTooltip_VerifyFocusDoesntDisplayTooltip["LiveUnit.IsAsync"] = true;
+    
+    
 
     this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -923,8 +923,8 @@ TooltipDisplayingTests = function () {
     
     
     
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved["Category"] = "Displaying";
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved["LiveUnit.IsAsync"] = true;
+    
+    
 
 };
 
