@@ -13,50 +13,6 @@ function StylesTestHelper(isDark) {
 		var success = "SUCCESS: ";
 		var failure = "FAILURE: "
 
-		var expectedWidth;
-		if (isPhone) {
-			expectedWidth = refElement.width_phone;
-		} else {
-			expectedWidth = refElement.width;
-		}
-		var isWidth = (element.width === expectedWidth);
-		if (isWidth) {
-			testStatus = success;
-		} else {
-			var widthUpperBound = expectedWidth + subjectiveSizing;
-			var widthLowerBound = expectedWidth - subjectiveSizing;
-			if (element.width > widthUpperBound || element.width < widthLowerBound) {
-				testStatus = failure;
-			} else {
-				testStatus = success;
-				isWidth = true;
-			}
-		}
-		LiveUnit.LoggingCore.logComment(testStatus + "expected width: " + expectedWidth + 
-			", actual width: " + element.width);
-		
-		var expectedHeight;
-		if (isPhone) {
-			expectedHeight = refElement.height_phone;
-		} else {
-			expectedHeight = refElement.height;
-		}
-		var isHeight = (element.height === expectedHeight);
-		if (isHeight) {
-			testStatus = success;
-		} else {
-			var heightUpperBound = expectedHeight + subjectiveSizing;
-			var heightLowerBound = expectedHeight - subjectiveSizing;
-			if (element.height > heightUpperBound || element.height < heightLowerBound) {
-				testStatus = failure;
-			} else {
-				testStatus = success;
-				isHeight = true;
-			}
-		}
-		LiveUnit.LoggingCore.logComment(testStatus + "expected height: " + expectedHeight + 
-			", actual height: " + element.height);
-		
 		var expectedColor;
 		if (isPhone) {
 			if (isDarkTest) {
@@ -79,7 +35,7 @@ function StylesTestHelper(isDark) {
 		}
 		LiveUnit.LoggingCore.logComment(testStatus + "expected color: " + expectedColor + 
 			", actual color: " + element.color);
-		return (isWidth && isHeight && isColor);
+		return isColor;
   }
 	 
 	this.testH1 = function () {
