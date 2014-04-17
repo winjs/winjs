@@ -266,7 +266,7 @@
         _remove: function (uri) {
             uri = abs(uri);
             WinJS.UI.Fragments.clearCache(uri);
-            delete viewMap[uri]
+            delete viewMap[uri.toLowerCase()]
         },
 
         render: function (uri, element, options, parentedPromise) {
