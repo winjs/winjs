@@ -35,11 +35,12 @@
         if (inline) {
             src = fragmentHref + "script[" + position + "]";
         }
+        src = src.toLowerCase();
 
-        if (!(src.toLowerCase() in scripts)) {
+        if (!(src in scripts)) {
             var promise = null;
 
-            scripts[src.toLowerCase()] = true;
+            scripts[src] = true;
             var n = document.createElement("script");
             if (scriptTag.language) {
                 n.setAttribute("language", "javascript");
@@ -62,6 +63,8 @@
                     n.onload = n.onerror = function () {
                         c();
                     };
+
+                    // Using scriptTag.src to maintain the original casing
                     n.setAttribute("src", scriptTag.src);
                 });
             }
@@ -87,6 +90,8 @@
         if (!(src in links)) {
             links[src] = true;
             var n = styleTag.cloneNode(false);
+
+            // Using scriptTag.href  to maintain the original casing
             n.href = styleTag.href;
             head.appendChild(n);
         }
