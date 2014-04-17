@@ -55,18 +55,12 @@ CorsicaTests.SettingsFlyoutTests = function () {
         document.body.removeChild(flyoutElement);
     }
 
-
-
-
     // Test settings flyout Instantiation with null element
     this.testSettingsFlyoutNullInstantiation = function () {
         LiveUnit.LoggingCore.logComment("Attempt to Instantiate the settings flyout with null element");
         var settingsFlyout = new WinJS.UI.SettingsFlyout(null);
         LiveUnit.Assert.isNotNull(settingsFlyout, "settings flyout instantiation was null when sent a null settings flyout element.");
     }
-
-
-
 
     // Test multiple instantiation of the same settings flyout DOM element
     this.testSettingsFlyoutMultipleInstantiation = function () {
@@ -80,8 +74,7 @@ CorsicaTests.SettingsFlyoutTests = function () {
         new WinJS.UI.Flyout(settingsFlyoutElement);
         document.body.removeChild(settingsFlyoutElement);
     }
-
-    this.testOverlayMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    this.testSettingsFlyoutMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
 
 
 
@@ -116,9 +109,7 @@ CorsicaTests.SettingsFlyoutTests = function () {
                 }).
                 done(complete);
         }
-
         this.testSettingsFlyoutWithFragment["timeout"] = 20000;
-
 
         this.testSettingswithCommandProperty = function (complete) {
             // Get the settings flyout element from the DOM
@@ -151,10 +142,7 @@ CorsicaTests.SettingsFlyoutTests = function () {
                 }).
                 done(complete);
         }
-
         this.testSettingswithCommandProperty["timeout"] = 20000;
-
-
     }
 
     this.testSettingsFlyoutDispose = function () {

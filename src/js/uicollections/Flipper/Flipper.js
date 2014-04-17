@@ -1176,7 +1176,7 @@
                     }
 
                     var that = this;
-                    this._buttonFadePromise = (immediately ? WinJS.Promise.wrap() : WinJS.Promise.timeout(buttonFadeDelay)).then(function () {
+                    this._buttonFadePromise = (immediately ? WinJS.Promise.wrap() : WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay))).then(function () {
                         that._fadeOutButton("prev");
                         that._fadeOutButton("next");
                         that._buttonFadePromise = null;

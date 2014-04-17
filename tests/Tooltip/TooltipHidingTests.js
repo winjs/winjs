@@ -49,7 +49,7 @@ TooltipHidingTests = function () {
         // set up the tooltip
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "tooltip" });
 
-        var TOOLTIP_SHOULD_HAVE_STARTED_CLOSING_BY_NOW_TIME = 1000;
+        var TOOLTIP_SHOULD_HAVE_STARTED_CLOSING_BY_NOW_TIME = WinJS.UI._animationTimeAdjustment(1000);
         var openedTime;
         var beforecloseTime;
         var tooltipHidItself = true;
@@ -110,7 +110,7 @@ TooltipHidingTests = function () {
                     // Set up a timer to catch if the tooltip didn't immediately hide itself in response to our hideMethod.
                     window.tooltipEventListener = tooltipEventListener;
                     window.timerForListener = setTimeout("window.tooltipEventListener({type:'tooltipDidntHideItself'});",
-                        TOOLTIP_SHOULD_HAVE_STARTED_CLOSING_BY_NOW_TIME);
+                        tooltipUtils.DEFAULT_MESSAGE_DURATION / 5);
                     break;
                 case "tooltipDidntHideItself":
                     // Tooltip isn't closing, so force it to close.

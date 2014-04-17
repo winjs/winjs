@@ -72,7 +72,7 @@ WinJSTests.FlipViewDatasourceTests = function () {
                 flipView.next();
                 list.splice(2, 1);
                 list.splice(1, 1);
-                WinJS.Promise.timeout(2000).then(function () {
+                WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(2000)).then(function () {
                     LiveUnit.Assert.areEqual("New DelhiIndia", flipView._pageManager._currentPage.element.textContent);
                     complete();
                 });

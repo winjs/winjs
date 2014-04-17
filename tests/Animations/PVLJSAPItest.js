@@ -1468,7 +1468,7 @@ PVLJSFunctionTests = function () {
         var div2 = document.getElementById("div2");
         verifier.rectBefore = util.getBoundingRectArray([div1, div2]);
         var promise = WinJS.UI.Animation.enterPage([div1, div2]).then(onComplete, onError);
-        window.setTimeout(verifyAnimation, 100);
+        window.setTimeout(verifyAnimation, WinJS.UI._animationTimeAdjustment(100));
     }
 
     this.testCancelTransition = function (signalTestCaseComplete) {
@@ -1486,7 +1486,7 @@ PVLJSFunctionTests = function () {
         target.style.left = (target.style.left === "500px") ? "" : "500px";
         var promise = reposition.execute().then(onComplete, onError);
         var wrappedCallback = LiveUnit.GetWrappedCallback(callback);
-        window.setTimeout(wrappedCallback, 100);
+        window.setTimeout(wrappedCallback, WinJS.UI._animationTimeAdjustment(100));
     }
 
     //This is to test canceling animation before it starts.

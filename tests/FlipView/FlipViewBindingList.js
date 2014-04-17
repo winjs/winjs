@@ -36,6 +36,14 @@ var Tests = Tests || {};
             return res;
         }
 
+        function asyncSequence(workFunctions) {
+            return workFunctions.reduce(function (p, work) {
+                return WinJS.Promise.as(p).then(function () {
+                    return WinJS.Promise.as(work()).then(function () { return WinJS.Promise.timeout(); });
+                });
+            });
+        }
+
         var seed = 0;
         function rand(nMax) {
             seed = (seed + 0.81282849124) * 2375.238208308;
@@ -322,17 +330,14 @@ var Tests = Tests || {};
             var flipView = elements.querySelector(".flipViewExample");
 
             function assertFlipView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        list.getAt(i).detail = list.getAt(i).detail + '_' + i;
-                        complete();
-                    }, 100);
-                });
+                return function () {
+                    list.getAt(i).detail = list.getAt(i).detail + '_' + i;
+                };
             }
 
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(10, list.length).map(assertFlipView));
+                    return asyncSequence(range(10, list.length).map(assertFlipView));
                 }).
                 then(post).
                 then(function () {
@@ -356,20 +361,16 @@ var Tests = Tests || {};
             var flipView = elements.querySelector(".flipViewExample");
 
             function assertFlipView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        if (list.getAt(i)) {
-                            list.getAt(i).title = list.getAt(i).title + i + (i % 3);
-                            list.notifyMutated(i);
-                        }
-                        complete();
-                    }, i * 100);
-
-                });
+                return function () {
+                    if (list.getAt(i)) {
+                        list.getAt(i).title = list.getAt(i).title + i + (i % 3);
+                        list.notifyMutated(i);
+                    }
+                };
             }
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(0, list.length).map(assertFlipView));
+                    return asyncSequence(range(0, list.length).map(assertFlipView));
                 }).
                 then(post).
                 then(function () {
@@ -392,17 +393,14 @@ var Tests = Tests || {};
             var flipView = elements.querySelector(".flipViewExample");
 
             function assertFlipView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        list.getAt(i).title = list.getAt(i).title + i * 10;
-                        list.notifyMutated(i);
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    list.getAt(i).title = list.getAt(i).title + i * 10;
+                    list.notifyMutated(i);
+                };
             }
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(0, list.length).map(assertFlipView));
+                    return asyncSequence(range(0, list.length).map(assertFlipView));
                 }).
                 then(post).
                 then(function () {
@@ -448,29 +446,25 @@ var Tests = Tests || {};
             var flipView = elements.querySelector(".flipViewExample");
 
             function assertFlipView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        if (i <= 11) {
-                            sorted.push({ title: i, detail: "hello world " + i });
-                        }
-                        else if (i < 14) {
-                            list.push({ title: i, detail: "hello world " + i });
-                        }
-                        else if (i == 14) {
-                            sorted.length = 6;
-                        }
-                        else {
-                            list.length = 2;
-                        }
-
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    if (i <= 11) {
+                        sorted.push({ title: i, detail: "hello world " + i });
+                    }
+                    else if (i < 14) {
+                        list.push({ title: i, detail: "hello world " + i });
+                    }
+                    else if (i == 14) {
+                        sorted.length = 6;
+                    }
+                    else {
+                        list.length = 2;
+                    }
+                };
             }
 
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(10, 16).map(assertFlipView));
+                    return asyncSequence(range(10, 16).map(assertFlipView));
                 }).
                 then(post).
                 then(function () {
@@ -492,24 +486,21 @@ var Tests = Tests || {};
 
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
             function assertFlipView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandom(list); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandom(list); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                };
             }
 
             WinJS.UI.processAll().
                 then(post).
                 then(function () {
-                    return join(range(0, 20).map(assertFlipView));
+                    return asyncSequence(range(0, 20).map(assertFlipView));
                 }).
                 then(post).
                 then(function () {
@@ -532,24 +523,21 @@ var Tests = Tests || {};
 
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
             function assertFlipView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandom(list); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandom(list); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                };
             }
 
             WinJS.UI.processAll().
                 then(post).
                 then(function () {
-                    return join(range(0, 20).map(assertFlipView));
+                    return asyncSequence(range(0, 20).map(assertFlipView));
                 }).
                 then(post).
                 then(function () {
@@ -572,23 +560,20 @@ var Tests = Tests || {};
 
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
             function assertFlipView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandomSpecial(list); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100)
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandomSpecial(list); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                };
             }
 
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(0, 20).map(assertFlipView));
+                    return asyncSequence(range(0, 20).map(assertFlipView));
                 }).
                 then(post).
                 then(function () {
@@ -613,23 +598,19 @@ var Tests = Tests || {};
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
 
             function assertFlipView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandom(list); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandom(list); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                };
             }
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(0, 20).map(assertFlipView));
+                    return asyncSequence(range(0, 20).map(assertFlipView));
                 }).
                 then(post).
                 then(function () {

@@ -563,7 +563,9 @@
 
                             var lastHeader = this._headersContainerElement.children[numberOfHeadersToRender - 1];
                             lastHeader.style.opacity = start;
-                            lastHeader.style[WinJS.Utilities._browserStyleEquivalents["transition"].scriptName] = "opacity 0.167s";
+                            // @TODO, add unit testing hook for animation performance
+                            var lastHeaderFadeInDuration = 0.167;
+                            lastHeader.style[WinJS.Utilities._browserStyleEquivalents["transition"].scriptName] = "opacity " + WinJS.UI._animationTimeAdjustment(time) + "s";
                             getComputedStyle(lastHeader).opacity;
                             lastHeader.style.opacity = end;
                         }
@@ -1104,7 +1106,6 @@
                     scroll: "scroll",
                 }
             })
-
             WinJS.Class.mix(Pivot, WinJS.UI.DOMEventMixin);
 
             var strings = {

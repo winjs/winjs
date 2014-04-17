@@ -365,7 +365,6 @@ CorsicaTests.AppBarTests = function () {
         complete();
     };
 
-
     this.testKeyboardingInEmptyAppBar = function (complete) {
         var AppBar = new WinJS.UI.AppBar(that._element);
         LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
