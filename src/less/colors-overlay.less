@@ -142,6 +142,15 @@
         .win-settingsflyout .win-header.win-ui-light {
             background-color: rgb(255, 255, 255);
         }
+
+        /*
+        win-hide-focus needs the qualifier for win-ui-light or dark,
+        otherwise .win-ui-dark button.win-command:focus is more
+        qualified and stomps on the transparent that doesn't have .win-ui-dark
+        */
+        &.win-command.win-hidefocus:focus, .win-command.win-hidefocus:focus {
+            border-color: transparent;
+        }
     }
 
     .mixin(light) {
@@ -261,7 +270,7 @@
             background-color: transparent;
             color: rgb(0, 0, 0);
         }
-        &.win-menu button:focus, .win-menu button:focus
+        &.win-menu button:focus, .win-menu button:focus,
         &.win-menu button:active, .win-menu button:active {
             background-color: rgb(222, 222, 222);
         }
@@ -278,18 +287,18 @@
             background-color: transparent;
             color: rgba(0, 0, 0, 0.1);
         }
+
+        /*
+        win-hide-focus needs the qualifier for win-ui-light or dark,
+        otherwise .win-ui-dark button.win-command:focus is more
+        qualified and stomps on the transparent that doesn't have .win-ui-dark
+        */
+        &.win-command.win-hidefocus:focus, .win-command.win-hidefocus:focus {
+            border-color: transparent;
+        }
     }
 
     .mixin(@theme);
-}
-
-/*
-    win-hide-focus needs the qualifier for win-ui-light or dark,
-    otherwise .win-ui-dark button.win-command:focus is more
-    qualified and stomps on the transparent that doesn't have .win-ui-dark
-*/
-&.win-command.win-hidefocus:focus, .win-command.win-hidefocus:focus {
-    border-color: transparent;
 }
 
 button.win-command, div.win-command {
