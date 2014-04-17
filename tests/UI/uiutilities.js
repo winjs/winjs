@@ -79,7 +79,9 @@ CorsicaTests.Utilities = function () {
 
         holder.className = "a  a  a b   a   c ";
         LiveUnit.Assert.areEqual(WinJS.Utilities.removeClass(holder, "a"), holder);
-        LiveUnit.Assert.areEqual(holder.className, "b c");
+        LiveUnit.Assert.areEqual(holder.classList.length, 2);
+        LiveUnit.Assert.isTrue(holder.classList.contains("b"));
+        LiveUnit.Assert.isTrue(holder.classList.contains("c"));
     };
 
     this.testMultipleAddRemove = function () {

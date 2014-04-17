@@ -25,6 +25,10 @@
         /// <resource type="javascript" src="//Microsoft.Phone.WinJS.2.1/js/ui.js" shared="true" />
         /// <resource type="css" src="//Microsoft.Phone.WinJS.2.1/css/ui-dark.css" shared="true" />
         AppBar: WinJS.Namespace._lazy(function () {
+
+            var appBarCounter = 0;
+            var currentAppBar = null;
+
             var commandBar; // One static commandBar to be shared by all WinJS AppBar instances.
             var core = Windows.UI.WebUI.Core;
 
@@ -200,6 +204,9 @@
                 commandBar = core.WebUICommandBar.getForCurrentView();
                 commandBar.isOpen = false;
 
+                this._uniqueId = appBarCounter;
+                appBarCounter++;
+
                 this._initializing = true;
 
                 // Simplify checking later
@@ -228,7 +235,8 @@
                 this._disposed = false;
 
                 if (!options.disabled) {
-                    options.disabled = false; // Make sure setter is called to show the CommandBar.
+                    // Explicity set to false to ensure sure that setOptions sees the 'disabled' property on the options object.
+                    options.disabled = false; 
                 } else {
                     // If we're supposed to be disabled, set the disabled property immediately to 
                     // disconnect from the commandBar before setOptions() is called.
@@ -278,7 +286,8 @@
                 /// <field type="Boolean" locid="WinJS.UI.AppBar.disabled" helpKeyword="WinJS.UI.AppBar.disabled"> 
                 /// Disable an AppBar.
                 /// When disabled the AppBar will animate off of the screen, stop firing events and will no longer respond to method or property changes until it is re-enabled. 
-                /// If another part of the App takes control of the commandBar while the AppBar is disabled, the AppBar will not know about it and will not respond to commandBar events.
+                /// If another part of the App takes control of the commandBar while the AppBar is disabled, the AppBar will not know about it. 
+                /// While the AppBar is disabled it will not respond to any commandBar events that it has registered listeners for.
                 /// Re-enabling an AppBar will take back control of the commandBar and overwrite the commandBar's current state with the commands and state of the re-enabled AppBar.
                 /// </field>
                 disabled: {
@@ -288,14 +297,20 @@
                     set: function (value) {
                         value = !!value;
 
-                        if (value !== this._disabled || this._initializing) { // Nop if state isn't changing.
-                            if (!value) {
-                                // Enabling                         
-                                this._disabled = false; // Set this first to unblock our commandBar event handlers.
+                        var isCurrent = (currentAppBar === this._uniqueId);
+                        var changingState = (value !== this._disabled);
+                        var initializing = this._initializing;
 
-                                // Reload state
-                                if (!this._initializing) {
-                                    // AppBar & commandBar may not be in sync if another control was using the commandBar. 
+                        if(!isCurrent || changingState || initializing){
+                            if (!value) { // Enabling
+
+                                // When we enable the AppBar, the AppBar should take control of the commandBar and inject itself into it.
+                                // It's IMPORTANT that we SET THIS FIRST, otherwise the AppBar components that interact with the commandBar will Nop.                                                                
+                                this._disabled = false;
+
+                                currentAppBar = this._uniqueId;
+                                if (!this._initializing) { 
+                                    // An AppBar that was previously disabled is not guaranteed to be in sync with the commandBar when that AppBar is re-enabled. 
                                     // Re-load this AppBar's state into the commandBar.
                                     this.closedDisplayMode = this.closedDisplayMode;
                                     this._setCommands(this._getCommands());
@@ -305,10 +320,17 @@
                                 // Show AppBar UI
                                 commandBar.visible = true;
 
-                            } else {
-                                // Disabling
-                                commandBar.visible = false;
-                                this._disabled = true; // Set this last to allow commandBar event handlers to fire while the appbar is dissapearing.
+                            } else { // Disabling  
+                                                                                            
+                                if (isCurrent) {
+                                    // If the commandBar menu was open, hiding the commandBar will throw the "menuclosed" event.
+                                    commandBar.visible = false;
+                                    currentAppBar = null;
+                                }
+                               
+                                // It's IMPORTANT that we SET THIS LAST when disabling the AppBar. Otherwise we disconnect from the commandBar
+                                // too early, and fail to fire the AppBar "hiding" event if the commandBar tells us "menuclosed".
+                                this._disabled = true;
                             }
                         }
                     }
@@ -683,7 +705,7 @@
                         };
                     }
 
-                    if (!this.disabled) {
+                    if (!this.disabled) {                        
 
                         // Use AppBar element backgroundColor (RGBA) to set the new WebUICommandBar.backgroundColor and WebUICommandBar.opacity values
                         var bgColorString = getComputedStyle(this.element).backgroundColor;
@@ -801,6 +823,13 @@
                 _writeProfilerMark: function AppBar_writeProfilerMark(text) {
                     WinJS.Utilities._writeProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
                 },
+            },
+            {
+                _currentAppBarId: { // Expose this static member for unit testing.
+                    get: function () {
+                        return currentAppBar; 
+                    },
+                }
             });
 
             WinJS.Class.mix(AppBar, WinJS.UI.DOMEventMixin);
