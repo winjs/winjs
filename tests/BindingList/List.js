@@ -15,7 +15,7 @@ var Tests = Tests || {};
         var List = WinJS.Binding.List;
 
         var post = function post (v) {
-            return WinJS.Promise.timeout().
+            return WinJS.Utilities.Scheduler.schedulePromiseNormal().
                 then(function () { return v; });
         };
         var errorHandler = function errorHandler (msg) {
@@ -2683,7 +2683,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(1, filtered.length);
 
                 list.getAt(0).a = "some string";
-                WinJS.Promise.timeout()
+                WinJS.Utilities.Scheduler.schedulePromiseNormal()
                     .then(function () {
                         LiveUnit.Assert.areEqual(1, list.length);
                         LiveUnit.Assert.areEqual(0, filtered.length);
@@ -5572,7 +5572,7 @@ var Tests = Tests || {};
                 }
                 hit = 0;
                 sorted.getAt(3).content.groupKey = 12;
-                WinJS.Promise.timeout()
+                WinJS.Utilities.Scheduler.schedulePromiseNormal()
                     .then(function () {
                         sortedListener.assertLengthChangedCount(1);
                         sorted.notifyMutated(3);
@@ -5723,7 +5723,7 @@ var Tests = Tests || {};
                 list.getAt(1).data = 10;
                 list.getAt(2).data = 1;
                 list.getAt(3).data = 2;
-                WinJS.Promise.timeout()
+                WinJS.Utilities.Scheduler.schedulePromiseNormal()
                     .then(function () {
                         LiveUnit.Assert.areEqual(3, hit);
                     })
