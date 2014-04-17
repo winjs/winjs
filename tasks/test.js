@@ -102,7 +102,6 @@
     <script src="../../@@TARGETFRAMEWORK/js/ui.js"></script>                                                                \r\n\
     <script src="../../@@TARGETFRAMEWORK/js/en-US/base.strings.js"></script>                                                \r\n\
     <script src="../../@@TARGETFRAMEWORK/js/en-US/ui.strings.js"></script>                                                  \r\n\
-    <script>WinJS.Utilities._unitTesting = true;</script>                                                                   \r\n\
                                                                                                                             \r\n\
     <!-- Test framework references -->                                                                                      \r\n\
     <link type="text/css" rel="stylesheet" href="../../../node_modules/qunitjs/qunit/qunit.css" />                          \r\n\
@@ -201,7 +200,7 @@
                     fs.mkdirSync(testFolder);
                 }
                 fs.writeFileSync(testFolder + "/test.html", html);
-            tests += '      <li><a href="' + dir + '/test.html" target="_blank">' + dir + " tests</a></li>\r\n";
+            tests += '      <li><a href="' + dir + '/test.html?unittesting" target="_blank">' + dir + " tests</a></li>\r\n";
             });
             tests = tests.substr(0, tests.length - 2);
             fs.writeFileSync("./bin/tests/tests.html", testMenuTemplate.replace("@@TESTS", tests));

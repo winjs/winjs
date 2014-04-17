@@ -30,11 +30,6 @@
                 return item;
             }
 
-            function fastAnimation(duration) {
-                // run at 20x
-                return duration / 20;
-            }
-
             // Private statics
 
             var sezoButtonClass = "win-semanticzoom-button";
@@ -69,7 +64,6 @@
             var easeOutBezier = "cubic-bezier(0.1,0.9,0.2,1)";
             var transformNames = browserStyleEquivalents["transform"];
             var transitionScriptName = browserStyleEquivalents["transition"].scriptName;
-            var animationAdjustment = identity;
 
             function buildTransition(prop, duration, timing) {
                 return prop + " " + WinJS.UI._animationTimeAdjustment(duration) + "s " + timing + " " + WinJS.UI._libraryDelay + "ms";

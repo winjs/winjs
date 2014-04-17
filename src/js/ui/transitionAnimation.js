@@ -382,10 +382,6 @@
         }
     }
 
-    function identity(v) {
-        return v;
-    }
-
     function fastAnimation(animation) {
         if (Array.isArray(animation)) {
             return animation.map(function (animation) {
@@ -404,7 +400,7 @@
         if (WinJS.Utilities._unitTesting) {
             return fastAnimation(animation);
         } else {
-            return identity(animation);
+            return animation;
         }
     }
 
