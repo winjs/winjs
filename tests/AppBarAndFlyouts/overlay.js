@@ -35,10 +35,10 @@ CorsicaTests.OverlayTests = function () {
         verifyFunction("addEventListener");
         verifyFunction("removeEventListener");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test Overlay Instantiation with null element
     this.testOverlayNullInstantiation = function () {
@@ -46,10 +46,10 @@ CorsicaTests.OverlayTests = function () {
         var overlay = new WinJS.UI._Overlay(null);
         LiveUnit.Assert.isNotNull(overlay, "Overlay instantiation was null when sent a null Overlay element.");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test multiple instantiation of the same overlay DOM element
     this.testOverlayMultipleInstantiation = function () {
@@ -62,11 +62,11 @@ CorsicaTests.OverlayTests = function () {
         LiveUnit.Assert.isNotNull(overlay, "Overlay element should not be null when instantiated.");
         new WinJS.UI._Overlay(overlayElement);
     }
-    
-    
-    
-    
-    
+
+    this.testOverlayMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+
+
+
 
     // Test overlay parameters
     this.testOverlayParams = function () {
@@ -101,10 +101,10 @@ CorsicaTests.OverlayTests = function () {
 
         LiveUnit.LoggingCore.logComment("Testing element");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test defaults
     this.testDefaultOverlayParameters = function () {
@@ -120,10 +120,10 @@ CorsicaTests.OverlayTests = function () {
         LiveUnit.Assert.areEqual(overlay.autoHide, undefined, "Verifying that autoHide is undefined");
         LiveUnit.Assert.areEqual(overlay.lightDismiss, undefined, "Verifying that lightDismiss is undefined");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Simple Function Tests
     this.testSimpleOverlayFunctions = function () {
@@ -147,11 +147,11 @@ CorsicaTests.OverlayTests = function () {
         LiveUnit.LoggingCore.logComment("removeEventListener");
         overlay.removeEventListener();
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testOverlayDispose = function () {
         var overlay = new WinJS.UI._Overlay();
         LiveUnit.Assert.isTrue(overlay.dispose);
@@ -167,8 +167,8 @@ CorsicaTests.OverlayTests = function () {
         LiveUnit.Assert.isTrue(inheritanceDispose);
         overlay.dispose();
     }
-    
-    
+
+
 }
 
 // register the object as a test class by passing in the name

@@ -61,10 +61,10 @@ SearchBoxTests.BasicTests = function () {
         var searchBox = new WinJS.UI.SearchBox(null);
         LiveUnit.Assert.isNotNull(searchBox, "SearchBox instantiation was null when sent a null searchbox element.");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test multiple instantiation of the same searchbox DOM element
     this.testSearchBoxMultipleInstantiation = function () {
@@ -77,11 +77,11 @@ SearchBoxTests.BasicTests = function () {
         LiveUnit.Assert.isNotNull(searchBox, "searchBox element should not be null when instantiated.");
         new WinJS.UI.SearchBox(searchBoxElement);
     }
-    
-    
-    
-    
-    
+
+    this.testSearchBoxMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+
+
+
 
     this.testPublicApiSurfaceFunctions = function () {
         // This test only verifies the API surface. It does not test the functionality.
@@ -134,8 +134,8 @@ SearchBoxTests.BasicTests = function () {
         LiveUnit.Assert.isTrue(searchBox._disposed);
         searchBox.dispose();
     }
-    
-    
+
+
 
     this.testSearchBoxDisposeSubTree = function () {
         var searchBoxParent = document.createElement('div');
@@ -149,8 +149,8 @@ SearchBoxTests.BasicTests = function () {
         LiveUnit.Assert.isTrue(searchBox._disposed);
         searchBox.dispose();
     }
-    
-    
+
+
 
     this.testSimpleFunctions = function () {
         var searchBox = document.getElementById("SearchBoxID").winControl;

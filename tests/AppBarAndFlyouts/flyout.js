@@ -56,10 +56,10 @@ CorsicaTests.FlyoutTests = function () {
         verifyFunction("addEventListener");
         verifyFunction("removeEventListener");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test flyout Instantiation with null element
     this.testFlyoutNullInstantiation = function () {
@@ -67,10 +67,10 @@ CorsicaTests.FlyoutTests = function () {
         var flyout = new WinJS.UI.Flyout(null);
         LiveUnit.Assert.isNotNull(flyout, "flyout instantiation was null when sent a null flyout element.");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test multiple instantiation of the same flyout DOM element
     this.testFlyoutMultipleInstantiation = function () {
@@ -79,11 +79,10 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
         new WinJS.UI.Flyout(that._element);
     }
-    
-    
-    
-    
-    
+
+    this.testFlyoutMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+
+
 
     // Test flyout parameters
     this.testFlyoutParams = function () {
@@ -144,10 +143,10 @@ CorsicaTests.FlyoutTests = function () {
         testBadInitOption("placement", 12, "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", {}, "WinJS.UI.Flyout.BadPlacement", badPlacement);
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test defaults
     this.testDefaultflyoutParameters = function () {
@@ -159,10 +158,10 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.Assert.areEqual(flyout.autoHide, undefined, "Verifying that autoHide is undefined");
         LiveUnit.Assert.areEqual(flyout.lightDismiss, undefined, "Verifying that lightDismiss is undefined");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Simple Function Tests
     this.testSimpleflyoutFunctions = function () {
@@ -182,10 +181,10 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.LoggingCore.logComment("removeEventListener");
         flyout.removeEventListener();
     }
-    
-    
-    
-    
+
+
+
+
 
     this.testFlyoutDispose = function () {
         var flyout = new WinJS.UI.Flyout();
@@ -209,8 +208,8 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.Assert.isTrue(flyout._disposed);
         flyout.dispose();
     }
-    
-    
+
+
 
     this.testFlyoutShowThrows = function (complete) {
         var flyout = new WinJS.UI.Flyout(that._element);

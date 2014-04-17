@@ -11,14 +11,14 @@ var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.SettingsFlyoutTests = function () {
     "use strict";
-    
+
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
         OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
         OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
         OverlayHelpers.disposeAndRemove(document.querySelector(".win-settingsflyout"));
     };
-    
+
     // Test settings flyout Instantiation
     this.testSettingsFlyoutInstantiation = function () {
         // Get the settings flyout element from the DOM
@@ -54,9 +54,9 @@ CorsicaTests.SettingsFlyoutTests = function () {
         verifyProperty("width");
         document.body.removeChild(flyoutElement);
     }
-    
-    
-    
+
+
+
 
     // Test settings flyout Instantiation with null element
     this.testSettingsFlyoutNullInstantiation = function () {
@@ -64,9 +64,9 @@ CorsicaTests.SettingsFlyoutTests = function () {
         var settingsFlyout = new WinJS.UI.SettingsFlyout(null);
         LiveUnit.Assert.isNotNull(settingsFlyout, "settings flyout instantiation was null when sent a null settings flyout element.");
     }
-    
-    
-    
+
+
+
 
     // Test multiple instantiation of the same settings flyout DOM element
     this.testSettingsFlyoutMultipleInstantiation = function () {
@@ -80,13 +80,13 @@ CorsicaTests.SettingsFlyoutTests = function () {
         new WinJS.UI.Flyout(settingsFlyoutElement);
         document.body.removeChild(settingsFlyoutElement);
     }
-    
-    
-    
-    
+
+    this.testOverlayMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+
+
 
     if (WinJS.Utilities.hasWinRT) {
-        // Test settings flyout loading from fragment 
+        // Test settings flyout loading from fragment
         this.testSettingsFlyoutWithFragment = function (complete) {
             // Get the settings flyout element from the DOM
             LiveUnit.LoggingCore.logComment("Attempt to to load the settings flyout fragment");
@@ -116,10 +116,10 @@ CorsicaTests.SettingsFlyoutTests = function () {
                 }).
                 done(complete);
         }
-        
-        
-        
-        
+
+
+
+
 
         this.testSettingswithCommandProperty = function (complete) {
             // Get the settings flyout element from the DOM
@@ -152,10 +152,10 @@ CorsicaTests.SettingsFlyoutTests = function () {
                 }).
                 done(complete);
         }
-        
-        
-        
-        
+
+
+
+
     }
 
     this.testSettingsFlyoutDispose = function () {

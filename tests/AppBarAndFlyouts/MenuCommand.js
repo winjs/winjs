@@ -32,10 +32,10 @@ CorsicaTests.MenuCommandTests = function () {
 
         // We have no functions
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test MenuCommand Instantiation with null element
     this.testMenuCommandNullInstantiation = function () {
@@ -43,10 +43,10 @@ CorsicaTests.MenuCommandTests = function () {
         var menuCommand = new WinJS.UI.MenuCommand(null, { type: 'separator' });
         LiveUnit.Assert.isNotNull(menuCommand, "MenuCommand instantiation was null when sent a null MenuCommand element.");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test multiple instantiation of the same MenuCommand DOM element
     this.testMenuCommandMultipleInstantiation = function () {
@@ -65,11 +65,11 @@ CorsicaTests.MenuCommandTests = function () {
             OverlayHelpers.disposeAndRemove(menuCommandElement);
         }
     }
-    
-    
-    
-    
-    
+
+    this.testMenuCommandMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+
+
+
 
     // Test MenuCommand parameters
     this.testMenuCommandParams = function () {
@@ -145,10 +145,10 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.LoggingCore.logComment("Testing element");
         //testBadInitOption("element", {}, WinJS.UI.MenuCommand.badElement);
     }
-    
-    
-    
-    
+
+
+
+
 
     this.testDefaultMenuCommandParameters = function () {
         // Get the MenuCommand element from the DOM
@@ -167,10 +167,10 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.Assert.isFalse(menuCommand.hidden, "Verifying that hidden is false");
         LiveUnit.Assert.isFalse(menuCommand.selected, "Verifying that selected is false");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Simple Property tests
     this.testSimpleMenuCommandProperties = function () {
@@ -203,11 +203,11 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.Assert.areEqual("unique", fakeDomObject.id, "Verifying that id is set to 'unique' from uniqueID");
         LiveUnit.Assert.areEqual("unique", menuCommand.element.getAttribute("aria-owns"), "Verifying that aria-owns is set by flyout setter");
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     // Hidden Property tests
     this.testHiddenProperty = function () {
         LiveUnit.LoggingCore.logComment("Attempt to test hidden property on menucommand");
@@ -225,17 +225,17 @@ CorsicaTests.MenuCommandTests = function () {
         try {
             cmd.hidden = false;
         } catch (err) {
-            // we throw 
+            // we throw
             result = true;
         }
         OverlayHelpers.disposeAndRemove(menuElement);
         LiveUnit.Assert.areEqual(true, result, "verify the hidden property throw the exception");
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     // Tests for dispose members and requirements
     this.testMenuCommandDispose = function () {
         var button = document.createElement("button");
@@ -248,8 +248,8 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.Assert.isTrue(mc._disposed);
         mc.dispose();
     }
-    
-    
+
+
 
     // Tests that previous innerHTML is cleared when we instantiate a new button.
     this.testMenuCommandRemovesOldInnerHTML = function () {
@@ -260,8 +260,8 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.Assert.isFalse(button.querySelector("#testMenuCommandRemovesOldInnerHTML"), "MenuCommand butttons should lose previous innerHTML on control Instantiation");
 
     }
-    
-    
+
+
 }
 
 // register the object as a test class by passing in the name

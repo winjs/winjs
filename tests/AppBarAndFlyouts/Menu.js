@@ -45,10 +45,10 @@ CorsicaTests.MenuTests = function () {
         verifyFunction("removeEventListener");
         OverlayHelpers.disposeAndRemove(menuElement);
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test Menu Instantiation with null element
     this.testMenuNullInstantiation = function () {
@@ -56,10 +56,10 @@ CorsicaTests.MenuTests = function () {
         var Menu = new WinJS.UI.Menu(null, { commands: { type: 'separator', id: 'sep'} });
         LiveUnit.Assert.isNotNull(Menu, "Menu instantiation was null when sent a null Menu element.");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test Menu Instantiation with no options
     this.testMenuEmptyInstantiation = function () {
@@ -67,10 +67,10 @@ CorsicaTests.MenuTests = function () {
         var menu = new WinJS.UI.Menu();
         LiveUnit.Assert.isNotNull(menu, "Menu instantiation was null when sent a Empty Menu element.");
     }
-    
-    
-    
-    
+
+
+
+
 
     // Test multiple instantiation of the same Menu DOM element
     this.testMenuMultipleInstantiation = function () {
@@ -90,11 +90,11 @@ CorsicaTests.MenuTests = function () {
             OverlayHelpers.disposeAndRemove(menuElement);
         }
     }
-    
-    
-    
-    
-    
+
+    this.testMenuMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+
+
+
 
     // Test Menu parameters
     this.testMenuParams = function () {
@@ -155,10 +155,10 @@ CorsicaTests.MenuTests = function () {
         testBadInitOption("placement", 12, "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", {}, "WinJS.UI.Flyout.BadPlacement", badPlacement);
     }
-    
-    
-    
-    
+
+
+
+
 
     this.testDefaultMenuParameters = function () {
         // Get the Menu element from the DOM
@@ -173,10 +173,10 @@ CorsicaTests.MenuTests = function () {
         LiveUnit.Assert.isTrue(Menu.hidden, "Verifying that hidden is true");
         OverlayHelpers.disposeAndRemove(menuElement);
     }
-    
-    
-    
-    
+
+
+
+
 
     // Simple Function Tests
     this.testSimpleMenuTestsFunctions = function () {
@@ -201,11 +201,11 @@ CorsicaTests.MenuTests = function () {
         Menu.removeEventListener();
         OverlayHelpers.disposeAndRemove(menuElement);
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testMenuDispose = function () {
         var mc1 = new WinJS.UI.MenuCommand(document.createElement("button"), { label: "mc1" });
         var mc2 = new WinJS.UI.MenuCommand(document.createElement("button"), { label: "mc2" });
@@ -220,8 +220,8 @@ CorsicaTests.MenuTests = function () {
         LiveUnit.Assert.isTrue(mc2._disposed);
         menu.dispose();
     }
-    
-    
+
+
 
     this.testMenuShowThrows = function (complete) {
         // Get the menu element from the DOM
@@ -235,7 +235,7 @@ CorsicaTests.MenuTests = function () {
         LiveUnit.LoggingCore.logComment("Calling show() with no parameters should throw");
         try {
             menu.show();
-        } catch (e) {            
+        } catch (e) {
             LiveUnit.Assert.areEqual(WinJS.Resources._getWinJSString("ui/noAnchor").value, e.message);
         }
 
