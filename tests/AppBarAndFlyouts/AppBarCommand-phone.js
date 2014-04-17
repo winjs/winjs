@@ -254,9 +254,9 @@ if (WinJS.Utilities.isPhone) {
                 document.body.removeChild(AppBarElement);
             }
         }
-        this.testHiddenProperty["Owner"] = "tarekms";
-        this.testHiddenProperty["Priority"] = "1";
-        this.testHiddenProperty["Description"] = "AppBarCommand hidden property test";
+        
+        
+        
         this.testHiddenProperty["Category"] = "Instantiation";
 
         // Test symbol and image icons
@@ -310,8 +310,8 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.isFalse(button.querySelector("#testAppBarCommandButtonsRemoveOldInnerHTML"), "AppBarCommand buttons should lose previous innerHTML on control Instantiation");
 
         }
-        this.testAppBarCommandButtonsRemoveOldInnerHTML["Owner"] = "jessesh";
-        this.testAppBarCommandButtonsRemoveOldInnerHTML["Description"] = "AppBarCommand buttons should lose previous innerHTML on control Instantiation";
+        
+        
     }
 
     // register the object as a test class by passing in the name

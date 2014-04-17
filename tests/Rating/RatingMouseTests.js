@@ -43,9 +43,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Hover_Lowest["Owner"] = "sehume";
-    this.testRating_Hover_Lowest["Priority"] = "feature";
-    this.testRating_Hover_Lowest["Description"] = "Test hovering on the first star in a default rating";
+    
+    
+    
     this.testRating_Hover_Lowest["Category"] = "mouse";
     this.testRating_Hover_Lowest["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Lowest.timeout = 30000;
@@ -64,9 +64,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Hover_Lowest_ShowingAverage["Owner"] = "sehume";
-    this.testRating_Hover_Lowest_ShowingAverage["Priority"] = "feature";
-    this.testRating_Hover_Lowest_ShowingAverage["Description"] = "Test hovering on the first star in a default rating";
+    
+    
+    
     this.testRating_Hover_Lowest_ShowingAverage["Category"] = "mouse";
     this.testRating_Hover_Lowest_ShowingAverage["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Lowest_ShowingAverage.timeout = 30000;
@@ -90,9 +90,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Hover_Lowest_ShowingUser["Owner"] = "sehume";
-    this.testRating_Hover_Lowest_ShowingUser["Priority"] = "feature";
-    this.testRating_Hover_Lowest_ShowingUser["Description"] = "Test hovering on the first star in a default rating.";
+    
+    
+    
     this.testRating_Hover_Lowest_ShowingUser["Category"] = "mouse";
     this.testRating_Hover_Lowest_ShowingUser["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Lowest_ShowingUser.timeout = 30000;
@@ -124,9 +124,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Hover_Lowest_Disabled["Owner"] = "sehume";
-    this.testRating_Hover_Lowest_Disabled["Priority"] = "feature";
-    this.testRating_Hover_Lowest_Disabled["Description"] = "Test hovering on the first star in a disabled rating, expecting no events.";
+    
+    
+    
     this.testRating_Hover_Lowest_Disabled["Category"] = "mouse";
     this.testRating_Hover_Lowest_Disabled["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Lowest_Disabled.timeout = 30000;
@@ -145,9 +145,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Hover_Highest["Owner"] = "sehume";
-    this.testRating_Hover_Highest["Priority"] = "feature";
-    this.testRating_Hover_Highest["Description"] = "Test hovering on the last star in a default rating";
+    
+    
+    
     this.testRating_Hover_Highest["Category"] = "mouse";
     this.testRating_Hover_Highest["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Highest.timeout = 30000;
@@ -166,9 +166,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Hover_Highest_ShowingAverage["Owner"] = "sehume";
-    this.testRating_Hover_Highest_ShowingAverage["Priority"] = "feature";
-    this.testRating_Hover_Highest_ShowingAverage["Description"] = "Test hovering on the last star in a default rating";
+    
+    
+    
     this.testRating_Hover_Highest_ShowingAverage["Category"] = "mouse";
     this.testRating_Hover_Highest_ShowingAverage["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Highest_ShowingAverage.timeout = 30000;
@@ -187,9 +187,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Hover_Highest_ShowingUser["Owner"] = "sehume";
-    this.testRating_Hover_Highest_ShowingUser["Priority"] = "feature";
-    this.testRating_Hover_Highest_ShowingUser["Description"] = "Test hovering on the last star in a default rating";
+    
+    
+    
     this.testRating_Hover_Highest_ShowingUser["Category"] = "mouse";
     this.testRating_Hover_Highest_ShowingUser["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Highest_ShowingUser.timeout = 30000;
@@ -208,9 +208,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Hover_Highest_IncreasedMax["Owner"] = "sehume";
-    this.testRating_Hover_Highest_IncreasedMax["Priority"] = "feature";
-    this.testRating_Hover_Highest_IncreasedMax["Description"] = "Test hovering on the last star in a custom rating.";
+    
+    
+    
     this.testRating_Hover_Highest_IncreasedMax["Category"] = "mouse";
     this.testRating_Hover_Highest_IncreasedMax["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Highest_IncreasedMax.timeout = 30000;
@@ -236,9 +236,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Hover_Highest_Disabled["Owner"] = "sehume";
-    this.testRating_Hover_Highest_Disabled["Priority"] = "feature";
-    this.testRating_Hover_Highest_Disabled["Description"] = "Test hovering on the last star in a disabled rating, expecting no events.";
+    
+    
+    
     this.testRating_Hover_Highest_Disabled["Category"] = "mouse";
     this.testRating_Hover_Highest_Disabled["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Highest_Disabled.timeout = 30000;
@@ -265,9 +265,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Hover_Random["Owner"] = "sehume";
-    this.testRating_Hover_Random["Priority"] = "feature";
-    this.testRating_Hover_Random["Description"] = "Test hovering on and off a random star in a rating control.";
+    
+    
+    
     this.testRating_Hover_Random["Category"] = "mouse";
     this.testRating_Hover_Random["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Random.timeout = 30000;
@@ -301,9 +301,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Hover_Random_RemoveEventListener_PreviewChange["Owner"] = "sehume";
-    this.testRating_Hover_Random_RemoveEventListener_PreviewChange["Priority"] = "feature";
-    this.testRating_Hover_Random_RemoveEventListener_PreviewChange["Description"] = "Test hovering on and off a random star in a rating control after removing the previewchange handler.";
+    
+    
+    
     this.testRating_Hover_Random_RemoveEventListener_PreviewChange["Category"] = "mouse";
     this.testRating_Hover_Random_RemoveEventListener_PreviewChange["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Random_RemoveEventListener_PreviewChange.timeout = 30000;
@@ -337,9 +337,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Hover_Random_RemoveEventListener_Cancel["Owner"] = "sehume";
-    this.testRating_Hover_Random_RemoveEventListener_Cancel["Priority"] = "feature";
-    this.testRating_Hover_Random_RemoveEventListener_Cancel["Description"] = "Test hovering on and off a random star in a rating control after removing the cancel handler.";
+    
+    
+    
     this.testRating_Hover_Random_RemoveEventListener_Cancel["Category"] = "mouse";
     this.testRating_Hover_Random_RemoveEventListener_Cancel["LiveUnit.IsAsync"] = true;
     this.testRating_Hover_Random_RemoveEventListener_Cancel.timeout = 30000;
@@ -358,9 +358,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Lowest["Owner"] = "sehume";
-    this.testRating_Click_Lowest["Priority"] = "feature";
-    this.testRating_Click_Lowest["Description"] = "Test clicking on the first star in a default rating";
+    
+    
+    
     this.testRating_Click_Lowest["Category"] = "mouse";
     this.testRating_Click_Lowest["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Lowest.timeout = 30000;
@@ -379,9 +379,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Lowest_ShowingAverage["Owner"] = "sehume";
-    this.testRating_Click_Lowest_ShowingAverage["Priority"] = "feature";
-    this.testRating_Click_Lowest_ShowingAverage["Description"] = "Test clicking on the first star in a rating control showing an average rating";
+    
+    
+    
     this.testRating_Click_Lowest_ShowingAverage["Category"] = "mouse";
     this.testRating_Click_Lowest_ShowingAverage["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Lowest_ShowingAverage.timeout = 30000;
@@ -400,9 +400,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Lowest_ShowingUser["Owner"] = "sehume";
-    this.testRating_Click_Lowest_ShowingUser["Priority"] = "feature";
-    this.testRating_Click_Lowest_ShowingUser["Description"] = "Test clicking on the first star in a rating control showing a user rating";
+    
+    
+    
     this.testRating_Click_Lowest_ShowingUser["Category"] = "mouse";
     this.testRating_Click_Lowest_ShowingUser["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Lowest_ShowingUser.timeout = 30000;
@@ -428,9 +428,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_Lowest_Disabled["Owner"] = "sehume";
-    this.testRating_Click_Lowest_Disabled["Priority"] = "feature";
-    this.testRating_Click_Lowest_Disabled["Description"] = "Test clicking on the first star in a rating control in disabled state.";
+    
+    
+    
     this.testRating_Click_Lowest_Disabled["Category"] = "mouse";
     this.testRating_Click_Lowest_Disabled["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Lowest_Disabled.timeout = 30000;
@@ -449,9 +449,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Lowest_SetToMin["Owner"] = "sehume";
-    this.testRating_Click_Lowest_SetToMin["Priority"] = "feature";
-    this.testRating_Click_Lowest_SetToMin["Description"] = "Test clicking on the first star in a rating control with userRating already set to 1";
+    
+    
+    
     this.testRating_Click_Lowest_SetToMin["Category"] = "mouse";
     this.testRating_Click_Lowest_SetToMin["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Lowest_SetToMin.timeout = 30000;
@@ -478,9 +478,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Lowest_CustomMax["Owner"] = "sehume";
-    this.testRating_Click_Lowest_CustomMax["Priority"] = "feature";
-    this.testRating_Click_Lowest_CustomMax["Description"] = "Test clicking on the first star in a rating control with a custom max";
+    
+    
+    
     this.testRating_Click_Lowest_CustomMax["Category"] = "mouse";
     this.testRating_Click_Lowest_CustomMax["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Lowest_CustomMax.timeout = 30000;
@@ -499,9 +499,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Highest["Owner"] = "sehume";
-    this.testRating_Click_Highest["Priority"] = "feature";
-    this.testRating_Click_Highest["Description"] = "Test clicking on the highest star in the default rating control";
+    
+    
+    
     this.testRating_Click_Highest["Category"] = "mouse";
     this.testRating_Click_Highest["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Highest.timeout = 30000;
@@ -520,9 +520,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Highest_ShowingAverage["Owner"] = "sehume";
-    this.testRating_Click_Highest_ShowingAverage["Priority"] = "feature";
-    this.testRating_Click_Highest_ShowingAverage["Description"] = "Test clicking on the highest star in a rating control showing an average rating";
+    
+    
+    
     this.testRating_Click_Highest_ShowingAverage["Category"] = "mouse";
     this.testRating_Click_Highest_ShowingAverage["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Highest_ShowingAverage.timeout = 30000;
@@ -541,9 +541,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Highest_ShowingUser["Owner"] = "sehume";
-    this.testRating_Click_Highest_ShowingUser["Priority"] = "feature";
-    this.testRating_Click_Highest_ShowingUser["Description"] = "Test clicking on the highest star in a rating control showing a user rating";
+    
+    
+    
     this.testRating_Click_Highest_ShowingUser["Category"] = "mouse";
     this.testRating_Click_Highest_ShowingUser["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Highest_ShowingUser.timeout = 30000;
@@ -569,9 +569,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_Highest_Disabled["Owner"] = "sehume";
-    this.testRating_Click_Highest_Disabled["Priority"] = "feature";
-    this.testRating_Click_Highest_Disabled["Description"] = "Test clicking on the highest star in a rating control in disabled state, expecting no events.";
+    
+    
+    
     this.testRating_Click_Highest_Disabled["Category"] = "mouse";
     this.testRating_Click_Highest_Disabled["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Highest_Disabled.timeout = 30000;
@@ -590,9 +590,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Highest_SetToMax["Owner"] = "sehume";
-    this.testRating_Click_Highest_SetToMax["Priority"] = "feature";
-    this.testRating_Click_Highest_SetToMax["Description"] = "Test clicking on the last star in a rating control with userRating already set to max";
+    
+    
+    
     this.testRating_Click_Highest_SetToMax["Category"] = "mouse";
     this.testRating_Click_Highest_SetToMax["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Highest_SetToMax.timeout = 30000;
@@ -614,9 +614,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_Highest_CustomMax["Owner"] = "sehume";
-    this.testRating_Click_Highest_CustomMax["Priority"] = "feature";
-    this.testRating_Click_Highest_CustomMax["Description"] = "Test clicking on the highest star in a custom rating control";
+    
+    
+    
     this.testRating_Click_Highest_CustomMax["Category"] = "mouse";
     this.testRating_Click_Highest_CustomMax["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Highest_CustomMax.timeout = 30000;
@@ -635,9 +635,9 @@ RatingMouseTests = function () {
             )
         );
     };
-    this.testRating_Click_CurrentRating["Owner"] = "sehume";
-    this.testRating_Click_CurrentRating["Priority"] = "feature";
-    this.testRating_Click_CurrentRating["Description"] = "Test clicking on the current user rating";
+    
+    
+    
     this.testRating_Click_CurrentRating["Category"] = "mouse";
     this.testRating_Click_CurrentRating["LiveUnit.IsAsync"] = true;
     this.testRating_Click_CurrentRating.timeout = 30000;
@@ -663,9 +663,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_CurrentRating_RemoveEventListener_Cancel["Owner"] = "sehume";
-    this.testRating_Click_CurrentRating_RemoveEventListener_Cancel["Priority"] = "feature";
-    this.testRating_Click_CurrentRating_RemoveEventListener_Cancel["Description"] = "Test clicking on the current user rating after removing the 'cancel' event listener (which this interaction throws).";
+    
+    
+    
     this.testRating_Click_CurrentRating_RemoveEventListener_Cancel["Category"] = "mouse";
     this.testRating_Click_CurrentRating_RemoveEventListener_Cancel["LiveUnit.IsAsync"] = true;
     this.testRating_Click_CurrentRating_RemoveEventListener_Cancel.timeout = 30000;
@@ -722,9 +722,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_All_Increasing["Owner"] = "sehume";
-    this.testRating_Click_All_Increasing["Priority"] = "feature";
-    this.testRating_Click_All_Increasing["Description"] = "Test clicking on each of the stars in a default rating control from first to last";
+    
+    
+    
     this.testRating_Click_All_Increasing["Category"] = "mouse";
     this.testRating_Click_All_Increasing["LiveUnit.IsAsync"] = true;
     this.testRating_Click_All_Increasing.timeout = 30000;
@@ -782,9 +782,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_All_Decreasing["Owner"] = "sehume";
-    this.testRating_Click_All_Decreasing["Priority"] = "feature";
-    this.testRating_Click_All_Decreasing["Description"] = "Test clicking on each of the stars in a default rating control from last to first";
+    
+    
+    
     this.testRating_Click_All_Decreasing["Category"] = "mouse";
     this.testRating_Click_All_Decreasing["LiveUnit.IsAsync"] = true;
     this.testRating_Click_All_Decreasing.timeout = 30000;
@@ -803,9 +803,9 @@ RatingMouseTests = function () {
             signalTestCaseCompleted,
             ratingUtils.generateClickActions(starToClick, newRating, 0));
     };
-    this.testRating_Click_Random["Owner"] = "sehume";
-    this.testRating_Click_Random["Priority"] = "feature";
-    this.testRating_Click_Random["Description"] = "Test clicking on a random star in a default rating.";
+    
+    
+    
     this.testRating_Click_Random["Category"] = "mouse";
     this.testRating_Click_Random["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Random.timeout = 30000;
@@ -827,9 +827,9 @@ RatingMouseTests = function () {
             signalTestCaseCompleted,
             ratingUtils.generateClickActions(starToClick, newRating, customUserRating));
     };
-    this.testRating_Click_Random_CustomMax["Owner"] = "sehume";
-    this.testRating_Click_Random_CustomMax["Priority"] = "feature";
-    this.testRating_Click_Random_CustomMax["Description"] = "Test clicking on a random star in a rating control with an increased max rating.";
+    
+    
+    
     this.testRating_Click_Random_CustomMax["Category"] = "mouse";
     this.testRating_Click_Random_CustomMax["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Random_CustomMax.timeout = 30000;
@@ -856,9 +856,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_Random_Disabled["Owner"] = "sehume";
-    this.testRating_Click_Random_Disabled["Priority"] = "feature";
-    this.testRating_Click_Random_Disabled["Description"] = "Test randomly clicking stars in a disabled rating control, expecting no events.";
+    
+    
+    
     this.testRating_Click_Random_Disabled["Category"] = "mouse";
     this.testRating_Click_Random_Disabled["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Random_Disabled.timeout = 30000;
@@ -885,9 +885,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_Random_RemoveEventListener_PreviewChange["Owner"] = "sehume";
-    this.testRating_Click_Random_RemoveEventListener_PreviewChange["Priority"] = "feature";
-    this.testRating_Click_Random_RemoveEventListener_PreviewChange["Description"] = "Test clicking on a random star in a rating after removing the 'previewchange' event listener.";
+    
+    
+    
     this.testRating_Click_Random_RemoveEventListener_PreviewChange["Category"] = "mouse";
     this.testRating_Click_Random_RemoveEventListener_PreviewChange["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Random_RemoveEventListener_PreviewChange.timeout = 30000;
@@ -914,9 +914,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_Random_RemoveEventListener_Change["Owner"] = "sehume";
-    this.testRating_Click_Random_RemoveEventListener_Change["Priority"] = "feature";
-    this.testRating_Click_Random_RemoveEventListener_Change["Description"] = "Test clicking on a random star in a rating after removing the 'change' event listener.";
+    
+    
+    
     this.testRating_Click_Random_RemoveEventListener_Change["Category"] = "mouse";
     this.testRating_Click_Random_RemoveEventListener_Change["LiveUnit.IsAsync"] = true;
     this.testRating_Click_Random_RemoveEventListener_Change.timeout = 30000;
@@ -994,9 +994,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Scrub_Forward["Owner"] = "sehume";
-    this.testRating_Scrub_Forward["Priority"] = "feature";
-    this.testRating_Scrub_Forward["Description"] = "Test scrubbing to pick a rating, scrubbing forward from 2 to 5";
+    
+    
+    
     this.testRating_Scrub_Forward["Category"] = "mouse";
     this.testRating_Scrub_Forward["LiveUnit.IsAsync"] = true;
     this.testRating_Scrub_Forward.timeout = 30000;
@@ -1073,9 +1073,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Scrub_Backward["Owner"] = "sehume";
-    this.testRating_Scrub_Backward["Priority"] = "feature";
-    this.testRating_Scrub_Backward["Description"] = "Test scrubbing to pick a rating, scrubbing backward from 11 to 8";
+    
+    
+    
     this.testRating_Scrub_Backward["Category"] = "mouse";
     this.testRating_Scrub_Backward["LiveUnit.IsAsync"] = true;
     this.testRating_Scrub_Backward.timeout = 30000;
@@ -1152,9 +1152,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Scrub_NoChange["Owner"] = "sehume";
-    this.testRating_Scrub_NoChange["Priority"] = "feature";
-    this.testRating_Scrub_NoChange["Description"] = "Test scrubbing to pick a rating and landing on starting rating";
+    
+    
+    
     this.testRating_Scrub_NoChange["Category"] = "mouse";
     this.testRating_Scrub_NoChange["LiveUnit.IsAsync"] = true;
     this.testRating_Scrub_NoChange.timeout = 30000;
@@ -1243,9 +1243,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Scrub_ClearRating["Owner"] = "sehume";
-    this.testRating_Scrub_ClearRating["Priority"] = "feature";
-    this.testRating_Scrub_ClearRating["Description"] = "Test scrubbing off the left side of the control to clear your rating";
+    
+    
+    
     this.testRating_Scrub_ClearRating["Category"] = "mouse";
     this.testRating_Scrub_ClearRating["LiveUnit.IsAsync"] = true;
     this.testRating_Scrub_ClearRating.timeout = 30000;
@@ -1332,9 +1332,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Scrub_ClearRating_enableClear_false["Owner"] = "sehume";
-    this.testRating_Scrub_ClearRating_enableClear_false["Priority"] = "feature";
-    this.testRating_Scrub_ClearRating_enableClear_false["Description"] = "Test scrubbing off the left side of the control to clear your rating on a control that doesn't allow you to do so.";
+    
+    
+    
     this.testRating_Scrub_ClearRating_enableClear_false["Category"] = "mouse";
     this.testRating_Scrub_ClearRating_enableClear_false["LiveUnit.IsAsync"] = true;
     this.testRating_Scrub_ClearRating_enableClear_false.timeout = 30000;
@@ -1376,9 +1376,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Click_PointerCancel["Owner"] = "sehume";
-    this.testRating_Click_PointerCancel["Priority"] = "feature";
-    this.testRating_Click_PointerCancel["Description"] = "Test receiving pointercancel event mid-tap";
+    
+    
+    
     this.testRating_Click_PointerCancel["Category"] = "mouse";
     this.testRating_Click_PointerCancel["LiveUnit.IsAsync"] = true;
     this.testRating_Click_PointerCancel.timeout = 30000;
@@ -1429,9 +1429,9 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Scrub_PointerCancel["Owner"] = "sehume";
-    this.testRating_Scrub_PointerCancel["Priority"] = "feature";
-    this.testRating_Scrub_PointerCancel["Description"] = "Test receiving pointercancel event mid-scrub";
+    
+    
+    
     this.testRating_Scrub_PointerCancel["Category"] = "mouse";
     this.testRating_Scrub_PointerCancel["LiveUnit.IsAsync"] = true;
     this.testRating_Scrub_PointerCancel.timeout = 30000;

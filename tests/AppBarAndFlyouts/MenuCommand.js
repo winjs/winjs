@@ -32,9 +32,9 @@ CorsicaTests.MenuCommandTests = function () {
 
         // We have no functions
     }
-    this.testMenuCommandInstantiation["Owner"] = "shawnste";
-    this.testMenuCommandInstantiation["Priority"] = "0";
-    this.testMenuCommandInstantiation["Description"] = "Test MenuCommand instantiation + function presence";
+    
+    
+    
     this.testMenuCommandInstantiation["Category"] = "Instantiation";
 
     // Test MenuCommand Instantiation with null element
@@ -43,9 +43,9 @@ CorsicaTests.MenuCommandTests = function () {
         var menuCommand = new WinJS.UI.MenuCommand(null, { type: 'separator' });
         LiveUnit.Assert.isNotNull(menuCommand, "MenuCommand instantiation was null when sent a null MenuCommand element.");
     }
-    this.testMenuCommandNullInstantiation["Owner"] = "shawnste";
-    this.testMenuCommandNullInstantiation["Priority"] = "1";
-    this.testMenuCommandNullInstantiation["Description"] = "Test MenuCommand Instantiation with null MenuCommand element";
+    
+    
+    
     this.testMenuCommandNullInstantiation["Category"] = "Instantiation";
 
     // Test multiple instantiation of the same MenuCommand DOM element
@@ -65,9 +65,9 @@ CorsicaTests.MenuCommandTests = function () {
             OverlayHelpers.disposeAndRemove(menuCommandElement);
         }
     }
-    this.testMenuCommandMultipleInstantiation["Owner"] = "shawnste";
-    this.testMenuCommandMultipleInstantiation["Priority"] = "1";
-    this.testMenuCommandMultipleInstantiation["Description"] = "Test MenuCommand Duplicate Instantiation with same DOM element";
+    
+    
+    
     this.testMenuCommandMultipleInstantiation["Category"] = "Instantiation";
     this.testMenuCommandMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
 
@@ -145,9 +145,9 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.LoggingCore.logComment("Testing element");
         //testBadInitOption("element", {}, WinJS.UI.MenuCommand.badElement);
     }
-    this.testMenuCommandParams["Owner"] = "shawnste";
-    this.testMenuCommandParams["Priority"] = "1";
-    this.testMenuCommandParams["Description"] = "Test initializing a MenuCommand with good and bad initialization options";
+    
+    
+    
     this.testMenuCommandParams["Category"] = "Instantiation";
 
     this.testDefaultMenuCommandParameters = function () {
@@ -167,9 +167,9 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.Assert.isFalse(menuCommand.hidden, "Verifying that hidden is false");
         LiveUnit.Assert.isFalse(menuCommand.selected, "Verifying that selected is false");
     }
-    this.testDefaultMenuCommandParameters["Owner"] = "shawnste";
-    this.testDefaultMenuCommandParameters["Priority"] = "1";
-    this.testDefaultMenuCommandParameters["Description"] = "Test default MenuCommand parameters";
+    
+    
+    
     this.testDefaultMenuCommandParameters["Category"] = "Instantiation";
 
     // Simple Property tests
@@ -203,9 +203,9 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.Assert.areEqual("unique", fakeDomObject.id, "Verifying that id is set to 'unique' from uniqueID");
         LiveUnit.Assert.areEqual("unique", menuCommand.element.getAttribute("aria-owns"), "Verifying that aria-owns is set by flyout setter");
     }
-    this.testSimpleMenuCommandProperties["Owner"] = "shawnste";
-    this.testSimpleMenuCommandProperties["Priority"] = "1";
-    this.testSimpleMenuCommandProperties["Description"] = "Test default MenuCommand parameters";
+    
+    
+    
     this.testSimpleMenuCommandProperties["Category"] = "Instantiation";
     
     // Hidden Property tests
@@ -231,9 +231,9 @@ CorsicaTests.MenuCommandTests = function () {
         OverlayHelpers.disposeAndRemove(menuElement);
         LiveUnit.Assert.areEqual(true, result, "verify the hidden property throw the exception");
     }
-    this.testHiddenProperty["Owner"] = "tarekms";
-    this.testHiddenProperty["Priority"] = "1";
-    this.testHiddenProperty["Description"] = "MenuCommand hidden property test";
+    
+    
+    
     this.testHiddenProperty["Category"] = "Instantiation";
     
     // Tests for dispose members and requirements
@@ -248,8 +248,8 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.Assert.isTrue(mc._disposed);
         mc.dispose();
     }
-    this.testMenuCommandDispose["Owner"] = "seanxu";
-    this.testMenuCommandDispose["Description"] = "MenuCommand dispose test";
+    
+    
 
     // Tests that previous innerHTML is cleared when we instantiate a new button.
     this.testMenuCommandRemovesOldInnerHTML = function () {
@@ -260,8 +260,8 @@ CorsicaTests.MenuCommandTests = function () {
         LiveUnit.Assert.isFalse(button.querySelector("#testMenuCommandRemovesOldInnerHTML"), "MenuCommand butttons should lose previous innerHTML on control Instantiation");
 
     }
-    this.testMenuCommandRemovesOldInnerHTML["Owner"] = "jessesh";
-    this.testMenuCommandRemovesOldInnerHTML["Description"] = "MenuCommand buttons should lose previous innerHTML on control Instantiation";
+    
+    
 }
 
 // register the object as a test class by passing in the name

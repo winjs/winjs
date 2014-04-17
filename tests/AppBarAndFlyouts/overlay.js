@@ -35,9 +35,9 @@ CorsicaTests.OverlayTests = function () {
         verifyFunction("addEventListener");
         verifyFunction("removeEventListener");
     }
-    this.testOverlayInstantiation["Owner"] = "shawnste";
-    this.testOverlayInstantiation["Priority"] = "0";
-    this.testOverlayInstantiation["Description"] = "Test Overlay instantiation + function presence";
+    
+    
+    
     this.testOverlayInstantiation["Category"] = "Instantiation";
 
     // Test Overlay Instantiation with null element
@@ -46,9 +46,9 @@ CorsicaTests.OverlayTests = function () {
         var overlay = new WinJS.UI._Overlay(null);
         LiveUnit.Assert.isNotNull(overlay, "Overlay instantiation was null when sent a null Overlay element.");
     }
-    this.testOverlayNullInstantiation["Owner"] = "shawnste";
-    this.testOverlayNullInstantiation["Priority"] = "1";
-    this.testOverlayNullInstantiation["Description"] = "Test Overlay Instantiation with null Overlay element";
+    
+    
+    
     this.testOverlayNullInstantiation["Category"] = "Instantiation";
 
     // Test multiple instantiation of the same overlay DOM element
@@ -62,9 +62,9 @@ CorsicaTests.OverlayTests = function () {
         LiveUnit.Assert.isNotNull(overlay, "Overlay element should not be null when instantiated.");
         new WinJS.UI._Overlay(overlayElement);
     }
-    this.testOverlayMultipleInstantiation["Owner"] = "shawnste";
-    this.testOverlayMultipleInstantiation["Priority"] = "1";
-    this.testOverlayMultipleInstantiation["Description"] = "Test Overlay Duplicate Instantiation with same DOM element";
+    
+    
+    
     this.testOverlayMultipleInstantiation["Category"] = "Instantiation";
     this.testOverlayMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
 
@@ -101,9 +101,9 @@ CorsicaTests.OverlayTests = function () {
 
         LiveUnit.LoggingCore.logComment("Testing element");
     }
-    this.testOverlayParams["Owner"] = "shawnste";
-    this.testOverlayParams["Priority"] = "1";
-    this.testOverlayParams["Description"] = "Test initializing a Overlay with good and bad initialization options";
+    
+    
+    
     this.testOverlayParams["Category"] = "Instantiation";
 
     // Test defaults
@@ -120,9 +120,9 @@ CorsicaTests.OverlayTests = function () {
         LiveUnit.Assert.areEqual(overlay.autoHide, undefined, "Verifying that autoHide is undefined");
         LiveUnit.Assert.areEqual(overlay.lightDismiss, undefined, "Verifying that lightDismiss is undefined");
     }
-    this.testDefaultOverlayParameters["Owner"] = "shawnste";
-    this.testDefaultOverlayParameters["Priority"] = "1";
-    this.testDefaultOverlayParameters["Description"] = "Test default overlay parameters";
+    
+    
+    
     this.testDefaultOverlayParameters["Category"] = "Instantiation";
 
     // Simple Function Tests
@@ -147,9 +147,9 @@ CorsicaTests.OverlayTests = function () {
         LiveUnit.LoggingCore.logComment("removeEventListener");
         overlay.removeEventListener();
     }
-    this.testSimpleOverlayFunctions["Owner"] = "shawnste";
-    this.testSimpleOverlayFunctions["Priority"] = "1";
-    this.testSimpleOverlayFunctions["Description"] = "Test default overlay parameters";
+    
+    
+    
     this.testSimpleOverlayFunctions["Category"] = "Instantiation";
     
     this.testOverlayDispose = function () {
@@ -167,8 +167,8 @@ CorsicaTests.OverlayTests = function () {
         LiveUnit.Assert.isTrue(inheritanceDispose);
         overlay.dispose();
     }
-    this.testOverlayDispose["Owner"] = "seanxu";
-    this.testOverlayDispose["Description"] = "Unit test for dispose requirements.";
+    
+    
 }
 
 // register the object as a test class by passing in the name

@@ -66,9 +66,9 @@ CorsicaTests.ToggleSwitchTests = function () {
         }
     }
 
-    this.testToggleInstantiation["Owner"] = "minglin"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testToggleInstantiation["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testToggleInstantiation["Description"] = "Test Toggle Instantiation";
+    
+    
+    
     this.testToggleInstantiation["Category"] = "Instantiation";
 
     // Test Toggle Instatiation with null anchor element
@@ -86,9 +86,9 @@ CorsicaTests.ToggleSwitchTests = function () {
         LiveUnit.Assert.isNotNull(toggle, "Allowing instantiating a toggle switch with null element.");
         LiveUnit.Assert.isNotNull(toggle.element, "When instantitating a toggle switch with null element, we generate an element for toggle.");
     }
-    this.testToggleNullInstatiation["Owner"] = "minglin";
-    this.testToggleNullInstatiation["Priority"] = "1";
-    this.testToggleNullInstatiation["Description"] = "Test Toggle Instantiation with null anchor element";
+    
+    
+    
     this.testToggleNullInstatiation["Category"] = "Instantiation";
 
     // Test toggle parameters
@@ -134,9 +134,9 @@ CorsicaTests.ToggleSwitchTests = function () {
         testBadInitOption("disabled", "TRUE", true);
     }
 
-    this.testToggleParams["Owner"] = "minglin";
-    this.testToggleParams["Priority"] = "1";
-    this.testToggleParams["Description"] = "Test initializing a toggle with good and bad initialization options";
+    
+    
+    
     this.testToggleParams["Category"] = "Instantiation";
 
     // Test that programmatic changes to the ToggleSwitch _checked property do not fire change events
@@ -155,9 +155,9 @@ CorsicaTests.ToggleSwitchTests = function () {
         }
     }
 
-    this.testToggleChangeToCheckedProperty["Owner"] = "jessesh";
-    this.testToggleChangeToCheckedProperty["Priority"] = "1";
-    this.testToggleChangeToCheckedProperty["Description"] = "Test that programmatic changes to the ToggleSwitch _checked property do not fire change events";
+    
+    
+    
     this.testToggleChangeToCheckedProperty["Category"] = "Instantiation";
     
     // Tests for dispose members and requirements
@@ -178,8 +178,8 @@ CorsicaTests.ToggleSwitchTests = function () {
         LiveUnit.Assert.isFalse(ts._gesture);
         ts.dispose();
     }
-    this.testToggleSwitchDispose["Owner"] = "seanxu";
-    this.testToggleSwitchDispose["Description"] = "Toggle dispose test";
+    
+    
 }
 
 // register the object as a test class by passing in the name

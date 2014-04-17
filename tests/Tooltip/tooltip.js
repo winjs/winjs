@@ -59,9 +59,9 @@ CorsicaTests.TooltipTests = function () {
         }
     }
 
-    this.testTooltipInstantiation["Owner"] = "lipinc"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testTooltipInstantiation["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testTooltipInstantiation["Description"] = "Test Tooltip Instantiation";
+    
+    
+    
     this.testTooltipInstantiation["Category"] = "Instantiation";
 
     // Test Tooltip Instatiation with null anchor element
@@ -80,9 +80,9 @@ CorsicaTests.TooltipTests = function () {
             tooltip.dispose();
         }
      }
-    this.testTooltipNullInstatiation["Owner"] = "lipinc";
-    this.testTooltipNullInstatiation["Priority"] = "1";
-    this.testTooltipNullInstatiation["Description"] = "Test Tooltip Instantiation with null anchor element";
+    
+    
+    
     this.testTooltipNullInstatiation["Category"] = "Instantiation";
 
     // Test multiple instantiation of the same anchor element
@@ -100,9 +100,9 @@ CorsicaTests.TooltipTests = function () {
             tearDown();
         }
     }
-    this.testTooltipMultipleInstantiation["Owner"] = "lipinc";
-    this.testTooltipMultipleInstantiation["Priority"] = "1";
-    this.testTooltipMultipleInstantiation["Description"] = "Test tooltip duplicate instantiation with same anchor element";
+    
+    
+    
     this.testTooltipMultipleInstantiation["Category"] = "Instantiation";
 
     // Test tooltip parameters
@@ -145,9 +145,9 @@ CorsicaTests.TooltipTests = function () {
         //testBadInitOption("placement", "lipinc");
     }
 
-    this.testTooltipParams["Owner"] = "lipinc";
-    this.testTooltipParams["Priority"] = "1";
-    this.testTooltipParams["Description"] = "Test initializing a tooltip with good and bad initialization options";
+    
+    
+    
     this.testTooltipParams["Category"] = "Instantiation";
 
 
@@ -167,9 +167,9 @@ CorsicaTests.TooltipTests = function () {
             tearDown();
         }
     }
-    this.testSimpleTooltipFunctions["Owner"] = "lipinc";
-    this.testSimpleTooltipFunctions["Priority"] = "1";
-    this.testSimpleTooltipFunctions["Description"] = "Test simple tooltip functions";
+    
+    
+    
     this.testSimpleTooltipFunctions["Category"] = "Instantiation";
     
     // Tests for dispose members and requirements
@@ -207,8 +207,8 @@ CorsicaTests.TooltipTests = function () {
             tearDown();
         }
     }
-    this.testTooltipDispose["Owner"] = "seanxu";
-    this.testTooltipDispose["Description"] = "Tooltip dispose test";
+    
+    
 }
 
 // register the object as a test class by passing in the name

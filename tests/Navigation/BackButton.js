@@ -114,9 +114,9 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonInstantiation["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonInstantiation["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonInstantiation["Description"] = "Test BackButton Instantiation";
+    
+    
+    
     this.testBackButtonInstantiation["Category"] = "Instantiation";
 
     // Test BackButton's Automatic Visibility Updates 
@@ -197,9 +197,9 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonAutomaticVisibilityUpdates["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonAutomaticVisibilityUpdates["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonAutomaticVisibilityUpdates["Description"] = "Test BackButton Visibility. Ensures Buttons are disabled on home page, enabled after navigating away from home, and then disabled again when navigating back to home.";
+    
+    
+    navigating back to home.";
     this.testBackButtonAutomaticVisibilityUpdates["Category"] = "Visibility";
 
     // Test BackButton's refresh method.
@@ -222,9 +222,9 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonRefreshMethod["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonRefreshMethod["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonRefreshMethod["Description"] = "Test WinJS.UI.BackButton.refresh method.";
+    
+    
+    
     this.testBackButtonRefreshMethod["Category"] = "Visibility";
 
     // Test BackButton's aria-label attribute.
@@ -243,9 +243,9 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonAriaLabel["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonAriaLabel["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonAriaLabel["Description"] = "Tests that WinJS.UI.BackButton._element's aria-label attribute is always set after construction.";
+    
+    
+    
     this.testBackButtonAriaLabel["Category"] = "Accessibility";
 
 
@@ -289,9 +289,9 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    this.testBackButtonReferenceCount["Owner"] = "jessesh"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testBackButtonReferenceCount["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testBackButtonReferenceCount["Description"] = "Tests that WinJS.UI.BackButton's internal Singleton object is keeping an accurate reference count of all the BackButtons controls that are alive.";
+    
+    
+    
     this.testBackButtonReferenceCount["Category"] = "Reference Counting";
 }
 

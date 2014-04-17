@@ -61,9 +61,9 @@ SearchBoxTests.BasicTests = function () {
         var searchBox = new WinJS.UI.SearchBox(null);
         LiveUnit.Assert.isNotNull(searchBox, "SearchBox instantiation was null when sent a null searchbox element.");
     }
-    this.testSearchBoxNullInstantiation["Owner"] = "srisrini";
-    this.testSearchBoxNullInstantiation["Priority"] = "1";
-    this.testSearchBoxNullInstantiation["Description"] = "Test searchBox Instantiation with null searchbox element";
+    
+    
+    
     this.testSearchBoxNullInstantiation["Category"] = "Instantiation";
 
     // Test multiple instantiation of the same searchbox DOM element
@@ -77,9 +77,9 @@ SearchBoxTests.BasicTests = function () {
         LiveUnit.Assert.isNotNull(searchBox, "searchBox element should not be null when instantiated.");
         new WinJS.UI.SearchBox(searchBoxElement);
     }
-    this.testSearchBoxMultipleInstantiation["Owner"] = "srisrini";
-    this.testSearchBoxMultipleInstantiation["Priority"] = "1";
-    this.testSearchBoxMultipleInstantiation["Description"] = "Test searchBox Duplicate Instantiation with same DOM element";
+    
+    
+    
     this.testSearchBoxMultipleInstantiation["Category"] = "Instantiation";
     this.testSearchBoxMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
 
@@ -134,8 +134,8 @@ SearchBoxTests.BasicTests = function () {
         LiveUnit.Assert.isTrue(searchBox._disposed);
         searchBox.dispose();
     }
-    this.testSearchBoxDispose["Owner"] = "srisrini";
-    this.testSearchBoxDispose["Description"] = "Unit test for dispose requirements.";
+    
+    
 
     this.testSearchBoxDisposeSubTree = function () {
         var searchBoxParent = document.createElement('div');
@@ -149,8 +149,8 @@ SearchBoxTests.BasicTests = function () {
         LiveUnit.Assert.isTrue(searchBox._disposed);
         searchBox.dispose();
     }
-    this.testSearchBoxDispose["Owner"] = "srisrini";
-    this.testSearchBoxDispose["Description"] = "Unit test for dispose subtree requirements.";
+    
+    
 
     this.testSimpleFunctions = function () {
         var searchBox = document.getElementById("SearchBoxID").winControl;

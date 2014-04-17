@@ -148,99 +148,99 @@ TooltipHidingTests = function () {
     this.testTooltip_Mouse_Blur = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "blur", true);
     };
-    this.testTooltip_Mouse_Blur["Owner"] = "evanwi";
-    this.testTooltip_Mouse_Blur["Priority"] = "feature";
-    this.testTooltip_Mouse_Blur["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_Blur["Category"] = "Automatic";
     this.testTooltip_Mouse_Blur["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "close", true);
     };
-    this.testTooltip_Mouse_Close["Owner"] = "evanwi";
-    this.testTooltip_Mouse_Close["Priority"] = "feature";
-    this.testTooltip_Mouse_Close["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_Close["Category"] = "Automatic";
     this.testTooltip_Mouse_Close["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseDown", true);
     };
-    this.testTooltip_Mouse_MouseDown["Owner"] = "evanwi";
-    this.testTooltip_Mouse_MouseDown["Priority"] = "feature";
-    this.testTooltip_Mouse_MouseDown["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_MouseDown["Category"] = "Automatic";
     this.testTooltip_Mouse_MouseDown["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseOut", true);
     };
-    this.testTooltip_Mouse_MouseOut["Owner"] = "evanwi";
-    this.testTooltip_Mouse_MouseOut["Priority"] = "feature";
-    this.testTooltip_Mouse_MouseOut["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_MouseOut["Category"] = "Automatic";
     this.testTooltip_Mouse_MouseOut["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseUp", true);
     };
-    this.testTooltip_Mouse_MouseUp["Owner"] = "evanwi";
-    this.testTooltip_Mouse_MouseUp["Priority"] = "feature";
-    this.testTooltip_Mouse_MouseUp["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_MouseUp["Category"] = "Automatic";
     this.testTooltip_Mouse_MouseUp["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "shiftTab", false);
     };
-    this.testTooltip_Mouse_ShiftTab["Owner"] = "evanwi";
-    this.testTooltip_Mouse_ShiftTab["Priority"] = "feature";
-    this.testTooltip_Mouse_ShiftTab["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_ShiftTab["Category"] = "Automatic";
     this.testTooltip_Mouse_ShiftTab["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "tab", false);
     };
-    this.testTooltip_Mouse_Tab["Owner"] = "evanwi";
-    this.testTooltip_Mouse_Tab["Priority"] = "feature";
-    this.testTooltip_Mouse_Tab["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_Tab["Category"] = "Automatic";
     this.testTooltip_Mouse_Tab["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchCancel", false);
     };
-    this.testTooltip_Mouse_TouchCancel["Owner"] = "evanwi";
-    this.testTooltip_Mouse_TouchCancel["Priority"] = "feature";
-    this.testTooltip_Mouse_TouchCancel["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_TouchCancel["Category"] = "Automatic";
     this.testTooltip_Mouse_TouchCancel["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchDown", false);
     };
-    this.testTooltip_Mouse_TouchDown["Owner"] = "evanwi";
-    this.testTooltip_Mouse_TouchDown["Priority"] = "feature";
-    this.testTooltip_Mouse_TouchDown["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_TouchDown["Category"] = "Automatic";
     this.testTooltip_Mouse_TouchDown["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchOut", false);
     };
-    this.testTooltip_Mouse_TouchOut["Owner"] = "evanwi";
-    this.testTooltip_Mouse_TouchOut["Priority"] = "feature";
-    this.testTooltip_Mouse_TouchOut["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_TouchOut["Category"] = "Automatic";
     this.testTooltip_Mouse_TouchOut["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouse_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchUp", false);
     };
-    this.testTooltip_Mouse_TouchUp["Owner"] = "evanwi";
-    this.testTooltip_Mouse_TouchUp["Priority"] = "feature";
-    this.testTooltip_Mouse_TouchUp["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouse_TouchUp["Category"] = "Automatic";
     this.testTooltip_Mouse_TouchUp["LiveUnit.IsAsync"] = true;
 
@@ -248,99 +248,99 @@ TooltipHidingTests = function () {
     this.testTooltip_Touch_Blur = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "blur", true);
     };
-    this.testTooltip_Touch_Blur["Owner"] = "evanwi";
-    this.testTooltip_Touch_Blur["Priority"] = "feature";
-    this.testTooltip_Touch_Blur["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_Blur["Category"] = "Automatic";
     this.testTooltip_Touch_Blur["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "close", true);
     };
-    this.testTooltip_Touch_Close["Owner"] = "evanwi";
-    this.testTooltip_Touch_Close["Priority"] = "feature";
-    this.testTooltip_Touch_Close["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_Close["Category"] = "Automatic";
     this.testTooltip_Touch_Close["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseDown", false);
     };
-    this.testTooltip_Touch_MouseDown["Owner"] = "evanwi";
-    this.testTooltip_Touch_MouseDown["Priority"] = "feature";
-    this.testTooltip_Touch_MouseDown["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_MouseDown["Category"] = "Automatic";
     this.testTooltip_Touch_MouseDown["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseOut", false);
     };
-    this.testTooltip_Touch_MouseOut["Owner"] = "evanwi";
-    this.testTooltip_Touch_MouseOut["Priority"] = "feature";
-    this.testTooltip_Touch_MouseOut["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_MouseOut["Category"] = "Automatic";
     this.testTooltip_Touch_MouseOut["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseUp", false);
     };
-    this.testTooltip_Touch_MouseUp["Owner"] = "evanwi";
-    this.testTooltip_Touch_MouseUp["Priority"] = "feature";
-    this.testTooltip_Touch_MouseUp["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_MouseUp["Category"] = "Automatic";
     this.testTooltip_Touch_MouseUp["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "shiftTab", false);
     };
-    this.testTooltip_Touch_ShiftTab["Owner"] = "evanwi";
-    this.testTooltip_Touch_ShiftTab["Priority"] = "feature";
-    this.testTooltip_Touch_ShiftTab["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_ShiftTab["Category"] = "Automatic";
     this.testTooltip_Touch_ShiftTab["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "tab", false);
     };
-    this.testTooltip_Touch_Tab["Owner"] = "evanwi";
-    this.testTooltip_Touch_Tab["Priority"] = "feature";
-    this.testTooltip_Touch_Tab["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_Tab["Category"] = "Automatic";
     this.testTooltip_Touch_Tab["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchCancel", true);
     };
-    this.testTooltip_Touch_TouchCancel["Owner"] = "evanwi";
-    this.testTooltip_Touch_TouchCancel["Priority"] = "feature";
-    this.testTooltip_Touch_TouchCancel["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_TouchCancel["Category"] = "Automatic";
     this.testTooltip_Touch_TouchCancel["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchDown", false);
     };
-    this.testTooltip_Touch_TouchDown["Owner"] = "evanwi";
-    this.testTooltip_Touch_TouchDown["Priority"] = "feature";
-    this.testTooltip_Touch_TouchDown["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_TouchDown["Category"] = "Automatic";
     this.testTooltip_Touch_TouchDown["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchOut", true);
     };
-    this.testTooltip_Touch_TouchOut["Owner"] = "evanwi";
-    this.testTooltip_Touch_TouchOut["Priority"] = "feature";
-    this.testTooltip_Touch_TouchOut["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_TouchOut["Category"] = "Automatic";
     this.testTooltip_Touch_TouchOut["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchUp", true);
     };
-    this.testTooltip_Touch_TouchUp["Owner"] = "evanwi";
-    this.testTooltip_Touch_TouchUp["Priority"] = "feature";
-    this.testTooltip_Touch_TouchUp["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_TouchUp["Category"] = "Automatic";
     this.testTooltip_Touch_TouchUp["LiveUnit.IsAsync"] = true;
 
@@ -348,99 +348,99 @@ TooltipHidingTests = function () {
     this.testTooltip_Keyboard_Blur = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "blur", true);
     };
-    this.testTooltip_Keyboard_Blur["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_Blur["Priority"] = "feature";
-    this.testTooltip_Keyboard_Blur["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_Blur["Category"] = "Automatic";
     this.testTooltip_Keyboard_Blur["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "close", true);
     };
-    this.testTooltip_Keyboard_Close["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_Close["Priority"] = "feature";
-    this.testTooltip_Keyboard_Close["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_Close["Category"] = "Automatic";
     this.testTooltip_Keyboard_Close["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseDown", false);
     };
-    this.testTooltip_Keyboard_MouseDown["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_MouseDown["Priority"] = "feature";
-    this.testTooltip_Keyboard_MouseDown["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_MouseDown["Category"] = "Automatic";
     this.testTooltip_Keyboard_MouseDown["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseOut", false);
     };
-    this.testTooltip_Keyboard_MouseOut["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_MouseOut["Priority"] = "feature";
-    this.testTooltip_Keyboard_MouseOut["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_MouseOut["Category"] = "Automatic";
     this.testTooltip_Keyboard_MouseOut["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseUp", false);
     };
-    this.testTooltip_Keyboard_MouseUp["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_MouseUp["Priority"] = "feature";
-    this.testTooltip_Keyboard_MouseUp["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_MouseUp["Category"] = "Automatic";
     this.testTooltip_Keyboard_MouseUp["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "shiftTab", true);
     };
-    this.testTooltip_Keyboard_ShiftTab["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_ShiftTab["Priority"] = "feature";
-    this.testTooltip_Keyboard_ShiftTab["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_ShiftTab["Category"] = "Automatic";
     this.testTooltip_Keyboard_ShiftTab["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "tab", true);
     };
-    this.testTooltip_Keyboard_Tab["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_Tab["Priority"] = "feature";
-    this.testTooltip_Keyboard_Tab["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_Tab["Category"] = "Automatic";
     this.testTooltip_Keyboard_Tab["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchCancel", false);
     };
-    this.testTooltip_Keyboard_TouchCancel["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_TouchCancel["Priority"] = "feature";
-    this.testTooltip_Keyboard_TouchCancel["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_TouchCancel["Category"] = "Automatic";
     this.testTooltip_Keyboard_TouchCancel["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchDown", false);
     };
-    this.testTooltip_Keyboard_TouchDown["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_TouchDown["Priority"] = "feature";
-    this.testTooltip_Keyboard_TouchDown["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_TouchDown["Category"] = "Automatic";
     this.testTooltip_Keyboard_TouchDown["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchOut", false);
     };
-    this.testTooltip_Keyboard_TouchOut["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_TouchOut["Priority"] = "feature";
-    this.testTooltip_Keyboard_TouchOut["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_TouchOut["Category"] = "Automatic";
     this.testTooltip_Keyboard_TouchOut["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchUp", false);
     };
-    this.testTooltip_Keyboard_TouchUp["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_TouchUp["Priority"] = "feature";
-    this.testTooltip_Keyboard_TouchUp["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_TouchUp["Category"] = "Automatic";
     this.testTooltip_Keyboard_TouchUp["LiveUnit.IsAsync"] = true;
 
@@ -449,99 +449,99 @@ TooltipHidingTests = function () {
     this.testTooltip_Mouseover_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "blur", false);
     };
-    this.testTooltip_Mouseover_Blur_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_Blur_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_Blur_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_Blur_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_Blur_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "close", true);
     };
-    this.testTooltip_Mouseover_Close_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_Close_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_Close_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_Close_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_Close_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseDown", false);
     };
-    this.testTooltip_Mouseover_MouseDown_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_MouseDown_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_MouseDown_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_MouseDown_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_MouseDown_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseOut", false);
     };
-    this.testTooltip_Mouseover_MouseOut_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_MouseOut_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_MouseOut_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_MouseOut_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_MouseOut_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseUp", false);
     };
-    this.testTooltip_Mouseover_MouseUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_MouseUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_MouseUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_MouseUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "shiftTab", false);
     };
-    this.testTooltip_Mouseover_ShiftTab_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_ShiftTab_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_ShiftTab_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_ShiftTab_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_ShiftTab_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "tab", false);
     };
-    this.testTooltip_Mouseover_Tab_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_Tab_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_Tab_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_Tab_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_Tab_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchCancel", false);
     };
-    this.testTooltip_Mouseover_TouchCancel_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_TouchCancel_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_TouchCancel_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_TouchCancel_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_TouchCancel_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchDown", false);
     };
-    this.testTooltip_Mouseover_TouchDown_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_TouchDown_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_TouchDown_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_TouchDown_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_TouchDown_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchOut", false);
     };
-    this.testTooltip_Mouseover_TouchOut_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_TouchOut_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_TouchOut_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_TouchOut_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_TouchOut_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mouseover_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchUp", false);
     };
-    this.testTooltip_Mouseover_TouchUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mouseover_TouchUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mouseover_TouchUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mouseover_TouchUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mouseover_TouchUp_Programmatic["LiveUnit.IsAsync"] = true;
 
@@ -551,117 +551,117 @@ TooltipHidingTests = function () {
     this.testTooltip_Mousedown_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mousedownProgrammatic", "close", true);
     };
-    this.testTooltip_Mousedown_Close_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mousedown_Close_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mousedown_Close_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mousedown_Close_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mousedown_Close_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Mousedown_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mousedownProgrammatic", "mouseUp", false);
     };
-    this.testTooltip_Mousedown_MouseUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Mousedown_MouseUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Mousedown_MouseUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Mousedown_MouseUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Mousedown_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "blur", false);
     };
-    this.testTooltip_Default_Blur_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_Blur_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_Blur_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_Blur_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_Blur_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "close", true);
     };
-    this.testTooltip_Default_Close_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_Close_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_Close_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_Close_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_Close_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseDown", false);
     };
-    this.testTooltip_Default_MouseDown_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_MouseDown_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_MouseDown_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_MouseDown_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_MouseDown_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseOut", false);
     };
-    this.testTooltip_Default_MouseOut_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_MouseOut_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_MouseOut_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_MouseOut_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_MouseOut_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseUp", false);
     };
-    this.testTooltip_Default_MouseUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_MouseUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_MouseUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_MouseUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "shiftTab", false);
     };
-    this.testTooltip_Default_ShiftTab_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_ShiftTab_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_ShiftTab_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_ShiftTab_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_ShiftTab_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "tab", false);
     };
-    this.testTooltip_Default_Tab_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_Tab_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_Tab_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_Tab_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_Tab_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchCancel", false);
     };
-    this.testTooltip_Default_TouchCancel_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_TouchCancel_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_TouchCancel_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_TouchCancel_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_TouchCancel_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchDown", false);
     };
-    this.testTooltip_Default_TouchDown_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_TouchDown_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_TouchDown_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_TouchDown_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_TouchDown_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.xtestTooltip_Default_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchOut", false);
     };
-    this.xtestTooltip_Default_TouchOut_Programmatic["Owner"] = "evanwi";
-    this.xtestTooltip_Default_TouchOut_Programmatic["Priority"] = "feature";
-    this.xtestTooltip_Default_TouchOut_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.xtestTooltip_Default_TouchOut_Programmatic["Category"] = "Programmatic";
     this.xtestTooltip_Default_TouchOut_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Default_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchUp", false);
     };
-    this.testTooltip_Default_TouchUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Default_TouchUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Default_TouchUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Default_TouchUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Default_TouchUp_Programmatic["LiveUnit.IsAsync"] = true;
 
@@ -669,99 +669,99 @@ TooltipHidingTests = function () {
     this.testTooltip_Touch_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "blur", false);
     };
-    this.testTooltip_Touch_Blur_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_Blur_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_Blur_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_Blur_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_Blur_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "close", true);
     };
-    this.testTooltip_Touch_Close_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_Close_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_Close_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_Close_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_Close_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseDown", false);
     };
-    this.testTooltip_Touch_MouseDown_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_MouseDown_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_MouseDown_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_MouseDown_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_MouseDown_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseOut", false);
     };
-    this.testTooltip_Touch_MouseOut_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_MouseOut_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_MouseOut_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_MouseOut_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_MouseOut_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseUp", false);
     };
-    this.testTooltip_Touch_MouseUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_MouseUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_MouseUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_MouseUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "shiftTab", false);
     };
-    this.testTooltip_Touch_ShiftTab_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_ShiftTab_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_ShiftTab_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_ShiftTab_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_ShiftTab_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "tab", false);
     };
-    this.testTooltip_Touch_Tab_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_Tab_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_Tab_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_Tab_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_Tab_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchCancel", false);
     };
-    this.testTooltip_Touch_TouchCancel_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_TouchCancel_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_TouchCancel_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_TouchCancel_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_TouchCancel_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchDown", false);
     };
-    this.testTooltip_Touch_TouchDown_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_TouchDown_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_TouchDown_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_TouchDown_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_TouchDown_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchOut", false);
     };
-    this.testTooltip_Touch_TouchOut_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_TouchOut_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_TouchOut_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_TouchOut_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_TouchOut_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Touch_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchUp", false);
     };
-    this.testTooltip_Touch_TouchUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Touch_TouchUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Touch_TouchUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Touch_TouchUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Touch_TouchUp_Programmatic["LiveUnit.IsAsync"] = true;
 
@@ -769,99 +769,99 @@ TooltipHidingTests = function () {
     this.testTooltip_Keyboard_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "blur", false);
     };
-    this.testTooltip_Keyboard_Blur_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_Blur_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_Blur_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_Blur_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_Blur_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "close", true);
     };
-    this.testTooltip_Keyboard_Close_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_Close_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_Close_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_Close_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_Close_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseDown", false);
     };
-    this.testTooltip_Keyboard_MouseDown_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_MouseDown_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_MouseDown_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_MouseDown_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_MouseDown_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseOut", false);
     };
-    this.testTooltip_Keyboard_MouseOut_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_MouseOut_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_MouseOut_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_MouseOut_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_MouseOut_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseUp", false);
     };
-    this.testTooltip_Keyboard_MouseUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_MouseUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_MouseUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_MouseUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_MouseUp_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "shiftTab", false);
     };
-    this.testTooltip_Keyboard_ShiftTab_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_ShiftTab_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_ShiftTab_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_ShiftTab_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_ShiftTab_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "tab", false);
     };
-    this.testTooltip_Keyboard_Tab_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_Tab_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_Tab_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_Tab_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_Tab_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchCancel", false);
     };
-    this.testTooltip_Keyboard_TouchCancel_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_TouchCancel_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_TouchCancel_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_TouchCancel_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_TouchCancel_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchDown", false);
     };
-    this.testTooltip_Keyboard_TouchDown_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_TouchDown_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_TouchDown_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_TouchDown_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_TouchDown_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchOut", false);
     };
-    this.testTooltip_Keyboard_TouchOut_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_TouchOut_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_TouchOut_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_TouchOut_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_TouchOut_Programmatic["LiveUnit.IsAsync"] = true;
 
     this.testTooltip_Keyboard_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchUp", false);
     };
-    this.testTooltip_Keyboard_TouchUp_Programmatic["Owner"] = "evanwi";
-    this.testTooltip_Keyboard_TouchUp_Programmatic["Priority"] = "feature";
-    this.testTooltip_Keyboard_TouchUp_Programmatic["Description"] = "Test tooltip hides on the proper events";
+    
+    
+    
     this.testTooltip_Keyboard_TouchUp_Programmatic["Category"] = "Programmatic";
     this.testTooltip_Keyboard_TouchUp_Programmatic["LiveUnit.IsAsync"] = true;
 

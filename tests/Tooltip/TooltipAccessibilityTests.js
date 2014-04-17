@@ -116,9 +116,9 @@ TooltipAccessibilityTests = function () {
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
 
-    this.testTooltip_VerifyARIA["Owner"] = "evanwi";
-    this.testTooltip_VerifyARIA["Priority"] = "feature";
-    this.testTooltip_VerifyARIA["Description"] = "Test Accessibility of the tooltip";
+    
+    
+    
     this.testTooltip_VerifyARIA["Category"] = "Accessibility";
     this.testTooltip_VerifyARIA["LiveUnit.IsAsync"] = true;
 };

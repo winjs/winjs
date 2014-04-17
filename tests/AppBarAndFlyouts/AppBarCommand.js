@@ -24,9 +24,9 @@ CorsicaTests.AppBarCommandTests = function () {
 
         document.body.removeChild(AppBarCommandElement);
     }
-    this.testAppBarCommandInstantiation["Owner"] = "shawnste";
-    this.testAppBarCommandInstantiation["Priority"] = "0";
-    this.testAppBarCommandInstantiation["Description"] = "Test AppBarCommand instantiation + function presence";
+    
+    
+    
     this.testAppBarCommandInstantiation["Category"] = "Instantiation";
 
     // Test AppBarCommand Instantiation with null element
@@ -35,9 +35,9 @@ CorsicaTests.AppBarCommandTests = function () {
         var AppBarCommand = new WinJS.UI.AppBarCommand(null, { type: 'separator' });
         LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand instantiation was null when sent a null AppBarCommand element.");
     }
-    this.testAppBarCommandNullInstantiation["Owner"] = "shawnste";
-    this.testAppBarCommandNullInstantiation["Priority"] = "1";
-    this.testAppBarCommandNullInstantiation["Description"] = "Test AppBarCommand Instantiation with null AppBarCommand element";
+    
+    
+    
     this.testAppBarCommandNullInstantiation["Category"] = "Instantiation";
 
     // Test AppBarCommand Instantiation with no options
@@ -46,9 +46,9 @@ CorsicaTests.AppBarCommandTests = function () {
         var AppBarCommand = new WinJS.UI.AppBarCommand();
         LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand instantiation was null when sent a Empty AppBarCommand element.");
     }
-    this.testAppBarCommandEmptyInstantiation["Owner"] = "shawnste";
-    this.testAppBarCommandEmptyInstantiation["Priority"] = "1";
-    this.testAppBarCommandEmptyInstantiation["Description"] = "Test AppBarCommand Instantiation with Empty AppBarCommand element";
+    
+    
+    
     this.testAppBarCommandEmptyInstantiation["Category"] = "Instantiation";
 
     // Test multiple instantiation of the same AppBarCommand DOM element
@@ -70,9 +70,9 @@ CorsicaTests.AppBarCommandTests = function () {
             throw error;
         }
     }
-    this.testAppBarCommandMultipleInstantiation["Owner"] = "shawnste";
-    this.testAppBarCommandMultipleInstantiation["Priority"] = "1";
-    this.testAppBarCommandMultipleInstantiation["Description"] = "Test AppBarCommand Duplicate Instantiation with same DOM element";
+    
+    
+    
     this.testAppBarCommandMultipleInstantiation["Category"] = "Instantiation";
     this.testAppBarCommandMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
 
@@ -171,9 +171,9 @@ CorsicaTests.AppBarCommandTests = function () {
 
         LiveUnit.LoggingCore.logComment("Testing element");
     }
-    this.testAppBarCommandParams["Owner"] = "shawnste";
-    this.testAppBarCommandParams["Priority"] = "1";
-    this.testAppBarCommandParams["Description"] = "Test initializing a AppBarCommand with good and bad initialization options";
+    
+    
+    
     this.testAppBarCommandParams["Category"] = "Instantiation";
 
     this.testDefaultAppBarCommandParameters = function () {
@@ -195,9 +195,9 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.isFalse(AppBarCommand.hidden, "Verifying that hidden is false");
         LiveUnit.Assert.isFalse(AppBarCommand.selected, "Verifying that selected is false");
     }
-    this.testDefaultAppBarCommandParameters["Owner"] = "shawnste";
-    this.testDefaultAppBarCommandParameters["Priority"] = "1";
-    this.testDefaultAppBarCommandParameters["Description"] = "Test default AppBarCommand parameters";
+    
+    
+    
     this.testDefaultAppBarCommandParameters["Category"] = "Instantiation";
 
     // Simple Property tests
@@ -231,9 +231,9 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.areEqual("unique", fakeDomObject.id, "Verifying that id is set to 'unique' from uniqueID");
         LiveUnit.Assert.areEqual("unique", appBarCommand.element.getAttribute("aria-owns"), "Verifying that aria-owns is set by flyout setter");
     }
-    this.testSimpleAppBarCommandProperties["Owner"] = "shawnste";
-    this.testSimpleAppBarCommandProperties["Priority"] = "1";
-    this.testSimpleAppBarCommandProperties["Description"] = "Test default AppBarCommand parameters";
+    
+    
+    
     this.testSimpleAppBarCommandProperties["Category"] = "Instantiation";
 
 
@@ -263,9 +263,9 @@ CorsicaTests.AppBarCommandTests = function () {
             document.body.removeChild(AppBarElement);
         }
     }
-    this.testHiddenProperty["Owner"] = "tarekms";
-    this.testHiddenProperty["Priority"] = "1";
-    this.testHiddenProperty["Description"] = "AppBarCommand hidden property test";
+    
+    
+    
     this.testHiddenProperty["Category"] = "Instantiation";
 
 
@@ -296,8 +296,8 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.isTrue(abc._tooltipControl._disposed);
         abc.dispose();
     };
-    this.testAppBarCommandDispose["Owner"] = "seanxu";
-    this.testAppBarCommandDispose["Description"] = "AppBarCommand dispose test";
+    
+    
 
     // Tests firstElementFocus and lastElementFocus properties of content type AppBarCommand
     this.testContentAppBarCommandFocusProperties = function () {
@@ -364,8 +364,8 @@ CorsicaTests.AppBarCommandTests = function () {
 
         document.body.removeChild(contentCommand.element);
     };
-    this.testAppBarCommandDispose["Owner"] = "jessesh";
-    this.testAppBarCommandDispose["Description"] = "Content AppBarCommand focus properties test";
+    
+    
 
     /// Tests that previous innerHTML is cleared when we instantiate a new button.
     this.testAppBarCommandButtonsRemoveOldInnerHTML = function () {
@@ -376,8 +376,8 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.Assert.isFalse(button.querySelector("#testAppBarCommandButtonsRemoveOldInnerHTML"), "AppBarCommand buttons should lose previous innerHTML on control Instantiation");
 
     }
-    this.testAppBarCommandButtonsRemoveOldInnerHTML["Owner"] = "jessesh";
-    this.testAppBarCommandButtonsRemoveOldInnerHTML["Description"] = "AppBarCommand buttons should lose previous innerHTML on control Instantiation";
+    
+    
 }
 
 // register the object as a test class by passing in the name
