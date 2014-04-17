@@ -18,7 +18,7 @@ CorsicaTests.BackButtonTests = function () {
 
     // Initial setup for each test to create the two backbuttons.
     // This function creates a BackButton element and an div contentHost to act as a fake fragment loader.
-    // A call is made to simulate navigation which then fakes loading a new fragment into the contentHost, 
+    // A call is made to simulate navigation which then fakes loading a new fragment into the contentHost,
     // this fragment contains only one additional BackButton control.
     this.setUp = function setup() {
         LiveUnit.LoggingCore.logComment("In setup");
@@ -56,7 +56,7 @@ CorsicaTests.BackButtonTests = function () {
             WinJS.Utilities.disposeSubTree(contentHost);
             document.body.removeChild(contentHost);
         }
-        
+
         // Unsubscribe
         nav.removeEventListener('navigating', navigatingHandler, false);
 
@@ -114,12 +114,12 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    
-    
-    
-    
 
-    // Test BackButton's Automatic Visibility Updates 
+
+
+
+
+    // Test BackButton's Automatic Visibility Updates
     this.testBackButtonAutomaticVisibilityUpdates = function (complete) {
         this.setupPromise.then(function () {
 
@@ -148,7 +148,7 @@ CorsicaTests.BackButtonTests = function () {
             LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === true, "Even after a manual refresh, Inner BackButton should be disabled on Home page");
             LiveUnit.Assert.isTrue(isVisible(innerButtonElement) === false, "Even after a manual refresh, Inner BackButton should be hidden while disabled");
 
-            // Navigate forward, grab reference to new instance of inner button. 
+            // Navigate forward, grab reference to new instance of inner button.
             LiveUnit.LoggingCore.logComment("Navigate away from Home page.");
             simulateNavigation().then(function () {
                 innerButtonElement = document.getElementById("innerButton");
@@ -197,10 +197,6 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    
-    
-    navigating back to home.";
-    
 
     // Test BackButton's refresh method.
     this.testBackButtonRefreshMethod = function (complete) {
@@ -222,10 +218,10 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    
-    
-    
-    
+
+
+
+
 
     // Test BackButton's aria-label attribute.
     this.testBackButtonAriaLabel = function (complete) {
@@ -243,10 +239,10 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    
-    
-    
-    
+
+
+
+
 
 
     // Test BackButton's singleton reference count used in dispose model
@@ -289,10 +285,10 @@ CorsicaTests.BackButtonTests = function () {
         });
     }
 
-    
-    
-    
-    
+
+
+
+
 }
 
 // register the object as a test class by passing in the name
