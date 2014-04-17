@@ -117,8 +117,7 @@ CorsicaTests.SettingsFlyoutTests = function () {
                 done(complete);
         }
 
-
-
+        this.testSettingsFlyoutWithFragment["timeout"] = 20000;
 
 
         this.testSettingswithCommandProperty = function (complete) {
@@ -153,7 +152,7 @@ CorsicaTests.SettingsFlyoutTests = function () {
                 done(complete);
         }
 
-
+        this.testSettingswithCommandProperty["timeout"] = 20000;
 
 
     }
