@@ -46,6 +46,12 @@ var setupTabManager = function (root) {
 
 CorsicaTests.TabManager = function () {
     this.testChildFocusEqualsNull = function () {
+        if (Object.keys(HTMLElement.prototype).indexOf("onbeforeactivate") < 0) {
+            // This test relies on specific implementation details of the TabContainer
+            LiveUnit.LoggingCore.logComment("Test skipped: this browser does not support a required API (onbeforeactivate)");
+            return;
+        }
+
         var markup =
             "<button>before</button>" +
             "<button>childFocus</button>" +
