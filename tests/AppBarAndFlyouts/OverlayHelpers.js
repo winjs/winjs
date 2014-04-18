@@ -13,6 +13,8 @@
             if (element) {
                 if (element.dispose) {
                     element.dispose();
+                } else if (element.winControl) {
+                    element.winControl.dispose();
                 } else {
                     WinJS.Utilities.disposeSubTree(element);
                 }

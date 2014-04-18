@@ -70,7 +70,7 @@
         "src/js/binding/list.js",
         "src/js/binding/dataTemplateCompiler.js",
 
-        "src/js/res/res.js",
+        "src/js/res/Res.js",
 
         "src/js/build/endBase.js"
     ];
@@ -118,7 +118,7 @@
         "src/js/binding/list.js",
         "src/js/binding/dataTemplateCompiler.js",
 
-        "src/js/res/res.js",
+        "src/js/res/Res.js",
 
         "src/js/build/endBase.js"
     ];
@@ -153,7 +153,7 @@
         "src/js/uicollections/ListView/ErrorMessages.js",
         "src/js/uicollections/ListView/GroupFocusCache.js",
         "src/js/uicollections/ListView/GroupsContainer.js",
-        "src/js/uicollections/ListView/ItemEventsHandler.js",
+        "src/js/uicollections/ListView/itemEventsHandler.js",
         "src/js/uicollections/ListView/ItemsContainer.js",
         "src/js/uicollections/ListView/Layouts2.js",
         "src/js/uicollections/ListView/ListViewImpl.js",
@@ -163,12 +163,12 @@
         "src/js/controls/DatePicker/datePicker.js",
         "src/js/controls/TimePicker/timePicker.js",
         "src/js/controls/Select/select.js",
-        "src/js/controls/BackButton/backButton.js",
-        "src/js/controls/Rating/rating.js",
+        "src/js/controls/BackButton/BackButton.js",
+        "src/js/controls/Rating/Rating.js",
         "src/js/controls/Toggle/Toggle.js",
         "src/js/controls/SemanticZoom/SemanticZoom.js",
-        "src/js/controls/Hub/hub.js",
-        "src/js/controls/Hub/hubSection.js",
+        "src/js/controls/Hub/Hub.js",
+        "src/js/controls/Hub/HubSection.js",
         "src/js/controls/AppBar/Overlay.js",
         "src/js/controls/AppBar/AppBarIcon.js",
         "src/js/controls/AppBar/AppBarCommand.js",
@@ -176,20 +176,20 @@
         "src/js/controls/AppBar/Flyout.js",
         "src/js/controls/AppBar/Menu.js",
         "src/js/controls/AppBar/MenuCommand.js",
-        "src/js/controls/SearchBox/searchBox.js",
+        "src/js/controls/SearchBox/SearchBox.js",
         "src/js/controls/AppBar/SettingsFlyout.js",
         "src/js/controls/ItemContainer/itemContainer.js",
-        "src/js/controls/NavBar/keyboardBehavior.js",
-        "src/js/controls/NavBar/navBar.js",
-        "src/js/controls/NavBar/navBarContainer.js",
-        "src/js/controls/NavBar/navBarCommand.js",
-        "src/js/controls/Tooltip/tooltip.js",
+        "src/js/controls/NavBar/KeyboardBehavior.js",
+        "src/js/controls/NavBar/NavBar.js",
+        "src/js/controls/NavBar/NavBarContainer.js",
+        "src/js/controls/NavBar/NavBarCommand.js",
+        "src/js/controls/Tooltip/Tooltip.js",
         "src/js/controls/ViewBox/ViewBox.js",
         "src/js/build/endUI.js"
     ];
 
     config.uiJSFilesPhone = [
-        "src/js/startUI.js",
+        "src/js/build/startUI.js",
         "src/js/uicollections/references.js",
         "src/js/animations/animations.js",
         "src/js/uicollections/Assert.js",
@@ -208,7 +208,7 @@
         "src/js/uicollections/ListView/ErrorMessages.js",
         "src/js/uicollections/ListView/GroupFocusCache.js",
         "src/js/uicollections/ListView/GroupsContainer.js",
-        "src/js/uicollections/ListView/ItemEventsHandler.js",
+        "src/js/uicollections/ListView/itemEventsHandler.js",
         "src/js/uicollections/ListView/ItemsContainer.js",
         "src/js/uicollections/ListView/Layouts2.js",
         "src/js/uicollections/ListView/ListViewImpl.js",
@@ -224,7 +224,7 @@
         "src/js/controls/ItemContainer/itemContainer.js",
         "src/js/controls/SemanticZoom/SemanticZoom.js",
         "src/js/controls/ViewBox/ViewBox.js",
-        "src/js/endUI.js",
+        "src/js/build/endUI.js",
     ];
 
     config.uiStringsFiles = [

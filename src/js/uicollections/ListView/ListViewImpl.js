@@ -158,11 +158,11 @@
             none: "none",
             /// <field locid="WinJS.UI.ListView.SelectionMode.single" helpKeyword="WinJS.UI.SelectionMode.single">
             /// A single item may be selected.
+            /// <compatibleWith platform="Windows" minVersion="8.0"/>
             /// </field>
             single: "single",
             /// <field locid="WinJS.UI.ListView.SelectionMode.multi" helpKeyword="WinJS.UI.SelectionMode.multi">
             /// Multiple items may be selected.
-            /// <compatibleWith platform="Windows" minVersion="8.0"/>
             /// </field>
             multi: "multi"
         },

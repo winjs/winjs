@@ -21,8 +21,8 @@ TooltipDisplayingTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -70,11 +70,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyTitleAttribute["Owner"] = "evanwi";
-    this.testTooltip_VerifyTitleAttribute["Priority"] = "feature";
-    this.testTooltip_VerifyTitleAttribute["Description"] = "Test Title Attribute Removed";
-    this.testTooltip_VerifyTitleAttribute["Category"] = "Displaying";
-    this.testTooltip_VerifyTitleAttribute["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyTitleAttributeAfter = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -141,11 +141,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyTitleAttributeAfter["Owner"] = "evanwi";
-    this.testTooltip_VerifyTitleAttributeAfter["Priority"] = "IDX";
-    this.testTooltip_VerifyTitleAttributeAfter["Description"] = "Test Title Attribute Removed After Tooltip already created";
-    this.testTooltip_VerifyTitleAttributeAfter["Category"] = "Displaying";
-    this.testTooltip_VerifyTitleAttributeAfter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyCustomizationInnerHTML = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -222,11 +222,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyCustomizationInnerHTML["Owner"] = "evanwi";
-    this.testTooltip_VerifyCustomizationInnerHTML["Priority"] = "feature";
-    this.testTooltip_VerifyCustomizationInnerHTML["Description"] = "Test content can be customized/updated dynamically";
-    this.testTooltip_VerifyCustomizationInnerHTML["Category"] = "Displaying";
-    this.testTooltip_VerifyCustomizationInnerHTML["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyDefaultStyles = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -293,11 +293,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyDefaultStyles["Owner"] = "evanwi";
-    this.testTooltip_VerifyDefaultStyles["Priority"] = "feature";
-    this.testTooltip_VerifyDefaultStyles["Description"] = "Test default styles cascade through to the tooltip";
-    this.testTooltip_VerifyDefaultStyles["Category"] = "Displaying";
-    this.testTooltip_VerifyDefaultStyles["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyPhantomDiv = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -375,11 +375,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyPhantomDiv["Owner"] = "evanwi";
-    this.testTooltip_VerifyPhantomDiv["Priority"] = "IDX";
-    this.testTooltip_VerifyPhantomDiv["Description"] = "Test phantom div which helps block user input on the tooltip";
-    this.testTooltip_VerifyPhantomDiv["Category"] = "Displaying";
-    this.testTooltip_VerifyPhantomDiv["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyCustomizationStyles = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -448,11 +448,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyCustomizationStyles["Owner"] = "evanwi";
-    this.testTooltip_VerifyCustomizationStyles["Priority"] = "feature";
-    this.testTooltip_VerifyCustomizationStyles["Description"] = "Test content can be customized with different styles";
-    this.testTooltip_VerifyCustomizationStyles["Category"] = "Displaying";
-    this.testTooltip_VerifyCustomizationStyles["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyExtraClass = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -514,11 +514,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyExtraClass["Owner"] = "evanwi";
-    this.testTooltip_VerifyExtraClass["Priority"] = "feature";
-    this.testTooltip_VerifyExtraClass["Description"] = "Test content can be customized using the extraClass property";
-    this.testTooltip_VerifyExtraClass["Category"] = "Displaying";
-    this.testTooltip_VerifyExtraClass["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyExtraClassRemoved = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -575,11 +575,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyExtraClassRemoved["Owner"] = "evanwi";
-    this.testTooltip_VerifyExtraClassRemoved["Priority"] = "feature";
-    this.testTooltip_VerifyExtraClassRemoved["Description"] = "Test extraClass property can be removed when the tooltip isn't visible";
-    this.testTooltip_VerifyExtraClassRemoved["Category"] = "Displaying";
-    this.testTooltip_VerifyExtraClassRemoved["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     function testTooltip_VerifyEvents(signalTestCaseCompleted, howAddEventListeners) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -675,20 +675,20 @@ TooltipDisplayingTests = function () {
     this.testTooltip_VerifyEvents = function (signalTestCaseCompleted) {
         testTooltip_VerifyEvents(signalTestCaseCompleted, "normal");
     };
-    this.testTooltip_VerifyEvents["Owner"] = "evanwi";
-    this.testTooltip_VerifyEvents["Priority"] = "feature";
-    this.testTooltip_VerifyEvents["Description"] = "Test events are all thrown and in the right order";
-    this.testTooltip_VerifyEvents["Category"] = "Displaying";
-    this.testTooltip_VerifyEvents["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyOnEvents = function (signalTestCaseCompleted) {
         testTooltip_VerifyEvents(signalTestCaseCompleted, "on");
     };
-    this.testTooltip_VerifyOnEvents["Owner"] = "evanwi";
-    this.testTooltip_VerifyOnEvents["Priority"] = "feature";
-    this.testTooltip_VerifyOnEvents["Description"] = "Test events are all thrown and in the right order";
-    this.testTooltip_VerifyOnEvents["Category"] = "Displaying";
-    this.testTooltip_VerifyOnEvents["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyAnchorContainingChild = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -747,11 +747,11 @@ TooltipDisplayingTests = function () {
         window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
         setTimeout("window.tooltipEventListener({type:'5 seconds later'});", 5000);
     };
-    this.testTooltip_VerifyAnchorContainingChild["Owner"] = "evanwi";
-    this.testTooltip_VerifyAnchorContainingChild["Priority"] = "feature";
-    this.testTooltip_VerifyAnchorContainingChild["Description"] = "Test hovering over an anchor element's child element doesn't cause tooltip to flicker";
-    this.testTooltip_VerifyAnchorContainingChild["Category"] = "Displaying";
-    this.testTooltip_VerifyAnchorContainingChild["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyNullInnerHTML = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -807,11 +807,11 @@ TooltipDisplayingTests = function () {
         window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
         setTimeout("window.tooltipEventListener({type:'5 seconds later'});", 5000);
     };
-    this.testTooltip_VerifyNullInnerHTML["Owner"] = "evanwi";
-    this.testTooltip_VerifyNullInnerHTML["Priority"] = "feature";
-    this.testTooltip_VerifyNullInnerHTML["Description"] = "Test a null innerHTML causes the tooltip to NOT display";
-    this.testTooltip_VerifyNullInnerHTML["Category"] = "Displaying";
-    this.testTooltip_VerifyNullInnerHTML["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyFocusDoesntDisplayTooltip = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -867,11 +867,11 @@ TooltipDisplayingTests = function () {
         window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
         setTimeout("window.tooltipEventListener({type:'5 seconds later'});", 5000);
     };
-    this.testTooltip_VerifyFocusDoesntDisplayTooltip["Owner"] = "evanwi";
-    this.testTooltip_VerifyFocusDoesntDisplayTooltip["Priority"] = "feature";
-    this.testTooltip_VerifyFocusDoesntDisplayTooltip["Description"] = "Test tooltip doesn't display when calling focus on the element";
-    this.testTooltip_VerifyFocusDoesntDisplayTooltip["Category"] = "Displaying";
-    this.testTooltip_VerifyFocusDoesntDisplayTooltip["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
     this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -920,11 +920,11 @@ TooltipDisplayingTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved["Owner"] = "evanwi";
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved["Priority"] = "feature";
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved["Description"] = "Test tooltip disappears when the anchor is removed";
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved["Category"] = "Displaying";
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
 };
 

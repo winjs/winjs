@@ -21,10 +21,9 @@
         }, root);
     }
 
-    // This may need to be updated for Mozilla prefixes, where the script name of a prefixed CSS name is supposed to be capitalized (eg, MozTransitionDuration).
-    // We currently don't have any styles that use a -moz- prefix, so this function doesn't test for that case right now.
     function getCamelCasedName(styleName) {
-        if (styleName.length > 0 && styleName.charAt(0) === "-") {
+        // special case -moz prefixed styles because their JS property name starts with Moz
+        if (styleName.length > 0 && styleName.indexOf("-moz") !== 0 && styleName.charAt(0) === "-") {
             styleName = styleName.slice(1);
         }
         return styleName.replace(/\-[a-z]/g, function (x) { return x[1].toUpperCase(); });
@@ -39,7 +38,7 @@
     }
 
     function addPrefixToCSSName(prefix, name) {
-        return (prefix !== "" ? "-" + prefix + "-" : "") + name;
+        return (prefix !== "" ? "-" + prefix.toLowerCase() + "-" : "") + name;
     }
 
     function getBrowserStyleEquivalents() {
@@ -50,7 +49,7 @@
 
         var equivalents = {},
             docStyle = document.documentElement.style,
-            stylePrefixesToTest = ["", "webkit", "ms"], // It may be necessary to update the function getCamelCasedName to handle moz prefixes, if moz is added to this array
+            stylePrefixesToTest = ["", "webkit", "ms", "Moz"],
             styles = ["animation",
                 "transition",
                 "transform",
@@ -61,6 +60,12 @@
                 "animation-iteration-count",
                 "animation-direction",
                 "animation-fill-mode",
+                "grid-column",
+                "grid-columns",
+                "grid-column-span",
+                "grid-row",
+                "grid-rows",
+                "grid-row-span",
                 "transform-origin",
                 "transition-property",
                 "transition-duration",
@@ -78,6 +83,7 @@
                 "scroll-snap-x",
                 "scroll-snap-y",
                 "overflow-style",
+                "user-select" // used for Template Compiler test
             ],
             prefixesUsedOnStyles = {};
 

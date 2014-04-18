@@ -259,6 +259,26 @@
 .win-listview .win-itemsblock {
     overflow: hidden;
 }
+//
+// Layouts when there is no CSS grid available
+//
+
+// Use flexbox to lay out header and item containers in all grid layouts, all horizontal list layouts, and grouped vertical lists with headers to the side.
+// Ungrouped vertical lists and vertical lists with headers above use flow layout.
+.win-listview .win-surface.win-nocssgrid.win-gridlayout,
+.win-listview .win-horizontal .win-nocssgrid.win-listlayout,
+.win-listview .win-vertical .win-nocssgrid.win-listlayout.win-headerpositionleft {
+   display: -webkit-flex;
+   display: flex;
+}
+.win-listview .win-horizontal .win-surface.win-nocssgrid {
+    flex-flow: column wrap;
+    align-content: flex-start;
+}
+.win-listview .win-vertical .win-surface.win-nocssgrid {
+    flex-flow: row wrap;
+    align-content: flex-start;
+}
 
 //
 // ListLayout
@@ -348,7 +368,6 @@
 .win-listview .win-gridlayout .win-container {
     margin: 5px;
 }
-
 // Headers
 .win-listview .win-vertical .win-gridlayout.win-headerpositionleft .win-groupheadercontainer,
 .win-listview .win-vertical .win-gridlayout.win-headerpositiontop .win-groupheadercontainer {

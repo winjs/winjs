@@ -140,7 +140,8 @@ if (!window.Windows) {
             LiveUnit.Assert.isTrue(eventFired, "resultsuggestionchosen event was not fired");
         };
 
-        this.testChooseSuggestionOnEnterEnabled = function searchBoxTest_ChooseSuggestionOnEnterEnabled() {
+        // GitHub issue #150
+        this.xtestChooseSuggestionOnEnterEnabled = function searchBoxTest_ChooseSuggestionOnEnterEnabled() {
             var searchBox = document.getElementById("SearchBoxID").winControl;
             searchBox.chooseSuggestionOnEnter = true;
             var eventFired = false;

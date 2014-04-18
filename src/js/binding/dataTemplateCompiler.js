@@ -1622,13 +1622,18 @@
                                 //
                                 var supported = typeof element.style[targetCssProperty] === "string";
                                 if (supported) {
-                                    // The mapping from css property name to JS property name is regular:
+                                    //  The mapping from css property name to JS property name is regular:
+                                    //  Chrome uses webkit as the JS property name prefix.
+                                    //  IE uses ms as the JS property name prefix. 
+                                    //  Firefox uses Moz as the JS property name prefix.
                                     //
-                                    //  1) -ms- prefix -> ms prefix
-                                    //  2) split on interior '-' and make the next word uppercase
-                                    //
-                                    // We can reverse this to make css property names.
-                                    //
+                                    //  To calculate the css property name we replace capital letters with 
+                                    //  a dash followed by the lowercase version of that letter.
+                                    //  
+                                    //  For Chrome and IE we have to add the leading dash manually since
+                                    //  the JS property name prefix is lowercase. For Firefox the replace
+                                    //  call will take care of this for us since their JS property name
+                                    //  prefix begins with a capital letter.
                                     if (targetCssProperty[0] === "m" && targetCssProperty[1] === "s" ||
                                             targetCssProperty.substring(0, 6) === "webkit") {
                                         targetCssProperty = "-" + targetCssProperty;

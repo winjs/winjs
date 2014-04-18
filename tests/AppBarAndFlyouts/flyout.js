@@ -14,17 +14,6 @@ var CorsicaTests = CorsicaTests || {};
 CorsicaTests.FlyoutTests = function () {
     "use strict";
 
-    function disposeAndRemove(element) {
-        if (element) {
-            if (element.dispose) {
-                element.dispose();
-            } else {
-                WinJS.Utilities.disposeSubTree(element);
-            }
-            element.parentElement && element.parentElement.removeChild(element);
-        }
-    }
-
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
         var flyoutElement = document.createElement('div');
@@ -36,14 +25,14 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
         var flyouts = document.querySelectorAll(".win-flyout");
         Array.prototype.forEach.call(flyouts, function(element){
-            disposeAndRemove(element);
+            OverlayHelpers.disposeAndRemove(element);
             element = null;
         });
-        disposeAndRemove(this._element);
+        OverlayHelpers.disposeAndRemove(this._element);
         this._element = null;
 
-        disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-        disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
+        OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
     };
     var that = this;
     // Test flyout Instantiation
@@ -67,10 +56,10 @@ CorsicaTests.FlyoutTests = function () {
         verifyFunction("addEventListener");
         verifyFunction("removeEventListener");
     }
-    this.testFlyoutInstantiation["Owner"] = "shawnste";
-    this.testFlyoutInstantiation["Priority"] = "0";
-    this.testFlyoutInstantiation["Description"] = "Test flyout instantiation + function presence";
-    this.testFlyoutInstantiation["Category"] = "Instantiation";
+
+
+
+
 
     // Test flyout Instantiation with null element
     this.testFlyoutNullInstantiation = function () {
@@ -78,10 +67,10 @@ CorsicaTests.FlyoutTests = function () {
         var flyout = new WinJS.UI.Flyout(null);
         LiveUnit.Assert.isNotNull(flyout, "flyout instantiation was null when sent a null flyout element.");
     }
-    this.testFlyoutNullInstantiation["Owner"] = "shawnste";
-    this.testFlyoutNullInstantiation["Priority"] = "1";
-    this.testFlyoutNullInstantiation["Description"] = "Test flyout Instantiation with null flyout element";
-    this.testFlyoutNullInstantiation["Category"] = "Instantiation";
+
+
+
+
 
     // Test multiple instantiation of the same flyout DOM element
     this.testFlyoutMultipleInstantiation = function () {
@@ -90,11 +79,10 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
         new WinJS.UI.Flyout(that._element);
     }
-    this.testFlyoutMultipleInstantiation["Owner"] = "shawnste";
-    this.testFlyoutMultipleInstantiation["Priority"] = "1";
-    this.testFlyoutMultipleInstantiation["Description"] = "Test flyout Duplicate Instantiation with same DOM element";
-    this.testFlyoutMultipleInstantiation["Category"] = "Instantiation";
+
     this.testFlyoutMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+
+
 
     // Test flyout parameters
     this.testFlyoutParams = function () {
@@ -155,10 +143,10 @@ CorsicaTests.FlyoutTests = function () {
         testBadInitOption("placement", 12, "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", {}, "WinJS.UI.Flyout.BadPlacement", badPlacement);
     }
-    this.testFlyoutParams["Owner"] = "shawnste";
-    this.testFlyoutParams["Priority"] = "1";
-    this.testFlyoutParams["Description"] = "Test initializing a flyout with good and bad initialization options";
-    this.testFlyoutParams["Category"] = "Instantiation";
+
+
+
+
 
     // Test defaults
     this.testDefaultflyoutParameters = function () {
@@ -170,10 +158,10 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.Assert.areEqual(flyout.autoHide, undefined, "Verifying that autoHide is undefined");
         LiveUnit.Assert.areEqual(flyout.lightDismiss, undefined, "Verifying that lightDismiss is undefined");
     }
-    this.testDefaultflyoutParameters["Owner"] = "shawnste";
-    this.testDefaultflyoutParameters["Priority"] = "1";
-    this.testDefaultflyoutParameters["Description"] = "Test default flyout parameters";
-    this.testDefaultflyoutParameters["Category"] = "Instantiation";
+
+
+
+
 
     // Simple Function Tests
     this.testSimpleflyoutFunctions = function () {
@@ -193,10 +181,10 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.LoggingCore.logComment("removeEventListener");
         flyout.removeEventListener();
     }
-    this.testSimpleflyoutFunctions["Owner"] = "shawnste";
-    this.testSimpleflyoutFunctions["Priority"] = "1";
-    this.testSimpleflyoutFunctions["Description"] = "Test default flyout parameters";
-    this.testSimpleflyoutFunctions["Category"] = "Instantiation";
+
+
+
+
 
     this.testFlyoutDispose = function () {
         var flyout = new WinJS.UI.Flyout();
@@ -220,8 +208,8 @@ CorsicaTests.FlyoutTests = function () {
         LiveUnit.Assert.isTrue(flyout._disposed);
         flyout.dispose();
     }
-    this.testFlyoutDispose["Owner"] = "seanxu";
-    this.testFlyoutDispose["Description"] = "Unit test for dispose requirements.";
+
+
 
     this.testFlyoutShowThrows = function (complete) {
         var flyout = new WinJS.UI.Flyout(that._element);

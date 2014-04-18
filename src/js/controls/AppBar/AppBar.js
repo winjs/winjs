@@ -409,6 +409,10 @@
                 this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
+                if (!this._element.hasAttribute("tabIndex")) {
+                    this._element.tabIndex = -1;
+                }
+
                 // validate that if they didn't set commands, but want command
                 // layout that the HTML only contains commands.  Do this first
                 // so that we don't leave partial AppBars in the DOM.

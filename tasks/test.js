@@ -13,7 +13,7 @@
                 grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
             } else {
                 if (args.saucelabs) {
-                    grunt.task.run(["default", "connect:saucelabs", "saucelabs-qunit"]);
+                    grunt.task.run(["release", "connect:saucelabs", "saucelabs-qunit"]);
                 } else {
                     grunt.task.run(["default", "connect:localhost"]);
                 }
@@ -24,7 +24,9 @@
         grunt.registerTask("build-qunit", function () {
             var fs = require("fs");
 
-            function extractDependencies(fileContents) {
+            function extractDependencies(path) {
+                var fileContents = fs.readFileSync(path, "utf-8");
+                var dir = path.substring(0, path.lastIndexOf("/"));
                 var deps = [];
 
                 var lines = fileContents.split("\n");
@@ -41,8 +43,7 @@
 
                     var startIndex = line.indexOf('path="') + 6;
                     var endIndex = line.indexOf('"', startIndex);
-
-                    deps.push(line.substring(startIndex, endIndex));
+                    deps.push(dir + "/" + line.substring(startIndex, endIndex));
 
                     processedOne = true;
                 }
@@ -142,9 +143,9 @@
                     // Some folders have .html test assets, we can ignore those
                     var file = files[i];
                     if (file.indexOf(".css") >= 0) {
-                        csss.push(file);
+                        csss.push("./tests/" + dir + "/" + file);
                     } else if (file.indexOf(".js") >= 0) {
-                        srcs.push(file);
+                        srcs.push("./tests/" + dir + "/" + file);
                     }
                 }
                 var done = false;
@@ -152,8 +153,7 @@
                     done = true;
                     var srcsCopy = srcs.slice(0);
                     for (var i = 0; i < srcs.length; i++) {
-                        var fc = fs.readFileSync("./tests/" + dir + "/" + srcs[i], "utf-8");
-                        var deps = extractDependencies(fc);
+                        var deps = extractDependencies(srcs[i]);
                         var length = srcsCopy.length;
                         deps.forEach(function (dep) {
                             if (dep === srcs[i]) {
@@ -185,10 +185,12 @@
                 }
 
                 for (var i = 0; i < csss.length; i++) {
-                    testReferences += '    <link type="text/css" rel="stylesheet" href="' + csss[i] + '" />';
+                    var url = csss[i].replace("./tests/" + dir + "/", "");
+                    testReferences += '    <link type="text/css" rel="stylesheet" href="' + url + '" />';
                 }
                 for (var i = srcs.length - 1; i >= 0; i--) {
-                    testReferences += '    <script src="' + srcs[i] + '"></script>\r\n';
+                    var url = srcs[i].replace("./tests/" + dir + "/", "");
+                    testReferences += '    <script src="' + url + '"></script>\r\n';
                 }
                 testReferences = testReferences.substr(0, testReferences.length - 2);
                 html = html.replace("@@TESTREFERENCES", testReferences);

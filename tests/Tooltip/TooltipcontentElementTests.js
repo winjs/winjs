@@ -21,8 +21,8 @@ TooltipContentElementTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -70,11 +70,11 @@ TooltipContentElementTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    this.testTooltip_contentElement["Owner"] = "evanwi";
-    this.testTooltip_contentElement["Priority"] = "feature";
-    this.testTooltip_contentElement["Description"] = "Test contentElement Property of the tooltip";
-    this.testTooltip_contentElement["Category"] = "ContentElement";
-    this.testTooltip_contentElement["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 
 };
 

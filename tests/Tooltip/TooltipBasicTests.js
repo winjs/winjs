@@ -20,8 +20,8 @@
 TooltipBasicTests = function () {
     var tooltipUtils = new TooltipUtils();
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -39,10 +39,10 @@ TooltipBasicTests = function () {
         LiveUnit.Assert.areEqual(tooltip.innerHTML, null);
         LiveUnit.Assert.areEqual(tooltip.contentElement, null);
     };
-    this.testTooltip_Instantiation["Owner"] = "evanwi";
-    this.testTooltip_Instantiation["Priority"] = "feature";
-    this.testTooltip_Instantiation["Description"] = "Test Tooltip Default Instantiation";
-    this.testTooltip_Instantiation["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Verify the properties can be set during initialization.  This is just a basic check
     // and these options are tested in other functions
@@ -60,10 +60,10 @@ TooltipBasicTests = function () {
         LiveUnit.Assert.areEqual(tooltip.contentElement, divElement);
         LiveUnit.Assert.areEqual(tooltip.extraClass, "dummyClass");
     };
-    this.testTooltip_Instantiation_options["Owner"] = "evanwi";
-    this.testTooltip_Instantiation_options["Priority"] = "feature";
-    this.testTooltip_Instantiation_options["Description"] = "Test Tooltip Initial options";
-    this.testTooltip_Instantiation_options["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Verify passing incorrect values for the DOM element causes failure
     this.testTooltip_Instantiation_element = function () {
@@ -99,10 +99,10 @@ TooltipBasicTests = function () {
         testBadCreation(undefined, false);
         testBadCreation(NaN, false);
     };
-    this.testTooltip_Instantiation_element["Owner"] = "evanwi";
-    this.testTooltip_Instantiation_element["Priority"] = "feature";
-    this.testTooltip_Instantiation_element["Description"] = "Test Tooltip DOM element";
-    this.testTooltip_Instantiation_element["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Verify passing incorrect values for the element property causes failure.
     // This property is set AFTER the tooltip is created.
@@ -139,10 +139,10 @@ TooltipBasicTests = function () {
         tooltip.element = document.getElementById(tooltipUtils.defaultElementID);
         LiveUnit.Assert.areEqual(tooltip.element, document.getElementById(tooltipUtils.defaultElementID), "original element");
     };
-    this.testTooltip_Instantiation_elementProperty["Owner"] = "evanwi";
-    this.testTooltip_Instantiation_elementProperty["Priority"] = "feature";
-    this.testTooltip_Instantiation_elementProperty["Description"] = "Test Tooltip Element Parameter";
-    this.testTooltip_Instantiation_elementProperty["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Verify tooltip either converts properties or throws an exception.
     // The only truly valid parameter to elementContent is an HTML element, but we don't throw any errors
@@ -169,10 +169,10 @@ TooltipBasicTests = function () {
         tooltip.elementContent = "<div>string</div>";
         LiveUnit.Assert.areEqual(tooltip.elementContent, "<div>string</div>");
     };
-    this.testTooltip_Instantiation_elementContent["Owner"] = "evanwi";
-    this.testTooltip_Instantiation_elementContent["Priority"] = "feature";
-    this.testTooltip_Instantiation_elementContent["Description"] = "Test Tooltip elementContent Parameter Conversion";
-    this.testTooltip_Instantiation_elementContent["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_infotip = function () {
@@ -198,10 +198,10 @@ TooltipBasicTests = function () {
         tooltip.infotip = NaN;
         LiveUnit.Assert.areEqual(tooltip.infotip, false, "NaN");
     };
-    this.testTooltip_Instantiation_infotip["Owner"] = "evanwi";
-    this.testTooltip_Instantiation_infotip["Priority"] = "feature";
-    this.testTooltip_Instantiation_infotip["Description"] = "Test Tooltip Infotip Parameter Conversion";
-    this.testTooltip_Instantiation_infotip["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_inner = function () {
@@ -233,10 +233,10 @@ TooltipBasicTests = function () {
         LiveUnit.Assert.isTrue((typeof (tooltip.delay) == "undefined"), "undefined");
 
     };
-    this.testTooltip_Instantiation_inner["Owner"] = "evanwi";
-    this.testTooltip_Instantiation_inner["Priority"] = "feature";
-    this.testTooltip_Instantiation_inner["Description"] = "Test Tooltip InnerHTML Parameter Conversion";
-    this.testTooltip_Instantiation_inner["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_placement = function () {
@@ -263,10 +263,10 @@ TooltipBasicTests = function () {
         testBadPlacement(tooltip, "");
         testBadPlacement(tooltip, NaN);
     };
-    this.testTooltip_Instantiation_placement["Owner"] = "evanwi";
-    this.testTooltip_Instantiation_placement["Priority"] = "feature";
-    this.testTooltip_Instantiation_placement["Description"] = "Test Tooltip Placement Parameter Conversion";
-    this.testTooltip_Instantiation_placement["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Verify tooltip either converts properties or throws an exception.
     // The only truly valid parameter to extraClass is a string, but we don't throw any errors
@@ -293,10 +293,10 @@ TooltipBasicTests = function () {
         tooltip.extraClass = "<div>string</div>";
         LiveUnit.Assert.areEqual(tooltip.extraClass, "<div>string</div>");
     };
-    this.testTooltip_Instantiation_extraClass["Owner"] = "evanwi";
-    this.testTooltip_Instantiation_extraClass["Priority"] = "feature";
-    this.testTooltip_Instantiation_extraClass["Description"] = "Test Tooltip extraClass Parameter Conversion";
-    this.testTooltip_Instantiation_extraClass["Category"] = "Instantiation";
+    
+    
+    
+    
 
 };
 

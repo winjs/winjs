@@ -1,4 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+///<reference path="../LegacyLiveUnit/CommonUtils.js" />
+
 if (typeof (WinJS) !== "undefined") {
     "use strict";
     var utilities = WinJS.Utilities,
@@ -60,28 +62,12 @@ if (typeof (WinJS) !== "undefined") {
         this._baseDataSourceConstructor(listDataAdapter);
     });
 
-    function endsWith(s, suffix) {
-        return s && s.substring(s.length - suffix.length) === suffix;
-    }
-
-    function waitForCSSFile(cssFile) {
-        for (var i = 0, len = document.styleSheets.length; i < len; i++) {
-            if (endsWith(document.styleSheets[i].href, cssFile) && document.styleSheets[i].rules.length > 0) {
-                return WinJS.Promise.wrap();
-            }
-        }
-
-        return WinJS.Promise.timeout(50).then(function () {
-            return waitForCSSFile(cssFile);
-        });
-    }
-
     function appendCSSFileToHead(cssFile) {
         var s = document.createElement("link");
         s.setAttribute("rel", "stylesheet");
         s.setAttribute("href", cssFile);
         document.head.appendChild(s);
-        return waitForCSSFile("/" + cssFile.replace("../", ""));
+        return CommonUtilities.waitForCSSFile("/" + cssFile.replace("../", ""));
     }
 
     function removeCSSFileFromHead(link) {

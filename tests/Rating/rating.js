@@ -71,10 +71,10 @@ CorsicaTests.RatingTests = function () {
         }
     }
 
-    this.testRatingInstantiation["Owner"] = "bogra"; // These are metadata properties you can set for your test function, use Latch to query on them
-    this.testRatingInstantiation["Priority"] = "0"; // Priority defaults to 0 if not specified.
-    this.testRatingInstantiation["Description"] = "Test Rating Instantiation";
-    this.testRatingInstantiation["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Test Rating Instatiation with null element
     this.testRatingNullInstatiation = function () {
@@ -93,10 +93,10 @@ CorsicaTests.RatingTests = function () {
         }
         LiveUnit.Assert.isNotNull(rating, "Rating instatiation correctly handled a null element.");
     }
-    this.testRatingNullInstatiation["Owner"] = "bogra";
-    this.testRatingNullInstatiation["Priority"] = "1";
-    this.testRatingNullInstatiation["Description"] = "Test Rating Instantiation with null rating element";
-    this.testRatingNullInstatiation["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Test rating parameters
     this.testRatingParams = function () {
@@ -146,10 +146,10 @@ CorsicaTests.RatingTests = function () {
         testGoodInitOption("averageRating", 0/*, averageRatingIsInvalid*/);
     }
 
-    this.testRatingParams["Owner"] = "bogra";
-    this.testRatingParams["Priority"] = "1";
-    this.testRatingParams["Description"] = "Test initializing a rating with good and bad initialization options";
-    this.testRatingParams["Category"] = "Instantiation";
+    
+    
+    
+    
 
     // Test maxRating,userRating & averageRating updates during runtime
     this.testRatingPropertiesUpdate = function (complete) {
