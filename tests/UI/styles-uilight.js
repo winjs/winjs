@@ -55,13 +55,9 @@ CorsicaTests.StylesUILight = function () {
 	
 	this.testButton = testHelper.testButton;
 	
-	this.testRadioButton = testHelper.testRadioButton;
-	
 	this.testSystemLink = testHelper.testSystemLink;
 	
 	this.testPickerBox = testHelper.testPickerBox;
-	
-	this.testCheckBox = testHelper.testCheckBox;
 	
 	this.testSlider = testHelper.testSlider;
 	

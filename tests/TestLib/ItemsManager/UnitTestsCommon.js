@@ -22,7 +22,7 @@ var TestComponents = TestComponents || {};
     };
 
     thisNamespace.setImmediate = function (callback) {
-        return window.setImmediate(LiveUnit.GetWrappedCallback(callback));
+        return WinJS.Utilities._setImmediate(LiveUnit.GetWrappedCallback(callback));
     };
 
     var seed = 0;
@@ -47,7 +47,7 @@ var TestComponents = TestComponents || {};
             TestComponents.seedPseudorandom(test);
             testOnce(function () {
                 if (++test < testMax) {
-                    setImmediate(continueTest);
+                    WinJS.Utilities._setImmediate(continueTest);
                 } else {
                     signalTestCaseCompleted();
                 }

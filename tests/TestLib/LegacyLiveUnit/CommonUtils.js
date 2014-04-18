@@ -79,9 +79,14 @@ CommonUtils.prototype = (function () {
             }
 
             for (var i = 0, len = document.styleSheets.length; i < len; i++) {
-                var styleSheet = document.styleSheets[i];
-                if (this.endsWith(styleSheet.href, cssFile) && styleSheet.rules.length > 0) {
-                    return WinJS.Promise.wrap();
+                try {
+                    // Firefox sometimes crashes here if stylesheets are being accessed too soon after they have been added
+                    var styleSheet = document.styleSheets[i];
+                    if (this.endsWith(styleSheet.href, cssFile) && styleSheet.cssRules && styleSheet.cssRules.length > 0) {
+                        return WinJS.Promise.wrap();
+                    }
+                }
+                catch(e) {
                 }
             }
 
