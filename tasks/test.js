@@ -64,6 +64,7 @@
 <!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\
 <head>                                                                                                                      \r\n\
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />                                                                 \r\n\
     <title>WinJS Tests</title>                                                                                              \r\n\
     <style>                                                                                                                 \r\n\
         body {                                                                                                              \r\n\
@@ -95,7 +96,7 @@
 <html>                                                                                                                      \r\n\
 <head>                                                                                                                      \r\n\
     <title>@@TITLE</title>                                                                                                  \r\n\
-                                                                                                                            \r\n\
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />                                                                 \r\n\
     <!-- WinJS references -->                                                                                               \r\n\
     <link type="text/css" rel="stylesheet" href="../../Microsoft.WinJS.2.1/css/ui-dark.css" />                              \r\n\
     <script src="../../@@TARGETFRAMEWORK/js/base.js"></script>                                                              \r\n\

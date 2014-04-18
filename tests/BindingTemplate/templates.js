@@ -1107,6 +1107,13 @@ CorsicaTests.TemplateCompilerTests = function () {
 
     this.testResetOnFragmentAttributeChange = function (complete) {
 
+        if(WinJS.Utilities._MutationObserver._isShim) {
+            // The Template Compiler will not automatically regenerate
+            // when the raw DOM is modified on platforms without
+            // MutationObserver support.
+            return complete();
+        }
+
         var templateDiv = document.createElement("div");
         templateDiv.innerHTML = "<div id='testObTemplateStyleBind2'>\
 <div class='one' data-win-bind='style.backgroundColor: x'></div>\

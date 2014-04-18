@@ -390,7 +390,7 @@
                     this._switchElement.addEventListener("MSGestureTap", tapHandler, false);
                     this._switchElement.addEventListener("keydown", spaceDownHandler, false);
                     this._switchElement.addEventListener("keyup", keyUpHandler, false);
-                    new MutationObserver(reloadChangeHandler).observe(this._switchElement, { attributes: true, attributeFilter: ["value"] });
+                    new WinJS.Utilities._MutationObserver(reloadChangeHandler).observe(this._switchElement, { attributes: true, attributeFilter: ["value"] });
                     this._switchElement.addEventListener("change", function (ev) { ev.stopPropagation(); }, true); // Stop the change event from bubbling up and fire our own change event when the user interaction is done.
 
                     WinJS.Utilities._addEventListener(this._switchElement, "pointerdown", trackTap, false); // Use the gesture object so we could listen to tap events

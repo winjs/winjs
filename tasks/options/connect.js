@@ -18,5 +18,15 @@ module.exports = {
             port: 9999,
             hostname: 'localhost'
         }
+    },
+    remote: {
+        options: {
+            port: 9666,
+            keepalive: true,
+            open: {
+                target: 'http://localhost:9666/bin/tests/tests.html'
+            },
+            hostname: '*'
+        }
     }
 };

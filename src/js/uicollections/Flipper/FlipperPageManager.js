@@ -93,7 +93,7 @@
                         }
                     }
                 }, false);
-                new MutationObserver(flipperPropertyChanged).observe(this._flipperDiv, { attributes: true, attributeFilter: ["dir", "style", "tabindex"] });
+                new WinJS.Utilities._MutationObserver(flipperPropertyChanged).observe(this._flipperDiv, { attributes: true, attributeFilter: ["dir", "style", "tabindex"] });
                 this._cachedStyleDir = this._flipperDiv.style.direction;
                 this._panningDiv.addEventListener("activate", function (event) {
                     that._hasFocus = true;
