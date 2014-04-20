@@ -12,7 +12,7 @@ WinJS is a set of JavaScript toolkits that allow developers to build application
 This is a first step for the WinJS project and there is still a lot of work that needs to be done. So please check out the [roadmap](https://github.com/winjs/winjs/wiki/Roadmap) to see where the project is headed or participate by [contributing](https://github.com/winjs/winjs/wiki/Contribute) along the way.
 
 # Contribute
-There are many ways to [contribute](https://github.com/winjs/winjs/wiki/Contribute) to the project.
+There are many ways to [contribute](https://github.com/winjs/winjs/blob/master/CONTRIBUTING.md) to the project.
 
 You can contribute by reviewing and sending feedback on code checkins, suggesting and trying out new features as they are implemented, submitting bugs and helping us verify fixes as they are checked in, as well as submitting code fixes or code contributions of your own.
 

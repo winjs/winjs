@@ -25,12 +25,12 @@ CommonUtils.prototype = (function () {
             ///     Name of the CSS file to load.
             /// </param>
             /// <param name="cssFileName" type="string">
-            ///     True, if this file is in the same folder as the executing script.
+            ///     A promise that is fulfilled when the CSS has been added and loaded successfully. The promise yields
+            ///     the <link> element that was added to document.head.
             /// </param>
             /// <returns type="boolean"/>
 
-            var added = false,
-                fullName = null;
+            var fullName = null;
             if (typeof (WebUnit) === 'undefined' && !local) {
                 // Don't use getPath, since that returns the "file:" location and we want the "http:" location in order to enable our tests in WWA's.
                 fullName = this.getCSSFromServer(cssFileName);
@@ -43,10 +43,9 @@ CommonUtils.prototype = (function () {
             s.setAttribute("href", fullName);
             document.head.appendChild(s);
 
-            if (this.isCssLoaded(cssFileName)) {
-                added = true;
-            }
-            return added;
+            return this.waitForCSSFile(cssFileName).then(function () {
+                return s;
+            });
         },
 
         getCSSFromServer: function CommonUtils_getCSSFromServer(fileName) {
@@ -61,7 +60,7 @@ CommonUtils.prototype = (function () {
             var resourcePath = "";
             for (var i = 0; i < document.styleSheets.length; i++) {
                 var sheet = document.styleSheets[i];
-                if (sheet.href) {
+                if (sheet.href && (sheet.href.indexOf("ui-light.css") >= 0 || sheet.href.indexOf("ui-dark.css") >= 0)) {
                     resourcePath = sheet.href;
                     break;
                 }
@@ -73,35 +72,32 @@ CommonUtils.prototype = (function () {
             return cssPath;
         },
 
-        isCssLoaded: function CommonUtils_isCssLoaded(cssFileName) {
-            /// <summary>
-            ///     Checks for whether CSS File is loaded in the DOM.
-            /// </summary>
-            /// <param name="cssFileName" type="string">
-            ///     Name of the CSS file to look for.
-            /// </param>
-            /// <returns type="boolean"/>
-
-            // Strip off any path from the filename.
-            var slash = cssFileName.lastIndexOf("/");
-            if (slash >= 0) {
-                cssFileName = cssFileName.substring(slash + 1);
+        waitForCSSFile: function waitForCSSFile(cssFile, attempt) {
+            attempt = attempt || 0;
+            if (attempt > 50) {
+                return WinJS.Promise.wrapError("Failed to load CSS File: " + cssFile);
             }
 
-            var loaded = false;
-            for (var i = 0; i < document.styleSheets.length; i++) {
-                if (document.styleSheets[i].href && (document.styleSheets[i].href.indexOf(cssFileName) > 0)) {
-                    LiveUnit.LoggingCore.logComment("Found CSS Stylesheet: " + cssFileName);
-                    LiveUnit.LoggingCore.logComment("At: " + document.styleSheets[i].href);
-                    loaded = true;
+            for (var i = 0, len = document.styleSheets.length; i < len; i++) {
+                try {
+                    // Firefox sometimes crashes here if stylesheets are being accessed too soon after they have been added
+                    var styleSheet = document.styleSheets[i];
+                    if (this.endsWith(styleSheet.href, cssFile) && styleSheet.cssRules && styleSheet.cssRules.length > 0) {
+                        return WinJS.Promise.wrap();
+                    }
+                }
+                catch(e) {
                 }
             }
 
-            if (!loaded) {
-                LiveUnit.LoggingCore.logComment("Unable to find CSS Stylesheet: " + cssFileName);
-            }
+            var that = this;
+            return WinJS.Promise.timeout(50).then(function () {
+                return waitForCSSFile.call(that, cssFile, attempt + 1);
+            });
+        },
 
-            return loaded;
+        endsWith: function endsWith(s, suffix) {
+            return s && s.substring(s.length - suffix.length) === suffix;
         },
 
         removeCss: function CommonUtils_removeCss(cssFileName) {

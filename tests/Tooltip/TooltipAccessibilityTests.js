@@ -21,8 +21,8 @@ TooltipAccessibilityTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
+    this.setUp = function (complete) {
+        tooltipUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -116,11 +116,11 @@ TooltipAccessibilityTests = function () {
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
 
-    this.testTooltip_VerifyARIA["Owner"] = "evanwi";
-    this.testTooltip_VerifyARIA["Priority"] = "feature";
-    this.testTooltip_VerifyARIA["Description"] = "Test Accessibility of the tooltip";
-    this.testTooltip_VerifyARIA["Category"] = "Accessibility";
-    this.testTooltip_VerifyARIA["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
 };
 
 // Register the object as a test class by passing in the name

@@ -21,8 +21,8 @@
 RatingInstantiationTests = function () {
     var ratingUtils = new RatingUtils();
 
-    this.setUp = function () {
-        ratingUtils.setUp();
+    this.setUp = function (complete) {
+        ratingUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -39,10 +39,10 @@ RatingInstantiationTests = function () {
         ratingUtils.verifyFunction(rating, "removeEventListener");
 
     };
-    this.testRating_Instantiation["Owner"] = "sehume";
-    this.testRating_Instantiation["Priority"] = "feature";
-    this.testRating_Instantiation["Description"] = "Test Rating Instantiation";
-    this.testRating_Instantiation["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -53,30 +53,30 @@ RatingInstantiationTests = function () {
         ratingUtils.verifyFunction(rating, "removeEventListener");
 
     };
-    this.testRating_Instantiation_FromNull["Owner"] = "sehume";
-    this.testRating_Instantiation_FromNull["Priority"] = "feature";
-    this.testRating_Instantiation_FromNull["Description"] = "Test Rating Instantiation from null object";
-    this.testRating_Instantiation_FromNull["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_WithOptions = function () {
         ratingUtils.instantiate("rating", { maxRating: 10, userRating: 7, averageRating: 5, disabled: !Math.floor(Math.random() * 2) });
     };
-    this.testRating_Instantiation_WithOptions["Owner"] = "sehume";
-    this.testRating_Instantiation_WithOptions["Priority"] = "feature";
-    this.testRating_Instantiation_WithOptions["Description"] = "Test rating instantiation with options";
-    this.testRating_Instantiation_WithOptions["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_FromNull_WithOptions = function () {
         var rating = ratingUtils.instantiate(null, { maxRating: 10, userRating: 7, averageRating: 5, disabled: !Math.floor(Math.random() * 2) });
     };
-    this.testRating_Instantiation_FromNull_WithOptions["Owner"] = "sehume";
-    this.testRating_Instantiation_FromNull_WithOptions["Priority"] = "feature";
-    this.testRating_Instantiation_FromNull_WithOptions["Description"] = "Test Rating Instantiation from null object";
-    this.testRating_Instantiation_FromNull_WithOptions["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -97,10 +97,10 @@ RatingInstantiationTests = function () {
         ratingUtils.setOptionsAndVerify(ratingElement, { maxRating: 5, userRating: ratingUtils.randomInt(0, 5), averageRating: ratingUtils.random(0, 5) });
 
     };
-    this.testRating_Instantiation_DynamicAdd["Owner"] = "sehume";
-    this.testRating_Instantiation_DynamicAdd["Priority"] = "IDX";
-    this.testRating_Instantiation_DynamicAdd["Description"] = "Test rating instantiation on an element added to the page after instantiation";
-    this.testRating_Instantiation_DynamicAdd["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -120,10 +120,10 @@ RatingInstantiationTests = function () {
         ratingUtils.setOptionsAndVerify(ratingElement, { maxRating: 5, userRating: ratingUtils.randomInt(0, 5), averageRating: ratingUtils.random(0, 5) });
 
     };
-    this.testRating_Instantiation_DynamicAdd_AverageRating1["Owner"] = "sehume";
-    this.testRating_Instantiation_DynamicAdd_AverageRating1["Priority"] = "IDX";
-    this.testRating_Instantiation_DynamicAdd_AverageRating1["Description"] = "Test rating instantiation on an element added to the page after instantiation, with averageRating set to 1 (known bug area)";
-    this.testRating_Instantiation_DynamicAdd_AverageRating1["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -132,10 +132,10 @@ RatingInstantiationTests = function () {
         var rating = ratingUtils.instantiate("ratingSpan");
         ratingUtils.removeElementById("ratingSpan");
     };
-    this.testRating_Instantiation_Span["Owner"] = "sehume";
-    this.testRating_Instantiation_Span["Priority"] = "feature";
-    this.testRating_Instantiation_Span["Description"] = "Test rating instantiation with undefined rating element";
-    this.testRating_Instantiation_Span["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -143,10 +143,10 @@ RatingInstantiationTests = function () {
         var ratingElem = ratingUtils.addTag("div", "rating_dir", { dir: "ltr" });
         var rating = ratingUtils.instantiate("rating_dir");
     };
-    this.testRating_dir_LTR["Owner"] = "sehume";
-    this.testRating_dir_LTR["Priority"] = "IDX";
-    this.testRating_dir_LTR["Description"] = "Sanity check instantiating default rating on div with dir='ltr'";
-    this.testRating_dir_LTR["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -154,10 +154,10 @@ RatingInstantiationTests = function () {
         document.getElementById("rating").setAttribute("dir", "rtl");
         var rating = ratingUtils.instantiate("rating");
     };
-    this.testRating_dir_RTL["Owner"] = "sehume";
-    this.testRating_dir_RTL["Priority"] = "IDX";
-    this.testRating_dir_RTL["Description"] = "Test instantiating default rating on div with dir='rtl'";
-    this.testRating_dir_RTL["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -171,10 +171,10 @@ RatingInstantiationTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { userRating: 15 });
         ratingUtils.setOptionsAndVerify("rating", { userRating: 32 });
     };
-    this.testRating_dir_RTL_IncreasedMax["Owner"] = "sehume";
-    this.testRating_dir_RTL_IncreasedMax["Priority"] = "IDX";
-    this.testRating_dir_RTL_IncreasedMax["Description"] = "Test instantiating rating with increased max on div with dir='rtl'";
-    this.testRating_dir_RTL_IncreasedMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -188,10 +188,10 @@ RatingInstantiationTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { userRating: 15 });
         ratingUtils.setOptionsAndVerify("rating", { userRating: 32 });
     };
-    this.testRating_dir_RTL_Readonly["Owner"] = "sehume";
-    this.testRating_dir_RTL_Readonly["Priority"] = "IDX";
-    this.testRating_dir_RTL_Readonly["Description"] = "Test instantiating disabled rating on div with dir='rtl'";
-    this.testRating_dir_RTL_Readonly["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -219,10 +219,10 @@ RatingInstantiationTests = function () {
         }
 
     };
-    this.testRating_dir_Swap["Owner"] = "sehume";
-    this.testRating_dir_Swap["Priority"] = "IDX";
-    this.testRating_dir_Swap["Description"] = "Test switching the direction of a rating control after creation.";
-    this.testRating_dir_Swap["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // maxRating Tests
@@ -237,40 +237,40 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_MaxRating_Random["Owner"] = "sehume";
-    this.testRating_Instantiation_MaxRating_Random["Priority"] = "feature";
-    this.testRating_Instantiation_MaxRating_Random["Description"] = "Test instantiating ratings control with varying maxRating values.";
-    this.testRating_Instantiation_MaxRating_Random["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_MaxRating_Invalid_0 = function () {
         ratingUtils.instantiate("rating", { maxRating: 0 });
     };
-    this.testRating_Instantiation_MaxRating_Invalid_0["Owner"] = "sehume";
-    this.testRating_Instantiation_MaxRating_Invalid_0["Priority"] = "IDX";
-    this.testRating_Instantiation_MaxRating_Invalid_0["Description"] = "Test instantiating ratings control while setting maxRating option to 0";
-    this.testRating_Instantiation_MaxRating_Invalid_0["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_MaxRating_Invalid_Null = function () {
         ratingUtils.instantiate("rating", { maxRating: null });
     };
-    this.testRating_Instantiation_MaxRating_Invalid_Null["Owner"] = "sehume";
-    this.testRating_Instantiation_MaxRating_Invalid_Null["Priority"] = "IDX";
-    this.testRating_Instantiation_MaxRating_Invalid_Null["Description"] = "Test instantiating ratings control while setting maxRating option to null";
-    this.testRating_Instantiation_MaxRating_Invalid_Null["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_MaxRating_Invalid_Undefined = function () {
         ratingUtils.instantiate("rating", { maxRating: undefined });
     };
-    this.testRating_Instantiation_MaxRating_Invalid_Undefined["Owner"] = "sehume";
-    this.testRating_Instantiation_MaxRating_Invalid_Undefined["Priority"] = "IDX";
-    this.testRating_Instantiation_MaxRating_Invalid_Undefined["Description"] = "Test instantiating ratings control while setting maxRating option to undefined";
-    this.testRating_Instantiation_MaxRating_Invalid_Undefined["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -282,10 +282,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_MaxRating_Invalid_Negatives["Owner"] = "sehume";
-    this.testRating_Instantiation_MaxRating_Invalid_Negatives["Priority"] = "IDX";
-    this.testRating_Instantiation_MaxRating_Invalid_Negatives["Description"] = "Test instantiating ratings control while setting maxRating option to random negative numbers";
-    this.testRating_Instantiation_MaxRating_Invalid_Negatives["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -297,10 +297,7 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_MaxRating_Invalid_NumbersAsStrings["Owner"] = "sehume";
-    this.testRating_Instantiation_MaxRating_Invalid_NumbersAsStrings["Priority"] = "IDX";
-    this.testRating_Instantiation_MaxRating_Invalid_NumbersAsStrings["Description"] = "Test instantiating ratings control while setting maxRating option to valid numbers, but passed as strings (not allowed by the API)";
-    this.testRating_Instantiation_MaxRating_Invalid_NumbersAsStrings["Category"] = "Instantiation";
+
 
     //-----------------------------------------------------------------------------------
 
@@ -312,10 +309,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_MaxRating_Invalid_Nonsense["Owner"] = "sehume";
-    this.testRating_Instantiation_MaxRating_Invalid_Nonsense["Priority"] = "IDX";
-    this.testRating_Instantiation_MaxRating_Invalid_Nonsense["Description"] = "Test instantiating ratings control while setting maxRating option to random nonsense strings";
-    this.testRating_Instantiation_MaxRating_Invalid_Nonsense["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // averageRating Tests
@@ -324,10 +321,10 @@ RatingInstantiationTests = function () {
     this.testRating_Instantiation_AverageRating_Default = function () {
         ratingUtils.instantiate("rating", { averageRating: 3 });
     };
-    this.testRating_Instantiation_AverageRating_Default["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Default["Priority"] = "feature";
-    this.testRating_Instantiation_AverageRating_Default["Description"] = "Test instantiating ratings control with averageRating set to less than default maxRating";
-    this.testRating_Instantiation_AverageRating_Default["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -342,20 +339,20 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_AverageRating_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_CustomMax["Priority"] = "feature";
-    this.testRating_Instantiation_AverageRating_CustomMax["Description"] = "Test instantiating ratings control with averageRating set to less than a custom maxRating";
-    this.testRating_Instantiation_AverageRating_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_Float_Default = function () {
         ratingUtils.instantiate("rating", { averageRating: ratingUtils.random(1, ratingUtils.defaultMaxRating) });
     };
-    this.testRating_Instantiation_AverageRating_Float_Default["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Float_Default["Priority"] = "feature";
-    this.testRating_Instantiation_AverageRating_Float_Default["Description"] = "Test instantiating ratings control with averageRating set to random floating point values";
-    this.testRating_Instantiation_AverageRating_Float_Default["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -369,20 +366,20 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_AverageRating_Floats_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Floats_CustomMax["Priority"] = "feature";
-    this.testRating_Instantiation_AverageRating_Floats_CustomMax["Description"] = "Test instantiating ratings control with averageRating set to random floating point values";
-    this.testRating_Instantiation_AverageRating_Floats_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_DefaultMax = function () {
         ratingUtils.instantiate("rating", { averageRating: ratingUtils.defaultMaxRating });
     };
-    this.testRating_Instantiation_AverageRating_DefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_DefaultMax["Priority"] = "feature";
-    this.testRating_Instantiation_AverageRating_DefaultMax["Description"] = "Test averageRating option set equal to the default max.";
-    this.testRating_Instantiation_AverageRating_DefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -391,10 +388,10 @@ RatingInstantiationTests = function () {
 
         ratingUtils.instantiate("rating", { maxRating: newMax, averageRating: newMax });
     };
-    this.testRating_Instantiation_AverageRating_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_CustomMax["Priority"] = "feature";
-    this.testRating_Instantiation_AverageRating_CustomMax["Description"] = "Test averageRating option set equal to a random max.";
-    this.testRating_Instantiation_AverageRating_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
 
     //-----------------------------------------------------------------------------------
@@ -402,30 +399,30 @@ RatingInstantiationTests = function () {
     this.testRating_Instantiation_AverageRating_0 = function () {
         ratingUtils.instantiate("rating", { averageRating: 0 });
     };
-    this.testRating_Instantiation_AverageRating_0["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_0["Priority"] = "feature";
-    this.testRating_Instantiation_AverageRating_0["Description"] = "Test instantiating ratings control while setting averageRating option to 0";
-    this.testRating_Instantiation_AverageRating_0["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_Invalid_Null = function () {
         ratingUtils.instantiate("rating", { averageRating: null });
     };
-    this.testRating_Instantiation_AverageRating_Invalid_Null["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Invalid_Null["Priority"] = "IDX";
-    this.testRating_Instantiation_AverageRating_Invalid_Null["Description"] = "Test instantiating ratings control while setting averageRating option to null";
-    this.testRating_Instantiation_AverageRating_Invalid_Null["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_Invalid_GreaterThanDefaultMax = function () {
         ratingUtils.instantiate("rating", { averageRating: ratingUtils.randomInt(ratingUtils.defaultMaxRating + 1, 50) });
     };
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanDefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanDefaultMax["Priority"] = "IDX";
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanDefaultMax["Description"] = "Test averageRating option set greater than the default max.";
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanDefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -434,20 +431,20 @@ RatingInstantiationTests = function () {
 
         ratingUtils.instantiate("rating", { maxRating: newMax, averageRating: ratingUtils.randomInt(newMax + 1, 50) });
     };
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanCustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanCustomMax["Priority"] = "IDX";
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanCustomMax["Description"] = "Test averageRating option set greater than a random max";
-    this.testRating_Instantiation_AverageRating_Invalid_GreaterThanCustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_Invalid_Undefined = function () {
         ratingUtils.instantiate("rating", { averageRating: undefined });
     };
-    this.testRating_Instantiation_AverageRating_Invalid_Undefined["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Invalid_Undefined["Priority"] = "IDX";
-    this.testRating_Instantiation_AverageRating_Invalid_Undefined["Description"] = "Test instantiating ratings control while setting averageRating option to undefined";
-    this.testRating_Instantiation_AverageRating_Invalid_Undefined["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -459,10 +456,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_AverageRating_Invalid_Negatives["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Invalid_Negatives["Priority"] = "IDX";
-    this.testRating_Instantiation_AverageRating_Invalid_Negatives["Description"] = "Test instantiating ratings control while setting averageRating option to random negative numbers";
-    this.testRating_Instantiation_AverageRating_Invalid_Negatives["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -474,10 +471,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_AverageRating_Invalid_NumbersAsStrings["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Invalid_NumbersAsStrings["Priority"] = "IDX";
-    this.testRating_Instantiation_AverageRating_Invalid_NumbersAsStrings["Description"] = "Test instantiating ratings control while setting averageRating option to random numbers, converted to strings";
-    this.testRating_Instantiation_AverageRating_Invalid_NumbersAsStrings["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -489,10 +486,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_AverageRating_Invalid_Nonsense["Owner"] = "sehume";
-    this.testRating_Instantiation_AverageRating_Invalid_Nonsense["Priority"] = "IDX";
-    this.testRating_Instantiation_AverageRating_Invalid_Nonsense["Description"] = "Test instantiating ratings control while setting averageRating option to random nonsense strings";
-    this.testRating_Instantiation_AverageRating_Invalid_Nonsense["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // userRating tests
@@ -501,10 +498,10 @@ RatingInstantiationTests = function () {
     this.testRating_Instantiation_UserRating_Default = function () {
         ratingUtils.instantiate("rating", { userRating: 3 });
     };
-    this.testRating_Instantiation_UserRating_Default["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Default["Priority"] = "feature";
-    this.testRating_Instantiation_UserRating_Default["Description"] = "Test instantiating rating control while setting userRating on default control";
-    this.testRating_Instantiation_UserRating_Default["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -518,20 +515,20 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_UserRating_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_CustomMax["Priority"] = "feature";
-    this.testRating_Instantiation_UserRating_CustomMax["Description"] = "Test instantiating rating control while setting userRating on rating control with custom max";
-    this.testRating_Instantiation_UserRating_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_DefaultMax = function () {
         ratingUtils.instantiate("rating", { userRating: ratingUtils.defaultMaxRating });
     };
-    this.testRating_Instantiation_UserRating_DefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_DefaultMax["Priority"] = "feature";
-    this.testRating_Instantiation_UserRating_DefaultMax["Description"] = "Test userRating option set equal to the default max.";
-    this.testRating_Instantiation_UserRating_DefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -540,40 +537,40 @@ RatingInstantiationTests = function () {
 
         ratingUtils.instantiate("rating", { maxRating: newMax, userRating: newMax });
     };
-    this.testRating_Instantiation_UserRating_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_CustomMax["Priority"] = "feature";
-    this.testRating_Instantiation_UserRating_CustomMax["Description"] = "Test userRating option set equal to a random max.";
-    this.testRating_Instantiation_UserRating_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_0 = function () {
         ratingUtils.instantiate("rating", { userRating: 0 });
     };
-    this.testRating_Instantiation_UserRating_0["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_0["Priority"] = "feature";
-    this.testRating_Instantiation_UserRating_0["Description"] = "Test instantiating ratings control while setting userRating option to 0";
-    this.testRating_Instantiation_UserRating_0["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_Invalid_Null = function () {
         ratingUtils.instantiate("rating", { userRating: null });
     };
-    this.testRating_Instantiation_UserRating_Invalid_Null["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_Null["Priority"] = "feature";
-    this.testRating_Instantiation_UserRating_Invalid_Null["Description"] = "Test instantiating ratings control while setting userRating option to null";
-    this.testRating_Instantiation_UserRating_Invalid_Null["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_Invalid_GreaterThanDefaultMax = function () {
         ratingUtils.instantiate("rating", { userRating: ratingUtils.randomInt(ratingUtils.defaultMaxRating + 1, ratingUtils.defaultMaxRating * 2) });
     };
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanDefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanDefaultMax["Priority"] = "IDX";
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanDefaultMax["Description"] = "Test userRating option set greater than the default max.";
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanDefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -581,20 +578,20 @@ RatingInstantiationTests = function () {
         var newMax = ratingUtils.randomNewMaxRating(50, ratingUtils.defaultMaxRating);
         ratingUtils.instantiate("rating", { maxRating: newMax, userRating: ratingUtils.randomInt(newMax + 1, newMax * 2) });
     };
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanCustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanCustomMax["Priority"] = "IDX";
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanCustomMax["Description"] = "Test userRating option set greater than a random max";
-    this.testRating_Instantiation_UserRating_Invalid_GreaterThanCustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_Invalid_Float_Default = function () {
         ratingUtils.instantiate("rating", { userRating: 3.1 });
     };
-    this.testRating_Instantiation_UserRating_Invalid_Float_Default["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_Float_Default["Priority"] = "IDX";
-    this.testRating_Instantiation_UserRating_Invalid_Float_Default["Description"] = "Test instantiating ratings control with userRating set to random floating point values";
-    this.testRating_Instantiation_UserRating_Invalid_Float_Default["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -608,20 +605,20 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_UserRating_Invalid_Floats_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_Floats_CustomMax["Priority"] = "IDX";
-    this.testRating_Instantiation_UserRating_Invalid_Floats_CustomMax["Description"] = "Test instantiating ratings control with userRating set to random floating point values";
-    this.testRating_Instantiation_UserRating_Invalid_Floats_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_Invalid_Undefined = function () {
         ratingUtils.instantiate("rating", { userRating: undefined });
     };
-    this.testRating_Instantiation_UserRating_Invalid_Undefined["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_Undefined["Priority"] = "IDX";
-    this.testRating_Instantiation_UserRating_Invalid_Undefined["Description"] = "Test instantiating ratings control while setting userRating option to undefined";
-    this.testRating_Instantiation_UserRating_Invalid_Undefined["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -633,10 +630,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_UserRating_Invalid_Negatives["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_Negatives["Priority"] = "IDX";
-    this.testRating_Instantiation_UserRating_Invalid_Negatives["Description"] = "Test instantiating ratings control while setting userRating option to random negative numbers";
-    this.testRating_Instantiation_UserRating_Invalid_Negatives["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -648,10 +645,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_UserRating_Invalid_NumbersAsStrings["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_NumbersAsStrings["Priority"] = "IDX";
-    this.testRating_Instantiation_UserRating_Invalid_NumbersAsStrings["Description"] = "Test instantiating ratings control while setting userRating option to random numbers, converted to strings";
-    this.testRating_Instantiation_UserRating_Invalid_NumbersAsStrings["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -663,10 +660,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_UserRating_Invalid_Nonsense["Owner"] = "sehume";
-    this.testRating_Instantiation_UserRating_Invalid_Nonsense["Priority"] = "IDX";
-    this.testRating_Instantiation_UserRating_Invalid_Nonsense["Description"] = "Test instantiating ratings control while setting userRating option to random nonsense strings";
-    this.testRating_Instantiation_UserRating_Invalid_Nonsense["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // disabled tests
@@ -675,20 +672,20 @@ RatingInstantiationTests = function () {
     this.testRating_Instantiation_disabled_true = function () {
         ratingUtils.instantiate("rating", { disabled: true });
     };
-    this.testRating_Instantiation_disabled_true["Owner"] = "sehume";
-    this.testRating_Instantiation_disabled_true["Priority"] = "feature";
-    this.testRating_Instantiation_disabled_true["Description"] = "Test instantiating ratings control while setting disabled option to 'true'";
-    this.testRating_Instantiation_disabled_true["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_disabled_false = function () {
         ratingUtils.instantiate("rating", { disabled: false });
     };
-    this.testRating_Instantiation_disabled_false["Owner"] = "sehume";
-    this.testRating_Instantiation_disabled_false["Priority"] = "feature";
-    this.testRating_Instantiation_disabled_false["Description"] = "Test instantiating ratings control while setting disabled option to 'false'";
-    this.testRating_Instantiation_disabled_false["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -698,10 +695,10 @@ RatingInstantiationTests = function () {
         ratingUtils.addTag("div", "rating");
         ratingUtils.instantiate("rating", { disabled: 0 });
     };
-    this.testRating_Instantiation_disabled_Invalid_Numbers["Owner"] = "sehume";
-    this.testRating_Instantiation_disabled_Invalid_Numbers["Priority"] = "IDX";
-    this.testRating_Instantiation_disabled_Invalid_Numbers["Description"] = "Test instantiating ratings control while setting disabled option to 1 or 0";
-    this.testRating_Instantiation_disabled_Invalid_Numbers["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -711,10 +708,10 @@ RatingInstantiationTests = function () {
         ratingUtils.addTag("div", "rating");
         ratingUtils.instantiate("rating", { disabled: "false" });
     };
-    this.testRating_Instantiation_disabled_Invalid_Strings["Owner"] = "sehume";
-    this.testRating_Instantiation_disabled_Invalid_Strings["Priority"] = "IDX";
-    this.testRating_Instantiation_disabled_Invalid_Strings["Description"] = "Test instantiating ratings control while setting disabled option to the strings 'true' or 'false'";
-    this.testRating_Instantiation_disabled_Invalid_Strings["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -726,10 +723,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_disabled_Invalid_Nonsense["Owner"] = "sehume";
-    this.testRating_Instantiation_disabled_Invalid_Nonsense["Priority"] = "IDX";
-    this.testRating_Instantiation_disabled_Invalid_Nonsense["Description"] = "Test instantiating ratings control while setting disabled option to random nonsense strings";
-    this.testRating_Instantiation_disabled_Invalid_Nonsense["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // enableClear tests
@@ -738,20 +735,20 @@ RatingInstantiationTests = function () {
     this.testRating_Instantiation_enableClear_true = function () {
         ratingUtils.instantiate("rating", { enableClear: true });
     };
-    this.testRating_Instantiation_enableClear_true["Owner"] = "sehume";
-    this.testRating_Instantiation_enableClear_true["Priority"] = "feature";
-    this.testRating_Instantiation_enableClear_true["Description"] = "Test instantiating ratings control while setting enableClear option to 'true'";
-    this.testRating_Instantiation_enableClear_true["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_enableClear_false = function () {
         ratingUtils.instantiate("rating", { enableClear: false });
     };
-    this.testRating_Instantiation_enableClear_false["Owner"] = "sehume";
-    this.testRating_Instantiation_enableClear_false["Priority"] = "feature";
-    this.testRating_Instantiation_enableClear_false["Description"] = "Test instantiating ratings control while setting enableClear option to 'false'";
-    this.testRating_Instantiation_enableClear_false["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -761,10 +758,10 @@ RatingInstantiationTests = function () {
         ratingUtils.addTag("div", "rating");
         ratingUtils.instantiate("rating", { enableClear: 0 });
     };
-    this.testRating_Instantiation_enableClear_Invalid_Numbers["Owner"] = "sehume";
-    this.testRating_Instantiation_enableClear_Invalid_Numbers["Priority"] = "IDX";
-    this.testRating_Instantiation_enableClear_Invalid_Numbers["Description"] = "Test instantiating ratings control while setting enableClear option to 1 or 0";
-    this.testRating_Instantiation_enableClear_Invalid_Numbers["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -774,10 +771,10 @@ RatingInstantiationTests = function () {
         ratingUtils.addTag("div", "rating");
         ratingUtils.instantiate("rating", { enableClear: "false" });
     };
-    this.testRating_Instantiation_enableClear_Invalid_Strings["Owner"] = "sehume";
-    this.testRating_Instantiation_enableClear_Invalid_Strings["Priority"] = "IDX";
-    this.testRating_Instantiation_enableClear_Invalid_Strings["Description"] = "Test instantiating ratings control while setting enableClear option to the strings 'true' or 'false'";
-    this.testRating_Instantiation_enableClear_Invalid_Strings["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -789,10 +786,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_enableClear_Invalid_Nonsense["Owner"] = "sehume";
-    this.testRating_Instantiation_enableClear_Invalid_Nonsense["Priority"] = "IDX";
-    this.testRating_Instantiation_enableClear_Invalid_Nonsense["Description"] = "Test instantiating ratings control while setting enableClear option to random nonsense strings";
-    this.testRating_Instantiation_enableClear_Invalid_Nonsense["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // tooltipStrings tests
@@ -805,14 +802,14 @@ RatingInstantiationTests = function () {
                 "It was Okay",
                 "I liked it.",
                 "I loved it!"
-            ];
+        ];
 
         ratingUtils.instantiate("rating", { tooltipStrings: tooltipStrings });
     };
-    this.testRating_Instantiation_tooltipStrings_PlainText_DefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_PlainText_DefaultMax["Priority"] = "feature";
-    this.testRating_Instantiation_tooltipStrings_PlainText_DefaultMax["Description"] = "Test instantiating ratings control while setting tooltipStrings to plain text";
-    this.testRating_Instantiation_tooltipStrings_PlainText_DefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -832,10 +829,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_tooltipStrings_PlainText_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_PlainText_CustomMax["Priority"] = "feature";
-    this.testRating_Instantiation_tooltipStrings_PlainText_CustomMax["Description"] = "Test instantiating ratings control while setting tooltipStrings to plain text";
-    this.testRating_Instantiation_tooltipStrings_PlainText_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -846,14 +843,14 @@ RatingInstantiationTests = function () {
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true),
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true),
                 ratingUtils.randomHTML(ratingUtils.randomInt(1, 10), true)
-            ];
+        ];
 
         ratingUtils.instantiate("rating", { tooltipStrings: tooltipStrings });
     };
-    this.testRating_Instantiation_tooltipStrings_HTML_DefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_HTML_DefaultMax["Priority"] = "feature";
-    this.testRating_Instantiation_tooltipStrings_HTML_DefaultMax["Description"] = "Test instantiating ratings control while setting tooltipStrings to random HTML text";
-    this.testRating_Instantiation_tooltipStrings_HTML_DefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -873,20 +870,20 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_tooltipStrings_HTML_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_HTML_CustomMax["Priority"] = "feature";
-    this.testRating_Instantiation_tooltipStrings_HTML_CustomMax["Description"] = "Test instantiating ratings control while setting tooltipStrings to random HTML text";
-    this.testRating_Instantiation_tooltipStrings_HTML_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_tooltipStrings_NULL_DefaultMax = function () {
         ratingUtils.instantiate("rating", { tooltipStrings: null });
     };
-    this.testRating_Instantiation_tooltipStrings_NULL_DefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_NULL_DefaultMax["Priority"] = "IDX";
-    this.testRating_Instantiation_tooltipStrings_NULL_DefaultMax["Description"] = "Test instantiating ratings control while setting tooltipStrings to null";
-    this.testRating_Instantiation_tooltipStrings_NULL_DefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -900,20 +897,20 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_tooltipStrings_NULL_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_NULL_CustomMax["Priority"] = "IDX";
-    this.testRating_Instantiation_tooltipStrings_NULL_CustomMax["Description"] = "Test instantiating ratings control while setting tooltipStrings to null";
-    this.testRating_Instantiation_tooltipStrings_NULL_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_tooltipStrings_TooFew_DefaultMax = function () {
         ratingUtils.instantiate("rating", { tooltipStrings: ["tooltip1", "tooltip1", "tooltip3"] });
     };
-    this.testRating_Instantiation_tooltipStrings_TooFew_DefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_TooFew_DefaultMax["Priority"] = "IDX";
-    this.testRating_Instantiation_tooltipStrings_TooFew_DefaultMax["Description"] = "Test instantiating ratings control while providing fewer than 5 tooltips";
-    this.testRating_Instantiation_tooltipStrings_TooFew_DefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -934,20 +931,20 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_tooltipStrings_TooFew_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_TooFew_CustomMax["Priority"] = "IDX";
-    this.testRating_Instantiation_tooltipStrings_TooFew_CustomMax["Description"] = "Test instantiating ratings control while providing fewer than a custom max number of tooltips";
-    this.testRating_Instantiation_tooltipStrings_TooFew_CustomMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_tooltipStrings_TooManyDefaultMax = function () {
         ratingUtils.instantiate("rating", { tooltipStrings: ["tooltip1", "tooltip1", "tooltip3", "tooltip4", "tooltip5", "tooltip6"] });
     };
-    this.testRating_Instantiation_tooltipStrings_TooManyDefaultMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_TooManyDefaultMax["Priority"] = "IDX";
-    this.testRating_Instantiation_tooltipStrings_TooManyDefaultMax["Description"] = "Test instantiating ratings control while providing more than 5 tooltips";
-    this.testRating_Instantiation_tooltipStrings_TooManyDefaultMax["Category"] = "Instantiation";
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -968,10 +965,10 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    this.testRating_Instantiation_tooltipStrings_TooMany_CustomMax["Owner"] = "sehume";
-    this.testRating_Instantiation_tooltipStrings_TooMany_CustomMax["Priority"] = "IDX";
-    this.testRating_Instantiation_tooltipStrings_TooMany_CustomMax["Description"] = "Test instantiating ratings control while providing greater than a custom max number of tooltips";
-    this.testRating_Instantiation_tooltipStrings_TooMany_CustomMax["Category"] = "Instantiation";
+
+
+
+
 };
 
 // Register the object as a test class by passing in the name

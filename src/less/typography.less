@@ -358,7 +358,7 @@
 }
 
 // Recursive loop over each font in the @fonts list
-.buildFontFallbacks(@index) when (@index <= 11) {
+.buildFontFallbacks(@index) when (@index <= length(@fonts)) {
 
     // Apply the font fallback mixin to each of these elements,
     // for this index

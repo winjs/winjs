@@ -3186,6 +3186,8 @@ CorsicaTests.Promise = function () {
 
     this.testRecursivelyChainingPromises = function (complete) {
 
+        q.clear();
+
         var count = 3000;
         var i = 0;
 
@@ -3193,7 +3195,9 @@ CorsicaTests.Promise = function () {
             if (i < count) {
                 console.log("Execution #" + i, i);
                 i++;
-                return WinJS.Promise.timeout().then(run);
+                return new WinJS.Promise(function (c) {
+                    q.schedule(function () { c(); });
+                }).then(run);
             }
         }
 
@@ -3205,6 +3209,7 @@ CorsicaTests.Promise = function () {
             .then(null, function () { ; })
             .then(complete);
 
+        q.drain();
 
     };
 

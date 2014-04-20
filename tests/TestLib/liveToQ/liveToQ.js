@@ -149,6 +149,20 @@
         window.global_test_results = test_results;
     });
 
+    function formatString(string) {
+        var args = arguments;
+        if (args.length > 1) {
+            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g, 
+                function (unused, left, right, index, illegalLeft, illegalRight) {
+                    if (illegalLeft || illegalRight) { 
+                        throw new Error(formatString("Malformed string input: {0}", illegalLeft || illegalRight)); 
+                    }
+                    return (left && "{") || (right && "}") || args[(index | 0) + 1];
+                });
+        }
+        return string;
+    }
+
     window.LiveUnit = {
         Assert: {
             areEqual: function (expected, actual, message) {
@@ -156,7 +170,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || ("areEqual - " + (message || ("expected: " + expected + ", actual: " + actual)));
+                    testError = testError || formatString("areEqual - {0} (expected: {1}, actual: {2})", message || "", expected, actual);
                     testFailed = true;
                 }
             },
@@ -166,7 +180,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || ("areNotEqual - " + (message || ("not expected: " + left)));
+                    testError = testError || formatString("areNotEqual - {0} (both equal: {1})", message || "", left);
                     testFailed = true;
                 }
             },
@@ -175,7 +189,7 @@
                 if (QUnit.breakOnAssertFail) {
                     debugger;
                 }
-                testError = testError || ("fail - " + message);
+                testError = testError || formatString("fail - {0}", message || "");
                 testFailed = true;
             },
 
@@ -184,7 +198,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || ("isFalse - " + (message || ("expected: falsy" + expected + ", actual: " + falsy)));
+                    testError = testError || formatString("isFalse - {0} (expected: falsy, actual: {1})", message || "", falsy);
                     testFailed = true;
                 }
             },
@@ -194,7 +208,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || ("isTrue - " + (message || ("expected: truthy" + expected + ", actual: " + truthy)));
+                    testError = testError || formatString("isTrue - {0} (expected: truthy, actual: {1})", message || "", truthy);
                     testFailed = true;
                 }
             },
@@ -206,7 +220,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || ("isNull - " + (message || ("expected: null or undefined" + expected + ", actual: " + obj)));
+                    testError = testError || formatString("isNull - {0} (expected: null or undefined, actual: {1})", message || "", obj);
                     testFailed = true;
                 }
             },
@@ -218,7 +232,7 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || ("isNotNull - " + (message || ("not expected: null or undefined" + expected + ", actual: " + obj)));
+                    testError = testError || formatString("isNotNull - {0} (expected: not null and not undefined, actual: {1})", message || "", obj);
                     testFailed = true;
                 }
             },

@@ -21,8 +21,8 @@
 RatingKeyboardTests = function () {
     var ratingUtils = new RatingUtils();
 
-    this.setUp = function () {
-        ratingUtils.setUp();
+    this.setUp = function (complete) {
+        ratingUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -50,11 +50,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Focus["Owner"] = "sehume";
-    this.testRating_Focus["Priority"] = "feature";
-    this.testRating_Focus["Description"] = "Test that programatic focus on rating control throws proper events";
-    this.testRating_Focus["Category"] = "Keyboard";
-    this.testRating_Focus["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Focus.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -83,11 +83,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Focus_ShowingUser["Owner"] = "sehume";
-    this.testRating_Focus_ShowingUser["Priority"] = "feature";
-    this.testRating_Focus_ShowingUser["Description"] = "Test programatic focus on rating control showing userRating throws proper events";
-    this.testRating_Focus_ShowingUser["Category"] = "Keyboard";
-    this.testRating_Focus_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Focus_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -111,11 +111,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Focus_ShowingAverage["Owner"] = "sehume";
-    this.testRating_Focus_ShowingAverage["Priority"] = "feature";
-    this.testRating_Focus_ShowingAverage["Description"] = "Test programatic focus on rating control showing averageRating throws proper events";
-    this.testRating_Focus_ShowingAverage["Category"] = "Keyboard";
-    this.testRating_Focus_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Focus_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -145,11 +145,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Blur["Owner"] = "sehume";
-    this.testRating_Blur["Priority"] = "feature";
-    this.testRating_Blur["Description"] = "Test programatic blur on default rating control throws proper events";
-    this.testRating_Blur["Category"] = "Keyboard";
-    this.testRating_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -184,11 +184,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Blur_ShowingUser["Owner"] = "sehume";
-    this.testRating_Blur_ShowingUser["Priority"] = "feature";
-    this.testRating_Blur_ShowingUser["Description"] = "Test programatic blur on rating control showing userRating throws proper events";
-    this.testRating_Blur_ShowingUser["Category"] = "Keyboard";
-    this.testRating_Blur_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Blur_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -222,11 +222,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Blur_ShowingAverage["Owner"] = "sehume";
-    this.testRating_Blur_ShowingAverage["Priority"] = "feature";
-    this.testRating_Blur_ShowingAverage["Description"] = "Test programatic blur on rating control showing averageRating throws proper events";
-    this.testRating_Blur_ShowingAverage["Category"] = "Keyboard";
-    this.testRating_Blur_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Blur_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -243,11 +243,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Enter["Description"] = "Test pressing enter after focusing the control";
-    this.testRating_Keyboard_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -264,11 +264,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Tab["Description"] = "Test pressing tab after focusing the control";
-    this.testRating_Keyboard_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -285,11 +285,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Default_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Default_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Right_Default_Cancel_Blur["Description"] = "Test right arrow key on default rating control without commiting";
-    this.testRating_Keyboard_Right_Default_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -304,11 +304,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Default_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Default_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Right_Default_Cancel_Escape["Description"] = "Test right arrow key on default rating control and then ESC cancelling";
-    this.testRating_Keyboard_Right_Default_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -323,11 +323,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Default_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Default_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Right_Default_Commit_Enter["Description"] = "Test right arrow key on default rating control, commit with enter key";
-    this.testRating_Keyboard_Right_Default_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -342,11 +342,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Default_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Default_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Right_Default_Commit_Tab["Description"] = "Test right arrow key on default rating control, commit with tab key";
-    this.testRating_Keyboard_Right_Default_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -361,11 +361,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Blur["Description"] = "Test right arrow key on rating control showing averageRating without commiting";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -380,11 +380,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Escape["Description"] = "Test right arrow key on rating control showing averageRating and then ESC cancelling";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -399,11 +399,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_AverageRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Enter["Description"] = "Test right arrow key on rating control showing averageRating, commit with enter key";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -418,11 +418,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_AverageRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Tab["Description"] = "Test right arrow key on rating control showing averageRating, commit with tab key";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -437,11 +437,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_UserRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Blur["Description"] = "Test right arrow key on rating control with rating already set without commiting";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -456,11 +456,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_UserRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Escape["Description"] = "Test right arrow key on rating control with rating already set and then ESC cancelling";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -475,11 +475,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_UserRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_UserRating_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Right_UserRating_Commit_Enter["Description"] = "Test right arrow key on rating control with rating already set, commit with enter key";
-    this.testRating_Keyboard_Right_UserRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -494,11 +494,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_UserRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_UserRating_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Right_UserRating_Commit_Tab["Description"] = "Test right arrow key on rating control with rating already set, commit with tab key";
-    this.testRating_Keyboard_Right_UserRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -513,11 +513,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur["Description"] = "Test right arrow key on rating control with rating set to max without commiting";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_RatingAtMax_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -532,11 +532,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape["Description"] = "Test right arrow key on rating control with rating set to max and then cancelling with esc";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_RatingAtMax_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -551,11 +551,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter["Description"] = "Test right arrow key on rating control with rating set to max, commit with enter key, validate no change sent";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_RatingAtMax_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -570,11 +570,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab["Description"] = "Test right arrow key on rating control with rating set to max, commit with tab key, validate no change sent";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_RatingAtMax_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -589,11 +589,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Disabled_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Blur["Description"] = "Test right arrow key on disabled rating control without commiting";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -608,11 +608,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Disabled_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Escape["Description"] = "Test right arrow key on disabled rating control and then cancelling with esc";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -627,11 +627,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Disabled_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Disabled_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Right_Disabled_Commit_Enter["Description"] = "Test right arrow key on disabled rating control, commit with enter key";
-    this.testRating_Keyboard_Right_Disabled_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -646,11 +646,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Disabled_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Disabled_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Right_Disabled_Commit_Tab["Description"] = "Test right arrow key on disabled rating control, commit with tab key";
-    this.testRating_Keyboard_Right_Disabled_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -665,11 +665,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_NoClear_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Blur["Priority"] = "IDX";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Blur["Description"] = "Test right arrow key on rating control with enableClear: false without commiting";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_NoClear_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -684,11 +684,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_NoClear_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Escape["Priority"] = "IDX";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Escape["Description"] = "Test right arrow key on rating control with enableClear: false, cancelling with Escape";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_NoClear_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_NoClear_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -703,11 +703,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_NoClear_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_NoClear_Commit_Enter["Priority"] = "IDX";
-    this.testRating_Keyboard_Right_NoClear_Commit_Enter["Description"] = "Test down arrow key on rating control with enableClear: false, commit with enter key";
-    this.testRating_Keyboard_Right_NoClear_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_NoClear_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_NoClear_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -722,11 +722,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_NoClear_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_NoClear_Commit_Tab["Priority"] = "IDX";
-    this.testRating_Keyboard_Right_NoClear_Commit_Tab["Description"] = "Test right arrow key on rating control with enableClear: false, commit with tab key";
-    this.testRating_Keyboard_Right_NoClear_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_NoClear_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_NoClear_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -770,11 +770,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Multiple["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Multiple["Priority"] = "IDX";
-    this.testRating_Keyboard_Right_Multiple["Description"] = "Test pressing right arrow key multiple times on rating control";
-    this.testRating_Keyboard_Right_Multiple["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Multiple["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Multiple.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -819,11 +819,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Right_Multiple_CustomMax["Owner"] = "sehume";
-    this.testRating_Keyboard_Right_Multiple_CustomMax["Priority"] = "IDX";
-    this.testRating_Keyboard_Right_Multiple_CustomMax["Description"] = "Test pressing right arrow key multiple times on a rating control with an increased maxRating";
-    this.testRating_Keyboard_Right_Multiple_CustomMax["Category"] = "Keyboard";
-    this.testRating_Keyboard_Right_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Right_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -840,11 +840,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Default_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Default_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Up_Default_Cancel_Blur["Description"] = "Test up arrow key on default rating control without commiting";
-    this.testRating_Keyboard_Up_Default_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -859,11 +859,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Default_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Default_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Up_Default_Cancel_Escape["Description"] = "Test up arrow key on default rating control and then ESC cancelling";
-    this.testRating_Keyboard_Up_Default_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -878,11 +878,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Default_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Default_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Up_Default_Commit_Enter["Description"] = "Test up arrow key on default rating control, commit with enter key";
-    this.testRating_Keyboard_Up_Default_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -897,11 +897,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Default_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Default_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Up_Default_Commit_Tab["Description"] = "Test up arrow key on default rating control, commit with tab key";
-    this.testRating_Keyboard_Up_Default_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -916,11 +916,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Blur["Description"] = "Test up arrow key on rating control showing averageRating without commiting";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -935,11 +935,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Escape["Description"] = "Test up arrow key on rating control showing averageRating and then ESC cancelling";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -954,11 +954,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_AverageRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Enter["Description"] = "Test up arrow key on rating control showing averageRating, commit with enter key";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -973,11 +973,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_AverageRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Tab["Description"] = "Test up arrow key on rating control showing averageRating, commit with tab key";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -992,11 +992,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_UserRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Blur["Description"] = "Test up arrow key on rating control with rating already set without commiting";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1011,11 +1011,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_UserRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Escape["Description"] = "Test up arrow key on rating control with rating already set and then ESC cancelling";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1030,11 +1030,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_UserRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_UserRating_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Up_UserRating_Commit_Enter["Description"] = "Test up arrow key on rating control with rating already set, commit with enter key";
-    this.testRating_Keyboard_Up_UserRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1049,11 +1049,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_UserRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_UserRating_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Up_UserRating_Commit_Tab["Description"] = "Test up arrow key on rating control with rating already set, commit with tab key";
-    this.testRating_Keyboard_Up_UserRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1068,11 +1068,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur["Description"] = "Test up arrow key on rating control with rating set to max without commiting";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_RatingAtMax_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1087,11 +1087,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape["Description"] = "Test up arrow key on rating control with rating set to max and then cancelling with esc";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_RatingAtMax_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1106,11 +1106,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter["Description"] = "Test up arrow key on rating control with rating set to max, commit with enter key, validate no change sent";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_RatingAtMax_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1125,11 +1125,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab["Description"] = "Test up arrow key on rating control with rating set to max, commit with tab key, validate no change sent";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_RatingAtMax_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1144,11 +1144,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Disabled_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Blur["Description"] = "Test up arrow key on disabled rating control without commiting";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1163,11 +1163,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Disabled_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Escape["Description"] = "Test up arrow key on disabled rating control and then cancelling with esc";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1182,11 +1182,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Disabled_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Disabled_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Up_Disabled_Commit_Enter["Description"] = "Test up arrow key on disabled rating control, commit with enter key";
-    this.testRating_Keyboard_Up_Disabled_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1201,11 +1201,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Disabled_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Disabled_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Up_Disabled_Commit_Tab["Description"] = "Test up arrow key on disabled rating control, commit with tab key";
-    this.testRating_Keyboard_Up_Disabled_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1220,11 +1220,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_NoClear_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Blur["Priority"] = "IDX";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Blur["Description"] = "Test up arrow key on rating control with enableClear: false without commiting";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_NoClear_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1239,11 +1239,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_NoClear_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Escape["Priority"] = "IDX";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Escape["Description"] = "Test up arrow key on rating control with enableClear: false, cancelling with Escape";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_NoClear_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_NoClear_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1258,11 +1258,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_NoClear_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_NoClear_Commit_Enter["Priority"] = "IDX";
-    this.testRating_Keyboard_Up_NoClear_Commit_Enter["Description"] = "Test up arrow key on rating control with enableClear: false, commit with enter key";
-    this.testRating_Keyboard_Up_NoClear_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_NoClear_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_NoClear_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1277,11 +1277,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_NoClear_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_NoClear_Commit_Tab["Priority"] = "IDX";
-    this.testRating_Keyboard_Up_NoClear_Commit_Tab["Description"] = "Test up arrow key on rating control with enableClear: false, commit with tab key";
-    this.testRating_Keyboard_Up_NoClear_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_NoClear_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_NoClear_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1326,11 +1326,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Multiple["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Multiple["Priority"] = "IDX";
-    this.testRating_Keyboard_Up_Multiple["Description"] = "Test pressing up arrow key multiple times on rating control";
-    this.testRating_Keyboard_Up_Multiple["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Multiple["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Multiple.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1376,11 +1376,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Up_Multiple_CustomMax["Owner"] = "sehume";
-    this.testRating_Keyboard_Up_Multiple_CustomMax["Priority"] = "IDX";
-    this.testRating_Keyboard_Up_Multiple_CustomMax["Description"] = "Test pressing up arrow key multiple times on a rating control with an increased maxRating";
-    this.testRating_Keyboard_Up_Multiple_CustomMax["Category"] = "Keyboard";
-    this.testRating_Keyboard_Up_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Up_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1397,11 +1397,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Default_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Default_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Left_Default_Cancel_Blur["Description"] = "Test left arrow key on default rating control without commiting";
-    this.testRating_Keyboard_Left_Default_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1416,11 +1416,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Default_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Default_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Left_Default_Cancel_Escape["Description"] = "Test left arrow key on default rating control, cancelling with Escape";
-    this.testRating_Keyboard_Left_Default_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1435,11 +1435,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Default_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Default_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Left_Default_Commit_Enter["Description"] = "Test left arrow key on default rating control, commit with enter key";
-    this.testRating_Keyboard_Left_Default_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1454,11 +1454,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Default_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Default_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Left_Default_Commit_Tab["Description"] = "Test left arrow key on default rating control, commit with tab key";
-    this.testRating_Keyboard_Left_Default_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1473,11 +1473,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Blur["Description"] = "Test left arrow key on rating control showing averageRating without commiting";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1492,11 +1492,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Escape["Description"] = "Test left arrow key on rating control showing averageRating, cancelling with escape";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1511,11 +1511,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_AverageRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Enter["Description"] = "Test left arrow key on rating control showing averageRating, commit with enter key";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1530,11 +1530,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_AverageRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Tab["Description"] = "Test left arrow key on rating control showing averageRating, commit with tab key";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1549,11 +1549,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_UserRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Blur["Description"] = "Test left arrow key on rating control with rating already set without commiting";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1568,11 +1568,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_UserRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Escape["Description"] = "Test left arrow key on rating control with rating already set, cancelling with escape";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1587,11 +1587,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_UserRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_UserRating_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Left_UserRating_Commit_Enter["Description"] = "Test left arrow key on rating control with rating already set, commit with enter key";
-    this.testRating_Keyboard_Left_UserRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1606,11 +1606,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_UserRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_UserRating_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Left_UserRating_Commit_Tab["Description"] = "Test left arrow key on rating control with rating already set, commit with tab key";
-    this.testRating_Keyboard_Left_UserRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1625,11 +1625,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur["Description"] = "Test left arrow key on rating control with rating set to max without commiting";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_RatingAtMax_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1644,11 +1644,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape["Description"] = "Test left arrow key on rating control with rating set to max, cancelling with escape";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_RatingAtMax_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1663,11 +1663,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter["Description"] = "Test left arrow key on rating control with rating set to max, commit with enter key, validate no change sent";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_RatingAtMax_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1682,11 +1682,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab["Description"] = "Test left arrow key on rating control with rating set to max, commit with tab key, validate no change sent";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_RatingAtMax_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1701,11 +1701,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Disabled_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Blur["Description"] = "Test left arrow key on disabled rating control without commiting";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1720,11 +1720,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Disabled_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Escape["Description"] = "Test left arrow key on disabled rating control and then cancelling with esc";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1739,11 +1739,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Disabled_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Disabled_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Left_Disabled_Commit_Enter["Description"] = "Test left arrow key on disabled rating control, commit with enter key";
-    this.testRating_Keyboard_Left_Disabled_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1758,11 +1758,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Disabled_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Disabled_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Left_Disabled_Commit_Tab["Description"] = "Test left arrow key on disabled rating control, commit with tab key";
-    this.testRating_Keyboard_Left_Disabled_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1777,11 +1777,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_NoClear_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Blur["Priority"] = "IDX";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Blur["Description"] = "Test left arrow key on rating control with enableClear: false without commiting";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_NoClear_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1796,11 +1796,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_NoClear_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Escape["Priority"] = "IDX";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Escape["Description"] = "Test left arrow key on rating control with enableClear: false, cancelling with Escape";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_NoClear_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_NoClear_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1815,11 +1815,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_NoClear_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_NoClear_Commit_Enter["Priority"] = "IDX";
-    this.testRating_Keyboard_Left_NoClear_Commit_Enter["Description"] = "Test left arrow key on rating control with enableClear: false, commit with enter key";
-    this.testRating_Keyboard_Left_NoClear_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_NoClear_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_NoClear_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1834,11 +1834,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_NoClear_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_NoClear_Commit_Tab["Priority"] = "IDX";
-    this.testRating_Keyboard_Left_NoClear_Commit_Tab["Description"] = "Test left arrow key on rating control with enableClear: false, commit with tab key";
-    this.testRating_Keyboard_Left_NoClear_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Left_NoClear_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_NoClear_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1886,11 +1886,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Multiple["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Multiple["Priority"] = "IDX";
-    this.testRating_Keyboard_Left_Multiple["Description"] = "Test pressing left arrow key multiple times on rating control";
-    this.testRating_Keyboard_Left_Multiple["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Multiple["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Multiple.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1939,11 +1939,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Left_Multiple_CustomMax["Owner"] = "sehume";
-    this.testRating_Keyboard_Left_Multiple_CustomMax["Priority"] = "IDX";
-    this.testRating_Keyboard_Left_Multiple_CustomMax["Description"] = "Test pressing left arrow key multiple times on a rating control with an increased maxRating";
-    this.testRating_Keyboard_Left_Multiple_CustomMax["Category"] = "Keyboard";
-    this.testRating_Keyboard_Left_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Left_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1960,11 +1960,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Default_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Default_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Down_Default_Cancel_Blur["Description"] = "Test down arrow key on default rating control without commiting";
-    this.testRating_Keyboard_Down_Default_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1979,11 +1979,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Default_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Default_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Down_Default_Cancel_Escape["Description"] = "Test down arrow key on default rating control, cancelling with Escape";
-    this.testRating_Keyboard_Down_Default_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1998,11 +1998,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Default_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Default_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Down_Default_Commit_Enter["Description"] = "Test down arrow key on default rating control, commit with enter key";
-    this.testRating_Keyboard_Down_Default_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2017,11 +2017,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Default_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Default_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Down_Default_Commit_Tab["Description"] = "Test down arrow key on default rating control, commit with tab key";
-    this.testRating_Keyboard_Down_Default_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2036,11 +2036,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Blur["Description"] = "Test down arrow key on rating control showing averageRating without commiting";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2055,11 +2055,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Escape["Description"] = "Test down arrow key on rating control showing averageRating, cancelling with escape";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2074,11 +2074,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_AverageRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Enter["Description"] = "Test down arrow key on rating control showing averageRating, commit with enter key";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2093,11 +2093,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_AverageRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Tab["Description"] = "Test down arrow key on rating control showing averageRating, commit with tab key";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2112,11 +2112,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_UserRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Blur["Description"] = "Test down arrow key on rating control with rating already set without commiting";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2131,11 +2131,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_UserRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Escape["Description"] = "Test down arrow key on rating control with rating already set, cancelling with escape";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2150,11 +2150,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_UserRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_UserRating_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Down_UserRating_Commit_Enter["Description"] = "Test down arrow key on rating control with rating already set, commit with enter key";
-    this.testRating_Keyboard_Down_UserRating_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2169,11 +2169,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_UserRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_UserRating_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Down_UserRating_Commit_Tab["Description"] = "Test down arrow key on rating control with rating already set, commit with tab key";
-    this.testRating_Keyboard_Down_UserRating_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2188,11 +2188,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur["Description"] = "Test down arrow key on rating control with rating set to max without commiting";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_RatingAtMax_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2207,11 +2207,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape["Description"] = "Test down arrow key on rating control with rating set to max, cancelling with escape";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_RatingAtMax_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2226,11 +2226,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter["Description"] = "Test down arrow key on rating control with rating set to max, commit with enter key, validate no change sent";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_RatingAtMax_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2245,11 +2245,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab["Description"] = "Test down arrow key on rating control with rating set to max, commit with tab key, validate no change sent";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_RatingAtMax_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2264,11 +2264,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Disabled_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Blur["Priority"] = "feature";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Blur["Description"] = "Test down arrow key on disabled rating control without commiting";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2283,11 +2283,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Disabled_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Escape["Priority"] = "feature";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Escape["Description"] = "Test down arrow key on disabled rating control and then cancelling with esc";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2302,11 +2302,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Disabled_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Disabled_Commit_Enter["Priority"] = "feature";
-    this.testRating_Keyboard_Down_Disabled_Commit_Enter["Description"] = "Test down arrow key on disabled rating control, commit with enter key";
-    this.testRating_Keyboard_Down_Disabled_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2321,11 +2321,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Disabled_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Disabled_Commit_Tab["Priority"] = "feature";
-    this.testRating_Keyboard_Down_Disabled_Commit_Tab["Description"] = "Test down arrow key on disabled rating control, commit with tab key";
-    this.testRating_Keyboard_Down_Disabled_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2340,11 +2340,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_NoClear_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Blur["Priority"] = "IDX";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Blur["Description"] = "Test down arrow key on rating control with enableClear: false without commiting";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Blur["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_NoClear_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2359,11 +2359,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_NoClear_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Escape["Priority"] = "IDX";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Escape["Description"] = "Test down arrow key on rating control with enableClear: false, cancelling with Escape";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Escape["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_NoClear_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_NoClear_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2378,11 +2378,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_NoClear_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_NoClear_Commit_Enter["Priority"] = "IDX";
-    this.testRating_Keyboard_Down_NoClear_Commit_Enter["Description"] = "Test down arrow key on rating control with enableClear: false, commit with enter key";
-    this.testRating_Keyboard_Down_NoClear_Commit_Enter["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_NoClear_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_NoClear_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2397,11 +2397,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_NoClear_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_NoClear_Commit_Tab["Priority"] = "IDX";
-    this.testRating_Keyboard_Down_NoClear_Commit_Tab["Description"] = "Test down arrow key on rating control with enableClear: false, commit with tab key";
-    this.testRating_Keyboard_Down_NoClear_Commit_Tab["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_NoClear_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_NoClear_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2449,11 +2449,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Multiple["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Multiple["Priority"] = "IDX";
-    this.testRating_Keyboard_Down_Multiple["Description"] = "Test pressing down arrow key multiple times on rating control";
-    this.testRating_Keyboard_Down_Multiple["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Multiple["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Multiple.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2502,11 +2502,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Down_Multiple_CustomMax["Owner"] = "sehume";
-    this.testRating_Keyboard_Down_Multiple_CustomMax["Priority"] = "IDX";
-    this.testRating_Keyboard_Down_Multiple_CustomMax["Description"] = "Test pressing down arrow key multiple times on a rating control with an increased maxRating";
-    this.testRating_Keyboard_Down_Multiple_CustomMax["Category"] = "Keyboard";
-    this.testRating_Keyboard_Down_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Down_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2531,11 +2531,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Default_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Blur["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Blur["Description"] = "Test sending random number key to default rating control without committing";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Default_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2558,11 +2558,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Default_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Escape["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Escape["Description"] = "Test sending random number key to default rating control, cancelling with Escape";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Default_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Default_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2585,11 +2585,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Default_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Default_Commit_Enter["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Default_Commit_Enter["Description"] = "Test sending random number key to default rating control, comitting with Enter";
-    this.testRating_Keyboard_Numbers_Default_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Default_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Default_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2612,11 +2612,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Default_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Default_Commit_Tab["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Default_Commit_Tab["Description"] = "Test sending random number key to default rating control, comitting with Tab";
-    this.testRating_Keyboard_Numbers_Default_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Default_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Default_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2639,11 +2639,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur["Description"] = "Test sending random number key to average rating control without committing";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_AverageRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2666,11 +2666,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape["Description"] = "Test sending random number key to average rating control, cancelling with Escape";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_AverageRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2693,11 +2693,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter["Description"] = "Test sending random number key to average rating control, comitting with Enter";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_AverageRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2720,11 +2720,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab["Description"] = "Test sending random number key to default rating control, comitting with Tab";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_AverageRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2747,11 +2747,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur["Description"] = "Test sending random number key to rating control showing user rating without committing";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_UserRating_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2774,11 +2774,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape["Description"] = "Test sending random number key to rating control showing user rating, cancelling with Escape";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_UserRating_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2801,11 +2801,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Enter["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Enter["Description"] = "Test sending random number key to rating control showing user rating, comitting with Enter";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_UserRating_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2828,11 +2828,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Tab["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Tab["Description"] = "Test sending random number key to rating control showing user rating, comitting with Tab";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_UserRating_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_UserRating_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2855,11 +2855,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur["Description"] = "Test sending random number key to a disabled rating control without committing";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Disabled_Cancel_Blur.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2882,11 +2882,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape["Description"] = "Test sending random number key to a disabled rating control, cancelling with Escape";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Disabled_Cancel_Escape.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2909,11 +2909,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Enter["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Enter["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Enter["Description"] = "Test sending random number key to a disabled rating control, comitting with Enter";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Enter["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Enter["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Disabled_Commit_Enter.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -2936,11 +2936,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Tab["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Tab["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Tab["Description"] = "Test sending random number key to a disabled rating control, comitting with Tab";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Tab["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Disabled_Commit_Tab["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Disabled_Commit_Tab.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3000,11 +3000,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Multiple_Default["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Multiple_Default["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Multiple_Default["Description"] = "Test sending multiple numbers to default rating control before committing";
-    this.testRating_Keyboard_Numbers_Multiple_Default["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Multiple_Default["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Multiple_Default.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3065,11 +3065,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Keyboard_Numbers_Multiple_CustomMax["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_Multiple_CustomMax["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_Multiple_CustomMax["Description"] = "Test sending multiple numbers to rating control with increased max before committing";
-    this.testRating_Keyboard_Numbers_Multiple_CustomMax["Category"] = "KeyBoard";
-    this.testRating_Keyboard_Numbers_Multiple_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_Multiple_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3086,11 +3086,11 @@ RatingKeyboardTests = function () {
             )
         );
     };
-    this.testRating_Keyboard_Numbers_0_enableClear_true["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_0_enableClear_true["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_0_enableClear_true["Description"] = "Test sending number key 0 to rating control with enableClear = true, which puts the control in 'unrate' mode.";
-    this.testRating_Keyboard_Numbers_0_enableClear_true["Category"] = "Keyboard";
-    this.testRating_Keyboard_Numbers_0_enableClear_true["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_0_enableClear_true.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3107,11 +3107,11 @@ RatingKeyboardTests = function () {
             )
         );
     };
-    this.testRating_Keyboard_Numbers_0_enableClear_false["Owner"] = "sehume";
-    this.testRating_Keyboard_Numbers_0_enableClear_false["Priority"] = "IDX";
-    this.testRating_Keyboard_Numbers_0_enableClear_false["Description"] = "Test sending number key 0 to rating control with enableClear = false, which sets the rating to '1'";
-    this.testRating_Keyboard_Numbers_0_enableClear_false["Category"] = "Keyboard";
-    this.testRating_Keyboard_Numbers_0_enableClear_false["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_Numbers_0_enableClear_false.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3150,11 +3150,11 @@ RatingKeyboardTests = function () {
             )
         );
     };
-    this.testRating_Keyboard_InvalidKey["Owner"] = "sehume";
-    this.testRating_Keyboard_InvalidKey["Priority"] = "IDX";
-    this.testRating_Keyboard_InvalidKey["Description"] = "Test sending a random invalid key to the the rating control, expecting it to be ignored";
-    this.testRating_Keyboard_InvalidKey["Category"] = "Keyboard";
-    this.testRating_Keyboard_InvalidKey["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Keyboard_InvalidKey.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -3177,7 +3177,7 @@ RatingKeyboardTests = function () {
             1: {
                 action: function (newAriaValueNow) {
                     return function () { document.getElementById("rating").setAttribute("aria-valuenow", newAriaValueNow); };
-                } (newRating),
+                }(newRating),
                 expectedEvents: { previewchange: 0, change: (rating.userRating !== newRating) ? 1 : 0, cancel: 0 },
                 tentativeRatingExpected: newRating,
                 userRatingExpected: newRating
@@ -3187,11 +3187,11 @@ RatingKeyboardTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Set_aria_valuenow_Random["Owner"] = "sehume";
-    this.testRating_Set_aria_valuenow_Random["Priority"] = "feature";
-    this.testRating_Set_aria_valuenow_Random["Description"] = "Test setting the rating's value via accessibility (aria-valuenow) in the manner that Narrator touch interacts with the control.";
-    this.testRating_Set_aria_valuenow_Random["Category"] = "Keyboard";
-    this.testRating_Set_aria_valuenow_Random["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Set_aria_valuenow_Random.timeout = 30000;
 };
 

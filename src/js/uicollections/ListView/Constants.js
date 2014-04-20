@@ -54,6 +54,7 @@
     thisWinUI._dragSourceClass = "win-dragsource";
     thisWinUI._clipClass = "win-clip";
     thisWinUI._selectionModeClass = "win-selectionmode";
+    thisWinUI._noCSSGrid = "win-nocssgrid";
     
     thisWinUI._INVALID_INDEX = -1;
     thisWinUI._UNINITIALIZED = -1;

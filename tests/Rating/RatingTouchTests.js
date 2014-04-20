@@ -20,8 +20,8 @@
 RatingTouchTests = function () {
     var ratingUtils = new RatingUtils();
 
-    this.setUp = function () {
-        ratingUtils.setUp();
+    this.setUp = function (complete) {
+        ratingUtils.setUp(complete);
     };
 
     this.tearDown = function () {
@@ -42,11 +42,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Lowest["Owner"] = "sehume";
-    this.testRating_Tap_Lowest["Priority"] = "feature";
-    this.testRating_Tap_Lowest["Description"] = "Test tapping on the first star in a default rating";
-    this.testRating_Tap_Lowest["Category"] = "touch";
-    this.testRating_Tap_Lowest["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Lowest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -63,11 +63,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Lowest_ShowingAverage["Owner"] = "sehume";
-    this.testRating_Tap_Lowest_ShowingAverage["Priority"] = "feature";
-    this.testRating_Tap_Lowest_ShowingAverage["Description"] = "Test tapping on the first star in a rating control showing an average rating";
-    this.testRating_Tap_Lowest_ShowingAverage["Category"] = "touch";
-    this.testRating_Tap_Lowest_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Lowest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -84,11 +84,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Lowest_ShowingUser["Owner"] = "sehume";
-    this.testRating_Tap_Lowest_ShowingUser["Priority"] = "feature";
-    this.testRating_Tap_Lowest_ShowingUser["Description"] = "Test tapping on the first star in a rating control showing a user rating";
-    this.testRating_Tap_Lowest_ShowingUser["Category"] = "touch";
-    this.testRating_Tap_Lowest_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Lowest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -112,11 +112,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Tap_Lowest_Disabled["Owner"] = "sehume";
-    this.testRating_Tap_Lowest_Disabled["Priority"] = "feature";
-    this.testRating_Tap_Lowest_Disabled["Description"] = "Test tapping on the first star in a rating control in disabled state, expecting no events.";
-    this.testRating_Tap_Lowest_Disabled["Category"] = "touch";
-    this.testRating_Tap_Lowest_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Lowest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -133,11 +133,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Lowest_SetToMin["Owner"] = "sehume";
-    this.testRating_Tap_Lowest_SetToMin["Priority"] = "feature";
-    this.testRating_Tap_Lowest_SetToMin["Description"] = "Test tapping on the first star in a rating control with userRating already set to 1";
-    this.testRating_Tap_Lowest_SetToMin["Category"] = "touch";
-    this.testRating_Tap_Lowest_SetToMin["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Lowest_SetToMin.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -162,11 +162,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Lowest_CustomMax["Owner"] = "sehume";
-    this.testRating_Tap_Lowest_CustomMax["Priority"] = "feature";
-    this.testRating_Tap_Lowest_CustomMax["Description"] = "Test tapping on the first star in a rating control with a custom max";
-    this.testRating_Tap_Lowest_CustomMax["Category"] = "touch";
-    this.testRating_Tap_Lowest_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Lowest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -183,11 +183,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Highest["Owner"] = "sehume";
-    this.testRating_Tap_Highest["Priority"] = "feature";
-    this.testRating_Tap_Highest["Description"] = "Test tapping on the highest star in the default rating control";
-    this.testRating_Tap_Highest["Category"] = "touch";
-    this.testRating_Tap_Highest["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Highest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -204,11 +204,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Highest_ShowingAverage["Owner"] = "sehume";
-    this.testRating_Tap_Highest_ShowingAverage["Priority"] = "feature";
-    this.testRating_Tap_Highest_ShowingAverage["Description"] = "Test tapping on the highest star in a rating control showing an average rating";
-    this.testRating_Tap_Highest_ShowingAverage["Category"] = "touch";
-    this.testRating_Tap_Highest_ShowingAverage["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Highest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -225,11 +225,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Highest_ShowingUser["Owner"] = "sehume";
-    this.testRating_Tap_Highest_ShowingUser["Priority"] = "feature";
-    this.testRating_Tap_Highest_ShowingUser["Description"] = "Test tapping on the highest star in a rating control showing a user rating";
-    this.testRating_Tap_Highest_ShowingUser["Category"] = "touch";
-    this.testRating_Tap_Highest_ShowingUser["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Highest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -253,11 +253,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Tap_Highest_Disabled["Owner"] = "sehume";
-    this.testRating_Tap_Highest_Disabled["Priority"] = "feature";
-    this.testRating_Tap_Highest_Disabled["Description"] = "Test tapping on the highest star in a rating control in disabled state, expecting no events.";
-    this.testRating_Tap_Highest_Disabled["Category"] = "touch";
-    this.testRating_Tap_Highest_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Highest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -274,11 +274,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Highest_SetToMax["Owner"] = "sehume";
-    this.testRating_Tap_Highest_SetToMax["Priority"] = "feature";
-    this.testRating_Tap_Highest_SetToMax["Description"] = "Test tapping on the last star in a rating control with userRating already set to max";
-    this.testRating_Tap_Highest_SetToMax["Category"] = "touch";
-    this.testRating_Tap_Highest_SetToMax["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Highest_SetToMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -298,11 +298,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_Highest_CustomMax["Owner"] = "sehume";
-    this.testRating_Tap_Highest_CustomMax["Priority"] = "feature";
-    this.testRating_Tap_Highest_CustomMax["Description"] = "Test tapping on the highest star in a custom rating control";
-    this.testRating_Tap_Highest_CustomMax["Category"] = "touch";
-    this.testRating_Tap_Highest_CustomMax["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Highest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -319,11 +319,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    this.testRating_Tap_CurrentRating["Owner"] = "sehume";
-    this.testRating_Tap_CurrentRating["Priority"] = "feature";
-    this.testRating_Tap_CurrentRating["Description"] = "Test tapping on the current user rating";
-    this.testRating_Tap_CurrentRating["Category"] = "mouse";
-    this.testRating_Tap_CurrentRating["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_CurrentRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -347,11 +347,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel["Owner"] = "sehume";
-    this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel["Priority"] = "feature";
-    this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel["Description"] = "Test tapping on the current user rating after removing the 'cancel' event listener (which this interaction throws).";
-    this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel["Category"] = "touch";
-    this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -373,13 +373,13 @@ RatingTouchTests = function () {
                     newRating = Math.round(i / 4) + 1;
                     starToTap = rating.element.childNodes[newRating - 1];
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
                 case 2:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchDown(star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchDown(star); }; }(starToTap),
                         expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         styleExpected: "tentative",
@@ -388,7 +388,7 @@ RatingTouchTests = function () {
                     break;
                 case 3:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchUp(star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchUp(star); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         userRatingExpected: newRating
@@ -396,7 +396,7 @@ RatingTouchTests = function () {
                     break;
                 case 4:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchOver(star, null); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchOver(star, null); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
@@ -406,11 +406,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Tap_All_Increasing["Owner"] = "sehume";
-    this.testRating_Tap_All_Increasing["Priority"] = "feature";
-    this.testRating_Tap_All_Increasing["Description"] = "Test tapping on each of the stars in a default rating control from first to last";
-    this.testRating_Tap_All_Increasing["Category"] = "touch";
-    this.testRating_Tap_All_Increasing["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_All_Increasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -433,13 +433,13 @@ RatingTouchTests = function () {
                     starToTap = rating.element.childNodes[newRating - 1];
 
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
                 case 2:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchDown(star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchDown(star); }; }(starToTap),
                         expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         styleExpected: "tentative",
@@ -448,7 +448,7 @@ RatingTouchTests = function () {
                     break;
                 case 3:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchUp(star); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchUp(star); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                         tentativeRatingExpected: newRating,
                         userRatingExpected: newRating
@@ -456,7 +456,7 @@ RatingTouchTests = function () {
                     break;
                 case 4:
                     actions[i + 1] = {
-                        action: function (star) { return function () { ratingUtils.touchOver(star, null); }; } (starToTap),
+                        action: function (star) { return function () { ratingUtils.touchOver(star, null); }; }(starToTap),
                         expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
                     };
                     break;
@@ -466,11 +466,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Tap_All_Decreasing["Owner"] = "sehume";
-    this.testRating_Tap_All_Decreasing["Priority"] = "feature";
-    this.testRating_Tap_All_Decreasing["Description"] = "Test tapping on each of the stars in a default rating control from last to first";
-    this.testRating_Tap_All_Decreasing["Category"] = "touch";
-    this.testRating_Tap_All_Decreasing["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_All_Decreasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -490,11 +490,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Tap_Random["Owner"] = "sehume";
-    this.testRating_Tap_Random["Priority"] = "feature";
-    this.testRating_Tap_Random["Description"] = "Test tapping on a random star in a default rating.";
-    this.testRating_Tap_Random["Category"] = "touch";
-    this.testRating_Tap_Random["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Random.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -521,11 +521,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Tap_Random_Disabled["Owner"] = "sehume";
-    this.testRating_Tap_Random_Disabled["Priority"] = "feature";
-    this.testRating_Tap_Random_Disabled["Description"] = "Test randomly tapping stars in a disabled rating control, expecting no events.";
-    this.testRating_Tap_Random_Disabled["Category"] = "touch";
-    this.testRating_Tap_Random_Disabled["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Random_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -552,11 +552,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Tap_Random_RemoveEventListener_Change["Owner"] = "sehume";
-    this.testRating_Tap_Random_RemoveEventListener_Change["Priority"] = "feature";
-    this.testRating_Tap_Random_RemoveEventListener_Change["Description"] = "Test tapping on a random star in a default rating after removing the 'change' event listener.";
-    this.testRating_Tap_Random_RemoveEventListener_Change["Category"] = "touch";
-    this.testRating_Tap_Random_RemoveEventListener_Change["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Tap_Random_RemoveEventListener_Change.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -572,12 +572,12 @@ RatingTouchTests = function () {
         var actions = {
             // touchOver star 2, expecting no event
             1: {
-                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // TouchDown on star 2, this should throw a preview
             2: {
-                action: function (star) { return function () { ratingUtils.touchDown(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchDown(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 2,
                 styleExpected: "tentative",
@@ -629,11 +629,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Touch_Scrub_Forward["Owner"] = "sehume";
-    this.testRating_Touch_Scrub_Forward["Priority"] = "feature";
-    this.testRating_Touch_Scrub_Forward["Description"] = "Test scrubbing to pick a rating, scrubbing forward from 2 to 5";
-    this.testRating_Touch_Scrub_Forward["Category"] = "touch";
-    this.testRating_Touch_Scrub_Forward["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Touch_Scrub_Forward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -708,11 +708,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Touch_Scrub_Backward["Owner"] = "sehume";
-    this.testRating_Touch_Scrub_Backward["Priority"] = "feature";
-    this.testRating_Touch_Scrub_Backward["Description"] = "Test scrubbing to pick a rating, scrubbing backward from 11 to 8";
-    this.testRating_Touch_Scrub_Backward["Category"] = "touch";
-    this.testRating_Touch_Scrub_Backward["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Touch_Scrub_Backward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -788,11 +788,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Touch_Scrub_NoChange["Owner"] = "sehume";
-    this.testRating_Touch_Scrub_NoChange["Priority"] = "feature";
-    this.testRating_Touch_Scrub_NoChange["Description"] = "Test scrubbing to pick a rating and landing on starting rating";
-    this.testRating_Touch_Scrub_NoChange["Category"] = "touch";
-    this.testRating_Touch_Scrub_NoChange["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Touch_Scrub_NoChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -852,7 +852,7 @@ RatingTouchTests = function () {
                         event.initPointerEvent("pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 0,
                 styleExpected: "tentative",
@@ -868,7 +868,7 @@ RatingTouchTests = function () {
                         event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                 tentativeRatingExpected: 0,
                 styleExpected: "user",
@@ -879,18 +879,18 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Touch_Scrub_ClearRating["Owner"] = "sehume";
-    this.testRating_Touch_Scrub_ClearRating["Priority"] = "feature";
-    this.testRating_Touch_Scrub_ClearRating["Description"] = "Test scrubbing off the left side of the control to clear your rating";
-    this.testRating_Touch_Scrub_ClearRating["Category"] = "touch";
-    this.testRating_Touch_Scrub_ClearRating["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Touch_Scrub_ClearRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Touch_Scrub_ClearRating_enableClear_false = function (signalTestCaseCompleted) {
         // Setup the page for test case
-        var rating = ratingUtils.instantiate("rating", { userRating: 6, maxRating: 8, enableClear: false});
+        var rating = ratingUtils.instantiate("rating", { userRating: 6, maxRating: 8, enableClear: false });
 
         // Register the test actions we will be taking
 
@@ -943,7 +943,7 @@ RatingTouchTests = function () {
                         event.initPointerEvent("pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // Release off left side of control, this should set the value to 1 and throw a change
@@ -956,7 +956,7 @@ RatingTouchTests = function () {
                         event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
-                } (rating.element.childNodes[0]),
+                }(rating.element.childNodes[0]),
                 expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
                 tentativeRatingExpected: 1,
                 styleExpected: "user",
@@ -967,11 +967,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Touch_Scrub_ClearRating_enableClear_false["Owner"] = "sehume";
-    this.testRating_Touch_Scrub_ClearRating_enableClear_false["Priority"] = "feature";
-    this.testRating_Touch_Scrub_ClearRating_enableClear_false["Description"] = "Test scrubbing off the left side of the control to clear your rating on a control that doesn't allow you to do so.";
-    this.testRating_Touch_Scrub_ClearRating_enableClear_false["Category"] = "touch";
-    this.testRating_Touch_Scrub_ClearRating_enableClear_false["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Touch_Scrub_ClearRating_enableClear_false.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -985,12 +985,12 @@ RatingTouchTests = function () {
         var actions = {
             // touchOver star 2, expecting no event
             1: {
-                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // TouchDown on star 2, this should throw a preview
             2: {
-                action: function (star) { return function () { ratingUtils.touchDown(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchDown(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 2,
                 styleExpected: "tentative",
@@ -998,7 +998,7 @@ RatingTouchTests = function () {
             },
             // Throw an pointercancel.  This should throw a 'cancel' and leave the value set to '3'
             3: {
-                action: function (star) { return function () { ratingUtils.touchCancel(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchCancel(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 1 },
                 tentativeRatingExpected: null,
                 styleExpected: "user",
@@ -1009,11 +1009,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Touch_Tap_PointerCancel["Owner"] = "sehume";
-    this.testRating_Touch_Tap_PointerCancel["Priority"] = "feature";
-    this.testRating_Touch_Tap_PointerCancel["Description"] = "Test receiving pointercancel event mid-tap";
-    this.testRating_Touch_Tap_PointerCancel["Category"] = "touch";
-    this.testRating_Touch_Tap_PointerCancel["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Touch_Tap_PointerCancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1027,12 +1027,12 @@ RatingTouchTests = function () {
         var actions = {
             // touchOver star 2, expecting no event
             1: {
-                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchOver(null, star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
             // TouchDown on star 2, this should throw a preview
             2: {
-                action: function (star) { return function () { ratingUtils.touchDown(star); }; } (rating.element.childNodes[1]),
+                action: function (star) { return function () { ratingUtils.touchDown(star); }; }(rating.element.childNodes[1]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
                 tentativeRatingExpected: 2,
                 styleExpected: "tentative",
@@ -1050,7 +1050,7 @@ RatingTouchTests = function () {
             },
             // Throw an pointercancel.  This should throw a 'cancel' and leave the value set to '4'
             4: {
-                action: function (star) { return function () { ratingUtils.touchCancel(star); }; } (rating.element.childNodes[2]),
+                action: function (star) { return function () { ratingUtils.touchCancel(star); }; }(rating.element.childNodes[2]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 1 },
                 tentativeRatingExpected: null,
                 styleExpected: "user",
@@ -1061,11 +1061,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    this.testRating_Touch_Scrub_PointerCancel["Owner"] = "sehume";
-    this.testRating_Touch_Scrub_PointerCancel["Priority"] = "feature";
-    this.testRating_Touch_Scrub_PointerCancel["Description"] = "Test receiving pointercancel event mid-scrub";
-    this.testRating_Touch_Scrub_PointerCancel["Category"] = "touch";
-    this.testRating_Touch_Scrub_PointerCancel["LiveUnit.IsAsync"] = true;
+    
+    
+    
+    
+    
     this.testRating_Touch_Scrub_PointerCancel.timeout = 30000;
 };
 

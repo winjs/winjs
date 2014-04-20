@@ -46,10 +46,10 @@ CorsicaTests.DOMWeakRefTable = function () {
         LiveUnit.Assert.areEqual(id, element2.id);
         LiveUnit.Assert.areEqual(content, element2.textContent);
 
-        WinJS.Promise.timeout().
+        WinJS.Utilities.Scheduler.schedulePromiseIdle().
             then(function () {
                 var element3 = U._getWeakRefElement(id);
-                LiveUnit.Assert.isFalse(element3 ? true : false);
+                LiveUnit.Assert.isNull(element3);
             }).
             then(null, onError).
             then(function () {
@@ -86,7 +86,7 @@ CorsicaTests.DOMWeakRefTable = function () {
         LiveUnit.Assert.areEqual(content, element2.textContent);
         LiveUnit.Assert.areEqual(0, U._DOMWeakRefTable_tableSize);
 
-        WinJS.Promise.timeout().
+        WinJS.Utilities.Scheduler.schedulePromiseIdle().
             then(function () {
                 var element3 = U._getWeakRefElement(id);
                 LiveUnit.Assert.areEqual(id, element2.id);
@@ -124,7 +124,7 @@ CorsicaTests.DOMWeakRefTable = function () {
 
         document.body.appendChild(element);
 
-        WinJS.Promise.timeout().
+        WinJS.Utilities.Scheduler.schedulePromiseIdle().
             then(function () {
                 // The element should have aged out of the table by now
                 LiveUnit.Assert.areEqual(0, U._DOMWeakRefTable_tableSize);

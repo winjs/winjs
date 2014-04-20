@@ -5,15 +5,12 @@
 /// <reference path="../TestLib/util.js" />
 /// <reference path="stylesCollection.js"/>
 /// <reference path="stylesTestHelper.js"/>
-/// <reference path="../TestLib/ListView/Helpers.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 
 var CorsicaTests = CorsicaTests || {};
 
 CorsicaTests.StylesUILight = function () {
-    var css = document.createElement("link");
-    css.href = "../../$(TargetFramework)/css/ui-light.css";
-    css.type = "text/css";
-    css.rel = "stylesheet";
+    var link = null;
 
     var isDarkTest = false;		
     var testHelper = new StylesTestHelper(isDarkTest);
@@ -26,12 +23,14 @@ CorsicaTests.StylesUILight = function () {
         document.body.appendChild(newNode);
         this._element = newNode;
 
-        document.head.appendChild(css);
-        waitForCSSFile("ui-light.css").then(complete);
+        CommonUtilities.addCss("ui-light.css").then(function (style) {
+            link = style;
+            complete();
+        });
     };
 
     this.tearDown = function () {
-        document.head.removeChild(css);
+        document.head.removeChild(link);
         Helper.enableStyleSheets("ui-dark.css");
         if (this._element) {
             WinJS.Utilities.disposeSubTree(this._element);
@@ -56,13 +55,9 @@ CorsicaTests.StylesUILight = function () {
 	
 	this.testButton = testHelper.testButton;
 	
-	this.testRadioButton = testHelper.testRadioButton;
-	
 	this.testSystemLink = testHelper.testSystemLink;
 	
 	this.testPickerBox = testHelper.testPickerBox;
-	
-	this.testCheckBox = testHelper.testCheckBox;
 	
 	this.testSlider = testHelper.testSlider;
 	

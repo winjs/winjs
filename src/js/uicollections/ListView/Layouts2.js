@@ -32,7 +32,8 @@
         return "_win-dynamic-" + prefix + "-" + (nextCssClassId++);
     }
 
-    var transformNames = WinJS.Utilities._browserStyleEquivalents["transform"];
+    var browserStyleEquivalents = WinJS.Utilities._browserStyleEquivalents;
+    var transformNames = browserStyleEquivalents["transform"];
     var transitionScriptName = WinJS.Utilities._browserStyleEquivalents["transition"].scriptName;
     var dragBetweenTransition = transformNames.cssName + " cubic-bezier(0.1, 0.9, 0.2, 1) 167ms";
     var dragBetweenDistance = 12;
@@ -190,17 +191,26 @@
             
             // Read from the DOM and detect the bugs
             site.viewport.insertBefore(surface, site.viewport.firstChild);
-            var canMeasure = surface.offsetWidth > 0;
+            var canMeasure = surface.offsetWidth > 0,
+                expectedWidth = 200;
             if (canMeasure) {
                 // If we can't measure now (e.g. ListView is display:none), leave environmentDetails as null
                 // so that we do the detection later when the app calls recalculateItemPosition/forceLayout.
                 
-                environmentDetails = {                    
+                environmentDetails = {
+                    supportsCSSGrid: !!(browserStyleEquivalents["grid-row"] && browserStyleEquivalents["grid-rows"] && browserStyleEquivalents["grid-row-span"] &&
+                        browserStyleEquivalents["grid-column"] && browserStyleEquivalents["grid-columns"] && browserStyleEquivalents["grid-column-span"]),
                     // Detects Chrome flex issue 345433: Incorrect sizing for nested flexboxes
                     // https://code.google.com/p/chromium/issues/detail?id=345433
                     // With nested flexboxes, the inner flexbox's width is proportional to the number of elements intead
                     // of the number of columns.
-                    nestedFlexTooLarge: flexRoot.firstElementChild.offsetWidth > 200
+                    nestedFlexTooLarge: flexRoot.firstElementChild.offsetWidth > expectedWidth,
+
+                    // Detects Firefox issue 995020
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=995020
+                    // The three squares we're adding to the nested flexbox should increase the size of the nestedFlex to be 200 pixels wide. This is the case in IE but
+                    // currently not in Firefox. In Firefox, the third square will move to the next column, but the container's width won't update for it.
+                    nestedFlexTooSmall: flexRoot.firstElementChild.offsetWidth < expectedWidth
                 };
             }
             
@@ -253,6 +263,9 @@
                     
                     this._envInfo = getEnvironmentSupportInformation(site) || {};
                     
+                    if (!this._envInfo.supportsCSSGrid) {
+                        Utilities.addClass(site.surface, WinJS.UI._noCSSGrid);
+                    }
                     if (this._backdropColorClassName) {
                         Utilities.addClass(site.surface, this._backdropColorClassName);
                     }
@@ -365,6 +378,7 @@
                             }
 
                             if (!that._envInfo.nestedFlexTooLarge && // Disabling structural nodes works around this issue
+                                    !that._envInfo.nestedFlexTooSmall && 
                                     allGroupsAreUniform()) {
                                 that._usingStructuralNodes = WinJS.UI._LayoutCommon._barsPerItemsBlock > 0;
                                 return WinJS.UI._LayoutCommon._barsPerItemsBlock * that._itemsPerBar;
@@ -2629,6 +2643,7 @@
                                     // Amount of space between the items container's margin and its content
                                     itemsContainerOuterX: getOuter(site.rtl ? "Right" : "Left", itemsContainer),
                                     itemsContainerOuterY: getOuter("Top", itemsContainer),
+                                    itemsContainerMargins: WinJS.UI._getMargins(itemsContainer),
 
                                     itemBoxOuterHeight: getOuterHeight(itemBox),
                                     itemBoxOuterWidth: getOuterWidth(itemBox),
@@ -2718,6 +2733,7 @@
                             // ListMode needs to use display block to proprerly measure items in vertical mode, and display flex to properly measure items in horizontal mode
                             itemsContainer.style.cssText +=
                                     ";display: " + (that._inListMode ? ((that._horizontal ? "flex" : "block") + "; overflow: hidden") : "inline-block") +
+                                     ";vertical-align:top" +
                                     ";-ms-grid-column: " + itemsContainerColumn +
                                     ";-ms-grid-row: " + itemsContainerRow;
                             if (!that._inListMode) {
@@ -3094,30 +3110,53 @@
                         groupBundle = this._site.tree[index],
                         headerContainer = groupBundle.header,
                         itemsContainer = groupBundle.itemsContainer.element,
-                        sizes = this._sizes;
+                        sizes = this._sizes,
+                        groupCrossSize = group.getItemsContainerCrossSize();
 
                     if (this._groupsEnabled) {
                         if (this._horizontal) {
                             if (this._groupHeaderPosition === WinJS.UI.HeaderPosition.top) {
                                 var headerContainerMinContentWidth = sizes.headerContainerMinWidth - sizes.headerContainerOuterWidth,
                                     itemsContainerContentWidth = group.getItemsContainerSize() - sizes.headerContainerOuterWidth;
-                                headerContainer.style.msGridColumn = index + 1;
                                 headerContainer.style.maxWidth = Math.max(headerContainerMinContentWidth, itemsContainerContentWidth) + "px";
-                                itemsContainer.style.msGridColumn = index + 1;
+                                if (this._envInfo.supportsCSSGrid) {
+                                    headerContainer.style.msGridColumn = index + 1;
+                                    itemsContainer.style.msGridColumn = index + 1;
+                                } else {
+                                    headerContainer.style.height = (sizes.headerContainerHeight - sizes.headerContainerOuterHeight) + "px";
+                                    itemsContainer.style.height = (groupCrossSize - sizes.itemsContainerOuterHeight) + "px";
+                                    // If the itemsContainer is too small, the next group's header runs the risk of appearing below the current group's items.
+                                    // We need to add a margin to the bottom of the itemsContainer to prevent that from happening.
+                                    itemsContainer.style.marginBottom = sizes.itemsContainerMargins.bottom + (sizes.maxItemsContainerContentSize - groupCrossSize + sizes.itemsContainerOuterHeight) + "px";
+                                }
                                 // itemsContainers only get the _groupLeaderClass when header position is top.
                                 Utilities.addClass(itemsContainer, WinJS.UI._groupLeaderClass);
                             } else {
                                 //#DBG _ASSERT(this._groupHeaderPosition === WinJS.UI.HeaderPosition.left);
-                                headerContainer.style.msGridColumn = index * 2 + 1;
-                                itemsContainer.style.msGridColumn = index * 2 + 2;
+                                if (this._envInfo.supportsCSSGrid) {
+                                    headerContainer.style.msGridColumn = index * 2 + 1;
+                                    itemsContainer.style.msGridColumn = index * 2 + 2;
+                                } else {
+                                    headerContainer.style.height = (groupCrossSize - sizes.headerContainerOuterHeight) + "px";
+                                    itemsContainer.style.height = (groupCrossSize - sizes.itemsContainerOuterHeight) + "px";
+                                }
                             }
                         } else {
                             if (this._groupHeaderPosition === WinJS.UI.HeaderPosition.left) {
                                 var headerContainerMinContentHeight = sizes.headerContainerMinHeight - sizes.headerContainerOuterHeight,
                                     itemsContainerContentHeight = group.getItemsContainerSize() - sizes.headerContainerOuterHeight;
-                                headerContainer.style.msGridRow = index + 1;
                                 headerContainer.style.maxHeight = Math.max(headerContainerMinContentHeight, itemsContainerContentHeight) + "px";
-                                itemsContainer.style.msGridRow = index + 1;
+                                if (this._envInfo.supportsCSSGrid) {
+                                    headerContainer.style.msGridRow = index + 1;
+                                    itemsContainer.style.msGridRow = index + 1;
+                                } else {
+                                    headerContainer.style.width = (sizes.headerContainerWidth - sizes.headerContainerOuterWidth) + "px";
+                                    itemsContainer.style.width = (groupCrossSize - sizes.itemsContainerOuterWidth) + "px";
+                                    // If the itemsContainer is too small, the next group's header runs the risk of appearing to the side of the current group's items.
+                                    // We need to add a margin to the right of the itemsContainer to prevent that from happening (or the left margin, in RTL).
+                                    itemsContainer.style["margin" + (this._site.rtl ? "Left" : "Right")] = (sizes.itemsContainerMargins[(this._site.rtl ? "left" : "right")] +
+                                        (sizes.maxItemsContainerContentSize - groupCrossSize + sizes.itemsContainerOuterWidth)) + "px";
+                                }
                                 // itemsContainers only get the _groupLeaderClass when header position is left.
                                 Utilities.addClass(itemsContainer, WinJS.UI._groupLeaderClass);
                             } else {
@@ -3127,8 +3166,14 @@
                                 // When the header's content is taken from the DOM, the headerContainer will shrink unless it has a height set.
                                 if (this._inListMode) {
                                     headerContainer.style.height = (sizes.headerContainerHeight - sizes.headerContainerOuterHeight) + "px";
+                                } else {
+                                    if (this._envInfo.supportsCSSGrid) {
+                                        itemsContainer.style.msGridRow = index * 2 + 2;
+                                    } else {
+                                        headerContainer.style.width = (groupCrossSize - sizes.headerContainerOuterWidth) + "px";
+                                        itemsContainer.style.width = (groupCrossSize - sizes.itemsContainerOuterWidth) + "px";
+                                    }
                                 }
-                                itemsContainer.style.msGridRow = index * 2 + 2;
                             }
 
                         }
@@ -3428,6 +3473,11 @@
                     var sizes = this._layout._sizes,
                         barCount = Math.ceil(this.count / this._layout._itemsPerBar);
                     return barCount * sizes.containerSize + sizes.itemsContainerOuterSize;
+                },
+
+                getItemsContainerCrossSize: function UniformGroupBase_getItemsContainerCrossSize() {
+                    var sizes = this._layout._sizes;
+                    return this._layout._itemsPerBar * sizes.containerCrossSize + sizes.itemsContainerOuterCrossSize;
                 },
 
                 getItemPositionForAnimations: function UniformGroupBase_getItemPositionForAnimations(itemIndex) {
@@ -3848,6 +3898,11 @@
                 getItemsContainerSize: function CellSpanningGroup_getItemsContainerSize() {
                     var sizes = this._layout._sizes;
                     return this.getColumnCount() * this.groupInfo.cellWidth + sizes.itemsContainerOuterSize;
+                },
+
+                getItemsContainerCrossSize: function CellSpanningGroup_getItemsContainerCrossSize() {
+                    var sizes = this._layout._sizes;
+                    return sizes.maxItemsContainerContentSize + sizes.itemsContainerOuterCrossSize;
                 },
 
                 getItemPositionForAnimations: function CellSpanningGroup_getItemPositionForAnimations(itemIndex) {
