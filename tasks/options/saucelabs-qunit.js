@@ -31,6 +31,8 @@
                     "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?autostart",
                 ],
                 tunnelTimeout: 5,
+                username:"banguero",
+                key:"3d3d6a1f-4e0a-48f7-b625-ae5afb8e477a",
                 build: process.env.TRAVIS_JOB_ID,
                 concurrency: 3,
                 throttled: 3,

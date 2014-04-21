@@ -2,6 +2,7 @@
   "name": "WinJS",
   "version": "2.0.1",
   "devDependencies": {
+    "browserstack-runner": "~0.1.13",
     "grunt": "~0.4.2",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-replace": "~0.5.1",
