@@ -30,9 +30,8 @@
                     "http://127.0.0.1:9999/bin/tests/TimePicker/test.html?autostart",
                     "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?autostart",
                 ],
-                tunnelTimeout: 5,
                 build: process.env.TRAVIS_JOB_ID,
-                testInterval: 2000,
+                testInterval: 1000,
                 browsers: browsers,
                 testname: "winjs qunit tests",
                 tags: ["winjs"]
