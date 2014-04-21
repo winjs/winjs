@@ -5,9 +5,9 @@ before_script:
 - npm install -g grunt-cli
 - git submodule update --init --recursive
 script:
-- grunt release
-- browserstack-runner init
-#- grunt test --saucelabs
+#- grunt release
+#- browserstack-runner init
+- grunt test --saucelabs
 env:
   global:
     - SAUCE_USERNAME=banguero
