@@ -5,10 +5,12 @@ before_script:
 - npm install -g grunt-cli
 - git submodule update --init --recursive
 script:
-#- grunt release
-#- browserstack-runner init
-- grunt test --saucelabs
+- grunt release
 env:
   global:
-    - SAUCE_USERNAME=banguero
-    - SAUCE_ACCESS_KEY=3d3d6a1f-4e0a-48f7-b625-ae5afb8e477a
+    - SAUCE_USERNAME=winjs
+    - SAUCE_ACCESS_KEY=26c17025-4f79-4313-ab42-c5f77a7ece4b
+branches:
+  only:
+    - master
+    - /^.*-runut$/
