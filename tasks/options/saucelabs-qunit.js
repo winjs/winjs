@@ -32,7 +32,7 @@
                 ],
                 tunnelTimeout: 5,
                 build: process.env.TRAVIS_JOB_ID,
-                concurrency: 3,
+                testInterval: 2000,
                 browsers: browsers,
                 testname: "winjs qunit tests",
                 tags: ["winjs"]
