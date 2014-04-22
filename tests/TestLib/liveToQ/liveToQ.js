@@ -10,6 +10,7 @@
 
     QUnit.config.autostart = false;
     QUnit.config.testTimeout = 30000;
+    QUnit.config.hidepassed = true;
     QUnit.breakOnAssertFail = false;
 
     var qunitDiv;
