@@ -28,8 +28,8 @@
             function interpretedRender(template, dataContext, container) {
                 WinJS.Utilities._writeProfilerMark("WinJS.Binding:templateRender" + template._profilerMarkIdentifier + ",StartTM");
 
-                if (++template._counter === 1 && (template.debugBreakOnRender || WinJS.Binding.Template._debugBreakOnRender)) {
-                    debugger;
+                if (++template._counter === 1 && (template.debugBreakOnRender || WinJS.Binding.Template._debugBreakOnRender)) {                   
+                    debugger; // jshint ignore:line
                 }
 
                 var workPromise = WinJS.Promise.wrap();

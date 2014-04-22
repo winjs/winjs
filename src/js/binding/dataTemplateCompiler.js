@@ -1328,7 +1328,7 @@
 
                     var statics = values(this._staticVariables);
 
-                    return new Function(IMPORTS_ARG_NAME,
+                    return new Function(IMPORTS_ARG_NAME, // jshint ignore:line
                         this.formatCode(
                             linkerCodeTemplate,
                             {
