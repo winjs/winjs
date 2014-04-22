@@ -5,7 +5,7 @@ before_script:
 - npm install -g grunt-cli
 - git submodule update --init --recursive
 script:
-- grunt release
+- grunt test --saucelabs
 env:
   global:
     - SAUCE_USERNAME=winjs
