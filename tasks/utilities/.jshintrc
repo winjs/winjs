@@ -37,10 +37,10 @@
     */
     "asi": true, // Suppresses warnings about missing semicolons.
     "boss": true, // Suppresses warnings about the use of assignments in cases where comparisons are expected. More often than not, code like if (a = 10) {} is a typo.
-    "debug": true, // Suppresses warnings about the debugger statements in your code.
+    "debug": false, // Suppresses warnings about the debugger statements in your code.
     "eqnull": true, // Suppresses warnings about == null comparisons. 
     "esnext": true, // Tells JSHint that your code uses ECMAScript 6 specific syntax.
-    "evil": true, // Suppresses warnings about the use of eval.
+    "evil": false, // Suppresses warnings about the use of eval.
     "expr": true, // Suppresses warnings about the use of expressions where normally you would expect to see assignments or function calls.
     "funcscope": true, // Suppresses warnings about declaring variables inside of control structures while accessing them later from the outside.
     "gcl": true, // Makes JSHint compatible with Google Closure Compiler.

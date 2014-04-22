@@ -435,7 +435,7 @@ StringLiteral       7.8.4
                     hasEscape = hasEscape || length === 1 || text.charCodeAt(offset - 1) !== quoteCharCode;
                     var stringValue;
                     if (hasEscape) {
-                        stringValue = eval(text.substr(startOffset, length));
+                        stringValue = eval(text.substr(startOffset, length)); // jshint ignore:line
                     } else {
                         stringValue = text.substr(startOffset + 1, length - 2);
                     }

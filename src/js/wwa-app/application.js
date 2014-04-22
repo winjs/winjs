@@ -54,7 +54,7 @@
         //
         // To see the original exception stack, look at data.stack.
         // For more information on debugging and exception handling go to http://go.microsoft.com/fwlink/p/?LinkId=253583.
-        debugger;
+        debugger; // jshint ignore:line
         MSApp.terminateApp(data);
     };
 
