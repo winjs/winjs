@@ -60,6 +60,11 @@ button.win-command:-ms-lang(@{rtl}) {
 button.win-command:focus {
     outline: none;
 }
+button.win-command::-moz-focus-inner {
+    padding: 0px;
+    border: 0px;
+}
+
 
 /*
 Command button icons.
@@ -75,6 +80,7 @@ Command button icons.
     width: 40px;
     height: 40px;
     box-sizing: border-box;
+    -moz-box-sizing: border-box;
     cursor: default;
 }
 .win-commandimage {
