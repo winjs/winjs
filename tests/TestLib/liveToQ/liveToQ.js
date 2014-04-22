@@ -52,8 +52,8 @@
         addOptions();
     });
 
-    if (QUnit.urlParams.unittesting === "true" || QUnit.urlParams.unittesting === true) {
-        WinJS.Utilities._unitTesting = true;
+    if (QUnit.urlParams.fastanimations === "true" || QUnit.urlParams.fastanimations === true) {
+        WinJS.Utilities._fastAnimations = true;
     }
 
     function completeTest() {
@@ -150,17 +150,16 @@
             }
         });
         test_results.tests = tests;
-
         window.global_test_results = test_results;
     });
 
     function formatString(string) {
         var args = arguments;
         if (args.length > 1) {
-            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g, 
+            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g,
                 function (unused, left, right, index, illegalLeft, illegalRight) {
-                    if (illegalLeft || illegalRight) { 
-                        throw new Error(formatString("Malformed string input: {0}", illegalLeft || illegalRight)); 
+                    if (illegalLeft || illegalRight) {
+                        throw new Error(formatString("Malformed string input: {0}", illegalLeft || illegalRight));
                     }
                     return (left && "{") || (right && "}") || args[(index | 0) + 1];
                 });

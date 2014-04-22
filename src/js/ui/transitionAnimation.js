@@ -397,7 +397,7 @@
     }
 
     function animationAdjustment(animation) {
-        if (WinJS.Utilities._unitTesting) {
+        if (WinJS.Utilities._fastAnimations) {
             return fastAnimation(animation);
         } else {
             return animation;
@@ -474,7 +474,7 @@
         },
 
         _animationTimeAdjustment: function (v) {
-            if (WinJS.Utilities._unitTesting) {
+            if (WinJS.Utilities._fastAnimations) {
                 return v / 20;
             } else {
                 return v;
