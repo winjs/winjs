@@ -4,6 +4,7 @@
     var qUnitGlobalErrorHandler = window.onerror;
 
     var testTimeout = 30000;
+    var hasRun = false;
     var testFailed = false;
     var testError = "";
     var verboseLog = "";
@@ -52,12 +53,23 @@
             btn.style.marginLeft = "4px";
             btn.innerHTML = "Start";
             btn.onclick = function () {
-                QUnit.start();
+                if (!hasRun) {
+                    QUnit.start();
+                    hasRun = true;
+                } else {
+                    if (QUnit.urlParams.autostart === "true" || QUnit.urlParams.autostart === true) {
+                        window.location = window.location;
+                    } else {
+                        var qs = (window.location.search.indexOf("?") >= 0) ? "&" : "?";
+                        window.location = window.location.href + qs + "autostart=true";
+                    }
+                }
             };
             toolBar.appendChild(btn);
 
             if (QUnit.urlParams.autostart === "true" || QUnit.urlParams.autostart === true) {
                 QUnit.start();
+                hasRun = true;
             }
         }
         addOptions();
