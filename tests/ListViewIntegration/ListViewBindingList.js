@@ -42,6 +42,14 @@ var Tests = Tests || {};
             return res;
         }
 
+        function asyncSequence(workFunctions) {
+            return workFunctions.reduce(function (p, work) {
+                return WinJS.Promise.as(p).then(function () {
+                    return WinJS.Promise.as(work()).then(function () { return WinJS.Promise.timeout(); });
+                });
+            });
+        }
+
         var seed = 0;
         function rand(nMax) {
             seed = (seed + 0.81282849124) * 2375.238208308;
@@ -387,17 +395,14 @@ var Tests = Tests || {};
             var listView = elements.querySelector(".listViewExample");
 
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        list.getAt(i).detail = list.getAt(i).detail + '_' + i;
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    list.getAt(i).detail = list.getAt(i).detail + '_' + i;
+                }
             }
 
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(10, list.length).map(assertListView));
+                    return asyncSequence(range(10, list.length).map(assertListView));
                 }).
                 then(waitForReady(listView, -1)).
                 then(function () {
@@ -425,20 +430,16 @@ var Tests = Tests || {};
             var listView = elements.querySelector(".listViewExample");
 
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        if (list.getAt(i)) {
-                            list.getAt(i).title = list.getAt(i).title + i + (i % 3);
-                            list.notifyMutated(i);
-                        }
-                        complete();
-                    }, i * 100);
-
-                });
+                return function () {
+                    if (list.getAt(i)) {
+                        list.getAt(i).title = list.getAt(i).title + i + (i % 3);
+                        list.notifyMutated(i);
+                    }
+                };
             }
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(0, list.length).map(assertListView));
+                    return asyncSequence(range(0, list.length).map(assertListView));
                 }).
                 then(waitForReady(listView, -1)).
                 then(function () {
@@ -467,17 +468,14 @@ var Tests = Tests || {};
             var listView = elements.querySelector(".listViewExample");
 
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        list.getAt(i).title = list.getAt(i).title + i * 10;
-                        list.notifyMutated(i);
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    list.getAt(i).title = list.getAt(i).title + i * 10;
+                    list.notifyMutated(i);
+                }
             }
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(0, list.length).map(assertListView));
+                    return asyncSequence(range(0, list.length).map(assertListView));
                 }).
                 then(waitForReady(listView, -1)).
                 then(function () {
@@ -508,25 +506,22 @@ var Tests = Tests || {};
             };
 
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandom(list); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandom(list); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                }
             }
 
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
             WinJS.UI.processAll().
                 then(waitForInitPost).
                 then(function () {
-                    return join(range(0, 50).map(assertListView));
+                    return asyncSequence(range(0, 50).map(assertListView));
                 }).
                 then(itemUpdatePost).
                 then(function () {
@@ -547,13 +542,10 @@ var Tests = Tests || {};
             var objToCompare = { title: 1, detail: 1 };
 
             function assertListView(i) {
-                return new WinJS.Promise(function (c2) {
-                    setTimeout(function () {
-                        list.getAt(i).title++;
-                        list.notifyMutated(i);
-                        c2();
-                    }, i * 100);
-                });
+                return function () {
+                    list.getAt(i).title++;
+                    list.notifyMutated(i);
+                };
             }
 
             for (var i = 0; i < 20; i++) {
@@ -570,7 +562,7 @@ var Tests = Tests || {};
 
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(0, list.length).map(assertListView));
+                    return asyncSequence(range(0, list.length).map(assertListView));
                 }).
                 then(waitForReady(listView, -1)).
                 then(function () {
@@ -596,29 +588,25 @@ var Tests = Tests || {};
             var listView = elements.querySelector(".listViewExample");
 
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        if (i <= 11) {
-                            sorted.push({ title: i, detail: "hello world " + i });
-                        }
-                        else if (i < 14) {
-                            list.push({ title: i, detail: "hello world " + i });
-                        }
-                        else if (i == 14) {
-                            sorted.length = 6;
-                        }
-                        else {
-                            list.length = 2;
-                        }
-
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    if (i <= 11) {
+                        sorted.push({ title: i, detail: "hello world " + i });
+                    }
+                    else if (i < 14) {
+                        list.push({ title: i, detail: "hello world " + i });
+                    }
+                    else if (i == 14) {
+                        sorted.length = 6;
+                    }
+                    else {
+                        list.length = 2;
+                    }
+                };
             }
 
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(10, 16).map(assertListView));
+                    return asyncSequence(range(10, 16).map(assertListView));
                 }).
                 then(waitForReady(listView, -1)).
                 then(function () {
@@ -645,24 +633,21 @@ var Tests = Tests || {};
 
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandom(list); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandom(list); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                };
             }
 
             WinJS.UI.processAll().
                 then(waitForReady(listView)).
                 then(function () {
-                    return join(range(0, 20).map(assertListView));
+                    return asyncSequence(range(0, 20).map(assertListView));
                 }).
                 then(waitForReady(listView)).
                 then(function () {
@@ -691,24 +676,21 @@ var Tests = Tests || {};
 
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandom(list); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandom(list); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                };
             }
 
             WinJS.UI.processAll().
                 then(waitForReady(listView)).
                 then(function () {
-                    return join(range(0, 20).map(assertListView));
+                    return asyncSequence(range(0, 20).map(assertListView));
                 }).
                 then(waitForReady(listView, -1)).
                 then(function () {
@@ -736,23 +718,20 @@ var Tests = Tests || {};
 
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandomSpecial(list); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100)
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandomSpecial(list); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                }
             }
 
             WinJS.UI.processAll().
                 then(function () {
-                    return join(range(0, 30).map(assertListView));
+                    return asyncSequence(range(0, 30).map(assertListView));
                 }).
                 then(waitForReady(listView, -1)).
                 then(function () {
@@ -851,26 +830,22 @@ var Tests = Tests || {};
             var order = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0];
 
             function assertListView(i) {
-                return new WinJS.Promise(function (complete) {
-                    setTimeout(function () {
-
-                        switch (rand(4)) {
-                            case 0: spliceRandom(list); break;
-                            case 1: moveRandom(list); break;
-                            case 2: setAtRandoms(); break;
-                            case 3: pushAndPopRandom(list, order, i); break;
-                            default: throw "NYI";
-                        }
-                        complete();
-                    }, i * 100);
-                });
+                return function () {
+                    switch (rand(4)) {
+                        case 0: spliceRandom(list); break;
+                        case 1: moveRandom(list); break;
+                        case 2: setAtRandoms(); break;
+                        case 3: pushAndPopRandom(list, order, i); break;
+                        default: throw "NYI";
+                    }
+                };
             }
             WinJS.UI.processAll().
                 then(waitForReady(listView)).
                 then(function () {
                     listView.winControl.itemDataSource.beginEdits();
                     listView.winControl.groupDataSource.beginEdits();
-                    return join(range(0, 30).map(assertListView));
+                    return asyncSequence(range(0, 30).map(assertListView));
                 }).
                 then(function () {
                     listView.winControl.itemDataSource.endEdits();

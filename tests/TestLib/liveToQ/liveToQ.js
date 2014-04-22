@@ -45,12 +45,16 @@
             };
             toolBar.appendChild(btn);
 
-            if (document.location.search.substr(1, 10) === "autostart") {
-                btn.click();
+            if (QUnit.urlParams.autostart === "true" || QUnit.urlParams.autostart === true) {
+                QUnit.start();
             }
         }
         addOptions();
     });
+
+    if (QUnit.urlParams.unittesting === "true" || QUnit.urlParams.unittesting === true) {
+        WinJS.Utilities._unitTesting = true;
+    }
 
     function completeTest() {
         QUnit.assert.ok(!testFailed, testError);

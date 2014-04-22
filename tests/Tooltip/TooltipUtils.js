@@ -40,15 +40,15 @@ TooltipUtils.prototype = (function () {
         OFFSET_PROGRAMMATIC_NONTOUCH: 12,
         DEFAULT_PLACEMENT: "top",
         DEFAULT_INFOTIP: false,
-        DELAY_INITIAL_TOUCH_SHORT: 400,
-        DELAY_INITIAL_TOUCH_LONG: 1200,
-        DEFAULT_MOUSE_HOVER_TIME: 400,
-        DEFAULT_MESSAGE_DURATION: 5000,
-        DELAY_RESHOW_NONINFOTIP_TOUCH: 0,
-        DELAY_RESHOW_NONINFOTIP_NONTOUCH: 600,
-        DELAY_RESHOW_INFOTIP_TOUCH: 400,
-        DELAY_RESHOW_INFOTIP_NONTOUCH: 600,
-        RESHOW_THRESHOLD: 200,
+        get DELAY_INITIAL_TOUCH_SHORT() { return WinJS.UI.Tooltip._DELAY_INITIAL_TOUCH_SHORT; },
+        get DELAY_INITIAL_TOUCH_LONG() { return WinJS.UI.Tooltip._DELAY_INITIAL_TOUCH_SHORT; },
+        get DEFAULT_MOUSE_HOVER_TIME() { return WinJS.UI.Tooltip._DEFAULT_MOUSE_HOVER_TIME; },
+        get DEFAULT_MESSAGE_DURATION() { return WinJS.UI.Tooltip._DEFAULT_MESSAGE_DURATION; },
+        get DELAY_RESHOW_NONINFOTIP_TOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_NONINFOTIP_TOUCH; },
+        get DELAY_RESHOW_NONINFOTIP_NONTOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_NONINFOTIP_NONTOUCH; },
+        get DELAY_RESHOW_INFOTIP_TOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_INFOTIP_TOUCH; },
+        get DELAY_RESHOW_INFOTIP_NONTOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_INFOTIP_NONTOUCH; },
+        get RESHOW_THRESHOLD() { return WinJS.UI.Tooltip._RESHOW_THRESHOLD; },
 
         //-----------------------------------------------------------------------------------
         setUp: function (complete) {
@@ -59,6 +59,7 @@ TooltipUtils.prototype = (function () {
             ///  String specifying id of element to create.
             /// </param>
             LiveUnit.LoggingCore.logComment("In setup");
+
             if (typeof (WebUnit) === 'undefined') {
                 // We could use the "light style" too
                 // commonUtils.addCss("ui-light.css");

@@ -110,7 +110,7 @@ WinJSTests.FlipperInstantiationTests = function () {
             flipperElement.style.width = "600px";
 
             // Wait and then complete the test
-            WinJS.Promise.timeout(500).then(function () {
+            WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500)).then(function () {
                 // Check the currentPage is same as before
                 LiveUnit.Assert.areEqual(startPage, flipper.currentPage, "Current Page should not have changed");
 
@@ -149,7 +149,7 @@ WinJSTests.FlipperInstantiationTests = function () {
             flipperElement.focus();
 
             // Wait and then complete the test
-            WinJS.Promise.timeout(500).then(function () {
+            WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500)).then(function () {
                 // Check the currentPage is same as before
                 LiveUnit.Assert.areEqual(startPage, flipper.currentPage, "Current Page should not have changed");
 

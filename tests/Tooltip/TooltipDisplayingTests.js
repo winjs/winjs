@@ -745,7 +745,7 @@ TooltipDisplayingTests = function () {
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
 
         window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
-        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", 5000);
+        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", tooltipUtils.DEFAULT_MESSAGE_DURATION);
     };
     
     
@@ -805,7 +805,7 @@ TooltipDisplayingTests = function () {
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
 
         window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
-        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", 5000);
+        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", tooltipUtils.DEFAULT_MESSAGE_DURATION);
     };
     
     
@@ -865,7 +865,7 @@ TooltipDisplayingTests = function () {
         tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
 
         window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
-        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", 5000);
+        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", tooltipUtils.DEFAULT_MESSAGE_DURATION);
     };
     
     
@@ -902,7 +902,7 @@ TooltipDisplayingTests = function () {
                     // you don't receive beforeclose and closed events
                     commonUtils.removeElementById(tooltipUtils.defaultElementID);
                     window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'several seconds later'});", (tooltipUtils.DEFAULT_MESSAGE_DURATION + 1000));
+                    setTimeout("window.tooltipEventListener({type:'several seconds later'});", (tooltipUtils.DEFAULT_MESSAGE_DURATION + tooltipUtils.DEFAULT_MESSAGE_DURATION / 5));
                     break;
                 case "beforeclose":
                     LiveUnit.Assert.fail("This should fail if win8 bug 275290 is fixed");

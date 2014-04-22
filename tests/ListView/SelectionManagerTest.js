@@ -856,7 +856,6 @@ WinJSTests.SelectionManagerTest = function () {
         });
     };
 
-
     var selectionUpdated = 0,
         selectionChanging = 0,
         selectionChanged = 0;
@@ -1100,7 +1099,7 @@ WinJSTests.SelectionManagerTest = function () {
                                     absoluteIndex: index
                                 };
 
-                                WinJS.Promise.timeout(50).then(function () {
+                                WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(50)).then(function () {
                                     complete(retVal);
                                 });
                             } else {
@@ -1510,7 +1509,7 @@ WinJSTests.SelectionManagerTest = function () {
                     setTimeout(function () {
                         validate(selection, retainedItems);
                         complete();
-                    }, 2000);
+                    }, 1000);
                 }
             ];
             runTests(listView, tests);
@@ -1673,7 +1672,7 @@ WinJSTests.SelectionManagerTest = function () {
                     countAfterDelta: 0,
                     countBeforeOverride: -1,
                     countAfterOverride: -1,
-                    delay: 1000
+                    delay: WinJS.UI._animationTimeAdjustment(1000),
                 };
             }
         }

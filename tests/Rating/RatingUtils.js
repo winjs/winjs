@@ -1134,7 +1134,7 @@ RatingUtils.prototype = (function () {
         //-----------------------------------------------------------------------------------
         // ASYNC Event Test Helper Code
 
-        timeBetweenActions: 100,
+        timeBetweenActions: 0,
         nextAction: null,
 
         //-----------------------------------------------------------------------------------

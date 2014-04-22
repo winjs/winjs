@@ -570,8 +570,8 @@ WinJSTests.ListViewAnimation2Test = function () {
                     bindingList.splice(0, 0, getItem());
                     timeout = setTimeout(function () {
                         bindingList.splice(0, 0, getItem());
-                    }, 40);
-                }, 40);
+                    }, WinJS.UI._animationTimeAdjustment(40));
+                }, WinJS.UI._animationTimeAdjustment(40));
 
                 return waitForReady(listView, -1)();
             }).
@@ -604,8 +604,8 @@ WinJSTests.ListViewAnimation2Test = function () {
                     bindingList.splice(0, 1);
                     timeout = setTimeout(function () {
                         bindingList.splice(0, 1);
-                    }, 40);
-                }, 40);
+                    }, WinJS.UI._animationTimeAdjustment(40));
+                }, WinJS.UI._animationTimeAdjustment(40));
 
                 return waitForReady(listView, -1)();
             }).

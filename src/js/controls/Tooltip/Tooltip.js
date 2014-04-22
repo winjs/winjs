@@ -29,16 +29,16 @@
 
             // Constants definition
             var DEFAULT_PLACEMENT = "top";
-            var DELAY_INITIAL_TOUCH_SHORT = 400;
-            var DELAY_INITIAL_TOUCH_LONG = 1200;
-            var DEFAULT_MOUSE_HOVER_TIME = 400; // 0.4 second
-            var DEFAULT_MESSAGE_DURATION = 5000; // 5 secs
-            var DELAY_RESHOW_NONINFOTIP_TOUCH = 0;
-            var DELAY_RESHOW_NONINFOTIP_NONTOUCH = 600;
-            var DELAY_RESHOW_INFOTIP_TOUCH = 400;
-            var DELAY_RESHOW_INFOTIP_NONTOUCH = 600;
-            var RESHOW_THRESHOLD = 200;
-            var HIDE_DELAY_MAX = 300000; // 5 mins
+            var DELAY_INITIAL_TOUCH_SHORT = WinJS.UI._animationTimeAdjustment(400);
+            var DELAY_INITIAL_TOUCH_LONG = WinJS.UI._animationTimeAdjustment(1200);
+            var DEFAULT_MOUSE_HOVER_TIME = WinJS.UI._animationTimeAdjustment(400); // 0.4 second
+            var DEFAULT_MESSAGE_DURATION = WinJS.UI._animationTimeAdjustment(5000); // 5 secs
+            var DELAY_RESHOW_NONINFOTIP_TOUCH = WinJS.UI._animationTimeAdjustment(0);
+            var DELAY_RESHOW_NONINFOTIP_NONTOUCH = WinJS.UI._animationTimeAdjustment(600);
+            var DELAY_RESHOW_INFOTIP_TOUCH = WinJS.UI._animationTimeAdjustment(400);
+            var DELAY_RESHOW_INFOTIP_NONTOUCH = WinJS.UI._animationTimeAdjustment(600);
+            var RESHOW_THRESHOLD = WinJS.UI._animationTimeAdjustment(200);
+            var HIDE_DELAY_MAX = WinJS.UI._animationTimeAdjustment(300000); // 5 mins
             var OFFSET_KEYBOARD = 12;
             var OFFSET_MOUSE = 20;
             var OFFSET_TOUCH = 45;
@@ -558,7 +558,6 @@
                     }
                 },
 
-
                 _onHideAnimationEnd: function () {
                     document.body.removeEventListener("DOMNodeRemoved", this._removeTooltip, false);
                     this._cleanUpDOM();
@@ -872,6 +871,47 @@
                         this._raiseEvent("closed");
                     }
                 }
+            }, {
+
+                _DELAY_INITIAL_TOUCH_SHORT: {
+                    get: function () { return DELAY_INITIAL_TOUCH_SHORT; },
+                },
+
+                _DELAY_INITIAL_TOUCH_LONG: {
+                    get: function () { return DELAY_INITIAL_TOUCH_LONG ; }
+                },
+
+                _DEFAULT_MOUSE_HOVER_TIME: {
+                    get: function () { return DEFAULT_MOUSE_HOVER_TIME; }
+                },
+
+                _DEFAULT_MESSAGE_DURATION: {
+                    get: function () { return DEFAULT_MESSAGE_DURATION; }
+                },
+
+                _DELAY_RESHOW_NONINFOTIP_TOUCH: {
+                    get: function () { return DELAY_RESHOW_NONINFOTIP_TOUCH; }
+                },
+
+                _DELAY_RESHOW_NONINFOTIP_NONTOUCH: {
+                    get: function () { return DELAY_RESHOW_NONINFOTIP_NONTOUCH; }
+                },
+
+                _DELAY_RESHOW_INFOTIP_TOUCH: {
+                    get: function () { return DELAY_RESHOW_INFOTIP_TOUCH; }
+                },
+
+                _DELAY_RESHOW_INFOTIP_NONTOUCH: {
+                    get: function () { return DELAY_RESHOW_INFOTIP_NONTOUCH; }
+                },
+                
+                _RESHOW_THRESHOLD: {
+                    get: function () { return RESHOW_THRESHOLD; }
+                },
+
+                _HIDE_DELAY_MAX: {
+                    get: function () { return HIDE_DELAY_MAX; }
+                },
             });
         })
     });

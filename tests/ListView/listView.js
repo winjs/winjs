@@ -31,6 +31,10 @@ WinJSTests.ListView = function () {
         return "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")";
     }
 
+    this.setUp = function () {
+        WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 5;
+    };
+
     this.testForceLayoutSavesContainers = function (complete) {
         var listViewEl = document.createElement("DIV");
         document.body.appendChild(listViewEl);
@@ -1071,7 +1075,7 @@ WinJSTests.ListView = function () {
                     return action(listView.itemDataSource);
                 }).
                 then(function () {
-                    return WinJS.Promise.timeout(1000);
+                    return WinJS.Promise.timeout();
                 }).
                 then(function () {
                     return listView.itemDataSource.getCount();
@@ -1663,6 +1667,9 @@ WinJSTests.ListView = function () {
                 };
             }
         });
+
+        // In this test even on a fast machine we want to ensure that we create containers in multiple stages
+        WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = -1;
 
         var jobNode;
         listView._view._scheduleLazyTreeCreation = function () {

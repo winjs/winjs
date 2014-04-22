@@ -382,6 +382,28 @@
         }
     }
 
+    function fastAnimation(animation) {
+        if (Array.isArray(animation)) {
+            return animation.map(function (animation) {
+                return fastAnimation(animation);
+            });
+        } else if (animation) {
+            animation.delay = WinJS.UI._animationTimeAdjustment(animation.delay);
+            animation.duration = WinJS.UI._animationTimeAdjustment(animation.duration);
+            return animation;
+        } else {
+            return;
+        }
+    }
+
+    function animationAdjustment(animation) {
+        if (WinJS.Utilities._unitTesting) {
+            return fastAnimation(animation);
+        } else {
+            return animation;
+        }
+    }
+
     var UI = WinJS.Namespace.define("WinJS.UI", {
         disableAnimations: function () {
             /// <signature helpKeyword="WinJS.UI.disableAnimations">
@@ -426,7 +448,7 @@
             /// Promise object that completes when the CSS animation is complete.
             /// </returns>
             /// </signature>
-            return applyAction(element, animation, executeElementAnimation);
+            return applyAction(element, animationAdjustment(animation), executeElementAnimation);
         },
 
         executeTransition: function (element, transition) {
@@ -448,7 +470,17 @@
             /// Promise object that completes when the CSS transition is complete.
             /// </returns>
             /// </signature>
-            return applyAction(element, transition, executeElementTransition);
-        }
+            return applyAction(element, animationAdjustment(transition), executeElementTransition);
+        },
+
+        _animationTimeAdjustment: function (v) {
+            if (WinJS.Utilities._unitTesting) {
+                return v / 20;
+            } else {
+                return v;
+            }
+        },
+
     });
+
 })(this, WinJS);

@@ -631,7 +631,7 @@ WinJSTests.HubTests = function () {
 
         var hub = new WinJS.UI.Hub(hubEl);
 
-        WinJS.Promise.timeout(3000).
+        WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(3000)).
             done(function () {
                 LiveUnit.Assert.areEqual(0, document.body.querySelectorAll("progress").length, "Expecting no progress indicators in DOM");
                 complete();

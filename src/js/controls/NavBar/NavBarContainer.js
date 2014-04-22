@@ -1232,7 +1232,7 @@
                         if (hasLeftContent) {
                             // If we need a delayed fade out and we are already running a delayed fade out just use that one, don't extend it.
                             // Otherwise create a delayed fade out.
-                            this._leftArrowWaitingToFadeOut = this._leftArrowWaitingToFadeOut || WinJS.Promise.timeout(buttonFadeDelay);
+                            this._leftArrowWaitingToFadeOut = this._leftArrowWaitingToFadeOut || WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay));
                         } else {
                             // If we need a immediate fade out and already have a delayed fade out cancel that one and create an immediate one.
                             this._leftArrowWaitingToFadeOut && this._leftArrowWaitingToFadeOut.cancel();
@@ -1258,7 +1258,7 @@
                         this._rightArrowFadeIn = this._rightArrowFadeIn || WinJS.UI.Animation.fadeIn(this._rightArrowEl);
                     } else {
                         if (hasRightContent) {
-                            this._rightArrowWaitingToFadeOut = this._rightArrowWaitingToFadeOut || WinJS.Promise.timeout(buttonFadeDelay);
+                            this._rightArrowWaitingToFadeOut = this._rightArrowWaitingToFadeOut || WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay));
                         } else {
                             this._rightArrowWaitingToFadeOut && this._rightArrowWaitingToFadeOut.cancel();
                             this._rightArrowWaitingToFadeOut = WinJS.Promise.wrap();

@@ -51,3 +51,10 @@ var AnimationCollection = {
         { "name": "Peek", "duration": 2000, "hasStagger": false, "animationCheckPoint": 1000 }
     ]
 };
+
+AnimationCollection.Animations = AnimationCollection.Animations.map(function (animation) {
+    animation.duration = WinJS.UI._animationTimeAdjustment(animation.duration);
+    animation.delay = WinJS.UI._animationTimeAdjustment(animation.delay);
+    animation.delayCap = WinJS.UI._animationTimeAdjustment(animation.delayCap);
+    return animation;
+});

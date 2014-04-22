@@ -232,7 +232,7 @@ WinJSTests.FlipViewNavigationTests = function () {
                 flipView.currentPage = 3;
                 flipView.element.textContent = null;
                 //Ensure that we don't get a JS exception when the animation completes
-                setTimeout(complete, 1000);
+                setTimeout(complete, WinJS.UI._animationTimeAdjustment(1000));
             });
     }
 

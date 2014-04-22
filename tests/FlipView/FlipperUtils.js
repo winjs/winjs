@@ -11,11 +11,11 @@
 // flipperUtilsObject is used to dereference methods when in callback functions.
 var flipperUtilsObject;
 
-// Time to wait before any navigation should have completed (animations take 200ms by default).
-var NAVIGATION_TIMEOUT = 3000;
-
 // Time to wait if using custom animation that is instant.
 var NAVIGATION_QUICK_TIMEOUT = 500;
+
+// Time to wait before any navigation should have completed (animations take 200ms by default).
+var NAVIGATION_TIMEOUT = Math.min(NAVIGATION_QUICK_TIMEOUT, WinJS.UI._animationTimeAdjustment(3000));
 
 function FlipperUtils() {
     flipperUtilsObject = this;

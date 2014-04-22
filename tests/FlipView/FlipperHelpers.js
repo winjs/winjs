@@ -280,7 +280,7 @@ function runFlipViewTests(flipView, tests, usePageCompletedEvent) {
         runNextTest();
     }
 
-    WinJS.Promise.timeout(500).then(function() {
+    WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500)).then(function() {
         flipView.addEventListener(usePageCompletedEvent ? "pagecompleted" : "pageselected", pageEventHandler, false);
         runNextTest();
     });

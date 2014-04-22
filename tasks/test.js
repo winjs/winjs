@@ -200,7 +200,7 @@
                     fs.mkdirSync(testFolder);
                 }
                 fs.writeFileSync(testFolder + "/test.html", html);
-            tests += '      <li><a href="' + dir + '/test.html" target="_blank">' + dir + " tests</a></li>\r\n";
+            tests += '      <li><a href="' + dir + '/test.html?unittesting" target="_blank">' + dir + " tests</a></li>\r\n";
             });
             tests = tests.substr(0, tests.length - 2);
             fs.writeFileSync("./bin/tests/tests.html", testMenuTemplate.replace("@@TESTS", tests));

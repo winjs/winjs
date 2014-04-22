@@ -918,7 +918,7 @@ WinJSTests.ListEditorTest = function () {
                         return testFunction(listView, list);
                     }).
                     then(function () {
-                        return WinJS.Promise.timeout(500);
+                        return WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500));
                     }).
                     then(validateUnhandledErrorsOnIdle).
                     done(complete);
@@ -1194,7 +1194,7 @@ WinJSTests.ListEditorTest = function () {
             then(function () {
                 return WinJS.Utilities.Scheduler.requestDrain(WinJS.Utilities.Scheduler.Priority.idle);
             }).then(function () {
-                return WinJS.Promise.timeout(500);
+                return WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500));
             }).then(validateUnhandledErrorsOnIdle).               
             done(function () {
                 WinJS.Utilities.disposeSubTree(testElement);

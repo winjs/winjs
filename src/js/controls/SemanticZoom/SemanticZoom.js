@@ -26,6 +26,10 @@
                 get invalidZoomFactor() { return WinJS.Resources._getWinJSString("ui/invalidZoomFactor").value; },
             };
 
+            function identity(item) {
+                return item;
+            }
+
             // Private statics
 
             var sezoButtonClass = "win-semanticzoom-button";
@@ -62,7 +66,7 @@
             var transitionScriptName = browserStyleEquivalents["transition"].scriptName;
 
             function buildTransition(prop, duration, timing) {
-                return prop + " " + duration + "s " + timing + " " + WinJS.UI._libraryDelay + "ms";
+                return prop + " " + WinJS.UI._animationTimeAdjustment(duration) + "s " + timing + " " + WinJS.UI._libraryDelay + "ms";
             }
             function outgoingElementTransition() {
                 return buildTransition(transformNames.cssName, outgoingScaleTransitionDuration, "ease-in-out") + ", " +
@@ -80,10 +84,6 @@
 
             function bounceBackTransition() {
                 return buildTransition(transformNames.cssName, bounceBackDuration, easeOutBezier);
-            }
-
-            function identity(item) {
-                return item;
             }
 
             var pinchDistanceCount = 2;
@@ -641,7 +641,7 @@
                     var that = this;
                     this._dismissButtonTimer = setTimeout(function () {
                         that._hideSemanticZoomButton();
-                    }, sezoButtonShowDuration);
+                    }, WinJS.UI._animationTimeAdjustment(sezoButtonShowDuration));
                 },
 
                 _showSemanticZoomButton: function () {
@@ -1186,7 +1186,7 @@
                         this._canvasOut.style[transformNames.scriptName] = "";
                         this._completeZoom();
                     } else if (!customViewAnimationPromise) {
-                        this.setTimeoutAfterTTFF(this._onZoomAnimationComplete.bind(this), zoomAnimationDuration);
+                        this.setTimeoutAfterTTFF(this._onZoomAnimationComplete.bind(this), WinJS.UI._animationTimeAdjustment(zoomAnimationDuration));
                     } else {
                         var that = this;
                         var onComplete = function onComplete() {
@@ -1295,7 +1295,7 @@
                     if (this._zoomInProgress || this._isBouncing) {
                         that._completeZoomTimer = setTimeout(function () {
                             that._completeZoom();
-                        }, zoomAnimationTimeout);
+                        }, WinJS.UI._animationTimeAdjustment(zoomAnimationTimeout));
                     }
                 },
 
@@ -1488,7 +1488,7 @@
 
                     scaleElement(targetElement, scale);
 
-                    this.setTimeoutAfterTTFF(this._onBounceAnimationComplete.bind(this), zoomAnimationDuration);
+                    this.setTimeoutAfterTTFF(this._onBounceAnimationComplete.bind(this), WinJS.UI._animationTimeAdjustment(zoomAnimationDuration));
                 },
 
                 _rtl: function () {

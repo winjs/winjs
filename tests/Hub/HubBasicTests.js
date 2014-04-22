@@ -43,7 +43,7 @@ HubTests.BasicTests = function () {
     function InitTest(testHost, config) {
         var control = testHost.querySelector(".win-hub").winControl;
         LiveUnit.LoggingCore.logComment("Waiting for control...");
-        return WinJS.Promise.timeout(500).then(function () {
+        return WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500)).then(function () {
             LiveUnit.LoggingCore.logComment("Verifying...");
 
             HubUtils.verifyOrientation(control, config.orientation);
@@ -413,7 +413,7 @@ HubTests.BasicTests = function () {
         return HubUtils.waitForReady(control)().
             then(function () {
                 control.sections.length = 0;
-                return WinJS.Promise.timeout(3000);
+                return WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(3000));
             }).
             then(function () {
                 LiveUnit.Assert.areEqual(0, document.body.querySelectorAll('progress').length, "Expecting no progress indicators in DOM");
