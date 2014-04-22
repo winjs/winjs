@@ -47,7 +47,7 @@ var Tests = Tests || {};
                 return WinJS.Promise.as(p).then(function () {
                     return WinJS.Promise.as(work()).then(function () { return WinJS.Promise.timeout(); });
                 });
-            });
+            }, WinJS.Promise.as());
         }
 
         var seed = 0;
