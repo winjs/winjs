@@ -3,13 +3,14 @@
 (function () {
     var qUnitGlobalErrorHandler = window.onerror;
 
+    var testTimeout = 30000;
     var testFailed = false;
     var testError = "";
     var verboseLog = "";
     var log = [];
 
     QUnit.config.autostart = false;
-    QUnit.config.testTimeout = 30000;
+    QUnit.config.testTimeout = testTimeout;
     QUnit.config.hidepassed = true;
     QUnit.breakOnAssertFail = false;
 
@@ -33,6 +34,16 @@
             };
             var span = document.createElement("span");
             span.innerHTML = "Break on Assert fail";
+            toolBar.appendChild(cb);
+            toolBar.appendChild(span);
+
+            cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.onchange = function () {
+                QUnit.config.testTimeout = cb.checked ? undefined : testTimeout;
+            };
+            var span = document.createElement("span");
+            span.innerHTML = "Disable test timeout";
             toolBar.appendChild(cb);
             toolBar.appendChild(span);
 
