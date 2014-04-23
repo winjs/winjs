@@ -3,7 +3,7 @@
 (function () {
     var qUnitGlobalErrorHandler = window.onerror;
 
-    var testTimeout = 30000;
+    var testTimeout = 15000;
     var hasRun = false;
     var testFailed = false;
     var testError = "";
