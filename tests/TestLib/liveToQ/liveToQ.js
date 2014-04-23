@@ -29,22 +29,29 @@
             }
 
             var cb = document.createElement("input");
+            cb.id = "breakOnAssertFail";
             cb.type = "checkbox";
-            cb.onchange = function () {
-                QUnit.breakOnAssertFail = cb.checked;
-            };
+            cb.checked = (QUnit.urlParams.breakonassertfail === "true" || QUnit.urlParams.breakonassertfail === true);
             var span = document.createElement("span");
             span.innerHTML = "Break on Assert fail";
             toolBar.appendChild(cb);
             toolBar.appendChild(span);
 
             cb = document.createElement("input");
+            cb.id = "disableTestTimeout";
             cb.type = "checkbox";
-            cb.onchange = function () {
-                QUnit.config.testTimeout = cb.checked ? undefined : testTimeout;
-            };
+            cb.checked = (QUnit.urlParams.disabletesttimeout === "true" || QUnit.urlParams.disabletesttimeout === true);
             var span = document.createElement("span");
             span.innerHTML = "Disable test timeout";
+            toolBar.appendChild(cb);
+            toolBar.appendChild(span);
+
+            cb = document.createElement("input");
+            cb.id = "fastAnimations";
+            cb.type = "checkbox";
+            cb.checked = (QUnit.urlParams.fastanimations === "true" || QUnit.urlParams.fastanimations === true);
+            var span = document.createElement("span");
+            span.innerHTML = "Fast Animations";
             toolBar.appendChild(cb);
             toolBar.appendChild(span);
 
@@ -54,29 +61,36 @@
             btn.innerHTML = "Start";
             btn.onclick = function () {
                 if (!hasRun) {
-                    QUnit.start();
-                    hasRun = true;
+                    start();
                 } else {
-                    if (QUnit.urlParams.autostart === "true" || QUnit.urlParams.autostart === true) {
-                        window.location = window.location;
-                    } else {
-                        var qs = (window.location.search.indexOf("?") >= 0) ? "&" : "?";
-                        window.location = window.location.href + qs + "autostart=true";
+                    var qs = "?autostart=true";
+                    qs += "&breakonassertfail=" + document.querySelector("#breakOnAssertFail").checked;
+                    qs += "&disabletesttimeout=" + document.querySelector("#disableTestTimeout").checked;
+                    qs += "&fastanimations=" + document.querySelector("#fastAnimations").checked;
+                    if (QUnit.urlParams.module) {
+                        qs += "&module=" + QUnit.urlParams.module;
                     }
+                    if (QUnit.urlParams.testNumber) {
+                        qs += "&testNumber=" + QUnit.urlParams.testNumber;
+                    }
+                    window.location = window.location.protocol + "//" + window.location.host + window.location.pathname + qs;
                 }
             };
             toolBar.appendChild(btn);
 
             if (QUnit.urlParams.autostart === "true" || QUnit.urlParams.autostart === true) {
-                QUnit.start();
-                hasRun = true;
+                start();
             }
         }
         addOptions();
     });
 
-    if (QUnit.urlParams.fastanimations === "true" || QUnit.urlParams.fastanimations === true) {
-        WinJS.Utilities._fastAnimations = true;
+    function start() {
+        hasRun = true;
+        WinJS.Utilities._fastAnimations = document.querySelector("#fastAnimations").checked;
+        QUnit.breakOnAssertFail = document.querySelector("#breakOnAssertFail").checked;
+        QUnit.config.testTimeout = document.querySelector("#disableTestTimeout").checked ? undefined : testTimeout;
+        QUnit.start();
     }
 
     function completeTest() {
