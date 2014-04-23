@@ -712,7 +712,13 @@ RatingUtils.prototype = (function () {
 
             // Make sure the styles for the overall control are set correctly
             var ratingControlStyle = window.getComputedStyle(element);
-            LiveUnit.Assert.areEqual("inline-flex", ratingControlStyle.getPropertyValue("display"), "Overall element should be a flex box");
+
+            // Some browsers have different expected display values
+            var expectedFlexStyle = "inline-flex";
+            if (navigator.appVersion.indexOf("MSIE 10") >= 0)
+                expectedFlexStyle = "-ms-inline-flexbox";
+
+            LiveUnit.Assert.areEqual(expectedFlexStyle, ratingControlStyle.getPropertyValue("display"), "Overall element should be a flex box");
             LiveUnit.Assert.areEqual("auto", ratingControlStyle.getPropertyValue("-ms-touch-action"), "Rating control should not block panning at its root element.");
 
             // Walk through the divs, verifying the proper number of star divs in the proper ratio of userRating/averageRating full stars followed by empty stars up to maxRating
