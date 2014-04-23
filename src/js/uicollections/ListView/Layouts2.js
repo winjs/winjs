@@ -182,7 +182,7 @@
             var flexRoot = document.createElement("div");
             flexRoot.style.cssText += "width: 500px; height: 200px; display: -webkit-flex; display: flex";
             flexRoot.innerHTML =
-                "<div style='height: 100%; display: -webkit-flex; display: flex; flex-flow: column wrap; align-content: flex-start'>" +
+                "<div style='height: 100%; display: -webkit-flex; display: flex; flex-flow: column wrap; align-content: flex-start; -webkit-flex-flow: column wrap; -webkit-align-content: flex-start'>" +
                     "<div style='width: 100px; height: 100px'></div>" +
                     "<div style='width: 100px; height: 100px'></div>" +
                     "<div style='width: 100px; height: 100px'></div>" +
