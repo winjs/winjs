@@ -841,7 +841,7 @@ CorsicaTests.Scheduler = function () {
 
             LiveUnit.Assert.isTrue(info.shouldYield);
             // exhaust its time slice so that it would yield to platform
-            repeatForDuration(S._TIME_SLICE);
+            repeatForDuration(S._TIME_SLICE + 1);
         }, S.Priority.high);
 
         S.schedule(function (info) {
