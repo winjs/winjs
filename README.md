@@ -36,17 +36,17 @@ cd winjs
 
 Install the [grunt command-line interface](https://github.com/gruntjs/grunt-cli) globally:
 ```
-npm install -g grunt-cli
+$ [sudo] npm install -g grunt-cli
 ```
 
 Grunt dependencies are installed separately in each cloned git repo. Install the dependencies with:
 ```
-npm install
+$ npm install
 ```
 
 Run the following and the WinJS JavaScript and CSS files will be put in the `bin` directory:
 ```
-grunt
+$ grunt
 ```
 
 # Try WinJS
