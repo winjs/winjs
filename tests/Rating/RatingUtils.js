@@ -714,11 +714,11 @@ RatingUtils.prototype = (function () {
             var ratingControlStyle = window.getComputedStyle(element);
 
             // Some browsers have different expected display values
-            var expectedFlexStyle = "inline-flex";
+            var expectedFlexDisplayValue = "inline-flex";
             if (navigator.appVersion.indexOf("MSIE 10") >= 0)
-                expectedFlexStyle = "-ms-inline-flexbox";
+                expectedFlexDisplayValue = "-ms-inline-flexbox";
 
-            LiveUnit.Assert.areEqual(expectedFlexStyle, ratingControlStyle.getPropertyValue("display"), "Overall element should be a flex box");
+            LiveUnit.Assert.areEqual(expectedFlexDisplayValue, ratingControlStyle.getPropertyValue("display"), "Overall element should be a flex box");
             LiveUnit.Assert.areEqual("auto", ratingControlStyle.getPropertyValue("-ms-touch-action"), "Rating control should not block panning at its root element.");
 
             // Walk through the divs, verifying the proper number of star divs in the proper ratio of userRating/averageRating full stars followed by empty stars up to maxRating
@@ -918,9 +918,7 @@ RatingUtils.prototype = (function () {
                     Helper.Assert.areColorsEqual(expectedColor, starBeforePartStyle.getPropertyValue("color"),
                         "Verify correct color used for star " + (i + 1) + " in " + this.currentTheme + " theme.");
 
-                    LiveUnit.Assert.areEqual("1", starStyle.flexGrow, "Verify star " + (i + 1) + " has flex-grow: 1;");
-                    LiveUnit.Assert.areEqual("1", starStyle.flexShrink, "Verify star " + (i + 1) + " has flex-shrink: 1;");
-                    LiveUnit.Assert.areEqual("auto", starStyle.flexBasis, "Verify star " + (i + 1) + " has flex-basic: auto;");
+                    LiveUnit.Assert.areEqual("1 1 auto", starStyle.flex, "Verify star " + (i + 1) + " has flex: 1;");
                 }
 
                 overallWidth += rectStar.width;
