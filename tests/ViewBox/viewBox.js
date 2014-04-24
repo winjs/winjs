@@ -4,6 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 
 var CorsicaTests = CorsicaTests || {};
 
@@ -15,6 +16,14 @@ CorsicaTests.ViewBox = function () {
         } catch (ex) {
             // don't rethrow assertion failure exception
         }
+    }
+
+    var canElementResize = null;
+    this.setUp = function(completed) {
+        CommonUtilities.detectMsElementResize(function(canResize) {
+            canElementResize = canResize;
+            completed();
+        });
     }
 
     // note: the .win-viewbox style comes from ui-dark.css or ui-light.css 
@@ -35,6 +44,10 @@ CorsicaTests.ViewBox = function () {
             LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
             
             container.style.height = "300px";
+
+            if(!canElementResize) {
+                WinJS.Utilities._resizeNotifier._handleResize();
+            }
             
             WinJS.Promise.timeout(16).then(function() {
                 LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
@@ -63,6 +76,10 @@ CorsicaTests.ViewBox = function () {
             LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
             
             container.style.height = "300px";
+
+            if(!canElementResize) {
+                WinJS.Utilities._resizeNotifier._handleResize();
+            }
             
             WinJS.Promise.timeout(16).then(function() {
                 LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
@@ -235,12 +252,19 @@ CorsicaTests.ViewBox = function () {
                     var sizer = container.querySelector(".sizer");
                     LiveUnit.Assert.areEqual("", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
                     document.body.appendChild(container);
+                    if(!canElementResize) {
+                        WinJS.Utilities._resizeNotifier._handleResize();
+                    }
                     return WinJS.Promise.timeout();
                 }).
                 then(function () {
                     var sizer = container.querySelector(".sizer");
                     LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
+                    
                     container.style.height = "300px";
+                    if(!canElementResize) {
+                        WinJS.Utilities._resizeNotifier._handleResize();
+                    }
                 }).
                 then(function () {
                     return WinJS.Promise.timeout(16);

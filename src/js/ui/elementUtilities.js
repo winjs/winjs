@@ -409,7 +409,39 @@
     );
 
     var _MutationObserver = global.MutationObserver || MutationObserverShim;
-        
+
+    // Lazily init singleton on first access.
+    var _resizeNotifier = null;
+
+    // Class to provide a global listener for window.onresize events.
+    // This keeps individual elements from having to listen to window.onresize
+    // and having to dispose themselves to avoid leaks.
+    var ResizeNotifier = WinJS.Class.define(
+        function ElementResizer_ctor() {
+            global.addEventListener("resize", this._handleResize.bind(this));
+        },
+        {
+            subscribe: function ElementResizer_subscribe(element, handler) {
+                element.addEventListener(this._resizeEvent, handler);
+                WinJS.Utilities.addClass(element, this._resizeClass);
+            },
+            unsubscribe: function ElementResizer_unsubscribe(element, handler) {
+                WinJS.Utilities.removeClass(element, this._resizeClass);
+                element.removeEventListener(this._resizeEvent, handler);
+            },
+            _handleResize: function ElementResizer_handleResize() {
+                var resizables = document.querySelectorAll('.' + this._resizeClass);
+                var length = resizables.length;
+                for(var i = 0; i < length; i++) {
+                    var event = document.createEvent("Event");
+                    event.initEvent(this._resizeEvent, false, true);
+                    resizables[i].dispatchEvent(event);
+                }
+            },
+            _resizeClass: { get: function() { return 'win-element-resize' }},
+            _resizeEvent: { get: function() { return 'WinJSElementResize' }}
+        }
+    );
 
     var uniqueElementIDCounter = 0;
     WinJS.Namespace.define("WinJS.Utilities", {
@@ -527,6 +559,15 @@
         },
 
         _MutationObserver : _MutationObserver,
+
+        _resizeNotifier : { 
+            get: function() {
+                if(!_resizeNotifier) {
+                    _resizeNotifier = new ResizeNotifier();
+                }
+                return _resizeNotifier;
+            }
+        },
 
         /// <field locid="WinJS.Utilities.Key" helpKeyword="WinJS.Utilities.Key">
         /// Defines a set of keyboard values.

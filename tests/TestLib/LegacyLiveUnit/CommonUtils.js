@@ -13,8 +13,9 @@ function CommonUtils() {
 
 CommonUtils.prototype = (function () {
 
+    var canElementResize = null;
+
     // Public methods
-    // Please keep these in alphabetical order.
     // Please refrain from adding any LiveUnit.Assert's in this class.
     return {
         addCss: function CommonUtils_addCss(cssFileName, local) {
@@ -1017,6 +1018,53 @@ CommonUtils.prototype = (function () {
                 }
                 if (action) { action(); }
             });
+        },
+
+
+        // Only IE supports mselementresize and IE10+ supports requestAnimationFrame.
+        // Android Web Browser on Jellybean supports neither.
+        detectMsElementResize: function(completed) {
+
+            // don't do feature detection twice
+            if(canElementResize !== null) {
+                return completed(canElementResize);
+            }
+
+            if(!window.requestAnimationFrame) {
+                canElementResize = false;
+                return completed(canElementResize);
+            }
+
+            function resizeCallback() {
+                canElementResize = true;
+                cleanup();
+            }
+
+            function detectCallback() {
+                canElementResize = false;
+                cleanup();
+            }
+
+            var detector = document.createElement("div");
+            detector.style.visibility = 'hidden';
+            detector.addEventListener("mselementresize", resizeCallback);
+            detector.addEventListener("detectresize", detectCallback);
+            document.body.appendChild(detector);
+            detector.style.height = "1px";
+            window.requestAnimationFrame(function() {
+                var event = document.createEvent("Event");
+                event.initEvent("detectresize", false, true);
+                detector.dispatchEvent(event);
+            });
+            
+
+            function cleanup() {
+                document.body.removeChild(detector);
+                detector.removeEventListener("mselementresize", resizeCallback);
+                detector.removeEventListener("detectresize", detectCallback);
+
+                completed(canElementResize);
+            }
         }
     };
 })();

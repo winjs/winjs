@@ -100,7 +100,9 @@
                         var sizer = box.firstElementChild;
                         this._sizer = sizer;
                         if (sizer) {
+                            WinJS.Utilities._resizeNotifier.subscribe(box, onresizeBox);
                             box.addEventListener("mselementresize", onresizeBox);
+                            WinJS.Utilities._resizeNotifier.subscribe(sizer, onresizeSizer);
                             sizer.addEventListener("mselementresize", onresizeSizer);
                         }
                         if (box.clientWidth === 0 && box.clientHeight === 0) {
@@ -140,6 +142,13 @@
                     /// </signature>
                     if (this._disposed) {
                         return;
+                    }
+
+                    if(this.element) {
+                        WinJS.Utilities._resizeNotifier.unsubscribe(this.element);
+                    }
+                    if (this._sizer) {
+                        WinJS.Utilities._resizeNotifier.unsubscribe(this._sizer);
                     }
 
                     this._disposed = true;
