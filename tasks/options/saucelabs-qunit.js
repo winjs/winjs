@@ -24,11 +24,11 @@
         all: {
             options: {
                 urls: [
-                    "http://127.0.0.1:9999/bin/tests/Navigation/test.html?fastanimations=true&autostart=true&testtimeout=50000", 
-                    "http://127.0.0.1:9999/bin/tests/PageControl/test.html?fastanimations=true&autostart=true&testtimeout=50000",
-                    "http://127.0.0.1:9999/bin/tests/Promise/test.html?fastanimations=true&autostart=true&testtimeout=50000",
-                    "http://127.0.0.1:9999/bin/tests/TimePicker/test.html?fastanimations=true&autostart=true&testtimeout=50000",
-                    "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?fastanimations=true&autostart=true&testtimeout=50000",
+                    "http://127.0.0.1:9999/bin/tests/Navigation/test.html?fastanimations=true&autostart=true&testtimeout=100000", 
+                    "http://127.0.0.1:9999/bin/tests/PageControl/test.html?fastanimations=true&autostart=true&testtimeout=100000",
+                    "http://127.0.0.1:9999/bin/tests/Promise/test.html?fastanimations=true&autostart=true&testtimeout=100000",
+                    "http://127.0.0.1:9999/bin/tests/TimePicker/test.html?fastanimations=true&autostart=true&testtimeout=100000",
+                    "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?fastanimations=true&autostart=true&testtimeout=100000",
                 ],
                 build: process.env.TRAVIS_JOB_ID,
                 testInterval: 1000,
