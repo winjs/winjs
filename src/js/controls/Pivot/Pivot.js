@@ -563,9 +563,8 @@
 
                             var lastHeader = this._headersContainerElement.children[numberOfHeadersToRender - 1];
                             lastHeader.style.opacity = start;
-                            // @TODO, add unit testing hook for animation performance
                             var lastHeaderFadeInDuration = 0.167;
-                            lastHeader.style[WinJS.Utilities._browserStyleEquivalents["transition"].scriptName] = "opacity " + WinJS.UI._animationTimeAdjustment(time) + "s";
+                            lastHeader.style[WinJS.Utilities._browserStyleEquivalents["transition"].scriptName] = "opacity " + WinJS.UI._animationTimeAdjustment(lastHeaderFadeInDuration) + "s";
                             getComputedStyle(lastHeader).opacity;
                             lastHeader.style.opacity = end;
                         }
