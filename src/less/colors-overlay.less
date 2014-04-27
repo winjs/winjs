@@ -9,7 +9,7 @@
         .win-commandimage {
             color: rgb(255, 255, 255);
         }
-        button:hover:active .win-commandimage {
+        button:enabled:hover:active .win-commandimage {
             color: rgb(0, 0, 0);
         }
         button:-ms-keyboard-active .win-commandimage {
@@ -24,11 +24,11 @@
             color: rgb(0, 0, 0);
         }
 
-        button[aria-checked=true]:hover .win-commandimage {
+        button[aria-checked=true]:enabled:hover .win-commandimage {
             color: rgb(0, 0, 0);
         }
 
-        button[aria-checked=true]:hover:active .win-commandimage {
+        button[aria-checked=true]:enabled:hover:active .win-commandimage {
             color: rgb(255, 255, 255);
         }
         button[aria-checked=true]:-ms-keyboard-active .win-commandimage {
@@ -45,11 +45,11 @@
             background-color: transparent;
             border-color: rgb(255, 255, 255);
         }
-        button:hover .win-commandring {
+        button:enabled:hover .win-commandring {
             background-color: rgba(255, 255, 255, 0.13);
             border-color: rgb(255, 255, 255);
         }
-        button:hover:active .win-commandring {
+        button:enabled:hover:active .win-commandring {
             background-color: rgb(255, 255, 255);
             border-color: rgb(255, 255, 255);
         }
@@ -67,11 +67,11 @@
             background-color: rgb(255, 255, 255);
             border-color: rgb(255, 255, 255);
         }
-        button[aria-checked=true]:hover .win-commandring {
+        button[aria-checked=true]:enabled:hover .win-commandring {
             background-color: rgb(222, 222, 222);
             border-color: rgb(222, 222, 222);
         }
-        button[aria-checked=true]:hover:active .win-commandring {
+        button[aria-checked=true]:enabled:hover:active .win-commandring {
             background-color: transparent;
             border-color: rgb(255, 255, 255);
         }
@@ -118,7 +118,7 @@
         &.win-menu button:active, .win-menu button:active {
             background-color: rgb(222, 222, 222);
         }
-        &.win-menu button:hover:active, .win-menu button:hover:active {
+        &.win-menu button:enabled:hover:active, .win-menu button:enabled:hover:active {
             color: rgb(0, 0, 0);
             background-color: rgb(255, 255, 255);
         }
@@ -164,7 +164,7 @@
         .win-commandimage {
             color: rgb(0, 0, 0);
         }
-        button:hover:active .win-commandimage {
+        button:enabled:hover:active .win-commandimage {
             color: rgb(255, 255, 255);
         }
         button:-ms-keyboard-active .win-commandimage {
@@ -178,10 +178,10 @@
         button[aria-checked=true]:active .win-commandimage {
             color: rgb(255, 255, 255);
         }
-        button[aria-checked=true]:hover .win-commandimage {
+        button[aria-checked=true]:enabled:hover .win-commandimage {
             color: rgb(255, 255, 255);
         }
-        button[aria-checked=true]:hover:active .win-commandimage {
+        button[aria-checked=true]:enabled:hover:active .win-commandimage {
             color: rgb(0, 0, 0);
         }
         button[aria-checked=true]:-ms-keyboard-active .win-commandimage {
@@ -199,11 +199,11 @@
             background-color: transparent;
             border-color: rgb(0, 0, 0);
         }
-        button:hover .win-commandring {
+        button:enabled:hover .win-commandring {
             background-color: rgba(0, 0, 0, 0.13);
             border-color: rgb(0, 0, 0);
         }
-        button:hover:active .win-commandring {
+        button:enabled:hover:active .win-commandring {
             background-color: rgb(0, 0, 0);
             border-color: rgb(0, 0, 0);
         }
@@ -221,11 +221,11 @@
             background-color: rgb(0, 0, 0);
             border-color: rgb(0, 0, 0);
         }
-        button[aria-checked=true]:hover .win-commandring {
+        button[aria-checked=true]:enabled:hover .win-commandring {
             background-color: rgb(33, 33, 33);
             border-color: rgb(33, 33, 33);
         }
-        button[aria-checked=true]:hover:active .win-commandring {
+        button[aria-checked=true]:enabled:hover:active .win-commandring {
             background-color: transparent;
             border-color: rgb(0, 0, 0);
         }
@@ -274,7 +274,7 @@
         &.win-menu button:active, .win-menu button:active {
             background-color: rgb(222, 222, 222);
         }
-        &.win-menu button:hover:active, .win-menu button:hover:active {
+        &.win-menu button:enabled:hover:active, .win-menu button:enabled:hover:active {
             color: rgb(255, 255, 255);
             background-color: rgb(0, 0, 0);
         }
@@ -305,7 +305,7 @@ button.win-command, div.win-command {
     background-color: transparent;
     border-color:  transparent;
 }
-button.win-command:hover, div.win-command:hover {
+button.win-command:enabled:hover, div.win-command:enabled:hover {
     background-color: transparent;
     border-color:  transparent;
 }
@@ -313,7 +313,7 @@ button.win-command:active, div.win-command:active {
     background-color: transparent;
     color: inherit;
 }
-button.win-command:hover:active, div.win-command:hover:active {
+button.win-command:enabled:hover:active, div.win-command:enabled:hover:active {
     background-color: transparent;
     color: inherit;
 }
@@ -357,10 +357,10 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
     */
     button.win-command,
     button.win-command:active,
-    button.win-command:hover:active,
+    button.win-command:enabled:hover:active,
     div.win-command,
     div.win-command:active,
-    div.win-command:hover:active {
+    div.win-command:enabled:hover:active {
         background-color: transparent;
         border-color: transparent;
     }
@@ -396,10 +396,10 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         color: ButtonText;
     }
     button:active .win-commandimage,
-    button:hover:active .win-commandimage {
+    button:enabled:hover:active .win-commandimage {
         color: ButtonFace;
     }
-    button:hover .win-commandimage {
+    button:enabled:hover .win-commandimage {
         color: HighlightText;
     }
     button:disabled .win-commandimage,
@@ -410,10 +410,10 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         color: ButtonFace;
     }
     button[aria-checked=true]:active .win-commandimage,
-    button[aria-checked=true]:hover:active .win-commandimage {
+    button[aria-checked=true]:enabled:hover:active .win-commandimage {
         color: ButtonText;
     }
-    button[aria-checked=true]:hover .win-commandimage {
+    button[aria-checked=true]:enabled:hover .win-commandimage {
         color: HighlightText;
     }
     button[aria-checked=true]:disabled .win-commandimage,
@@ -429,11 +429,11 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         border-color: ButtonText;
     }
     button:active .win-commandring,
-    button:hover:active .win-commandring {
+    button:enabled:hover:active .win-commandring {
         background-color: ButtonText;
         border-color: ButtonText;
     }
-    button:hover .win-commandring {
+    button:enabled:hover .win-commandring {
         background-color: Highlight;
         border-color: ButtonText;
     }
@@ -447,11 +447,11 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         border-color: ButtonText;
     }
     button[aria-checked=true]:active .win-commandring,
-    button[aria-checked=true]:hover:active .win-commandring {
+    button[aria-checked=true]:enabled:hover:active .win-commandring {
         background-color: ButtonFace;
         border-color: ButtonText;
     }
-    button[aria-checked=true]:hover .win-commandring {
+    button[aria-checked=true]:enabled:hover .win-commandring {
         background-color: Highlight;
         border-color: ButtonText;
     }
@@ -480,7 +480,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         background-color: Highlight;
         color: HighlightText;
     }
-    .win-menu button.win-command:hover:active {
+    .win-menu button.win-command:enabled:hover:active {
         background-color: ButtonText;
         color: ButtonFace;
     }

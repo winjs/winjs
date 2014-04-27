@@ -411,7 +411,11 @@
 
                     var resetOnFragmentChange = options.resetOnFragmentChange || (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled);
                     if (resetOnFragmentChange) {
-                        var mo = new MutationObserver(function () {
+                        // For platforms that don't support MutationObserver the shim
+                        // currently will never fire. This is OK because only MutationObserver
+                        // can monitor DocFragments and this feature is only for
+                        // assisting authoring tools.
+                        var mo = new WinJS.Utilities._MutationObserver(function () {
                             that._reset();
                             mo.disconnect();
                         });

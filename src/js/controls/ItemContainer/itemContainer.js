@@ -86,7 +86,7 @@
 
                 WinJS.UI.setOptions(this, options);
 
-                this._mutationObserver = new MutationObserver(this._itemPropertyChange.bind(this));
+                this._mutationObserver = new WinJS.Utilities._MutationObserver(this._itemPropertyChange.bind(this));
                 this._mutationObserver.observe(element, { attributes: true, attributeFilter: ["aria-selected"] });
                 this._setAriaRole();
 

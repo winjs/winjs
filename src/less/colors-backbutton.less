@@ -2,7 +2,7 @@
 .Colors(@theme) {
     .mixin(dark) {
         .win-navigation-backbutton, .win-navigation-backbutton:active,
-        .win-navigation-backbutton:hover, .win-navigation-backbutton:active:hover {
+        .win-navigation-backbutton:enabled:hover, .win-navigation-backbutton:enabled:hover:active {
             background-color: transparent;
         }
         .win-backbutton, .win-back {
@@ -10,13 +10,13 @@
             border-color: rgb(255, 255, 255);
             color: rgb(255, 255, 255);
         }
-        .win-backbutton:hover,
-        .win-navigation-backbutton:hover .win-back {
+        .win-backbutton:enabled:hover,
+        .win-navigation-backbutton:enabled:hover .win-back {
             background-color: rgba(255, 255, 255, 0.13);
             border-color: rgb(255, 255, 255);
         }
-        .win-backbutton:hover:active,
-        .win-navigation-backbutton:hover:active .win-back,
+        .win-backbutton:enabled:hover:active,
+        .win-navigation-backbutton:enabled:hover:active .win-back,
         .win-navigation-backbutton:active .win-back {
             background-color: rgb(255, 255, 255);
             border-color: rgb(255, 255, 255);
@@ -40,7 +40,7 @@
 
     .mixin(light) {
         .win-navigation-backbutton, .win-navigation-backbutton:active,
-        .win-navigation-backbutton:hover, .win-navigation-backbutton:active:hover
+        .win-navigation-backbutton:enabled:hover, .win-navigation-backbutton:enabled:hover:active
         {
             background-color: transparent;
         }
@@ -49,13 +49,13 @@
             border-color: rgb(0, 0, 0);
             color: rgb(0, 0, 0);
         }
-        .win-backbutton:hover,
-        .win-navigation-backbutton:hover .win-back {
+        .win-backbutton:enabled:hover,
+        .win-navigation-backbutton:enabled:hover .win-back {
             background-color: rgba(0, 0, 0, 0.13);
             border-color: rgb(0, 0, 0);
         }
-        .win-backbutton:hover:active,
-        .win-navigation-backbutton:hover:active .win-back {
+        .win-backbutton:enabled:hover:active,
+        .win-navigation-backbutton:enabled:hover:active .win-back {
             background-color: rgb(0, 0, 0);
             border-color: rgb(0, 0, 0);
             color: rgb(255, 255, 255);
@@ -81,7 +81,7 @@
 }
 
 button.win-navigation-backbutton, button.win-navigation-backbutton:active,
-button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:hover {
+button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton:enabled:hover:active {
     // Overwrite default background and border styles from HTML button element
     background-color: transparent;
     border: none;
@@ -89,7 +89,7 @@ button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:
 
 @media (-ms-high-contrast) {
     button.win-navigation-backbutton, button.win-navigation-backbutton:active,
-    button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:hover {
+    button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton:enabled:hover:active {
         /* Overwrite default background and border styles from BackButton control's <button> element */
         background-color: transparent;
         border: none;
@@ -100,8 +100,8 @@ button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:
         color: ButtonText;
     }
 
-    .win-backbutton:hover:active,
-    .win-navigation-backbutton:hover:active .win-back,
+    .win-backbutton:enabled:hover:active,
+    .win-navigation-backbutton:enabled:hover:active .win-back,
     .win-semanticzoom-button:hover:active {
         background-clip: border-box;
         background-color: ButtonText;
@@ -124,8 +124,8 @@ button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:
         color: ButtonFace;
     }
 
-    .win-backbutton:hover,
-    .win-navigation-backbutton:hover .win-back,
+    .win-backbutton:enabled:hover,
+    .win-navigation-backbutton:enabled:hover .win-back,
     .win-semanticzoom-button:hover {
         background-color: Highlight;
         border-color: ButtonText;

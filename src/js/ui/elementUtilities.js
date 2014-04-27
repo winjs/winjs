@@ -316,7 +316,100 @@
         customEvents.pointerover = pointerEventEntry;
         customEvents.pointerout = pointerEventEntry;
         customEvents.pointercancel = pointerEventEntry;
-    }    
+    }
+
+    // The MutationObserverShim only supports the following configuration:
+    //  attributes
+    //  attributeFilter
+    var MutationObserverShim = WinJS.Class.define(
+        function MutationObserverShim_ctor(callback) {
+            this._callback = callback;
+            this._toDispose = [];
+            this._attributeFilter = [];
+            this._scheduled = false;
+            this._pendingChanges = [];
+            this._observerCount = 0;
+            this._handleCallback = this._handleCallback.bind(this);
+            this._targetElements = [];
+        },
+        {
+            observe: function MutationObserverShim_observe(element, configuration) {
+                if(this._targetElements.indexOf(element) === -1) {
+                    this._targetElements.push(element);
+                }
+                this._observerCount++;
+                if(configuration.attributes) {
+                    this._addRemovableListener(element, "DOMAttrModified", this._handleCallback);
+                }
+                if(configuration.attributeFilter) {
+                    this._attributeFilter = configuration.attributeFilter;
+                }
+            },
+            disconnect: function MutationObserverShim_disconnect() {
+                this._observerCount = 0;
+                this._targetElements = [];
+                this._toDispose.forEach(function(disposeFunc) {
+                    disposeFunc();
+                });
+            },
+            _addRemovableListener: function MutationObserverShim_addRemovableListener(target, event, listener) {
+                target.addEventListener(event, listener);
+                this._toDispose.push(function() {
+                    target.removeEventListener(event, listener);
+                });
+            },
+            _handleCallback: function MutationObserverShim_handleCallback(evt) {
+
+                // prevent multiple events from firing when nesting observers
+                evt.stopPropagation();
+
+                if(this._attributeFilter.length && this._attributeFilter.indexOf(evt.attrName) === -1) {
+                    return;
+                }
+
+                // subtree:true is not currently supported
+                if(this._targetElements.indexOf(evt.target) === -1) {
+                    return;
+                }
+
+                var attrName = evt.attrName;
+
+                // DOM mutation events use different naming for this attribute
+                if(attrName === 'tabindex') {
+                    attrName = 'tabIndex';
+                }
+                
+                this._pendingChanges.push({
+                    type: 'attributes',
+                    target: evt.target,
+                    attributeName: attrName
+                });
+                
+                if(this._observerCount === 1) {
+                    this._dispatchEvent();
+                } else if(this._scheduled === false) {
+                    this._scheduled = true;
+                    WinJS.Utilities._setImmediate(this._dispatchEvent.bind(this));
+                }
+                
+            },
+            _dispatchEvent: function MutationObserverShim_dispatchEvent() {
+                try {
+                    this._callback(this._pendingChanges);
+                }
+                finally {
+                    this._pendingChanges = [];
+                    this._scheduled = false;
+                }
+            }
+        },
+        {
+            _isShim: true
+        }
+    );
+
+    var _MutationObserver = global.MutationObserver || MutationObserverShim;
+        
 
     var uniqueElementIDCounter = 0;
     WinJS.Namespace.define("WinJS.Utilities", {
@@ -432,6 +525,8 @@
             }
             return success;
         },
+
+        _MutationObserver : _MutationObserver,
 
         /// <field locid="WinJS.Utilities.Key" helpKeyword="WinJS.Utilities.Key">
         /// Defines a set of keyboard values.

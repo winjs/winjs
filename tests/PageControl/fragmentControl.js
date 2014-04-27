@@ -218,7 +218,7 @@ WinJSTests.FragmentControl = function () {
             LiveUnit.Assert.areEqual(4, d.children.length, "Missing expected child");
             
             // verify CSS was applied
-            return WinJS.Promise.timeout(100).then(function() {
+            return WinJS.Promise.timeout(500).then(function() {
                 Helper.Assert.areColorsEqual("rgb(255, 0, 0)", getComputedStyle(d.children[3]).backgroundColor, "Referenced style should have been applied and colored the generated element");
                 LiveUnit.Assert.areEqual("hit", d.children[3].textContent, "Loaded script should have run and updated the body for the generated element");
             }); 

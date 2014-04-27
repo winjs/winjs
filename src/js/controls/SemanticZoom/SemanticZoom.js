@@ -213,7 +213,7 @@
                 // Register event handlers
 
                 this._element.addEventListener("mselementresize", onSemanticZoomResize);
-                new MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
+                new WinJS.Utilities._MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
 
                 if (!isPhone) {
                     this._element.addEventListener("mousewheel", this._onMouseWheel.bind(this), true);

@@ -522,7 +522,7 @@
                             }
                         }
 
-                        new MutationObserver(ariaSelectedMutated).observe(headerContainerEl, { attributes: true, attributeFilter: ["aria-selected"] });
+                        new WinJS.Utilities._MutationObserver(ariaSelectedMutated).observe(headerContainerEl, { attributes: true, attributeFilter: ["aria-selected"] });
                     }
 
                     if (this._items.length === 1) {

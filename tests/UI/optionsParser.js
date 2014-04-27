@@ -17,8 +17,9 @@ var CorsicaTests = CorsicaTests || {};
         var notExistingString = "Unable to get property 'notExisting' of undefined or null reference";
         try {
             var value;
+            var index = "notExisting";
             // value will default to undefined which simulates the lack of context specified on a test
-            value.notExisting;
+            value[index];
         } catch (e) {
             notExistingString = e.message;
         }
@@ -238,7 +239,7 @@ var CorsicaTests = CorsicaTests || {};
         {
             input: "{ a: 'a\\\\'b' }",
             errornumber: -2146827273,
-            errorSubstrings: ['unterminated string literal', 'Unexpected token ILLEGAL']
+            errorSubstrings: ['unterminated string literal', 'Unexpected token ILLEGAL', 'Unexpected EOF' /*Safari*/]
         },
         {
             name: "hexDigits",

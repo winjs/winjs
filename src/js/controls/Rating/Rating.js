@@ -520,7 +520,7 @@
                         this._element.addEventListener(events[i].name, events[i].handler, false);
                     }
 
-                    this._ariaValueNowMutationObserver = new MutationObserver(this._ariaValueNowChanged.bind(this));
+                    this._ariaValueNowMutationObserver = new WinJS.Utilities._MutationObserver(this._ariaValueNowChanged.bind(this));
                     this._ariaValueNowMutationObserver.observe(this._element, { attributes: true, attributeFilter: ["aria-valuenow"] });
                 },
 

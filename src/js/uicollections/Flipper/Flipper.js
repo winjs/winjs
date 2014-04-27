@@ -630,7 +630,7 @@
                         that.next();
                     }, false);
 
-                    new MutationObserver(flipViewPropertyChanged).observe(this._flipviewDiv, { attributes: true, attributeFilter: ["dir", "style"] });
+                    new WinJS.Utilities._MutationObserver(flipViewPropertyChanged).observe(this._flipviewDiv, { attributes: true, attributeFilter: ["dir", "style"] });
                     this._cachedStyleDir = this._flipviewDiv.style.direction;
 
                     this._flipviewDiv.addEventListener("mselementresize", flipviewResized);

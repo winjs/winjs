@@ -3,13 +3,15 @@
 (function () {
     var qUnitGlobalErrorHandler = window.onerror;
 
+    var testTimeout = QUnit.urlParams.testtimeout ? QUnit.urlParams.testtimeout:  15000;
+    var hasRun = false;
     var testFailed = false;
     var testError = "";
     var verboseLog = "";
     var log = [];
 
     QUnit.config.autostart = false;
-    QUnit.config.testTimeout = 30000;
+    QUnit.config.testTimeout = testTimeout;
     QUnit.config.hidepassed = true;
     QUnit.breakOnAssertFail = false;
 
@@ -27,12 +29,29 @@
             }
 
             var cb = document.createElement("input");
+            cb.id = "breakOnAssertFail";
             cb.type = "checkbox";
-            cb.onchange = function () {
-                QUnit.breakOnAssertFail = cb.checked;
-            };
+            cb.checked = (QUnit.urlParams.breakonassertfail === "true" || QUnit.urlParams.breakonassertfail === true);
             var span = document.createElement("span");
             span.innerHTML = "Break on Assert fail";
+            toolBar.appendChild(cb);
+            toolBar.appendChild(span);
+
+            cb = document.createElement("input");
+            cb.id = "disableTestTimeout";
+            cb.type = "checkbox";
+            cb.checked = (QUnit.urlParams.disabletesttimeout === "true" || QUnit.urlParams.disabletesttimeout === true);
+            var span = document.createElement("span");
+            span.innerHTML = "Disable test timeout";
+            toolBar.appendChild(cb);
+            toolBar.appendChild(span);
+
+            cb = document.createElement("input");
+            cb.id = "fastAnimations";
+            cb.type = "checkbox";
+            cb.checked = (QUnit.urlParams.fastanimations === "true" || QUnit.urlParams.fastanimations === true);
+            var span = document.createElement("span");
+            span.innerHTML = "Fast Animations";
             toolBar.appendChild(cb);
             toolBar.appendChild(span);
 
@@ -41,19 +60,37 @@
             btn.style.marginLeft = "4px";
             btn.innerHTML = "Start";
             btn.onclick = function () {
-                QUnit.start();
+                if (!hasRun) {
+                    start();
+                } else {
+                    var qs = "?autostart=true";
+                    qs += "&breakonassertfail=" + document.querySelector("#breakOnAssertFail").checked;
+                    qs += "&disabletesttimeout=" + document.querySelector("#disableTestTimeout").checked;
+                    qs += "&fastanimations=" + document.querySelector("#fastAnimations").checked;
+                    if (QUnit.urlParams.module) {
+                        qs += "&module=" + QUnit.urlParams.module;
+                    }
+                    if (QUnit.urlParams.testNumber) {
+                        qs += "&testNumber=" + QUnit.urlParams.testNumber;
+                    }
+                    window.location = window.location.protocol + "//" + window.location.host + window.location.pathname + qs;
+                }
             };
             toolBar.appendChild(btn);
 
             if (QUnit.urlParams.autostart === "true" || QUnit.urlParams.autostart === true) {
-                QUnit.start();
+                start();
             }
         }
         addOptions();
     });
 
-    if (QUnit.urlParams.unittesting === "true" || QUnit.urlParams.unittesting === true) {
-        WinJS.Utilities._unitTesting = true;
+    function start() {
+        hasRun = true;
+        WinJS.Utilities._fastAnimations = document.querySelector("#fastAnimations").checked;
+        QUnit.breakOnAssertFail = document.querySelector("#breakOnAssertFail").checked;
+        QUnit.config.testTimeout = document.querySelector("#disableTestTimeout").checked ? undefined : testTimeout;
+        QUnit.start();
     }
 
     function completeTest() {
@@ -150,17 +187,16 @@
             }
         });
         test_results.tests = tests;
-
         window.global_test_results = test_results;
     });
 
     function formatString(string) {
         var args = arguments;
         if (args.length > 1) {
-            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g, 
+            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g,
                 function (unused, left, right, index, illegalLeft, illegalRight) {
-                    if (illegalLeft || illegalRight) { 
-                        throw new Error(formatString("Malformed string input: {0}", illegalLeft || illegalRight)); 
+                    if (illegalLeft || illegalRight) {
+                        throw new Error(formatString("Malformed string input: {0}", illegalLeft || illegalRight));
                     }
                     return (left && "{") || (right && "}") || args[(index | 0) + 1];
                 });

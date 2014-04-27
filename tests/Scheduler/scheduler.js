@@ -841,7 +841,7 @@ CorsicaTests.Scheduler = function () {
 
             LiveUnit.Assert.isTrue(info.shouldYield);
             // exhaust its time slice so that it would yield to platform
-            repeatForDuration(S._TIME_SLICE);
+            repeatForDuration(S._TIME_SLICE + 10);
         }, S.Priority.high);
 
         S.schedule(function (info) {
@@ -2435,7 +2435,7 @@ CorsicaTests.Scheduler = function () {
         //
         S.schedule(function () {
             drainRequest = S.requestDrain(S.Priority.aboveNormal).then(function () {
-                repeatForDuration(S._TIME_SLICE);
+                repeatForDuration(S._TIME_SLICE + 10);
 
                 LiveUnit.Assert.areEqual(1, count);
                 count++;

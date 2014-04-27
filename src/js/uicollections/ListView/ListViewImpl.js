@@ -374,7 +374,7 @@
                 element.winControl = this;
                 WinJS.Utilities.addClass(element, "win-disposable");
                 this._affectedRange = new AffectedRange();
-                this._mutationObserver = new MutationObserver(this._itemPropertyChange.bind(this));
+                this._mutationObserver = new WinJS.Utilities._MutationObserver(this._itemPropertyChange.bind(this));
                 this._versionManager = null;
                 this._insertedItems = {};
                 this._element = element;
@@ -1646,7 +1646,7 @@
                     this._cachedStyleDir = this._element.style.direction;
 
                     elementObservers.forEach(function (elementObserver) {
-                        new MutationObserver(elementObserver.handler).observe(that._element, { attributes: true, attributeFilter: elementObserver.filter });
+                        new WinJS.Utilities._MutationObserver(elementObserver.handler).observe(that._element, { attributes: true, attributeFilter: elementObserver.filter });
                     });
 
                     // KeyDown handler needs to be added explicitly via addEventListener instead of using attachEvent.

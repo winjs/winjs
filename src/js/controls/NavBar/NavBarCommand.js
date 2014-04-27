@@ -370,7 +370,7 @@
                     this._buttonEl.addEventListener("beforeactivate", this._beforeactivateButtonHandler.bind(this));
                     this._buttonEl.addEventListener("pointerdown", this._MSPointerDownButtonHandler.bind(this));
 
-                    var mutationObserver = new MutationObserver(this._splitButtonAriaExpandedPropertyChangeHandler.bind(this));
+                    var mutationObserver = new WinJS.Utilities._MutationObserver(this._splitButtonAriaExpandedPropertyChangeHandler.bind(this));
                     mutationObserver.observe(this._splitButtonEl, { attributes: true, attributeFilter: ["aria-expanded"] });
                     this._splitButtonEl.addEventListener("click", this._handleSplitButtonClick.bind(this));
                     this._splitButtonEl.addEventListener("beforeactivate", this._beforeactivateSplitButtonHandler.bind(this));
