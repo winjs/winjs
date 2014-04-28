@@ -20,6 +20,7 @@
 
 RatingMouseTests = function () {
     var ratingUtils = new RatingUtils();
+    var commonUtils = new CommonUtils();
 
     this.setUp = function (complete) {
         ratingUtils.setUp(complete);
@@ -43,11 +44,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Lowest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -64,11 +65,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Lowest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -90,11 +91,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Lowest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -124,11 +125,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Lowest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -145,11 +146,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Highest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -166,11 +167,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Highest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -187,11 +188,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Highest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -208,11 +209,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Highest_IncreasedMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -236,11 +237,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Highest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -265,11 +266,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Random.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -301,11 +302,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Random_RemoveEventListener_PreviewChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -337,11 +338,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Hover_Random_RemoveEventListener_Cancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -358,11 +359,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Lowest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -379,11 +380,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Lowest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -400,11 +401,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Lowest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -428,11 +429,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Lowest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -449,11 +450,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Lowest_SetToMin.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -478,11 +479,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Lowest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -499,11 +500,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Highest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -520,11 +521,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Highest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -541,11 +542,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Highest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -569,11 +570,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Highest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -590,11 +591,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Highest_SetToMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -614,11 +615,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Highest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -635,11 +636,11 @@ RatingMouseTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_CurrentRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -663,11 +664,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_CurrentRating_RemoveEventListener_Cancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -722,11 +723,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_All_Increasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -782,11 +783,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_All_Decreasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -803,11 +804,11 @@ RatingMouseTests = function () {
             signalTestCaseCompleted,
             ratingUtils.generateClickActions(starToClick, newRating, 0));
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Random.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -827,11 +828,11 @@ RatingMouseTests = function () {
             signalTestCaseCompleted,
             ratingUtils.generateClickActions(starToClick, newRating, customUserRating));
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Random_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -856,11 +857,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Random_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -885,11 +886,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Random_RemoveEventListener_PreviewChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -914,11 +915,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_Random_RemoveEventListener_Change.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -994,11 +995,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Scrub_Forward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1073,11 +1074,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Scrub_Backward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1152,11 +1153,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Scrub_NoChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1212,8 +1213,8 @@ RatingMouseTests = function () {
 
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = document.createEvent("PointerEvent");
-                        event.initPointerEvent("pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
+                        var event = commonUtils.createPointerEvent();
+                        commonUtils.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                         star.dispatchEvent(event);
                     };
                 }(rating.element.childNodes[0]),
@@ -1228,8 +1229,8 @@ RatingMouseTests = function () {
                     return function () {
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = document.createEvent("PointerEvent");
-                        event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
+                        var event = commonUtils.createPointerEvent();
+                        commonUtils.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                         star.dispatchEvent(event);
                     };
                 }(rating.element.childNodes[0]),
@@ -1243,11 +1244,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Scrub_ClearRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1303,8 +1304,8 @@ RatingMouseTests = function () {
 
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = document.createEvent("PointerEvent");
-                        event.initPointerEvent("pointermove", true, true, window, 0,
+                        var event = commonUtils.createPointerEvent();
+                        commonUtils.initPointerEvent(event, "pointermove", true, true, window, 0,
                             window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                         star.dispatchEvent(event);
                     };
@@ -1317,8 +1318,8 @@ RatingMouseTests = function () {
                     return function () {
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = document.createEvent("PointerEvent");
-                        event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
+                        var event = commonUtils.createPointerEvent();
+                        commonUtils.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                         star.dispatchEvent(event);
                     };
                 }(rating.element.childNodes[0]),
@@ -1332,11 +1333,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Scrub_ClearRating_enableClear_false.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1376,11 +1377,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Click_PointerCancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1429,11 +1430,11 @@ RatingMouseTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Scrub_PointerCancel.timeout = 30000;
 };
 
