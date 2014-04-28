@@ -30,7 +30,7 @@
         module.exports.testDeps = {
             files: [{
                 src: [config.desktopOutput + "/js/base.js"],
-                dest: config.testsOutput + "base/source/base.js"
+                dest: config.testsOutput + "Base/source/base.js"
             }]
         };
     }
