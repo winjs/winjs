@@ -689,6 +689,22 @@ WinJSTests.PivotTests = function () {
         };
 
         this.testNavigateViaInertia = function testNavigateViaInertia(complete) {
+            if (!window.msZoomTo) {
+                LiveUnit.LoggingCore.logComment("This test simulates panning using msZoomTo which is not supported on this platform.");
+                complete();
+                return;
+            }
+            if (!window.MSManipulationEvent) {
+                LiveUnit.LoggingCore.logComment("This test relies on MSManipulationStateChanged events which are not supported on this platform.");
+                complete();
+                return;
+            }
+            if (Object.keys(window.MSManipulationEvent.prototype).indexOf("inertiaDestinationX") === -1) {
+                LiveUnit.LoggingCore.logComment("This test relies on inertiaDestination APIs which are not supported on this platform.");
+                complete();
+                return;
+            }
+
             var pivotItemCount = 3;
             instances = 0;
             var pivot = new WinJS.UI.Pivot(undefined, {
