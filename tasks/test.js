@@ -64,7 +64,7 @@
             }
 
             var testMenuTemplate =
-        '<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
+'<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
 <!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\
 <head>                                                                                                                      \r\n\
@@ -93,8 +93,8 @@
 </body>                                                                                                                     \r\n\
 </html>';
 
-        var testPageTemplate =
-    '<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
+            var testPageTemplate =
+'<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
 <!-- saved from url=(0014)about:internet -->\r\n\
 <!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\
@@ -102,11 +102,11 @@
     <title>@@TITLE</title>                                                                                                  \r\n\
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />                                                                 \r\n\
     <!-- WinJS references -->                                                                                               \r\n\
-    <link type="text/css" rel="stylesheet" href="../../Microsoft.WinJS.2.1/css/ui-dark.css" />                              \r\n\
-    <script src="../../@@TARGETFRAMEWORK/js/base.js"></script>                                                              \r\n\
-    <script src="../../@@TARGETFRAMEWORK/js/ui.js"></script>                                                                \r\n\
-    <script src="../../@@TARGETFRAMEWORK/js/en-US/base.strings.js"></script>                                                \r\n\
-    <script src="../../@@TARGETFRAMEWORK/js/en-US/ui.strings.js"></script>                                                  \r\n\
+    <link type="text/css" rel="stylesheet" href="../../../$(TargetOutputPath)/css/ui-dark.css" />                           \r\n\
+    <script src="../../../$(TargetOutputPath)/js/base.js"></script>                                                         \r\n\
+    <script src="../../../$(TargetOutputPath)/js/ui.js"></script>                                                           \r\n\
+    <script src="../../../$(TargetOutputPath)/js/en-US/base.strings.js"></script>                                           \r\n\
+    <script src="../../../$(TargetOutputPath)/js/en-US/ui.strings.js"></script>                                             \r\n\
                                                                                                                             \r\n\
     <!-- Test framework references -->                                                                                      \r\n\
     <link type="text/css" rel="stylesheet" href="../../../node_modules/qunitjs/qunit/qunit.css" />                          \r\n\
@@ -120,7 +120,7 @@
     <div id="qunit" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; overflow-y: scroll; -moz-user-select: text; -webkit-user-select: text; -khtml-user-select: text; -ms-user-select: text;"></div>  \r\n\
     <div id="qunit-fixture"></div>                                                                                          \r\n\
 </body>                                                                                                                     \r\n\
-</html>'.replace(/@@TARGETFRAMEWORK/g, config.targetFramework);
+</html>';
 
             if (!fs.existsSync("./bin")) {
                 fs.mkdirSync("./bin");

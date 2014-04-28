@@ -5,9 +5,30 @@
     var config = require("../../config.js");
 
     module.exports = {
+        phoneTests: {
+            options: {
+                patterns: [
+                    {
+                        match: /\$\(TargetOutputPath\)/g,
+                        replacement: config.phoneOutput
+                    }
+                ]
+            },
+            files: [
+                { expand: true, flatten: false, src: [config.testsOutput + "Pivot/*.html"], dest: "" },
+            ]
+        },
         tests: {
             options: {
                 patterns: [
+                    {
+                        match: /\$\(TargetFramework\)/g,
+                        replacement: config.targetFramework
+                    },
+                    {
+                        match: /\$\(TargetOutputPath\)/g,
+                        replacement: config.desktopOutput
+                    }
                 ],
             },
             files: [
@@ -47,9 +68,8 @@
               { expand: true, flatten: true, src: [config.phoneOutput + "js/" + config.localeFolder + "/*.js"], dest: config.phoneOutput + "js/" + config.localeFolder + "/" },
               { expand: true, flatten: true, src: [config.desktopOutput + "css/*.css"], dest: config.desktopOutput + "css/" },
               { expand: true, flatten: true, src: [config.phoneOutput + "css/*.css"], dest: config.phoneOutput + "css/" },
-              { expand: true, flatten: false, src: [config.testsOutput + "**"], dest: "" },
             ]
-        }
+        },
     };
 
     if (config.inRazzle) {
