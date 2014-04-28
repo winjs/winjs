@@ -60,7 +60,8 @@
             btn.style.marginLeft = "4px";
             btn.innerHTML = "Start";
             btn.onclick = function () {
-                if (!hasRun) {
+                // Changing the fast animations setting requires a re-load.
+                if (!hasRun && (WinJS.Utilities._fastAnimations === document.querySelector("#fastAnimations").checked)) {
                     start();
                 } else {
                     var qs = "?autostart=true";
@@ -85,9 +86,12 @@
         addOptions();
     });
 
+    if (QUnit.urlParams.fastanimations === "true" || QUnit.urlParams.fastanimations === true) {
+        WinJS.Utilities._fastAnimations = true;
+    }
+
     function start() {
         hasRun = true;
-        WinJS.Utilities._fastAnimations = document.querySelector("#fastAnimations").checked;
         QUnit.breakOnAssertFail = document.querySelector("#breakOnAssertFail").checked;
         QUnit.config.testTimeout = document.querySelector("#disableTestTimeout").checked ? undefined : testTimeout;
         QUnit.start();
