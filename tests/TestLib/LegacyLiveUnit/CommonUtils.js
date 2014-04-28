@@ -43,7 +43,7 @@ CommonUtils.prototype = (function () {
             else if (window.MSPointerEvent) {
 
                 // Camel case the "pointerevent" pattern and prefix with MS
-                args[0].replace(/pointer(.)/g, function(match, nextChar) {
+                args[0] = args[0].replace(/pointer(.)/g, function(match, nextChar) {
                     return "MSPointer" + nextChar.toUpperCase();
                 });
 
