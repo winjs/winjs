@@ -43,7 +43,11 @@
 
                     var startIndex = line.indexOf('path="') + 6;
                     var endIndex = line.indexOf('"', startIndex);
-                    deps.push(dir + "/" + line.substring(startIndex, endIndex));
+                    var path = dir + "/" + line.substring(startIndex, endIndex);
+                    if (!fs.existsSync(path)) {
+                        grunt.fail.warn("Could not find dependency:\n" + line + "in file:\n" + path);
+                    }
+                    deps.push(path);
 
                     processedOne = true;
                 }
