@@ -41,8 +41,14 @@ CommonUtils.prototype = (function () {
             }
             // Fallback to the ms prefix version from IE 10
             else if (window.MSPointerEvent) {
+                var nextWordStart = "pointer".length;
+
+                // Camel case the "pointerevent" pattern
+                args[0][0] = args[0][0].toUpperCase();
+                args[0][nextWordStart] = args[0][nextWordStart].toUpperCase();
+
                 // Prefix "ms" onto first argument, the event type
-                args[0] = "ms" + args[0];
+                args[0] = "MS" + args[0];
                 e.initPointerEvent.apply(e, args);
             }
             // Fallback to a mouse event
