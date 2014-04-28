@@ -44,6 +44,7 @@ CommonUtils.prototype = (function () {
                 var nextWordStart = "pointer".length;
 
                 // Camel case the "pointerevent" pattern
+                args[0] = args[0].toLowerCase();
                 args[0][0] = args[0][0].toUpperCase();
                 args[0][nextWordStart] = args[0][nextWordStart].toUpperCase();
 
