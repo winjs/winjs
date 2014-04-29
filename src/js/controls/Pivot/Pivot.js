@@ -352,12 +352,14 @@
                         // If recentering causes a scroll, then we need to make sure that the next
                         // scroll event event doesn't trigger another navigation
                         this._recentering = true;
-                    } else {
+                    } else if (this._stoppedAndRecenteredSignal) {
                         this._stoppedAndRecenteredSignal.complete();
                         this._stoppedAndRecenteredSignal = null;
                     }
+                    if (this.selectedItem) {
+                        this.selectedItem.element.style[this._getDirectionAccessor()] = this._currentScrollTargetLocation + 'px';
+                    }
                     WinJS.log && WinJS.log('_recenterUI index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation);
-                    this.selectedItem.element.style[this._getDirectionAccessor()] = this._currentScrollTargetLocation + 'px';
                     this._viewportElement.scrollLeft = this._currentScrollTargetLocation;
                 },
 
@@ -623,6 +625,7 @@
                     this._skipHeaderSlide = true;
                     this.selectedIndex = Math.min(pendingIndexOnScreen, this.items.length - 1);
                     this._skipHeaderSlide = false;
+                    this._recenterUI();
                 },
 
                 _handleItemChanged: function pivot_handleItemChanged(ev) {
