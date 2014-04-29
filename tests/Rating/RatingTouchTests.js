@@ -19,6 +19,7 @@
 
 RatingTouchTests = function () {
     var ratingUtils = new RatingUtils();
+    var commonUtils = new CommonUtils();
 
     this.setUp = function (complete) {
         ratingUtils.setUp(complete);
@@ -42,11 +43,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Lowest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -63,11 +64,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Lowest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -84,11 +85,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Lowest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -112,11 +113,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Lowest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -133,11 +134,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Lowest_SetToMin.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -162,11 +163,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Lowest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -183,11 +184,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Highest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -204,11 +205,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Highest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -225,11 +226,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Highest_ShowingUser.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -253,11 +254,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Highest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -274,11 +275,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Highest_SetToMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -298,11 +299,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Highest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -319,11 +320,11 @@ RatingTouchTests = function () {
             )
         );
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_CurrentRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -347,11 +348,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -406,11 +407,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_All_Increasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -466,11 +467,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_All_Decreasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -490,11 +491,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Random.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -521,11 +522,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Random_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -552,11 +553,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Tap_Random_RemoveEventListener_Change.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -629,11 +630,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Touch_Scrub_Forward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -708,11 +709,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Touch_Scrub_Backward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -788,11 +789,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Touch_Scrub_NoChange.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -848,8 +849,8 @@ RatingTouchTests = function () {
 
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = document.createEvent("PointerEvent");
-                        event.initPointerEvent("pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
+                        var event = commonUtils.createPointerEvent();
+                        commonUtils.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
                 }(rating.element.childNodes[0]),
@@ -864,8 +865,8 @@ RatingTouchTests = function () {
                     return function () {
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = document.createEvent("PointerEvent");
-                        event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
+                        var event = commonUtils.createPointerEvent();
+                        commonUtils.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
                 }(rating.element.childNodes[0]),
@@ -879,11 +880,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Touch_Scrub_ClearRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -939,8 +940,8 @@ RatingTouchTests = function () {
 
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = document.createEvent("PointerEvent");
-                        event.initPointerEvent("pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
+                        var event = commonUtils.createPointerEvent();
+                        commonUtils.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
                 }(rating.element.childNodes[0]),
@@ -952,8 +953,8 @@ RatingTouchTests = function () {
                     return function () {
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = document.createEvent("PointerEvent");
-                        event.initPointerEvent("pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
+                        var event = commonUtils.createPointerEvent();
+                        commonUtils.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
                 }(rating.element.childNodes[0]),
@@ -967,11 +968,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Touch_Scrub_ClearRating_enableClear_false.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1009,11 +1010,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Touch_Tap_PointerCancel.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1061,11 +1062,11 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testRating_Touch_Scrub_PointerCancel.timeout = 30000;
 };
 
