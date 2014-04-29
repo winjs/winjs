@@ -47,6 +47,7 @@ CommonUtils.prototype = (function () {
                     return "MSPointer" + nextChar.toUpperCase();
                 });
 
+                console.log(args);
                 e.initPointerEvent.apply(e, args);
             }
             // Fallback to a mouse event
