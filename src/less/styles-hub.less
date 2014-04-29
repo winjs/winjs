@@ -14,9 +14,12 @@
     height: 100%;
     width: 100%;
     /* Allow win-hub-surface margin/padding right to work */
+    display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    flex-shrink: 0;
+    -ms-flex: 0 0 auto; /* IE10 */
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
     -ms-scroll-snap-type: proximity;
 }
 .win-hub-horizontal .win-hub-viewport {
@@ -30,9 +33,12 @@
     flex-direction: column;
 }
 .win-hub-surface {
+    display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    flex-shrink: 0;
+    -ms-flex: 0 0 auto; /* IE10 */
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
 }
 .win-hub-vertical .win-hub-surface {
     width: 100%;
