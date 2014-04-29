@@ -44,10 +44,6 @@ RatingTouchTests = function () {
         );
     };
 
-
-
-
-
     this.testRating_Tap_Lowest.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -65,10 +61,6 @@ RatingTouchTests = function () {
         );
     };
 
-
-
-
-
     this.testRating_Tap_Lowest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -85,10 +77,6 @@ RatingTouchTests = function () {
             )
         );
     };
-
-
-
-
 
     this.testRating_Tap_Lowest_ShowingUser.timeout = 30000;
 
@@ -114,10 +102,6 @@ RatingTouchTests = function () {
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
 
-
-
-
-
     this.testRating_Tap_Lowest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -134,10 +118,6 @@ RatingTouchTests = function () {
             )
         );
     };
-
-
-
-
 
     this.testRating_Tap_Lowest_SetToMin.timeout = 30000;
 
@@ -164,10 +144,6 @@ RatingTouchTests = function () {
         );
     };
 
-
-
-
-
     this.testRating_Tap_Lowest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -184,10 +160,6 @@ RatingTouchTests = function () {
             )
         );
     };
-
-
-
-
 
     this.testRating_Tap_Highest.timeout = 30000;
 
@@ -206,10 +178,6 @@ RatingTouchTests = function () {
         );
     };
 
-
-
-
-
     this.testRating_Tap_Highest_ShowingAverage.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -226,10 +194,6 @@ RatingTouchTests = function () {
             )
         );
     };
-
-
-
-
 
     this.testRating_Tap_Highest_ShowingUser.timeout = 30000;
 
@@ -255,10 +219,6 @@ RatingTouchTests = function () {
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
 
-
-
-
-
     this.testRating_Tap_Highest_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -275,10 +235,6 @@ RatingTouchTests = function () {
             )
         );
     };
-
-
-
-
 
     this.testRating_Tap_Highest_SetToMax.timeout = 30000;
 
@@ -300,10 +256,6 @@ RatingTouchTests = function () {
         );
     };
 
-
-
-
-
     this.testRating_Tap_Highest_CustomMax.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -320,10 +272,6 @@ RatingTouchTests = function () {
             )
         );
     };
-
-
-
-
 
     this.testRating_Tap_CurrentRating.timeout = 30000;
 
@@ -348,10 +296,6 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-
-
-
-
 
     this.testRating_Tap_CurrentRating_RemoveEventListener_Cancel.timeout = 30000;
 
@@ -407,10 +351,6 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-
-
-
-
 
     this.testRating_Tap_All_Increasing.timeout = 30000;
 
@@ -468,10 +408,6 @@ RatingTouchTests = function () {
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
 
-
-
-
-
     this.testRating_Tap_All_Decreasing.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -491,10 +427,6 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-
-
-
-
 
     this.testRating_Tap_Random.timeout = 30000;
 
@@ -523,10 +455,6 @@ RatingTouchTests = function () {
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
 
-
-
-
-
     this.testRating_Tap_Random_Disabled.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -553,10 +481,6 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-
-
-
-
 
     this.testRating_Tap_Random_RemoveEventListener_Change.timeout = 30000;
 
@@ -630,10 +554,6 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-
-
-
-
 
     this.testRating_Touch_Scrub_Forward.timeout = 30000;
 
@@ -710,10 +630,6 @@ RatingTouchTests = function () {
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
 
-
-
-
-
     this.testRating_Touch_Scrub_Backward.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -789,10 +705,6 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-
-
-
-
 
     this.testRating_Touch_Scrub_NoChange.timeout = 30000;
 
@@ -881,10 +793,6 @@ RatingTouchTests = function () {
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
 
-
-
-
-
     this.testRating_Touch_Scrub_ClearRating.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -969,10 +877,6 @@ RatingTouchTests = function () {
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
 
-
-
-
-
     this.testRating_Touch_Scrub_ClearRating_enableClear_false.timeout = 30000;
 
     //-----------------------------------------------------------------------------------
@@ -1010,10 +914,6 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-
-
-
-
 
     this.testRating_Touch_Tap_PointerCancel.timeout = 30000;
 
@@ -1062,10 +962,6 @@ RatingTouchTests = function () {
         // Run the test
         ratingUtils.startAsyncEventTest(signalTestCaseCompleted, actions);
     };
-
-
-
-
 
     this.testRating_Touch_Scrub_PointerCancel.timeout = 30000;
 };

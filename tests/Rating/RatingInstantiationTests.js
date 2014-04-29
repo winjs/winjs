@@ -40,10 +40,6 @@ RatingInstantiationTests = function () {
 
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_FromNull = function () {
@@ -54,29 +50,17 @@ RatingInstantiationTests = function () {
 
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_WithOptions = function () {
         ratingUtils.instantiate("rating", { maxRating: 10, userRating: 7, averageRating: 5, disabled: !Math.floor(Math.random() * 2) });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_FromNull_WithOptions = function () {
         var rating = ratingUtils.instantiate(null, { maxRating: 10, userRating: 7, averageRating: 5, disabled: !Math.floor(Math.random() * 2) });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -98,10 +82,6 @@ RatingInstantiationTests = function () {
 
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_DynamicAdd_AverageRating1 = function () {
@@ -121,10 +101,6 @@ RatingInstantiationTests = function () {
 
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_Span = function () {
@@ -133,10 +109,6 @@ RatingInstantiationTests = function () {
         ratingUtils.removeElementById("ratingSpan");
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_dir_LTR = function () {
@@ -144,20 +116,12 @@ RatingInstantiationTests = function () {
         var rating = ratingUtils.instantiate("rating_dir");
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_dir_RTL = function () {
         document.getElementById("rating").setAttribute("dir", "rtl");
         var rating = ratingUtils.instantiate("rating");
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -172,10 +136,6 @@ RatingInstantiationTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { userRating: 32 });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_dir_RTL_Readonly = function () {
@@ -188,10 +148,6 @@ RatingInstantiationTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { userRating: 15 });
         ratingUtils.setOptionsAndVerify("rating", { userRating: 32 });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -220,10 +176,6 @@ RatingInstantiationTests = function () {
 
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
     // maxRating Tests
     //-----------------------------------------------------------------------------------
@@ -238,19 +190,11 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_MaxRating_Invalid_0 = function () {
         ratingUtils.instantiate("rating", { maxRating: 0 });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -258,19 +202,11 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { maxRating: null });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_MaxRating_Invalid_Undefined = function () {
         ratingUtils.instantiate("rating", { maxRating: undefined });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -282,10 +218,6 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -310,10 +242,6 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
     // averageRating Tests
     //-----------------------------------------------------------------------------------
@@ -321,10 +249,6 @@ RatingInstantiationTests = function () {
     this.testRating_Instantiation_AverageRating_Default = function () {
         ratingUtils.instantiate("rating", { averageRating: 3 });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -340,19 +264,11 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_Float_Default = function () {
         ratingUtils.instantiate("rating", { averageRating: ratingUtils.random(1, ratingUtils.defaultMaxRating) });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -367,19 +283,11 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_DefaultMax = function () {
         ratingUtils.instantiate("rating", { averageRating: ratingUtils.defaultMaxRating });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -390,19 +298,11 @@ RatingInstantiationTests = function () {
     };
 
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_0 = function () {
         ratingUtils.instantiate("rating", { averageRating: 0 });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -410,19 +310,11 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { averageRating: null });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_Invalid_GreaterThanDefaultMax = function () {
         ratingUtils.instantiate("rating", { averageRating: ratingUtils.randomInt(ratingUtils.defaultMaxRating + 1, 50) });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -432,19 +324,11 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { maxRating: newMax, averageRating: ratingUtils.randomInt(newMax + 1, 50) });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_Invalid_Undefined = function () {
         ratingUtils.instantiate("rating", { averageRating: undefined });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -457,10 +341,6 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_AverageRating_Invalid_NumbersAsStrings = function () {
@@ -471,10 +351,6 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -487,10 +363,6 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
     // userRating tests
     //-----------------------------------------------------------------------------------
@@ -498,10 +370,6 @@ RatingInstantiationTests = function () {
     this.testRating_Instantiation_UserRating_Default = function () {
         ratingUtils.instantiate("rating", { userRating: 3 });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -516,19 +384,11 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_DefaultMax = function () {
         ratingUtils.instantiate("rating", { userRating: ratingUtils.defaultMaxRating });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -538,19 +398,11 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { maxRating: newMax, userRating: newMax });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_0 = function () {
         ratingUtils.instantiate("rating", { userRating: 0 });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -558,19 +410,11 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { userRating: null });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_Invalid_GreaterThanDefaultMax = function () {
         ratingUtils.instantiate("rating", { userRating: ratingUtils.randomInt(ratingUtils.defaultMaxRating + 1, ratingUtils.defaultMaxRating * 2) });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -579,19 +423,11 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { maxRating: newMax, userRating: ratingUtils.randomInt(newMax + 1, newMax * 2) });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_Invalid_Float_Default = function () {
         ratingUtils.instantiate("rating", { userRating: 3.1 });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -606,19 +442,11 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_Invalid_Undefined = function () {
         ratingUtils.instantiate("rating", { userRating: undefined });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -631,10 +459,6 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_UserRating_Invalid_NumbersAsStrings = function () {
@@ -645,10 +469,6 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -661,10 +481,6 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
     // disabled tests
     //-----------------------------------------------------------------------------------
@@ -673,19 +489,11 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { disabled: true });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_disabled_false = function () {
         ratingUtils.instantiate("rating", { disabled: false });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -696,10 +504,6 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { disabled: 0 });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_disabled_Invalid_Strings = function () {
@@ -708,10 +512,6 @@ RatingInstantiationTests = function () {
         ratingUtils.addTag("div", "rating");
         ratingUtils.instantiate("rating", { disabled: "false" });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -724,10 +524,6 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
     // enableClear tests
     //-----------------------------------------------------------------------------------
@@ -736,19 +532,11 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { enableClear: true });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_enableClear_false = function () {
         ratingUtils.instantiate("rating", { enableClear: false });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -759,10 +547,6 @@ RatingInstantiationTests = function () {
         ratingUtils.instantiate("rating", { enableClear: 0 });
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_enableClear_Invalid_Strings = function () {
@@ -771,10 +555,6 @@ RatingInstantiationTests = function () {
         ratingUtils.addTag("div", "rating");
         ratingUtils.instantiate("rating", { enableClear: "false" });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -786,10 +566,6 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
     // tooltipStrings tests
@@ -806,10 +582,6 @@ RatingInstantiationTests = function () {
 
         ratingUtils.instantiate("rating", { tooltipStrings: tooltipStrings });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -830,10 +602,6 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_tooltipStrings_HTML_DefaultMax = function () {
@@ -847,10 +615,6 @@ RatingInstantiationTests = function () {
 
         ratingUtils.instantiate("rating", { tooltipStrings: tooltipStrings });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -871,19 +635,11 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_tooltipStrings_NULL_DefaultMax = function () {
         ratingUtils.instantiate("rating", { tooltipStrings: null });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -898,19 +654,11 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_tooltipStrings_TooFew_DefaultMax = function () {
         ratingUtils.instantiate("rating", { tooltipStrings: ["tooltip1", "tooltip1", "tooltip3"] });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -932,19 +680,11 @@ RatingInstantiationTests = function () {
         }
     };
 
-
-
-
-
     //-----------------------------------------------------------------------------------
 
     this.testRating_Instantiation_tooltipStrings_TooManyDefaultMax = function () {
         ratingUtils.instantiate("rating", { tooltipStrings: ["tooltip1", "tooltip1", "tooltip3", "tooltip4", "tooltip5", "tooltip6"] });
     };
-
-
-
-
 
     //-----------------------------------------------------------------------------------
 
@@ -965,10 +705,6 @@ RatingInstantiationTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-
-
-
-
 };
 
 // Register the object as a test class by passing in the name
