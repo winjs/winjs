@@ -835,6 +835,17 @@ WinJSTests.PivotTests = function () {
         this.testContentVisibleInRTL = function testContentVisibleInRTL(complete) {
             this.runContentVisibilityTest(complete, true);
         };
+
+        this.testEmptyPivotRecentersCorrectly = function (complete) {
+            var pivotDiv = document.createElement("div");
+            var pivot = new WinJS.UI.Pivot(pivotDiv);
+            pivotWrapperEl.appendChild(pivot.element);
+            setTimeout(function () {
+                LiveUnit.Assert.areNotEqual(0, pivot._viewportWidth);
+                LiveUnit.Assert.areEqual(pivot._viewportElement.scrollLeft, pivot._currentScrollTargetLocation);
+                complete();
+            });
+        };
     }
 };
 
