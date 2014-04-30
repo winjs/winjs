@@ -36,7 +36,7 @@
                     config.tests_results.results = sortByComponentName(config.tests_results.results);
                     var data = JSON.stringify(config.tests_results);
                     console.log("Posting test results...");
-                    http.post('http://winjs-staging.azurewebsites.net/api.aspx', {
+                    http.post('http://try.buildwinjs.com/api.aspx', {
                         type: "addresult",
                         name: fileName,
                         content: data,
