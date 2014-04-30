@@ -9,8 +9,8 @@
             options: {
                 patterns: [
                     {
-                        match: /\$\(TargetOutputPath\)/g,
-                        replacement: config.phoneOutput
+                        match: /\$\(TargetFramework\)/g,
+                        replacement: config.phoneFramework
                     }
                 ]
             },
@@ -23,11 +23,7 @@
                 patterns: [
                     {
                         match: /\$\(TargetFramework\)/g,
-                        replacement: config.targetFramework
-                    },
-                    {
-                        match: /\$\(TargetOutputPath\)/g,
-                        replacement: config.desktopOutput
+                        replacement: config.desktopFramework
                     }
                 ],
             },

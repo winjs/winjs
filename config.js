@@ -24,9 +24,10 @@
     }
 
     config.targetName = "WinJS." + config.version;
-    config.targetFramework = "Microsoft.WinJS.2.1";
-    config.desktopOutput = config.outputFolder + "Microsoft." + config.targetName + "/";
-    config.phoneOutput = config.outputFolder + "Microsoft.Phone." + config.targetName + "/";
+    config.desktopFramework = "Microsoft." + config.targetName;
+    config.phoneFramework = "Microsoft.Phone." + config.targetName;
+    config.desktopOutput = config.outputFolder + config.desktopFramework + "/";
+    config.phoneOutput = config.outputFolder + config.phoneFramework + "/";
 
     config.baseJSFiles = [
         "src/js/build/Copyright.js",
