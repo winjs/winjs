@@ -6,11 +6,13 @@ before_script:
 - git submodule update --init --recursive
 script:
 - grunt release
+- grunt saucelabs --force
 env:
   global:
-    - SAUCE_USERNAME=winjs
-    - SAUCE_ACCESS_KEY=26c17025-4f79-4313-ab42-c5f77a7ece4b
+  - SAUCE_USERNAME=winjs
+  - SAUCE_ACCESS_KEY=26c17025-4f79-4313-ab42-c5f77a7ece4b
+  - secure: UVSPVW/U0QGmbpEBPBiFW3mIwxw+/cXNWpDgufddKRKaW1MpcP41lUAkLG9SwsgeevGd2L5qdvCmVetV3dk9Fl82PJF3ct0Yy7HJspn9nsfHz1Si5hJyLyQwkaxYrLQqtgyaV9dpNOZJeeZPg/vQPOMqbexo9oIfZMkmoi8n5d8=
 branches:
   only:
-    - master
-    - /^.*-runut$/
+  - master
+  - /^.*-runut$/
