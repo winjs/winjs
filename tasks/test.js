@@ -18,30 +18,52 @@
             var fs = require("fs");
 
             function extractDependencies(path) {
+                // This function extracts the <reference path="..." /> tags in test files and returns their real paths.
                 var fileContents = fs.readFileSync(path, "utf-8");
                 var dir = path.substring(0, path.lastIndexOf("/"));
                 var deps = [];
 
                 var lines = fileContents.split("\n");
+                var processedOne = false;
                 for (var i = 0; i < lines.length; i++) {
                     var line = lines[i];
-                    var processedOne = false;
                     if (line.indexOf("<reference") < 0 || line.indexOf("ms-appx") >= 0) {
                         if (processedOne) {
+                            // If we already processed a reference tag before and this line is not a reference tag,
+                            // then we must be past the reference portion of the test file and can break here.
                             break;
                         } else {
+                            // If we haven't processed any reference tags, then we could be looking at a blank line,
+                            // or copyright line, or some other file header line; skip and continue with the next line.
                             continue;
                         }
                     }
 
+                    // Extract the relative path from the reference tag.
                     var startIndex = line.indexOf('path="') + 6;
                     var endIndex = line.indexOf('"', startIndex);
                     var path = dir + "/" + line.substring(startIndex, endIndex);
-                    if (!fs.existsSync(path)) {
-                        grunt.fail.warn("Could not find dependency:\n" + line + "in file:\n" + path);
+
+                    // realpathSync will abort the build if the file can't be resolved.
+                    var fullPath = fs.realpathSync(path);
+                    fullPath = fullPath.replace(/\\/g, "/");
+
+                    // This part checks if the filepath is correctly cased by walking the path starting
+                    // from the repository root and comparing each step with the directory listing.
+                    var rootFolder = "winjs/tests/";
+                    var split = fullPath.split(rootFolder);
+                    var steps = split[1].split("/");
+                    var csPath = split[0] + rootFolder;
+                    while (steps.length) {
+                        var step = steps[0];
+                        var files = fs.readdirSync(csPath);
+                        if (files.indexOf(step) < 0) {
+                            grunt.fail.warn("Incorrect casing for:\n" + line + "in file:\n" + fullPath + "\nstep: " + step);
+                        }
+                        csPath += "/" + step;
+                        steps = steps.slice(1);
                     }
                     deps.push(path);
-
                     processedOne = true;
                 }
                 return deps;
