@@ -94,6 +94,7 @@
         hasRun = true;
         QUnit.breakOnAssertFail = document.querySelector("#breakOnAssertFail").checked;
         QUnit.config.testTimeout = document.querySelector("#disableTestTimeout").checked ? undefined : testTimeout;
+        QUnit.config.started = +new Date(); // This is a temporary fix and can be removed when and if jquery/qunit#555 is accepted.
         QUnit.start();
     }
 
