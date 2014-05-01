@@ -22,12 +22,12 @@
 
                     var now = new Date();
                     var month = now.getUTCMonth() + 1;
-                    var day = now.getUTCDate() + 1;
+                    var day = now.getUTCDate();
                     var hour = now.getUTCHours();
                     var mins = now.getUTCMinutes();
                     var secs = now.getUTCSeconds();
                     var fileName = "Automated " +
-                        ((month + 1) < 10 ? ("0" + month) : (month + 1)) + "-" +
+                        (month < 10 ? ("0" + month) : month + "-" +
                         (day < 10 ? ("0" + day) : day) + "-" + now.getUTCFullYear() + " " +
                         (hour < 10 ? "0" + hour : hour) + ":" +
                         (mins < 10 ? "0" + mins : mins) + ":" +
