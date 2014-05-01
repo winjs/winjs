@@ -40,6 +40,9 @@
                         type: "addresult",
                         name: fileName,
                         content: data,
+                        travisBuildID: process.env.TRAVIS_BUILD_ID,
+                        travisBuildNumber: process.env.TRAVIS_BUILD_NUMBER,
+                        travisCommit: process.env.TRAVIS_COMMIT,
                         auth: process.env.auth
                     }, function(res) {
                         done();
