@@ -131,6 +131,7 @@
                 urls: [
                     "http://127.0.0.1:9999/bin/tests/FlipView/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/Hub/test.html?fastanimations=true&autostart=true",
+                    "http://127.0.0.1:9999/bin/tests/Pivot/test.html?fastanimations=true&autostart=true",
                     // disabled because they take > 80 secs and saucelabs exits
                     //"http://127.0.0.1:9999/bin/tests/ListView/test.html?fastanimations=true&autostart=true",
                     //"http://127.0.0.1:9999/bin/tests/ListViewIntegration/test.html?fastanimations=true&autostart=true",
