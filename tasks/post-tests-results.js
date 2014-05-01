@@ -27,8 +27,9 @@
                     var mins = now.getUTCMinutes();
                     var secs = now.getUTCSeconds();
                     var fileName = "Automated " +
+                        now.getUTCFullYear() + "-" +
                         (month < 10 ? ("0" + month) : month) + "-" +
-                        (day < 10 ? ("0" + day) : day) + "-" + now.getUTCFullYear() + " " +
+                        (day < 10 ? ("0" + day) : day) + " " +
                         (hour < 10 ? "0" + hour : hour) + ":" +
                         (mins < 10 ? "0" + mins : mins) + ":" +
                         (secs < 10 ? "0" + secs : secs) + " UTC";
