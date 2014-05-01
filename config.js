@@ -250,4 +250,12 @@
         ],
     };
 
+    // Object that aggregates the saucelabs test results that we report through our automation
+    config.tests_results = {    
+        "date": new Date(),
+        "environment": [],
+        "results":  []
+    };
+
+
 })();

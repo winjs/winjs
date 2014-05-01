@@ -46,5 +46,6 @@
         grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
         grunt.registerTask("lint", ["jshint"]);
         grunt.registerTask("minify", ["uglify"]);
+        grunt.registerTask("saucelabs", ["connect:saucelabs", "saucelabs-qunit", "post-tests-results"]);
     };
 })();
