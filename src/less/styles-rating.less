@@ -11,7 +11,8 @@
 }
 
 .win-rating .win-star {
-    flex: auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
     height:28px;
     width: 28px;
     padding: 0 6px;
@@ -23,6 +24,7 @@
     cursor: default;
     position: relative;
     letter-spacing: 0; // Use letter-spacing: 0 to make average star look like one glyph.
+    -ms-touch-action: none;
     touch-action: none;
 }
 .win-rating.win-small .win-star {
@@ -36,5 +38,6 @@
 }
 .win-rating .win-star.win-disabled {
     cursor: default;
+    -ms-touch-action: auto;
     touch-action: auto;
 }

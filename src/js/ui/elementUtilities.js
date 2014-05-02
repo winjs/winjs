@@ -43,7 +43,7 @@
     function getDimension(element, property) {
         return WinJS.Utilities.convertToPixels(element, window.getComputedStyle(element, null)[property]);
     }
-    
+
     var _MSGestureEvent = global.MSGestureEvent || {
         MSGESTURE_FLAG_BEGIN: 1,
         MSGESTURE_FLAG_CANCEL: 4,
@@ -68,10 +68,10 @@
         MSPOINTER_TYPE_PEN: "pen",
         MSPOINTER_TYPE_MOUSE: "mouse",
     };
-    
+
     // Helpers for managing element._eventsMap for custom events
     //
-    
+
     function addListenerToEventMap(element, type, listener, useCapture, data) {
         var eventNameLowercase = type.toLowerCase();
         if (!element._eventsMap) {
@@ -86,10 +86,10 @@
             data: data
         });
     }
-    
+
     function removeListenerFromEventMap(element, type, listener, useCapture) {
         var eventNameLowercase = type.toLowerCase();
-        var mappedEvents = element._eventsMap && element._eventsMap[eventNameLowercase]; 
+        var mappedEvents = element._eventsMap && element._eventsMap[eventNameLowercase];
         if (mappedEvents) {
             for (var i = mappedEvents.length - 1; i >= 0; i--) {
                 var mapping = mappedEvents[i];
@@ -101,39 +101,39 @@
         }
         return null;
     }
-    
+
     function lookupListeners(element, type) {
         var eventNameLowercase = type.toLowerCase();
         return element._eventsMap && element._eventsMap[eventNameLowercase] && element._eventsMap[eventNameLowercase].slice(0) || [];
     }
-    
+
     // Custom focusin/focusout events
     // Generally, use these instead of using the browser's blur/focus/focusout/focusin events directly.
     // However, this doesn't support the window object. If you need to listen to focus events on the window,
-    // use the browser's events directly. 
+    // use the browser's events directly.
     //
-    
+
     function bubbleEvent(element, type, eventObject) {
         while (element) {
             var handlers = lookupListeners(element, type);
             for (var i = 0, len = handlers.length; i < len; i++) {
                 handlers[i].listener.call(element, eventObject);
             }
-            
+
             element = element.parentNode;
         }
     }
-    
+
     function prepareFocusEvent(eventObject) {
         // If an iframe is involved, then relatedTarget should be null.
         if (eventObject.relatedTarget && eventObject.relatedTarget.tagName === "IFRAME" ||
                 eventObject.target && eventObject.target.tagName === "IFRAME") {
             eventObject.relatedTarget = null;
         }
-        
+
         return eventObject;
     }
-    
+
     var activeElement = null;
     global.addEventListener("blur", function (eventObject) {
         // Fires focusout when focus move to another window or into an iframe.
@@ -147,7 +147,7 @@
         }
         activeElement = null;
     });
-    
+
     document.documentElement.addEventListener("focus", function (eventObject) {
         var previousActiveElement = activeElement;
         activeElement = eventObject.target;
@@ -166,17 +166,17 @@
             }));
         }
     }, true);
-    
+
     function registerBubbleListener(element, type, listener, useCapture) {
         if (useCapture) {
             throw "This custom WinJS event only supports bubbling";
         }
         addListenerToEventMap(element, type, listener, useCapture);
     }
-    
+
     // Custom pointer events
     //
-    
+
     function touchEventTranslator(callback, eventObject) {
         eventObject._handledTouch = true;
         var changedTouches = eventObject.changedTouches,
@@ -208,42 +208,55 @@
         return callback(eventObject);
     }
 
+    function mspointerEventTranslator(callback, eventObject) {
+        eventObject._handledTouch = true;
+        return callback(eventObject);
+    }
+
     var eventTranslations = {
         pointerdown: {
             touch: "touchstart",
+            mspointer: "MSPointerDown",
             mouse: "mousedown"
         },
         pointerup: {
             touch: "touchend",
+            mspointer: "MSPointerUp",
             mouse: "mouseup"
         },
         pointermove: {
             touch: "touchmove",
+            mspointer: "MSPointerMove",
             mouse: "mousemove"
         },
         pointerenter: {
             touch: null,
+            mspointer: "MSPointerEnter",
             mouse: "mouseenter"
         },
         pointerover: {
             touch: null,
+            mspointer: "MSPointerOver",
             mouse: "mouseover"
         },
         pointerout: {
             touch: "touchleave",
+            mspointer: "MSPointerOut",
             mouse: "mouseout"
         },
         pointercancel: {
             touch: "touchcancel",
+            mspointer: "MSPointerCancel",
             mouse: null
         }
     };
-    
+
     function registerPointerEvent(element, type, callback, capture) {
         var eventNameLowercase = type.toLowerCase();
-        
+
         var mouseWrapper,
-            touchWrapper;
+            touchWrapper,
+            mspointerWrapper;
         var translations = eventTranslations[eventNameLowercase];
 
         // Browsers fire a touch event and then a mouse event when the input is touch. touchHandled is used to prevent invoking the pointer callback twice.
@@ -260,7 +273,15 @@
             element.addEventListener(translations.mouse, mouseWrapper, capture);
         }
 
-        if (translations.touch) {
+        // If we are in IE10, we should use MSPointer as it provides a better interface than touch events
+        if (global.MSPointerEvent) {
+            mspointerWrapper = function(eventObject) {
+                eventObject._normalizedType = eventNameLowercase;
+                touchHandled = true;
+                return mspointerEventTranslator(callback, eventObject);
+            };
+            element.addEventListener(translations.mspointer, mspointerWrapper, capture);
+        } else if (translations.touch) {
             touchWrapper = function (eventObject) {
                 eventObject._normalizedType = eventNameLowercase;
                 touchHandled = true;
@@ -268,16 +289,17 @@
             }
             element.addEventListener(translations.touch, touchWrapper, capture);
         }
-        
+
         addListenerToEventMap(element, type, callback, capture, {
             mouseWrapper: mouseWrapper,
-            touchWrapper: touchWrapper
+            touchWrapper: touchWrapper,
+            mspointerWrapper: mspointerWrapper
         });
     }
-    
+
     function unregisterPointerEvent(element, type, callback, capture) {
         var eventNameLowercase = type.toLowerCase();
-        
+
         var mapping = removeListenerFromEventMap(element, type, callback, capture);
         if (mapping) {
             var translations = eventTranslations[eventNameLowercase];
@@ -287,12 +309,15 @@
             if (mapping.data.touchWrapper) {
                 element.removeEventListener(translations.touch, mapping.data.touchWrapper, capture);
             }
+            if (mapping.data.mspointerWrapper) {
+                element.removeEventListener(translations.mspointer, mapping.data.mspointerWrapper, capture);
+            }
         }
     }
-    
-    // Custom events dispatch table. Event names should be lowercased. 
+
+    // Custom events dispatch table. Event names should be lowercased.
     //
-    
+
     var customEvents = {
         focusout: {
             register: registerBubbleListener,
@@ -308,7 +333,7 @@
             register: registerPointerEvent,
             unregister: unregisterPointerEvent
         };
-        
+
         customEvents.pointerdown = pointerEventEntry;
         customEvents.pointerup = pointerEventEntry;
         customEvents.pointermove = pointerEventEntry;
@@ -378,20 +403,20 @@
                 if(attrName === 'tabindex') {
                     attrName = 'tabIndex';
                 }
-                
+
                 this._pendingChanges.push({
                     type: 'attributes',
                     target: evt.target,
                     attributeName: attrName
                 });
-                
+
                 if(this._observerCount === 1) {
                     this._dispatchEvent();
                 } else if(this._scheduled === false) {
                     this._scheduled = true;
                     WinJS.Utilities._setImmediate(this._dispatchEvent.bind(this));
                 }
-                
+
             },
             _dispatchEvent: function MutationObserverShim_dispatchEvent() {
                 try {
@@ -490,10 +515,10 @@
                     || element.webkitMatchesSelector;
             return matchesSelector.call(element, selectorString);
         },
-        
+
         _addEventListener: function _addEventListener(element, type, listener, useCapture) {
             var eventNameLower = type && type.toLowerCase();
-            var entry = customEvents[eventNameLower]; 
+            var entry = customEvents[eventNameLower];
             if (entry) {
                 entry.register(element, type, listener, useCapture);
             } else {
@@ -503,14 +528,14 @@
 
         _removeEventListener: function _removeEventListener(element, type, listener, useCapture) {
             var eventNameLower = type && type.toLowerCase();
-            var entry = customEvents[eventNameLower]; 
+            var entry = customEvents[eventNameLower];
             if (entry) {
                 entry.unregister(element, type, listener, useCapture);
             } else {
                 element.removeEventListener(type, listener, useCapture);
             }
         },
-        
+
         _bubbleEvent: bubbleEvent,
 
         _setPointerCapture: function (element, pointerId) {
@@ -1117,7 +1142,7 @@
             /// true if the specified element contains the specified class; otherwise, false.
             /// </returns>
             /// </signature>
-            
+
             if(e.classList) {
                 return e.classList.contains(name);
             } else {
@@ -1221,7 +1246,7 @@
             /// </returns>
             /// </signature>
             if(e.classList) {
-                
+
                 // Fastpath: Nothing to remove
                 if(e.classList.length === 0) {
                     return e;
@@ -1238,7 +1263,7 @@
                 var namesToRemove;
                 var namesToRemoveLen;
 
-                if (name.indexOf(" ") >= 0) { 
+                if (name.indexOf(" ") >= 0) {
                     namesToRemove = name.split(" ");
                     namesToRemoveLen = removeEmpties(namesToRemove);
                 }
