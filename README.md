@@ -49,6 +49,7 @@ Run the following and the WinJS JavaScript and CSS files will be put in the `bin
 grunt
 ```
 
+> **Note:** You may need to use sudo (for OSX, *nix, BSD etc) or run your command shell as Administrator (for Windows) to install Grunt globally.
+
 # Try WinJS
 Check out our online playground http://try.buildwinjs.com
-
