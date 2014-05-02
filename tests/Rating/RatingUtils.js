@@ -716,9 +716,14 @@ RatingUtils.prototype = (function () {
             // Some browsers have different expected display values
             var expectedFlexDisplayValue = "inline-flex";
             var flexItemStyleAttribute = "flex";
-            if (!("flex" in document.documentElement.style) && ("msFlex" in document.documentElement.style)) {
-                expectedFlexDisplayValue = "-ms-inline-flexbox";
-                flexItemStyleAttribute = "-ms-flex";
+            if (!("flex" in document.documentElement.style)) {
+                if ("msFlex" in document.documentElement.style) {
+                    expectedFlexDisplayValue = "-ms-inline-flexbox";
+                    flexItemStyleAttribute = "-ms-flex";
+                } else if ("webkitFlex" in document.documentElement.style) {
+                    expectedFlexDisplayValue = "-webkit-inline-flexbox";
+                    flexItemStyleAttribute = "-webkit-flex";
+                }
             }
 
             LiveUnit.Assert.areEqual(expectedFlexDisplayValue, ratingControlStyle.getPropertyValue("display"), "Overall element should be a flex box");
