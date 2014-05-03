@@ -142,7 +142,7 @@
                 ],
                 build: process.env.TRAVIS_JOB_ID,
                 testInterval: 1000,
-                throttled:4,
+                throttled:10,
                 browsers: [{
                     browserName: "internet explorer",
                     platform: "WIN8.1",
