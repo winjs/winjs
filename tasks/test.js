@@ -80,7 +80,7 @@
 </head>                                                                                                                     \r\n\
 <body>                                                                                                                      \r\n\
   <img src="http://try.buildwinjs.com/images/winjs-logo.png" alt="WinJS Tests"/> <br/>                                      \r\n\
-  <a href="http://try.buildwinjs.com/#status" target="_blank">View Test Status page</a>                                     \r\n\
+  <a href="http://try.buildwinjs.com/#status" target="_blank">View Tests Status page</a>                                    \r\n\
   <ul>                                                                                                                      \r\n\
 @@TESTS                                                                                                                     \r\n\
   <ul>                                                                                                                      \r\n\
