@@ -178,14 +178,22 @@ CommonUtils.prototype = (function () {
             ///  JavaScript object containing list of attributes to set on HTML tag (note that tagId takes precedence for "id" attribute)
             /// </param>
             LiveUnit.LoggingCore.logComment("Adding \"" + tagName + "\" with id \"" + tagId + "\" to the DOM");
+
+            // Some controls have styles that conflict with position: absolute.
+            // Instead of applying position: absolute to the added tag itself, put the tag
+            // in a wrapping div.
+            var wrapper = document.createElement("div");
+            wrapper.style.position = "absolute";
+            wrapper.style.left = wrapper.style.top = "0px";
+            document.body.appendChild(wrapper);
+
             var tag = document.createElement(tagName);
-            tag.style.position = "absolute";
-            tag.style.left = tag.style.top = "0px";
             for (var a in attributes) {
                 tag.setAttribute(a, attributes[a]);
             }
             tag.setAttribute("id", tagId);
-            document.body.appendChild(tag);
+            tag.setAttribute("has-wrapper", true);
+            wrapper.appendChild(tag);
         },
 
         getElementById: function (elementId) {
@@ -212,6 +220,11 @@ CommonUtils.prototype = (function () {
             var tag = document.getElementById(tagId);
             if (!tag) { return; }
             LiveUnit.LoggingCore.logComment("Remove tag \"" + tagId + "\" from the DOM");
+
+            // We can't be sure that people using this method used addTag to create the element, so we have
+            // to find out if this element has a wrapping div around it.
+            if (tag.getAttribute("has-wrapper"))
+                return tag.parentNode.parentNode.removeChild(tag.parentNode);
             return tag.parentNode.removeChild(tag);
         },
 
@@ -1086,7 +1099,7 @@ CommonUtils.prototype = (function () {
                 event.initEvent("detectresize", false, true);
                 detector.dispatchEvent(event);
             });
-            
+
 
             function cleanup() {
                 document.body.removeChild(detector);
