@@ -541,6 +541,7 @@ WinJSTests.NavBarLayoutTests = function () {
         complete();
     };
 
+    // Verifies that the NavBar focus state is reset when the NavBar is hidden and then shown.
     this.testNavBarFocusOnHideAndShow = function (complete) {
         var navbarEl = document.createElement("div"),
             navbarContainerEl = document.createElement("div");
@@ -603,11 +604,12 @@ WinJSTests.NavBarLayoutTests = function () {
             return CommonUtilities.waitForEvent(navbar, "aftershow");
         }).
         then(function () {
-            // Verify the focus on last command
+            // Verify the focus state was reset
+            var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
             var lastNavItem = navbarContainer._surfaceEl.children[19].winControl;
-            LiveUnit.Assert.areEqual(lastNavItem._buttonEl, document.activeElement);
-            LiveUnit.Assert.areEqual(19, navbarContainer.currentIndex);
-            LiveUnit.Assert.isTrue(lastNavItem.splitOpened);
+            LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
+            LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
+            LiveUnit.Assert.isFalse(lastNavItem.splitOpened);
 
             complete();
         });

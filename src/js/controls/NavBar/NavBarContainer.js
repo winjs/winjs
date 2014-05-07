@@ -84,6 +84,7 @@
                 WinJS.Utilities.addClass(this.element, WinJS.UI.NavBarContainer._ClassName.navbarcontainer);
                 WinJS.Utilities.addClass(this.element, "win-disposable");
 
+                this._closeSplitAndResetBound = this._closeSplitAndReset.bind(this);
                 this._currentManipulationState = MS_MANIPULATION_STATE_STOPPED;
 
                 this._fixedSize = false;
@@ -97,9 +98,7 @@
                 this._dataChangingBound = this._dataChanging.bind(this);
                 this._dataChangedBound = this._dataChanged.bind(this);
 
-                this._navigatedBound = this._navigated.bind(this);
-
-                WinJS.Navigation.addEventListener('navigated', this._navigatedBound);
+                WinJS.Navigation.addEventListener('navigated', this._closeSplitAndResetBound);
 
                 // Don't use set options for the properties so we can control the ordering to avoid rendering multiple times.
                 this.layout = options.layout || WinJS.UI.Orientation.horizontal;
@@ -126,6 +125,10 @@
                 }
 
                 this._updatePageUI();
+                
+                WinJS.Utilities.Scheduler.schedule(function NavBarContainer_async_initialize() {
+                    this._updateAppBarReference();
+                }, WinJS.Utilities.Scheduler.Priority.normal, this, "WinJS.UI.NavBarContainer_async_initialize");
 
                 this._writeProfilerMark("constructor,StopTM");
             }, {
@@ -371,7 +374,26 @@
                     this._duringForceLayout = false;
                 },
 
-                _navigated: function NavBarContainer_navigated() {
+                _updateAppBarReference: function NavBarContainer_updateAppBarReference() {
+                    if (!this._appBarEl || !this._appBarEl.contains(this.element)) {
+                        if (this._appBarEl) {
+                            this._appBarEl.removeEventListener('beforeshow', this._closeSplitAndResetBound);
+                            this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
+                        }
+                    
+                        var appBarEl = this.element.parentNode;
+                        while (appBarEl && !WinJS.Utilities.hasClass(appBarEl, 'win-appbar')) {
+                            appBarEl = appBarEl.parentNode;
+                        }
+                        this._appBarEl = appBarEl;
+                        
+                        if (this._appBarEl) {
+                            this._appBarEl.addEventListener('beforeshow', this._closeSplitAndResetBound);
+                        }
+                    }
+                },
+
+                _closeSplitAndReset: function NavBarContainer_closeSplitAndReset() {
                     this._closeSplitIfOpen();
                     this._reset();
                 },
@@ -634,38 +656,29 @@
                 },
 
                 _resizeHandler: function NavBarContainer_resizeHandler() {
-                    if (this._disposed) {
-                        return;
-                    }
-                    if (this._measured) {
-                        this._measured = false;
+                    if (this._disposed) { return; }
+                    if (!this._measured) { return; }
+                    var viewportResized = this.layout === WinJS.UI.Orientation.horizontal
+                            ? this._sizes.viewportOffsetWidth !== parseFloat(getComputedStyle(this._viewportEl).width)
+                            : this._sizes.viewportOffsetHeight !== parseFloat(getComputedStyle(this._viewportEl).height);
+                    if (!viewportResized) { return; }
+                    
+                    this._measured = false;
 
-                        if (!this._pendingResize) {
-                            this._pendingResize = true;
+                    if (!this._pendingResize) {
+                        this._pendingResize = true;
 
-                            this._resizeImplBound = this._resizeImplBound || this._resizeImpl.bind(this);
+                        this._resizeImplBound = this._resizeImplBound || this._resizeImpl.bind(this);
+                        
+                        this._updateAppBarReference();
 
-                            if (!this._appBarEl || !this._appBarEl.contains(this.element)) {
-                                if (this._appBarEl) {
-                                    this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
-                                }
-
-                                var appBarEl = this.element.parentNode;
-                                while (appBarEl && !WinJS.Utilities.hasClass(appBarEl, 'win-appbar')) {
-                                    appBarEl = appBarEl.parentNode;
-                                }
-
-                                this._appBarEl = appBarEl;
-                            }
-
-                            if (this._appBarEl && this._appBarEl.winControl && this._appBarEl.winControl.hidden) {
-                                // Do resize lazily.
-                                WinJS.Utilities.Scheduler.schedule(this._resizeImplBound, WinJS.Utilities.Scheduler.Priority.idle, null, "WinJS.UI.NavBarContainer._resizeImpl");
-                                this._appBarEl.addEventListener('beforeshow', this._resizeImplBound);
-                            } else {
-                                // Do resize now
-                                this._resizeImpl();
-                            }
+                        if (this._appBarEl && this._appBarEl.winControl && this._appBarEl.winControl.hidden) {
+                            // Do resize lazily.
+                            WinJS.Utilities.Scheduler.schedule(this._resizeImplBound, WinJS.Utilities.Scheduler.Priority.idle, null, "WinJS.UI.NavBarContainer._resizeImpl");
+                            this._appBarEl.addEventListener('beforeshow', this._resizeImplBound);
+                        } else {
+                            // Do resize now
+                            this._resizeImpl();
                         }
                     }
                 },
@@ -1337,10 +1350,11 @@
                     this._disposed = true;
 
                     if (this._appBarEl) {
+                        this._appBarEl.removeEventListener('beforeshow', this._closeSplitAndResetBound);
                         this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
                     }
 
-                    WinJS.Navigation.removeEventListener('navigated', this._navigatedBound);
+                    WinJS.Navigation.removeEventListener('navigated', this._closeSplitAndResetBound);
 
                     this._leftArrowWaitingToFadeOut && this._leftArrowWaitingToFadeOut.cancel();
                     this._leftArrowFadeOut && this._leftArrowFadeOut.cancel();

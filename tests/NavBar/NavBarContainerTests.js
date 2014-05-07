@@ -122,6 +122,63 @@ WinJSTests.NavBarContainerTests = function () {
             complete();
         });
     };
+    
+    this.testCurrentIndexAndMaxRowsConstructor = function (complete) {
+        var navbarContainerEl = document.createElement('div');
+        this._element.appendChild(navbarContainerEl);
+
+        var navbarContainer = new WinJS.UI.NavBarContainer(navbarContainerEl, {
+            data: navUtils.getNavBarCommandsData(20, true),
+            currentIndex: 10,
+            maxRows: 2
+        });
+
+        LiveUnit.Assert.areEqual(1, navbarContainer._sizes.columnsPerPage);
+        LiveUnit.Assert.areEqual(2, navbarContainer._sizes.rowsPerPage);
+        LiveUnit.Assert.areEqual(Math.ceil(20 / (1 * 2)), navbarContainer._sizes.pages);
+        LiveUnit.Assert.areEqual(2500, navbarContainer._scrollPosition);
+
+        navbarContainer.element.focus();
+        WinJS.Utilities._setImmediate(function () {
+            var navItem10 = navbarContainer._surfaceEl.children[10].winControl;
+            LiveUnit.Assert.areEqual(navItem10._buttonEl, document.activeElement);
+            LiveUnit.Assert.areEqual(10, navbarContainer.currentIndex);
+            complete();
+        });
+    };
+    
+    this.testCurrentIndexAndMaxRows = function (complete) {
+        var navbarContainerEl = document.createElement('div');
+        this._element.appendChild(navbarContainerEl);
+
+        var navbarContainer = new WinJS.UI.NavBarContainer(navbarContainerEl, {
+            data: navUtils.getNavBarCommandsData(20, true)
+        });
+
+        LiveUnit.Assert.areEqual(1, navbarContainer._sizes.columnsPerPage);
+        LiveUnit.Assert.areEqual(1, navbarContainer._sizes.rowsPerPage);
+        LiveUnit.Assert.areEqual(Math.ceil(20 / (1 * 1)), navbarContainer._sizes.pages);
+        LiveUnit.Assert.areEqual(0, navbarContainer._scrollPosition);
+        
+        // Wait for the control to no longer be in the construction phase
+        WinJS.Utilities.Scheduler.schedulePromiseNormal().then(function () {
+            navbarContainer.maxRows = 2;
+            navbarContainer.currentIndex = 10;
+            navbarContainer.element.focus();
+            
+            // Wait for focus to move
+            return WinJS.Promise.timeout();
+        }).then(function () {
+            var navItem10 = navbarContainer._surfaceEl.children[10].winControl;
+            LiveUnit.Assert.areEqual(navItem10._buttonEl, document.activeElement);
+            LiveUnit.Assert.areEqual(10, navbarContainer.currentIndex);
+            LiveUnit.Assert.areEqual(1, navbarContainer._sizes.columnsPerPage);
+            LiveUnit.Assert.areEqual(2, navbarContainer._sizes.rowsPerPage);
+            LiveUnit.Assert.areEqual(Math.ceil(20 / (1 * 2)), navbarContainer._sizes.pages);
+            LiveUnit.Assert.areEqual(2500, navbarContainer._scrollPosition);
+            complete();
+        });
+    };
 
     this.testSizes = function () {
         var navbarContainerEl = document.createElement('div');
