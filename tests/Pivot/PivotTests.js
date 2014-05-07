@@ -656,7 +656,7 @@ WinJSTests.PivotTests = function () {
 
             pivotWrapperEl.appendChild(pivot.element);
 
-            WinJS.Promise.timeout().then(function () {
+            waitForNextItemAnimationStart(pivot).then(function () {
                 // Test constructor/refresh
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.api, pivot._navMode);
 
@@ -667,7 +667,7 @@ WinJSTests.PivotTests = function () {
 
                 // Test selectedIndex
                 pivot.selectedIndex = 1;
-                return WinJS.Promise.timeout();
+                return waitForNextItemAnimationStart(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.api, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -677,7 +677,7 @@ WinJSTests.PivotTests = function () {
 
                 // Test selectedItem
                 pivot.selectedItem = pivot.items.getAt(2);
-                return WinJS.Promise.timeout();
+                return waitForNextItemAnimationStart(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.api, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -719,7 +719,7 @@ WinJSTests.PivotTests = function () {
 
                 // Pan right
                 WinJS.Utilities._zoomTo(pivot._viewportElement, { contentX: pivot._viewportElement.scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                return WinJS.Promise.timeout();
+                return waitForNextItemAnimationStart(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.inertia, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -729,7 +729,7 @@ WinJSTests.PivotTests = function () {
 
                 // Pan left
                 WinJS.Utilities._zoomTo(pivot._viewportElement, { contentX: pivot._viewportElement.scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                return WinJS.Promise.timeout();
+                return waitForNextItemAnimationStart(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.inertia, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -755,7 +755,7 @@ WinJSTests.PivotTests = function () {
 
                 // Scroll right
                 pivot._viewportElement.scrollLeft += 50;
-                return WinJS.Promise.timeout();
+                return waitForNextItemAnimationStart(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.scroll, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -765,7 +765,7 @@ WinJSTests.PivotTests = function () {
 
                 // Pan left
                 pivot._viewportElement.scrollLeft -= 50;
-                return WinJS.Promise.timeout();
+                return waitForNextItemAnimationStart(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.scroll, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
