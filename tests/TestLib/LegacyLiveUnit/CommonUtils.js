@@ -18,7 +18,7 @@ CommonUtils.prototype = (function () {
     // Public methods
     // Please refrain from adding any LiveUnit.Assert's in this class.
     return {
-        createPointerEvent: function() {
+        createPointerEvent: function(fallbackType) {
             // PointerEvent is already supported, so just use that
             if (window.PointerEvent) {
                 var e = document.createEvent("PointerEvent");
@@ -26,6 +26,12 @@ CommonUtils.prototype = (function () {
             } else if (window.MSPointerEvent) {
                 // Fallback to the ms prefix version from IE 10
                 var e = document.createEvent("MSPointerEvent");
+                return e;
+            } else if (fallbackType === "mouse") {
+                var e = document.createEvent("MouseEvent");
+                return e;
+            } else if (fallbackType === "touch") {
+                var e = document.createEvent("TouchEvent");
                 return e;
             }
         },
@@ -45,6 +51,20 @@ CommonUtils.prototype = (function () {
                 });
 
                 e.initPointerEvent.apply(e, args);
+            } else if (e instanceof MouseEvent) {
+                // Convert "pointerevent" to "mouseevent"
+                args[0] = args[0].replace(/pointer/g, "mouse");
+
+                // Get the arguments mouse events care about
+                args = args.slice(0, 14);
+                e.initMouseEvent.apply(e, args);
+            } else if (e instanceof TouchEvent) {
+                // Convert "pointerevent" to "touchevent"
+                args[0] = args[0].replace(/pointer/g, "touch");
+
+                // Get the arguments touch events care about
+                args = args.slice(0, 14);
+                e.initTouchEvent.apply(e, args);
             }
         },
 
@@ -223,8 +243,9 @@ CommonUtils.prototype = (function () {
 
             // We can't be sure that people using this method used addTag to create the element, so we have
             // to find out if this element has a wrapping div around it.
-            if (tag.getAttribute("has-wrapper"))
+            if (tag.getAttribute("has-wrapper")) {
                 return tag.parentNode.parentNode.removeChild(tag.parentNode);
+            }
             return tag.parentNode.removeChild(tag);
         },
 
@@ -612,7 +633,7 @@ CommonUtils.prototype = (function () {
             var event;
 
             if (fromElement) {
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("mouse");
                 // pointerType = 4 (mouse event)
                 this.initPointerEvent(event, "pointerout", true, true, window, 0, 0, 0, 0, 0,
                     false, false, false, false, 0, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
@@ -621,14 +642,14 @@ CommonUtils.prototype = (function () {
             if (toElement) {
                 var rect = this.getClientRect(toElement);
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("mouse");
                 // pointerType = 4 (mouse event)
                 this.initPointerEvent(event, "pointerover", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
                     false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 1, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                 toElement.dispatchEvent(event);
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("mouse");
                 // pointerType = 4 (mouse event)
                 this.initPointerEvent(event, "pointermove", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
@@ -666,7 +687,7 @@ CommonUtils.prototype = (function () {
             if (element) {
                 var rect = this.getClientRect(element);
 
-                var event = this.createPointerEvent();
+                var event = this.createPointerEvent("mouse");
                 // pointerType = 4 (mouse event)
                 this.initPointerEvent(event, "pointerdown", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
@@ -704,7 +725,7 @@ CommonUtils.prototype = (function () {
             if (element) {
                 var rect = this.getClientRect(element);
 
-                var event = this.createPointerEvent();
+                var event = this.createPointerEvent("mouse");
                 // pointerType = 4 (mouse event)
                 this.initPointerEvent(event, "pointerup", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
@@ -785,14 +806,14 @@ CommonUtils.prototype = (function () {
 
                 var rect = this.getClientRect(element);
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("mouse");
                 // pointerType = 4 (mouse event)
                 this.initPointerEvent(event, "pointerdown", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
                     false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 1, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                 events[events.length] = event;
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("mouse");
                 // pointerType = 4 (mouse event)
                 this.initPointerEvent(event, "pointerup", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
@@ -827,7 +848,7 @@ CommonUtils.prototype = (function () {
             if (element) {
                 var rect = this.getClientRect(element);
 
-                var event = this.createPointerEvent();
+                var event = this.createPointerEvent("touch");
                 // pointerType = 2 (touch event)
                 this.initPointerEvent(event, "pointercancel", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
@@ -851,7 +872,7 @@ CommonUtils.prototype = (function () {
             if (fromElement) {
                 rect = this.getClientRect(fromElement);
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("touch");
                 // pointerType = 2 (touch event)
                 this.initPointerEvent(event, "pointerout", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
@@ -861,14 +882,14 @@ CommonUtils.prototype = (function () {
             if (toElement) {
                 rect = this.getClientRect(toElement);
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("touch");
                 // pointerType = 2 (touch event)
                 this.initPointerEvent(event, "pointerover", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
                     false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                 toElement.dispatchEvent(event);
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("touch");
                 // pointerType = 2 (touch event)
                 this.initPointerEvent(event, "pointermove", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
@@ -888,14 +909,14 @@ CommonUtils.prototype = (function () {
             if (element) {
                 var rect = this.getClientRect(element);
 
-                var event = this.createPointerEvent();
+                var event = this.createPointerEvent("touch");
                 // pointerType = 2 (touch event)
                 this.initPointerEvent(event, "pointerdown", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y, // fake mouse coordinates
                     false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                 element.dispatchEvent(event);
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("touch");
                 // pointerType = 2 (touch event)
                 this.initPointerEvent(event, "pointermove", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
@@ -914,14 +935,14 @@ CommonUtils.prototype = (function () {
             if (element) {
                 var rect = this.getClientRect(element);
 
-                var event = this.createPointerEvent();
+                var event = this.createPointerEvent("touch");
                 // pointerType = 2 (touch event)
                 this.initPointerEvent(event, "pointermove", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
                     false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                 element.dispatchEvent(event);
 
-                event = this.createPointerEvent();
+                event = this.createPointerEvent("touch");
                 // pointerType = 2 (touch event)
                 this.initPointerEvent(event, "pointerup", true, true, window, 0,
                     window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,

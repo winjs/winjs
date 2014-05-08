@@ -761,7 +761,7 @@ RatingTouchTests = function () {
 
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = commonUtils.createPointerEvent();
+                        var event = commonUtils.createPointerEvent("touch");
                         commonUtils.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
@@ -777,7 +777,7 @@ RatingTouchTests = function () {
                     return function () {
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = commonUtils.createPointerEvent();
+                        var event = commonUtils.createPointerEvent("touch");
                         commonUtils.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
@@ -848,7 +848,7 @@ RatingTouchTests = function () {
 
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = commonUtils.createPointerEvent();
+                        var event = commonUtils.createPointerEvent("touch");
                         commonUtils.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
@@ -861,7 +861,7 @@ RatingTouchTests = function () {
                     return function () {
                         var rect = window.async.ratingUtils.getClientRect(star);
 
-                        var event = commonUtils.createPointerEvent();
+                        var event = commonUtils.createPointerEvent("touch");
                         commonUtils.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_TOUCH || "touch"), 0, true);
                         star.dispatchEvent(event);
                     };
