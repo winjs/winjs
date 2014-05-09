@@ -51,5 +51,8 @@ grunt
 
 > **Note:** You may need to use sudo (for OSX, *nix, BSD etc) or run your command shell as Administrator (for Windows) to install Grunt globally.
 
+# Tests status
+Refer to http://try.buildwinjs.com/#status for the current status of the unit tests and the list of known issues.
+
 # Try WinJS
 Check out our online playground http://try.buildwinjs.com
