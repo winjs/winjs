@@ -557,7 +557,7 @@
 
                 capture: function (element) {
 
-                    var capture = element.capture;
+                    var capture = element._capture;
                     if (capture) {
                         capture.refCount++;
                         return capture;
@@ -584,7 +584,7 @@
                     //
                     capture = this._captureCSE.createPathExpression(path, name.toLowerCase());
                     capture.element = element;
-                    capture.element.capture = capture;
+                    capture.element._capture = capture;
                     capture.refCount = 1;
                     return capture;
 
