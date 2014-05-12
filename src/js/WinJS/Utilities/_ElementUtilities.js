@@ -262,17 +262,6 @@
         // Browsers fire a touch event and then a mouse event when the input is touch. touchHandled is used to prevent invoking the pointer callback twice.
         var touchHandled;
 
-        if (translations.mouse) {
-            mouseWrapper = function (eventObject) {
-                eventObject._normalizedType = eventNameLowercase;
-                if (!touchHandled) {
-                    return mouseEventTranslator(callback, eventObject);
-                }
-                touchHandled = false;
-            }
-            element.addEventListener(translations.mouse, mouseWrapper, capture);
-        }
-
         // If we are in IE10, we should use MSPointer as it provides a better interface than touch events
         if (global.MSPointerEvent) {
             mspointerWrapper = function(eventObject) {
@@ -281,13 +270,26 @@
                 return mspointerEventTranslator(callback, eventObject);
             };
             element.addEventListener(translations.mspointer, mspointerWrapper, capture);
-        } else if (translations.touch) {
-            touchWrapper = function (eventObject) {
-                eventObject._normalizedType = eventNameLowercase;
-                touchHandled = true;
-                return touchEventTranslator(callback, eventObject);
+        } else {
+            // Otherwise, use a mouse and touch event
+            if (translations.mouse) {
+                mouseWrapper = function (eventObject) {
+                    eventObject._normalizedType = eventNameLowercase;
+                    if (!touchHandled) {
+                        return mouseEventTranslator(callback, eventObject);
+                    }
+                    touchHandled = false;
+                }
+                element.addEventListener(translations.mouse, mouseWrapper, capture);
             }
-            element.addEventListener(translations.touch, touchWrapper, capture);
+            if (translations.touch) {
+                touchWrapper = function (eventObject) {
+                    eventObject._normalizedType = eventNameLowercase;
+                    touchHandled = true;
+                    return touchEventTranslator(callback, eventObject);
+                }
+                element.addEventListener(translations.touch, touchWrapper, capture);
+            }
         }
 
         addListenerToEventMap(element, type, callback, capture, {
@@ -585,7 +587,7 @@
 
         _MutationObserver : _MutationObserver,
 
-        _resizeNotifier : { 
+        _resizeNotifier : {
             get: function() {
                 if(!_resizeNotifier) {
                     _resizeNotifier = new ResizeNotifier();
