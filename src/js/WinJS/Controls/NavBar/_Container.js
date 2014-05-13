@@ -83,6 +83,9 @@
                 this._element = element;
                 WinJS.Utilities.addClass(this.element, WinJS.UI.NavBarContainer._ClassName.navbarcontainer);
                 WinJS.Utilities.addClass(this.element, "win-disposable");
+                if (!element.getAttribute("tabIndex")) {
+                    element.tabIndex = -1;
+                }
 
                 this._closeSplitAndResetBound = this._closeSplitAndReset.bind(this);
                 this._currentManipulationState = MS_MANIPULATION_STATE_STOPPED;
