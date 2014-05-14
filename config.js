@@ -33,7 +33,7 @@
         "src/js/build/Copyright.js",
         "src/js/WinJS/Core/_WriteProfilerMark.js",
         "src/js/build/startBase.js",
-        "src/js/base/references.js",
+        "src/js/build/base.references.js",
         "src/js/WinJS/Core/_Base.js",
         "src/js/WinJS/Core/_BaseUtils.js",
         "src/js/WinJS/Core/_Log.js",
@@ -80,7 +80,7 @@
         "src/js/build/Copyright.js",
         "src/js/WinJS/Core/_WriteProfilerMark.js",
         "src/js/build/startBase.js",
-        "src/js/base/references.js",
+        "src/js/build/base.references.js",
         "src/js/WinJS/Core/_Base.js",
         "src/js/WinJS/Core/_BaseUtils.js",
         "src/js/WinJS/Core/_BaseUtilsPhone.js",
@@ -191,7 +191,7 @@
 
     config.uiJSFilesPhone = [
         "src/js/build/startUI.js",
-        "src/js/uicollections/references.js",
+        "src/js/build/ui.references.js",
         "src/js/WinJS/Animations.js",
         "src/js/uicollections/Assert.js",
         "src/js/WinJS/BindingList/_BindingListDataSource.js",
