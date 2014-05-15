@@ -118,7 +118,7 @@
                     "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?fastanimations=true&autostart=true",
                 ],
                 build: process.env.TRAVIS_JOB_ID,
-                testInterval: 1000,
+                testInterval: 6000,
                 browsers: browsers,
                 throttled:4,
                 testname: "winjs qunit tests",
@@ -141,7 +141,7 @@
     
                 ],
                 build: process.env.TRAVIS_JOB_ID,
-                testInterval: 1000,
+                testInterval: 6000,
                 throttled:10,
                 browsers: [{
                     browserName: "internet explorer",
