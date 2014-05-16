@@ -316,7 +316,7 @@ CorsicaTests.DatePicker = function () {
         var control = new WinJS.UI.DatePicker(controlElement, { calendar: "GregorianCalendar" });
 
         // note: if month is July, put 7 as expected month value and we'll adjust to 0 base in comparison below
-        var dateStrings = [["7/28/2011 1:30:57 PM", 7, 28, 2011],          // time that found original bug #427727
+        var dateStrings = [[new Date(2011, 6, 28, 13, 30, 57), 7, 28, 2011],          // time that found original bug #427727
                            ["2/29/2000", 2, 29, 2000],                     // y2k leap year date
                            ["1969/12/31 23:59:59", 12, 31, 1969],          // *almost* midnight
                            ["1999/12/31 23:59:59", 12, 31, 1999],          // just before Y2K
@@ -325,7 +325,6 @@ CorsicaTests.DatePicker = function () {
                            ["1582/10/05 00:00:00", 10, 5, 1582],           // gJulianEnd + 1,
                            ["1582/10/15 00:00:00", 10, 15, 1582],          // gGregorianStart,
                            ["1582/10/14 23:59:59", 10, 14, 1582],          // gGregorianStart-1
-                           ["00/01/01 00:00:00", 12, 1, 1900],             // gYearZero,   Sat Dec 1 00:00:00 PST 1900 {
         // bug 464745 fails under wwahost        ["29222/04/25 16:53:20", 4, 25, 29222],         // gMaxMs,  This makes actual date Mon Apr 25 16:53:20 PDT 29222
         // bug 464745 fails under wwahost        ["-25283/09/08 07:06:40", 9, 8, 25283],         // -1*gMaxMs,
         ];

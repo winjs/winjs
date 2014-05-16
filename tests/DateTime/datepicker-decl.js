@@ -25,120 +25,22 @@ CorsicaTests.DatePickerDecl = function () {
 
     }
 
-    function createPicker(options) {
-        var wrt = WinJS.UI.DatePicker._getInformationWinRT;
-        var js = WinJS.UI.DatePicker._getInformationJS;
-
-        if (isWinRTEnabled()) {
-            WinJS.UI.DatePicker.getInformation =
-                function (startDate, endDate, calendar, datePattern) {
-                    return {
-                        order: wrt(startDate, endDate, calendar).order,
-                        getDate: function (index) {
-                            var date1 = wrt(startDate, endDate, calendar, datePattern).getDate(index);
-                            var date2 = js(startDate, endDate, calendar, datePattern).getDate(index);
-                            if (!calendar && date1.toString() != date2.toString()) {
-                                throw "mismatch";
-                            }
-                            return date1;
-                        },
-                        getIndex: function (date) {
-                            var index1 = wrt(startDate, endDate, calendar, datePattern).getIndex(date);
-                            var index2 = js(startDate, endDate, calendar, datePattern).getIndex(date);
-
-                            if (!calendar && JSON.stringify(index1) != JSON.stringify(index2)) {
-                                throw "mismatch";
-                            }
-                            return index1;
-                        },
-                        years: {
-                            getLength: function () {
-                                var len1 = wrt(startDate, endDate, calendar, datePattern).years.getLength();
-                                var len2 = js(startDate, endDate, calendar, datePattern).years.getLength();
-
-                                if (!calendar && len1 != len2) {
-                                    throw "mismatch";
-                                }
-                                return len1;
-                            },
-                            getValue: function (index) {
-                                var item1 = wrt(startDate, endDate, calendar, datePattern).years.getValue(index);
-                                var item2 = js(startDate, endDate, calendar, datePattern).years.getValue(index);
-
-                                if (!calendar && item1 != item2 && datePattern.year.pattern === defaultYearPattern) {
-                                    throw "mismatch";
-                                }
-                                return item1;
-                            }
-                        },
-                        months: function (yearIndex) {
-                            return {
-                                getLength: function () {
-                                    var len1 = wrt(startDate, endDate, calendar, datePattern).months(yearIndex).getLength();
-                                    var len2 = js(startDate, endDate, calendar, datePattern).months(yearIndex).getLength();
-
-                                    if (!calendar && len1 != len2) {
-                                        throw "mismatch";
-                                    }
-                                    return len1;
-                                },
-                                getValue: function (index) {
-                                    var item1 = wrt(startDate, endDate, calendar).months(yearIndex).getValue(index);
-                                    var item2 = js(startDate, endDate, calendar).months(yearIndex).getValue(index);
-
-                                    if (!calendar && item1 != item2 && datePattern.month.pattern === defaultMonthPattern) {
-                                        throw "mismatch";
-                                    }
-                                    return item1;
-                                }
-                            };
-                        },
-                        dates: function (yearIndex, monthIndex) {
-                            return {
-                                getLength: function () {
-                                    var len1 = wrt(startDate, endDate, calendar, datePattern).dates(yearIndex, monthIndex).getLength();
-                                    var len2 = js(startDate, endDate, calendar, datePattern).dates(yearIndex, monthIndex).getLength();
-
-                                    if (!calendar && len1 != len2) {
-                                        throw "mismatch";
-                                    }
-                                    return len1;
-                                },
-                                getValue: function (index) {
-                                    var item1 = wrt(startDate, endDate, calendar, datePattern).dates(yearIndex, monthIndex).getValue(index);
-                                    var item2 = js(startDate, endDate, calendar, datePattern).dates(yearIndex, monthIndex).getValue(index);
-
-                                    if (!calendar && item1 != item2 && datePattern.day.pattern === defaultDayPattern) {
-                                        throw "mismatch";
-                                    }
-                                    return item1;
-                                }
-                            };
-                        }
-                    };
-                };
-        }
-
-        var dp = document.createElement('div');
-        dp.setAttribute('data-win-control', 'WinJS.UI.DatePicker');
-
-        if (options !== undefined) {
-            dp.setAttribute('data-win-options', JSON.stringify(options));
-        }
-
-        // NOTE: The datetime UI is created in a deferred UI manner so
-        // we need to have the timeout() to allow the browser to go through
-        // a few cycles before returning the object.
-        return process(dp).then(function () {
-            return WinJS.Promise.timeout().then(function () { return dp; });
-        });
-    }
-
     var elementToBeRemoved;
     function createPickerWithAppend(options) {
-
+        var dateObject = null;
         if (options && options.current) {
-            options.current = options.current + " 12:00pm";
+            // NOTE: If the 'current' property is a string, then we want to 
+            // set the property declaratively. If it is a date object, we
+            // set it imperatively. This is because stringifying the date
+            // object and reparsing it yields different results on different
+            // browser implementations.
+            if (typeof options.current === "string") {
+                options.current = options.current + " 12:00pm";
+            } else {
+                dateObject = options.current;
+                dateObject.setHours(12);
+                delete options.current;
+            }
         }
 
         var dp = document.createElement('div');
@@ -154,7 +56,12 @@ CorsicaTests.DatePickerDecl = function () {
         // we need to have the timeout() to allow the browser to go through
         // a few cycles before returning the object.
         return process(dp).then(function () {
-            return WinJS.Promise.timeout().then(function () { return dp; });
+            return WinJS.Promise.timeout().then(function () {
+                if (dateObject) {
+                    dp.winControl.current = dateObject;
+                }
+                return dp;
+            });
         });
     }
     // return the select element containing the day component
@@ -324,7 +231,7 @@ CorsicaTests.DatePickerDecl = function () {
 
         var cleanup;
         createPickerWithAppend({
-            current: 'January, 1, 2012',
+            current: new Date(2012, 0, 1),
             calendar: 'GregorianCalendar'
         }).then(function (picker) {
             datePicker = picker;
@@ -550,7 +457,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testDefaultFormats = function (complete) {
         // validate datePicker default format
         createPickerWithAppend({
-            current: 'April 7, 1978',
+            current: new Date(1978, 3, 7),
             calendar: 'GregorianCalendar'
         }).then(function (picker) {
 
@@ -611,7 +518,7 @@ CorsicaTests.DatePickerDecl = function () {
         // create initial control in disabled state
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'May 1, 1972',
+            current: new Date(1972, 4, 1),
             disabled: true
         }).then(function (picker) {
             verifyDate(picker, { day: 1, month: 5, year: 1972 });
@@ -628,7 +535,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testDisabled2 = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'March 3, 1968',
+            current: new Date(1968, 2, 3),
             disabled: false
         }).then(function (picker) {
             verifyDate(picker, { day: 3, month: 3, year: 1968 });
@@ -645,7 +552,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testCustomDate = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'February 3, 2005'
+            current: new Date(2005, 1, 3)
         }).then(function (picker) {
             verifyDate(picker, { day: 3, month: 2, year: 2005 });
         })
@@ -657,7 +564,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testLeapYear = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'February 29, 2000'
+            current: new Date(2000, 1, 29)
         }).then(function (picker) {
             verifyDate(picker, { day: 29, month: 2, year: 2000 });
         })
@@ -677,7 +584,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testNonLeapYear = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'February 29, 2001'
+            current: new Date(2001, 1, 29)
         }).then(function (picker) {
             verifyDate(picker, { day: 1, month: 3, year: 2001 });
         })
@@ -691,7 +598,7 @@ CorsicaTests.DatePickerDecl = function () {
         //BugID: 450489 - closed by design
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 20, 1989',
+            current: new Date(1989, 3, 20),
             minYear: 2000
         }).then(function (picker) {
             verifyDate(picker, { day: 20, month: 4, year: 2000 });
@@ -704,7 +611,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testMaxYear = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 29, 2035',
+            current: new Date(2035, 11, 29),
             maxYear: 2011
         }).then(function (picker) {
             verifyDate(picker, { day: 29, month: 12, year: 2011 });
@@ -720,7 +627,7 @@ CorsicaTests.DatePickerDecl = function () {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
             maxYear: 2011,
-            current: 'January 2, 2121',
+            current: new Date(2121, 0, 2)
         }).then(function (picker) {
             verifyDate(picker, { day: 2, month: 1, year: 2011 });
         })
@@ -733,7 +640,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify year > range snaps to maxYear
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 1, 2021',
+            current: new Date(2021, 11, 1),
             maxYear: 2001,
             minYear: 2000
         }).then(function (picker) {
@@ -748,7 +655,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify year < range snaps to min year
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 2, 1921',
+            current: new Date(1921, 11, 2),
             maxYear: 2001,
             minYear: 2000
         }).then(function (picker) {
@@ -763,7 +670,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify if minyear > maxyear, maxyear == minyear
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 3, 1972',
+            current: new Date(1972, 11, 3),
             maxYear: 1995,
             minYear: 2000
         }).then(function (picker) {
@@ -778,7 +685,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify if minyear > maxyear, minyear == maxyear, different attribute order
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 3, 1972',
+            current: new Date(1972, 11, 3),
             minYear: 2000,
             maxYear: 1995
         }).then(function (picker) {
@@ -793,7 +700,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify when minyear == maxyear, year snaps to minyear
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 4, 1935',
+            current: new Date(1935, 11, 4),
             maxYear: 1995,
             minYear: 1995
         }).then(function (picker) {
@@ -809,7 +716,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify invalid input, minyear && maxyear are ignored
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 5, 1942',
+            current: new Date(1942, 11, 5),
             maxYear: 1995,
             minYear: 0 // UNDONE: -1995 (1996 BC fails in WinRT mode)
         }).then(function (picker) {
@@ -825,7 +732,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify invalid input, minyear && maxyear are ignored
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 5, 1942',
+            current: new Date(1942, 11, 5),
             maxYear: 1995,
             minYear: 1910 // UNDONE: -1995 (1996 BC fails in WinRT mode)
         }).then(function (picker) {
@@ -842,7 +749,7 @@ CorsicaTests.DatePickerDecl = function () {
             calendar: 'GregorianCalendar',
             minYear: 2010,
             maxYear: 2020,
-            current: 'December, 5, 2011'
+            current: new Date(2011, 11, 5)
         }).then(function (picker) {
             verifyDate(picker, { day: 5, month: 12, year: 2011 });
 
@@ -883,7 +790,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify min year only, year snaps to minyear
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'February 1, 1990',
+            current: new Date(1990, 1, 1),
             minYear: 2000
         }).then(function (picker) {
             verifyDate(picker, { day: 1, month: 2, year: 2000 });
@@ -897,7 +804,7 @@ CorsicaTests.DatePickerDecl = function () {
         // verify max year only, year doesn't go beyond maxyear
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'February 1, 2100',
+            current: new Date(2100, 1, 1),
             maxYear: 2000
         }).then(function (picker) {
             verifyDate(picker, { day: 1, month: 2, year: 2000 });
@@ -917,7 +824,7 @@ CorsicaTests.DatePickerDecl = function () {
         // bug: win8TFS:245862 - consume real WinJS.Glob formatting not yet implemented
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 01, 2012',
+            current: new Date(2012, 11, 1),
             dayFormat: 'd'
         }).then(function (picker) {
             verifyDate(picker, { day: '1', month: 12, year: 2012 });
@@ -926,7 +833,7 @@ CorsicaTests.DatePickerDecl = function () {
 
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 01, 2012',
+            current: new Date(2012, 11, 1),
             dayFormat: 'dd'
         }).then(function (picker) {
             verifyDate(picker, { day: '01', month: 12, year: 2012 });
@@ -937,7 +844,7 @@ CorsicaTests.DatePickerDecl = function () {
 
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 01, 2012',
+            current: new Date(2012, 11, 1),
             dayFormat: ''
         }).then(function (picker) {
             verifyDate(picker, { month: 12, year: 2012 });
@@ -952,7 +859,7 @@ CorsicaTests.DatePickerDecl = function () {
         // bug: win8TFS:245862 - consume real WinJS.Glob formatting not yet implemented
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'March 12, 2012',
+            current: new Date(2012, 2, 12),
             monthFormat: 'M'
         }).then(function (picker) {
             verifyDate(picker, { day: 12, month: '3', year: 2012 });
@@ -961,7 +868,7 @@ CorsicaTests.DatePickerDecl = function () {
 
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'March 12, 2012',
+            current: new Date(2012, 2, 12),
             monthFormat: 'MM'
         }).then(function (picker) {
             verifyDate(picker, { day: 12, month: '03', year: 2012 });
@@ -970,7 +877,7 @@ CorsicaTests.DatePickerDecl = function () {
 
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'March 12, 2012',
+            current: new Date(2012, 2, 12),
             monthFormat: 'MMMM'
         }).then(function (picker) {
             verifyDate(picker, { day: 12, month: 'March', year: 2012 });
@@ -979,7 +886,7 @@ CorsicaTests.DatePickerDecl = function () {
 
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'March 12, 2012',
+            current: new Date(2012, 2, 12),
             monthFormat: ''
         }).then(function (picker) {
             verifyDate(picker, { day: 12, year: 2012 });
@@ -993,7 +900,7 @@ CorsicaTests.DatePickerDecl = function () {
         // bug: win8TFS:245862 - consume real WinJS.Glob formatting not yet implemented
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 01, 2023',
+            current: new Date(2023, 11, 1),
             yearFormat: 'yy'
         }).then(function (picker) {
             verifyDate(picker, { day: 1, month: 12, year: '23' });
@@ -1002,7 +909,7 @@ CorsicaTests.DatePickerDecl = function () {
 
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 04, 2056',
+            current: new Date(2056, 11, 4),
             yearFormat: 'yyyy'
         })
         .then(function (picker) {
@@ -1013,7 +920,7 @@ CorsicaTests.DatePickerDecl = function () {
 
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'December 07, 2089',
+            current: new Date(2089, 11, 7),
             yearFormat: ''
         })
         .then(function (picker) {
@@ -1064,7 +971,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testFireMonthchangeEvent = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             attachEventListeners(picker);
             fireOnchange(monthElement(picker));
@@ -1079,7 +986,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testFireDatechangeEvent = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             attachEventListeners(picker);
             fireOnchange(dateElement(picker));
@@ -1094,7 +1001,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testFireYearchangeEvent = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             attachEventListeners(picker);
             fireOnchange(yearElement(picker));
@@ -1109,7 +1016,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testFireAllEventsAndRemove = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             attachEventListeners(picker);
             verifyDate(picker, { day: '01', month: '04', year: '2011' });
@@ -1143,7 +1050,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testFireMultipleChangeEvents = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             attachEventListeners(picker);
 
@@ -1164,7 +1071,7 @@ CorsicaTests.DatePickerDecl = function () {
         // BUG: win8TFS: 245862 - consume real WinJS.Glob
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             // note: javascript Date object has 0 based months (0 == January)
             //    so Feb 03, 2011 == Date(2011, 02, 03)
@@ -1180,7 +1087,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testdatechangeEvent = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             verifyDate(picker, { day: '01', month: '04', year: '2011' });
             attachEventListeners(picker);
@@ -1198,7 +1105,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testmonthchangeEvent = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             verifyDate(picker, { day: '01', month: '04', year: '2011' });
 
@@ -1218,7 +1125,7 @@ CorsicaTests.DatePickerDecl = function () {
         // BUG: 266243 datePicker needs to use Date.getDate() to compare dates instead of Date.getDay() - day of week
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             verifyDate(picker, { day: '01', month: '04', year: '2011' });
 
@@ -1237,20 +1144,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testCurrentAttribute = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: '1/1/2011'
-        }).then(function (picker) {
-            var current = picker.winControl.current;
-            verifyDate(picker, { day: '01', month: '01', year: '2011' });
-        })
-        .then(null, unhandledTestError)
-        .then(cleanupDatePicker)
-        .then(complete, complete);
-    };
-
-    this.testCurrentAttributeWithAbbreviatedMonth = function (complete) {
-        createPickerWithAppend({
-            calendar: 'GregorianCalendar',
-            current: 'Jan 01, 2011'
+            current: new Date(2011, 0, 1)
         }).then(function (picker) {
             var current = picker.winControl.current;
             verifyDate(picker, { day: '01', month: '01', year: '2011' });
@@ -1263,7 +1157,7 @@ CorsicaTests.DatePickerDecl = function () {
     this.testThreeEventsAndRemove = function (complete) {
         createPickerWithAppend({
             calendar: 'GregorianCalendar',
-            current: 'April 01, 2011'
+            current: new Date(2011, 3, 1)
         }).then(function (picker) {
             attachEventListeners(picker);
             verifyDate(picker, { day: '01', month: '04', year: '2011' });
@@ -1431,7 +1325,7 @@ CorsicaTests.DatePickerDecl = function () {
             var cleanup;
             createPickerWithAppend({
                 calendar: calendarType,
-                current: 'October 25, 2011'
+                current: new Date(2011, 9, 25)
             }).then(function (picker) {
                 datePicker = picker;
                 cleanup = addGlobChangeEvent(picker);
@@ -1471,7 +1365,7 @@ CorsicaTests.DatePickerDecl = function () {
             var cleanup;
             createPickerWithAppend({
                 calendar: 'GregorianCalendar',
-                current: 'October 25, 2011'
+                current: new Date(2011, 9, 25)
             }).then(function (picker) {
                 datePicker = picker;
                 cleanup = addGlobChangeEvent(picker);
@@ -1740,7 +1634,7 @@ CorsicaTests.DatePickerDecl = function () {
             createPickerWithAppend({
                 calendar: calendarType,
                 minYear: 1899,
-                current: 'April 7, 1900'
+                current: new Date(1900, 3, 7)
             }).then(function (picker) {
                 datePicker = picker;
 
@@ -1770,7 +1664,7 @@ CorsicaTests.DatePickerDecl = function () {
             var calendarType = 'GregorianCalendar';
             createPickerWithAppend({
                 calendar: 'GregorianCalendar',
-                current: 'April 7, 2000'
+                current: new Date(2000, 3, 7)
             }).then(function (picker) {
                 datePicker = picker;
 
@@ -1848,7 +1742,7 @@ CorsicaTests.DatePickerDecl = function () {
             createPickerWithAppend({
                 calendar: calendarType,
                 minYear: 2000,
-                current: 'January, 1, 2001'
+                current: new Date(2001, 0, 1)
             }).then(function (picker) {
                 datePicker = picker;
                 var calendar = calendarType;
@@ -1928,7 +1822,7 @@ CorsicaTests.DatePickerDecl = function () {
             var calendarType = 'JapaneseCalendar';
             createPickerWithAppend({
                 calendar: calendarType,
-                current: 'January, 1, 2001'
+                current: new Date(2001, 0, 1)
             }).then(function (picker) {
                 datePicker = picker;
                 var calendar = calendarType;
@@ -1956,7 +1850,7 @@ CorsicaTests.DatePickerDecl = function () {
             var calendarType = 'JapaneseCalendar';
             createPickerWithAppend({
                 calendar: calendarType,
-                current: 'January, 7, 1989'
+                current: new Date(1989, 0, 7)
             }).then(function (picker) {
                 datePicker = picker;
                 var calendar = calendarType;
@@ -1981,7 +1875,7 @@ CorsicaTests.DatePickerDecl = function () {
             var calendarType = 'JapaneseCalendar';
             createPickerWithAppend({
                 calendar: calendarType,
-                current: 'January, 1, 2001',
+                current: new Date(2001, 0, 1),
                 minYear: 1990,
                 maxYear: 2010
             }).then(function (picker) {
@@ -2086,7 +1980,7 @@ CorsicaTests.DatePickerDecl = function () {
             var calendarType = 'JulianCalendar';
             createPickerWithAppend({
                 calendar: calendarType,
-                current: 'January, 1, 2001'
+                current: new Date(2001, 0, 1)
             }).then(function (picker) {
                 datePicker = picker;
                 var calendar = calendarType;
@@ -2163,7 +2057,7 @@ CorsicaTests.DatePickerDecl = function () {
             var calendarType = 'TaiwanCalendar';
             createPickerWithAppend({
                 calendar: calendarType,
-                current: 'January, 1, 2001'
+                current: new Date(2001, 0, 1)
             }).then(function (picker) {
                 datePicker = picker;
                 var calendar = calendarType;
@@ -2191,7 +2085,7 @@ CorsicaTests.DatePickerDecl = function () {
             var calendarType = 'TaiwanCalendar';
             createPickerWithAppend({
                 calendar: calendarType,
-                current: 'January, 1, 2001',
+                current: new Date(2001, 0, 1),
                 minYear: 1990,
                 maxYear: 2011
             }).then(function (picker) {
@@ -2945,7 +2839,7 @@ CorsicaTests.DatePickerDecl = function () {
                     dateIndex = Math.min(date.getDate(), dateSource(yearIndex, monthIndex).getLength()) - 1;
                 }
                 else {
-                    var dateValue = date.getDate() + (new Date(year, date.getMonth(), 0)).getDate();
+                    var dateValue = date.getDate() + (new Date(year, date.getMonth(), 0, 12)).getDate();
                     dateIndex = Math.min(dateValue, dateSource(yearIndex, monthIndex).getLength()) - 1;
                 }
 
@@ -3006,7 +2900,7 @@ CorsicaTests.DatePickerDecl = function () {
         if (!isWinRTEnabled()) {
             var cleanup;
             WinJS.UI.DatePicker.getInformation = getInformationJS;
-            createPickerWithAppend({ current: 'December 31, 2011' }).then(function (picker) {
+            createPickerWithAppend({ current: new Date(2011, 11, 31) }).then(function (picker) {
                 datePicker = picker;
                 var controls = [];
                 var domElement = document.getElementsByClassName('win-datepicker')[0];
@@ -3039,7 +2933,7 @@ CorsicaTests.DatePickerDecl = function () {
             WinJS.UI.DatePicker.getInformation = getInformationJS;
             createPickerWithAppend({
                 calendar: 'GregorianCalendar',
-                current: 'December 31, 2011'
+                current: new Date(2011, 11, 31)
             }).then(function (picker) {
 
                 var selectControls = getControls(picker);
@@ -3071,7 +2965,7 @@ CorsicaTests.DatePickerDecl = function () {
         if (!isWinRTEnabled()) {
             var cleanup;
             WinJS.UI.DatePicker.getInformation = getInformationJS;
-            createPickerWithAppend({ current: 'December 31, 2011' }).then(function (picker) {
+            createPickerWithAppend({ current: new Date(2011, 11, 31) }).then(function (picker) {
 
                 var selectControls = getControls(picker);
                 LiveUnit.Assert.areEqual("DYM", getActualUIOrder(), "Incorrect UI order");
@@ -3122,7 +3016,7 @@ CorsicaTests.DatePickerDecl = function () {
             numofCalls = 0;
             var cleanup;
             WinJS.UI.DatePicker.getInformation = getInformationJS;
-            createPickerWithAppend({ current: 'December 31, 2011' }).then(function (picker) {
+            createPickerWithAppend({ current: new Date(2011, 11, 31) }).then(function (picker) {
 
                 LiveUnit.Assert.areEqual(1, numofCalls, "number of calls should be 1");
                 numofCalls = 0;
@@ -3145,7 +3039,7 @@ CorsicaTests.DatePickerDecl = function () {
             var cleanup;
             createPickerWithAppend({
                 calendar: calendarType,
-                current: 'October 25, 2011'
+                current: new Date(2011, 9, 25)
             }).then(function (picker) {
                 datePicker = picker;
                 cleanup = addGlobChangeEvent(picker);
@@ -3278,7 +3172,7 @@ CorsicaTests.DatePickerDecl = function () {
                 calendar: calendarType,
                 minYear: 1899,
                 maxYear: 2111,
-                current: 'January, 1, 1900'
+                current: new Date(1900, 0, 1)
 
             }).then(function (picker) {
                 datePicker = picker;
