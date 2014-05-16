@@ -20,6 +20,17 @@
         phoneLight: {
             src: ["src/less/phone-light.less"],
             dest: config.phoneOutput + "css/ui-light.css"
+        },
+        tests: {
+            files: [
+                {
+                    cwd: "tests/",
+                    src: "**/*.less",
+                    ext: ".less.css",
+                    dest: config.testsOutput,
+                    expand: true
+                }
+            ]
         }
     };
 })();

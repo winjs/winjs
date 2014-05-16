@@ -3,14 +3,18 @@
     "use strict";
 
     var config = require("../../config.js");
-
+    var path = require("path");
+    
     module.exports = {
         tests: {
             files: [{
                 expand: true,
                 cwd: "tests/",
                 src: ["**"],
-                dest: config.testsOutput
+                dest: config.testsOutput,
+                filter: function isNotLessFile(filePath) {
+                    return path.extname(filePath) !== ".less";
+                }
             }]
         },
 

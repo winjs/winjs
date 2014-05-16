@@ -1,0 +1,117 @@
+//
+// Mixins for flexbox styles
+//
+
+#flex {
+    // IE 10's prefixed flexbox syntax is quite different than the standard. Most
+    // of the complexity here is for dealing with IE 10. A summary of the differences
+    // can be found at: http://msdn.microsoft.com/en-us/library/ie/dn265027(v=vs.85).aspx
+    
+    .display-flex() {
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+    }
+
+    .display-inline-flex() {
+        display: -ms-inline-flexbox;
+        display: -webkit-inline-flex;
+        display: inline-flex;
+    }
+    
+    // The supported values for align-content, align-items, align-self, and
+    // justify-content are different in IE 10. Specifically:
+    //   - flex-start is start
+    //   - flex-end is end
+    //   - space-between is justify
+    //   - space-around is distribute
+    // ._ie10-align-property is responsible for doing this value translation.
+    
+    ._ie10-align-property(@property; flex-start) {
+        @{property}: start;
+    }
+
+    ._ie10-align-property(@property; flex-end) {
+        @{property}: end;
+    }
+
+    ._ie10-align-property(@property; space-between) {
+        @{property}: justify;
+    }
+
+    ._ie10-align-property(@property; space-around) {
+        @{property}: distribute;
+    }
+
+    ._ie10-align-property(@property; @value) when (default()) {
+        @{property}: @value;
+    }
+
+    .align-content(@value) {
+        ._ie10-align-property(-ms-flex-line-pack; @value);
+        -webkit-align-content: @value;
+        align-content: @value;
+    }
+
+    .align-items(@value) {
+        ._ie10-align-property(-ms-flex-align; @value);
+        -webkit-align-items: @value;
+        align-items: @value;
+    }
+
+    .align-self(@value) {
+        ._ie10-align-property(-ms-flex-item-align; @value);
+        -webkit-align-self: @value;
+        align-self: @value;
+    }
+
+    .justify-content(@value) {
+        ._ie10-align-property(-ms-flex-pack; @value);
+        -webkit-justify-content: @value;
+        justify-content: @value;
+    }
+    
+    // In IE 10, the equivalent of flex-wrap's "nowrap" is "none".
+    
+    ._ie10-wrap(nowrap) {
+        -ms-flex-wrap: none;
+    }
+
+    ._ie10-wrap(@value) when (default()) {
+        -ms-flex-wrap: @value;
+    }
+
+    .flex-wrap(@value) {
+        ._ie10-wrap(@value);
+        -webkit-flex-wrap: @value;
+        flex-wrap: @value;
+    }
+
+    .flex-direction(@value) {
+        -ms-flex-direction: @value;
+        -webkit-flex-direction: @value;
+        flex-direction: @value;
+    }
+
+    .flex-flow(@direction; @wrap) {
+        .flex-direction(@direction);
+        .flex-wrap(@wrap);
+    }
+
+    .order(@value) {
+        -ms-flex-order: @value;
+        flex-order: @value;
+        -webkit-order: @value;
+        order: @value;
+    }
+
+    .flex(none) {
+        .flex(0; 0; auto);
+    }
+
+    .flex(@grow: 0; @shrink: 1; @basis: auto) when (default()) {
+        -ms-flex: @arguments;
+        -webkit-flex: @arguments;
+        flex: @arguments;
+    }
+}
