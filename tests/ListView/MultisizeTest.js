@@ -35,7 +35,7 @@ WinJSTests.MultisizeTests = function () {
         removeListviewAnimations();
 
         this._defaultMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
-        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -46,7 +46,7 @@ WinJSTests.MultisizeTests = function () {
         var element = document.getElementById("MultisizeTests");
         document.body.removeChild(element);
         restoreListviewAnimations();
-        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     }
 
     function getDataObject(groupId, pattern, counter) {

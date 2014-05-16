@@ -45,7 +45,7 @@ WinJSTests.ReuseTests = function () {
         disposedItemsCount = 0;
         disposedItems = [];
         removeListviewAnimations();
-        appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
+        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -54,7 +54,7 @@ WinJSTests.ReuseTests = function () {
         var element = document.getElementById("ReuseTests");
         document.body.removeChild(element);
         restoreListviewAnimations();
-        removeCSSFileFromHead("$(TESTDATA)/Listview.css");
+        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     }
 
     function setupListView(element, layoutName) {

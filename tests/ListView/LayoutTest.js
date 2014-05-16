@@ -43,7 +43,7 @@ var WinJSTests = WinJSTests || {};
 
             document.body.appendChild(newNode);
             removeListviewAnimations();
-            appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
+            appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
         };
 
         this.tearDown = function () {
@@ -52,7 +52,7 @@ var WinJSTests = WinJSTests || {};
             var element = document.getElementById("LayoutTests");
             document.body.removeChild(element);
             restoreListviewAnimations();
-            removeCSSFileFromHead("$(TESTDATA)/Listview.css");
+            removeCSSFileFromHead("$(TESTDATA)/ListView.css");
         }
 
         function setupListView(element, layoutName, itemTemplate) {

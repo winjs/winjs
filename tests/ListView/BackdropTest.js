@@ -26,7 +26,7 @@ var WinJSTests = WinJSTests || {};
             newNode.style.height = "250px";
             document.body.appendChild(newNode);
             defaultNumberOfItemsPerItemsBlock = WinJS.UI.ListLayout._numberOfItemsPerItemsBlock;
-            appendCSSFileToHead("$(TESTDATA)/Listview.css").then(complete);
+            appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
         };
 
         this.tearDown = function () {
@@ -36,7 +36,7 @@ var WinJSTests = WinJSTests || {};
                 WinJS.Utilities.disposeSubTree(element);
                 document.body.removeChild(element);
             }
-            removeCSSFileFromHead("$(TESTDATA)/Listview.css");
+            removeCSSFileFromHead("$(TESTDATA)/ListView.css");
             WinJS.UI.ListLayout._numberOfItemsPerItemsBlock = defaultNumberOfItemsPerItemsBlock;
         };
 
