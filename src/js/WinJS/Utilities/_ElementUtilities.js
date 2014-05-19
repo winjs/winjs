@@ -1546,6 +1546,37 @@
             };
         },
 
+        getTabIndex: function (element) {
+            /// <signature helpKeyword="WinJS.Utilities.getTabIndex">
+            /// <summary locid="WinJS.Utilities.getTabIndex">
+            /// Gets the tabIndex of the specified element.
+            /// </summary>
+            /// <param name="element" type="HTMLElement" locid="WinJS.Utilities.getTabIndex_p:element">
+            /// The element.
+            /// </param>
+            /// <returns type="Number" locid="WinJS.Utilities.getTabIndex_returnValue">
+            /// The tabIndex of the element. Returns -1 if the element cannot be tabbed to
+            /// </returns>
+            /// </signature>
+            // For reference: http://www.w3.org/html/wg/drafts/html/master/single-page.html#specially-focusable
+            var tabbableElementsRE = /BUTTON|COMMAND|MENUITEM|OBJECT|SELECT|TEXTAREA/;
+            if (element.disabled) {
+                return -1;
+            }
+            var tabIndex = element.getAttribute("tabindex");
+            if (tabIndex === null || tabIndex === undefined) {
+                var name = element.tagName;
+                if (tabbableElementsRE.test(name) ||
+                    (element.href && (name === "A" || name === "AREA" || name === "LINK")) ||
+                    (name === "INPUT" && element.type !== "hidden") ||
+                    (name === "TH" && element.sorted)) {
+                    return 0;
+                }
+                return -1;
+            }
+            return parseInt(tabIndex, 10);
+        },
+
         convertToPixels: function (element, value) {
             /// <signature helpKeyword="WinJS.Utilities.convertToPixels">
             /// <summary locid="WinJS.Utilities.convertToPixels">

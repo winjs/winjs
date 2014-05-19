@@ -131,11 +131,11 @@ var WinJSTests = WinJSTests || {};
         }
 
         if (WinJS.Utilities.isPhone) {
-            this.generateHeightAutoTest("ListLayout", "128px");
-            this.generateHeightAutoTest("GridLayout", "122px");
+            this.generateHeightAutoTest("ListLayout", "108px");
+            this.generateHeightAutoTest("GridLayout", "102px");
         } else {
-            this.generateHeightAutoTest("ListLayout", "144px");
-            this.generateHeightAutoTest("GridLayout", "124px");
+            this.generateHeightAutoTest("ListLayout", "124px");
+            this.generateHeightAutoTest("GridLayout", "104px");
         }
 
         this.generateChangeLayout = function (fromLayoutName, toLayoutName) {

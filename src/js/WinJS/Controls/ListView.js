@@ -434,7 +434,6 @@
                 this._updateItemsAriaRoles();
                 this._updateGroupHeadersAriaRoles();
                 this._element.setAttribute("aria-multiselectable", this._multiSelection());
-                this._tabIndex = (this._element.tabIndex !== undefined && this._element.tabIndex >= 0) ? this._element.tabIndex : 0;
                 this._element.tabIndex = -1;
                 this._tabManager.tabIndex = this._tabIndex;
                 if (this._element.style.position !== "absolute" && this._element.style.position !== "relative") {
@@ -1444,36 +1443,6 @@
                     return this._batchingViewUpdatesSignal;
                 },
 
-                _resetItemCanvas: function () {
-                    // The item canvas MUST have style.position = absolute, otherwise clipping will not be done.
-                    var tabManagerEl = this._canvas;
-                    if (this._tabManager) {
-                        this._tabManager.dispose();
-                    }
-
-                    this._tabManager = new WinJS.UI.TabContainer(tabManagerEl);
-                    function tabManagerHandler(eventName) {
-                        return {
-                            name: eventName,
-                            handler: function (eventObject) {
-                                that["_" + eventName](eventObject);
-                                that._mode[eventName](eventObject);
-                            },
-                            capture: false
-                        };
-                    }
-
-                    var itemCanvasEvents = [
-                        tabManagerHandler("onTabEnter"),
-                        tabManagerHandler("onTabExit")
-                    ];
-                    var that = this;
-                    itemCanvasEvents.forEach(function (itemCanvasEvent) {
-                        tabManagerEl.addEventListener(itemCanvasEvent.name, itemCanvasEvent.handler, false);
-                    });
-                    this._tabManager.tabIndex = this._tabIndex;
-                },
-
                 _resetCanvas: function () {
                     if (this._disposed) {
                         return;
@@ -1490,11 +1459,9 @@
                     // We reset the itemCanvas on _resetCanvas in case a ListView client uses two separate custom layouts, and each layout
                     // changes different styles on the itemCanvas without resetting it.
                     this._canvas.appendChild(this._canvasProxy);
-                    this._resetItemCanvas();
                 },
 
                 _setupInternalTree: function ListView_setupInternalTree() {
-
                     utilities.addClass(this._element, WinJS.UI._listViewClass);
                     utilities[this._rtl() ? "addClass" : "removeClass"](this._element, WinJS.UI._rtlListViewClass);
 
@@ -1511,20 +1478,20 @@
                         // gets discarded. It has to be positioned in the center of the viewport, though, otherwise calling .focus() on it
                         // can move our viewport around when we don't want it moved.
                         // The keyboard event helper element will be skipped in the tab order if it doesn't have width+height set on it.
-                        '<div aria-hidden="true" style="position:absolute;left:50%;top:50%;">' +
-                            '<div aria-hidden="true" style="width:0px; height:0px;"></div>' +
-                        '</div>';
+                       '<div aria-hidden="true" style="position:absolute;left:50%;top:50%;width:0px;height:0px;" tabindex="-1"></div>';
 
                     this._viewport = this._element.firstElementChild;
                     this._canvas = this._viewport.firstElementChild;
                     this._canvasProxy = this._canvas.firstElementChild;
                     // The deleteWrapper div is used to maintain the scroll width (after delete(s)) until the animation is done
                     this._deleteWrapper = this._canvas.nextElementSibling;
-                    this._keyboardEventsHelper = this._viewport.nextElementSibling.firstElementChild;
-                    this._tabIndex = this._element.tabIndex !== undefined ? this._element.tabIndex : 0;
-                    this._tabEventsHelper = new WinJS.UI.TabContainer(this._keyboardEventsHelper.parentNode);
-                    this._tabEventsHelper.tabIndex = this._tabIndex;
-                    this._resetItemCanvas();
+                    this._keyboardEventsHelper = this._viewport.nextElementSibling;
+                    this._tabIndex = WinJS.Utilities.getTabIndex(this._element);
+                    if (this._tabIndex < 0) {
+                        this._tabIndex = 0;
+                    }
+                    this._tabManager = new WinJS.UI.TabContainer(this._viewport);
+                    this._tabManager.tabIndex = this._tabIndex;
 
                     this._progressBar = document.createElement("progress");
                     utilities.addClass(this._progressBar, WinJS.UI._progressClass);
@@ -1547,7 +1514,6 @@
                         }
 
                         this._keyboardEventsHelper._shouldHaveFocus = false;
-                        this._tabEventsHelper.childFocus = this._keyboardEventsHelper;
                         // If the viewport has focus, leave it there. This will prevent focus from jumping
                         // from the viewport to the keyboardEventsHelper when scrolling with Narrator Touch.
                         if (document.activeElement !== this._viewport && this._hasKeyboardFocus) {
@@ -1571,7 +1537,6 @@
                         if (that._isZombie()) {
                             return;
                         }
-                        that._tabEventsHelper.childFocus = null;
 
                         if (that._tabManager.childFocus !== item) {
                             that._tabManager.childFocus = item;
@@ -1597,10 +1562,11 @@
                     };
 
                     if (entity.type !== WinJS.UI.ObjectType.groupHeader) {
-                        this._focusRequest = this._view.items.requestItem(entity.index).then(setFocusOnItemImpl);
+                        this._focusRequest = this._view.items.requestItem(entity.index);
                     } else {
-                        this._focusRequest = this._groups.requestHeader(entity.index).then(setFocusOnItemImpl);
+                        this._focusRequest = this._groups.requestHeader(entity.index);
                     }
+                    this._focusRequest.then(setFocusOnItemImpl);
                 },
 
                 _attachEvents: function ListView_attachEvents() {
@@ -1688,9 +1654,14 @@
                     viewportEvents.forEach(function (viewportEvent) {
                         that._viewport.addEventListener(viewportEvent.name, viewportEvent.handler, false);
                     });
-
-                    this._keyboardEventsHelper.parentNode.addEventListener("onTabEnter", this._onTabEnter.bind(this), false);
-                    this._keyboardEventsHelper.parentNode.addEventListener("onTabExit", this._onTabExit.bind(this), false);
+                    this._viewport.addEventListener("onTabEnter", this._onTabEnter.bind(this));
+                    this._viewport.addEventListener("onTabExit", this._onTabExit.bind(this));
+                    this._viewport.addEventListener("onTabEntered", function (e) {
+                        that._mode.onTabEntered(e);
+                    });
+                    this._viewport.addEventListener("onTabExiting", function (e) {
+                        that._mode.onTabExiting(e);
+                    });
                 },
 
                 _updateItemsManager: function ListView_updateItemsManager() {
@@ -2775,7 +2746,6 @@
                             return
                         }
 
-                        this._tabEventsHelper.childFocus = null;
                         // In the event that .focus() is explicitly called on an element, we need to figure out what item got focus and set our state appropriately.
                         var items = this._view.items,
                             entity = {},
@@ -2834,11 +2804,6 @@
                     var element = this._view.items.itemBoxFrom(event.target) || this._groups.headerFrom(event.target);
                     if (element) {
                         this._clearFocusRectangle(element);
-                    }
-                    if (this._focusRequest) {
-                        // If we're losing focus and we had an outstanding focus request, that means the focused item isn't realized. To enable the user to tab back
-                        // into the listview, we'll make the keyboardEventsHelper tabbable for this scenario.
-                        this._tabEventsHelper.childFocus = this._keyboardEventsHelper;
                     }
                 },
 
@@ -2929,7 +2894,6 @@
                                 });
                                 that._tabIndex = newTabIndex;
                                 that._tabManager.tabIndex = newTabIndex;
-                                that._tabEventsHelper.tabIndex = newTabIndex;
                                 that._element.tabIndex = -1;
                             }
                         }

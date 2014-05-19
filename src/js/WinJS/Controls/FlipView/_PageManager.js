@@ -69,7 +69,10 @@
                 this._rtl = window.getComputedStyle(this._flipperDiv, null).direction === "rtl";
                 this._itemsManager = itemsManager;
                 this._itemSpacing = itemSpacing;
-                this._tabIndex = (flipperDiv.tabIndex !== undefined && flipperDiv.tabIndex >= 0 ? flipperDiv.tabIndex : 0);
+                this._tabIndex = WinJS.Utilities.getTabIndex(flipperDiv);
+                if (this._tabIndex < 0) {
+                    this._tabIndex = 0;
+                }
                 flipperDiv.tabIndex = -1;
                 this._tabManager = new WinJS.UI.TabContainer(this._panningDivContainer);
                 this._tabManager.tabIndex = this._tabIndex;
@@ -281,7 +284,9 @@
                     this._checkElementVisibility(false);
                     this._blockTabs = true;
                     this._lastScrollPos = newPos;
-                    this._tabManager.childFocus = this._currentPage.pageRoot;
+                    if (this._currentPage.element) {
+                        this._tabManager.childFocus = this._currentPage.element;
+                    }
                     this._setListEnds();
 
                     if (!this._manipulationState && this._viewportOnItemStart()) {
@@ -1499,6 +1504,9 @@
                         utilities.empty(page.elementRoot);
 
                         if (page.element) {
+                            if (page === manager._currentPage) {
+                                manager._tabManager.childFocus = element;
+                            }
                             if (!isFlipper(page.element)) {
                                 page.element.tabIndex = manager._tabIndex;
                                 page.element.setAttribute("role", "option");

@@ -1311,7 +1311,7 @@
                     }
                 },
 
-                onTabEnter: function (eventObject) {
+                onTabEntered: function (eventObject) {
                     if (this.site._groups.length() === 0) {
                         return;
                     }
@@ -1325,8 +1325,8 @@
                     // on blur which works for 99% of all scenarios. When the ListView is the only tabbable element on the page,
                     // then tabbing out of the ListView will make focus wrap around and focus the ListView again. The blur event is
                     // handled after TabEnter, so the keyboard focus flag is not yet cleared. Therefore, we examine the srcElement and see
-                    // if it is the canvas/surface since it is the first tabbable element in the ListView DOM tree.
-                    var inboundFocus = !site._hasKeyboardFocus || eventObject.target === site._canvas;
+                    // if it is the _viewport since it is the first tabbable element in the ListView DOM tree.
+                    var inboundFocus = !site._hasKeyboardFocus || eventObject.target === site._viewport;
                     if (inboundFocus) {
                         this.inboundFocusHandled = true;
 
@@ -1347,7 +1347,7 @@
                                 entity.index = focused.index;
                                 site._changeFocus(entity, true, false, false, true);
                             }
-
+                            eventObject.preventDefault();
                         } else {
                             // We tabbed into the ListView from after the ListView, focus should go to headers
                             var entity = { type: WinJS.UI.ObjectType.groupHeader };
@@ -1362,11 +1362,12 @@
                                 entity.index = focused.index;
                                 site._changeFocus(entity, true, false, false, true);
                             }
+                            eventObject.preventDefault();
                         }
                     }
                 },
 
-                onTabExit: function (eventObject) {
+                onTabExiting: function (eventObject) {
                     if (!this.site._supportsGroupHeaderKeyboarding || this.site._groups.length() === 0) {
                         return;
                     }
@@ -1380,12 +1381,14 @@
                         var entity = { type: WinJS.UI.ObjectType.groupHeader, index: site._groups.groupFromItem(focused.index) };
                         if (dispatchKeyboardNavigating(site._element, focused, entity)) {
                             site._changeFocus(entity, true, false, false, true);
+                            eventObject.preventDefault();
                         }
                     } else if (!forward && focused.type === WinJS.UI.ObjectType.groupHeader) {
                         // Shift tabbing and we were focusing a header, go to items
                         var entity = { type: WinJS.UI.ObjectType.item, index: site._groupFocusCache.getIndexForGroup(focused.index) };
                         if (dispatchKeyboardNavigating(site._element, focused, entity)) {
                             site._changeFocus(entity, true, false, false, true);
+                            eventObject.preventDefault();
                         }
                     }
                 }

@@ -155,21 +155,7 @@
                 return true;
             }
 
-            // IE allows focus to go to elements that it shouldn't sometimes.
-            // For reference: http://www.w3.org/html/wg/drafts/html/master/single-page.html#specially-focusable
-            // Workaround for majority of cases:
-            var simpleLogicForValidTabStop =
-                (elem.tabIndex >= 0) && 
-                ((elem.nodeName === "A" && elem.href) || 
-                (elem.nodeName === "LINK" && elem.href) ||
-                (elem.nodeName === "BUTTON") ||
-                (elem.nodeName === "INPUT" && elem.type !== "hidden") ||
-                (elem.nodeName === "SELECT") ||
-                (elem.nodeName === "TEXTAREA") ||
-                (elem.nodeName === "MENUITEM") ||
-                (elem.nodeName === "TH" && elem.sorted) ||
-                (elem.draggable) ||
-                (elem.getAttribute("tabindex") !== null));
+            var simpleLogicForValidTabStop = (WinJS.Utilities.getTabIndex(elem) >= 0);
             if (!simpleLogicForValidTabStop) {
                 return false;
             }

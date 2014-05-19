@@ -143,11 +143,6 @@ if (typeof (WinJS) !== "undefined") {
         } else {
             LiveUnit.Assert.isTrue(childFocus === listView.elementFromIndex(0) || childFocus === null, "_tabManager's childFocus wasn't reset " + context);
         }
-
-        if (childFocus === null) {
-            LiveUnit.Assert.areEqual(false, listView._keyboardEventsHelper._shouldHaveFocus, "_keyboardEventsHelper's _shouldHaveFocus wasn't reset " + context);
-            LiveUnit.Assert.areEqual(0, listView._keyboardEventsHelper.tabIndex, "_keyboardEventsHelper's tabIndex wasn't reset " + context);
-        }
     }
 
 

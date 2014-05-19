@@ -749,7 +749,7 @@ WinJSTests.BrowseModeTests = function () {
         });
     };
 
-    this.testOnTabExit = function () {
+    this.testOnTabExiting = function () {
         // This test mode mimics a ListView with infinite number of groups,
         // where each group has 10 items: group0 has items 0-9, group1 has items 10-19, etc
         var prevent = false;
@@ -765,42 +765,42 @@ WinJSTests.BrowseModeTests = function () {
 
         // Tab forward from item11, but prevent navigation
         prevent = true;
-        mode.onTabExit({ detail: 1 });
+        mode.onTabExiting({ detail: 1, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(11, mode.site._selection._getFocused().index);
         prevent = false;
 
         // Tab forward from item11, should go to group1
-        mode.onTabExit({ detail: 1 });
+        mode.onTabExiting({ detail: 1, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(1, mode.site._selection._getFocused().index);
 
         // Tab backwards from group1, but prevent navigation
         prevent = true;
-        mode.onTabExit({ detail: 0 });
+        mode.onTabExiting({ detail: 0, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(1, mode.site._selection._getFocused().index);
         prevent = false;
 
         // Tab backwards from group1, should go to item11
-        mode.onTabExit({ detail: 0 });
+        mode.onTabExiting({ detail: 0, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(11, mode.site._selection._getFocused().index);
 
         // Tab backwards from item11, leaving listView, should not change our internal focus state
-        mode.onTabExit({ detail: 0 });
+        mode.onTabExiting({ detail: 0, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(11, mode.site._selection._getFocused().index);
 
         // Tab forward from group1, leaving listView, should not change our internal focus state
         mode.site._changeFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 1 });
-        mode.onTabExit({ detail: 1 });
+        mode.onTabExiting({ detail: 1, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(1, mode.site._selection._getFocused().index);
 
     };
 
-    this.testOnTabEnter = function () {
+    this.testOnTabEntered = function () {
         // This test mode mimics a ListView with infinite number of groups,
         // where each group has 10 items: group0 has items 0-9, group1 has items 10-19, etc
         var fireCount = 0;
@@ -815,7 +815,7 @@ WinJSTests.BrowseModeTests = function () {
 
         // Tab forward into the listView, focus should go to item11
         var curFireCount = fireCount;
-        mode.onTabEnter({ detail: 1 });
+        mode.onTabEntered({ detail: 1, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(11, mode.site._selection._getFocused().index);
         LiveUnit.Assert.areEqual(curFireCount, fireCount);
@@ -826,7 +826,7 @@ WinJSTests.BrowseModeTests = function () {
         // Tab forward into the listView, focus should go to item11
         // even though the last focused entity was a header
         curFireCount = fireCount;
-        mode.onTabEnter({ detail: 1 });
+        mode.onTabEntered({ detail: 1, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(11, mode.site._selection._getFocused().index);
         LiveUnit.Assert.areEqual(curFireCount + 1, fireCount);
@@ -836,7 +836,7 @@ WinJSTests.BrowseModeTests = function () {
 
         // Tab backwards into the listView, focus should go to header1
         curFireCount = fireCount;
-        mode.onTabEnter({ detail: 0 });
+        mode.onTabEntered({ detail: 0, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(1, mode.site._selection._getFocused().index);
         LiveUnit.Assert.areEqual(curFireCount, fireCount);
@@ -847,7 +847,7 @@ WinJSTests.BrowseModeTests = function () {
         // Tab backwards into the listView, focus should go to header1
         // even though the last focused entity was an item
         curFireCount = fireCount;
-        mode.onTabEnter({ detail: 0 });
+        mode.onTabEntered({ detail: 0, preventDefault: function () { } });
         LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, mode.site._selection._getFocused().type);
         LiveUnit.Assert.areEqual(1, mode.site._selection._getFocused().index);
         LiveUnit.Assert.areEqual(curFireCount + 1, fireCount);
@@ -1390,10 +1390,10 @@ WinJSTests.BrowseModeTests = function () {
                 // Focus item, go to group header, remove last focused item from the group and go to item track again, focus should go on first item of the group
                 lv.currentItem = { type: WinJS.UI.ObjectType.groupHeader, index: 4 };
                 lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 22 };
-                lv._mode.onTabExit({ detail: 1 });
+                lv._mode.onTabExiting({ detail: 1, preventDefault: function () { } });
                 LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                 lv.itemDataSource.remove("22");
-                lv._mode.onTabExit({ detail: 0 });
+                lv._mode.onTabExiting({ detail: 0, preventDefault: function () { } });
                 LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, lv.currentItem.type);
                 LiveUnit.Assert.areEqual(20, lv.currentItem.index);
 
@@ -1402,14 +1402,14 @@ WinJSTests.BrowseModeTests = function () {
                 lv.currentItem = { type: WinJS.UI.ObjectType.groupHeader, index: 18 };
                 lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 93 };
                 var itemKey = lv.currentItem.key;
-                lv._mode.onTabExit({ detail: 1 });
+                lv._mode.onTabExiting({ detail: 1, preventDefault: function () { } });
                 LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                 LiveUnit.Assert.areEqual(18, lv.currentItem.index);
                 lv.itemDataSource.insertAfter("newItem92", { title: "S", groupKey: "S" }, "91");
                 lv.itemDataSource.insertAfter("newItem94", { title: "S", groupKey: "S" }, "93");
                 lv.itemDataSource.insertAfter("newItem93", { title: "S", groupKey: "S" }, "92");
                 lv.itemDataSource.insertAfter("newItem95", { title: "S", groupKey: "S" }, "94");
-                lv._mode.onTabExit({ detail: 0 });
+                lv._mode.onTabExiting({ detail: 0, preventDefault: function () { } });
                 LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, lv.currentItem.type);
                 LiveUnit.Assert.areEqual(itemKey, lv.currentItem.key);
 

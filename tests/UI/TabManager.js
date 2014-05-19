@@ -2,168 +2,419 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
 
-
 var CorsicaTests = CorsicaTests || {};
-
-var setupTabManager = function (root) {
-    "use strict";
-    var first = document.createElement("div");
-    first.id = "first";
-    first.innerHTML = "<div tabIndex='0'>FIRST</div>";
-    var container = document.createElement("div");
-    container.id = "container";
-    var last = document.createElement("div");
-    last.id = "last";
-    last.innerHTML = "<div tabIndex='0'>LAST</div>";
-
-    var tabHierarchy;
-
-    for (var i = 0; i < 5; i++) {
-        var item = document.createElement("div");
-        item.id = "item" + i;
-        item.tabIndex = 0;
-        item.className = "item";
-        item.innerHTML = "bla <div tabIndex='0'>I get focus too</div>";
-        
-        var attachHandler = function attachHandler (e) {
-            e.addEventListener("focus", function () {
-                tabHierarchy.childFocus = e;
-            }, true);
-        };
-
-        attachHandler(item);
-        
-        container.appendChild(item);
-    }
-
-    root.appendChild(first);
-    root.appendChild(container);
-    root.appendChild(last);
-
-    tabHierarchy = new WinJS.UI.TabContainer(container);
-    return tabHierarchy;
-}
-
 CorsicaTests.TabManager = function () {
-    this.testChildFocusEqualsNull = function () {
-        if (Object.keys(HTMLElement.prototype).indexOf("onbeforeactivate") < 0) {
-            // This test relies on specific implementation details of the TabContainer
-            LiveUnit.LoggingCore.logComment("Test skipped: this browser does not support a required API (onbeforeactivate)");
-            return;
+    "use strict";
+    var realYieldForEvents = WinJS.Utilities._yieldForEvents;
+    this.setUp = function (complete) {
+        LiveUnit.LoggingCore.logComment("In setup");
+        var newNode = document.createElement("div");
+        newNode.id = "TabManagerTest";
+        document.body.appendChild(newNode);
+        WinJS.Utilities._yieldForEvents = function (callback) {
+            callback(); // Avoid async for these tests by making _yieldForEvents synchronous
         }
-
-        var markup =
-            "<button>before</button>" +
-            "<button>childFocus</button>" +
-            "<button>after</button>";
-
-        var tabEntered = false;
-        var tabExited = false;
-
-        var div = document.createElement("div");
-        div.innerHTML = markup;
-        document.body.appendChild(div);
-
-        var tm = new WinJS.UI.TabContainer(div.children[1]);
-        tm.childFocus = null;
-
-        var before = div.children[0];
-        var childFocus = div.children[2];
-        var after = div.children[4];
-        LiveUnit.Assert.isTrue(before.innerHTML === "before");
-        LiveUnit.Assert.isTrue(childFocus.innerHTML === "childFocus");
-        LiveUnit.Assert.isTrue(after.innerHTML === "after");
-        childFocus.addEventListener("onTabEnter", function () {
-            if (tabEntered) {
-                LiveUnit.Assert.fail("onTabEnter fired twice");
-            }
-            tabEntered = true;
-        });
-        childFocus.addEventListener("onTabExit", function () {
-            tabExited = true;
-        });
-
-        // Make sure the childFocus is focusable before the test
-        WinJS.Utilities._setActive(childFocus);
-        LiveUnit.Assert.isTrue(document.activeElement === childFocus);
-
-        // Put focus on 'before'
-        WinJS.Utilities._setActive(before);
-        LiveUnit.Assert.isTrue(document.activeElement === before);
-
-        // Focus the prefix, which should fire onTabEnter and focus should not move
-        childFocus.previousElementSibling.focus();
-        LiveUnit.Assert.isTrue(tabEntered);
-        LiveUnit.Assert.isTrue(document.activeElement === before);
-
-        // Since onTabEnter fired, childFocus is now unfocusable
-        childFocus.focus();
-        LiveUnit.Assert.isTrue(document.activeElement === before);
-
-        // Focus the postfix, this should onTabExit and make the childFocus focusable again
-        childFocus.nextElementSibling.focus();
-        LiveUnit.Assert.isTrue(tabExited);
-        LiveUnit.Assert.isTrue(document.activeElement === before);
-
-        // Verify that the childFocus is focusable
-        childFocus.focus();
-        LiveUnit.Assert.isTrue(document.activeElement === childFocus);
+        complete();
     };
 
-    this.testInstantiate = function () {
-        // Make sure we were able to create the TabContainer. 
-        // (since we cannot simuate Tab event, we cannot test much more)
-        var root = document.createElement("div");
-        var tabHierarchy = setupTabManager(root);
-        LiveUnit.Assert.isTrue(tabHierarchy !== undefined);
-
-        // Check prefix and postfix elements have been inserted
-        var children = root.childNodes;
-        LiveUnit.Assert.isTrue(children[0].id === "first");
-        // children[1] is prefix
-        LiveUnit.Assert.isTrue(children[2].id === "container");
-        // children[3] is postfix
-        LiveUnit.Assert.isTrue(children[4].id === "last");
-    }
-
-    this.testChildFocus = function () {
-        var root = document.createElement("div");
-        var tabHierarchy = setupTabManager(root);
-        var container = root.childNodes[2];
-        var children = container.childNodes;
-
-        function checkInsertionAt(idx) {
-            var childI = 0;
-            for (var i = 0; i < 5; i++) {
-                if (idx === i) {
-                    // Skip prefix
-                    childI++;
-                }
-                LiveUnit.Assert.isTrue(children[childI++].id === "item" + i);
-                if (idx === i) {
-                    // Skip postfix
-                    childI++;
-                }
-            }
+    this.tearDown = function () {
+        LiveUnit.LoggingCore.logComment("In tearDown");
+        WinJS.Utilities._yieldForEvents = realYieldForEvents;
+        var element = document.getElementById("TabManagerTest");
+        if (element) {
+            WinJS.Utilities.disposeSubTree(element);
+            document.body.removeChild(element);
         }
+    };
 
-        // Verify no prefix/postfix are inserted around children at this time
-        checkInsertionAt(-1);
-        
-        // Now set active child focus on 4th element
-        tabHierarchy.childFocus = children[3];
-        // Verify prefix/postfix got inserted
-        checkInsertionAt(3);
 
-        // Now set active child focus on 2nd element
-        tabHierarchy.childFocus = children[1];
-        // Verify prefix/postfix got inserted in new location and removed from old one
-        checkInsertionAt(1);
+    var simpleItemHTML =
+            "    <div tabindex='0'>" +
+            "        <div>Unfocusable div</div>" +
+            "        <a href='http://www.microsoft.com/' class='firstFocusableElementInItem'>Simple link</a>" +
+            "        <button disabled='true'>Disabled button</button>" +
+            "        <div>" +
+            "            <div tabindex='0' class='lastFocusableElementInItem'>Focusable div</div>" +
+            "        </div>" +
+            "    </div>";
+
+    function getFirstInItemTabOrder(item) {
+        return item.querySelector(".firstFocusableElementInItem");
     }
+
+    function getLastInItemTabOrder(item) {
+        return item.querySelector(".lastFocusableElementInItem");
+    }
+
+    function fakeFocusEvent(target) {
+        var fakeEvent = document.createEvent("UIEvents");
+        fakeEvent.initUIEvent("focus", false, false, window, 0);
+        target.dispatchEvent(fakeEvent);
+    }
+
+    function fakeBlurEvent(target) {
+        var fakeEvent = document.createEvent("UIEvents");
+        fakeEvent.initUIEvent("blur", false, false, window, 0);
+        target.dispatchEvent(fakeEvent);
+    }
+
+    function fakeTabKeyEvent(target, shiftKey) {
+        // Chrome won't let us stick a keyCode and shiftKey onto a UIEvent, so just use a custom event named keydown.
+        var fakeEvent = document.createEvent("CustomEvent");
+        fakeEvent.initCustomEvent("keydown", true, true, {});
+        fakeEvent.keyCode = WinJS.Utilities.Key.tab;
+        fakeEvent.shiftKey = shiftKey;
+        target.dispatchEvent(fakeEvent);
+    }
+
+    this.testGetTabIndex = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML = "<div>Not focusable</div>"
+            + "<div tabindex='-1'>Not focusable</div>"
+            + "<div tabindex='0'>Focusable</div>"
+            + "<div tabindex='1'>Focusable</div>"
+            + "<button>Focusable</button>"
+            + "<button tabindex='1'>Focusable</button>"
+            + "<button tabindex='-1'>Not focusable</button>"
+            + "<a>Not focusable</a>"
+            + "<a tabindex='-1'>Not focusable</a>"
+            + "<a href='http://www.microsoft.com/'>Focusable</a>"
+            + "<a href='http://www.microsoft.com/' tabindex='1'>Focusable</a>"
+            + "<a href='http://www.microsoft.com/' tabindex='-1'>Not focusable</a>"
+            + "<button disabled='true'>Not focusable</button>"
+            + "<input>Focusable</input>"
+            + "<object>Focusable</object>"
+            + "<select>Focusable</select>"
+            + "<textarea>Focusable</textarea>"
+            + "<command>Focusable</command>"
+            + "<area href='http://www.microsoft.com/'>Focusable</button>"
+            + "<link href='http://www.microsoft.com/'>Focusable</button>";
+        var getTabIndex = WinJS.Utilities.getTabIndex;
+        var expectedTabIndices = [-1, -1, 0, 1, 0, 1, -1, -1, -1, 0, 1, -1, -1, 0, 0, 0, 0, 0, 0, 0];
+        var curr = root.firstElementChild,
+            index = 0;
+        while (curr) {
+            LiveUnit.Assert.areEqual(expectedTabIndices[index], getTabIndex(curr));
+            index++;
+            curr = curr.nextElementSibling;
+        }
+    };
+
+    this.testTabContainerInitialization = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML = "<div></div>";
+        var tabContainedElement = root.firstElementChild;
+
+        LiveUnit.Assert.isNull(tabContainedElement.previousElementSibling);
+        LiveUnit.Assert.isNull(tabContainedElement.nextElementSibling);
+        // This test needs to make sure that the root had no tabIndex set before tabContainer initialization, and had it set to -1
+        // after initialization, so use getAttribute instead of getTabIndex for these assertions.
+        LiveUnit.Assert.isNull(tabContainedElement.getAttribute("tabindex"));
+
+        var tabContainer = new WinJS.UI.TabContainer(tabContainedElement);
+        LiveUnit.Assert.areEqual(tabContainer._elementTabHelper._catcherBegin, tabContainedElement.previousElementSibling);
+        LiveUnit.Assert.areEqual(tabContainer._elementTabHelper._catcherEnd, tabContainedElement.nextElementSibling);
+        LiveUnit.Assert.areEqual("-1", tabContainedElement.getAttribute("tabindex"));
+    };
+
+    this.testTabIndexProperty = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML = "<div></div>";
+
+        var getTabIndex = WinJS.Utilities.getTabIndex;
+        var tabContainedElement = root.firstElementChild,
+            tabContainer = new WinJS.UI.TabContainer(tabContainedElement);
+
+        LiveUnit.Assert.areEqual(-1, getTabIndex(tabContainedElement));
+        LiveUnit.Assert.areEqual(0, getTabIndex(tabContainer._elementTabHelper._catcherBegin));
+        LiveUnit.Assert.areEqual(0, getTabIndex(tabContainer._elementTabHelper._catcherEnd));
+        tabContainer.tabIndex = 2;
+        LiveUnit.Assert.areEqual(-1, getTabIndex(tabContainedElement));
+        LiveUnit.Assert.areEqual(2, getTabIndex(tabContainer._elementTabHelper._catcherBegin));
+        LiveUnit.Assert.areEqual(2, getTabIndex(tabContainer._elementTabHelper._catcherEnd));
+    };
+
+    this.testHasMoreElementsInSimpleTree = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML =
+            "<div>" +
+                simpleItemHTML +
+                simpleItemHTML +
+            "</div>";
+
+        var tabContainedElement = root.firstElementChild,
+            firstChildFocus = tabContainedElement.firstElementChild,
+            secondChildFocus = firstChildFocus.nextElementSibling,
+            tabContainer = new WinJS.UI.TabContainer(tabContainedElement);
+
+        tabContainer.childFocus = firstChildFocus;
+        LiveUnit.Assert.isTrue(tabContainer._hasMoreElementsInTabOrder(firstChildFocus, true));
+        LiveUnit.Assert.isTrue(tabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(firstChildFocus), true));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(firstChildFocus), true));
+        LiveUnit.Assert.isTrue(tabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(firstChildFocus), false));
+        LiveUnit.Assert.isTrue(tabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(firstChildFocus), false));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(firstChildFocus, false));
+
+        tabContainer.childFocus = null;
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(firstChildFocus, true));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(firstChildFocus), true));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(firstChildFocus), true));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(firstChildFocus), false));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(firstChildFocus), false));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(firstChildFocus, false));
+
+        tabContainer.childFocus = secondChildFocus;
+        LiveUnit.Assert.isTrue(tabContainer._hasMoreElementsInTabOrder(secondChildFocus, true));
+        LiveUnit.Assert.isTrue(tabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(secondChildFocus), true));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(secondChildFocus), true));
+        LiveUnit.Assert.isTrue(tabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(secondChildFocus), false));
+        LiveUnit.Assert.isTrue(tabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(secondChildFocus), false));
+        LiveUnit.Assert.isFalse(tabContainer._hasMoreElementsInTabOrder(secondChildFocus, false));
+    };
+
+    this.testHasMoreElementsNestedTabContainerTree = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML =
+            "<div>" +
+            "    <div>" +
+                    simpleItemHTML +
+            "        <div>" +
+                         simpleItemHTML +
+            "        </div>" +
+                    simpleItemHTML +
+            "    </div>" +
+            "</div>";
+
+        var outerTabContainerElement = root.firstElementChild,
+            rootChildFocus = outerTabContainerElement.firstElementChild,
+            itemBeforeInnerContainer = rootChildFocus.firstElementChild,
+            innerTabContainerElement = itemBeforeInnerContainer.nextElementSibling,
+            innerContainerItem = innerTabContainerElement.firstElementChild,
+            itemAfterInnerContainer = innerTabContainerElement.nextElementSibling,
+            outerTabContainer = new WinJS.UI.TabContainer(outerTabContainerElement),
+            innerTabContainer = new WinJS.UI.TabContainer(innerTabContainerElement);
+
+        // Nothing should be tabbable while no childFocus is set on the tabContainers
+        LiveUnit.Assert.isFalse(outerTabContainer._hasMoreElementsInTabOrder(itemBeforeInnerContainer, true));
+        LiveUnit.Assert.isFalse(outerTabContainer._hasMoreElementsInTabOrder(itemBeforeInnerContainer, false));
+        LiveUnit.Assert.isFalse(outerTabContainer._hasMoreElementsInTabOrder(innerContainerItem, true));
+        LiveUnit.Assert.isFalse(outerTabContainer._hasMoreElementsInTabOrder(innerContainerItem, false));
+        LiveUnit.Assert.isFalse(innerTabContainer._hasMoreElementsInTabOrder(innerContainerItem, true));
+        LiveUnit.Assert.isFalse(innerTabContainer._hasMoreElementsInTabOrder(innerContainerItem, false));
+        LiveUnit.Assert.isFalse(outerTabContainer._hasMoreElementsInTabOrder(itemAfterInnerContainer, true));
+        LiveUnit.Assert.isFalse(outerTabContainer._hasMoreElementsInTabOrder(itemAfterInnerContainer, false));
+
+        outerTabContainer.childFocus = rootChildFocus;
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(itemBeforeInnerContainer, true));
+        LiveUnit.Assert.isFalse(outerTabContainer._hasMoreElementsInTabOrder(itemBeforeInnerContainer, false)); 
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(itemBeforeInnerContainer), true));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(itemBeforeInnerContainer), false));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(itemBeforeInnerContainer), true));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(itemBeforeInnerContainer), false));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(itemAfterInnerContainer, true));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(itemAfterInnerContainer, false));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(itemAfterInnerContainer), true));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(itemAfterInnerContainer), false));
+        LiveUnit.Assert.isFalse(outerTabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(itemAfterInnerContainer), true));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(itemAfterInnerContainer), false));
+
+        innerTabContainer.childFocus = innerContainerItem;
+        LiveUnit.Assert.isTrue(innerTabContainer._hasMoreElementsInTabOrder(innerContainerItem, true));
+        LiveUnit.Assert.isTrue(innerTabContainer._hasMoreElementsInTabOrder(getFirstInItemTabOrder(innerContainerItem), true));
+        LiveUnit.Assert.isTrue(innerTabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(innerContainerItem), false));
+
+        // The inner tab container isn't aware of the DOM outside of its own tree, so _hasMoreElementsInTabOrder should return false in these next couple of edge tests.
+        // These same tests should return true when we call _hasMoreElementsInTabOrder on the outerTabContainer, since it knows the inner container
+        // is surrounded by two tabbable items.
+        LiveUnit.Assert.isFalse(innerTabContainer._hasMoreElementsInTabOrder(innerContainerItem, false));
+        LiveUnit.Assert.isFalse(innerTabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(innerContainerItem), true));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(innerContainerItem, false));
+        LiveUnit.Assert.isTrue(outerTabContainer._hasMoreElementsInTabOrder(getLastInItemTabOrder(innerContainerItem), true));
+    };
+
+    this.testTabEnterBehavior = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML =
+            "<div>" +
+                simpleItemHTML +
+            "</div>";
+
+        var tabContainedElement = root.firstElementChild,
+            firstChildFocus = tabContainedElement.firstElementChild,
+            tabContainer = new WinJS.UI.TabContainer(tabContainedElement);
+
+        tabContainer.childFocus = firstChildFocus;
+        var gotFocusEvent = false,
+            gotTabEnterEvent = false;
+
+        tabContainedElement.addEventListener("onTabEnter", function (e) {
+            gotTabEnterEvent = true;
+        });
+        firstChildFocus.focus = function () {
+            gotFocusEvent = true;
+        };
+
+        fakeFocusEvent(tabContainer._elementTabHelper._catcherBegin);
+        LiveUnit.Assert.isTrue(gotFocusEvent);
+        LiveUnit.Assert.isTrue(gotTabEnterEvent);
+        gotFocusEvent = false;
+        gotTabEnterEvent = false;
+        fakeFocusEvent(tabContainer._elementTabHelper._catcherEnd);
+        LiveUnit.Assert.isTrue(gotFocusEvent);
+        LiveUnit.Assert.isTrue(gotTabEnterEvent);
+
+        tabContainer.childFocus = null;
+        firstChildFocus.focus = function () {
+            LiveUnit.Assert.fail();
+        };
+        tabContainedElement.focus = function () {
+            gotFocusEvent = true;
+        };
+        gotFocusEvent = false;
+        gotTabEnterEvent = false;
+        fakeFocusEvent(tabContainer._elementTabHelper._catcherBegin);
+        LiveUnit.Assert.isTrue(gotFocusEvent);
+        LiveUnit.Assert.isTrue(gotTabEnterEvent);
+    };
+
+    this.testTabEnteredBehavior = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML =
+            "<div>" +
+                simpleItemHTML +
+            "</div>";
+
+        var tabContainedElement = root.firstElementChild,
+            firstChildFocus = tabContainedElement.firstElementChild,
+            tabContainer = new WinJS.UI.TabContainer(tabContainedElement);
+
+        tabContainer.childFocus = firstChildFocus;
+        var gotFocusEvent = false,
+            gotTabEnterEvent = false,
+            gotTabEnteredEvent = false,
+            preventDefaultOnTabEntered = true;
+
+        tabContainedElement.addEventListener("onTabEnter", function (e) {
+            gotTabEnterEvent = true;
+        });
+        firstChildFocus.focus = function () {
+            gotFocusEvent = true;
+        };
+        tabContainedElement.addEventListener("onTabEntered", function (e) {
+            gotTabEnteredEvent = true;
+            if (preventDefaultOnTabEntered) {
+                e.preventDefault();
+            }
+        });
+        fakeFocusEvent(tabContainer._elementTabHelper._catcherBegin);
+        LiveUnit.Assert.isFalse(gotFocusEvent);
+        LiveUnit.Assert.isTrue(gotTabEnterEvent);
+        LiveUnit.Assert.isTrue(gotTabEnteredEvent);
+        gotFocusEvent = false;
+        gotTabEnterEvent = false;
+        gotTabEnteredEvent = false;
+        preventDefaultOnTabEntered = false;
+        fakeFocusEvent(tabContainer._elementTabHelper._catcherBegin);
+        LiveUnit.Assert.isTrue(gotFocusEvent);
+        LiveUnit.Assert.isTrue(gotTabEnterEvent);
+        LiveUnit.Assert.isTrue(gotTabEnteredEvent);
+    };
+
+    this.testTabExitBehavior = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML =
+            "<div>" +
+                simpleItemHTML +
+            "</div>";
+
+        var getTabIndex = WinJS.Utilities.getTabIndex;
+        var tabContainedElement = root.firstElementChild,
+            firstChildFocus = tabContainedElement.firstElementChild,
+            tabContainer = new WinJS.UI.TabContainer(tabContainedElement);
+
+        tabContainer.childFocus = firstChildFocus;
+        var gotTabExitEvent = false;
+
+        tabContainedElement.addEventListener("onTabExit", function (e) {
+            gotTabExitEvent = true;
+        });
+
+        LiveUnit.Assert.areEqual(0, getTabIndex(firstChildFocus));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getFirstInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getLastInItemTabOrder(firstChildFocus)));
+
+        fakeTabKeyEvent(getLastInItemTabOrder(firstChildFocus), false);
+        LiveUnit.Assert.areEqual(-1, getTabIndex(firstChildFocus));
+        LiveUnit.Assert.areEqual(-1, getTabIndex(getFirstInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.areEqual(-1, getTabIndex(getLastInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.isTrue(gotTabExitEvent);
+        fakeBlurEvent(getLastInItemTabOrder(firstChildFocus));
+        LiveUnit.Assert.areEqual(0, getTabIndex(firstChildFocus));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getFirstInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getLastInItemTabOrder(firstChildFocus)));
+
+        gotTabExitEvent = false;
+        fakeTabKeyEvent(getFirstInItemTabOrder(firstChildFocus), false);
+        LiveUnit.Assert.isFalse(gotTabExitEvent);
+
+        fakeTabKeyEvent(firstChildFocus, true);
+        LiveUnit.Assert.areEqual(-1, getTabIndex(firstChildFocus));
+        LiveUnit.Assert.areEqual(-1, getTabIndex(getFirstInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.areEqual(-1, getTabIndex(getLastInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.isTrue(gotTabExitEvent);
+        fakeBlurEvent(firstChildFocus);
+        LiveUnit.Assert.areEqual(0, getTabIndex(firstChildFocus));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getFirstInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getLastInItemTabOrder(firstChildFocus)));
+    };
+
+    this.testTabExitingBehavior = function () {
+        var root = document.getElementById("TabManagerTest");
+        root.innerHTML =
+            "<div>" +
+                simpleItemHTML +
+            "</div>";
+
+        var getTabIndex = WinJS.Utilities.getTabIndex;
+        var tabContainedElement = root.firstElementChild,
+            firstChildFocus = tabContainedElement.firstElementChild,
+            tabContainer = new WinJS.UI.TabContainer(tabContainedElement);
+
+        tabContainer.childFocus = firstChildFocus;
+        var gotTabExitEvent = false,
+            gotTabExitingEvent = false,
+            preventDefaultOnTabExiting = true;
+
+        tabContainedElement.addEventListener("onTabExit", function (e) {
+            gotTabExitEvent = true;
+        });
+        tabContainedElement.addEventListener("onTabExiting", function (e) {
+            gotTabExitingEvent = true;
+            if (preventDefaultOnTabExiting) {
+                e.preventDefault();
+            }
+        });
+        LiveUnit.Assert.areEqual(0, getTabIndex(firstChildFocus));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getFirstInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getLastInItemTabOrder(firstChildFocus)));
+
+        fakeTabKeyEvent(getLastInItemTabOrder(firstChildFocus), false);
+        LiveUnit.Assert.areEqual(0, getTabIndex(firstChildFocus));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getFirstInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.areEqual(0, getTabIndex(getLastInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.isTrue(gotTabExitingEvent);
+        LiveUnit.Assert.isFalse(gotTabExitEvent);
+        gotTabExitEvent = false;
+        gotTabExitingEvent = false;
+        preventDefaultOnTabExiting = false;
+        fakeTabKeyEvent(getLastInItemTabOrder(firstChildFocus), false);
+        LiveUnit.Assert.areEqual(-1, getTabIndex(firstChildFocus));
+        LiveUnit.Assert.areEqual(-1, getTabIndex(getFirstInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.areEqual(-1, getTabIndex(getLastInItemTabOrder(firstChildFocus)));
+        LiveUnit.Assert.isTrue(gotTabExitingEvent);
+        LiveUnit.Assert.isTrue(gotTabExitEvent);
+    };
 }
 
-var LiveUnit = LiveUnit || undefined;
+LiveUnit.registerTestClass("CorsicaTests.TabManager");
 
-if (LiveUnit) {
-    LiveUnit.registerTestClass("CorsicaTests.TabManager");
-}

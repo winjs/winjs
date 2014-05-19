@@ -1534,9 +1534,9 @@ WinJSTests.ListView = function () {
         document.body.appendChild(lv.element);
 
         // To make listView delegate focus to a header, we want to shift-tab
-        // into the listView, the detail field in the eventArgs on tabEnter
+        // into the listView, the detail field in the eventArgs on tabEntered
         // specifies the tab direction, 0 is shift-tab, 1 is tab.
-        lv._mode.onTabEnter({ detail: 0, srcElement: lv._canvas });
+        lv._mode.onTabEntered({ detail: 0, srcElement: lv._canvas, preventDefault: function () { } });
 
         document.body.removeChild(lv.element);
         lv.dispose();
@@ -1589,7 +1589,7 @@ WinJSTests.ListView = function () {
         document.body.appendChild(lv.element);
 
         waitForReady(lv, -1)().then(function () {
-            lv._mode.onTabEnter({ detail: 0 });
+            lv._mode.onTabEntered({ detail: 0, preventDefault: function () { } });
 
             return waitForReady(lv, -1)();
         }).then(function () {
@@ -1597,7 +1597,7 @@ WinJSTests.ListView = function () {
 
             return waitForReady(lv, -1)();
         }).done(function () {
-            lv._mode.onTabEnter({ detail: 1, srcElement: lv._canvas });
+            lv._mode.onTabEntered({ detail: 1, srcElement: lv._canvas, preventDefault: function () { } });
 
             document.body.removeChild(lv.element);
             lv.dispose();
@@ -1624,7 +1624,7 @@ WinJSTests.ListView = function () {
         document.body.appendChild(lv.element);
 
         waitForReady(lv, -1)().then(function () {
-            lv._mode.onTabEnter({ detail: 0 });
+            lv._mode.onTabEntered({ detail: 0, preventDefault: function () { } });
 
             return waitForReady(lv, -1)();
         }).then(function () {
@@ -1632,7 +1632,7 @@ WinJSTests.ListView = function () {
 
             return waitForReady(lv, -1)();
         }).done(function () {
-            lv._mode.onTabEnter({ detail: 1, srcElement: lv._canvas });
+            lv._mode.onTabEntered({ detail: 1, srcElement: lv._canvas, preventDefault: function () { } });
 
             document.body.removeChild(lv.element);
             lv.dispose();
