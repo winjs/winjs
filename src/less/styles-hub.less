@@ -14,12 +14,8 @@
     height: 100%;
     width: 100%;
     /* Allow win-hub-surface margin/padding right to work */
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -ms-flex: 0 0 auto; /* IE10 */
-    -webkit-flex: 0 0 auto;
-    flex: 0 0 auto;
+    #flex > .display-flex();
+    #flex > .flex(0; 0; auto);
     -ms-scroll-snap-type: proximity;
 }
 .win-hub-horizontal .win-hub-viewport {
@@ -30,20 +26,16 @@
     position: relative;
     overflow-y: auto;
     overflow-x: hidden;
-    flex-direction: column;
+    #flex > .flex-direction(column);
 }
 .win-hub-surface {
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -ms-flex: 0 0 auto; /* IE10 */
-    -webkit-flex: 0 0 auto;
-    flex: 0 0 auto;
+    #flex > .display-flex();
+    #flex > .flex(0; 0; auto);
 }
 .win-hub-vertical .win-hub-surface {
     width: 100%;
     padding: 15px 0;
-    flex-direction: column;
+    #flex > .flex-direction(column);
 }
 .win-hub-horizontal .win-hub-surface {
     height: 100%;
