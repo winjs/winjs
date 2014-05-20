@@ -53,12 +53,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="..\..\src\js\**\*.js">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Link>js\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\..\src\less\**\*.less">
+      <Link>less\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="..\..\src\js\**\*.resjson">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Link>js\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </PRIResource>
   </ItemGroup>
   <ItemGroup>
