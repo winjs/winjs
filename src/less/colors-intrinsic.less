@@ -535,8 +535,16 @@
                 background-color: rgba(255, 255, 255, 0.16);
             }
 
+            &::-webkit-slider-runnable-track {
+                background: rgba(255, 255, 255, 0.16);
+            }
+
             &::-ms-thumb {
                 background-color: rgb(255, 255, 255);
+            }
+
+            &::-webkit-slider-thumb {
+                background: rgb(255, 255, 255);
             }
 
             &::-ms-ticks-before, &::-ms-ticks-after {
@@ -551,6 +559,10 @@
                 background-color: rgba(255, 255, 255, 0.18);
             }
 
+            &:enabled:hover::-webkit-slider-runnable-track {
+                background-color: rgba(255, 255, 255, 0.18);
+            }
+
             &:disabled::-ms-fill-lower {
                 background-color: rgba(255, 255, 255, 0.23);
             }
@@ -562,6 +574,11 @@
             &:disabled::-ms-thumb {
                 background-color: rgb(126, 126, 126);
             }
+
+            &:disabled::-webkit-slider-thumb {
+                background-color: rgb(126, 126, 126);
+            }
+
         }
         .mixin(light) {
             &::-ms-fill-lower {
@@ -572,7 +589,15 @@
                 background-color: rgba(0, 0, 0, 0.1);
             }
 
+            &::-webkit-slider-runnable-track {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+
             &::-ms-thumb {
+                background-color: rgb(0, 0, 0);
+            }
+
+            &::-webkit-slider-thumb {
                 background-color: rgb(0, 0, 0);
             }
 
@@ -588,6 +613,10 @@
                 background-color: rgba(0, 0, 0, 0.15);
             }
 
+            &:enabled:hover::-webkit-slider-runnable-track {
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+
             &:disabled::-ms-fill-lower {
                 background-color: rgba(0, 0, 0, 0.2);
             }
@@ -597,6 +626,10 @@
             }
 
             &:disabled::-ms-thumb {
+                background-color: rgb(146, 146, 146);
+            }
+
+            &:disabled::-webkit-slider-thumb {
                 background-color: rgb(146, 146, 146);
             }
         }

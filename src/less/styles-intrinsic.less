@@ -280,6 +280,11 @@ input[type=range] {
     width: 280px;
     height: auto;
     padding: 17px 0px 32px 0px;
+    -webkit-appearance: none;
+
+    &:focus {
+        outline: none;
+    }
 
     &::-ms-track {
         padding: 0px;
@@ -288,10 +293,20 @@ input[type=range] {
         border-style: none;
     }
 
+    &::-webkit-slider-runnable-track {
+        height: 11px;
+    }
+
     &::-ms-thumb {
         width: 11px;
         height: 11px;
         border-style: none;
+    }
+
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 11px;
+        width: 11px;
     }
 
     &::-ms-ticks-before, &::-ms-ticks-after {
