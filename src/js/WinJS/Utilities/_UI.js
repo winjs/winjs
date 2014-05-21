@@ -34,6 +34,18 @@
         }
     });
 
+    WinJS.Namespace.define("WinJS.UI", {
+
+        CountResult: {
+            unknown: "unknown"
+        },
+
+        CountError: {
+            noResponse: "noResponse"
+        }
+
+    });
+
 
     WinJS.Namespace.define("WinJS.Utilities", {
 

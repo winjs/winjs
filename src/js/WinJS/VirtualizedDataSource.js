@@ -12,14 +12,6 @@
             failure: "failure"
         },
 
-        CountResult: {
-            unknown: "unknown"
-        },
-
-        CountError: {
-            noResponse: "noResponse"
-        },
-
         FetchError: {
             noResponse: "noResponse",
             doesNotExist: "doesNotExist"
