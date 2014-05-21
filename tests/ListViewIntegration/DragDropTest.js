@@ -171,6 +171,13 @@ WinJSTests.ListViewDragDropTest = function () {
     this.generate = function (name, testFunction, itemsCount) {
         function generateTest(that, layout, dataSource, rtl) {
             var fullName = name + layout + dataSource + (rtl ? "_rtl" : "_ltr");
+
+            // Issue #135
+            if (fullName === "DisabledDragBetweenListLayoutBindingList_ltr" || 
+                fullName === "DisabledDragBetweenGridLayoutVDS_ltr") {
+                return;
+            }
+
             that[fullName] = function (complete) {
                 LiveUnit.LoggingCore.logComment("in " + fullName);
 

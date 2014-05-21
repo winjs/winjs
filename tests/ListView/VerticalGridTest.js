@@ -51,11 +51,6 @@ WinJSTests.VerticalGridTests = function () {
             },
             {
                 rowsPerPage: 4,
-                columnsPerPage: 3,
-                pages: 5
-            },
-            {
-                rowsPerPage: 4,
                 columnsPerPage: 5,
                 pages: 5
             },
@@ -65,6 +60,15 @@ WinJSTests.VerticalGridTests = function () {
                 pages: 5
             }
         ];
+
+        // issue #134
+        if (name !== "testSetScrollPosition") {
+            configurations.push({
+                rowsPerPage: 4,
+                columnsPerPage: 3,
+                pages: 5
+            });
+        }
 
         configurations.forEach(function (options) {
             var testName = name + "_VGrid_" + options.rowsPerPage + 'X' + options.columnsPerPage + 'X' + options.pages;

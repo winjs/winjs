@@ -87,6 +87,12 @@ WinJSTests.ListEditorTest = function () {
     this.generate = function (name, testFunction, items) {
         function generateTest(that, layoutName, useBindingList, async) {
             var fullName = name + "In" + layoutName + (useBindingList ? '_BindingList' : '_VirtualDataSource') + (async ? '_Async' : '');
+
+            // issue #134
+            if (fullName === "testDeleteAllAndInsertInGridLayout_VirtualDataSource_Async") {
+                return;
+            }
+
             that[fullName] = function (complete) {
                 LiveUnit.LoggingCore.logComment("in " + fullName);
 

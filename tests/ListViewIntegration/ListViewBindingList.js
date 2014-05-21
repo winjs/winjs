@@ -534,8 +534,8 @@ var Tests = Tests || {};
                 done(complete);
         }
 
-
-        this.testGroupSortedWithBinding = function (complete) {
+        // Issue #135
+        this.xtestGroupSortedWithBinding = function (complete) {
             //BugID:  629543
             var sampleDataSource = [];
 
@@ -812,7 +812,8 @@ var Tests = Tests || {};
                 done(complete);
         };
 
-        this.testListViewUsingGroupSortedWithMutations = function (complete) {
+        // Issue #135
+        this.xtestListViewUsingGroupSortedWithMutations = function (complete) {
             //BugID:  629543
             var sampleDataSource = [];
             for (var i = 0; i < 20; i++) {
