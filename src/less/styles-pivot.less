@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .win-pivot {
-    display: -ms-grid;
-    -ms-grid-rows: auto auto 1fr;
-    -ms-grid-columns: 1fr;
+    #flex > .display-flex();
+    #flex > .flex-flow(column; nowrap);
+
     height: 100%;
     width: 100%;
     overflow: hidden;
@@ -10,8 +10,6 @@
 }
 
 .win-pivot .win-pivot-title {
-    -ms-grid-column: 1;
-    -ms-grid-row: 1;
     font-size: 14pt;
     font-family: 'Segoe';
     font-weight: 600;
@@ -32,8 +30,7 @@
 }
 
 .win-pivot .win-pivot-headers {
-    -ms-grid-column: 1;
-    -ms-grid-row: 2;
+    #flex > .flex(@shrink: 0);
     white-space: nowrap;
 }
 
@@ -74,18 +71,19 @@
 
 .win-pivot .win-pivot-viewport {
     /* Overlap the headers but not the title */
-    -ms-grid-column: 1;
-    -ms-grid-row: 2;
-    -ms-grid-row-span: 2;
+    height: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     -ms-scroll-snap-type: mandatory;
     -ms-scroll-snap-points-x: snapInterval(0%, 100%);
     -ms-overflow-style: none;
-    /* Avoid overlapping the headers with content. */
-    padding-top: 78px;
-    /* Adding position relative so that the viewport is drawn on top of the headers with 0.4 opacity (Trident bug). */
+
+    /* The following 3 styles take advantage of a Trident bug to make the viewport pannable on the header track. The viewport is extended over the
+        header track space, and position: relative allows interacting with it as if the viewport was drawn over the header track.
+    */
     position: relative;
+    padding-top: 72px;
+    margin-top: -72px;
 }
 
 .win-pivot.win-pivot-locked .win-pivot-viewport {
@@ -107,10 +105,6 @@
     top: 28px;
     bottom: 0;
     width: 1%;
-}
-
-.win-pivot-column4 .win-pivot-item {
-    -ms-grid-column: 4;
 }
 
 .win-pivot-item .win-pivot-item-content {
