@@ -70,6 +70,14 @@
                     throw new WinJS.ErrorFromName("WinJS.UI.Pivot.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
+                this._handleItemChangedBound = this._handleItemChanged.bind(this);
+                this._handleItemInsertedBound = this._handleItemInserted.bind(this);
+                this._handleItemMovedBound = this._handleItemMoved.bind(this);
+                this._handleItemRemovedBound = this._handleItemRemoved.bind(this);
+                this._handleItemReloadBound = this._handleItemReload.bind(this);
+                this._showNavButtons = this._showNavButtons.bind(this);
+                this._hideNavButtons = this._hideNavButtons.bind(this);
+
                 this._id = element.id || WinJS.Utilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -95,8 +103,9 @@
                 this._headersContainerElement = document.createElement("DIV");
                 WinJS.Utilities.addClass(this._headersContainerElement, WinJS.UI.Pivot._ClassName.pivotHeaders);
                 this._element.appendChild(this._headersContainerElement);
-
                 this._element.addEventListener('click', this._headerClickedHandler.bind(this));
+                WinJS.Utilities._addEventListener(this._headersContainerElement, "mouseenter", this._showNavButtons);
+                WinJS.Utilities._addEventListener(this._headersContainerElement, "mouseleave", this._hideNavButtons);
 
                 this._viewportElement = document.createElement("DIV");
                 this._viewportElement.className = WinJS.UI.Pivot._ClassName.pivotViewport;
@@ -131,12 +140,6 @@
                 }
 
                 WinJS.UI.setOptions(this, options);
-
-                this._handleItemChangedBound = this._handleItemChanged.bind(this);
-                this._handleItemInsertedBound = this._handleItemInserted.bind(this);
-                this._handleItemMovedBound = this._handleItemMoved.bind(this);
-                this._handleItemRemovedBound = this._handleItemRemoved.bind(this);
-                this._handleItemReloadBound = this._handleItemReload.bind(this);
 
                 this._refresh();
 
@@ -597,6 +600,34 @@
                             return;
                         }
                         this._headersContainerElement.style[leadingMargin] = (-1 * leadingSpace) + "px";
+
+                        if (!supportsSnapPoints) {
+                            // Create header track nav button elements
+                            this._prevButton = document.createElement("button");
+                            this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
+                            this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonPrev);
+                            this._prevButton.style.left = leadingSpace + "px";
+                            this._prevButton.innerHTML = "&#xE016;";
+                            this._prevButton.addEventListener("click", function () {
+                                that._goPrevious();
+                            });
+                            WinJS.Utilities._addEventListener(this._prevButton, "mouseenter", that._showNavButtons);
+                            WinJS.Utilities._addEventListener(this._prevButton, "mouseleave", that._hideNavButtons);
+                            this._headersContainerElement.appendChild(this._prevButton);
+
+                            this._nextButton = document.createElement("button");
+                            this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
+                            this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonNext);
+                            this._nextButton.innerHTML = "&#xE017;";
+                            this._nextButton.addEventListener("click", function () {
+                                that._goNext();
+                            });
+                            WinJS.Utilities._addEventListener(this._nextButton, "mouseenter", that._showNavButtons);
+                            WinJS.Utilities._addEventListener(this._nextButton, "mouseleave", that._hideNavButtons);
+                            this._headersContainerElement.appendChild(this._nextButton);
+
+                            this._navButtonsShowCount = 0;
+                        }
                     }
                 },
 
@@ -818,6 +849,22 @@
                     }
                 },
 
+                _showNavButtons: function pivot_showNavButtons(e) {
+                    if (e.pointerType === WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || e.pointerType === "touch") {
+                        return;
+                    }
+                    this._navButtonsShowCount++;
+                    this._headersContainerElement.classList.add(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
+                },
+
+                _hideNavButtons: function pivot_hideNavButtons() {
+                    this._navButtonsShowCount--;
+                    if (this._navButtonsShowCount <= 0) {
+                        this._headersContainerElement.classList.remove(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
+                        this._navButtonsShowCount = 0;
+                    }
+                },
+
                 _hidePivotItem: function pivot_hidePivotItem(element, goPrevious) {
                     var that = this;
                     function cleanup() {
@@ -944,7 +991,7 @@
                     var headerAnimation;
                     if (WinJS.UI.isAnimationEnabled()) {
                         headerAnimation = WinJS.UI.executeTransition(
-                        this._headersContainerElement.children,
+                        this._headersContainerElement.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotHeader),
                         {
                             property: WinJS.Utilities._browserStyleEquivalents["transform"].cssName,
                             delay: 0,
@@ -1106,6 +1153,10 @@
                     pivotViewport: "win-pivot-viewport",
                     pivotSurface: "win-pivot-surface",
                     pivotNoSnap: "win-pivot-nosnap",
+                    pivotNavButton: "win-pivot-navbutton",
+                    pivotNavButtonPrev: "win-pivot-navbutton-prev",
+                    pivotNavButtonNext: "win-pivot-navbutton-next",
+                    pivotShowNavButtons: "win-pivot-shownavbuttons",
                 },
                 // Names of events fired by the Pivot.
                 _EventName: {

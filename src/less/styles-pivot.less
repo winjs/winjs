@@ -9,6 +9,31 @@
     -ms-scroll-limit-x-max: 0px;
 }
 
+.win-pivot .win-pivot-navbutton {
+    transition: opacity linear 167ms;
+    -webkit-transition: opacity linear 167ms;
+    position: absolute;
+    width: 28px;
+    height: 72px;
+    margin: 12px 4px 0px 4px;
+    top: 0px;
+    align-items: center;
+    justify-content: center;
+    min-width: 0px;
+    border-width: 0px;
+    cursor: pointer;
+    background-color: gray;
+    opacity: 0;
+}
+
+.win-pivot .win-pivot-headers.win-pivot-shownavbuttons .win-pivot-navbutton {
+    opacity: 0.8;
+}
+
+.win-pivot .win-pivot-navbutton-next {
+    right: 0px;
+}
+
 .win-pivot .win-pivot-title {
     font-size: 14pt;
     font-family: 'Segoe';
@@ -32,6 +57,7 @@
 .win-pivot .win-pivot-headers {
     #flex > .flex(@shrink: 0);
     white-space: nowrap;
+    position: relative;
 }
 
 .win-pivot .win-pivot-header {
