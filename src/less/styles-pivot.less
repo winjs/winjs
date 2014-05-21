@@ -86,6 +86,11 @@
     margin-top: -72px;
 }
 
+.win-pivot.win-pivot-nosnap .win-pivot-viewport {
+    padding-top: 0px;
+    margin-top: 0px;
+}
+
 .win-pivot.win-pivot-locked .win-pivot-viewport {
     overflow: hidden;
 }
@@ -97,6 +102,10 @@
     position: relative;
 }
 
+.win-pivot.win-pivot-nosnap .win-pivot-surface {
+    width: 100%;
+}
+
 /*
     PivotItem
 */
@@ -104,13 +113,12 @@
     position: absolute;
     top: 28px;
     bottom: 0;
-    width: 1%;
+    width: ~"calc(100% - 28px)";
 }
 
 .win-pivot-item .win-pivot-item-content {
     height: 100%;
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
-    width: ~"calc(100% - 28px)";
     padding: 0px 19px;
 }

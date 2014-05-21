@@ -24,6 +24,11 @@
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Pivot: WinJS.Namespace._lazy(function () {
+            // Feature detection
+            var el = document.createElement("div");
+            el.style.msScrollSnapType = "mandatory";
+            var supportsSnapPoints = !!getComputedStyle(el).msScrollSnapType;
+            el = null;
 
             function pivotDefaultHeaderTemplate(item) {
                 var element = document.createTextNode(typeof item.header === "object" ? JSON.stringify(item.header) : ('' + item.header));
@@ -67,6 +72,10 @@
 
                 this._id = element.id || WinJS.Utilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
+
+                if (!supportsSnapPoints) {
+                    element.classList.add(WinJS.UI.Pivot._ClassName.pivotNoSnap);
+                }
 
                 // Attaching JS control to DOM element
                 element.winControl = this;
@@ -346,6 +355,10 @@
                 },
 
                 _recenterUI: function pivot_recenterUI() {
+                    if (!supportsSnapPoints) {
+                        return;
+                    }
+
                     this._offsetFromCenter = 0;
 
                     if (this._viewportElement.scrollLeft !== this._currentScrollTargetLocation) {
@@ -364,7 +377,7 @@
                 },
 
                 _scrollHandler: function pivot_scrollHandler() {
-                    if (this._disposed) {
+                    if (this._disposed || !supportsSnapPoints) {
                         return;
                     }
 
@@ -395,7 +408,7 @@
 
                 _MSManipulationStateChangedHandler: function pivot_MSManipulationStateChangedHandler(ev) {
                     this._currentManipulationState = ev.currentState;
-                    if (ev.target !== this._viewportElement) {
+                    if (!supportsSnapPoints || ev.target !== this._viewportElement) {
                         // Ignore sub scroller manipulations.
                         return;
                     }
@@ -794,7 +807,9 @@
                     get: function () {
                         if (!this._viewportElWidth) {
                             this._viewportElWidth = parseFloat(getComputedStyle(this._viewportElement).width);
-                            this._viewportElement.style[WinJS.Utilities._browserStyleEquivalents["scroll-snap-points-x"].scriptName] = "snapInterval(0%, " + Math.ceil(this._viewportElWidth) + "px)";
+                            if (supportsSnapPoints) {
+                                this._viewportElement.style[WinJS.Utilities._browserStyleEquivalents["scroll-snap-points-x"].scriptName] = "snapInterval(0%, " + Math.ceil(this._viewportElWidth) + "px)";
+                            }
                         }
                         return this._viewportElWidth || 1;
                     },
@@ -978,7 +993,7 @@
                         this._offsetFromCenter++;
                     }
 
-                    if (this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
+                    if (supportsSnapPoints && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                         if (this._skipHeaderSlide) {
                             WinJS.log && WinJS.log('_skipHeaderSlide index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
                             this._viewportElement.scrollLeft = this._currentScrollTargetLocation;
@@ -1004,8 +1019,10 @@
                             return;
                         }
                         if (loadId === that._loadId) {
-                            // Position item:
-                            item.element.style[that._getDirectionAccessor()] = that._currentScrollTargetLocation + "px";
+                            if (supportsSnapPoints) {
+                                // Position item:
+                                item.element.style[that._getDirectionAccessor()] = that._currentScrollTargetLocation + "px";
+                            }
 
                             // Once the item is loaded show it and animate it in.
                             that._showPivotItem(item.element, goPrevious);
@@ -1088,6 +1105,7 @@
                     pivotHeaderSelected: "win-pivot-header-selected",
                     pivotViewport: "win-pivot-viewport",
                     pivotSurface: "win-pivot-surface",
+                    pivotNoSnap: "win-pivot-nosnap",
                 },
                 // Names of events fired by the Pivot.
                 _EventName: {
