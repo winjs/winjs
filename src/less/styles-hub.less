@@ -44,9 +44,8 @@
 
 
 .win-hub-section {
-    display: -ms-grid;
-    -ms-grid-columns: 1fr;
-    -ms-grid-rows: auto 1fr;
+    #flex > .display-flex();
+    #flex > .flex-direction(column);
     padding: 0 40px;
 }
 .win-hub-horizontal {
@@ -69,8 +68,7 @@
     }
 }
 .win-hub-section-header {
-    -ms-grid-column: 1;
-    -ms-grid-row: 1;
+    #flex > .flex(@shrink: 0);
     margin: 4px 0;
     font-size: 20pt;
     text-align: left;
@@ -85,15 +83,18 @@
 button.win-hub-section-header-tabstop,
 button.win-hub-section-header-tabstop:hover,
 button.win-hub-section-header-tabstop:hover:active {
-    display: -ms-inline-grid;
+    #flex > .display-inline-flex();
+    #flex > .flex-direction(row);
     background-color: transparent;
     border: 0;
-    padding: 0;
+    padding: 0 3px 0 0;
     min-height: 0;
     min-width: 0;
     font-size: 20pt;
-    -ms-grid-columns: minmax(0, max-content) 3px;
-    -ms-grid-rows: max-content;
+    
+    &:-ms-lang(@{rtl}) {
+        padding: 0 0 0 3px;
+    }
 }
 button.win-hub-section-header-tabstop:focus {
     outline: none;
@@ -105,21 +106,22 @@ button.win-hub-section-header-tabstop:focus {
 button.win-hub-section-header-tabstop:-ms-keyboard-active {
     background-color: transparent;
 }
-// Use grid and top level layout for truncation
-button.win-hub-section-header-tabstop.win-hub-section-header-interactive,
-button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover,
-button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover:active {
-    -ms-grid-columns: minmax(0, max-content) 7px max-content 3px;
-}
 .win-hub-section-header-content {
     display: inline-block;
+    #flex > .flex(@grow: 1);
 }
 .win-hub-section-header-chevron {
     display: none;
 }
 .win-hub-section-header-interactive .win-hub-section-header-chevron {
-    -ms-grid-column: 3;
+    #flex > .flex(@shrink: 0);
     display: inline-block;
+    margin-left: 7px;
+    
+    &:-ms-lang(@{rtl}) {
+        margin-left: 0;
+        margin-right: 7px;
+    }
 }
 .win-hub-section-header-chevron::before {
     font-family: "Segoe UI Symbol", "Symbols";
@@ -130,8 +132,7 @@ button.win-hub-section-header-tabstop.win-hub-section-header-interactive:hover:a
     content: "\E26C";
 }
 .win-hub-section-content {
-    -ms-grid-column: 1;
-    -ms-grid-row: 2;
+    #flex > .flex(@grow: 1);
 }
 .win-hub-horizontal .win-hub-section-content {
     height: ~"calc(100% - 44px)";
