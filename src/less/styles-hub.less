@@ -83,13 +83,12 @@
 button.win-hub-section-header-tabstop,
 button.win-hub-section-header-tabstop:hover,
 button.win-hub-section-header-tabstop:hover:active {
-    #flex > .display-inline-flex();
-    #flex > .flex-direction(row);
     background-color: transparent;
     border: 0;
     padding: 0 3px 0 0;
     min-height: 0;
     min-width: 0;
+    max-width: ~"calc(100% - 3px)";
     font-size: 20pt;
     
     &:-ms-lang(@{rtl}) {
@@ -105,6 +104,11 @@ button.win-hub-section-header-tabstop:focus {
 // CSS rule group. For this reason, never group it with other rules.
 button.win-hub-section-header-tabstop:-ms-keyboard-active {
     background-color: transparent;
+}
+.win-hub-section-header-wrapper {
+    #flex > .display-inline-flex();
+    #flex > .flex-direction(row);
+    width: 100%;
 }
 .win-hub-section-header-content {
     display: inline-block;

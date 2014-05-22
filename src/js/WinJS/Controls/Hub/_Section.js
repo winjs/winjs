@@ -61,12 +61,19 @@
                 this._headerElement.className = WinJS.UI.HubSection._ClassName.hubSectionHeader
                 this._headerElement.innerHTML =
                     '<button type="button" role="link" class="' + WinJS.UI.HubSection._ClassName.hubSectionInteractive + ' ' + WinJS.UI.HubSection._ClassName.hubSectionHeaderTabStop + '">' +
-                        '<h2 class="' + WinJS.UI.HubSection._ClassName.hubSectionHeaderContent + ' ' + WinJS.UI.HubSection._Constants.ellipsisTypeClassName + ' ' + WinJS.UI.HubSection._Constants.xLargeTypeClassName + '"></h2>' +
-                        '<span class="' + WinJS.UI.HubSection._ClassName.hubSectionHeaderChevron + ' ' + WinJS.UI.HubSection._Constants.ellipsisTypeClassName + ' ' + WinJS.UI.HubSection._Constants.xLargeTypeClassName + '"></span>' +
+                        '<div class="' +  WinJS.UI.HubSection._ClassName.hubSectionHeaderWrapper + '">' +
+                            '<h2 class="' + WinJS.UI.HubSection._ClassName.hubSectionHeaderContent + ' ' + WinJS.UI.HubSection._Constants.ellipsisTypeClassName + ' ' + WinJS.UI.HubSection._Constants.xLargeTypeClassName + '"></h2>' +
+                            '<span class="' + WinJS.UI.HubSection._ClassName.hubSectionHeaderChevron + ' ' + WinJS.UI.HubSection._Constants.ellipsisTypeClassName + ' ' + WinJS.UI.HubSection._Constants.xLargeTypeClassName + '"></span>' +
+                        '</div>' +
                     '</button>';
                 this._headerTabStopElement = this._headerElement.firstElementChild;
-                this._headerContentElement = this._headerTabStopElement.firstElementChild;
-                this._headerChevronElement = this._headerTabStopElement.lastElementChild;
+                // The purpose of headerWrapperElement is to lay out its children in a flexbox. Ideally, this flexbox would
+                // be on headerTabStopElement. However, firefox lays out flexboxes with display:flex differently.
+                // Firefox bug 1014285 (Button with display:inline-flex doesn't layout properly)
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=1014285
+                this._headerWrapperElement = this._headerTabStopElement.firstElementChild;
+                this._headerContentElement = this._headerWrapperElement.firstElementChild;
+                this._headerChevronElement = this._headerWrapperElement.lastElementChild;
                 element.appendChild(this._headerElement);
 
                 this._winKeyboard = new WinJS.UI._WinKeyboard(this._headerElement);
@@ -184,6 +191,7 @@
                     hubSection: "win-hub-section",
                     hubSectionHeader: "win-hub-section-header",
                     hubSectionHeaderTabStop: "win-hub-section-header-tabstop",
+                    hubSectionHeaderWrapper: "win-hub-section-header-wrapper",
                     hubSectionInteractive: "win-hub-section-header-interactive",
                     hubSectionHeaderContent: "win-hub-section-header-content",
                     hubSectionHeaderChevron: "win-hub-section-header-chevron",
