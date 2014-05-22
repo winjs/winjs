@@ -1098,15 +1098,14 @@
                     var leftKey = this._rtl ? Key.rightArrow : Key.leftArrow;
                     var rightKey = this._rtl ? Key.leftArrow : Key.rightArrow;
 
-                    if (ev.keyCode === Key.upArrow || ev.keyCode === Key.downArrow || ev.keyCode === Key.leftArrow || ev.keyCode === Key.rightArrow || ev.keyCode === Key.pageUp || ev.keyCode === Key.pageDown) {
+                        if (ev.keyCode === Key.upArrow || ev.keyCode === Key.downArrow || ev.keyCode === Key.leftArrow || ev.keyCode === Key.rightArrow || ev.keyCode === Key.pageUp || ev.keyCode === Key.pageDown) {
                         var headerTabStopElement = this._findHeaderTabStop(ev.target);
                         if (headerTabStopElement && !this._isHeaderInteractive(ev.target)) {
                             var currentSection = this.sections.indexOf(headerTabStopElement.parentElement.parentElement.winControl);
                             var targetSectionIndex;
                             var useEnsureVisible = false;
-                            // Page up/down go to the next/previous header and line it up with the app header. End/Home use
-                            // default browser behavior (no focus change but scroll to start/end). Up/Right/Down/Left move 
-                            // focus to the next/previous header and move it on screen (app header distance from either edge).
+                            // Page up/down go to the next/previous header and line it up with the app header. Up/Right/Down/Left
+                            // move focus to the next/previous header and move it on screen (app header distance from either edge).
                             if (ev.keyCode === Key.pageDown ||
                                 (this.orientation === WinJS.UI.Orientation.horizontal && ev.keyCode === rightKey) ||
                                 (this.orientation === WinJS.UI.Orientation.vertical && ev.keyCode === Key.downArrow)) {
@@ -1144,6 +1143,12 @@
 
                             ev.preventDefault();
                         }
+                    } else if (ev.keyCode === Key.home || ev.keyCode === Key.end) {
+                        // Home/End scroll to start/end and leave focus where it is.
+                        this._measure();
+                        var maxScrollPos = Math.max(0, this._scrollLength - this._viewportSize);
+                        this._scrollTo(ev.keyCode === Key.home ? 0 : maxScrollPos, true);
+                        ev.preventDefault();
                     }
                 },
                 _tryFocus: function hub_tryFocus(index) {
