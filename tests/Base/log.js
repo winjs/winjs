@@ -50,10 +50,10 @@ CorsicaTests.Log = function () {
         var c = window.console;
         try {
             window.console = {
-                log: function(m) { logC++; return c.log(m); },
-                error: function(m) { errorC++; return c.error(m); },
-                warn: function(m) { warnC++; return c.warn(m); },
-                info: function(m) { infoC++; return c.info(m); },
+                log: function(m) { logC++; },
+                error: function(m) { errorC++; },
+                warn: function(m) { warnC++; },
+                info: function(m) { infoC++; },
             };
             WinJS.Utilities.startLog();
             fakeLib();
@@ -76,10 +76,10 @@ CorsicaTests.Log = function () {
         var c = window.console;
         try {
             window.console = {
-                log: function(m) { logC++; return c.log(m); },
-                error: function(m) { errorC++; return c.error(m); },
-                warn: function(m) { warnC++; return c.warn(m); },
-                info: function(m) { infoC++; return c.info(m); },
+                log: function(m) { logC++; },
+                error: function(m) { errorC++; },
+                warn: function(m) { warnC++; },
+                info: function(m) { infoC++; },
             };
             WinJS.Utilities.startLog("i1");
             fakeLib();
@@ -192,7 +192,7 @@ CorsicaTests.Log = function () {
 
         try {
             window.console = {
-                info: function(m) { infoC++; receivedInfo = m; return c.info(m); },
+                info: function(m) { infoC++; receivedInfo = m; },
             };
 
             WinJS.Utilities.startLog();
@@ -264,10 +264,10 @@ CorsicaTests.Log = function () {
 
         try {
             window.console = {
-                log: function(m) { logC++; return c.log(m); },
-                error: function(m) { errorC++; return c.error(m); },
-                warn: function(m) { warnC++; return c.warn(m); },
-                info: function(m) { infoC++; return c.info(m); },
+                log: function(m) { logC++; },
+                error: function(m) { errorC++; },
+                warn: function(m) { warnC++; },
+                info: function(m) { infoC++; },
             };
             
             WinJS.Utilities.startLog();
