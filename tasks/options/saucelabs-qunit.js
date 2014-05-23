@@ -28,7 +28,7 @@
 
     function getBrowserIndex(browser) {
         var index = 0;
-        for (var i = 1; i <= browsers.length; i++) {
+        for (var i = 1, len = browsers.length; i <= len; i++) {
             var info = browsers[i-1];
 
             if (info.browserName === browser[1] &&
@@ -75,7 +75,7 @@
 
     function getComponentResults(component) {
         var info;
-        for (var i = 0; i < config.tests_results.results.length; i++) {
+        for (var i = 0, len = config.tests_results.results.length; i < len; i++) {
             var componentInfo = config.tests_results.results[i];
             if (componentInfo.name === component) {
                 info = componentInfo;
