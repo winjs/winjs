@@ -445,6 +445,39 @@ CorsicaTests.XHR = function () {
         }
     }
 
+    // Cordova returns status of '0' when successfully retrieving local
+    // file system resources with the file:// protocol.
+    this.testCordovaXHR = function (complete) {
+        var oldXHR = window.XMLHttpRequest;
+        window.XMLHttpRequest = mockXMLHttpRequest;
+        mockXMLHttpRequest.prototype.mockResponse = function (request) {
+            LiveUnit.Assert.areEqual('GET', request.type);
+            LiveUnit.Assert.areEqual('file://SimpleFile.txt', request.url);
+            LiveUnit.Assert.areEqual(true, request.async);
+            return { status: 0, responseText: "42" };
+        }
+
+        try {
+            var options = {};
+            options['url'] = 'file://SimpleFile.txt';
+
+            var callback = function (success, response) {
+                LiveUnit.Assert.areEqual(true, success, "File not successfully retrieved with XHR");
+                LiveUnit.Assert.areEqual("42", response.responseText);
+                complete();
+            }
+
+            WinJS.xhr(options).
+              then(
+                  function (req) { callback(true, req); },
+                  function (req) { callback(false, req); }
+              );
+        }
+        finally {
+            window.XMLHttpRequest = oldXHR;
+        }
+    }
+
 };
 
 LiveUnit.registerTestClass("CorsicaTests.XHR");
