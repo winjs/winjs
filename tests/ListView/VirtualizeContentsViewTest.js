@@ -1799,6 +1799,12 @@ WinJSTests.VirtualizedViewTests = function () {
 
     this.generateEditsDonotCreateAllContainersTest = function (groups, structureNodes) {
         var that = this;
+
+        // Issue #134
+        if (groups && !structureNodes) {
+            return;
+        }
+
         this["testEditsDonotCreateAllContainers" + (groups ? "WithGroups" : "") + (structureNodes ? "WithStructureNodes" : "")] = function (complete) {
             WinJS.UI._VirtualizeContentsView._chunkSize = 100;
 
