@@ -30,6 +30,8 @@
             var supportsSnapPoints = !!getComputedStyle(el).msScrollSnapType;
             el = null;
 
+            var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+
             function pivotDefaultHeaderTemplate(item) {
                 var element = document.createTextNode(typeof item.header === "object" ? JSON.stringify(item.header) : ('' + item.header));
                 return element;
@@ -77,6 +79,9 @@
                 this._handleItemReloadBound = this._handleItemReload.bind(this);
                 this._showNavButtons = this._showNavButtons.bind(this);
                 this._hideNavButtons = this._hideNavButtons.bind(this);
+                this._headersPointerDownHandler = this._headersPointerDownHandler.bind(this);
+                this._headersPointerUpHandler = this._headersPointerUpHandler.bind(this);
+                this._elementClickedHandler = this._elementClickedHandler.bind(this);
 
                 this._id = element.id || WinJS.Utilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -103,9 +108,13 @@
                 this._headersContainerElement = document.createElement("DIV");
                 WinJS.Utilities.addClass(this._headersContainerElement, WinJS.UI.Pivot._ClassName.pivotHeaders);
                 this._element.appendChild(this._headersContainerElement);
-                this._element.addEventListener('click', this._headerClickedHandler.bind(this));
                 WinJS.Utilities._addEventListener(this._headersContainerElement, "mouseenter", this._showNavButtons);
                 WinJS.Utilities._addEventListener(this._headersContainerElement, "mouseleave", this._hideNavButtons);
+                WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler);
+                WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler);
+                if (supportsSnapPoints) {
+                    this._element.addEventListener('click', this._elementClickedHandler);
+                }
 
                 this._viewportElement = document.createElement("DIV");
                 this._viewportElement.className = WinJS.UI.Pivot._ClassName.pivotViewport;
@@ -281,7 +290,7 @@
                     return this.element.dispatchEvent(event);
                 },
 
-                _headerClickedHandler: function pivot_headerClickedHandler(ev) {
+                _elementClickedHandler: function pivot_elementClickedHandler(ev) {
                     var header;
 
                     if (this.locked) {
@@ -319,18 +328,21 @@
                     }
 
                     if (header) {
-                        var item = header._item;
-                        var index = this._items.indexOf(item);
-                        if (index !== this.selectedIndex) {
-                            if (!header.previousSibling) {
-                                // prevent clicking the previous header
-                                return;
-                            }
-                            this.selectedIndex = index;
-                        } else {
-                            // Move focus into content for Narrator.
-                            WinJS.Utilities._setActiveFirstFocusableElement(this.selectedItem.element);
+                        this._activateHeader(header);
+                    }
+                },
+
+                _activateHeader: function pivot_activateHeader(headerElement) {
+                    var index = this._items.indexOf(headerElement._item);
+                    if (index !== this.selectedIndex) {
+                        if (!headerElement.previousSibling) {
+                            // prevent clicking the previous header
+                            return;
                         }
+                        this.selectedIndex = index;
+                    } else {
+                        // Move focus into content for Narrator.
+                        WinJS.Utilities._setActiveFirstFocusableElement(this.selectedItem.element);
                     }
                 },
 
@@ -629,6 +641,42 @@
                             this._navButtonsShowCount = 0;
                         }
                     }
+                },
+
+                _headersPointerDownHandler: function pivot_headersPointerDownHandler(e) {
+                    // This prevents Chrome's history navigation swipe gestures.
+                    e.preventDefault();
+
+                    this._headersPointerDownPoint = { x: e.clientX, y: e.clientY, type: e.pointerType };
+                    this._headersPointerUpPoint = null;
+                },
+
+                _headersPointerUpHandler: function pivot_headersPointerUpHandler(e) {
+                    if (!this._headersPointerDownPoint) {
+                        return;
+                    }
+
+                    var dx = e.clientX - this._headersPointerDownPoint.x;
+                    var dy = e.clientY - this._headersPointerDownPoint.y;
+                    if (dx < 4 && dy < 4) {
+                        // Detect header click
+                        var element = e.srcElement;
+                        while (element !== null && !element.classList.contains(WinJS.UI.Pivot._ClassName.pivotHeader)) {
+                            element = element.parentElement;
+                        }
+                        if (element !== null) {
+                            this._activateHeader(element);
+                        }
+                    } else if (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH && Math.abs(dy) < 50) {
+                        // Header swipe navigation detection
+                        if (dx < -50) {
+                            this._goNext();
+                        } else if (dx > 50) {
+                            this._goPrevious();
+                        }
+                    }
+                    this._headersPointerUpPoint = { x: e.clientX, y: e.clientY };
+                    this._headersPointerDownPoint = null;
                 },
 
                 _refresh: function pivot_refresh() {
