@@ -38,3 +38,31 @@
 
     .platform(@platform);
 }
+
+@media (-ms-high-contrast) {
+    .win-semanticzoom-button {
+        background-color: ButtonFace;
+        border-color: ButtonText;
+        color: ButtonText;
+    }
+
+    .win-semanticzoom-button:hover:active {
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
+
+    .win-semanticzoom-button:-ms-keyboard-active {
+        background-clip: border-box;
+        background-color: ButtonText;
+        border-color: transparent;
+        color: ButtonFace;
+    }
+
+    .win-semanticzoom-button:hover {
+        background-color: Highlight;
+        border-color: ButtonText;
+        color: HighlightText;
+    }
+}

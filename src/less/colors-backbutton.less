@@ -94,15 +94,14 @@ button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton
         background-color: transparent;
         border: none;
     }
-    .win-backbutton, .win-back, .win-semanticzoom-button {
+    .win-backbutton, .win-back {
         background-color: ButtonFace;
         border-color: ButtonText;
         color: ButtonText;
     }
 
     .win-backbutton:enabled:hover:active,
-    .win-navigation-backbutton:enabled:hover:active .win-back,
-    .win-semanticzoom-button:hover:active {
+    .win-navigation-backbutton:enabled:hover:active .win-back {
         background-clip: border-box;
         background-color: ButtonText;
         border-color: transparent;
@@ -116,8 +115,8 @@ button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton
         color: GrayText;
     }
 
-    .win-backbutton:-ms-keyboard-active, win-navigation-backbutton:-ms-keyboard-active .win-back,
-    .win-semanticzoom-button:-ms-keyboard-active {
+    .win-backbutton:-ms-keyboard-active,
+    .win-navigation-backbutton:-ms-keyboard-active .win-back {
         background-clip: border-box;
         background-color: ButtonText;
         border-color: transparent;
@@ -125,8 +124,7 @@ button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton
     }
 
     .win-backbutton:enabled:hover,
-    .win-navigation-backbutton:enabled:hover .win-back,
-    .win-semanticzoom-button:hover {
+    .win-navigation-backbutton:enabled:hover .win-back {
         background-color: Highlight;
         border-color: ButtonText;
         color: HighlightText;
