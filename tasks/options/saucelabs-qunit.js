@@ -123,7 +123,7 @@
                     "http://127.0.0.1:9999/bin/tests/Repeater/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/Scheduler/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/SearchBox/test.html?fastanimations=true&autostart=true",
-                    "http://127.0.0.1:9999/bin/tests/SemanticZoom/test.html?fastanimations=true&autostart=true&testtimeout=10000",
+                    "http://127.0.0.1:9999/bin/tests/SemanticZoom/test.html?fastanimations=true&autostart=true&testtimeout=3000",
                     "http://127.0.0.1:9999/bin/tests/TimePicker/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/Toggle/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/UI/test.html?fastanimations=true&autostart=true",
