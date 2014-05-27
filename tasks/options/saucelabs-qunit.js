@@ -119,7 +119,7 @@
                     "http://127.0.0.1:9999/bin/tests/Navigation/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/PageControl/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/Promise/test.html?fastanimations=true&autostart=true",
-                    "http://127.0.0.1:9999/bin/tests/Rating/test.html?fastanimations=true&autostart=true",
+                    "http://127.0.0.1:9999/bin/tests/Rating/test.html?fastanimations=true&autostart=true&testtimeout=3000",
                     "http://127.0.0.1:9999/bin/tests/Repeater/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/Scheduler/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/SearchBox/test.html?fastanimations=true&autostart=true",
