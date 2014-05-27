@@ -5,16 +5,6 @@
     var config = require("../../config.js");
 
     module.exports = {
-        baseDesktop: {
-            src: config.baseJSFiles,
-            dest: config.desktopOutput + "js/base.js",
-            nonull: true
-        },
-        basePhone: {
-            src: config.baseJSFilesPhone,
-            dest: config.phoneOutput + "js/base.js",
-            nonull: true
-        },
         baseStringsDesktop: {
             src: config.baseStringsFiles,
             dest: config.desktopOutput + "js/" + config.localeFolder + "/base.strings.js",
@@ -23,16 +13,6 @@
         baseStringsPhone: {
             src: config.baseStringsFiles,
             dest: config.phoneOutput + "js/" + config.localeFolder + "/base.strings.js",
-            nonull: true
-        },
-        uiDesktop: {
-            src: config.uiJSFiles,
-            dest: config.desktopOutput + "js/ui.js",
-            nonull: true
-        },
-        uiPhone: {
-            src: config.uiJSFilesPhone,
-            dest: config.phoneOutput + "js/ui.js",
             nonull: true
         },
         uiStringsDesktop: {

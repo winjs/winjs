@@ -250,6 +250,10 @@
             "src/js/library/stringsBlockHeader.js",
             "src/js/library/stringsFooter.js",
             "src/js/library/stringsHeader.js",
+            "src/js/build/startBase.js",
+            "src/js/build/endBase.js",
+            "src/js/build/startUI.js",
+            "src/js/build/endUI.js"
         ],
     };
 

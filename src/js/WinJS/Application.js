@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+define(['./Application/_State'], function() {
 (function applicationInit(global, WinJS, undefined) {
     "use strict";
 
@@ -563,3 +564,4 @@
 
     Object.defineProperties(WinJS.Application, WinJS.Utilities.createEventProperties(checkpointET, unloadET, activatedET, loadedET, readyET, settingsET, errorET, backClickET));
 })(this, WinJS);
+});

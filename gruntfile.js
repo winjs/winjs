@@ -39,7 +39,7 @@
         grunt.loadTasks("tasks/");
 
         // Task aliases
-        grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "copy", "replace"]);
+        grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "requirejs", "copy", "replace"]);
         grunt.registerTask("release", ["jshint", "default", "uglify"]);
         grunt.registerTask("css", ["less"]);
         grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);

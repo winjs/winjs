@@ -1,5 +1,19 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
+define([
+    './ListView/_BrowseMode',
+    './ListView/_Constants',
+    './ListView/_ErrorMessages',
+    './ListView/_GroupFocusCache',
+    './ListView/_GroupsContainer',
+    './ListView/_ItemsContainer',
+    './ListView/_ItemsManager',
+    './ListView/_Layouts',
+    './ListView/_ParallelWorkQueue',
+    './ListView/_SelectionManager',
+    './ListView/_StorageDataSource',
+    './ListView/_VersionManager',
+    './ListView/_VirtualizeContentsView',
+    ], function() {
 (function listViewImplInit(global, WinJS, undefined) {
     "use strict";
 
@@ -4435,4 +4449,4 @@
     });
 
 })(this, WinJS);
-
+});
