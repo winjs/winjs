@@ -307,7 +307,6 @@
                 _release: function (item, index) {
                     var retained = this._retained[index];
                     if (retained) {
-                        //#DBG _ASSERT(retained.key === item.key);
                         if (retained._retainedCount === 1) {
                             delete this._retained[index];
                             delete this._retainedKeys[retained.key];
@@ -315,14 +314,6 @@
                             retained._retainedCount--;
                         }
                     }
-                    /*#DBG
-                    // If an item isn't found in the retained map, it was either removed from retainedCount reaching zero, or removed from the map by a removed notification.
-                    // We'll decrement the count here for debugging purposes. If retainedCount is less than zero, there's a refcounting error somewhere.
-                    if (!retained) {
-                        item._retainedCount--;
-                        _ASSERT(item._retainedCount >= 0);
-                    }
-                   #DBG*/
                 },
                 _shouldNotify: function (index) {
                     var retained = this._retained;

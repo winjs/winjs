@@ -32,41 +32,15 @@
                 },
 
                 removeItem: function (index) {
-                    /*#DBG
-                    delete WinJS.Utilities.data(this._itemData[index].element).itemData;
-                    delete WinJS.Utilities.data(this._itemData[index].element).itemsContainer;
-                    #DBG*/
                     delete this._itemData[index];
                 },
 
                 removeItems: function ItemsContainer_removeItems() {
-                    /*#DBG
-                    var that = this;
-                    Object.keys(this._itemData).forEach(function (k) {
-                        delete WinJS.Utilities.data(that._itemData[k].element).itemData;
-                        delete WinJS.Utilities.data(that._itemData[k].element).itemsContainer;
-                    });
-                    #DBG*/
                     this._itemData = {};
                     this.waitingItemRequests = {};
                 },
 
                 setItemAt: function ItemsContainer_setItemAt(itemIndex, itemData) {
-                    /*#DBG
-                    if (itemData.itemsManagerRecord.released) {
-                        throw "ACK! Attempt to use a released itemsManagerRecord";
-                    }
-                    var oldItemData = WinJS.Utilities.data(itemData.element).itemData;
-                    if (oldItemData || WinJS.Utilities.data(itemData.element).itemsContainer) {
-                        if (oldItemData.itemsManagerRecord.item.index !== itemIndex) {
-                            throw "ACK! Attempted use of already in-use element";
-                        }
-                    }
-                    WinJS.Utilities.data(itemData.element).itemData = itemData;
-                    WinJS.Utilities.data(itemData.element).itemsContainer = this;
-                    #DBG*/
-                    //#DBG _ASSERT(itemData.element && (itemData.element instanceof HTMLElement));
-                    //#DBG _ASSERT(!this._itemData[itemIndex]);
                     this._itemData[itemIndex] = itemData;
                     if (!itemData.detached) {
                         this.notify(itemIndex, itemData);
@@ -142,7 +116,6 @@
                     for (var index in this._itemData) {
                         if (this._itemData.hasOwnProperty(index)) {
                             var itemData = this._itemData[index];
-                            //#DBG _ASSERT(itemData);
                             callback(parseInt(index, 10), itemData.element, itemData);
                         }
                     }

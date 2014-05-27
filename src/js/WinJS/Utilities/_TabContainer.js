@@ -256,7 +256,6 @@
                         if (e && e.parentNode) {
                             this._focusElement = e;
                         } else {
-                            //#DBG _ASSERT(!!e.parentNode);
                             this._focusElement = null;
                         }
                     }

@@ -1262,7 +1262,6 @@
                 /// </field>
                 scrollPosition: {
                     get: function () {
-                        //#DBG _ASSERT(this._lastScrollPosition >= 0);
                         return this._currentScrollPosition;
                     },
                     set: function (newPosition) {
@@ -1546,7 +1545,6 @@
                             if (that._selection._keyboardFocused()) {
                                 that._drawFocusRectangle(item);
                             }
-                            //#DBG _ASSERT(that._cachedCount !== WinJS.UI._UNINITIALIZED);
                             // The requestItem promise just completed so _cachedCount will
                             // be initialized.
                             that._view.updateAriaForAnnouncement(item, (entity.type === WinJS.UI.ObjectType.groupHeader ? that._groups.length() : that._cachedCount));
@@ -1676,8 +1674,6 @@
 
                                 that._createUpdater();
 
-                                //#DBG _ASSERT(utilities._isDOMElement(newItem));
-
                                 var elementInfo = that._updater.elements[uniqueID(oldItem)];
                                 if (elementInfo) {
                                     var selected = that.selection._isIncluded(elementInfo.index);
@@ -1786,9 +1782,6 @@
                                         var itemData = that._view.items.itemDataAt(index);
                                         itemData.removed = true;
 
-                                        /*#DBG
-                                        delete elementInfo.itemsManagerRecord.updater;
-                                        #DBG*/
                                         delete that._updater.elements[uniqueID(item)];
                                     } else {
                                         index = itemObject && itemObject.index;
@@ -1929,7 +1922,6 @@
                                 if (that._ifZombieDispose()) { return; }
                                 that._writeProfilerMark("countChanged(" + newCount + "),info");
 
-                                //#DBG _ASSERT(newCount !== undefined);
                                 that._cachedCount = newCount;
                                 that._createUpdater();
 
@@ -2057,12 +2049,6 @@
                         };
 
                         this._view.items.each(function (index, item, itemData) {
-                            /*#DBG
-                            if (itemData.itemsManagerRecord.released) {
-                                throw "ACK! found released data in items collection";
-                            }
-                            itemData.itemsManagerRecord.updater = updater;
-                            #DBG*/
                             updater.elements[uniqueID(item)] = {
                                 item: item,
                                 container: itemData.container,
@@ -2102,17 +2088,6 @@
                     this._updater = null;
                     var groupsChanged = this._groupsChanged;
                     this._groupsChanged = false;
-
-                    /*#DBG
-                    if (updater) {
-                        for (i in updater.elements) {
-                            if (updater.elements.hasOwnProperty(i)) {
-                                var elementInfo = updater.elements[i];
-                                delete elementInfo.itemsManagerRecord.updater;
-                            }
-                        }
-                    }
-                    #DBG*/
 
                     this._countDifference = this._countDifference || 0;
 
@@ -2220,11 +2195,6 @@
                         for (i in updater.elements) {
                             if (updater.elements.hasOwnProperty(i)) {
                                 var elementInfo = updater.elements[i];
-                                /*#DBG
-                                if (elementInfo.itemsManagerRecord.released) {
-                                    throw "ACK! attempt to put released record into list of items for ScrollView";
-                                }
-                                #DBG*/
                                 newItems[elementInfo.newIndex] = {
                                     element: elementInfo.item,
                                     container: elementInfo.container,
@@ -2772,7 +2742,6 @@
                                 }
                             }
                             if (this._tabManager.childFocus !== element && this._tabManager.childFocus !== winItem) {
-                                //#DBG _ASSERT(entity.index !== WinJS.UI._INVALID_INDEX);
                                 this._selection._setFocused(entity, this._keyboardFocusInbound || this._selection._keyboardFocused());
                                 this._keyboardFocusInbound = false;
                                 element = entity.type === WinJS.UI.ObjectType.groupHeader ? element : items.itemAt(entity.index);
@@ -3460,7 +3429,6 @@
                 },
 
                 _changeFocus: function (newFocus, skipSelection, ctrlKeyDown, skipEnsureVisible, keyboardFocused) {
-                    //#DBG _ASSERT(newFocus.index !== -1);
                     if (this._isZombie()) {
                         return;
                     }
@@ -3496,8 +3464,6 @@
                 // - ensure the item is selected or visible
                 // - set Trident's focus to newFocus when ListView doesn't have focus
                 _changeFocusPassively: function (newFocus) {
-                    //#DBG _ASSERT(newFocus.index !== -1);
-
                     var targetItem;
                     if (newFocus.type !== WinJS.UI.ObjectType.groupHeader) {
                         targetItem = this._view.items.itemAt(newFocus.index);
@@ -3516,7 +3482,6 @@
                         WinJS.Utilities.addClass(item, thisWinUI._itemFocusClass);
                     } else {
                         var itemBox = this._view.items.itemBoxFrom(item);
-                        //#DBG _ASSERT(utilities.hasClass(itemBox, WinJS.UI._itemBoxClass));
                         if (itemBox.querySelector("." + thisWinUI._itemFocusOutlineClass)) {
                             return;
                         }
@@ -3535,7 +3500,6 @@
                     var itemBox = this._view.items.itemBoxFrom(item);
                     if (itemBox) {
                         utilities.removeClass(itemBox, thisWinUI._itemFocusClass);
-                        //#DBG _ASSERT(utilities.hasClass(itemBox, WinJS.UI._itemBoxClass));
                         var outline = itemBox.querySelector("." + thisWinUI._itemFocusOutlineClass);
                         if (outline) {
                             outline.parentNode.removeChild(outline);

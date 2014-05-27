@@ -743,7 +743,6 @@
                                     return { type: WinJS.UI.ObjectType.item, index: nextGroup.startIndex };
                                 }
                             } else {
-                                //#DBG _ASSERT(adjustedKey === Key.downArrow || adjustedKey === Key.upArrow);
                                 return currentItem;
                             }
                         } else {
@@ -941,8 +940,6 @@
                     // In this function we update the cached records and apply transforms to hide the modifications
                     // from the user. We will remove the transforms via animations in execute animation.
 
-                    //#DBG _ASSERT(!this._animationsRunning);
-
                     if (!Object.keys(this._cachedItemRecords).length &&
                         !Object.keys(this._cachedGroupRecords).length &&
                         !Object.keys(this._cachedHeaderRecords).length) {
@@ -1092,8 +1089,6 @@
                     // This function is called when we should perform an animation to reveal the true location of the items.
                     // We fade out removed items, fade in added items, and move items which need to be shifted. If they moved
                     // across columns we do a reflow animation.
-
-                    //#DBG _ASSERT(!this._animationsRunning);
 
                     var animationSignal = new WinJS._Signal();
 
@@ -2414,7 +2409,6 @@
                     return offset < this._groups[0].offset ?
                         0 :
                         this._groupFrom(function (group, groupIndex) {
-                            //#DBG _ASSERT(group.offset !== undefined);
                             return offset < group.offset;
                         });
                 },
@@ -2437,7 +2431,6 @@
                 },
 
                 _groupFrom: function _LayoutCommon_groupFrom(comp) {
-                    //#DBG _ASSERT(this.assertValid());
                     if (this._groups.length > 0) {
                         var lastGroupIndex = this._groups.length - 1,
                             lastGroup = this._groups[lastGroupIndex];
@@ -2558,7 +2551,6 @@
                         if (this._groupHeaderPosition === WinJS.UI.HeaderPosition.top) {
                             Utilities.addClass(surface, WinJS.UI._headerPositionTopClass);
                         } else {
-                            //#DBG _ASSERT(this._groupHeaderPosition === WinJS.UI.HeaderPosition.left);
                             Utilities.addClass(surface, WinJS.UI._headerPositionLeftClass);
                         }
                     }
@@ -3092,7 +3084,6 @@
                                 }
                             }
                         } else {
-                            //#DBG _ASSERT(this._groupHeaderPosition === WinJS.UI.HeaderPosition.left);
                             Utilities.addClass(this._site.surface, WinJS.UI._headerPositionLeftClass);
                             if (!this._horizontal) {
                                 for (i = 0; i < len; i++) {
@@ -3132,7 +3123,6 @@
                                 // itemsContainers only get the _groupLeaderClass when header position is top.
                                 Utilities.addClass(itemsContainer, WinJS.UI._groupLeaderClass);
                             } else {
-                                //#DBG _ASSERT(this._groupHeaderPosition === WinJS.UI.HeaderPosition.left);
                                 if (this._envInfo.supportsCSSGrid) {
                                     headerContainer.style.msGridColumn = index * 2 + 1;
                                     itemsContainer.style.msGridColumn = index * 2 + 2;
@@ -3160,7 +3150,6 @@
                                 // itemsContainers only get the _groupLeaderClass when header position is left.
                                 Utilities.addClass(itemsContainer, WinJS.UI._groupLeaderClass);
                             } else {
-                                //#DBG _ASSERT(this._groupHeaderPosition === WinJS.UI.HeaderPosition.top);
                                 headerContainer.style.msGridRow = index * 2 + 1;
                                 // It's important to explicitly set the container height in vertical list mode with headers above, since we use flow layout.
                                 // When the header's content is taken from the DOM, the headerContainer will shrink unless it has a height set.

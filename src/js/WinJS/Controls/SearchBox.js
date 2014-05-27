@@ -1505,7 +1505,6 @@
                     } else {
                         var curHit = reducedHits[reducedHits.length - 1];
                         var curHitEndPosition = curHit.startPosition + curHit.length;
-                        //#DBG _ASSERT(nextHit.startPosition >= curHit.startPosition);
                         if (nextHit.startPosition <= curHitEndPosition) {
                             // The next hit intersects or is next to current hit. Merge it.                        
                             var nextHitEndPosition = nextHit.startPosition + nextHit.length;

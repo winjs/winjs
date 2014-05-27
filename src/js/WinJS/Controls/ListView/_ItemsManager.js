@@ -4,12 +4,6 @@
 (function itemsManagerInit(global) {
     "use strict";
 
-    /*#DBG
-        function dbg_stackTraceDefault() { return "add global function dbg_stackTrace to see stack traces"; }
-    
-        global.dbg_stackTrace = global.dbg_stackTrace || dbg_stackTraceDefault;
-    #DBG*/
-
     var markSupportedForProcessing = WinJS.Utilities.markSupportedForProcessing;
 
     WinJS.Namespace.define("WinJS.UI", {
@@ -200,19 +194,10 @@
                 // Constructor
 
                 this._itemsManager = itemsManager;
-                /*#DBG
-                this._notificationsCount = 0;
-                #DBG*/
             }, {
                 // Public methods
 
                 beginNotifications: function () {
-                    /*#DBG
-                    if (this._notificationsCount !== 0) {
-                        throw new "ACK! Unbalanced beginNotifications call";
-                    }
-                    this._notificationsCount++;
-                    #DBG*/
                     this._itemsManager._versionManager.beginNotifications();
                     this._itemsManager._beginNotifications();
                 },
@@ -255,12 +240,6 @@
                 },
 
                 endNotifications: function () {
-                    /*#DBG
-                    if (this._notificationsCount !== 1) {
-                        throw new "ACK! Unbalanced endNotifications call";
-                    }
-                    this._notificationsCount--;
-                    #DBG*/
                     this._itemsManager._versionManager.endNotifications();
                     this._itemsManager._endNotifications();
                 },
@@ -332,54 +311,14 @@
                     return this._waitForElement(this._elementForItem(itemPromise, true))
                 },
                 _itemAtIndex: function (index) {
-                    /*#DBG
-                    var that = this;
-                    var startVersion = that._versionManager.version;
-                    #DBG*/
                     var itemPromise = this._itemPromiseAtIndex(index)
-                    var result = this._itemFromItemPromise(itemPromise)/*#DBG .
-                then(function (v) {
-                    var rec = that._recordFromElement(v);
-                    var endVersion = that._versionManager.version;
-                    if (rec.item.index !== index) {
-                        throw "ACK! inconsistent index";
-                    }
-                    if (startVersion !== endVersion) {
-                        throw "ACK! inconsistent version";
-                    }
-                    if (WinJS.Utilities.data(v).itemData &&
-                            WinJS.Utilities.data(v).itemData.itemsManagerRecord.item.index !== index) {
-                                throw "ACK! inconsistent itemData.index";
-                            }
-                    return v;
-                }) #DBG*/;
-                    return result.then(null, function (e) {
+                    this._itemFromItemPromise(itemPromise).then(null, function (e) {
                         itemPromise.cancel();
                         return WinJS.Promise.wrapError(e);
                     });
                 },
                 _itemPromiseAtIndex: function (index) {
-                    /*#DBG
-                    var that = this;
-                    var startVersion = that._versionManager.version;
-                    if (that._versionManager.locked) {
-                        throw "ACK! Attempt to get an item while editing";
-                    }
-                    #DBG*/
-                    var itemPromise = this._listBinding.fromIndex(index);
-                    /*#DBG
-                    itemPromise.then(function (item) {
-                        var endVersion = that._versionManager.version;
-                        if (item.index !== index) {
-                            throw "ACK! inconsistent index";
-                        }
-                        if (startVersion !== endVersion) {
-                            throw "ACK! inconsistent version";
-                        }
-                        return item;
-                    });
-                    #DBG*/
-                    return itemPromise;
+                    return this._listBinding.fromIndex(index);
                 },
                 _waitForElement: function (possiblePlaceholder) {
                     var that = this;
@@ -463,12 +402,6 @@
                 _releaseRecord: function (record) {
                     if (!record) { return; }
 
-                    /*#DBG
-                    if (record.released) {
-                        throw "ACK! Double release on item";
-                    }
-                    #DBG*/
-
                     if (record.renderPromise) {
                         record.renderPromise.cancel();
                     }
@@ -494,12 +427,6 @@
                         this._listBinding.releaseItem(record.item);
                     }
 
-                    /*#DBG
-                    record.released = true;
-                    if (record.updater) {
-                        throw "ACK! attempt to release item current held by updater";
-                    }
-                    #DBG*/
                 },
 
                 refresh: function () {
@@ -646,18 +573,12 @@
                 },
 
                 _replaceElement: function (record, elementNew) {
-                    /*#DBG
-                    if (!this._handleInHandleMap(record.item.handle)) {
-                        throw "ACK! replacing element not present in handle map";
-                    }
-                    #DBG*/
                     this._removeEntryFromElementMap(record.element);
                     record.element = elementNew;
                     this._addEntryToElementMap(elementNew, record);
                 },
 
                 _changeElement: function (record, elementNew, elementNewIsPlaceholder) {
-                    //#DBG _ASSERT(elementNew);
                     record.renderPromise = null;
                     var elementOld = record.element,
                         itemOld = record.item;
@@ -750,34 +671,16 @@
                 },
 
                 _addEntryToElementMap: function (element, record) {
-                    /*#DBG 
-                    if (WinJS.Utilities.data(element).itemsManagerRecord) {
-                        throw "ACK! Extra call to _addEntryToElementMap, ref counting error";
-                    }
-                    WinJS.Utilities.data(element).itemsManagerRecord = record;
-                    #DBG*/
                     this._elementMap[uniqueID(element)] = record;
                 },
 
                 _removeEntryFromElementMap: function (element) {
-                    /*#DBG
-                    if (!WinJS.Utilities.data(element).itemsManagerRecord) {
-                        throw "ACK! Extra call to _removeEntryFromElementMap, ref counting error";
-                    }
-                    WinJS.Utilities.data(element).removeElementMapRecord = WinJS.Utilities.data(element).itemsManagerRecord;
-                    WinJS.Utilities.data(element).removeEntryMapStack = dbg_stackTrace();
-                    delete WinJS.Utilities.data(element).itemsManagerRecord;
-                    #DBG*/
                     delete this._elementMap[uniqueID(element)];
                 },
 
                 _recordFromElement: function (element, ignoreFailure) {
                     var record = this._elementMap[uniqueID(element)];
                     if (!record) {
-                        /*#DBG
-                        var removeElementMapRecord = WinJS.Utilities.data(element).removeElementMapRecord;
-                        var itemsManagerRecord = WinJS.Utilities.data(element).itemsManagerRecord;
-                        #DBG*/
                         this._writeProfilerMark("_recordFromElement:ItemIsInvalidError,info");
                         throw new WinJS.ErrorFromName("WinJS.UI.ItemsManager.ItemIsInvalid", strings.itemIsInvalid);
                     }
@@ -786,23 +689,10 @@
                 },
 
                 _addEntryToHandleMap: function (handle, record) {
-                    /*#DBG
-                    if (this._handleMap[handle]) {
-                        throw "ACK! Extra call to _addEntryToHandleMap, ref counting error";
-                    }
-                    this._handleMapLeak = this._handleMapLeak || {};
-                    this._handleMapLeak[handle] = { record: record, addHandleMapStack: dbg_stackTrace() };
-                    #DBG*/
                     this._handleMap[handle] = record;
                 },
 
                 _removeEntryFromHandleMap: function (handle, record) {
-                    /*#DBG
-                    if (!this._handleMap[handle]) {
-                        throw "ACK! Extra call to _removeEntryFromHandleMap, ref counting error";
-                    }
-                    this._handleMapLeak[handle].removeHandleMapStack = dbg_stackTrace();
-                    #DBG*/
                     delete this._handleMap[handle];
                 },
 
@@ -813,9 +703,6 @@
                 _recordFromHandle: function (handle, ignoreFailure) {
                     var record = this._handleMap[handle];
                     if (!record && !ignoreFailure) {
-                        /*#DBG
-                        var leak = this._handleMapLeak[handle];
-                        #DBG*/
                         throw new WinJS.ErrorFromName("WinJS.UI.ItemsManager.ItemIsInvalid", strings.itemIsInvalid);
                     }
                     return record;
@@ -854,7 +741,6 @@
 
                     var record = this._recordFromHandle(oldItem.handle);
 
-                    //#DBG _ASSERT(record);
                     if (record.renderPromise) {
                         record.renderPromise.cancel();
                     }
@@ -902,7 +788,6 @@
                     if (this._handleInHandleMap(handle)) {
                         var element = this._elementFromHandle(handle);
 
-                        //#DBG _ASSERT(element);
                         this._handlerToNotify().removed(element, mirage, handle);
                         this.releaseItem(element);
                         this._presentAllElements();
@@ -1000,8 +885,6 @@
 
                 _presentElement: function (record) {
                     var elementOld = record.element;
-                    //#DBG _ASSERT(elementOld);
-
                     // Finish modifying the slot before calling back into user code, in case there is a reentrant call
                     this._replaceElement(record, record.elementDelayed);
                     record.elementDelayed = null;

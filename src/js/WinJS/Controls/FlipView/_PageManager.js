@@ -564,9 +564,6 @@
                                 curr = curr.next;
                             }
 
-                            // We never should go past current if prev is null/undefined.
-                            //#DBG _ASSERT(!passedCurrent);
-
                             if (curr.elementUniqueID === uniqueID(next) && curr !== this._prevMarker) {
                                 curr.prev.setElement(element);
                                 elementSuccessfullyPlaced = true;
@@ -675,12 +672,6 @@
                     var record = this._getAnimationRecord(element);
 
                     if (!record) {
-                        /*#DBG
-                        // When a moved notification is received, and it doesn't have a record, it shouldn't be in the buffer
-                        this._forEachPage(function (curr) {
-                            _ASSERT(curr.element !== element);
-                        });
-                        #DBG*/
                         record = this._createAnimationRecord(uniqueID(element));
                     }
 

@@ -74,7 +74,6 @@
                 },
 
                 groupFrom: function GroupsContainerBase_groupFrom(comp) {
-                    //#DBG _ASSERT(this.assertValid());
                     if (this.groups.length > 0) {
                         var lastGroupIndex = this.groups.length - 1,
                             lastGroup = this.groups[lastGroupIndex];
@@ -96,9 +95,7 @@
                 },
 
                 groupFromOffset: function GroupsContainerBase_groupFromOffset(offset) {
-                    //#DBG _ASSERT(this.assertValid());
                     return this.groupFrom(function (group, groupIndex) {
-                        //#DBG _ASSERT(group.offset !== undefined);
                         return offset < group.offset;
                     });
                 },
@@ -126,33 +123,6 @@
                 _dispose: function GroupsContainerBase_dispose() {
                     this.cleanUp();
                 },
-
-                /*#DBG
-                assertValid: function () {
-                if (WinJS.validation) {
-                if (this.groups.length) {
-                var prevIndex = this.groups[0].startIndex,
-                prevKey = this.groups[0].key,
-                keys = {};
-            
-                //#DBG _ASSERT(prevIndex === 0);
-                keys[prevKey] = true;
-            
-                for (var i = 1, len = this.groups.length; i < len; i++) {
-                var group = this.groups[i];
-                //#DBG _ASSERT(group.startIndex > prevIndex);
-                prevIndex = group.startIndex;
-            
-                //#DBG _ASSERT(!keys[group.key]);
-                keys[group.key] = true;
-            
-                prevKey = group.key;
-                }
-                }
-                }
-                return  true;
-                },
-                #DBG*/
 
                 synchronizeGroups: function GroupsContainerBase_synchronizeGroups() {
                     var that = this;
@@ -219,7 +189,6 @@
                     },
 
                     endNotifications: function GroupsContainer_endNotifications() {
-                        //#DBG _ASSERT(that.assertValid());
                         that._listView._versionManager.endNotifications();
 
                         if (that._listView._ifZombieDispose()) { return; }
@@ -255,14 +224,12 @@
 
                         if (that._listView._ifZombieDispose()) { return; }
 
-                        //#DBG _ASSERT(newItem.key == oldItem.key);
                         var groupEntry = that.fromKey(newItem.key);
                         if (groupEntry) {
                             that._listView._writeProfilerMark("groupChanged(" + groupEntry.index + "),info");
 
                             groupEntry.group.userData = newItem;
                             groupEntry.group.startIndex = newItem.firstItemIndexHint;
-                            //#DBG _ASSERT(that.assertValid());
                             this.markToRemove(groupEntry.group);
                         }
 
@@ -286,7 +253,6 @@
                                 that.groups.splice(index, 1);
                             }
 
-                            //#DBG _ASSERT(that.assertValid());
                             this.markToRemove(groupEntry.group);
                         }
 
@@ -302,7 +268,6 @@
 
                         var notificationHandler = this;
                         itemPromise.retain().then(function (item) {
-                            //#DBG _ASSERT(!that.fromKey(item.key))
 
                             var index;
                             if (!previousHandle && !nextHandle && !that.groups.length) {
@@ -362,7 +327,6 @@
                                 itemPromise.retain();
                             }
 
-                            //#DBG _ASSERT(that.assertValid());
                             notificationHandler.scheduleUpdate();
                         });
                         that.pendingChanges.push(itemPromise);

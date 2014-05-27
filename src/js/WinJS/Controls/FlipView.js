@@ -542,7 +542,6 @@
 
                         moved: function FlipView_moved(element, prev, next, itemPromise) {
                             var elementReady = function (element) {
-                                //#DBG _ASSERT(element);
                                 that._pageManager.moved(element, prev, next);
                             };
 

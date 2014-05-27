@@ -222,17 +222,6 @@
                     });
                 },
 
-                /*#DBG
-                _assertValid: function () {
-                    for (var i = 0, len = this._ranges.length; i < len; i++) {
-                        var range = this._ranges[i];
-                        _ASSERT(range.firstIndex <= range.lastIndex);
-                        _ASSERT(!i || this._ranges[i - 1].lastIndex < range.firstIndex);
-                    }
-                    return true;
-                },
-                #DBG*/
-
                 _execute: function (operation, items) {
                     var that = this,
                         keysSupported = !!that._getListBinding().fromKey,
@@ -410,7 +399,6 @@
                             });
                         } else {
                             // The whole range is being unselected
-                            //#DBG _ASSERT(range.firstIndex >= toRemove.firstIndex && range.lastIndex <= toRemove.lastIndex);
                             range.firstPromise.release();
                             range.lastPromise.release();
                         }
@@ -453,7 +441,6 @@
                 },
 
                 _mergeRanges: function (target, source) {
-                    //#DBG _ASSERT(!target.lastPromise && !source.lastPromise);
                     target.lastIndex = source.lastIndex;
                     target.lastKey = source.lastKey;
                 },

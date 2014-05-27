@@ -199,168 +199,6 @@
                     WinJS.log && WinJS.log(message, "winjs vds", "perf");
                 }
 
-                /*#DBG
-        
-                var totalSlots = 0;
-        
-                function VERIFYLIST() {
-                    _ASSERT(slotListEnd.lastInSequence);
-                    _ASSERT(slotsEnd.firstInSequence);
-                    checkListIntegrity(slotsStart, slotsEnd, keyMap, indexMap);
-                }
-        
-                function VERIFYREFRESHLIST() {
-                    checkListIntegrity(refreshStart, refreshEnd, refreshKeyMap, refreshIndexMap);
-                }
-        
-                function checkListIntegrity(listStart, listEnd, keyMapForSlot, indexMapForSlot) {
-                    if (UI.VirtualizedDataSource._internalValidation) {
-                        var listEndReached,
-                            slotWithoutIndexReached;
-                        for (var slotCheck = listStart; slotCheck !== listEnd; slotCheck = slotCheck.next) {
-                            _ASSERT(slotCheck.next);
-                            _ASSERT(slotCheck.next.prev === slotCheck);
-                            if (slotCheck.lastInSequence) {
-                                _ASSERT(slotCheck.next.firstInSequence);
-                            }
-        
-                            if (slotCheck !== listStart) {
-                                _ASSERT(slotCheck.prev);
-                                _ASSERT(slotCheck.prev.next === slotCheck);
-                                if (slotCheck.firstInSequence) {
-                                    _ASSERT(slotCheck.prev.lastInSequence);
-                                }
-                            }
-        
-                            if (slotCheck.item || slotCheck.itemNew) {
-                                _ASSERT(editsQueued || slotCheck.key);
-                            }
-        
-                            if (slotCheck.key) {
-                                _ASSERT(keyMapForSlot[slotCheck.key] === slotCheck);
-        
-                                if (slotCheck.item) {
-                                    _ASSERT(slotCheck.item.key === slotCheck.key);
-                                }
-                            }
-        
-                            if (typeof slotCheck.index === "number") {
-                                _ASSERT(!listEndReached);
-        
-                                if (!indexUpdateDeferred) {
-                                    _ASSERT(indexMapForSlot[slotCheck.index] === slotCheck);
-                                    _ASSERT(slotCheck === listStart || slotCheck.prev.index < slotCheck.index);
-                                    _ASSERT(!slotCheck.firstInSequence || !slotCheck.prev || slotCheck.prev.index !== slotCheck.index - 1);
-                                    _ASSERT(!slotCheck.lastInSequence || !slotCheck.next || slotCheck.next.index !== slotCheck.index + 1);
-        
-                                    if (slotCheck.item) {
-                                        _ASSERT(listStart === refreshStart || slotCheck.item.index === slotCheck.index);
-                                    }
-                                }
-                            } else {
-                                slotWithoutIndexReached = true;
-                            }
-        
-                            if (slotCheck === slotListEnd) {
-                                listEndReached = true;
-                            }
-        
-                            if (slotCheck.lastInSequence && !listEndReached && !indexUpdateDeferred) {
-                                _ASSERT(!slotWithoutIndexReached);
-                            }
-                        }
-                    }
-                }
-        
-                function OUTPUTLIST() {
-                    outputList("Main List", slotsStart);
-                }
-        
-                function OUTPUTREFRESHLIST() {
-                    outputList("Refresh List", refreshStart);
-                }
-        
-                function outputList(header, slotFirst) {
-                    _TRACE("-- " + header + " --");
-        
-                    for (var slot = slotFirst; slot; slot = slot.next) {
-                        var line = (slot.firstInSequence ? "[" : " ");
-        
-                        if (slot.index !== undefined && slot !== slotsStart && slot !== refreshStart) {
-                            line += slot.index + ": ";
-                        }
-        
-                        if (slot === slotsStart || slot === refreshStart) {
-                            line += "{";
-                        } else if (slot === slotListEnd || slot === refreshEnd) {
-                            line += "}";
-                        } else if (slot === slotsEnd) {
-                            line += "-";
-                        } else {
-                            line += (slot.key ? '"' + slot.key + '"' : "?");
-                        }
-        
-                        if (slot.bindingMap) {
-                            line += " (";
-                            var first = true;
-                            for (var listBindingID in slot.bindingMap) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    line += ", ";
-                                }
-        
-                                line += listBindingID;
-                            }
-                            line += ")";
-                        }
-        
-                        if (slot.itemNew) {
-                            line += " itemNew";
-                        }
-        
-                        if (slot.item) {
-                            line += " item";
-                        }
-        
-                        if (slot.fetchListeners) {
-                            line += " fetching";
-                        }
-        
-                        if (slot.directFetchListeners) {
-                            line += " directFetching";
-                        }
-        
-                        if (slot.indexRequested) {
-                            line += " index";
-                        }
-        
-                        if (slot.keyRequested) {
-                            line += " key";
-                        }
-        
-                        if (slot.description) {
-                            line += " description=" + JSON.stringify(slot.description);
-                        }
-        
-                        if (slotFetchInProgress(slot)) {
-                            line += " now";
-                        }
-        
-                        if (typeof slot.handle === "string") {
-                            line += " <" + slot.handle + ">";
-                        }
-        
-                        if (slot.lastInSequence) {
-                            line += "]";
-                        }
-        
-                        _TRACE(line);
-                    }
-                }
-        
-                #DBG*/
-
                 function isNonNegativeNumber(n) {
                     return (typeof n === "number") && n >= 0;
                 }
@@ -413,17 +251,10 @@
                 }
 
                 function createPrimarySlot() {
-                    /*#DBG
-                    totalSlots++;
-                    #DBG*/
-
                     return createSlot();
                 }
 
                 function insertSlot(slot, slotNext) {
-                    //#DBG _ASSERT(slotNext);
-                    //#DBG _ASSERT(slotNext.prev);
-
                     slot.prev = slotNext.prev;
                     slot.next = slotNext;
 
@@ -432,10 +263,6 @@
                 }
 
                 function removeSlot(slot) {
-                    //#DBG _ASSERT(slot.prev.next === slot);
-                    //#DBG _ASSERT(slot.next.prev === slot);
-                    //#DBG _ASSERT(slot !== slotsStart && slot !== slotListEnd && slot !== slotsEnd);
-
                     if (slot.lastInSequence) {
                         delete slot.lastInSequence;
                         slot.prev.lastInSequence = true;
@@ -466,10 +293,6 @@
 
                 // Does a little careful surgery to the slot sequence from slotFirst to slotLast before slotNext
                 function moveSequenceBefore(slotNext, slotFirst, slotLast) {
-                    //#DBG _ASSERT(slotFirst !== slotsStart && slotLast !== slotListEnd && slotLast !== slotsEnd);
-                    //#DBG _ASSERT(slotFirst.firstInSequence && slotLast.lastInSequence);
-                    //#DBG _ASSERT(slotNext.firstInSequence && slotNext.prev.lastInSequence);
-
                     slotFirst.prev.next = slotLast.next;
                     slotLast.next.prev = slotFirst.prev;
 
@@ -484,10 +307,6 @@
 
                 // Does a little careful surgery to the slot sequence from slotFirst to slotLast after slotPrev
                 function moveSequenceAfter(slotPrev, slotFirst, slotLast) {
-                    //#DBG _ASSERT(slotFirst !== slotsStart && slotLast !== slotsEnd);
-                    //#DBG _ASSERT(slotFirst.firstInSequence && slotLast.lastInSequence);
-                    //#DBG _ASSERT(slotPrev.lastInSequence && slotPrev.next.firstInSequence);
-
                     slotFirst.prev.next = slotLast.next;
                     slotLast.next.prev = slotFirst.prev;
 
@@ -525,8 +344,6 @@
                     var slotPrev = slot.prev;
 
                     if (slotPrev.lastInSequence) {
-                        //#DBG _ASSERT(slotNext.firstInSequence);
-
                         if (mergeWithPrev) {
                             delete slotPrev.lastInSequence;
                         } else {
@@ -544,9 +361,6 @@
                 // Keys and Indices
 
                 function setSlotKey(slot, key) {
-                    //#DBG _ASSERT(!slot.key);
-                    //#DBG _ASSERT(!keyMap[key]);
-
                     slot.key = key;
 
                     // Add the slot to the keyMap, so it is possible to quickly find the slot given its key
@@ -556,8 +370,6 @@
                 function setSlotIndex(slot, index, indexMapForSlot) {
                     // Tolerate NaN, so clients can pass (undefined - 1) or (undefined + 1)
                     if (+index === index) {
-                        //#DBG _ASSERT(indexUpdateDeferred || !indexMapForSlot[index]);
-
                         slot.index = index;
 
                         // Add the slot to the indexMap, so it is possible to quickly find the slot given its index
@@ -585,9 +397,6 @@
                 }
 
                 function createSlotSequence(slotNext, index, indexMapForSlot) {
-                    //#DBG _ASSERT(slotNext.prev.lastInSequence);
-                    //#DBG _ASSERT(slotNext.firstInSequence);
-
                     var slotNew = createAndAddSlot(slotNext, indexMapForSlot);
 
                     slotNew.firstInSequence = true;
@@ -603,8 +412,6 @@
                 }
 
                 function addSlotBefore(slotNext, indexMapForSlot) {
-                    //#DBG _ASSERT(slotNext.firstInSequence);
-                    //#DBG _ASSERT(slotNext.prev.lastInSequence);
                     var slotNew = createAndAddSlot(slotNext, indexMapForSlot);
                     delete slotNext.firstInSequence;
 
@@ -621,9 +428,6 @@
                 }
 
                 function addSlotAfter(slotPrev, indexMapForSlot) {
-                    //#DBG _ASSERT(slotPrev !== slotListEnd);
-                    //#DBG _ASSERT(slotPrev.lastInSequence);
-                    //#DBG _ASSERT(slotPrev.next.firstInSequence);
                     var slotNew = createAndAddSlot(slotPrev.next, indexMapForSlot);
                     delete slotPrev.lastInSequence;
 
@@ -641,7 +445,6 @@
 
                 function reinsertSlot(slot, slotNext, mergeWithPrev, mergeWithNext) {
                     insertAndMergeSlot(slot, slotNext, mergeWithPrev, mergeWithNext);
-                    //#DBG _ASSERT(!keyMap[slot.key]);
                     keyMap[slot.key] = slot;
                     var index = slot.index;
                     if (slot.index !== undefined) {
@@ -650,11 +453,6 @@
                 }
 
                 function removeSlotPermanently(slot) {
-                    /*#DBG
-                    _ASSERT(totalSlots > 0);
-                    totalSlots--;
-                    #DBG*/
-
                     removeSlot(slot);
 
                     if (slot.key) {
@@ -683,8 +481,6 @@
                 }
 
                 function successorFromIndex(index, indexMapForSlot, listStart, listEnd, skipPreviousIndex) {
-                    //#DBG _ASSERT(index !== undefined);
-
                     // Try the previous index
                     var slotNext = (skipPreviousIndex ? null : indexMapForSlot[index - 1]);
                     if (slotNext && (slotNext.next !== listEnd || listEnd.firstInSequence)) {
@@ -698,9 +494,6 @@
                             slotNext = listStart.next;
                             var lastSequenceStart;
                             while (true) {
-                                //#DBG _ASSERT(slotNext);
-                                //#DBG _ASSERT(slotNext.index !== index);
-
                                 if (slotNext.firstInSequence) {
                                     lastSequenceStart = slotNext;
                                 }
@@ -725,7 +518,6 @@
                 // Slot Items
 
                 function isPlaceholder(slot) {
-                    //#DBG _ASSERT(slot !== slotsStart && slot !== slotsEnd);
                     return !slot.item && !slot.itemNew && slot !== slotListEnd;
                 }
 
@@ -909,8 +701,6 @@
                 }
 
                 function handlerToNotify(bindingRecord) {
-                    //#DBG _ASSERT(bindingRecord.notificationHandler);
-
                     if (!bindingRecord.notificationsSent) {
                         bindingRecord.notificationsSent = true;
 
@@ -925,8 +715,6 @@
                     if (!editsInProgress && !dataNotificationsInProgress) {
                         forEachBindingRecord(function (bindingRecord) {
                             if (bindingRecord.notificationsSent) {
-                                //#DBG _ASSERT(bindingRecord.notificationHandler);
-
                                 bindingRecord.notificationsSent = false;
 
                                 if (bindingRecord.notificationHandler.endNotifications) {
@@ -972,7 +760,6 @@
 
                 function sendIndexChangedNotifications(slot, indexOld) {
                     forEachBindingRecordOfSlot(slot, function (bindingRecord, listBindingID) {
-                        //#DBG _ASSERT(bindingRecord.notificationHandler);
                         if (bindingRecord.notificationHandler.indexChanged) {
                             handlerToNotify(bindingRecord).indexChanged(handleForBinding(slot, listBindingID), slot.index, indexOld);
                         }
@@ -980,8 +767,6 @@
                 }
 
                 function changeSlotIndex(slot, index) {
-                    //#DBG _ASSERT(indexUpdateDeferred || ((typeof slot.index !== "number" || indexMap[slot.index] === slot) && !indexMap[index]));
-
                     var indexOld = slot.index;
 
                     if (indexOld !== undefined && indexMap[indexOld] === slot) {
@@ -993,7 +778,6 @@
                     if (+index === index) {
                         setSlotIndex(slot, index, indexMap);
                     } else if (+indexOld === indexOld) {
-                        //#DBG _ASSERT(!slot.indexRequested);
                         delete slot.index;
                     } else {
                         // If neither the new index or the old index is defined then there was no index changed.
@@ -1060,7 +844,6 @@
                     prepareSlotItem(slot);
 
                     forEachBindingRecordOfSlot(slot, function (bindingRecord, listBindingID) {
-                        //#DBG _ASSERT(bindingRecord.notificationHandler);
                         var handle = handleForBinding(slot, listBindingID);
                         handlerToNotify(bindingRecord).changed(itemForBinding(slot.item, handle), itemForBinding(itemOld, handle));
                     });
@@ -1092,7 +875,6 @@
                         // Send the notification before the move
                         for (listBindingID in bindingMapRecipients) {
                             var bindingRecord = bindingMapRecipients[listBindingID];
-                            //#DBG _ASSERT(bindingRecord.notificationHandler);
                             handlerToNotify(bindingRecord).moved(bindingRecord.itemPromiseFromKnownSlot(slot),
                                 ((slotMoveAfter.lastInSequence || slotMoveAfter === slot.prev) && !mergeWithPrev) || slotMoveAfter === slotsStart ? null : handleForBinding(slotMoveAfter, listBindingID),
                                 ((slotMoveBefore.firstInSequence || slotMoveBefore === slot.next) && !mergeWithNext) || slotMoveBefore === slotListEnd ? null : handleForBinding(slotMoveBefore, listBindingID)
@@ -1110,11 +892,9 @@
                 }
 
                 function deleteSlot(slot, mirage) {
-                    //#DBG _ASSERT((!slot.fetchListeners && !slot.directFetchListeners) || !slot.item);
                     completeFetchPromises(slot, true);
 
                     forEachBindingRecordOfSlot(slot, function (bindingRecord, listBindingID) {
-                        //#DBG _ASSERT(bindingRecord.notificationHandler);
                         handlerToNotify(bindingRecord).removed(handleForBinding(slot, listBindingID), mirage);
                     });
 
@@ -1132,8 +912,6 @@
                     while (!slot.firstInSequence) {
                         slot = slot.prev;
                     }
-
-                    //#DBG _ASSERT(slot !== slotsStart);
 
                     var last;
                     do {
@@ -1157,8 +935,6 @@
 
                     var delta = 0;
                     while (!slot.firstInSequence) {
-                        //#DBG _ASSERT(typeof slot.indexNew !== "number");
-
                         delta++;
                         slot = slot.prev;
                     }
@@ -1200,8 +976,6 @@
 
                 // Updates the new index of the given slot if necessary, and all subsequent new indices
                 function updateNewIndices(slot, indexDelta) {
-                    //#DBG _ASSERT(indexDelta !== 0);
-
                     // If this slot is at the start of a sequence, transfer the indexNew
                     if (slot.firstInSequence) {
                         var indexNew;
@@ -1246,8 +1020,6 @@
 
                 // Updates the new index of the first slot in each sequence after the given new index
                 function updateNewIndicesFromIndex(index, indexDelta) {
-                    //#DBG _ASSERT(indexDelta !== 0);
-
                     for (var slot = slotsStart; slot !== slotListEnd; slot = slot.next) {
                         var indexNew = slot.indexNew;
 
@@ -1286,7 +1058,6 @@
                         if (slot.lastInSequence) {
                             var index = indexNew;
                             for (var slotUpdate = slotFirstInSequence; slotUpdate !== slot.next; slotUpdate = slotUpdate.next) {
-                                //#DBG _ASSERT(index !== slotUpdate.index || +index !== index || indexMap[index] === slotUpdate);
                                 if (index !== slotUpdate.index) {
                                     changeSlotIndex(slotUpdate, index);
                                 }
@@ -1442,11 +1213,9 @@
                 function requestSlot(slot) {
                     // Ensure that there's a slot on either side of each requested item
                     if (slot.firstInSequence) {
-                        //#DBG _ASSERT(slot.index - 1 !== slot.prev.index);
                         addSlotBefore(slot, indexMap);
                     }
                     if (slot.lastInSequence) {
-                        //#DBG _ASSERT(slot.index + 1 !== slot.next.index);
                         addSlotAfter(slot, indexMap);
                     }
 
@@ -1519,8 +1288,6 @@
                         slot.hints = hints;
                     }
 
-                    //#DBG _ASSERT(slot.key === key);
-
                     return requestSlot(slot);
                 }
 
@@ -1534,7 +1301,6 @@
                     }
 
                     var slot = indexMap[index];
-                    //#DBG _ASSERT(slot !== slotListEnd);
 
                     if (!slot) {
                         var slotNext = successorFromIndex(index, indexMap, slotsStart, slotListEnd);
@@ -1558,8 +1324,6 @@
                             slot = createPrimarySlotSequence(slotNext, index);
                         }
                     }
-
-                    //#DBG _ASSERT(slot.index === index);
 
                     if (!slot.item) {
                         slot.indexRequested = true;
@@ -1677,7 +1441,6 @@
 
                 function resultsValid(slot, refreshID, fetchID) {
                     // This fetch has completed, whatever it has returned
-                    //#DBG _ASSERT(!fetchID || fetchesInProgress[fetchID]);
                     delete fetchesInProgress[fetchID];
 
                     if (refreshID !== currentRefreshID || slotPermanentlyRemoved(slot)) {
@@ -1721,7 +1484,6 @@
                             var perfID = "itemsFetched id=" + fetchID + " count=" + fetchResult.items.length;
                             profilerMarkStart(perfID);
                             if (resultsValid(slot, refreshID, fetchID)) {
-                                //#DBG _ASSERT(+indexRequested === indexRequested);
                                 fetchResult.absoluteIndex = indexRequested;
                                 addMarkers(fetchResult);
                                 processResultsForIndex(indexRequested, slot, fetchResult.items, fetchResult.offset, fetchResult.totalCount, fetchResult.absoluteIndex);
@@ -1738,8 +1500,6 @@
                 }
 
                 function fetchItemsFromStart(slot, count) {
-                    //#DBG _ASSERT(!refreshInProgress);
-
                     var fetchID = setFetchIDs(slot, 0, count - 1);
                     if (itemsFromStart) {
                         fetchItems(slot, fetchID, itemsFromStart(fetchID, count), 0);
@@ -1749,25 +1509,16 @@
                 }
 
                 function fetchItemsFromEnd(slot, count) {
-                    //#DBG _ASSERT(!refreshInProgress);
-
                     var fetchID = setFetchIDs(slot, count - 1, 0);
                     fetchItems(slot, fetchID, itemsFromEnd(fetchID, count));
                 }
 
                 function fetchItemsFromKey(slot, countBefore, countAfter) {
-                    //#DBG _ASSERT(!refreshInProgress);
-                    //#DBG _ASSERT(itemsFromKey);
-                    //#DBG _ASSERT(slot.key);
-
                     var fetchID = setFetchIDs(slot, countBefore, countAfter);
                     fetchItems(slot, fetchID, itemsFromKey(fetchID, slot.key, countBefore, countAfter, slot.hints));
                 }
 
                 function fetchItemsFromIndex(slot, countBefore, countAfter) {
-                    //#DBG _ASSERT(!refreshInProgress);
-                    //#DBG _ASSERT(slot !== slotsStart);
-
                     var index = slot.index;
 
                     // Don't ask for items with negative indices
@@ -1793,7 +1544,6 @@
                             // First search backwards
                             for (slotSearch = slot.prev; slotSearch !== slotsStart; slotSearch = slotSearch.prev) {
                                 if (slotSearch.index !== undefined && slotSearch.key) {
-                                    //#DBG _ASSERT(index > slotSearch.index);
                                     delta = index - slotSearch.index;
                                     if (closestDelta > delta) {
                                         closestDelta = delta;
@@ -1806,7 +1556,6 @@
                             // Then search forwards
                             for (slotSearch = slot.next; slotSearch !== slotListEnd; slotSearch = slotSearch.next) {
                                 if (slotSearch.index !== undefined && slotSearch.key) {
-                                    //#DBG _ASSERT(slotSearch.index > index);
                                     delta = slotSearch.index - index;
                                     if (closestDelta > delta) {
                                         closestDelta = delta;
@@ -1835,8 +1584,6 @@
                 }
 
                 function fetchItemsFromDescription(slot, countBefore, countAfter) {
-                    //#DBG _ASSERT(!refreshInProgress);
-
                     var fetchID = setFetchIDs(slot, countBefore, countAfter);
                     fetchItems(slot, fetchID, itemsFromDescription(fetchID, slot.description, countBefore, countAfter));
                 }
@@ -1872,7 +1619,6 @@
                                 }
 
                                 if (slot.keyRequested && !slotRequestedByKey) {
-                                    //#DBG _ASSERT(slot.key);
                                     slotRequestedByKey = slot;
                                     requestedKeyOffset = placeholderCount - 1;
                                 }
@@ -1883,7 +1629,6 @@
                                 }
 
                                 if (slot.indexRequested && !slotRequestedByIndex) {
-                                    //#DBG _ASSERT(typeof slot.index === "number");
                                     slotRequestedByIndex = slot;
                                     requestedIndexOffset = placeholderCount - 1;
                                 }
@@ -1915,7 +1660,6 @@
                                             fetchItemsFromIndex(slotFirstPlaceholder, placeholderCount - 1, 0);
                                         } else {
                                             // There is no way to fetch anything in this sequence
-                                            //#DBG _ASSERT(slot.lastInSequence);
                                             deleteMirageSequence(slotFirstPlaceholder);
                                         }
 
@@ -1973,8 +1717,6 @@
                                 break;
 
                             default:
-                                //#DBG _ASSERT(property !== "handle");
-                                //#DBG _ASSERT(property !== "index");
                                 if (item[property] !== itemNew[property]) {
                                     return true;
                                 }
@@ -2001,25 +1743,18 @@
                 }
 
                 function updateSlotItem(slot) {
-                    //#DBG _ASSERT(slot.itemNew);
-
                     if (slot.item) {
                         changeSlotIfNecessary(slot);
                     } else {
-                        //#DBG _ASSERT(slot.key);
                         completeFetchPromises(slot);
                     }
                 }
 
                 function updateSlot(slot, item) {
-                    //#DBG _ASSERT(item !== startMarker && item !== endMarker);
-
                     if (!slot.key) {
                         setSlotKey(slot, item.key);
                     }
                     slot.itemNew = item;
-
-                    //#DBG _ASSERT(slot.key === item.key);
 
                     updateSlotItem(slot);
                 }
@@ -2040,8 +1775,6 @@
                                 }
 
                                 var bindingRecord = bindingMap[listBindingID].bindingRecord;
-                                //#DBG _ASSERT(bindingRecord.notificationHandler);
-
                                 handlerToNotify(bindingRecord).removed(handleForBinding(slotToDiscard, listBindingID), true, handleForBinding(slot, listBindingID));
 
                                 // A re-entrant call to release from the removed handler might have cleared slotToDiscard.bindingMap
@@ -2055,17 +1788,11 @@
 
                 function mergeSlots(slot, slotToDiscard) {
                     // This shouldn't be called on a slot that has a pending change notification
-                    //#DBG _ASSERT(!slot.item || !slot.itemNew);
-
                     // Only one of the two slots should have a key
-                    //#DBG _ASSERT(!slot.key || !slotToDiscard.key);
-
                     // If slotToDiscard is about to acquire an index, send the notifications now; in rare cases, multiple
                     // indexChanged notifications will be sent for a given item during a refresh, but that's fine.
                     if (slot.index !== slotToDiscard.index) {
                         // If slotToDiscard has a defined index, that should have been transferred already
-                        //#DBG _ASSERT(refreshInProgress || slot.index !== undefined);
-
                         var indexOld = slotToDiscard.index;
                         slotToDiscard.index = slot.index;
                         sendIndexChangedNotifications(slotToDiscard, indexOld);
@@ -2080,14 +1807,11 @@
                             slot.bindingMap = {};
                         }
 
-                        //#DBG _ASSERT(!slot.bindingMap[listBindingID]);
-
                         var slotBinding = bindingMap[listBindingID];
 
                         if (!slotBinding.handle) {
                             slotBinding.handle = slotToDiscard.handle;
                         }
-                        //#DBG _ASSERT(handleMap[slotBinding.handle] === slotToDiscard);
                         handleMap[slotBinding.handle] = slot;
 
                         slot.bindingMap[listBindingID] = slotBinding;
@@ -2100,8 +1824,6 @@
 
                     // See if the item needs to be transferred from slotToDiscard to slot
                     var item = slotToDiscard.itemNew || slotToDiscard.item;
-                    //#DBG _ASSERT(!item || !slot.key);
-
                     if (item) {
                         item = Object.create(item);
                         defineCommonItemProperties(item, slot, slot.handle);
@@ -2152,9 +1874,6 @@
 
                 function mergeSlotsAndItem(slot, slotToDiscard, item) {
                     if (slotToDiscard && slotToDiscard.key) {
-                        //#DBG _ASSERT(!item || slotToDiscard.key === item.key);
-                        //#DBG _ASSERT(!slotToDiscard.bindingMap);
-
                         if (!item) {
                             item = slotToDiscard.itemNew || slotToDiscard.item;
                         }
@@ -2194,8 +1913,6 @@
                 }
 
                 function matchSlot(slot, result) {
-                    //#DBG _ASSERT(result !== startMarker && result !== endMarker);
-
                     // First see if there is an existing slot that needs to be merged
                     var slotExisting = slotFromResult(result);
                     if (slotExisting === slot) {
@@ -2210,9 +1927,6 @@
                 }
 
                 function promoteSlot(slot, item, index, insertionPoint) {
-                    //#DBG _ASSERT(typeof slot.index !== "number");
-                    //#DBG _ASSERT(+index === index || !indexMap[index]);
-
                     if (item && slot.key && slot.key !== item.key) {
                         // A contradiction has been found
                         beginRefresh();
@@ -2283,8 +1997,6 @@
                     if (slotWithIndex && slotWithIndex !== slotWithKey) {
                         mergeSlots(slot, slotWithIndex);
                     }
-
-                    //#DBG _ASSERT(!slotWithIndex || slotWithIndex.prev.next !== slotWithIndex);
 
                     return true;
                 }
@@ -2364,8 +2076,6 @@
 
                 // Removes any placeholders with indices that exceed the given upper bound on the count
                 function removeMirageIndices(countMax, indexFirstKnown) {
-                    //#DBG _ASSERT(isNonNegativeInteger(countMax));
-
                     var placeholdersAtEnd = 0;
 
                     function removePlaceholdersAfterSlot(slotRemoveAfter) {
@@ -2381,8 +2091,6 @@
                     }
 
                     for (var slot = slotListEnd.prev; !(slot.index < countMax) || placeholdersAtEnd > 0;) {
-                        //#DBG _ASSERT(!refreshInProgress);
-
                         var slotPrev = slot.prev;
 
                         if (slot === slotsStart) {
@@ -2394,7 +2102,6 @@
                                 return false;
                             } else if (slot.index >= indexFirstKnown) {
                                 removePlaceholdersAfterSlot(slot);
-                                //#DBG _ASSERT(slot.index < countMax);
                             } else {
                                 if (itemsFromKey) {
                                     fetchItemsFromKey(slot, 0, placeholdersAtEnd);
@@ -2444,10 +2151,6 @@
                     }
 
                     resultsProcessed = true;
-
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
 
                     (function () {
                         var i,
@@ -2634,7 +2337,6 @@
                                             if (slotBeforeSequence) {
                                                 moveSequenceAfter(slotListEnd, sequenceStart(slotBeforeSequence), slotBeforeSequence);
                                             }
-                                            //#DBG _ASSERT(!slotAfterSequence);
                                         } else {
                                             var slotInsertBefore = insertionPoint.slotNext;
                                             if (!slotInsertBefore) {
@@ -2649,7 +2351,6 @@
                                             mergeSequences(slotLastInSequence);
                                         }
                                     } else if (!firstSequence) {
-                                        //#DBG _ASSERT(slotFirstInSequence === slotExisting);
                                         slotBefore = offsetMap[i - 1];
 
                                         if (slotBefore) {
@@ -2684,13 +2385,8 @@
 
                                 // See if the fetched slot needs to be merged
                                 if (i === offset && slotExisting !== slot && !slotPermanentlyRemoved(slot)) {
-                                    //#DBG _ASSERT(!slot.key);
-
                                     slotBeforeSequence = (slot.firstInSequence ? null : slot.prev);
                                     slotAfterSequence = (slot.lastInSequence ? null : slot.next);
-
-                                    //#DBG _ASSERT(!slotBeforeSequence || !slotBeforeSequence.key);
-                                    //#DBG _ASSERT(!slotAfterSequence || !slotAfterSequence.key);
 
                                     sendMirageNotifications(slotExisting, slot, slotExisting.bindingMap);
                                     mergeSlots(slotExisting, slot);
@@ -2735,7 +2431,6 @@
                                     } else if (slotExisting.firstInSequence) {
                                         // Adding the cached items may result in some sequences merging
                                         if (slotExisting.prev !== slotBefore) {
-                                            //#DBG _ASSERT(slotExisting.index === undefined);
                                             moveSequenceAfter(slotBefore, slotExisting, sequenceEnd(slotExisting));
                                         }
                                         mergeSequences(slotBefore);
@@ -2761,10 +2456,6 @@
 
                     finishNotifications();
 
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
-
                     // Finally complete any promises for newly obtained items
                     callFetchCompleteCallbacks();
                     profilerMarkEnd(perfId);
@@ -2781,9 +2472,6 @@
                             // Don't return an error, just complete with null (when the slot is deleted)
 
                             if (slot.indexRequested) {
-                                //#DBG _ASSERT(isPlaceholder(slot));
-                                //#DBG _ASSERT(slot.index !== undefined);
-
                                 // We now have an upper bound on the count
                                 removeMirageIndices(slot.index);
                             } else if (slot.keyRequested || slot.description) {
@@ -2826,8 +2514,6 @@
                             ));
                         } else {
                             var indexLast = indexFirst + resultsCount - 1;
-                            //#DBG _ASSERT(slot.index > indexLast);
-
                             var fetchID = setFetchIDs(slot, slot.index - indexLast, 0);
                             fetchItemsForIndex(indexLast, slot, fetchID, itemsFromKey(
                                 fetchID,
@@ -2852,7 +2538,6 @@
 
                                 // No need to check return value of removeMirageIndices, since processErrorResult is going to start
                                 // a refresh anyway.
-                                //#DBG _ASSERT(refreshRequested);
                             } else {
                                 // Something has changed, but this index might still exist, so request a refresh
                                 beginRefresh();
@@ -2926,11 +2611,6 @@
                     refreshStart.next = refreshEnd;
                     refreshEnd.prev = refreshStart;
 
-                    /*#DBG
-                    refreshStart.debugInfo = "*** refreshStart ***";
-                    refreshEnd.debugInfo = "*** refreshEnd ***";
-                    #DBG*/
-
                     refreshItemsFetched = false;
                     refreshCount = undefined;
                     keyFetchIDs = {};
@@ -2954,7 +2634,6 @@
                         waitForRefresh = false;
 
                         // The edit queue has been paused until the next refresh - resume it now
-                        //#DBG _ASSERT(editsQueued);
                         applyNextEdit();
                         return;
                     }
@@ -2974,7 +2653,6 @@
                             return;
                         }
 
-                        //#DBG _ASSERT(refreshRequested);
                         refreshRequested = false;
 
                         resetRefreshState();
@@ -3004,7 +2682,6 @@
 
                 function resultsValidForRefresh(refreshID, fetchID) {
                     // This fetch has completed, whatever it has returned
-                    //#DBG _ASSERT(fetchesInProgress[fetchID]);
                     delete fetchesInProgress[fetchID];
 
                     if (refreshID !== currentRefreshID) {
@@ -3012,7 +2689,6 @@
                         return false;
                     }
 
-                    //#DBG _ASSERT(refreshFetchesInProgress > 0);
                     refreshFetchesInProgress--;
 
                     return true;
@@ -3050,8 +2726,6 @@
                         // Request additional items to try to locate items that have moved
                         var searchDelta = 10,
                             index = slot.index;
-
-                        //#DBG _ASSERT(+index === index);
 
                         if (refreshIndexMap[index] && refreshIndexMap[index].firstInSequence) {
                             // Ensure at least one element is observed before this one
@@ -3109,7 +2783,6 @@
                             // longer exist.
                             if (slot.key && isPlaceholder(slot) && !deletedKeys[slot.key]) {
                                 // Fulfill each "itemFromKey" request
-                                //#DBG _ASSERT(itemsFromKey);
                                 if (!refreshKeyMap[slot.key]) {
                                     // Fetch at least one item before and after, just to verify item's position in list
                                     fetchID = newFetchID();
@@ -3129,10 +2802,6 @@
                             if (slot.lastInSequence || slot.next === slotListEnd || keyAlreadyFetched) {
                                 refreshRange(slotFetchFirst, fetchID, (!slotRefreshFirst || slotRefreshFirst.firstInSequence ? refreshFetchExtra : 0), fetchCount - 1 + refreshFetchExtra);
 
-                                /*#DBG
-                                fetchID = undefined;
-                                #DBG*/
-
                                 if (!allRanges) {
                                     break;
                                 }
@@ -3148,7 +2817,6 @@
                         refreshFirstItem(newFetchID());
                     }
 
-                    //#DBG _ASSERT(fetchID === undefined);
                 }
 
                 function startRefreshFetches() {
@@ -3232,9 +2900,7 @@
                 }
 
                 function setRefreshSlotResult(slotRefresh, result) {
-                    //#DBG _ASSERT(result.key);
                     slotRefresh.key = result.key;
-                    //#DBG _ASSERT(!refreshKeyMap[slotRefresh.key]);
                     refreshKeyMap[slotRefresh.key] = slotRefresh;
 
                     slotRefresh.item = result;
@@ -3257,10 +2923,6 @@
                 function processRefreshResults(key, results, offset, count, index) {
                     index = validateIndexReturned(index);
                     count = validateCountReturned(count);
-
-                    /*#DBG
-                    VERIFYREFRESHLIST();
-                    #DBG*/
 
                     var keyPresent = false;
 
@@ -3363,8 +3025,6 @@
 
                                 mergeSequences(slot);
                             } else if (slot.lastInSequence) {
-                                //#DBG _ASSERT(slotNext.firstInSequence);
-
                                 mergeSequences(slot);
                             }
                         }
@@ -3400,10 +3060,6 @@
                         }
                     }
 
-                    /*#DBG
-                    VERIFYREFRESHLIST();
-                    #DBG*/
-
                     if (reentrantRefresh) {
                         synchronousRefresh = true;
                     } else {
@@ -3420,9 +3076,6 @@
                         case FetchError.doesNotExist:
                             if (fromStart) {
                                 // The attempt to fetch the first item failed, so the list must be empty
-                                //#DBG _ASSERT(refreshStart.next === refreshEnd);
-                                //#DBG _ASSERT(refreshStart.lastInSequence && refreshEnd.firstInSequence);
-
                                 setSlotIndex(refreshEnd, 0, refreshIndexMap);
                                 refreshCount = 0;
 
@@ -3514,7 +3167,6 @@
                         matchSlotForRefresh(slotExisting, slot, slotRefresh);
                         return true;
                     } else {
-                        //#DBG _ASSERT(!slotExisting);
                         return false;
                     }
                 }
@@ -3523,7 +3175,6 @@
                     var indexNew;
 
                     if (slot.indexRequested) {
-                        //#DBG _ASSERT(!slot.key);
                         indexNew = slot.index;
                     } else {
                         var slotRefresh = slotRefreshFromSlot(slot);
@@ -3536,9 +3187,6 @@
                 }
 
                 function concludeRefresh() {
-                    //#DBG _ASSERT(refreshInProgress);
-                    //#DBG _ASSERT(!indexUpdateDeferred);
-
                     beginRefreshCount = 0;
                     refreshHistory = new Array(100);
                     refreshHistoryPos = -1;
@@ -3568,11 +3216,6 @@
                         sequenceNew,
                         index,
                         offset;
-
-                    /*#DBG
-                    VERIFYLIST();
-                    VERIFYREFRESHLIST();
-                    #DBG*/
 
                     // Assign a sequence number to each refresh slot
                     sequenceCountNew = 0;
@@ -3614,13 +3257,9 @@
                                 // Remove items that can't exist in the list and send mirage removed notifications
                                 deleteSlot(slot, true);
                             } else if (slot.item || slot.keyRequested) {
-                                //#DBG _ASSERT(slotRefresh);
-
                                 // Store the new item; this value will be compared with that stored in slot.item later
                                 slot.itemNew = slotRefresh.item;
                             } else {
-                                //#DBG _ASSERT(!slot.item);
-
                                 // Clear keys and items that have never been observed by client
                                 if (slot.key) {
                                     if (!slot.keyRequested) {
@@ -3635,21 +3274,12 @@
                         slot = slotNext;
                     }
 
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
-
                     // Placeholders generated by itemsAtIndex should not move.  Match these to items now if possible, or merge them
                     // with existing items if necessary.
                     for (slot = slotsStart.next; slot !== slotListEnd;) {
                         slotNext = slot.next;
 
-                        //#DBG _ASSERT(!slot.key || refreshKeyMap[slot.key]);
-
                         if (slot.indexRequested) {
-                            //#DBG _ASSERT(!slot.item);
-                            //#DBG _ASSERT(slot.index !== undefined);
-
                             slotRefresh = refreshIndexMap[slot.index];
                             if (slotRefresh) {
                                 matchSlotForRefresh(slotFromSlotRefresh(slotRefresh), slot, slotRefresh);
@@ -3658,10 +3288,6 @@
 
                         slot = slotNext;
                     }
-
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
 
                     // Match old sequences to new sequences
                     var bestMatch,
@@ -3688,7 +3314,6 @@
 
                         slotRefresh = slotRefreshFromSlot(slot);
                         if (slotRefresh) {
-                            //#DBG _ASSERT(slotRefresh.sequenceNumber !== undefined);
                             newSequenceCounts[slotRefresh.sequenceNumber]++;
                         }
 
@@ -3731,12 +3356,8 @@
                         }
                     }
 
-                    //#DBG _ASSERT(sequenceOldEnd);
-
                     // Special case: split the old start into a separate sequence if the new start isn't its best match
                     if (sequencesOld[0].sequenceNew !== sequencesNew[0]) {
-                        //#DBG _ASSERT(sequencesOld[0].first === slotsStart);
-                        //#DBG _ASSERT(!slotsStart.lastInSequence);
                         splitSequence(slotsStart);
                         sequencesOld[0].first = slotsStart.next;
                         sequencesOld.unshift({
@@ -3753,8 +3374,6 @@
 
                     // Special case: split the old end into a separate sequence if the new end isn't its best match
                     if (sequenceOldEnd.sequenceNew !== sequencesNew[sequenceCountNew - 1]) {
-                        //#DBG _ASSERT(sequenceOldEnd.last === slotListEnd);
-                        //#DBG _ASSERT(!slotListEnd.firstInSequence);
                         splitSequence(slotListEnd.prev);
                         sequenceOldEnd.last = slotListEnd.prev;
                         sequenceIndexEnd++;
@@ -3786,19 +3405,13 @@
                     sequencesNew[0].sequenceOld = sequencesOld[0];
                     sequencesOld[0].stationarySlot = slotsStart;
 
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
-
                     // Merge additional indexed old sequences when possible
 
                     // First do a forward pass
                     for (i = 0; i <= sequenceIndexEnd; i++) {
                         sequenceOld = sequencesOld[i];
 
-                        //#DBG _ASSERT(sequenceOld);
                         if (sequenceOld.sequenceNew && (sequenceOldBestMatch = sequenceOld.sequenceNew.sequenceOld) === sequenceOldPrev && sequenceOldPrev.last !== slotListEnd) {
-                            //#DBG _ASSERT(sequenceOldBestMatch.last.next === sequenceOld.first);
                             mergeSequencesForRefresh(sequenceOldBestMatch.last);
                             sequenceOldBestMatch.last = sequenceOld.last;
                             delete sequencesOld[i];
@@ -3814,7 +3427,6 @@
                         // From this point onwards, some members of sequencesOld may be undefined
                         if (sequenceOld) {
                             if (sequenceOld.sequenceNew && (sequenceOldBestMatch = sequenceOld.sequenceNew.sequenceOld) === sequenceOldPrev && sequenceOld.last !== slotListEnd) {
-                                //#DBG _ASSERT(sequenceOld.last.next === sequenceOldBestMatch.first);
                                 mergeSequencesForRefresh(sequenceOld.last);
                                 sequenceOldBestMatch.first = sequenceOld.first;
                                 delete sequencesOld[i];
@@ -3836,8 +3448,6 @@
                     for (i = sequenceIndexEnd + 1; i < sequenceCountOld; i++) {
                         sequenceOld = sequencesOld[i];
                         if (sequenceOld && (!sequenceOld.sequenceNew || sequenceOld.sequenceNew.sequenceOld !== sequenceOld)) {
-                            //#DBG _ASSERT(!sequenceOld.indexRequested);
-
                             // If the order of the known items in the sequence is unchanged, then the sequence probably has not
                             // moved, but we now know where it belongs relative to at least one other sequence.
                             var orderPreserved = true,
@@ -3932,7 +3542,6 @@
                                 slotNext = slot.next;
 
                                 if (slot !== slotsStart && slot !== slotListEnd && slot !== slotsEnd && !slot.item && !slot.keyRequested) {
-                                    //#DBG _ASSERT(!slot.indexRequested);
                                     deleteSlot(slot, true);
                                     if (sequenceOld.first === slot) {
                                         if (sequenceOld.last === slot) {
@@ -3950,10 +3559,6 @@
                             } while (!sequenceEndReached);
                         }
                     }
-
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
 
                     // Locate boundaries of new items in new sequences
                     for (i = 0; i < sequenceCountNew; i++) {
@@ -3988,7 +3593,6 @@
                                     }
 
                                     if (slot.lastInSequence) {
-                                        //#DBG _ASSERT(slot === sequenceOld.last);
                                         break;
                                     }
                                 }
@@ -4022,14 +3626,12 @@
                                 // The items in the longest ordered subsequence don't move; everything else does
                                 var stationaryItems = [],
                                     stationaryItemCount = piles.length;
-                                //#DBG _ASSERT(stationaryItemCount > 0);
                                 slotRefresh = piles[stationaryItemCount - 1];
                                 for (j = stationaryItemCount; j--;) {
                                     slotRefresh.stationary = true;
                                     stationaryItems[j] = slotRefresh;
                                     slotRefresh = slotRefresh.predecessor;
                                 }
-                                //#DBG _ASSERT(!slotRefresh);
                                 sequenceOld.stationarySlot = slotFromSlotRefresh(stationaryItems[0]);
 
                                 // Try to match new items before the first stationary item to placeholders
@@ -4058,13 +3660,10 @@
                                 for (j = 0; j < stationaryItemCount - 1; j++) {
                                     slotRefresh = stationaryItems[j];
                                     slot = slotFromSlotRefresh(slotRefresh);
-                                    //#DBG _ASSERT(slot);
                                     var slotRefreshStop = stationaryItems[j + 1],
                                         slotRefreshMergePoint = null,
                                         slotStop = slotFromSlotRefresh(slotRefreshStop),
                                         slotExisting;
-                                    //#DBG _ASSERT(slotStop);
-
                                     // Find all the new items
                                     slotNext = slot.next;
                                     for (slotRefresh = slotRefresh.next; slotRefresh !== slotRefreshStop && !slotRefreshMergePoint && slot !== slotStop; slotRefresh = slotRefresh.next) {
@@ -4147,10 +3746,6 @@
                         }
                     }
 
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
-
                     // Move items and send notifications
                     for (i = 0; i < sequenceCountNew; i++) {
                         sequenceNew = sequencesNew[i];
@@ -4161,9 +3756,6 @@
                                 slot = slotFromSlotRefresh(slotRefresh);
                                 if (slot) {
                                     if (!slotRefresh.stationary) {
-                                        //#DBG _ASSERT(slot !== slotsStart);
-                                        //#DBG _ASSERT(slot !== slotsEnd);
-
                                         var slotMoveBefore,
                                             mergeWithPrev = false,
                                             mergeWithNext = false;
@@ -4249,10 +3841,6 @@
                         }
                     }
 
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
-
                     // Insert new items (with new indices) and send notifications
                     for (i = 0; i < sequenceCountNew; i++) {
                         sequenceNew = sequencesNew[i];
@@ -4270,8 +3858,6 @@
                                         var slotRefreshOld;
                                         for (slotRefreshOld = sequenceNew.firstInner; !slotFromSlotRefresh(slotRefreshOld) ; slotRefreshOld = slotRefreshOld.next) {
                                             /*@empty*/
-                                            //#DBG _ASSERT(slotRefreshOld !== sequenceNew.lastInner);
-                                        }
                                         slotInsertBefore = slotFromSlotRefresh(slotRefreshOld);
                                     }
 
@@ -4295,10 +3881,6 @@
                             }
                         }
                     }
-
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
 
                     // Rebuild the indexMap from scratch, so it is possible to detect colliding indices
                     indexMap = [];
@@ -4422,7 +4004,6 @@
                                     moveSequenceBefore(slotsEnd, slotFirstInSequence, slot);
                                 }
                             } else {
-                                //#DBG _ASSERT(slot.index !== undefined);
                                 if (indexMax < slot.index && !listEndReached) {
                                     indexMax = slot.index;
                                 } else {
@@ -4459,25 +4040,13 @@
 
                     indexUpdateDeferred = false;
 
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
-
                     // Now that all the sequences have been moved, merge any colliding slots
                     mergeSequencePairs(sequencePairsToMerge);
-
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
 
                     // Send countChanged notification
                     if (refreshCount !== undefined && refreshCount !== knownCount) {
                         changeCount(refreshCount);
                     }
-
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
 
                     finishNotifications();
 
@@ -4509,7 +4078,6 @@
                             }
 
                             if (slotRefresh.lastInSequence) {
-                                //#DBG _ASSERT(slotRefresh === sequenceNew.last);
                                 break;
                             }
                         }
@@ -4525,10 +4093,6 @@
 
                     resetRefreshState();
                     refreshInProgress = false;
-
-                    /*#DBG
-                    VERIFYLIST();
-                    #DBG*/
 
                     // Complete any promises for newly obtained items
                     callFetchCompleteCallbacks();
@@ -4597,7 +4161,6 @@
                 function dequeueEdit() {
                     firstEditInProgress = false;
 
-                    //#DBG _ASSERT(editQueue.next !== editQueue);
                     var editNext = editQueue.next.next;
 
                     editQueue.next = editNext;
@@ -4656,8 +4219,6 @@
                     function onEditComplete(item) {
                         if (item) {
                             if (keyUpdate && keyUpdate.key !== item.key) {
-                                //#DBG _ASSERT(edit.editType === EditType.insert);
-
                                 var keyNew = item.key;
                                 if (!edit.undo) {
                                     // If the edit is in the process of being queued, we can use the correct key when we update the
@@ -4668,15 +4229,8 @@
                                     if (slot) {
                                         var keyOld = slot.key;
                                         if (keyOld) {
-                                            //#DBG _ASSERT(slot.key === keyOld);
-                                            //#DBG _ASSERT(keyMap[keyOld] === slot);
                                             delete keyMap[keyOld];
                                         }
-                                        /*#DBG
-                                        // setSlotKey asserts that the slot key is absent
-                                        delete slot.key;
-                                        #DBG*/
-
                                         setSlotKey(slot, keyNew);
                                         slot.itemNew = item;
                                         if (slot.item) {
@@ -4688,7 +4242,6 @@
                                     }
                                 }
                             } else if (edit.editType === EditType.change) {
-                                //#DBG _ASSERT(slot.item);
                                 slot.itemNew = item;
 
                                 if (!reentrant) {
@@ -4770,8 +4323,6 @@
                 }
 
                 function completeEdits() {
-                    //#DBG _ASSERT(!editsInProgress);
-
                     updateIndices();
 
                     finishNotifications();
@@ -5304,9 +4855,6 @@
                     editQueue = {};
                     editQueue.next = editQueue;
                     editQueue.prev = editQueue;
-                    /*#DBG
-                    editQueue.debugInfo = "*** editQueueHead/Tail ***";
-                    #DBG*/
 
                     // Track whether there are currently edits queued
                     editsQueued = false;
@@ -5351,12 +4899,6 @@
                     slotListEnd.prev = slotsStart;
                     slotListEnd.next = slotsEnd;
                     slotsEnd.prev = slotListEnd;
-
-                    /*#DBG
-                    slotsStart.debugInfo = "*** slotsStart ***";
-                    slotListEnd.debugInfo = "*** slotListEnd ***";
-                    slotsEnd.debugInfo = "*** slotsEnd ***";
-                    #DBG*/
 
                     // Map of request IDs to slots
                     handleMap = {};
@@ -5442,22 +4984,6 @@
 
                 resetState();
 
-                /*#DBG
-                this._debugBuild = true;
-        
-                Object.defineProperty(this, "_totalSlots", {
-                    get: function () {
-                        return totalSlots;
-                    }
-                });
-        
-                Object.defineProperty(this, "_releasedSlots", {
-                    get: function () {
-                        return releasedSlots;
-                    }
-                });
-                #DBG*/
-
                 // Public methods
 
                 this.createListBinding = function (notificationHandler) {
@@ -5487,7 +5013,6 @@
 
                     function releaseSlotForCursor(slot) {
                         if (slot) {
-                            //#DBG _ASSERT(slot.cursorCount > 0);
                             if (--slot.cursorCount === 0) {
                                 releaseSlotIfUnrequested(slot);
                             }
@@ -5566,7 +5091,6 @@
                     function releaseItem(handle) {
                         var slot = handleMap[handle];
 
-                        //#DBG _ASSERT(slot);
                         if (slot) {
                             var slotBinding = slot.bindingMap[listBindingID];
                             if (--slotBinding.count === 0) {

@@ -33,20 +33,10 @@
 
                 beginUpdating: function () {
                     this._checkLocked();
-                    /*#DBG
-                    if (this._updateCount !== 0) {
-                        throw "ACK! incorrect begin/endUpdating pair on version manager";
-                    }
-                    #DBG*/
                     this._updateCount++;
                 },
                 endUpdating: function() {
                     this._updateCount--;
-                    /*#DBG
-                    if (this._updateCount < 0) {
-                        throw "ACK! incorrect begin/endUpdating pair on version manager";
-                    }
-                    #DBG*/
                     this._checkUnlocked();
                 },
                 beginNotifications: function () {
@@ -55,11 +45,6 @@
                 },
                 endNotifications: function () {
                     this._notificationCount--;
-                    /*#DBG
-                    if (this._notificationCount < 0) {
-                        throw "ACK! incorrect begin/endNotifications pair on version manager";
-                    }
-                    #DBG*/
                     this._checkUnlocked();
                 },
                 _checkLocked: function () {

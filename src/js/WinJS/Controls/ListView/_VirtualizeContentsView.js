@@ -162,12 +162,6 @@
                 },
 
                 _addItem: function VirtualizeContentsView_addItem(fragment, itemIndex, element, currentPass) {
-                    /*#DBG
-                    if (!WinJS.Utilities.data(element).itemsManagerRecord || WinJS.Utilities.data(element).removeElementMapRecord) {
-                        throw "ACK! Attempt to add an item to the scrollview which hasn't yet been realized";
-                    }
-                    #DBG*/
-
                     if (this._realizePass === currentPass) {
                         var record = this._listView._itemsManager._recordFromElement(element);
 
@@ -490,7 +484,6 @@
 
                     function newItemIsReady(itemIndex, element, itemsManagerRecord) {
                         if (that._realizePass === currentPass) {
-                            //#DBG _ASSERT(!itemsManagerRecord.released);
                             var element = itemsManagerRecord.element;
                             that._addItem(fragment, itemIndex, element, currentPass);
                             itemIsReady(itemIndex, itemsManagerRecord);
@@ -501,7 +494,6 @@
                         var createCount = 0;
                         var updateCount = 0;
                         var cleanCount = 0;
-                        //#DBG _ASSERT(lastInView < end);
                         that.firstIndexDisplayed = firstInView;
                         that.lastIndexDisplayed = lastInView;
 
@@ -790,7 +782,6 @@
                         realizationPromises = [];
 
                     if (groupIndex !== null) {
-                        //#DBG _ASSERT(groupEnd !== null);
                         for (; groupIndex <= groupEnd; groupIndex++) {
                             realizationPromises.push(updateGroup(groupIndex));
                         }
@@ -1115,7 +1106,6 @@
 
                                                     // If group is the last realized group, then nextGroup won't exist in the DOM.
                                                     // When this is the case, nextItem shouldn't exist.
-                                                    //#DBG _ASSERT(nextGroup && nextGroup.header || !nextItem);
                                                     if (nextGroup && nextGroup.header && nextItem) {
                                                         WinJS.UI._setAttribute(nextGroup.header, "tabindex", that._listView._tabIndex);
                                                         WinJS.UI._setAttribute(nextGroup.header, "role", that._listView._headerRole);
@@ -1132,7 +1122,6 @@
                                                     lastRealizedIndexInGroup = calcLastRealizedIndexInGroup(currentGroup);
                                                 } else {
                                                     // This is not the last item in the group so flow to the next item
-                                                    //#DBG _ASSERT(nextItem);
                                                     WinJS.UI._setFlow(item, nextItem);
                                                 }
                                             } else if (nextItem) {
@@ -1272,12 +1261,10 @@
                     var type = WinJS.UI.ObjectType.item;
                     if (WinJS.Utilities.hasClass(item, WinJS.UI._headerClass)) {
                         index = this._listView._groups.index(item);
-                        //#DBG _ASSERT(index !== WinJS.UI._INVALID_INDEX);
                         type = WinJS.UI.ObjectType.groupHeader;
                         WinJS.UI._setAttribute(item, "role", this._listView._headerRole);
                     } else {
                         index = this.items.index(item);
-                        //#DBG _ASSERT(index !== WinJS.UI._INVALID_INDEX);
                         WinJS.UI._setAttribute(item, "aria-setsize", count);
                         WinJS.UI._setAttribute(item, "aria-posinset", index + 1);
                         WinJS.UI._setAttribute(item, "role", this._listView._itemRole);

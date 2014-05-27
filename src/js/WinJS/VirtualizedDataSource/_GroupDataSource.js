@@ -218,8 +218,6 @@
 
                 getCount: function () {
                     if (this._lastGroup && typeof this._lastGroup.index === "number") {
-                        //#DBG _ASSERT(this._count === this._lastGroup.index);
-
                         return Promise.wrap(this._count);
                     } else {
                         // Even if there's a current estimate for _count, consider this call to be a request to determine the true
@@ -252,7 +250,6 @@
                             that._fetchQueue.push(fetch);
 
                             if (!that._itemBatch) {
-                                //#DBG _ASSERT(that._fetchQueue[0] === fetch);
                                 that._continueFetch(fetch);
                             }
                         });
@@ -365,7 +362,6 @@
                                 if (typeof group.index !== "number" && typeof index === "number") {
                                     // Set the indices of as many groups as possible
                                     for (var group2 = group; group2; group2 = this._nextGroup(group2)) {
-                                        //#DBG _ASSERT(typeof this._indexMap[index] !== "number");
                                         group2.index = index;
                                         this._indexMap[index] = group2;
 
@@ -435,7 +431,6 @@
                 },
 
                 _fetchBatch: function (itemPromise, countBefore, countAfter) {
-                    //#DBG _ASSERT(countBefore + 1 + countAfter === this._batchSize);
                     this._itemBatch = new Array(this._batchSize);
                     this._itemsToFetch = this._batchSize;
 
@@ -467,7 +462,6 @@
                     var groupHighestIndex = this._indexMap[this._indexMax - 1];
                     if (groupHighestIndex) {
                         // We've already fetched some of the first items, so continue where we left off
-                        //#DBG _ASSERT(groupHighestIndex.firstReached);
                         this._fetchAdjacent(groupHighestIndex.lastItem, true);
                     } else {
                         // Fetch one non-existent item before the list so _processBatch knows the start was reached
@@ -493,7 +487,6 @@
                                 this._fetchAdjacent((groupPrev && groupPrev.lastReached ? groupPrev.firstItem : group.firstItem), false);
                             } else {
                                 groupNext = this._nextGroup(group);
-                                //#DBG _ASSERT(fetch.countAfter > 0 && !groupReady(groupNext));
                                 this._fetchAdjacent((groupNext && groupNext.firstReached ? groupNext.lastItem : group.lastItem), true);
                             }
                         } else {
@@ -632,7 +625,6 @@
                             that._fetchQueue.push(fetch);
 
                             if (!that._itemBatch) {
-                                //#DBG _ASSERT(that._fetchQueue[0] === fetch);
                                 that._continueFetch(fetch);
                             }
                         }
