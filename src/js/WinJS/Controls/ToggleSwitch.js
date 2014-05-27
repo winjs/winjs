@@ -21,11 +21,8 @@
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         ToggleSwitch: WinJS.Namespace._lazy(function () {
-            // Constants definition
-            var MOUSE_LBUTTON = 0; // left button of the mouse
-            var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
-            var PT_PEN = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_PEN || "pen";
-            var PT_MOUSE = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse";
+            // Constants
+            var MOUSE_LBUTTON = 0;
 
             var strings = {
                 get on() { return WinJS.Resources._getWinJSString("ui/on").value; },
@@ -103,7 +100,6 @@
                 this._disposed = false;
                 this._spaceKeyDown = false;
 
-                this._gesture = WinJS.Utilities._createGestureRecognizer(); // Add the gesture object before creating the listeners in _setElement for gesture events handling
                 this._shouldHideFocus = false; // This variable is needed to prevent focus rect from showing between the time during pointer down and focus happens.
                 this._pointerId = 0;
                 this._hasCapture = false;
@@ -137,8 +133,8 @@
                     },
                     set: function (value) {
                         var disabled = !!value; // Sanitize for a bool
-                        this._switchElement.disabled = disabled; // This is necessary to apply the css to the toggle 'switch' 
-                        if (disabled) { // This is necessary to apply the css to the toggle 'label' and 'title' 
+                        this._switchElement.disabled = disabled; // This is necessary to apply the css to the toggle 'switch'
+                        if (disabled) { // This is necessary to apply the css to the toggle 'label' and 'title'
                             utilities.addClass(this._labelOnElement, msToggleDisabled);
                             utilities.addClass(this._labelOffElement, msToggleDisabled);
                             utilities.addClass(this._titleElement, msToggleDisabled);
@@ -288,12 +284,8 @@
 
                 _wireupEvents: function () {
                     var that = this;
-                    var pointerUpHandler = function (event) {
-                        if (event.pointerId == that._pointerId) {
-                            that._valueHandler(false);
-                        }
-                    };
-                    var spaceDownHandler = function (event) {
+
+                    var keyDownHandler = function (event) {
                         if (event.keyCode === utilities.Key.space) { // Spacebar
                             if (!that._spaceKeyDown) {
                                 that._switchElement.valueAsNumber = (that._switchElement.valueAsNumber + 1) % 2;
@@ -310,45 +302,9 @@
                             }
                         }
                     };
-                    var tapHandler = function () {
-                        that._valueHandler(true);
-                    };
                     var cancelHandler = function () {
                         that._switchElement.valueAsNumber = that.checked;
                         that._spaceKeyDown = false; // Reset flag on spaceKey
-                    };
-                    var dragHandler = function (event) {
-                        if (!that._switchElement.disabled) {
-                            // touch or the left button of mouse is down
-                            if (!that._hasCapture && event.type == "MSGestureChange") {
-                                try {
-                                    WinJS.Utilities._setPointerCapture(that._switchElement, that._pointerId);
-                                    that._hasCapture = true;
-                                } catch (err) { }
-                            }
-                            else if (that._hasCapture && event.type == "MSGestureEnd") {
-                                try {
-                                    that._hasCapture = false;
-                                } catch (err) { }
-                            }
-                        }
-                    };
-                    var trackTap = function (event) {
-                        if (!that._switchElement.disabled && (event.pointerType === PT_TOUCH || event.pointerType === PT_PEN || event.button === MOUSE_LBUTTON)) {
-                            if (!that._hasCapture) {
-                                try {
-                                    // since toggle only needs to track one finger,
-                                    // it's better to reset the old pointerId and only track one
-                                    that._gesture.stop();
-                                    that._gesture.target = event.target;
-                                    that._gesture.addPointer(event.pointerId);
-                                    that._pointerId = event.pointerId;
-                                } catch (err) { }
-                            }
-                            // Prevent default behavior for these events
-                            event.preventDefault();
-                            switchFocus();
-                        }
                     };
                     var onDOMAttrModified = function (event) {
                         if (event.attrName === "aria-checked") {
@@ -382,23 +338,59 @@
                             utilities.removeClass(that._switchElement, msFocusHide);
                         }
                     };
-                    WinJS.Utilities._addEventListener(this._switchElement, "pointercancel", cancelHandler, false);
-                    this._switchElement.addEventListener("lostpointercapture", cancelHandler, false);
-                    WinJS.Utilities._addEventListener(this._switchElement, "pointerup", pointerUpHandler, false);
-                    this._switchElement.addEventListener("MSGestureChange", dragHandler, false);
-                    this._switchElement.addEventListener("MSGestureEnd", dragHandler, false);
-                    this._switchElement.addEventListener("MSGestureTap", tapHandler, false);
-                    this._switchElement.addEventListener("keydown", spaceDownHandler, false);
-                    this._switchElement.addEventListener("keyup", keyUpHandler, false);
-                    new WinJS.Utilities._MutationObserver(reloadChangeHandler).observe(this._switchElement, { attributes: true, attributeFilter: ["value"] });
-                    this._switchElement.addEventListener("change", function (ev) { ev.stopPropagation(); }, true); // Stop the change event from bubbling up and fire our own change event when the user interaction is done.
 
-                    WinJS.Utilities._addEventListener(this._switchElement, "pointerdown", trackTap, false); // Use the gesture object so we could listen to tap events
-                    this._switchElement.addEventListener("DOMAttrModified", onDOMAttrModified, false); // Listen to DOMAttrModified for aria-checked change
-                    
-                    WinJS.Utilities._addEventListener(this._switchElement, "focusout", function () { enableFocusRect(); cancelHandler(); }, false);
-                    WinJS.Utilities._addEventListener(this._domElement, "focusin", switchFocus, false);
+                    var pointerDownHandler = function(e) {
+                        if (that._switchElement.disabled || ("button" in e && e.button !== MOUSE_LBUTTON)) {
+                            return;
+                        }
+
+                        that._tapping = true;
+                        that._pointerDown = true;
+                        setTimeout(function() {
+                            that._tapping = false;
+                        }, 200);
+                        if (that._switchElement.setPointerCapture) {
+                            e.preventDefault();
+                        }
+                        switchFocus();
+                    };
+
+                    var pointerUpHandler = function(e) {
+                        if (that._switchElement.disabled) {
+                            return;
+                        }
+
+                        that._pointerDown = false;
+                        that._valueHandler(that._tapping);
+                        that._hasCapture = false;
+                    };
+
+                    var pointerMoveHandler = function(e) {
+                        if (that._switchElement.disabled) {
+                            return;
+                        }
+
+                        if (that._pointerDown && !that._hasCapture) {
+                            WinJS.Utilities._setPointerCapture(that._switchElement, e.pointerId);
+                            that._hasCapture = true;
+                        }
+                    };
+
                     WinJS.Utilities._addEventListener(this._domElement, "pointerdown", dismissFocusRect, true);
+                    WinJS.Utilities._addEventListener(this._domElement, "focusin", switchFocus, false);
+
+                    this._switchElement.addEventListener("lostpointercapture", cancelHandler, false);
+                    this._switchElement.addEventListener("DOMAttrModified", onDOMAttrModified, false); // Listen to DOMAttrModified for aria-checked change
+                    this._switchElement.addEventListener("change", function (ev) { ev.stopPropagation(); }, true); // Stop the change event from bubbling up and fire our own change event when the user interaction is done.
+                    this._switchElement.addEventListener("keydown", keyDownHandler, false);
+                    this._switchElement.addEventListener("keyup", keyUpHandler, false);
+                    WinJS.Utilities._addEventListener(this._switchElement, "pointercancel", cancelHandler, false);
+                    WinJS.Utilities._addEventListener(this._switchElement, "pointerdown", pointerDownHandler, false);
+                    WinJS.Utilities._addEventListener(this._switchElement, "pointerup", pointerUpHandler, false);
+                    WinJS.Utilities._addEventListener(this._switchElement, "pointermove", pointerMoveHandler, false);
+                    WinJS.Utilities._addEventListener(this._switchElement, "focusout", function () { enableFocusRect(); cancelHandler(); }, false);
+
+                    new WinJS.Utilities._MutationObserver(reloadChangeHandler).observe(this._switchElement, { attributes: true, attributeFilter: ["value"] });
                 },
 
                 dispose: function () {
@@ -412,8 +404,6 @@
                     }
 
                     this._disposed = true;
-                    this._gesture.target = null;
-                    this._gesture = null;
                 },
 
                 addEventListener: function (eventName, eventCallBack, capture) {
