@@ -24,14 +24,19 @@
     cursor: pointer;
     background-color: gray;
     opacity: 0;
+    font-family: "Segoe UI Symbol", "Symbols";
 }
 
 .win-pivot .win-pivot-headers.win-pivot-shownavbuttons .win-pivot-navbutton {
     opacity: 0.8;
 }
 
-.win-pivot .win-pivot-navbutton-next {
-    right: 0px;
+.win-pivot .win-pivot-headers .win-pivot-navbutton-prev:before {
+    content: "\E0E2";
+}
+
+.win-pivot .win-pivot-headers .win-pivot-navbutton-next:before {
+    content: "\E0E3";
 }
 
 .win-pivot .win-pivot-title {

@@ -108,11 +108,11 @@
                 this._headersContainerElement = document.createElement("DIV");
                 WinJS.Utilities.addClass(this._headersContainerElement, WinJS.UI.Pivot._ClassName.pivotHeaders);
                 this._element.appendChild(this._headersContainerElement);
-                WinJS.Utilities._addEventListener(this._headersContainerElement, "mouseenter", this._showNavButtons);
-                WinJS.Utilities._addEventListener(this._headersContainerElement, "mouseleave", this._hideNavButtons);
                 if (supportsSnapPoints) {
                     this._element.addEventListener('click', this._elementClickedHandler);
                 } else {
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons);
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons);
                     WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler);
                     WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler);
                 }
@@ -619,25 +619,21 @@
                             this._prevButton = document.createElement("button");
                             this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
                             this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonPrev);
-                            this._prevButton.style.left = leadingSpace + "px";
-                            this._prevButton.innerHTML = "&#xE016;";
                             this._prevButton.addEventListener("click", function () {
                                 that._goPrevious();
                             });
-                            WinJS.Utilities._addEventListener(this._prevButton, "mouseenter", that._showNavButtons);
-                            WinJS.Utilities._addEventListener(this._prevButton, "mouseleave", that._hideNavButtons);
                             this._headersContainerElement.appendChild(this._prevButton);
+                            // Left is NOT 0px since the header track has a negative leading space for the previous header
+                            this._prevButton.style.left = leadingSpace + "px";
 
                             this._nextButton = document.createElement("button");
                             this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
                             this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonNext);
-                            this._nextButton.innerHTML = "&#xE017;";
                             this._nextButton.addEventListener("click", function () {
                                 that._goNext();
                             });
-                            WinJS.Utilities._addEventListener(this._nextButton, "mouseenter", that._showNavButtons);
-                            WinJS.Utilities._addEventListener(this._nextButton, "mouseleave", that._hideNavButtons);
                             this._headersContainerElement.appendChild(this._nextButton);
+                            this._nextButton.style.right = "0px";
 
                             this._navButtonsShowCount = 0;
                         }
@@ -899,14 +895,20 @@
                 },
 
                 _showNavButtons: function pivot_showNavButtons(e) {
-                    if (e.pointerType === WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || e.pointerType === "touch") {
+                    if (e.pointerType === PT_TOUCH) {
                         return;
                     }
                     this._navButtonsShowCount++;
                     this._headersContainerElement.classList.add(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
                 },
 
-                _hideNavButtons: function pivot_hideNavButtons() {
+                _hideNavButtons: function pivot_hideNavButtons(e) {
+                    if (this._headersContainerElement.contains(e.relatedTarget)) {
+                        // Don't hide the nav button if the pointerout event is being fired from going
+                        // from one element to another within the header track.
+                        return;
+                    }
+
                     this._navButtonsShowCount--;
                     if (this._navButtonsShowCount <= 0) {
                         this._headersContainerElement.classList.remove(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
