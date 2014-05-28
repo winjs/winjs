@@ -3858,6 +3858,7 @@
                                         var slotRefreshOld;
                                         for (slotRefreshOld = sequenceNew.firstInner; !slotFromSlotRefresh(slotRefreshOld) ; slotRefreshOld = slotRefreshOld.next) {
                                             /*@empty*/
+                                        }
                                         slotInsertBefore = slotFromSlotRefresh(slotRefreshOld);
                                     }
 
@@ -6050,7 +6051,7 @@
             });
             WinJS.Class.mix(VDS, WinJS.Utilities.eventMixin);
             return VDS;
-        }),
+        })
 
     });
 
