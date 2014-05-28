@@ -156,11 +156,11 @@
             return highestTabIndex;
         },
 
-        _trySetActive: function Utilities_trySetActive(elem) {
-            return this._tryFocus(elem, true);
+        _trySetActive: function Utilities_trySetActive(elem, scroller) {
+            return this._tryFocus(elem, true, scroller);
         },
 
-        _tryFocus: function Utilities_tryFocus(elem, useSetActive) {
+        _tryFocus: function Utilities_tryFocus(elem, useSetActive, scroller) {
             var previousActiveElement = document.activeElement;
 
             if (elem === previousActiveElement) {
@@ -173,7 +173,7 @@
             }
 
             if (useSetActive) {
-                WinJS.Utilities._setActive(elem);
+                WinJS.Utilities._setActive(elem, scroller);
             } else {
                 elem.focus();
             }
@@ -184,11 +184,11 @@
             return false;
         },
 
-        _setActiveFirstFocusableElement: function Utilities_setActiveFirstFocusableElement(rootEl) {
-            return this._focusFirstFocusableElement(rootEl, true);
+        _setActiveFirstFocusableElement: function Utilities_setActiveFirstFocusableElement(rootEl, scroller) {
+            return this._focusFirstFocusableElement(rootEl, true, scroller);
         },
 
-        _focusFirstFocusableElement: function Utilities_focusFirstFocusableElement(rootEl, useSetActive) {
+        _focusFirstFocusableElement: function Utilities_focusFirstFocusableElement(rootEl, useSetActive, scroller) {
             var _elms = rootEl.getElementsByTagName("*");
 
             // Get the tabIndex set to the firstDiv (which is the lowest)
@@ -201,7 +201,7 @@
             while (_lowestTabIndex) {
                 for (var i = 0; i < _elms.length; i++) {
                     if (_elms[i].tabIndex === _lowestTabIndex) {
-                        if (this._tryFocus(_elms[i], useSetActive)) {
+                        if (this._tryFocus(_elms[i], useSetActive, scroller)) {
                             return true;
                         }
                     } else if ((_lowestTabIndex < _elms[i].tabIndex)
@@ -220,7 +220,7 @@
             // Wasn't able to set focus to anything with a positive tabIndex, try everything now.
             // This is where things with tabIndex of 0 will be tried.
             for (i = 0; i < _elms.length; i++) {
-                if (this._tryFocus(_elms[i], useSetActive)) {
+                if (this._tryFocus(_elms[i], useSetActive, scroller)) {
                     return true;
                 }
             }
@@ -228,11 +228,11 @@
             return false;
         },
 
-        _setActiveLastFocusableElement: function Utilities_setActiveLastFocusableElement(rootEl) {
-            return this._focusLastFocusableElement(rootEl, true);
+        _setActiveLastFocusableElement: function Utilities_setActiveLastFocusableElement(rootEl, scroller) {
+            return this._focusLastFocusableElement(rootEl, true, scroller);
         },
 
-        _focusLastFocusableElement: function Utilities_focusLastFocusableElement(rootEl, useSetActive) {
+        _focusLastFocusableElement: function Utilities_focusLastFocusableElement(rootEl, useSetActive, scroller) {
             var _elms = rootEl.getElementsByTagName("*");
             // Get the tabIndex set to the finalDiv (which is the highest)
             var _highestTabIndex = this._getHighestTabIndexInList(_elms);
@@ -245,7 +245,7 @@
             if (_highestTabIndex === 0) {
                 for (var i = _elms.length - 1; i >= 0; i--) {
                     if (_elms[i].tabIndex === _highestTabIndex) {
-                        if (this._tryFocus(_elms[i], useSetActive)) {
+                        if (this._tryFocus(_elms[i], useSetActive, scroller)) {
                             return true;
                         }
                     } else if (_nextHighestTabIndex < _elms[i].tabIndex) {
@@ -263,7 +263,7 @@
             while (_highestTabIndex) {
                 for (i = _elms.length - 1; i >= 0; i--) {
                     if (_elms[i].tabIndex === _highestTabIndex) {
-                        if (this._tryFocus(_elms[i], useSetActive)) {
+                        if (this._tryFocus(_elms[i], useSetActive, scroller)) {
                             return true;
                         }
                     } else if ((_nextHighestTabIndex < _elms[i].tabIndex) && (_elms[i].tabIndex < _highestTabIndex)) {
@@ -280,7 +280,7 @@
 
             // Wasn't able to set focus to anything with a tabIndex, try everything now
             for (i = _elms.length - 2; i > 0; i--) {
-                if (this._tryFocus(_elms[i], useSetActive)) {
+                if (this._tryFocus(_elms[i], useSetActive, scroller)) {
                     return true;
                 }
             }

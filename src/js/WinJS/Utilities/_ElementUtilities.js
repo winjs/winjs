@@ -6,6 +6,8 @@
     if (!global.document) {
         return;
     }
+    
+    var zoomToDuration = 167;
 
     function removeEmpties(arr) {
         var len = arr.length;
@@ -647,16 +649,61 @@
             if (element.msZoomTo) {
                 element.msZoomTo(args);
             } else {
-                if (typeof args.contentX === "number") {
-                    setAdjustedScrollPosition(element, args.contentX, undefined);
-                }
-                if (typeof args.contentY === "number") {
-                    element.scrollTop = args.contentY;
-                }
+                // Schedule to ensure that we're not running from within an event handler. For example, if running
+                // within a focus handler triggered by WinJS.Utilities._setActive, scroll position will not yet be
+                // restored.
+                WinJS.Utilities.Scheduler.schedule(function () {
+                    var initialPos = getAdjustedScrollPosition(element);
+                    var effectiveScrollLeft = (typeof element._zoomToDestX === "number" ? element._zoomToDestX : initialPos.scrollLeft);
+                    var effectiveScrollTop = (typeof element._zoomToDestY === "number" ? element._zoomToDestY : initialPos.scrollTop);
+                    var cs = getComputedStyle(element);
+                    var scrollLimitX = element.scrollWidth - parseInt(cs.width, 10) - parseInt(cs.paddingLeft, 10) - parseInt(cs.paddingRight, 10);
+                    var scrollLimitY = element.scrollHeight - parseInt(cs.height, 10) - parseInt(cs.paddingTop, 10) - parseInt(cs.paddingBottom, 10);
+                    
+                    if (typeof args.contentX !== "number") {
+                        args.contentX = effectiveScrollLeft;
+                    }
+                    if (typeof args.contentY !== "number") {
+                        args.contentY = effectiveScrollTop;
+                    }
+                    
+                    var zoomToDestX = WinJS.Utilities._clamp(args.contentX, 0, scrollLimitX);
+                    var zoomToDestY = WinJS.Utilities._clamp(args.contentY, 0, scrollLimitY);
+                    if (zoomToDestX === effectiveScrollLeft && zoomToDestY === effectiveScrollTop) {
+                        // Scroll position is already in the proper state. This zoomTo is a no-op.
+                        return;
+                    }
+                    
+                    element._zoomToId = element._zoomToId || 0;
+                    element._zoomToId++;
+                    element._zoomToDestX = zoomToDestX;
+                    element._zoomToDestY = zoomToDestY;
+                    
+                    var thisZoomToId = element._zoomToId;
+                    var start = WinJS.Utilities._now();
+                    var xFactor = (element._zoomToDestX - initialPos.scrollLeft) / zoomToDuration;
+                    var yFactor = (element._zoomToDestY - initialPos.scrollTop) / zoomToDuration;
+                    
+                    var update = function () {
+                        var t = WinJS.Utilities._now() - start;
+                        if (element._zoomToId !== thisZoomToId) {
+                            return;
+                        } else if (t > zoomToDuration) {
+                            setAdjustedScrollPosition(element, element._zoomToDestX, element._zoomToDestY);
+                            element._zoomToDestX = null;
+                            element._zoomToDestY = null;
+                        } else {
+                            setAdjustedScrollPosition(element, initialPos.scrollLeft + t * xFactor, initialPos.scrollTop + t * yFactor);
+                            requestAnimationFrame(update);
+                        }
+                    };
+                    
+                    requestAnimationFrame(update);
+                }, WinJS.Utilities.Scheduler.Priority.high, null, "WinJS.Utilities._zoomTo");
             }
         },
 
-        _setActive: function _setActive(element) {
+        _setActive: function _setActive(element, scroller) {
             var success = true;
             try {
                 if (global.HTMLElement && HTMLElement.prototype.setActive) {
@@ -664,7 +711,23 @@
                 } else {
                     // We are aware the unlike setActive(), focus() will scroll to the element that gets focus. However, this is
                     // our current cross-browser solution until there is an equivalent for setActive() in other browsers.
+                    //
+                    // This _setActive polyfill does have limited support for preventing scrolling: via the scroller parameter, it
+                    // can prevent one scroller from scrolling. This functionality is necessary in some scenarios. For example, when using
+                    // _zoomTo and _setActive together.
+                    
+                    var scrollLeft,
+                        scrollTop;
+                    
+                    if (scroller) {
+                        scrollLeft = scroller.scrollLeft;
+                        scrollTop = scroller.scrollTop;
+                    }
                     element.focus();
+                    if (scroller) {
+                        scroller.scrollLeft = scrollLeft;
+                        scroller.scrollTop = scrollTop;
+                    }
                 }
             } catch (e) {
                 // setActive() raises an exception when trying to focus an invisible item. Checking visibility is non-trivial, so it's best

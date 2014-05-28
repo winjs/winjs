@@ -2,6 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/util.js" />
 /// <deploy src="../TestData/" />
 
 var CorsicaTests = CorsicaTests || {};
@@ -664,6 +665,85 @@ CorsicaTests.Utilities = function () {
                 child1.scrollTop = 30;
             });
     };
+    
+    // Verifies that *setActive* gives an element focus without causing its parent scroller to scroll.
+    function generateTestNoScroll(rtl, setActive) {
+        return function (complete) {
+            var scroller = document.createElement("div");
+            var child = document.createElement("div");
+            
+            if (rtl) {
+                scroller.setAttribute("dir", "rtl");
+            }
+            scroller.style.position = "relative";
+            scroller.style.overflow = "auto";
+            scroller.style.width = "100px";
+            scroller.style.height = "100px";
+            scroller.style.backgroundColor = "steelblue";
+            scroller.className = "testNoScroll";
+            
+            child.style.position = "absolute";
+            child.style.left = (rtl ? -200 : 200) + "px";
+            child.style.top = "200px";
+            child.style.width = "50px";
+            child.style.height = "50px";
+            child.tabIndex = 0;
+            child.style.backgroundColor = "orange";
+            
+            scroller.appendChild(child);
+            document.body.appendChild(scroller);
+            
+            var initPos = { scrollLeft: 5, scrollTop: 8 };
+            
+            Helper.waitForScroll(scroller).then(function () {
+                var pos = WinJS.Utilities.getScrollPosition(scroller, 5, 8);
+                LiveUnit.Assert.areEqual(initPos.scrollLeft, pos.scrollLeft, "scrollLeft wasn't initialized properly");
+                LiveUnit.Assert.areEqual(initPos.scrollTop, pos.scrollTop, "scrollTop wasn't initialized properly");
+                
+                return Helper.waitForFocus(child, function () {
+                    setActive(child, scroller);
+                });
+            }).then(function () {
+                // Post to guarantee we aren't running within a focus handler. Within a focus handler, the
+                // setActive helper may not have restored the scroll position yet.
+                return WinJS.Promise.timeout();
+            }).then(function () {
+                var pos = WinJS.Utilities.getScrollPosition(scroller, 5, 8);
+                LiveUnit.Assert.areEqual(child, document.activeElement, "Focus should have been moved to child");
+                LiveUnit.Assert.areEqual(initPos.scrollLeft, pos.scrollLeft, "scroller's scrollLeft shouldn't have changed");
+                LiveUnit.Assert.areEqual(initPos.scrollTop, pos.scrollTop, "scroller's scrollTop shouldn't have changed");
+                
+                scroller.parentNode && scroller.parentNode.removeChild(scroller);
+                complete();
+            });
+            
+            WinJS.Utilities.setScrollPosition(scroller, initPos);
+        };
+    };
+    
+    // Sets the tabIndex before calling *setActiveWithin*.
+    function setActiveWithinWithTabIndex(tabIndex, setActiveWithin) {
+        return function (elem, scroller) {
+            elem.tabIndex = tabIndex;
+            setActiveWithin(scroller, scroller);
+        };
+    }
+    
+    var Utils = WinJS.Utilities;
+    
+    var setActiveTests = {
+        _setActive: Utils._setActive.bind(Utils),
+        _trySetActive: Utils._trySetActive.bind(Utils),
+        _setActiveFirstFocusableElement0: setActiveWithinWithTabIndex(0, Utils._setActiveFirstFocusableElement.bind(Utils)),
+        _setActiveFirstFocusableElementPos: setActiveWithinWithTabIndex(1, Utils._setActiveFirstFocusableElement.bind(Utils)),
+        _setActiveLastFocusableElement0: setActiveWithinWithTabIndex(0, Utils._setActiveLastFocusableElement.bind(Utils)),
+        _setActiveLastFocusableElementPos: setActiveWithinWithTabIndex(1, Utils._setActiveLastFocusableElement.bind(Utils)),
+        
+    };
+    Object.keys(setActiveTests).forEach(function (name) {
+        this["testNoScroll" + name + "_ltr"] = generateTestNoScroll(false, setActiveTests[name]);
+        this["testNoScroll" + name + "_rtl"] = generateTestNoScroll(true, setActiveTests[name]);
+    }.bind(this));
 }
 
 

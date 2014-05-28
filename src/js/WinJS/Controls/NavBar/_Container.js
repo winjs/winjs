@@ -67,7 +67,7 @@
                 /// </returns>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
-
+                
                 element = element || document.createElement("DIV");
                 this._id = element.id || WinJS.Utilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -603,7 +603,9 @@
                     this._rightArrowEl.style.visibility = 'hidden';
                     this._rightArrowFadeOut = WinJS.Promise.wrap();
 
-                    this._keyboardBehavior = new WinJS.UI._KeyboardBehavior(this._surfaceEl);
+                    this._keyboardBehavior = new WinJS.UI._KeyboardBehavior(this._surfaceEl, {
+                        scroller: this._viewportEl
+                    });
                     this._winKeyboard = new WinJS.UI._WinKeyboard(this._surfaceEl);
                 },
 
@@ -763,7 +765,7 @@
                                 this._scrollTo(scrollPositionTarget);
                             }
 
-                            WinJS.Utilities._setActive(element);
+                            WinJS.Utilities._setActive(element, this._viewportEl);
                         } else {
                             if (this.layout === WinJS.UI.Orientation.horizontal) {
                                 var indexOfLastItemOnPage = (page + 1) * sizes.columnsPerPage * sizes.rowsPerPage - 1;
@@ -816,7 +818,7 @@
                             }
 
                             try {
-                                WinJS.Utilities._setActive(element);
+                                WinJS.Utilities._setActive(element, this._viewportEl);
                             } catch (e) {
                             }
                         }

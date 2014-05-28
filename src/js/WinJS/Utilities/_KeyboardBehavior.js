@@ -164,6 +164,16 @@
                         this._getAdjacent = value;
                     }
                 },
+                
+                // If set, KeyboardBehavior will prevent *scroller* from scrolling when moving focus
+                scroller: {
+                    get: function () {
+                        return this._scroller;
+                    },
+                    set: function (value) {
+                        this._scroller = value;
+                    }
+                },
 
                 _keyDownHandler: function _KeyboardBehavior_keyDownHandler(ev) {
                     if (!ev.altKey) {
@@ -272,7 +282,7 @@
 
                         this.currentIndex = index;
 
-                        WinJS.Utilities._setActive(elementToFocus);
+                        WinJS.Utilities._setActive(elementToFocus, this.scroller);
                     }
                 },
 

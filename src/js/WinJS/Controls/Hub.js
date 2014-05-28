@@ -1074,13 +1074,13 @@ define(['./Hub/_Section'], function() {
                         for (var i = indexToFocus; i < this.sections.length; i++) {
                             var section = this.sections.getAt(i);
 
-                            var focusAttempt = WinJS.Utilities._trySetActive(section._headerTabStopElement);
+                            var focusAttempt = WinJS.Utilities._trySetActive(section._headerTabStopElement, this._viewportElement);
 
                             if (focusAttempt) {
                                 return;
                             }
 
-                            if (WinJS.Utilities._setActiveFirstFocusableElement(section.contentElement)) {
+                            if (WinJS.Utilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
                                 return;
                             }
                         }
@@ -1088,11 +1088,11 @@ define(['./Hub/_Section'], function() {
                         for (var i = indexToFocus - 1; i >= 0; i--) {
                             var section = this.sections.getAt(i);
 
-                            if (WinJS.Utilities._setActiveFirstFocusableElement(section.contentElement)) {
+                            if (WinJS.Utilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
                                 return;
                             }
 
-                            var focusAttempt = WinJS.Utilities._trySetActive(section._headerTabStopElement);
+                            var focusAttempt = WinJS.Utilities._trySetActive(section._headerTabStopElement, this._viewportElement);
 
                             if (focusAttempt) {
                                 return;
@@ -1160,7 +1160,7 @@ define(['./Hub/_Section'], function() {
                 _tryFocus: function hub_tryFocus(index) {
                     var targetSection = this.sections.getAt(index);
 
-                    WinJS.Utilities._setActive(targetSection._headerTabStopElement);
+                    WinJS.Utilities._setActive(targetSection._headerTabStopElement, this._viewportElement);
 
                     return document.activeElement === targetSection._headerTabStopElement;
                 },
