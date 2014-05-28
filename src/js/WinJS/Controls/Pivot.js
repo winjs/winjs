@@ -983,6 +983,7 @@
                     }
 
                     this._showPivotItemAnimation.then(showCleanup, showCleanup);
+                    return this._showPivotItemAnimation;
                 },
 
                 _slideHeaders: function pivot_slideHeaders(goPrevious, index, oldIndex) {
@@ -1117,11 +1118,19 @@
                             if (supportsSnapPoints) {
                                 // Position item:
                                 item.element.style[that._getDirectionAccessor()] = that._currentScrollTargetLocation + "px";
+                                that._showPivotItem(item.element, goPrevious);
+                            } else {
+                                // Since we aren't msZommTo'ing when snap points aren't supported, both the show and hide animations would be
+                                // executing ontop of each other which produces undesirable visuals. Here we wait for the hide to finish before showing.
+                                if (that._hidePivotItemAnimation) {
+                                    that._showPivotItemAnimation = that._hidePivotItemAnimation.then(function () {
+                                        return that._showPivotItem(item.element, goPrevious);
+                                    });
+                                } else {
+                                    // During the very first load, there is no hide animation, we can just show the pivot item immediately.
+                                    that._showPivotItem(item.element, goPrevious);
+                                }
                             }
-
-                            // Once the item is loaded show it and animate it in.
-                            that._showPivotItem(item.element, goPrevious);
-
                             WinJS.Promise.join([that._slideHeadersAnimation, that._showPivotItemAnimation, that._hidePivotItemAnimation]).then(function () {
                                 (that._stoppedAndRecenteredSignal ? that._stoppedAndRecenteredSignal.promise : WinJS.Promise.wrap()).then(function () {
                                     WinJS.Promise.timeout(50).then(function () {
