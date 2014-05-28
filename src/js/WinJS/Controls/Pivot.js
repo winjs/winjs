@@ -632,8 +632,6 @@
                             });
                             this._headersContainerElement.appendChild(this._nextButton);
                             this._nextButton.style.right = "0px";
-
-                            this._navButtonsShowCount = 0;
                         }
                     }
                 },
@@ -897,7 +895,6 @@
                     if (e.pointerType === PT_TOUCH) {
                         return;
                     }
-                    this._navButtonsShowCount++;
                     this._headersContainerElement.classList.add(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
                 },
 
@@ -908,11 +905,7 @@
                         return;
                     }
 
-                    this._navButtonsShowCount--;
-                    if (this._navButtonsShowCount <= 0) {
-                        this._headersContainerElement.classList.remove(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
-                        this._navButtonsShowCount = 0;
-                    }
+                    this._headersContainerElement.classList.remove(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
                 },
 
                 _hidePivotItem: function pivot_hidePivotItem(element, goPrevious) {
