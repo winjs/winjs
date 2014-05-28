@@ -25,10 +25,8 @@
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Pivot: WinJS.Namespace._lazy(function () {
             // Feature detection
-            var el = document.createElement("div");
-            el.style.msScrollSnapType = "mandatory";
-            var supportsSnapPoints = !!getComputedStyle(el).msScrollSnapType;
-            el = null;
+            var supportsSnapPoints = !!WinJS.Utilities._browserStyleEquivalents["scroll-snap-type"];
+            var supportsTouchDetection = !!(window.MSPointerEvent || window.TouchEvent);
 
             var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
 
@@ -644,7 +642,7 @@
                     // This prevents Chrome's history navigation swipe gestures.
                     e.preventDefault();
 
-                    this._headersPointerDownPoint = { x: e.clientX, y: e.clientY, type: e.pointerType };
+                    this._headersPointerDownPoint = { x: e.clientX, y: e.clientY, type: e.pointerType || "mouse" };
                     this._headersPointerUpPoint = null;
                 },
 
@@ -664,8 +662,9 @@
                         if (element !== null) {
                             this._activateHeader(element);
                         }
-                    } else if (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH && Math.abs(dy) < 50) {
+                    } else if ((!supportsTouchDetection || (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH)) && Math.abs(dy) < 50) {
                         // Header swipe navigation detection
+                        // If touch detection is not supported then we will detect swipe gestures for any pointer type.
                         if (dx < -50) {
                             this._goNext();
                         } else if (dx > 50) {
