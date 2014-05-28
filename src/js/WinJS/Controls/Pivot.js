@@ -110,10 +110,11 @@
                 this._element.appendChild(this._headersContainerElement);
                 WinJS.Utilities._addEventListener(this._headersContainerElement, "mouseenter", this._showNavButtons);
                 WinJS.Utilities._addEventListener(this._headersContainerElement, "mouseleave", this._hideNavButtons);
-                WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler);
-                WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler);
                 if (supportsSnapPoints) {
                     this._element.addEventListener('click', this._elementClickedHandler);
+                } else {
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler);
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler);
                 }
 
                 this._viewportElement = document.createElement("DIV");
@@ -660,7 +661,7 @@
                     var dy = e.clientY - this._headersPointerDownPoint.y;
                     if (dx < 4 && dy < 4) {
                         // Detect header click
-                        var element = e.srcElement;
+                        var element = e.target;
                         while (element !== null && !element.classList.contains(WinJS.UI.Pivot._ClassName.pivotHeader)) {
                             element = element.parentElement;
                         }
