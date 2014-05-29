@@ -2,12 +2,10 @@
 .win-pivot {
     #flex > .display-flex();
     #flex > .flex-flow(column; nowrap);
-
     height: 100%;
     width: 100%;
     overflow: hidden;
     -ms-scroll-limit-x-max: 0px;
-    font-family: "Segoe WP SemiLight", "Segoe UI"
 }
 
 .win-pivot .win-pivot-navbutton {
@@ -18,8 +16,8 @@
     height: 72px;
     margin: 12px 4px 0px 4px;
     top: 0px;
-    align-items: center;
-    justify-content: center;
+    #flex > .align-items(center);
+    #flex > .justify-content(center);
     min-width: 0px;
     border-width: 0px;
     cursor: pointer;
@@ -75,11 +73,9 @@
 
 .win-pivot button.win-pivot-header,
 .win-pivot button.win-pivot-header:hover,
-.win-pivot button.win-pivot-header:focus,
 .win-pivot button.win-pivot-header:hover:active {
     background-color: transparent;
     border: 0;
-    outline: 0;
     margin: 0;
     padding: 0px 9px;
     letter-spacing: 0px;
@@ -89,6 +85,7 @@
     min-width: 0;
     font-size: 45pt;
     font-weight: 400;
+    font-family: "Segoe WP Semilight";
 }
 
 .win-pivot.win-pivot-locked .win-pivot-header {
@@ -110,18 +107,12 @@
     -ms-scroll-snap-type: mandatory;
     -ms-scroll-snap-points-x: snapInterval(0%, 100%);
     -ms-overflow-style: none;
-
     /* The following 3 styles take advantage of a Trident bug to make the viewport pannable on the header track. The viewport is extended over the
         header track space, and position: relative allows interacting with it as if the viewport was drawn over the header track.
     */
     position: relative;
     padding-top: 72px;
     margin-top: -72px;
-}
-
-.win-pivot.win-pivot-nosnap .win-pivot-viewport {
-    padding-top: 0px;
-    margin-top: 0px;
 }
 
 .win-pivot.win-pivot-locked .win-pivot-viewport {
@@ -135,10 +126,6 @@
     position: relative;
 }
 
-.win-pivot.win-pivot-nosnap .win-pivot-surface {
-    width: 100%;
-}
-
 /*
     PivotItem
 */
@@ -150,14 +137,29 @@
     width: 1%;
 }
 
-.win-pivot.win-pivot-nosnap .win-pivot-item {
-    width: 100%;
-}
-
 .win-pivot-item .win-pivot-item-content {
     height: 100%;
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     padding: 0px 19px;
     width: ~"calc(100% - 28px)";
+}
+
+/*
+    Modified styles for when the Pivot is in nosnap mode
+*/
+.win-pivot.win-pivot-nosnap {
+    .win-pivot-viewport {
+        padding-top: 0px;
+        margin-top: 0px;
+        overflow: hidden;
+    }
+
+    .win-pivot-surface {
+        width: 100%;
+    }
+
+    .win-pivot-item {
+        width: 100%;
+    }
 }

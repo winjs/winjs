@@ -75,11 +75,6 @@
                 this._handleItemMovedBound = this._handleItemMoved.bind(this);
                 this._handleItemRemovedBound = this._handleItemRemoved.bind(this);
                 this._handleItemReloadBound = this._handleItemReload.bind(this);
-                this._showNavButtons = this._showNavButtons.bind(this);
-                this._hideNavButtons = this._hideNavButtons.bind(this);
-                this._headersPointerDownHandler = this._headersPointerDownHandler.bind(this);
-                this._headersPointerUpHandler = this._headersPointerUpHandler.bind(this);
-                this._elementClickedHandler = this._elementClickedHandler.bind(this);
 
                 this._id = element.id || WinJS.Utilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -107,12 +102,12 @@
                 WinJS.Utilities.addClass(this._headersContainerElement, WinJS.UI.Pivot._ClassName.pivotHeaders);
                 this._element.appendChild(this._headersContainerElement);
                 if (supportsSnapPoints) {
-                    this._element.addEventListener('click', this._elementClickedHandler);
+                    this._element.addEventListener('click', this._elementClickedHandler.bind(this));
                 } else {
-                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons);
-                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons);
-                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler);
-                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler);
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler.bind(this));
                 }
 
                 this._viewportElement = document.createElement("DIV");
@@ -645,7 +640,6 @@
                     e.preventDefault();
 
                     this._headersPointerDownPoint = { x: e.clientX, y: e.clientY, type: e.pointerType || "mouse" };
-                    this._headersPointerUpPoint = null;
                 },
 
                 _headersPointerUpHandler: function pivot_headersPointerUpHandler(e) {
@@ -654,8 +648,9 @@
                     }
 
                     var dx = e.clientX - this._headersPointerDownPoint.x;
+                    dx = this._rtl ? -dx : dx;
                     var dy = e.clientY - this._headersPointerDownPoint.y;
-                    if (dx < 4 && dy < 4) {
+                    if (Math.abs(dx) < 4 && Math.abs(dy) < 4) {
                         // Detect header click
                         var element = e.target;
                         while (element !== null && !element.classList.contains(WinJS.UI.Pivot._ClassName.pivotHeader)) {
@@ -673,7 +668,6 @@
                             this._goPrevious();
                         }
                     }
-                    this._headersPointerUpPoint = { x: e.clientX, y: e.clientY };
                     this._headersPointerDownPoint = null;
                 },
 
@@ -1110,43 +1104,42 @@
 
                     // Start it hidden until it is loaded
                     item._process().then(function () {
-                        if (that._disposed) {
+                        if (that._disposed || loadId !== that._loadId) {
                             return;
                         }
-                        if (loadId === that._loadId) {
-                            if (supportsSnapPoints) {
-                                // Position item:
-                                item.element.style[that._getDirectionAccessor()] = that._currentScrollTargetLocation + "px";
-                                that._showPivotItem(item.element, goPrevious);
+                        if (supportsSnapPoints) {
+                            // Position item:
+                            item.element.style[that._getDirectionAccessor()] = that._currentScrollTargetLocation + "px";
+                            that._showPivotItem(item.element, goPrevious);
+                        } else {
+                            // Since we aren't msZoomTo'ing when snap points aren't supported, both the show and hide animations would be
+                            // executing on top of each other which produces undesirable visuals. Here we wait for the hide to finish before showing.
+                            if (that._hidePivotItemAnimation) {
+                                that._showPivotItemAnimation = that._hidePivotItemAnimation.then(function () {
+                                    if (that._disposed || loadId !== that._loadId) {
+                                        return;
+                                    }
+                                    return that._showPivotItem(item.element, goPrevious);
+                                });
                             } else {
-                                // Since we aren't msZommTo'ing when snap points aren't supported, both the show and hide animations would be
-                                // executing ontop of each other which produces undesirable visuals. Here we wait for the hide to finish before showing.
-                                if (that._hidePivotItemAnimation) {
-                                    that._showPivotItemAnimation = that._hidePivotItemAnimation.then(function () {
-                                        return that._showPivotItem(item.element, goPrevious);
-                                    });
-                                } else {
-                                    // During the very first load, there is no hide animation, we can just show the pivot item immediately.
-                                    that._showPivotItem(item.element, goPrevious);
-                                }
+                                // During the very first load or when the hide animation is canceled, we just show the pivot item immediately.
+                                that._showPivotItem(item.element, goPrevious);
                             }
-                            WinJS.Promise.join([that._slideHeadersAnimation, that._showPivotItemAnimation, that._hidePivotItemAnimation]).then(function () {
-                                (that._stoppedAndRecenteredSignal ? that._stoppedAndRecenteredSignal.promise : WinJS.Promise.wrap()).then(function () {
-                                    WinJS.Promise.timeout(50).then(function () {
-                                        if (that._disposed) {
-                                            return;
-                                        }
-                                        if (loadId === that._loadId) {
-                                            that._navMode = WinJS.UI.Pivot._NavigationModes.none;
+                        }
+                        WinJS.Promise.join([that._slideHeadersAnimation, that._showPivotItemAnimation, that._hidePivotItemAnimation]).then(function () {
+                            (that._stoppedAndRecenteredSignal ? that._stoppedAndRecenteredSignal.promise : WinJS.Promise.wrap()).then(function () {
+                                WinJS.Promise.timeout(50).then(function () {
+                                    if (that._disposed || loadId !== that._loadId) {
+                                        return;
+                                    }
+                                    that._navMode = WinJS.UI.Pivot._NavigationModes.none;
 
-                                            // Fire event even if animation didn't occur:
-                                            that._writeProfilerMark("itemAnimationStop,info");
-                                            that._fireEvent(WinJS.UI.Pivot._EventName.itemAnimationEnd, true);
-                                        }
-                                    });
+                                    // Fire event even if animation didn't occur:
+                                    that._writeProfilerMark("itemAnimationStop,info");
+                                    that._fireEvent(WinJS.UI.Pivot._EventName.itemAnimationEnd, true);
                                 });
                             });
-                        }
+                        });
                     });
                 },
 

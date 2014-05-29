@@ -42,18 +42,17 @@ WinJSTests.PivotTests = function () {
         var elementRect = element.getBoundingClientRect();
         var clientX = Math.floor(elementRect.left + (elementRect.width / 2));
         var clientY = Math.floor(elementRect.top + (elementRect.height / 2));
-        //PointerEvent.initPointerEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary); 
-        var event = document.createEvent(pointerName + "Event");
-        event["init" + pointerName + "Event"](pointerdown, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
-        element.dispatchEvent(event);
-        event = document.createEvent(pointerName + "Event");
-        event["init" + pointerName + "Event"](pointerup, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
-        event.changedTouches = [{ pageX: clientX, pageY: clientY }];
-        element.dispatchEvent(event);
-        event = document.createEvent(pointerName + "Event");
-        event["init" + pointerName + "Event"]("click", true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
-        event.changedTouches = [{ pageX: clientX, pageY: clientY }];
-        element.dispatchEvent(event);
+
+        function fireEvent(type) {
+            //PointerEvent.initPointerEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary); 
+            var event = document.createEvent(pointerName + "Event");
+            event["init" + pointerName + "Event"](type, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
+            element.dispatchEvent(event);
+        }
+        
+        fireEvent(pointerdown);
+        fireEvent(pointerup);
+        fireEvent("click");
     }
 
     function getPivotItemsProgrammatically(count) {
@@ -456,8 +455,11 @@ WinJSTests.PivotTests = function () {
         waitForNextItemAnimationEnd(pivot).
             then(function () {
                 var pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
-                LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
-                LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
+                if (supportsSnapPoints) {
+                    // When snap points aren't supported, the overflow is always hidden
+                    LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
+                    LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
+                }
 
                 // Lock the Pivot
                 pivot.locked = true;
@@ -478,8 +480,10 @@ WinJSTests.PivotTests = function () {
                 // Unlock the Pivot
                 pivot.locked = false;
                 var pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
-                LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
-                LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
+                if (supportsSnapPoints) {
+                    LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
+                    LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
+                }
                 LiveUnit.Assert.areEqual(pivotItemCount + 1, countVisiblePivotItemHeaders(pivot), "Not all headers were visible");
 
                 complete();
