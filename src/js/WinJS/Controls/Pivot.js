@@ -332,6 +332,10 @@
                 },
 
                 _activateHeader: function pivot_activateHeader(headerElement) {
+                    if (this.locked) {
+                        return;
+                    }
+
                     var index = this._items.indexOf(headerElement._item);
                     if (index !== this.selectedIndex) {
                         if (!headerElement.previousSibling) {
