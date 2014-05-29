@@ -2,8 +2,8 @@
 .Colors(@theme) {
     .mixin(dark) {
         // Command colors
-        button.win-command:focus,
-        div.win-command:focus {
+        button:enabled.win-command:focus,
+        div:enabled.win-command:focus {
             border-color: rgb(255, 255, 255);
         }
         .win-commandimage {
@@ -114,7 +114,7 @@
             background-color: transparent;
             color: rgb(255, 255, 255);
         }
-        &.win-menu button:focus, .win-menu button:focus
+        &.win-menu button:focus, .win-menu button:focus,
         &.win-menu button:active, .win-menu button:active {
             background-color: rgb(222, 222, 222);
         }
@@ -148,14 +148,14 @@
         otherwise .win-ui-dark button.win-command:focus is more
         qualified and stomps on the transparent that doesn't have .win-ui-dark
         */
-        &.win-command.win-hidefocus:focus, .win-command.win-hidefocus:focus {
+        &.win-command:enabled.win-hidefocus:focus, .win-command:enabled.win-hidefocus:focus {
             border-color: transparent;
         }
     }
 
     .mixin(light) {
-        button.win-command:focus,
-        div.win-command:focus  {
+        button:enabled.win-command:focus,
+        div:enabled.win-command:focus  {
             border-color: rgb(0, 0, 0);
         }
 
@@ -293,41 +293,42 @@
         otherwise .win-ui-dark button.win-command:focus is more
         qualified and stomps on the transparent that doesn't have .win-ui-dark
         */
-        &.win-command.win-hidefocus:focus, .win-command.win-hidefocus:focus {
+        &.win-command:enabled.win-hidefocus:focus, .win-command:enabled.win-hidefocus:focus {
             border-color: transparent;
         }
     }
 
+    button.win-command, div.win-command {
+        background-color: transparent;
+        border-color:  transparent;
+    }
+    button.win-command:enabled:hover, div.win-command:enabled:hover {
+        background-color: transparent;
+        border-color:  transparent;
+    }
+    button.win-command:active, div.win-command:active {
+        background-color: transparent;
+        color: inherit;
+    }
+    button.win-command:enabled:hover:active, div.win-command:enabled:hover:active {
+        background-color: transparent;
+        color: inherit;
+    }
+    button.win-command:-ms-keyboard-active, div.win-command:-ms-keyboard-active {
+        background-color: transparent;
+        color: inherit;
+    }
+    button.win-command:disabled, div.win-command:disabled {
+        border-color: transparent;
+        background-color: transparent;
+    }
+
+    .win-hidefocus:focus {
+        outline: none;
+    }
+
     .mixin(@theme);
-}
 
-button.win-command, div.win-command {
-    background-color: transparent;
-    border-color:  transparent;
-}
-button.win-command:enabled:hover, div.win-command:enabled:hover {
-    background-color: transparent;
-    border-color:  transparent;
-}
-button.win-command:active, div.win-command:active {
-    background-color: transparent;
-    color: inherit;
-}
-button.win-command:enabled:hover:active, div.win-command:enabled:hover:active {
-    background-color: transparent;
-    color: inherit;
-}
-button.win-command:-ms-keyboard-active, div.win-command:-ms-keyboard-active {
-    background-color: transparent;
-    color: inherit;
-}
-button.win-command:disabled, div.win-command:disabled {
-    border-color: transparent;
-    background-color: transparent;
-}
-
-.win-hidefocus:focus {
-    outline: none;
 }
 
 /* AppBarCommand (and MenuCommand) separator. */
@@ -375,16 +376,16 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
     button:disabled:active .win-label {
         color: GrayText;
     }
-    button.win-command:focus,
-    div.win-command:focus {
+    button:enabled.win-command:focus,
+    div:enabled.win-command:focus {
         border-color: ButtonText;
     }
     button.win-hidefocus:focus,
     div.win-hidefocus:focus {
         outline: none;
     }
-    button.win-command.win-hidefocus:focus,
-    div.win-command.win-hidefocus:focus {
+    button:enabled.win-command.win-hidefocus:focus,
+    div:enabled.win-command.win-hidefocus:focus {
         border-color: transparent;
     }
 
