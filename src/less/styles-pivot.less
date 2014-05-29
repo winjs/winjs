@@ -146,7 +146,12 @@
     position: absolute;
     top: 28px;
     bottom: 0;
-    width: ~"calc(100% - 28px)";
+    /* Since the surface is 100x in width, 1% here means the size of the viewport. */
+    width: 1%;
+}
+
+.win-pivot.win-pivot-nosnap .win-pivot-item {
+    width: 100%;
 }
 
 .win-pivot-item .win-pivot-item-content {
@@ -154,4 +159,5 @@
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     padding: 0px 19px;
+    width: ~"calc(100% - 28px)";
 }
