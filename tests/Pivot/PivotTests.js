@@ -10,6 +10,17 @@ var WinJSTests = WinJSTests || {};
 WinJSTests.PivotTests = function () {
     "use strict";
 
+    var supportsSnapPoints = !!WinJS.Utilities._browserStyleEquivalents["scroll-snap-type"];
+
+    var pointerName = "Mouse";
+    var pointerdown = "mousedown";
+    var pointerup = "mouseup";
+    if (window.MSPointerEvent) {
+        pointerName = "Pointer";
+        pointerdown = "MSPointerDown";
+        pointerup = "MSPointerUp";
+    }
+
     var pivotWrapperEl;
     this.setUp = function () {
         pivotWrapperEl = document.createElement('div');
@@ -29,11 +40,19 @@ WinJSTests.PivotTests = function () {
     function simulateTap(element) {
         element.scrollIntoView(false);
         var elementRect = element.getBoundingClientRect();
-        var event = document.createEvent("PointerEvent");
         var clientX = Math.floor(elementRect.left + (elementRect.width / 2));
         var clientY = Math.floor(elementRect.top + (elementRect.height / 2));
         //PointerEvent.initPointerEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary); 
-        event.initPointerEvent("click", true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
+        var event = document.createEvent(pointerName + "Event");
+        event["init" + pointerName + "Event"](pointerdown, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
+        element.dispatchEvent(event);
+        event = document.createEvent(pointerName + "Event");
+        event["init" + pointerName + "Event"](pointerup, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
+        event.changedTouches = [{ pageX: clientX, pageY: clientY }];
+        element.dispatchEvent(event);
+        event = document.createEvent(pointerName + "Event");
+        event["init" + pointerName + "Event"]("click", true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
+        event.changedTouches = [{ pageX: clientX, pageY: clientY }];
         element.dispatchEvent(event);
     }
 
@@ -154,8 +173,7 @@ WinJSTests.PivotTests = function () {
         var pivot = new WinJS.UI.Pivot(undefined, {
             title: "test"
         });
-
-        var nextItemHeader = pivot.element.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotHeader)[2];
+        pivotWrapperEl.appendChild(pivot.element);
 
         LiveUnit.Assert.areEqual("test", pivot.title, "Title");
         LiveUnit.Assert.areEqual("test", pivot.element.querySelector("." + WinJS.UI.Pivot._ClassName.pivotTitle).textContent, "Title");
@@ -174,6 +192,8 @@ WinJSTests.PivotTests = function () {
         pivot = new WinJS.UI.Pivot(undefined, {
             title: ""
         });
+        WinJS.Utilities.empty(pivotWrapperEl);
+        pivotWrapperEl.appendChild(pivot.element);
         LiveUnit.Assert.areEqual("", pivot.title, "Title");
         LiveUnit.Assert.areEqual("", pivot.element.querySelector("." + WinJS.UI.Pivot._ClassName.pivotTitle).textContent, "Title");
         LiveUnit.Assert.areEqual("none", getComputedStyle(pivot.element.querySelector("." + WinJS.UI.Pivot._ClassName.pivotTitle)).display, "Title display");
@@ -186,6 +206,7 @@ WinJSTests.PivotTests = function () {
             selectedIndex: 2,
             items: new WinJS.Binding.List(getPivotItemsProgrammatically(pivotItemCount))
         });
+        pivotWrapperEl.appendChild(pivot.element);
 
         waitForNextItemAnimationEnd(pivot).then(function () {
             LiveUnit.Assert.areEqual(2, pivot.selectedIndex, "Correct selectedIndex");
@@ -232,6 +253,7 @@ WinJSTests.PivotTests = function () {
         var index = 0;
 
         var pivot = new WinJS.UI.Pivot();
+        pivotWrapperEl.appendChild(pivot.element);
 
         // Timeout to deal with refresh schedule high.
         WinJS.Promise.timeout().then(function () {
@@ -474,19 +496,19 @@ WinJSTests.PivotTests = function () {
         pivotWrapperEl.appendChild(pivot.element);
 
         waitForNextItemAnimationEnd(pivot).then(function () {
-            LiveUnit.Assert.areEqual(3, pivot._headersContainerElement.children.length);
+            LiveUnit.Assert.areEqual(3, pivot.element.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotHeader).length);
 
             // Zoom next
-            WinJS.Utilities._zoomTo(pivot._viewportElement, { contentX: pivot._viewportElement.scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+            pivot._goNext();
             return waitForNextItemAnimationEnd(pivot);
         }).then(function () {
-            LiveUnit.Assert.areEqual(3, pivot._headersContainerElement.children.length);
+            LiveUnit.Assert.areEqual(3, pivot.element.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotHeader).length);
 
-            // Zoom next
-            WinJS.Utilities._zoomTo(pivot._viewportElement, { contentX: pivot._viewportElement.scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+            // Zoom prev
+            pivot._goPrevious();
             return waitForNextItemAnimationEnd(pivot);
         }).done(function () {
-            LiveUnit.Assert.areEqual(4, pivot._headersContainerElement.children.length);
+            LiveUnit.Assert.areEqual(4, pivot.element.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotHeader).length);
             complete();
         });
     };
@@ -561,6 +583,12 @@ WinJSTests.PivotTests = function () {
     if (WinJS.UI.isAnimationEnabled()) {
 
         this.testFlip = function testFlip(complete) {
+            if (!supportsSnapPoints) {
+                LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
+                complete();
+                return;
+            }
+
             // Use zoomTo
             var pivotItemCount = 3;
             instances = 0;
@@ -694,8 +722,8 @@ WinJSTests.PivotTests = function () {
                 complete();
                 return;
             }
-            if (!window.MSManipulationEvent) {
-                LiveUnit.LoggingCore.logComment("This test relies on MSManipulationStateChanged events which are not supported on this platform.");
+            if (!supportsSnapPoints) {
+                LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
                 complete();
                 return;
             }
@@ -741,6 +769,11 @@ WinJSTests.PivotTests = function () {
         };
 
         this.testNavigateViaScroll = function testNavigateViaScroll(complete) {
+            if (!supportsSnapPoints) {
+                LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
+                complete();
+                return;
+            }
             var pivotItemCount = 3;
             instances = 0;
             var pivot = new WinJS.UI.Pivot(undefined, {
@@ -837,6 +870,12 @@ WinJSTests.PivotTests = function () {
         };
 
         this.testEmptyPivotRecentersCorrectly = function (complete) {
+            if (!supportsSnapPoints) {
+                LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
+                complete();
+                return;
+            }
+
             var pivotDiv = document.createElement("div");
             var pivot = new WinJS.UI.Pivot(pivotDiv);
             pivotWrapperEl.appendChild(pivot.element);
