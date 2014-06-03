@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function elementUtilities(global, WinJS, undefined) {
+define([
+    '../Core/_Global'
+    ], function elementUtilities(_Global) {
     "use strict";
 
     // not supported in WebWorker
-    if (!global.document) {
+    if (!_Global.document) {
         return;
     }
     
@@ -46,7 +48,7 @@
         return WinJS.Utilities.convertToPixels(element, window.getComputedStyle(element, null)[property]);
     }
 
-    var _MSGestureEvent = global.MSGestureEvent || {
+    var _MSGestureEvent = _Global.MSGestureEvent || {
         MSGESTURE_FLAG_BEGIN: 1,
         MSGESTURE_FLAG_CANCEL: 4,
         MSGESTURE_FLAG_END: 2,
@@ -54,7 +56,7 @@
         MSGESTURE_FLAG_NONE: 0
     };
 
-    var _MSManipulationEvent = global.MSManipulationEvent || {
+    var _MSManipulationEvent = _Global.MSManipulationEvent || {
         MS_MANIPULATION_STATE_ACTIVE: 1,
         MS_MANIPULATION_STATE_CANCELLED: 6,
         MS_MANIPULATION_STATE_COMMITTED: 7,
@@ -65,7 +67,7 @@
         MS_MANIPULATION_STATE_STOPPED: 0
     };
 
-    var _MSPointerEvent = global.MSPointerEvent || {
+    var _MSPointerEvent = _Global.MSPointerEvent || {
         MSPOINTER_TYPE_TOUCH: "touch",
         MSPOINTER_TYPE_PEN: "pen",
         MSPOINTER_TYPE_MOUSE: "mouse",
@@ -137,7 +139,7 @@
     }
 
     var activeElement = null;
-    global.addEventListener("blur", function (eventObject) {
+    _Global.addEventListener("blur", function (eventObject) {
         // Fires focusout when focus move to another window or into an iframe.
         var previousActiveElement = activeElement;
         if (previousActiveElement) {
@@ -265,7 +267,7 @@
         var touchHandled;
 
         // If we are in IE10, we should use MSPointer as it provides a better interface than touch events
-        if (global.MSPointerEvent) {
+        if (_Global.MSPointerEvent) {
             mspointerWrapper = function(eventObject) {
                 eventObject._normalizedType = eventNameLowercase;
                 touchHandled = true;
@@ -332,7 +334,7 @@
             unregister: removeListenerFromEventMap
         }
     };
-    if (!global.PointerEvent) {
+    if (!_Global.PointerEvent) {
         var pointerEventEntry = {
             register: registerPointerEvent,
             unregister: unregisterPointerEvent
@@ -437,7 +439,7 @@
         }
     );
 
-    var _MutationObserver = global.MutationObserver || MutationObserverShim;
+    var _MutationObserver = _Global.MutationObserver || MutationObserverShim;
 
     // Lazily init singleton on first access.
     var _resizeNotifier = null;
@@ -447,7 +449,7 @@
     // and having to dispose themselves to avoid leaks.
     var ResizeNotifier = WinJS.Class.define(
         function ElementResizer_ctor() {
-            global.addEventListener("resize", this._handleResize.bind(this));
+            _Global.addEventListener("resize", this._handleResize.bind(this));
         },
         {
             subscribe: function ElementResizer_subscribe(element, handler) {
@@ -551,7 +553,7 @@
         },
 
         _createGestureRecognizer: function () {
-            if (global.MSGesture) {
+            if (_Global.MSGesture) {
                 return new MSGesture();
             }
 
@@ -706,7 +708,7 @@
         _setActive: function _setActive(element, scroller) {
             var success = true;
             try {
-                if (global.HTMLElement && HTMLElement.prototype.setActive) {
+                if (_Global.HTMLElement && HTMLElement.prototype.setActive) {
                     element.setActive();
                 } else {
                     // We are aware the unlike setActive(), focus() will scroll to the element that gets focus. However, this is
@@ -1812,4 +1814,4 @@
             return false;
         }
     });
-})(this, WinJS);
+});

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function layouts2Init(global, WinJS, undefined) {
+define([
+    ], function layouts2Init() {
     "use strict";
 
     var Utilities = WinJS.Utilities,
@@ -4461,4 +4462,4 @@
         },
         _getMargins: getMargins
     });
-})(this, WinJS);
+});

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function baseInit(global, undefined) {
+define([
+    './_Global'
+    ], function baseInit(_Global) {
     "use strict";
 
     function initializeProperties(target, members, prefix) {
@@ -38,12 +40,12 @@
     (function (rootNamespace) {
 
         // Create the rootNamespace in the global namespace
-        if (!global[rootNamespace]) {
-            global[rootNamespace] = Object.create(Object.prototype);
+        if (!_Global[rootNamespace]) {
+            _Global[rootNamespace] = Object.create(Object.prototype);
         }
 
         // Cache the rootNamespace we just created in a local variable
-        var _rootNamespace = global[rootNamespace];
+        var _rootNamespace = _Global[rootNamespace];
         if (!_rootNamespace.Namespace) {
             _rootNamespace.Namespace = Object.create(Object.prototype);
         }
@@ -103,7 +105,7 @@
             /// The newly-defined namespace.
             /// </returns>
             /// </signature>
-            return defineWithParent(global, name, members);
+            return defineWithParent(_Global, name, members);
         }
 
         var LazyStates = {
@@ -280,5 +282,4 @@
 
     })(WinJS);
 
-})(this);
-
+});

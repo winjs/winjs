@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function constantsInit(global, WinJS, undefined) {
+define([
+    ], function constantsInit() {
     "use strict";
 
     var thisWinUI = WinJS.UI;
@@ -90,4 +91,4 @@
     thisWinUI._SELECTION_CHECKMARK = "\uE081";
 
     thisWinUI._LISTVIEW_PROGRESS_DELAY = 2000;
-})(this, WinJS);
+});

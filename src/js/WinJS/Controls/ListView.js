@@ -13,8 +13,7 @@ define([
     './ListView/_StorageDataSource',
     './ListView/_VersionManager',
     './ListView/_VirtualizeContentsView',
-    ], function() {
-(function listViewImplInit(global, WinJS, undefined) {
+    ], function listViewImplInit(_BrowseMode, _Constants, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _ItemsContainer, _ItemsManager, _Layouts, _ParallelWorkQueue, _SelectionManager, _StorageDataSource, _VersionManager, _VirtualizeContentsView) {
     "use strict";
 
     var transformNames = WinJS.Utilities._browserStyleEquivalents["transform"];
@@ -4450,5 +4449,4 @@ define([
         }
     });
 
-})(this, WinJS);
 });

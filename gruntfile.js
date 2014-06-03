@@ -4,6 +4,7 @@
 
     module.exports = function (grunt) {
         var config = require("./config.js");
+        config.grunt = grunt;
 
         // Make sure that Grunt doesn't remove BOM from our utf8 files
         // on read
@@ -15,7 +16,7 @@
             var object = {};
             var key;
 
-            glob.sync("*", { cwd: path }).forEach(function (option) {
+            glob.sync("*.js", { cwd: path }).forEach(function (option) {
                 key = option.replace(/\.js$/, "");
                 object[key] = require(path + option);
             });

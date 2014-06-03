@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function linkedListMixinInit(global, undefined) {
+define([
+    './Core/_Global'
+    ], function schedulerInit(_Global) {
     "use strict";
 
     function linkedListMixin(name) {
@@ -54,11 +56,6 @@
         _linkedListMixin: linkedListMixin
 
     });
-
-}(this));
-
-(function schedulerInit(global, undefined) {
-    "use strict";
 
     var Promise = WinJS.Promise;
     var linkedListMixin = WinJS.Utilities._linkedListMixin;
@@ -464,7 +461,7 @@
     //
     state_canceled.enter = function (job) {
         jobProfilerMark(job, "job-canceled", "info");
-        WinJS.Utilities._traceAsyncOperationCompleted(job._asyncOpID, global.Debug && Debug.MS_ASYNC_OP_STATUS_CANCELED)
+        WinJS.Utilities._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_CANCELED)
         job._removeJob();
         job._work = null;
         job._context = null;
@@ -727,7 +724,7 @@
     //
     state_complete.completed = true;
     state_complete.enter = function (job) {
-        WinJS.Utilities._traceAsyncOperationCompleted(job._asyncOpID, global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
+        WinJS.Utilities._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
         job._work = null;
         job._context = null;
         job.owner = null;
@@ -934,7 +931,7 @@
 
     // Whether we are using the WWA scheduler.
     //
-    var usingWwaScheduler = !!(global.MSApp && global.MSApp.execAtPriority);
+    var usingWwaScheduler = !!(_Global.MSApp && _Global.MSApp.execAtPriority);
 
     // Queue of drain listeners
     //
@@ -1063,7 +1060,7 @@
     // setImmediate has this guarantee built-in so we prefer that. Otherwise, we do setTimeout 16
     // which should give the host a decent amount of time to do work.
     //
-    var scheduleWithHost = global.setImmediate ? global.setImmediate.bind(global) : function (callback) {
+    var scheduleWithHost = _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (callback) {
         setTimeout(callback, 16);
     };
 
@@ -1099,7 +1096,7 @@
         IDLE: "idle"
     };
 
-    var MSApp = (usingWwaScheduler ? global.MSApp : MSAppStubs);
+    var MSApp = (usingWwaScheduler ? _Global.MSApp : MSAppStubs);
 
     function toWwaPriority(winjsPriority) {
         if (winjsPriority >= Priority.aboveNormal + 1) { return MSApp.HIGH; }
@@ -1170,7 +1167,7 @@
 
     // Performance.now is not defined in web workers.
     //
-    var now = (global.performance && performance.now.bind(performance)) || Date.now.bind(Date);
+    var now = (_Global.performance && performance.now.bind(performance)) || Date.now.bind(Date);
 
     // Main scheduler pump.
     //
@@ -1597,7 +1594,7 @@
             },
             set: function (value) {
                 usingWwaScheduler = value;
-                MSApp = (usingWwaScheduler ? global.MSApp : MSAppStubs);
+                MSApp = (usingWwaScheduler ? _Global.MSApp : MSAppStubs);
             }
         },
 
@@ -1614,4 +1611,4 @@
 
     });
 
-}(this));
+});

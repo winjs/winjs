@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // WinJS.Binding.ListDataSource
 //
-(function bindingListDataSourceInit(global, undefined) {
+define([
+    '../Core/_Global'
+    ], function bindingListDataSourceInit(_Global) {
     "use strict";
 
     WinJS.Namespace.define("WinJS.Binding", {
@@ -137,7 +139,7 @@
                 // When in WebContext, weakref utility functions don't work as desired so we capture this
                 // ListBinding object in the handler's closure. This causes the same leak as in 1.0.
                 var fallbackReference = null;
-                if (!WinJS.Utilities.hasWinRT || !global.msSetWeakWinRTProperty || !global.msGetWeakWinRTProperty) {
+                if (!WinJS.Utilities.hasWinRT || !_Global.msSetWeakWinRTProperty || !_Global.msGetWeakWinRTProperty) {
                     fallbackReference = this;
                 }
                 if (notificationHandler) {
@@ -602,7 +604,7 @@
 
             var bindingId = 0;
             var DataSource = WinJS.Class.define(function DataSource_ctor(list) {
-                this._usingWeakRef = WinJS.Utilities.hasWinRT && global.msSetWeakWinRTProperty && global.msGetWeakWinRTProperty;
+                this._usingWeakRef = WinJS.Utilities.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty;
                 this._bindings = {};
                 this._list = list;
 
@@ -739,4 +741,4 @@
         })
     });
 
-}(this));
+});

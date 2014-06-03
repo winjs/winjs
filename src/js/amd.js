@@ -25,18 +25,23 @@ var define;
     // WinJS/Core depends on ./Core/_Base
     // should return WinJS/Core/_Base
     function normalize(id, dependencies) {
-        var parts = id.split('/');
-        var parent = "";
-        if(parts.length > 1) {
-            parent = parts.slice(0, -1).join('/');
-        }
+        var parent = id.split('/');
+        parent.pop();
         return dependencies.map(function(dep) {
-            // no support for .. yet
-            var start = dep.substr(0, 2);
-            if(start === "./" ) {
-                return parent + dep.substr(1);
+            if(dep[0] === '.') {
+                var parts = dep.split('/');
+                var current = parent.slice(0);
+                parts.forEach(function(part) {
+                    if(part === '..') {
+                        current.pop();
+                    } else if(part !== '.') {
+                        current.push(part);
+                    }
+                });
+                return current.join('/');
+            } else {
+                return dep;
             }
-            return dep;
         });
     }
 
@@ -54,6 +59,8 @@ var define;
         var deps = resolve(dependencies);
         if(factory && factory.apply) {
             return factory.apply(null, deps);
+        } else {
+            return factory;
         }
     }
     require = function(dependencies, factory) {

@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function baseUtilsInit(global, WinJS) {
+define([
+    './_Global'
+    ], function baseUtilsInit(_Global) {
     "use strict";
 
-    var hasWinRT = !!global.Windows;
+    var hasWinRT = !!_Global.Windows;
 
     var strings = {
         get notSupportedForProcessing() { return WinJS.Resources._getWinJSString("base/notSupportedForProcessing").value; }
@@ -43,7 +45,7 @@
 
     function getBrowserStyleEquivalents() {
         // not supported in WebWorker
-        if (!global.document) {
+        if (!_Global.document) {
             return {};
         }
 
@@ -133,7 +135,7 @@
                 chosenPrefix = "";
             for (var j = 0, prefixLen = animationEventPrefixes.length; j < prefixLen; j++) {
                 var prefix = animationEventPrefixes[j];
-                if ((prefix + eventToTest.eventObject) in global) {
+                if ((prefix + eventToTest.eventObject) in _Global) {
                     chosenPrefix = prefix.toLowerCase();
                     break;
                 }
@@ -152,7 +154,7 @@
         }
 
         // Non-standardized events
-        equivalents["manipulationStateChanged"] = ("MSManipulationEvent" in global ? "ManipulationEvent" : null);
+        equivalents["manipulationStateChanged"] = ("MSManipulationEvent" in _Global ? "ManipulationEvent" : null);
         return equivalents;
     }
 
@@ -195,7 +197,7 @@
             if (!name) {
                 return null;
             }
-            return getMemberFiltered(name, root || global, nop);
+            return getMemberFiltered(name, root || _Global, nop);
         },
 
         _browserStyleEquivalents: getBrowserStyleEquivalents(),
@@ -234,14 +236,14 @@
 
                 var readyState = WinJS.Utilities.testReadyState;
                 if (!readyState) {
-                    if (global.document) {
+                    if (_Global.document) {
                         readyState = document.readyState;
                     }
                     else {
                         readyState = "complete";
                     }
                 }
-                if (readyState === "complete" || (global.document && document.body !== null)) {
+                if (readyState === "complete" || (_Global.document && document.body !== null)) {
                     if (async) {
                         WinJS.Utilities.Scheduler.schedule(function WinJS_Utilities_ready() {
                             complete();
@@ -252,7 +254,7 @@
                     }
                 }
                 else {
-                    global.addEventListener("DOMContentLoaded", complete, false);
+                    _Global.addEventListener("DOMContentLoaded", complete, false);
                 }
             });
         },
@@ -304,22 +306,22 @@
                 /// </signature>
                 var supportedForProcessing = true;
 
-                supportedForProcessing = supportedForProcessing && value !== global;
-                supportedForProcessing = supportedForProcessing && value !== global.location;
+                supportedForProcessing = supportedForProcessing && value !== _Global;
+                supportedForProcessing = supportedForProcessing && value !== _Global.location;
                 supportedForProcessing = supportedForProcessing && !(value instanceof HTMLIFrameElement);
                 supportedForProcessing = supportedForProcessing && !(typeof value === "function" && !value.supportedForProcessing);
 
-                switch (global.frames.length) {
+                switch (_Global.frames.length) {
                     case 0:
                         break;
 
                     case 1:
-                        supportedForProcessing = supportedForProcessing && value !== global.frames[0];
+                        supportedForProcessing = supportedForProcessing && value !== _Global.frames[0];
                         break;
 
                     default:
-                        for (var i = 0, len = global.frames.length; supportedForProcessing && i < len; i++) {
-                            supportedForProcessing = supportedForProcessing && value !== global.frames[i];
+                        for (var i = 0, len = _Global.frames.length; supportedForProcessing && i < len; i++) {
+                            supportedForProcessing = supportedForProcessing && value !== _Global.frames[i];
                         }
                         break;
                 }
@@ -335,18 +337,18 @@
             enumerable: true
         },
         
-        _setImmediate: global.setImmediate ? global.setImmediate.bind(global) : function (handler) {
+        _setImmediate: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
             setTimeout(handler, 0);
         },
         
         // Allows the browser to finish dispatching its current set of events before running
         // the callback.
-        _yieldForEvents: global.setImmediate ? global.setImmediate.bind(global) : function (handler) {
+        _yieldForEvents: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
             setTimeout(handler, 0);
         },
         
         // Allows the browser to notice a DOM modification before running the callback.
-        _yieldForDomModification: global.setImmediate ? global.setImmediate.bind(global) : function (handler) {
+        _yieldForDomModification: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
             setTimeout(handler, 0);
         },
 
@@ -383,13 +385,13 @@
         },
 
         _now: function _now() {
-            return (global.performance && performance.now()) || Date.now();
+            return (_Global.performance && performance.now()) || Date.now();
         },
 
-        _traceAsyncOperationStarting: (global.Debug && Debug.msTraceAsyncOperationStarting && Debug.msTraceAsyncOperationStarting.bind(global.Debug)) || nop,
-        _traceAsyncOperationCompleted: (global.Debug && Debug.msTraceAsyncOperationCompleted && Debug.msTraceAsyncOperationCompleted.bind(global.Debug)) || nop,
-        _traceAsyncCallbackStarting: (global.Debug && Debug.msTraceAsyncCallbackStarting && Debug.msTraceAsyncCallbackStarting.bind(global.Debug)) || nop,
-        _traceAsyncCallbackCompleted: (global.Debug && Debug.msTraceAsyncCallbackCompleted && Debug.msTraceAsyncCallbackCompleted.bind(global.Debug)) || nop
+        _traceAsyncOperationStarting: (_Global.Debug && Debug.msTraceAsyncOperationStarting && Debug.msTraceAsyncOperationStarting.bind(_Global.Debug)) || nop,
+        _traceAsyncOperationCompleted: (_Global.Debug && Debug.msTraceAsyncOperationCompleted && Debug.msTraceAsyncOperationCompleted.bind(_Global.Debug)) || nop,
+        _traceAsyncCallbackStarting: (_Global.Debug && Debug.msTraceAsyncCallbackStarting && Debug.msTraceAsyncCallbackStarting.bind(_Global.Debug)) || nop,
+        _traceAsyncCallbackCompleted: (_Global.Debug && Debug.msTraceAsyncCallbackCompleted && Debug.msTraceAsyncCallbackCompleted.bind(_Global.Debug)) || nop
     });
 
     WinJS.Namespace.define("WinJS", {
@@ -408,5 +410,5 @@
             enumerable: false
         },
     });
-})(this, WinJS);
+});
 

@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function templateCompilerInit(global) {
+define([
+    '../Core/_Global'
+    ], function templateCompilerInit(_Global) {
     "use strict";
 
     // not supported in WebWorker
-    if (!global.document) {
+    if (!_Global.document) {
         return;
     }
 
@@ -255,7 +257,7 @@
                         }
                         return null;
                     },
-                    global
+                    _Global
                 );
             }
             function visit(node, key, pre, post) {
@@ -476,7 +478,7 @@
                 this._profilerMarkIdentifier = options.profilerMarkIdentifier;
                 this._captureCSE = new TreeCSE(this, "container", InstanceKind.capture, this.generateElementCaptureAccess.bind(this));
                 this._dataCSE = new TreeCSE(this, "data", InstanceKind.data, this.generateNormalAccess.bind(this), this.importSafe("dataSecurityCheck", requireSupportedForProcessing));
-                this._globalCSE = new TreeCSE(this, this.importSafe("global", global), InstanceKind.global, this.generateNormalAccess.bind(this), this.importSafe("globalSecurityCheck", requireSupportedForProcessing));
+                this._globalCSE = new TreeCSE(this, this.importSafe("global", _Global), InstanceKind.global, this.generateNormalAccess.bind(this), this.importSafe("globalSecurityCheck", requireSupportedForProcessing));
 
                 // Clone the template content and import it into its own HTML document for further processing
                 WinJS.UI.Fragments.renderCopy(this._templateElement, this._templateContent);
@@ -1032,7 +1034,7 @@
                         }
 
                         var bindingText = element.getAttribute("data-win-bind");
-                        var elementBindings = binding_parser(bindingText, global);
+                        var elementBindings = binding_parser(bindingText, _Global);
                         elementBindings.forEach(function (binding) {
                             if (binding.initializer) {
                                 // If an initializer is specified it may be a nested template
@@ -1124,7 +1126,7 @@
                         var name = element.getAttribute("data-win-control");
                         // Control constructors are checked along the entirety of their path to be supported 
                         //  for processing when they are bound
-                        var ControlConstructor = WinJS.Utilities._getMemberFiltered(name.trim(), global, requireSupportedForProcessing);
+                        var ControlConstructor = WinJS.Utilities._getMemberFiltered(name.trim(), _Global, requireSupportedForProcessing);
                         if (!ControlConstructor) {
                             continue;
                         }
@@ -1951,7 +1953,7 @@
 
                     var importAliases = compiler.importAllSafe({
                         Signal: WinJS._Signal,
-                        global: global,
+                        global: _Global,
                         document: document,
                         cancelBlocker: cancelBlocker,
                         promise_as: promise_as,
@@ -2271,4 +2273,4 @@
     });
 
 
-}(this));
+});

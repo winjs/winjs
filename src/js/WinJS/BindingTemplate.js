@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-define(['./BindingTemplate/_DataTemplateCompiler.js'], function() {
-(function dataTemplateInit(global, WinJS, undefined) {
+define([
+    './Core/_Global',
+    './BindingTemplate/_DataTemplateCompiler.js'], function dataTemplateInit(_Global, _DataTemplateCompiler) {
     "use strict";
 
     // not supported in WebWorker
-    if (!global.document) {
+    if (!_Global.document) {
         return;
     }
 
@@ -521,5 +522,4 @@ define(['./BindingTemplate/_DataTemplateCompiler.js'], function() {
         });
     }
 
-})(this, WinJS);
 });

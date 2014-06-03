@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Glyph Enumeration
 /// <dictionary>Segoe</dictionary>
-(function appBarIconInit(WinJS) {
+define([
+     ], function appBarIconInit() {
     "use strict";
 
     var glyphs = ["previous",
@@ -210,4 +211,4 @@
             fixedIcons[item] = { get: function () { return WinJS.Resources._getWinJSString("ui/appBarIcons/" + item).value; } };
             return fixedIcons;
         }, {}));
-})(WinJS);
+});

@@ -2,7 +2,37 @@
 (function () {
     "use strict";
 
+    var path = require('path');
     var config = require("../../config.js");
+    var grunt = config.grunt;
+
+    var rootPath = path.resolve();
+    var realFileNames = [];
+
+    grunt.file.recurse('src', function(abspath) {
+        realFileNames.push(path.join(rootPath, abspath));
+    });
+
+    // ensure that the files discovered by requireJS have appropriate
+    // casing so that non-Windows builds will work.
+    function done(done, output) {
+
+        var lines = output.split('\n');
+        lines.splice(0, 3);
+        lines.pop();
+
+        lines = lines.map(function(line) {
+            return path.normalize(line);
+        });
+
+        lines.forEach(function(line) {
+            if(realFileNames.indexOf(line) === -1) {
+                grunt.fail.warn("Source file in build is not in filesystem:" + line + ". Check casing of filename.");
+            }
+        });
+
+        done();
+    }
 
     module.exports = {
         base: {
@@ -16,7 +46,8 @@
                 wrap: {
                     startFile: 'src/js/build/startBase.js',
                     endFile: 'src/js/build/endBase.js'
-                }
+                },
+                done: done
             }
         },
         basePhone: {
@@ -30,7 +61,8 @@
                 wrap: {
                     startFile: 'src/js/build/startBase.js',
                     endFile: 'src/js/build/endBase.js'
-                }
+                },
+                done: done
             }
         },
         ui: {
@@ -44,7 +76,8 @@
                 wrap: {
                     startFile: 'src/js/build/startUI.js',
                     endFile: 'src/js/build/endUI.js'
-                }
+                },
+                done: done
             }
         },
         uiPhone: {
@@ -58,7 +91,8 @@
                 wrap: {
                     startFile: 'src/js/build/startUI.js',
                     endFile: 'src/js/build/endUI-phone.js'
-                }
+                },
+                done: done
             }
         }
     };

@@ -2,8 +2,7 @@
 define([
     './NavBar/_Command', 
     './NavBar/_Container'
-    ], function() {
-(function NavBarInit(global, WinJS, undefined) {
+    ], function NavBarInit(_Command, _Container) {
     "use strict";
 
     var customLayout = "custom";
@@ -187,5 +186,4 @@ define([
         })
     });
 
-})(this, WinJS);
 });

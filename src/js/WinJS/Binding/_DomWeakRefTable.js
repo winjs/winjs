@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function DOMWeakRefTableInit(global, undefined) {
+define([
+    '../Core/_Global'
+    ], function DOMWeakRefTableInit(_Global) {
     "use strict";
 
-    if (WinJS.Utilities.hasWinRT && global.msSetWeakWinRTProperty && global.msGetWeakWinRTProperty) {
+    if (WinJS.Utilities.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty) {
 
         var host = new Windows.Foundation.Uri("about://blank");
 
@@ -48,7 +50,7 @@
     }
 
     function scheduleCleanupIfNeeded() {
-        if ((global.Debug && Debug.debuggerEnabled && U._DOMWeakRefTable_noTimeoutUnderDebugger) || cleanupToken) {
+        if ((_Global.Debug && Debug.debuggerEnabled && U._DOMWeakRefTable_noTimeoutUnderDebugger) || cleanupToken) {
             return;
         }
         var period = U._DOMWeakRefTable_sweepPeriod;
@@ -61,7 +63,7 @@
     }
 
     function unscheduleCleanupIfNeeded() {
-        if (global.Debug && Debug.debuggerEnabled && U._DOMWeakRefTable_noTimeoutUnderDebugger) {
+        if (_Global.Debug && Debug.debuggerEnabled && U._DOMWeakRefTable_noTimeoutUnderDebugger) {
             return;
         }
         var period = U._DOMWeakRefTable_sweepPeriod;
@@ -127,4 +129,4 @@
 
     });
 
-}(this));
+});

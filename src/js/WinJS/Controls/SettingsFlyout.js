@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,registeredforsettings,SettingsFlyout,Statics,Syriac</dictionary>
-(function settingsFlyoutInit(WinJS) {
+define([
+    ], function settingsFlyoutInit() {
     "use strict";
 
     WinJS.Namespace.define("WinJS.UI", {
@@ -616,5 +617,4 @@
     });
 
 
-})(WinJS);
-
+});

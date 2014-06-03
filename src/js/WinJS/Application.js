@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-define(['./Application/_State'], function() {
-(function applicationInit(global, WinJS, undefined) {
+define([
+    './Core/_Global',
+    './Application/_State'
+    ], function applicationInit(_Global, _State) {
     "use strict";
 
-    global.Debug && (global.Debug.setNonUserCodeExceptions = true);
+    _Global.Debug && (_Global.Debug.setNonUserCodeExceptions = true);
 
     var Scheduler = WinJS.Utilities.Scheduler;
 
@@ -24,7 +26,7 @@ define(['./Application/_State'], function() {
     var registered = false;
     // check for WinRT & document, which means we will disabled application WinRT stuff in web worker context
     //
-    var useWinRT = WinJS.Utilities.hasWinRT && global.document;
+    var useWinRT = WinJS.Utilities.hasWinRT && _Global.document;
 
     var ListenerType = WinJS.Class.mix(WinJS.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), WinJS.Utilities.eventMixin);
     var listeners = new ListenerType();
@@ -399,7 +401,7 @@ define(['./Application/_State'], function() {
 
     // capture this early
     //
-    if (global.document) {
+    if (_Global.document) {
         document.addEventListener("DOMContentLoaded", domContentLoadedHandler, false);
     }
 
@@ -421,10 +423,10 @@ define(['./Application/_State'], function() {
     function register() {
         if (!registered) {
             registered = true;
-            global.addEventListener("beforeunload", beforeUnloadHandler, false);
+            _Global.addEventListener("beforeunload", beforeUnloadHandler, false);
 
             if (useWinRT) {
-                global.addEventListener("error", errorHandler, false);
+                _Global.addEventListener("error", errorHandler, false);
 
                 var wui = Windows.UI.WebUI.WebUIApplication;
                 wui.addEventListener("activated", activatedHandler, false);
@@ -447,10 +449,10 @@ define(['./Application/_State'], function() {
     function unregister() {
         if (registered) {
             registered = false;
-            global.removeEventListener("beforeunload", beforeUnloadHandler, false);
+            _Global.removeEventListener("beforeunload", beforeUnloadHandler, false);
 
             if (useWinRT) {
-                global.removeEventListener("error", errorHandler, false);
+                _Global.removeEventListener("error", errorHandler, false);
 
                 var wui = Windows.UI.WebUI.WebUIApplication;
                 wui.removeEventListener("activated", activatedHandler, false);
@@ -563,5 +565,4 @@ define(['./Application/_State'], function() {
     });
 
     Object.defineProperties(WinJS.Application, WinJS.Utilities.createEventProperties(checkpointET, unloadET, activatedET, loadedET, readyET, settingsET, errorET, backClickET));
-})(this, WinJS);
 });

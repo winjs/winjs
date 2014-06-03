@@ -2,8 +2,9 @@
 
 // WinJS.Binding.List
 //
-define(['./BindingList/_BindingListDataSource'], function() {
-(function listInit(global, undefined) {
+define([
+    './BindingList/_BindingListDataSource'
+    ], function listInit(_BindingListDataSource) {
     "use strict";
 
     var strings = {
@@ -2073,5 +2074,4 @@ define(['./BindingList/_BindingListDataSource'], function() {
     });
 
 
-}(this));
 });

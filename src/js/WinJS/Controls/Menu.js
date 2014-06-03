@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Menu
 /// <dictionary>Menu,Menus,Flyout,Flyouts,Statics</dictionary>
-define(['./Menu/_Command'], function() {
-(function menuInit(WinJS) {
+define([
+    './Menu/_Command'
+    ], function menuInit(_Command) {
     "use strict";
 
     WinJS.Namespace.define("WinJS.UI", {
@@ -371,5 +372,4 @@ define(['./Menu/_Command'], function() {
         })
     });
 
-})(WinJS);
 });

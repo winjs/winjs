@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function stateInit(global) {
+define([
+    '../Core/_Global'
+    ], function stateInit(_Global) {
     "use strict";
 
     function initWithWinRT() {
@@ -273,7 +275,7 @@
             }
         },
         _oncheckpoint: function (e) {
-            if (global.MSApp && MSApp.getViewOpener && MSApp.getViewOpener()) {
+            if (_Global.MSApp && MSApp.getViewOpener && MSApp.getViewOpener()) {
                 // don't save state in child windows.
                 return;
             }
@@ -296,4 +298,4 @@
             }
         }
     });    
-})(this);
+});

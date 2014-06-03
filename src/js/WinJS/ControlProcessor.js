@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    './Core/_Global',
     './ControlProcessor/_OptionsLexer', 
     './ControlProcessor/_OptionsParser'
-    ], function() {
-(function declarativeControlsInit(global, WinJS, undefined) {
+    ], function declarativeControlsInit(_Global, _OptionsLexer, _OptionsParser) {
     "use strict";
 
     // not supported in WebWorker
-    if (!global.document) {
+    if (!_Global.document) {
         return;
     }
 
@@ -56,7 +56,7 @@ define([
                 var options;
                 var optionsAttribute = element.getAttribute("data-win-options");
                 if (optionsAttribute) {
-                    options = WinJS.UI.optionsParser(optionsAttribute, global, {
+                    options = WinJS.UI.optionsParser(optionsAttribute, _Global, {
                         select: createSelect(element)
                     });
                 }
@@ -168,7 +168,7 @@ define([
         if (element.getAttribute) {
             var evaluator = element.getAttribute("data-win-control");
             if (evaluator) {
-                return WinJS.Utilities._getMemberFiltered(evaluator.trim(), global, requireSupportedForProcessing);
+                return WinJS.Utilities._getMemberFiltered(evaluator.trim(), _Global, requireSupportedForProcessing);
             }
         }
     }
@@ -240,5 +240,4 @@ define([
             }
         }
     });
-})(this, WinJS);
 });

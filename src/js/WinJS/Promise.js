@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function promiseInit(global, undefined) {
+define([
+    './Core/_Global'
+    ], function promiseInit(_Global) {
     "use strict";
 
-    global.Debug && (global.Debug.setNonUserCodeExceptions = true);
+    _Global.Debug && (_Global.Debug.setNonUserCodeExceptions = true);
 
     var ListenerType = WinJS.Class.mix(WinJS.Class.define(null, { /*empty*/ }, { supportedForProcessing: false }), WinJS.Utilities.eventMixin);
     var promiseEventListeners = new ListenerType();
@@ -546,7 +548,7 @@
             var onComplete = listener.c;
             var target = listener.promise;
 
-            WinJS.Utilities._traceAsyncOperationCompleted(listener.asyncOpID, global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
+            WinJS.Utilities._traceAsyncOperationCompleted(listener.asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
 
             if (target) {
                 WinJS.Utilities._traceAsyncCallbackStarting(listener.asyncOpID);
@@ -578,7 +580,7 @@
             var onError = listener.e;
             var target = listener.promise;
 
-            var errorID = global.Debug && (value && value.name === canceledName ? Debug.MS_ASYNC_OP_STATUS_CANCELED : Debug.MS_ASYNC_OP_STATUS_ERROR);
+            var errorID = _Global.Debug && (value && value.name === canceledName ? Debug.MS_ASYNC_OP_STATUS_CANCELED : Debug.MS_ASYNC_OP_STATUS_ERROR);
             WinJS.Utilities._traceAsyncOperationCompleted(listener.asyncOpID, errorID);
 
             if (target) {
@@ -1371,7 +1373,7 @@
             },
             _veryExpensiveTagWithStack_tag: tag,
             _getStack: function () {
-                if (global.Debug && Debug.debuggerEnabled) {
+                if (_Global.Debug && Debug.debuggerEnabled) {
                     try { throw new Error(); } catch (e) { return e.stack; }
                 }
             },
@@ -1453,4 +1455,4 @@
         _Signal: Signal
     });
 
-}(this));
+});

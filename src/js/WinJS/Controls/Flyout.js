@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,Statics</dictionary>
-define(['./Flyout/_Overlay'], function() {
-(function flyoutInit(WinJS) {
+define([
+    './Flyout/_Overlay'
+    ], function flyoutInit(_Overlay) {
     "use strict";
 
     WinJS.Namespace.define("WinJS.UI", {
@@ -876,5 +877,4 @@ define(['./Flyout/_Overlay'], function() {
         })
     });
 
-})(WinJS);
 });

@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function declarativeInit(WinJS, global, undefined) {
+define([
+    '../Core/_Global'
+    ], function declarativeInit(_Global) {
     "use strict";
 
     var uid = (Math.random() * 1000) >> 0;
 
     // If we have proper weak references then we can move away from using the element's ID property
     //
-    var optimizeBindingReferences = WinJS.Utilities.hasWinRT && global.msSetWeakWinRTProperty && global.msGetWeakWinRTProperty;
+    var optimizeBindingReferences = WinJS.Utilities.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty;
 
     var strings = {
         get attributeBindingSingleProperty() { return WinJS.Resources._getWinJSString("base/attributeBindingSingleProperty").value; },
@@ -139,7 +141,7 @@
 
     function sourceOneBinding(bind, ref, bindingId, source, e, pend, cacheEntry) {
         var bindable;
-        if (source !== global) {
+        if (source !== _Global) {
             source = WinJS.Binding.as(source);
         }
         if (source._getObservable) {
@@ -176,7 +178,7 @@
             var declBindCache = bindingCache.expressions[bindingStr];
             var declBind;
             if (!declBindCache) {
-                declBind = filterIdBinding(WinJS.Binding._bindingParser(bindingStr, global), bindingStr);
+                declBind = filterIdBinding(WinJS.Binding._bindingParser(bindingStr, _Global), bindingStr);
                 bindingCache.expressions[bindingStr] = declBind;
             }
             if (!declBind) {
@@ -185,7 +187,7 @@
             return declBind;
         }
         else {
-            return filterIdBinding(WinJS.Binding._bindingParser(bindingStr, global), bindingStr);
+            return filterIdBinding(WinJS.Binding._bindingParser(bindingStr, _Global), bindingStr);
         }
     }
 
@@ -211,7 +213,7 @@
         }
 
         pend.count++;
-        var source = dataContext || global;
+        var source = dataContext || _Global;
 
         WinJS.Utilities._DOMWeakRefTable_fastLoadPath = true;
         try {
@@ -367,7 +369,7 @@
             WinJS.Utilities._createWeakRef(dest, ref);
 
             var bindable;
-            if (source !== global) {
+            if (source !== _Global) {
                 source = WinJS.Binding.as(source);
             }
             if (source._getObservable) {
@@ -402,7 +404,7 @@
     }
 
     function getValue(obj, path) {
-        if (obj !== global) {
+        if (obj !== _Global) {
             obj = requireSupportedForProcessing(obj);
         }
         if (path) {
@@ -486,7 +488,7 @@
         WinJS.Utilities._createWeakRef(dest, ref);
 
         var bindable;
-        if (source !== global) {
+        if (source !== _Global) {
             source = WinJS.Binding.as(source);
         }
         if (source._getObservable) {
@@ -674,4 +676,4 @@
         addClassOneTime: initializer(addClassOneTime),
     });
 
-})(WinJS, this);
+});

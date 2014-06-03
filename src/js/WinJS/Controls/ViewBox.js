@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // ViewBox control
-(function viewboxInit(global, undefined) {
+define([
+    ], function viewboxInit() {
     "use strict";
 
     WinJS.Namespace.define("WinJS.UI", {
@@ -165,4 +166,4 @@
         })
     });
 
-}(this));
+});

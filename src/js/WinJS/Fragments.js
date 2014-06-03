@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function fragmentLoaderInit(global, WinJS, undefined) {
+define([
+    './Core/_Global'
+    ], function fragmentLoaderInit(_Global) {
     "use strict";
 
     var strings = {
@@ -7,7 +9,7 @@
     };
 
     // not supported in WebWorker
-    if (!global.document) {
+    if (!_Global.document) {
         return;
     }
 
@@ -405,15 +407,6 @@
         _cacheStore: { get: function () { return cacheStore; } },
         _forceLocal: forceLocal
     });
-})(this, WinJS);
-
-(function fragmentLoader2Init(global) {
-    "use strict";
-
-    // not supported in WebWorker
-    if (!global.document) {
-        return;
-    }
 
     function cleanupDocumentIFrame(state) {
         // This is to work around a weird bug where removing the
@@ -480,7 +473,7 @@
         });
     }
         
-    if (global.document && document.implementation.createHTMLDocument && document.location.protocol !== "file:") {
+    if (_Global.document && document.implementation.createHTMLDocument && document.location.protocol !== "file:") {
         WinJS.Namespace.define("WinJS.UI.Fragments", {
             _populateDocument: populateDocumentXHR,
             _cleanupDocument: cleanupDocumentXHR
@@ -492,4 +485,4 @@
             _cleanupDocument: cleanupDocumentIFrame
         });
     }
-})(this);
+});

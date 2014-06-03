@@ -3,8 +3,7 @@
 define([
     './VirtualizedDataSource/_GroupDataSource',
     './VirtualizedDataSource/_GroupedItemDataSource'
-    ], function() {
-(function listDataSourceInit(undefined) {
+    ], function listDataSourceInit(_GroupDataSource, _GroupedItemDataSource) {
     "use strict";
 
     WinJS.Namespace.define("WinJS.UI", {
@@ -6063,5 +6062,4 @@ define([
         FetchError = WinJS.UI.FetchError,
         EditError = WinJS.UI.EditError;
 
-})();
 });

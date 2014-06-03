@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function resourcesInit(global, WinJS, undefined) {
+define([
+    './_Global'
+    ], function resourcesInit(_Global) {
     "use strict";
 
     var resourceMap;
@@ -114,7 +116,7 @@
         },
 
         _getStringJS: function (resourceId) {
-            var str = global.strings && global.strings[resourceId];
+            var str = _Global.strings && _Global.strings[resourceId];
             if (typeof str === "string") {
                 str = { value: str };
             }
@@ -122,7 +124,7 @@
         },
 
         _getResourceContext: function () {
-            if (global.document) {
+            if (_Global.document) {
                 if (!resourceContext) {
                     resourceContext = Windows.ApplicationModel.Resources.Core.ResourceContext.getForCurrentView();
                 }
@@ -171,5 +173,4 @@
     };
 
 
-})(this, WinJS);
-
+});

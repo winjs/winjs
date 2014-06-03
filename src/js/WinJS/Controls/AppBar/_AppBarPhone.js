@@ -4,8 +4,7 @@
 define([
     './_CommandPhone', 
     './_Icon'
-    ], function() {
-(function appBarInit(WinJS) {
+    ], function appBarInit(_CommandPhone, _Icon) {
     "use strict";
 
     WinJS.Namespace.define("WinJS.UI", {
@@ -842,5 +841,4 @@ define([
         })
     });
 
-})(WinJS);
 });

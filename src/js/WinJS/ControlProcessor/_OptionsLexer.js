@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function optionsLexerInit(global, undefined) {
+define([
+    ], function optionsLexerInit() {
     "use strict";
 
     /*
@@ -631,4 +632,4 @@ StringLiteral       7.8.4
             return lexer;
         })
     });
-})(this);
+});

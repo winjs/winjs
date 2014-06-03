@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function safeHTMLInit(global, undefined) {
+define([
+    '../Core/_Global'
+    ], function safeHTMLInit(_Global) {
     "use strict";
 
 
@@ -60,7 +62,7 @@
         element.insertAdjacentHTML(position, text);
     };
 
-    var msApp = global.MSApp;
+    var msApp = _Global.MSApp;
     if (msApp) {
         setInnerHTMLUnsafe = function (element, text) {
             /// <signature helpKeyword="WinJS.Utilities.setInnerHTMLUnsafe">
@@ -116,9 +118,9 @@
             });
         };
     }
-    else if (global.msIsStaticHTML) {
+    else if (_Global.msIsStaticHTML) {
         var check = function (str) {
-            if (!global.msIsStaticHTML(str)) {
+            if (!_Global.msIsStaticHTML(str)) {
                 throw new WinJS.ErrorFromName("WinJS.Utitilies.NonStaticHTML", strings.nonStaticHTML);
             }
         }
@@ -187,4 +189,4 @@
         insertAdjacentHTMLUnsafe: insertAdjacentHTMLUnsafe
     });
 
-}(this));
+});
