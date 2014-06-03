@@ -285,16 +285,17 @@
 
     button, input[type=button], input[type=reset] {
         .mixin(dark) {
-            &:enabled:hover:active {
+            &:hover:active {
                 background-color: rgb(255, 255, 255);
                 color: rgb(0, 0, 0);
             }
 
-            &:enabled:hover {
+            &:hover {
                 background-color: rgba(255, 255, 255, 0.13);
             }
 
-            &:disabled {
+            &:disabled, &:disabled:hover, &:disabled:hover:active {
+                background-color: transparent;
                 border-color: rgba(255, 255, 255, 0.4);
                 color: rgba(255, 255, 255, 0.4);
             }
@@ -304,18 +305,18 @@
             border-color: rgb(255, 255, 255);
         }
         .mixin(light) {
-            &:enabled:hover:active {
+            &:hover:active {
                 background-color: rgb(0, 0, 0);
                 border-color: rgb(0, 0, 0);
                 color: rgb(255, 255, 255);
             }
 
-            &:enabled:hover {
+            &:hover {
                 background-color: rgba(205, 205, 205, 0.82);
                 border-color: rgba(164, 164, 164, 0.45);
             }
 
-            &:disabled {
+            &:disabled, &:disabled:hover:active {
                 background-color: rgba(202, 202, 202, 0.4);
                 border-color: rgba(0, 0, 0, 0.08);
                 color: rgba(0, 0, 0, 0.4);
@@ -330,7 +331,7 @@
 
     button[type=submit], input[type=submit] {
         .mixin(dark) {
-            &:enabled:hover:active {
+            &:hover:active {
                 background-color: rgb(255, 255, 255);
                 border-color: transparent;
                 color: rgb(0, 0, 0);
@@ -341,14 +342,14 @@
                 border-color: rgb(255, 255, 255);
             }
 
-            &:disabled {
+            &:disabled, &:disabled:hover:active {
                 background-color: transparent;
                 border-color: rgba(255, 255, 255, 0.4);
                 color: rgba(255, 255, 255, 0.4);
             }
         }
         .mixin(light) {
-            &:enabled:hover:active {
+            &:hover:active {
                 background-color: rgb(0, 0, 0);
                 border-color: transparent;
                 color: rgb(255, 255, 255);
@@ -359,7 +360,7 @@
                 border-color: transparent;
             }
 
-            &:disabled {
+            &:disabled, &:disabled:hover:active {
                 background-color: rgba(202, 202, 202, 0.4);
                 border-color: rgba(0, 0, 0, 0.08);
                 color: rgba(0, 0, 0, 0.4);

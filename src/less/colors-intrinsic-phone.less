@@ -223,11 +223,12 @@
     button, input[type=button], input[type=reset],
     button[type=submit], input[type=submit] {
         .mixin(dark) {
-            &:enabled:hover:active {
+            &:hover:active {
                 background-color: Highlight;
             }
 
-            &:disabled {
+            &:disabled, &:disabled:hover:active {
+                background-color: transparent;
                 border-color: rgba(255, 255, 255, 0.4);
                 color: @win_light_text_low;
             }
@@ -236,18 +237,18 @@
             border-color: rgb(255, 255, 255);
         }
         .mixin(light) {
-            &:enabled:hover:active {
+            &:hover:active {
                 background-color: Highlight;
             }
 
-            &:disabled {
+            &:disabled, &:disabled:hover:active {
+                background-color: transparent;
                 border-color: rgba(0, 0, 0, 0.4);
                 color: @win_dark_text_low;
             }
 
             color: @win_dark_text_high;
             border-color: rgb(0, 0, 0);
-            background-color: transparent;
         }
         .mixin(@theme);
 
