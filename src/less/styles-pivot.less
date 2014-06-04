@@ -13,7 +13,7 @@
     -webkit-transition: opacity linear 167ms;
     position: absolute;
     width: 28px;
-    height: 72px;
+    height: 100%;
     margin: 12px 4px 0px 4px;
     top: 0px;
     #flex > .align-items(center);
@@ -62,11 +62,12 @@
     #flex > .flex(@shrink: 0);
     white-space: nowrap;
     position: relative;
+    overflow-y: visible;
+    height: 72px;
 }
 
 .win-pivot .win-pivot-header {
     display: inline-block;
-    height: 72px;
     transition: opacity linear 167ms;
     -webkit-transition: opacity linear 167ms;
 }
@@ -80,7 +81,6 @@
     padding: 0px 9px;
     letter-spacing: 0px;
     min-height: 0;
-    overflow: visible;
     max-width: none;
     min-width: 0;
     font-size: 45pt;
