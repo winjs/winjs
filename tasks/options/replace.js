@@ -5,19 +5,6 @@
     var config = require("../../config.js");
 
     module.exports = {
-        phoneTests: {
-            options: {
-                patterns: [
-                    {
-                        match: /\$\(TargetFramework\)/g,
-                        replacement: config.phoneFramework
-                    }
-                ]
-            },
-            files: [
-                { expand: true, flatten: false, src: [config.testsOutput + "Pivot/*.html"], dest: "" },
-            ]
-        },
         tests: {
             options: {
                 patterns: [

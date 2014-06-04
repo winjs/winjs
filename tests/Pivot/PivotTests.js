@@ -29,6 +29,7 @@ WinJSTests.PivotTests = function () {
     };
 
     this.tearDown = function () {
+        WinJS.Utilities.disposeSubTree(pivotWrapperEl);
         document.body.removeChild(pivotWrapperEl);
     };
 
@@ -49,10 +50,18 @@ WinJSTests.PivotTests = function () {
             event["init" + pointerName + "Event"](type, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
             element.dispatchEvent(event);
         }
-        
+
         fireEvent(pointerdown);
         fireEvent(pointerup);
         fireEvent("click");
+    }
+
+    function createAndAppendPivotWithItems(count) {
+        var pivot = new WinJS.UI.Pivot(undefined, {
+            items: new WinJS.Binding.List(getPivotItemsProgrammatically(count))
+        });
+        pivotWrapperEl.appendChild(pivot.element);
+        return pivot;
     }
 
     function getPivotItemsProgrammatically(count) {
@@ -721,7 +730,7 @@ WinJSTests.PivotTests = function () {
         };
 
         this.testNavigateViaInertia = function testNavigateViaInertia(complete) {
-            if (!window.msZoomTo) {
+            if (!HTMLElement.prototype.msZoomTo) {
                 LiveUnit.LoggingCore.logComment("This test simulates panning using msZoomTo which is not supported on this platform.");
                 complete();
                 return;
@@ -886,6 +895,23 @@ WinJSTests.PivotTests = function () {
             setTimeout(function () {
                 LiveUnit.Assert.areNotEqual(0, pivot._viewportWidth);
                 LiveUnit.Assert.areEqual(pivot._viewportElement.scrollLeft, pivot._currentScrollTargetLocation);
+                complete();
+            });
+        };
+
+        this.testClickHeadersFastDoesNotCauseUnexpectedNavigation = function testClickHeadersFastDoesNotCauseUnexpectedNavigation(complete) {
+            var pivot = createAndAppendPivotWithItems(5);
+            var headers = null;
+            waitForNextItemAnimationEnd(pivot).then(function () {
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+                headers = document.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotHeader);
+                headers[2].click();
+                return waitForNextItemAnimationStart(pivot);
+            }).then(function () {
+                headers[3].click();
+                return waitForNextItemAnimationEnd(pivot);
+            }).done(function () {
+                LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
                 complete();
             });
         };
