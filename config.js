@@ -253,7 +253,8 @@
             "src/js/build/startBase.js",
             "src/js/build/endBase.js",
             "src/js/build/startUI.js",
-            "src/js/build/endUI.js"
+            "src/js/build/endUI.js",
+            "src/js/build/endUI-phone.js"
         ],
     };
 
