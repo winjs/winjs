@@ -57,7 +57,7 @@
                 out: config.phoneOutput + "js/ui.js",
                 wrap: {
                     startFile: 'src/js/build/startUI.js',
-                    endFile: 'src/js/build/endUI.js'
+                    endFile: 'src/js/build/endUI-phone.js'
                 }
             }
         }
