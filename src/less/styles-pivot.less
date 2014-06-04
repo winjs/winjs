@@ -68,8 +68,10 @@
 
 .win-pivot .win-pivot-header {
     display: inline-block;
+    text-overflow: ellipsis;
     transition: opacity linear 167ms;
     -webkit-transition: opacity linear 167ms;
+    overflow: hidden;
 }
 
 .win-pivot button.win-pivot-header,
@@ -81,7 +83,6 @@
     padding: 0px 9px;
     letter-spacing: 0px;
     min-height: 0;
-    max-width: none;
     min-width: 0;
     font-size: 45pt;
     font-weight: 400;

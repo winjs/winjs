@@ -532,12 +532,19 @@ define(['./Pivot/_Item'], function() {
 
                     WinJS.Utilities._disposeElement(this._headersContainerElement);
                     WinJS.Utilities.empty(this._headersContainerElement);
+                    var cs = getComputedStyle(this._headersContainerElement);
+                    var marginLeft = parseFloat(cs.marginLeft);
+                    marginLeft = marginLeft > 0 ? 0 : marginLeft;
+                    var marginRight = parseFloat(cs.marginRight);
+                    marginRight = marginRight > 0 ? 0 : marginRight;
+                    var maxHeaderLength = parseFloat(cs.width) + marginLeft + marginRight;
 
                     var that = this;
                     function renderHeader(index) {
                         var item = that._items.getAt(index);
 
                         var headerContainerEl = document.createElement("BUTTON");
+                        headerContainerEl.style.maxWidth = (0.8 * maxHeaderLength) + "px";
                         if (index === that.selectedIndex) {
                             WinJS.Utilities.addClass(headerContainerEl, WinJS.UI.Pivot._ClassName.pivotHeaderSelected);
                             headerContainerEl.setAttribute('aria-selected', true);
