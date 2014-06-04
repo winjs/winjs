@@ -117,8 +117,9 @@ function nodeInView(flipView, pageContainer) {
         pageBottom = pageTop + pageContainer.offsetHeight;
 
     var viewport = flipView._panningDivContainer;
-    return (viewport.scrollLeft <= pageLeft && viewport.scrollLeft + viewport.offsetWidth >= pageRight &&
-            viewport.scrollTop <= pageTop && viewport.scrollTop + viewport.offsetHeight >= pageBottom);
+    var scrollPosition = WinJS.Utilities.getScrollPosition(viewport);
+    return (scrollPosition.scrollLeft <= pageLeft && scrollPosition.scrollLeft + viewport.offsetWidth >= pageRight &&
+            scrollPosition.scrollTop <= pageTop && scrollPosition.scrollTop + viewport.offsetHeight >= pageBottom);
 }
 
 function elementInView(flipView, element) {
@@ -215,14 +216,13 @@ alternateBasicInstantRenderer.verifyOutput = function (renderedItem, rawData) {
 function verifyFlipViewPagePositions(flipView) {
     var width = flipView._flipviewDiv.offsetWidth,
         height = flipView._flipviewDiv.offsetHeight,
-        scrollLeft = flipView._panningDivContainer.scrollLeft,
-        scrollTop = flipView._panningDivContainer.scrollTop,
+        scrollPosition = WinJS.Utilities.getScrollPosition(flipView._panningDivContainer),
         horizontal = flipView.orientation === "horizontal",
         itemSpacing = flipView.itemSpacing,
         pages = [],
         currentPageIndex = -1;
 
-    LiveUnit.Assert.areEqual(0, (horizontal ? scrollTop : scrollLeft));
+    LiveUnit.Assert.areEqual(0, (scrollPosition[(horizontal ? "scrollTop" : "scrollLeft")]));
     flipView._pageManager._forEachPage(function (curr) {
         if (curr.element) {
             pages.push(curr);

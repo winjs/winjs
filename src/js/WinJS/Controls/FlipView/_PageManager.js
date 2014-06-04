@@ -180,8 +180,7 @@
                             currStyle.left = "0px";
                             currStyle.top = "0px";
                         });
-                        this._panningDivContainer.scrollLeft = 0;
-                        this._panningDivContainer.scrollTop = 0;
+                        WinJS.Utilities.setScrollPosition(this._panningDivContainer, { scrollLeft: 0, scrollTop: 0 });
                         var containerStyle = this._panningDivContainer.style;
                         containerStyle.overflowX = "hidden";
                         containerStyle.overflowY = "hidden";
@@ -1548,9 +1547,9 @@
 
                     if (this._horizontal) {
                         if (newValue === undefined) {
-                            return this._panningDivContainer.scrollLeft;
+                            return WinJS.Utilities.getScrollPosition(this._panningDivContainer).scrollLeft;
                         }
-                        this._panningDivContainer.scrollLeft = newValue;
+                        WinJS.Utilities.setScrollPosition(this._panningDivContainer, { scrollLeft: newValue });
                     } else {
                         if (newValue === undefined) {
                             return this._panningDivContainer.scrollTop;
@@ -1566,7 +1565,7 @@
                         if (this._rtl) {
                             return this._viewportStart() + this._panningDivContainerOffsetWidth;
                         } else {
-                            return element.scrollLeft + this._panningDivContainerOffsetWidth;
+                            return WinJS.Utilities.getScrollPosition(element).scrollLeft + this._panningDivContainerOffsetWidth;
                         }
                     } else {
                         return element.scrollTop + this._panningDivContainerOffsetHeight;

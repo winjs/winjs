@@ -392,7 +392,7 @@ ListViewVerify.prototype = (function () {
 
                     lvUtils.logTestComment("tileLocation(l,r,t,b):" + tileLocation.left + " ," + tileLocation.right + " ," + tileLocation.top + " ," + tileLocation.bottom);
                     scrollDimension = 'scrollLeft';
-                    scrollLocation = listviewContainer.firstChild.nextSibling.scrollLeft;
+                    scrollLocation = WinJS.Utilities.getScrollPosition(listviewContainer.firstChild.nextSibling).scrollLeft;
                     axisLength = listviewContainer.firstChild.nextSibling.firstChild.offsetWidth;
 
                     lvUtils.logTestComment("scrollLocation:" + scrollLocation);
@@ -532,7 +532,7 @@ ListViewVerify.prototype = (function () {
 
             var listviewContainer = document.getElementById(placeholderId);
             var direction = listviewContainer.style.direction;
-            var actualScrollLocation = (controlType === Expected.Control.Grid) ? listviewContainer.firstChild.nextSibling.scrollLeft : listviewContainer.firstChild.nextSibling.scrollTop;
+            var actualScrollLocation = (controlType === Expected.Control.Grid) ? WinJS.Utilities.getScrollPosition(listviewContainer.firstChild.nextSibling).scrollLeft : listviewContainer.firstChild.nextSibling.scrollTop;
             var currFirstIndex = lvUtils.getFirstVisibleIndex(placeholderId, controlType, actualScrollLocation, options, win8uiCssEnabled);
             var currLastIndex = lvUtils.getLastVisibleIndex(placeholderId, controlType, actualScrollLocation, options, win8uiCssEnabled);
 

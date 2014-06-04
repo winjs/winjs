@@ -86,11 +86,11 @@ WinJSTests.HorizontalListTest = function () {
         this.lvUtils.waitForReady(lv)().done(function () {
             new asyncWhile(function () {
                 scrollMax = viewport.scrollWidth - viewport.clientWidth;
-                return WinJS.Promise.wrap(viewport.scrollLeft < scrollMax);
+                return WinJS.Promise.wrap(WinJS.Utilities.getScrollPosition(viewport).scrollLeft < scrollMax);
             }, function () {
                 return new WinJS.Promise(function (c) {
-                    var targetScrollPosition = Math.min(viewport.scrollLeft + increment, scrollMax);
-                    viewport.scrollLeft = targetScrollPosition;
+                    var targetScrollPosition = Math.min(WinJS.Utilities.getScrollPosition(viewport).scrollLeft + increment, scrollMax);
+                    WinJS.Utilities.setScrollPosition(viewport, { scrollLeft: targetScrollPosition });
 
                     //use requestAnimationFrame to match ListView's timing
                     requestAnimationFrame(function () {
@@ -111,15 +111,15 @@ WinJSTests.HorizontalListTest = function () {
         this.lvUtils.waitForReady(lv)().done(function () {
             new asyncWhile(function () {
                 scrollMax = viewport.scrollWidth - viewport.clientWidth;
-                return WinJS.Promise.wrap(viewport.scrollLeft < scrollMax);
+                return WinJS.Promise.wrap(WinJS.Utilities.getScrollPosition(viewport).scrollLeft < scrollMax);
             }, function () {
                 return new WinJS.Promise(function (c) {
-                    var targetScrollPosition = Math.min(viewport.scrollLeft + increment, scrollMax);
+                    var targetScrollPosition = Math.min(WinJS.Utilities.getScrollPosition(viewport).scrollLeft + increment, scrollMax);
                     lv.scrollPosition = targetScrollPosition;
 
                     //use requestAnimationFrame to match ListView's timing
                     requestAnimationFrame(function () {
-                        LiveUnit.Assert.areEqual(targetScrollPosition, viewport.scrollLeft);
+                        LiveUnit.Assert.areEqual(targetScrollPosition, WinJS.Utilities.getScrollPosition(viewport).scrollLeft);
                         c();
                     });
                 });
@@ -135,10 +135,10 @@ WinJSTests.HorizontalListTest = function () {
         this.lvUtils.waitForReady(lv)().done(function () {
             new asyncWhile(function () {
                 var scrollMax = viewport.scrollWidth - viewport.clientWidth;
-                return WinJS.Promise.wrap(viewport.scrollLeft < scrollMax);
+                return WinJS.Promise.wrap(WinJS.Utilities.getScrollPosition(viewport).scrollLeft < scrollMax);
             }, function () {
                 return new WinJS.Promise(function (c) {
-                    viewport.scrollLeft += increment;
+                    WinJS.Utilities.setScrollPosition(viewport, { scrollLeft: (WinJS.Utilities.getScrollPosition(viewport).scrollLeft + increment) });
 
                     //use requestAnimationFrame to match ListView's timing
                     requestAnimationFrame(function () {

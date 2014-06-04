@@ -109,7 +109,7 @@ WinJSTests.SemanticZoomTests = function () {
             then(function () {
                 // Hit test on the listView to get the item at the viewport center
                 var style = getComputedStyle(sezo.element),
-                    centerX = list1._viewport.scrollLeft + (parseInt(style.width, 10) / 2),
+                    centerX = WinJS.Utilities.getScrollPosition(list1._viewport).scrollLeft + (parseInt(style.width, 10) / 2),
                     centerY = list1._viewport.scrollTop + parseInt(style.height, 10) / 2,
                     centerItemIndex = -1;
 

@@ -387,7 +387,7 @@ define(['./Pivot/_Item'], function () {
 
                         this._offsetFromCenter = 0;
 
-                        if (this._viewportElement.scrollLeft !== this._currentScrollTargetLocation) {
+                        if (WinJS.Utilities.getScrollPosition(this._viewportElement).scrollLeft !== this._currentScrollTargetLocation) {
                             // If recentering causes a scroll, then we need to make sure that the next
                             // scroll event event doesn't trigger another navigation
                             this._recentering = true;
@@ -399,7 +399,7 @@ define(['./Pivot/_Item'], function () {
                             this.selectedItem.element.style[this._getDirectionAccessor()] = this._currentScrollTargetLocation + 'px';
                         }
                         WinJS.log && WinJS.log('_recenterUI index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation);
-                        this._viewportElement.scrollLeft = this._currentScrollTargetLocation;
+                        WinJS.Utilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
                     },
 
                     _scrollHandler: function pivot_scrollHandler() {
@@ -417,9 +417,9 @@ define(['./Pivot/_Item'], function () {
                         if (this._navMode === WinJS.UI.Pivot._NavigationModes.none || this._navMode === WinJS.UI.Pivot._NavigationModes.scroll) {
                             this._navMode = WinJS.UI.Pivot._NavigationModes.scroll;
                             if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
-                                WinJS.log && WinJS.log('_scrollHandler ScrollPosition: ' + this._viewportElement.scrollLeft, "winjs pivot", "log");
+                                WinJS.log && WinJS.log('_scrollHandler ScrollPosition: ' + WinJS.Utilities.getScrollPosition(this._viewportElement).scrollLeft, "winjs pivot", "log");
                                 // Check if narrator user panned/scrolled the Pivot and we are now at an unsupported location.
-                                var diff = this._viewportElement.scrollLeft - this._currentScrollTargetLocation;
+                                var diff = WinJS.Utilities.getScrollPosition(this._viewportElement).scrollLeft - this._currentScrollTargetLocation;
                                 this._cachedRTL = getComputedStyle(this._element, null).direction === "rtl";
                                 if (diff > 10) {
                                     WinJS.log && WinJS.log('_scrollHandler diff > 1: ' + diff, "winjs pivot", "log");
@@ -1112,7 +1112,7 @@ define(['./Pivot/_Item'], function () {
                         if (supportsSnapPoints && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                             if (this._skipHeaderSlide) {
                                 WinJS.log && WinJS.log('_skipHeaderSlide index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
-                                this._viewportElement.scrollLeft = this._currentScrollTargetLocation;
+                                WinJS.Utilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
                             } else {
                                 WinJS.log && WinJS.log('zoomTo index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
                                 WinJS.Utilities._zoomTo(this._viewportElement, { contentX: this._currentScrollTargetLocation, contentY: 0, viewportX: 0, viewportY: 0 });

@@ -3429,7 +3429,7 @@ WinJSTests.VirtualizedViewTests = function () {
             LiveUnit.Assert.areEqual(1, stateChangeCounter.complete);
 
             listView._onMSManipulationStateChanged({ currentState: 1 });
-            listView._viewport.scrollLeft = 1500;
+            WinJS.Utilities.setScrollPosition(listView._viewport, {scrollLeft: 1500});
 
             return WinJS.Promise.timeout(300);
         }).then(function () {
@@ -3441,7 +3441,7 @@ WinJSTests.VirtualizedViewTests = function () {
             LiveUnit.Assert.areEqual(1, stateChangeCounter.itemsLoaded);
             LiveUnit.Assert.areEqual(1, stateChangeCounter.complete);
 
-            listView._viewport.scrollLeft = 3000;
+            WinJS.Utilities.setScrollPosition(listView._viewport, {scrollLeft: 3000});
 
             return WinJS.Promise.timeout(300);
         }).then(function () {
@@ -3464,7 +3464,7 @@ WinJSTests.VirtualizedViewTests = function () {
             LiveUnit.Assert.areEqual(2, stateChangeCounter.itemsLoaded);
             LiveUnit.Assert.areEqual(2, stateChangeCounter.complete);
 
-            listView._viewport.scrollLeft = 0;
+            WinJS.Utilities.setScrollPosition(listView._viewport, { scrollLeft: 0 });
 
             return WinJS.Promise.timeout(50);
         }).then(function () {

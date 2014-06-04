@@ -95,7 +95,7 @@ WinJSTests.ConfigurationTests = function () {
             });
             var tests = [
                 function () {
-                    viewport(element).scrollLeft = 100;
+                    WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 100});
                     return true;
                 },
                 function () {
@@ -144,7 +144,7 @@ WinJSTests.ConfigurationTests = function () {
     this.generate("testDatasourceChange", "dataSourceChange", function (element, listView, complete) {
         var tests = [
             function () {
-                viewport(element).scrollLeft = 100;
+                WinJS.Utilities.setScrollPosition(viewport(element), { scrollLeft: 100 });
                 return true;
             },
             function () {
@@ -193,7 +193,7 @@ WinJSTests.ConfigurationTests = function () {
     this.generate("testTemplateChange", "templateChange", function (element, listView, complete) {
         var tests = [
             function () {
-                viewport(element).scrollLeft = 100;
+                WinJS.Utilities.setScrollPosition(viewport(element), { scrollLeft: 100 });
                 return true;
             },
             function () {
@@ -449,7 +449,7 @@ WinJSTests.ConfigurationTests = function () {
 
         waitForReady(listView, -1)().then(function () {
             LiveUnit.Assert.areEqual(2000, listView.scrollPosition);
-            LiveUnit.Assert.areEqual(listView._viewport.scrollLeft, listView.scrollPosition);
+            LiveUnit.Assert.areEqual(WinJS.Utilities.getScrollPosition(listView._viewport).scrollLeft, listView.scrollPosition);
             LiveUnit.Assert.areEqual(60, listView.indexOfFirstVisible);
 
             placeholder.style.display = "none";
@@ -469,7 +469,7 @@ WinJSTests.ConfigurationTests = function () {
             return waitForReady(listView, -1)();
         }).then(function () {
             LiveUnit.Assert.areEqual(0, listView.scrollPosition);
-            LiveUnit.Assert.areEqual(listView._viewport.scrollLeft, listView.scrollPosition);
+            LiveUnit.Assert.areEqual(WinJS.Utilities.getScrollPosition(listView._viewport).scrollLeft, listView.scrollPosition);
             LiveUnit.Assert.areEqual(0, listView.indexOfFirstVisible);
             LiveUnit.Assert.isTrue(!!listView.elementFromIndex(0));
 

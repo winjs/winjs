@@ -336,13 +336,15 @@ HubTests.BasicTests = function () {
                 var scrollProperty = control.orientation === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop";
                 var scrollRange = HubUtils.getScrollRange(control);
                 var scroller = control.element.firstElementChild;
-                var currentScrollPosition = scroller[scrollProperty];
+                var currentScrollPosition = WinJS.Utilities.getScrollPosition(scroller)[scrollProperty];
                 var increment = 11;
 
                 function loop() {
                     return new WinJS.Promise(function (c) {
                         currentScrollPosition = Math.min(currentScrollPosition + increment, scrollRange.max);
-                        scroller[scrollProperty] = currentScrollPosition;
+                        var newPosition = {};
+                        newPosition[scrollProperty] = currentScrollPosition;
+                        WinJS.Utilities.setScrollPosition(scroller, newPosition);
 
                         Helper.waitForScroll(control._viewportElement).then(function () {
                             LiveUnit.Assert.areEqual(currentScrollPosition, control.scrollPosition);
@@ -374,7 +376,7 @@ HubTests.BasicTests = function () {
                         control.scrollPosition = currentScrollPosition;
 
                         Helper.waitForScroll(control._viewportElement).then(function () {
-                            LiveUnit.Assert.areEqual(currentScrollPosition, scroller[scrollProperty]);
+                            LiveUnit.Assert.areEqual(currentScrollPosition, WinJS.Utilities.getScrollPosition(scroller)[scrollProperty]);
                             c();
                         });
                     });

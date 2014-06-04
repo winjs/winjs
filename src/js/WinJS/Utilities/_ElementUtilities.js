@@ -470,6 +470,70 @@
         }
     );
 
+    var determinedRTLEnvironment = false,
+        usingWebkitScrollCoordinates = false,
+        usingFirefoxScrollCoordinates = false;
+    function determineRTLEnvironment() {
+        var element = document.createElement("div");
+        element.style.direction = "rtl";
+        element.innerHTML = "" +
+            "<div style='width: 100px; height: 100px; overflow: scroll; visibility:hidden'>" +
+                "<div style='width: 10000px; height: 100px;'></div>" +
+            "</div>";
+        document.body.appendChild(element);
+        var elementScroller = element.firstChild;
+        if (elementScroller.scrollLeft > 0) {
+            usingWebkitScrollCoordinates = true;
+        }
+        elementScroller.scrollLeft += 100;
+        if (elementScroller.scrollLeft === 0) {
+            usingFirefoxScrollCoordinates = true;
+        }
+        document.body.removeChild(element);
+        determinedRTLEnvironment = true;
+    }
+
+    function getAdjustedScrollPosition(element) {
+        var computedStyle = getComputedStyle(element),
+            scrollLeft = element.scrollLeft,
+            scrollTop = element.scrollTop;
+        if (computedStyle.direction === "rtl") {
+            if (!determinedRTLEnvironment) {
+                determineRTLEnvironment();
+            }
+            if (usingWebkitScrollCoordinates) {
+                scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
+            }
+            scrollLeft = Math.abs(scrollLeft);
+        }
+
+        return {
+            scrollLeft: scrollLeft,
+            scrollTop: element.scrollTop
+        };
+    }
+
+    function setAdjustedScrollPosition(element, scrollLeft, scrollTop) {
+        if (scrollLeft !== undefined) {
+            var computedStyle = getComputedStyle(element);
+            if (computedStyle.direction === "rtl") {
+                if (!determinedRTLEnvironment) {
+                    determineRTLEnvironment();
+                }
+                if (usingFirefoxScrollCoordinates) {
+                    scrollLeft = -scrollLeft;
+                } else if (usingWebkitScrollCoordinates) {
+                    scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
+                }
+            }
+            element.scrollLeft = scrollLeft;
+        }
+
+        if (scrollTop !== undefined) {
+            element.scrollTop = scrollTop;
+        }
+    }
+
     var uniqueElementIDCounter = 0;
     WinJS.Namespace.define("WinJS.Utilities", {
         _dataKey: "_msDataKey",
@@ -559,7 +623,7 @@
                 element.msZoomTo(args);
             } else {
                 if (typeof args.contentX === "number") {
-                    element.scrollLeft = args.contentX;
+                    setAdjustedScrollPosition(element, args.contentX, undefined);
                 }
                 if (typeof args.contentY === "number") {
                     element.scrollTop = args.contentY;
@@ -1415,6 +1479,37 @@
             return top;
         },
 
+        getScrollPosition: function (element) {
+            /// <signature helpKeyword="WinJS.Utilities.getScrollPosition">
+            /// <summary locid="WinJS.Utilities.getScrollPosition">
+            /// Gets the scrollLeft and scrollTop of the specified element, adjusting the scrollLeft to change from browser specific coordinates to logical coordinates when in RTL.
+            /// </summary>
+            /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.Utilities.getScrollPosition_p:element">
+            /// The element.
+            /// </param>
+            /// <returns type="Object" locid="WinJS.Utilities.getScrollPosition_returnValue">
+            /// An object with two properties: scrollLeft and scrollTop
+            /// </returns>
+            /// </signature>
+            return getAdjustedScrollPosition(element);
+        },
+
+        setScrollPosition: function (element, position) {
+            /// <signature helpKeyword="WinJS.Utilities.setScrollPosition">
+            /// <summary locid="WinJS.Utilities.setScrollPosition">
+            /// Sets the scrollLeft and scrollTop of the specified element, changing the scrollLeft from logical coordinates to browser-specific coordinates when in RTL.
+            /// </summary>
+            /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.Utilities.setScrollPosition_p:element">
+            /// The element.
+            /// </param>
+            /// <param name="position" type="Object" domElement="true" locid="WinJS.Utilities.setScrollPosition_p:position">
+            /// The element.
+            /// </param>
+            /// </signature>
+            position = position || {};
+            setAdjustedScrollPosition(element, position.scrollLeft, position.scrollTop);
+        },
+
         empty: function (element) {
             /// <signature helpKeyword="WinJS.Utilities.empty">
             /// <summary locid="WinJS.Utilities.empty">
@@ -1529,7 +1624,7 @@
                     element !== document.documentElement) {
                 top -= element.scrollTop;
                 var dir = document.defaultView.getComputedStyle(element, null).direction;
-                left -= dir !== "rtl" ? element.scrollLeft : -element.scrollLeft;
+                left -= dir !== "rtl" ? element.scrollLeft : -getAdjustedScrollPosition(element).scrollLeft;
 
                 if (element === offsetParent) {
                     top += element.offsetTop;

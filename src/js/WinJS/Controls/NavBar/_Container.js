@@ -361,11 +361,7 @@
                     /// <compatibleWith platform="Windows" minVersion="8.1"/>
                     /// </signature>
                     if (this._measured) {
-                        if (this.layout === WinJS.UI.Orientation.horizontal) {
-                            this._scrollPosition = this._viewportEl.scrollLeft;
-                        } else {
-                            this._scrollPosition = this._viewportEl.scrollTop;
-                        }
+                        this._scrollPosition = WinJS.Utilities.getScrollPosition(this._viewportEl)[(this.layout === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")];
                     }
 
                     this._duringForceLayout = true;
@@ -906,11 +902,9 @@
                                 this._closeSplitIfOpen();
                             }
 
-                            if (this.layout === WinJS.UI.Orientation.horizontal) {
-                                this._viewportEl.scrollLeft = targetScrollPosition;
-                            } else {
-                                this._viewportEl.scrollTop = targetScrollPosition;
-                            }
+                            var newScrollPos = {};
+                            newScrollPos[(this.layout === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")] = targetScrollPosition;
+                            WinJS.Utilities.setScrollPosition(this._viewportEl, newScrollPos);
                         }
                     } else {
                         if ((!this._zooming && Math.abs(this._scrollPosition - targetScrollPosition) > 1) || (this._zooming && Math.abs(this._zoomPosition - targetScrollPosition) > 1)) {
@@ -957,12 +951,7 @@
                         this._checkingScroll = requestAnimationFrame(function () {
                             that._checkingScroll = null;
 
-                            var newScrollPosition;
-                            if (that.layout === WinJS.UI.Orientation.horizontal) {
-                                newScrollPosition = that._viewportEl.scrollLeft;
-                            } else {
-                                newScrollPosition = that._viewportEl.scrollTop;
-                            }
+                            var newScrollPosition = WinJS.Utilities.getScrollPosition(that._viewportEl)[(that.layout === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")];
                             if (newScrollPosition !== that._scrollPosition) {
                                 that._scrollPosition = newScrollPosition;
                                 that._closeSplitIfOpen();
@@ -1054,7 +1043,7 @@
                             }
 
                             if (this.layout === WinJS.UI.Orientation.horizontal) {
-                                this._scrollPosition = this._viewportEl.scrollLeft;
+                                this._scrollPosition = WinJS.Utilities.getScrollPosition(this._viewportEl).scrollLeft;
 
                                 sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(getComputedStyle(this._leftArrowEl).marginRight);
                                 var usableSpace = sizes.viewportOffsetWidth - sizes.leadingEdge * 2;

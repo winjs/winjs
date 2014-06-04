@@ -434,7 +434,7 @@ FlipperUtils.prototype = (function () {
                 // If failing, check with the dev if this is still the right way to obtain the panning div
                 // Right now (beta milestone), this info can be found in FlipperHelpers.js file in the dev
                 // unittests
-                var panningDivScrollLeft = flipper._panningDivContainer.scrollLeft;
+                var panningDivScrollLeft = WinJS.Utilities.getScrollPosition(flipper._panningDivContainer).scrollLeft;
                 var panningDivScrollRight = panningDivScrollLeft + flipper._panningDivContainer.offsetWidth;
 
                 LiveUnit.LoggingCore.logComment("offsetLeft: " + offsetLeft);

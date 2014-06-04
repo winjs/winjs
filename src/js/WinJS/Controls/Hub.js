@@ -266,7 +266,10 @@ define(['./Hub/_Section'], function() {
                         } else {
                             this._measure();
                             var targetScrollPos = Math.max(0, Math.min(this._scrollLength - this._viewportSize, value));
-                            this._viewportElement[this._names.scrollPos] = this._scrollPosition = targetScrollPos;
+                            this._scrollPosition = targetScrollPos;
+                            var newScrollPos = {};
+                            newScrollPos[this._names.scrollPos] = targetScrollPos;
+                            WinJS.Utilities.setScrollPosition(this._viewportElement, newScrollPos);
                         }
                     }
                 },
@@ -913,7 +916,7 @@ define(['./Hub/_Section'], function() {
 
                         this._viewportSize = this._viewportElement[this._names.offsetSize];
                         this._viewportOppositeSize = this._viewportElement[this._names.oppositeOffsetSize];
-                        this._scrollPosition = this._viewportElement[this._names.scrollPos];
+                        this._scrollPosition = WinJS.Utilities.getScrollPosition(this._viewportElement)[this._names.scrollPos];
                         this._scrollLength = this._viewportElement[this._names.scrollSize];
 
                         var surfaceElementComputedStyle = getComputedStyle(this._surfaceElement);
@@ -1013,7 +1016,9 @@ define(['./Hub/_Section'], function() {
                             WinJS.Utilities._zoomTo(this._viewportElement, { contentX: this._scrollPosition, contentY: 0, viewportX: 0, viewportY: 0 });
                         }
                     } else {
-                        this._viewportElement[this._names.scrollPos] = this._scrollPosition;
+                        var newScrollPos = {};
+                        newScrollPos[this._names.scrollPos] = this._scrollPosition;
+                        WinJS.Utilities.setScrollPosition(this._viewportElement, newScrollPos);
                     }
                 },
                 _windowKeyDownHandler: function hub_windowKeyDownHandler(ev) {
@@ -1249,7 +1254,10 @@ define(['./Hub/_Section'], function() {
                         // clamp section: 
                         var targetScrollPosition = this._ensureVisibleMath(item.index, targetScrollPosition);
 
-                        this._viewportElement[this._names.scrollPos] = this._scrollPosition = targetScrollPosition;
+                        this._scrollPosition = targetScrollPosition;
+                        var newScrollPos = {};
+                        newScrollPos[this._names.scrollPos] = this._scrollPosition;
+                        WinJS.Utilities.setScrollPosition(this._viewportElement, newScrollPos);
                     }
                 },
                 _endZoom: function hub_endZoom(isCurrentView) {

@@ -340,7 +340,7 @@ WinJSTests.GroupsTests = function () {
                 function () {
                     var element = document.getElementById("groupTestList"),
                         viewportElement = viewport(element),
-                        scrollOffset = viewportElement.scrollLeft;
+                        scrollOffset = WinJS.Utilities.getScrollPosition(viewportElement).scrollLeft;
 
                     checkHeader(listView, 7, scrollOffset - 50, 0, "groupScrollTo");
                     checkTile(listView, 7, 105, scrollOffset + 50, 0);
@@ -444,18 +444,19 @@ WinJSTests.GroupsTests = function () {
                     return true;
                 },
                 function () {
-                    var newPos = viewportElement.scrollLeft - viewportElement.offsetWidth;
+                    var position = WinJS.Utilities.getScrollPosition(viewportElement);
+                    position.scrollLeft = position.scrollLeft - viewportElement.offsetWidth;
                     LiveUnit.Assert.areEqual(338, listView.indexOfFirstVisible);
 
                     // Verify that we have realized content for the item
                     checkTile(listView, 22, 338, 12450, 0);
-                    LiveUnit.LoggingCore.logComment("scrolling from " + viewportElement.scrollLeft + " to " + newPos);
-                    viewportElement.scrollLeft = newPos;
+                    LiveUnit.LoggingCore.logComment("scrolling from " + WinJS.Utilities.getScrollPosition(viewportElement).scrollLeft + " to " + position.scrollLeft);
+                    WinJS.Utilities.setScrollPosition(viewportElement, position);
                     return true;
                 },
                 function () {
                     //LiveUnit.Assert.areEqual(337, listView.lastVisible());
-                    LiveUnit.LoggingCore.logComment("scrollPos=" + viewportElement.scrollLeft + " lastVisible=" + listView.indexOfLastVisible);
+                    LiveUnit.LoggingCore.logComment("scrollPos=" + WinJS.Utilities.getScrollPosition(viewportElement).scrollLeft + " lastVisible=" + listView.indexOfLastVisible);
 
                     complete();
                 }
@@ -1046,7 +1047,9 @@ WinJSTests.GroupsTests = function () {
                 if (!stopScrolling && document.body.contains(listView.element)) {
                     var scrollProperty = listView.layout.orientation === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop";
                     scrollPosition += 10;
-                    listView._viewport[scrollProperty] = scrollPosition;
+                    var newPos = {};
+                    newPos[scrollProperty] = scrollPosition;
+                    WinJS.Utilities.setScrollPosition(listView._viewport, newPos);
                     setTimeout(scrollListView, 16);
                 }
             }
@@ -1114,7 +1117,9 @@ WinJSTests.GroupsTests = function () {
                 if (!stopScrolling && document.body.contains(listView.element)) {
                     var scrollProperty = listView.layout.orientation === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop";
                     scrollPosition += 5;
-                    listView._viewport[scrollProperty] = scrollPosition;
+                    var newPos = {};
+                    newPos[scrollProperty] = scrollPosition;
+                    WinJS.Utilities.setScrollPosition(listView._viewport, newPos);
                     setTimeout(scrollListView, 16);
                 }
             }

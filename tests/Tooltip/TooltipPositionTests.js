@@ -98,12 +98,10 @@ TooltipPositionTests = function () {
         }
 
         if (scrollThe.indexOf("body") != -1) {
-            document.body.scrollTop = 25;
-            document.body.scrollLeft = 25;
+            WinJS.Utilities.setScrollPosition(document.body, { scrollLeft: 25, scrollTop: 25 });
         }
         else {
-            document.body.scrollTop = 0;
-            document.body.scrollLeft = 0;
+            WinJS.Utilities.setScrollPosition(document.body, { scrollLeft: 0, scrollTop: 0 });
         }
 
         if (scrollThe.indexOf("parent") != -1) {
@@ -112,8 +110,7 @@ TooltipPositionTests = function () {
             parentElement.style.top = "100px";
             parentElement.style.left = "100px";
             parentElement.style.overflow = "scroll";
-            parentElement.scrollTop = 25;
-            parentElement.scrollLeft = 25;
+            WinJS.Utilities.setScrollPosition(parentElement, { scrollLeft: 25, scrollTop: 25 });
         }
         else {
             parentElement.style.width = "";
@@ -121,8 +118,7 @@ TooltipPositionTests = function () {
             parentElement.style.top = "";
             parentElement.style.left = "";
             parentElement.style.overflow = "auto";
-            parentElement.scrollTop = 0;
-            parentElement.scrollLeft = 0;
+            WinJS.Utilities.setScrollPosition(parentElement, { scrollLeft: 0, scrollTop: 0 });
         }
 
         // Position the element

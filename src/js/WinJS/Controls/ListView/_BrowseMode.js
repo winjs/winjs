@@ -8,9 +8,10 @@
     WinJS.Namespace.define("WinJS.UI", {
         _getCursorPos: function (eventObject) {
             var docElement = document.documentElement;
+            var docScrollPos = WinJS.Utilities.getScrollPosition(docElement);
 
             return {
-                left: eventObject.clientX + (document.body.dir === "rtl" ? -docElement.scrollLeft : docElement.scrollLeft),
+                left: eventObject.clientX + (document.body.dir === "rtl" ? -docScrollPos.scrollLeft : docScrollPos.scrollLeft),
                 top: eventObject.clientY + docElement.scrollTop
             };
         },
@@ -1025,7 +1026,9 @@
                                             var currentTime = WinJS.Utilities._now();
                                             var delta = that._autoScrollRate * ((currentTime - that._lastDragTimeout) / 1000);
                                             delta = (delta < 0 ? Math.min(-1, delta) : Math.max(1, delta));
-                                            that.site._viewport[that.site._scrollProperty] += delta;
+                                            var newScrollPos = {};
+                                            newScrollPos[that.site._scrollProperty] = that.site._viewportScrollPosition + delta;
+                                            WinJS.Utilities.setScrollPosition(that.site._viewport, newScrollPos);
                                             that._lastDragTimeout = currentTime;
                                             that._autoScrollFrame = requestAnimationFrame(nextFrame);
                                         }

@@ -1246,11 +1246,13 @@ define([
 
                 _viewportScrollPosition: {
                     get: function () {
-                        this._currentScrollPosition = this._viewport[this._scrollProperty];
+                        this._currentScrollPosition = WinJS.Utilities.getScrollPosition(this._viewport)[this._scrollProperty];
                         return this._currentScrollPosition;
                     },
                     set: function (value) {
-                        this._viewport[this._scrollProperty] = value;
+                        var newScrollPos = {};
+                        newScrollPos[this._scrollProperty] = value;
+                        WinJS.Utilities.setScrollPosition(this._viewport, newScrollPos);
                         this._currentScrollPosition = value;
                     }
                 },
@@ -2572,7 +2574,7 @@ define([
                         utilities.addClass(this._viewport, WinJS.UI._verticalClass);
                         utilities.removeClass(this._viewport, WinJS.UI._horizontalClass);
                         if (resetScrollPosition) {
-                            this._viewport.scrollLeft = 0;
+                            WinJS.Utilities.setScrollPosition(this._viewport, {scrollLeft: 0});
                         }
                     }
                 },

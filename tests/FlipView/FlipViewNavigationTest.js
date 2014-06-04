@@ -80,7 +80,9 @@ WinJSTests.FlipViewNavigationTests = function () {
             function () {
                 LiveUnit.Assert.areEqual(0, flipview.currentPage);
                 if (flipview.orientation === "horizontal") {
-                    flipview._panningDivContainer.scrollLeft += 400;
+                    var scrollPosition = WinJS.Utilities.getScrollPosition(flipview._panningDivContainer);
+                    scrollPosition.scrollLeft += 400;
+                    WinJS.Utilities.setScrollPosition(flipview._panningDivContainer, scrollPosition);
                 } else {
                     flipview._panningDivContainer.scrollTop += 400;
                 }

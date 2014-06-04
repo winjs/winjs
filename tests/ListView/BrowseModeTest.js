@@ -1007,7 +1007,9 @@ WinJSTests.BrowseModeTests = function () {
                 LiveUnit.Assert.isTrue(targetElement === listView._tabManager.childFocus);
                 LiveUnit.Assert.isTrue(gotInvokeEvent);
                 gotInvokeEvent = false;
-                listView._viewport.scrollLeft += 5000;
+                var scrollPos = WinJS.Utilities.getScrollPosition(listView._viewport);
+                scrollPos.scrollLeft += 5000;
+                WinJS.Utilities.setScrollPosition(listView._viewport, scrollPos);
 
                 return waitForDeferredAction(listView)();
             }).then(function () {

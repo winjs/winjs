@@ -223,7 +223,7 @@ var WinJSTests = WinJSTests || {};
                     checkTile(listview, 4, 100, 100);
 
                     element.dir = "rtl";
-                    viewport(element).scrollLeft = 0;
+                    WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 0});
                     return true;
                 },
                 function () {
@@ -271,7 +271,7 @@ var WinJSTests = WinJSTests || {};
                     return true;
                 },
                 function () {
-                    LiveUnit.Assert.areEqual(101, viewport(element).scrollLeft);
+                    LiveUnit.Assert.areEqual(101, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                     LiveUnit.Assert.areEqual(3, listview.indexOfFirstVisible);
                     LiveUnit.Assert.areEqual(14, listview.indexOfLastVisible);
 
@@ -419,7 +419,7 @@ var WinJSTests = WinJSTests || {};
                         return true;
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(150, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(150, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(150, listview.scrollPosition);
 
                         LiveUnit.Assert.areEqual(3, listview.indexOfFirstVisible);
@@ -428,64 +428,64 @@ var WinJSTests = WinJSTests || {};
                         listview.indexOfFirstVisible = 0;
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(0, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(0, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(0, listview.indexOfFirstVisible);
 
                         listview.indexOfFirstVisible = 1;
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(0, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(0, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(0, listview.indexOfFirstVisible);
 
                         listview.indexOfFirstVisible = 3;
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(100, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(100, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(3, listview.indexOfFirstVisible);
 
-                        viewport(element).scrollLeft = 150;
+                        WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 150});
                         return true;
                     },
                     function () {
                         listview.ensureVisible(6);
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(150, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(150, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(3, listview.indexOfFirstVisible);
 
-                        viewport(element).scrollLeft = 150;
+                        WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 150});
                     },
                     function () {
                         listview.ensureVisible(3);
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(100, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(100, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(3, listview.indexOfFirstVisible);
 
                         listview.ensureVisible(0);
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(0, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(0, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(0, listview.indexOfFirstVisible);
 
-                        viewport(element).scrollLeft = 150;
+                        WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 150});
                         return true;
                     },
                     function () {
                         listview.ensureVisible(12);
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(200, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(200, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(6, listview.indexOfFirstVisible);
 
-                        viewport(element).scrollLeft = 150;
+                        WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 150});
                         return true;
                     },
                     function () {
                         listview.ensureVisible(15);
                     },
                     function () {
-                        LiveUnit.Assert.areEqual(300, viewport(element).scrollLeft);
+                        LiveUnit.Assert.areEqual(300, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
                         LiveUnit.Assert.areEqual(9, listview.indexOfFirstVisible);
 
                         complete();
@@ -536,12 +536,12 @@ var WinJSTests = WinJSTests || {};
                     listview.ensureVisible(6);
                 },
                 function () {
-                    LiveUnit.Assert.areEqual(300, viewport(element).scrollLeft);
+                    LiveUnit.Assert.areEqual(300, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
 
                     listview.ensureVisible(3);
                 },
                 function () {
-                    LiveUnit.Assert.areEqual(100, viewport(element).scrollLeft);
+                    LiveUnit.Assert.areEqual(100, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
 
                     utilities.removeClass(element, "bigMargins");
                     listview.forceLayout();
@@ -552,21 +552,21 @@ var WinJSTests = WinJSTests || {};
                     listview.ensureVisible(12);
                 },
                 function () {
-                    LiveUnit.Assert.areEqual(200, viewport(element).scrollLeft);
+                    LiveUnit.Assert.areEqual(200, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
 
                     utilities.addClass(element, "bigMargins");
                     listview.forceLayout();
                     return true;
                 },
                 function () {
-                    viewport(element).scrollLeft = 125;
+                    WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 125});
                     return true;
                 },
                 function () {
                     LiveUnit.Assert.areEqual(2, listview.indexOfFirstVisible);
                     LiveUnit.Assert.areEqual(5, listview.indexOfLastVisible);
 
-                    viewport(element).scrollLeft = 250;
+                    WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 250});
                     return true;
                 },
                 function () {
@@ -577,14 +577,14 @@ var WinJSTests = WinJSTests || {};
                     return true
                 },
                 function () {
-                    viewport(element).scrollLeft = 25;
+                    WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 25});
                     return true;
                 },
                 function () {
                     LiveUnit.Assert.areEqual(0, listview.indexOfFirstVisible);
                     LiveUnit.Assert.areEqual(3, listview.indexOfLastVisible);
 
-                    viewport(element).scrollLeft = 201;
+                    WinJS.Utilities.setScrollPosition(viewport(element), {scrollLeft: 201});
                     return true;
                 },
                 function () {
@@ -597,7 +597,7 @@ var WinJSTests = WinJSTests || {};
 
             runTests(listview, tests);
         };
-        this.generate("testEnsureVisibleWithAsymmetricalMarginsInGridLayout", "GridLayout", testEnsureVisibleWithAsymmetricalMarginsInGrid, "asymmetricalMarginsTemplate", "asymmetricalMarginsPlaceholder");
+        this.generate("testEnsureVisibleWithAsymmetricalM   arginsInGridLayout", "GridLayout", testEnsureVisibleWithAsymmetricalMarginsInGrid, "asymmetricalMarginsTemplate", "asymmetricalMarginsPlaceholder");
 
         var testEnsureVisibleWithAsymmetricalMarginsInList = function (element, listview, complete) {
             var tests = [
@@ -646,7 +646,7 @@ var WinJSTests = WinJSTests || {};
                 listview.ensureVisible(1);
             },
             function () {
-                LiveUnit.Assert.areEqual(0, viewport(element).scrollLeft);
+                LiveUnit.Assert.areEqual(0, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
 
                 listview.ensureVisible(20);
             },
@@ -654,7 +654,7 @@ var WinJSTests = WinJSTests || {};
                 listview.indexOfFirstVisible = 0;
             },
             function () {
-                LiveUnit.Assert.areEqual(0, viewport(element).scrollLeft);
+                LiveUnit.Assert.areEqual(0, WinJS.Utilities.getScrollPosition(viewport(element)).scrollLeft);
 
                 complete();
             }
@@ -1193,20 +1193,20 @@ var WinJSTests = WinJSTests || {};
                         },
                         function () {
                             var scrollProperty = listView._horizontal() ? "scrollLeft" : "scrollTop";
-                            LiveUnit.Assert.areEqual(300, listView._viewport[scrollProperty]);
+                            LiveUnit.Assert.areEqual(300, WinJS.Utilities.getScrollPosition(listView._viewport)[scrollProperty]);
                             setTimeout(function () {
                                 element.style.display = "none";
                                 setTimeout(function () {
                                     element.style.display = "block";
                                     // Changing display property resets scrollXXX property without raising onscroll event
-                                    LiveUnit.Assert.areEqual(0, listView._viewport[scrollProperty]);
+                                    LiveUnit.Assert.areEqual(0, WinJS.Utilities.getScrollPosition(listView._viewport)[scrollProperty]);
                                     // forceLayout restores scrollXXX
                                     listView[functionName]();
                                     listView.addEventListener("loadingstatechanged", checkAndExecute, false);
 
                                     function checkAndExecute() {
                                         if (listView.loadingState === "complete") {
-                                            LiveUnit.Assert.areEqual(300, listView._viewport[scrollProperty]);
+                                            LiveUnit.Assert.areEqual(300, WinJS.Utilities.getScrollPosition(listView._viewport)[scrollProperty]);
 
                                             listView.removeEventListener("loadingstatechanged", checkAndExecute, false);
                                             document.body.removeChild(element);

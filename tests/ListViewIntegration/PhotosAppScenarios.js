@@ -191,7 +191,7 @@ WinJSTests.PhotosAppScenarios = function () {
                     then(function () {
                         // Hit test on the listView to get the item at the viewport center
                         var style = getComputedStyle(sezoDiv),
-                            centerX = list1._viewport.scrollLeft + (parseInt(style.width, 10) / 2),
+                            centerX = WinJS.Utilities.getScrollPosition(list1._viewport).scrollLeft + (parseInt(style.width, 10) / 2),
                             centerY = parseInt(style.height, 10) / 2,
                             centerItemIndex = list1.layout.hitTest(centerX, centerY);
 
