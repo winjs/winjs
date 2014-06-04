@@ -30,6 +30,7 @@ define(['./Pivot/_Item'], function() {
             var supportsTouchDetection = !!(window.MSPointerEvent || window.TouchEvent);
 
             var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+            var Keys = WinJS.Utilities.Key;
 
             function pivotDefaultHeaderTemplate(item) {
                 var element = document.createTextNode(typeof item.header === "object" ? JSON.stringify(item.header) : ('' + item.header));
@@ -101,6 +102,7 @@ define(['./Pivot/_Item'], function() {
 
                 this._headersContainerElement = document.createElement("DIV");
                 WinJS.Utilities.addClass(this._headersContainerElement, WinJS.UI.Pivot._ClassName.pivotHeaders);
+                this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
                 this._element.appendChild(this._headersContainerElement);
                 if (supportsSnapPoints) {
                     this._element.addEventListener('click', this._elementClickedHandler.bind(this));
@@ -110,6 +112,8 @@ define(['./Pivot/_Item'], function() {
                     WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
                     WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler.bind(this));
                 }
+
+                this._tabContainer = new WinJS.UI.TabContainer(this._headersContainerElement);
 
                 this._viewportElement = document.createElement("DIV");
                 this._viewportElement.className = WinJS.UI.Pivot._ClassName.pivotViewport;
@@ -283,6 +287,14 @@ define(['./Pivot/_Item'], function() {
                     var event = document.createEvent("CustomEvent");
                     event.initCustomEvent(type, !!canBubble, !!cancelable, detail);
                     return this.element.dispatchEvent(event);
+                },
+
+                _headersKeyDown: function pivot_headersKeydown(e) {
+                    if (e.keyCode === Keys.leftArrow || e.keyCode === Keys.pageUp) {
+                        this._rtl ? this._goNext() : this._goPrevious();
+                    } else if (e.keyCode === Keys.rightArrow || e.keyCode === Keys.pageDown) {
+                        this._rtl ? this._goPrevious() : this._goNext();
+                    }
                 },
 
                 _elementClickedHandler: function pivot_elementClickedHandler(ev) {
@@ -515,6 +527,7 @@ define(['./Pivot/_Item'], function() {
                         return;
                     }
 
+                    var restoreFocus = this._headersContainerElement.contains(document.activeElement);
                     var template = WinJS.Utilities._syncRenderer(pivotDefaultHeaderTemplate);
 
                     WinJS.Utilities._disposeElement(this._headersContainerElement);
@@ -632,6 +645,11 @@ define(['./Pivot/_Item'], function() {
                             this._headersContainerElement.appendChild(this._nextButton);
                             this._nextButton.style.right = this._rtl ? leadingSpace + "px" : "0px";
                         }
+                    }
+                    var firstHeaderIndex = this._headersContainerElement.children.length > 1 ? 1 : 0;
+                    this._tabContainer.childFocus = this._headersContainerElement.children[firstHeaderIndex];
+                    if (restoreFocus) {
+                        this._headersContainerElement.children[firstHeaderIndex].focus();
                     }
                 },
 
