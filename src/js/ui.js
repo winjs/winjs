@@ -11,6 +11,7 @@ define([
     'WinJS/Controls/Rating',
     'WinJS/Controls/ToggleSwitch',
     'WinJS/Controls/SemanticZoom',
+    'WinJS/Controls/Pivot',
     'WinJS/Controls/Hub',
     'WinJS/Controls/Flyout',
     'WinJS/Controls/AppBar',
