@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Back Button
 define([
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function backButtonInit() {
     "use strict";
 
@@ -47,7 +49,7 @@ define([
         }
 
         // Singleton reference count for registering and unregistering global event handlers.
-        var backButtonReferenceCount = 0; // 
+        var backButtonReferenceCount = 0; //
 
         /* Step 2: Return Singleton object literal */
         return {
@@ -100,11 +102,11 @@ define([
                 /// Creates a new BackButton control
                 /// </summary>
                 /// <param name="element" domElement="true" locid="WinJS.UI.BackButton.constructor_p:element">
-                /// The DOM element that will host the control. If this parameter is null, this constructor creates one for you.              
+                /// The DOM element that will host the control. If this parameter is null, this constructor creates one for you.
                 /// </param>
                 /// <param name="options" type="Object" isOptional="true" locid="WinJS.UI.MenuBackButtonCommand.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds to 
-                /// one of the control's properties or events. 
+                /// An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds to
+                /// one of the control's properties or events.
                 /// </param>
                 /// <returns type="WinJS.UI.BackButton" locid="WinJS.UI.BackButton.constructor_returnValue">
                 /// A BackButton control.
@@ -183,8 +185,8 @@ define([
                 },
 
                 _initializeButton: function () {
-                    //Final EN-US HTML should be: 
-                    //<button class="win-navigation-backbutton" aria-label="Back" title="Back" type="button"><span class="win-back"></span></button> 
+                    //Final EN-US HTML should be:
+                    //<button class="win-navigation-backbutton" aria-label="Back" title="Back" type="button"><span class="win-back"></span></button>
                     //Button will automatically be disabled if WinJS.Navigation.history.canGoBack is false.
 
                     // Verify the HTML is a button

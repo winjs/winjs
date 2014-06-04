@@ -20,6 +20,7 @@
     "chalk": "~0.4.0",
     "text-table": "~0.2.0",
     "http-post": "~0.1.1",
-    "grunt-contrib-requirejs": "^0.4.4"
+    "grunt-contrib-requirejs": "^0.4.4",
+    "mkpath": "^0.1.0"
   }
 }

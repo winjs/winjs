@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,registeredforsettings,SettingsFlyout,Statics,Syriac</dictionary>
 define([
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function settingsFlyoutInit() {
     "use strict";
 
@@ -94,7 +96,7 @@ define([
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </signature>
 
-                // Make sure there's an input element            
+                // Make sure there's an input element
                 this._element = element || document.createElement("div");
                 this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -521,7 +523,7 @@ define([
             SettingsFlyout.show = function () {
                 /// <signature helpKeyword="WinJS.UI.SettingsFlyout.show">
                 /// <summary locid="WinJS.UI.SettingsFlyout.show_static">
-                /// Shows the SettingsPane UI, if hidden, regardless of other states. 
+                /// Shows the SettingsPane UI, if hidden, regardless of other states.
                 /// </summary>
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </signature>

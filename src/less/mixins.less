@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //
 // Mixins for flexbox styles
 //
@@ -6,7 +7,7 @@
     // IE 10's prefixed flexbox syntax is quite different than the standard. Most
     // of the complexity here is for dealing with IE 10. A summary of the differences
     // can be found at: http://msdn.microsoft.com/en-us/library/ie/dn265027(v=vs.85).aspx
-    
+
     .display-flex() {
         display: -ms-flexbox;
         display: -webkit-flex;
@@ -18,7 +19,7 @@
         display: -webkit-inline-flex;
         display: inline-flex;
     }
-    
+
     // The supported values for align-content, align-items, align-self, and
     // justify-content are different in IE 10. Specifically:
     //   - flex-start is start
@@ -26,7 +27,7 @@
     //   - space-between is justify
     //   - space-around is distribute
     // ._ie10-align-property is responsible for doing this value translation.
-    
+
     ._ie10-align-property(@property; flex-start) {
         @{property}: start;
     }
@@ -70,9 +71,9 @@
         -webkit-justify-content: @value;
         justify-content: @value;
     }
-    
+
     // In IE 10, the equivalent of flex-wrap's "nowrap" is "none".
-    
+
     ._ie10-wrap(nowrap) {
         -ms-flex-wrap: none;
     }

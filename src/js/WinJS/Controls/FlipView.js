@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './FlipView/_PageManager'
+    './FlipView/_PageManager',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function flipperInit(_PageManager) {
     "use strict";
 

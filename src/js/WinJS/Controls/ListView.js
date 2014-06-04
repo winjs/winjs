@@ -13,6 +13,8 @@ define([
     './ListView/_StorageDataSource',
     './ListView/_VersionManager',
     './ListView/_VirtualizeContentsView',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function listViewImplInit(_BrowseMode, _Constants, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _ItemsContainer, _ItemsManager, _Layouts, _ParallelWorkQueue, _SelectionManager, _StorageDataSource, _VersionManager, _VirtualizeContentsView) {
     "use strict";
 
@@ -1183,7 +1185,7 @@ define([
                 forceLayout: function ListView_forceLayout() {
                     /// <signature helpKeyword="WinJS.UI.ListView.forceLayout">
                     /// <summary locid="WinJS.UI.ListView.forceLayout">
-                    /// Forces the ListView to update its layout. Use this function or relcaculateItemPosition when making the ListView visible again after you set its style.display property to "none” or after style changes have been made that affect the size or position of the ListView or its items. 
+                    /// Forces the ListView to update its layout. Use this function or relcaculateItemPosition when making the ListView visible again after you set its style.display property to "none” or after style changes have been made that affect the size or position of the ListView or its items.
                     /// after you set its style.display property to "none".
                     /// </summary>
                     /// </signature>
@@ -1648,7 +1650,7 @@ define([
                     events.forEach(function (eventHandler) {
                         WinJS.Utilities._addEventListener(that._viewport, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
-                    
+
                     var elementEvents = [
                         listViewHandler("FocusIn", false, false),
                         listViewHandler("FocusOut", false, false),
@@ -2014,7 +2016,7 @@ define([
                 _processReload: function () {
                     this._affectedRange.addAll();
 
-                    // Inform scroll view that a realization pass is coming so that it doesn't restart the 
+                    // Inform scroll view that a realization pass is coming so that it doesn't restart the
                     // realization pass itself.
                     this._cancelAsyncViewWork(true);
                     if (this._currentMode()._dragging) {
@@ -2037,7 +2039,7 @@ define([
                         }
                         this._versionManager.beginUpdating();
 
-                        // Inform scroll view that a realization pass is coming so that it doesn't restart the 
+                        // Inform scroll view that a realization pass is coming so that it doesn't restart the
                         // realization pass itself.
                         this._cancelAsyncViewWork();
 
@@ -2163,7 +2165,7 @@ define([
                         // If there are 2 edits before layoutAnimations runs we need to merge the 2 groups of modified elements.
                         // For example:
                         // If you start with A, B, C and add item Z to the beginning you will have
-                        // [ -1 -> 0, 0 -> 1, 1 -> 2, 2 -> 3] 
+                        // [ -1 -> 0, 0 -> 1, 1 -> 2, 2 -> 3]
                         // However before layout is called an insert of Y to the beginning also happens you should get
                         // [ -1 -> 0, -1 -> 1, 0 -> 2, 1 -> 3, 2 -> 4]
                         var previousModifiedElements = this._modifiedElements || [];
@@ -2253,7 +2255,7 @@ define([
                             this._currentMode().fireDragUpdateEvent();
                         }
 
-                        // If the focused item is removed, or the item we're trying to focus on has been moved before we can focus on it, 
+                        // If the focused item is removed, or the item we're trying to focus on has been moved before we can focus on it,
                         // we need to update our focus request to get the item from the appropriate index.
                         if (updater.focusedItemRemoved || (this._focusRequest && (updater.oldFocus.index !== updater.newFocus.index) || (updater.oldFocus.type !== updater.newFocus.type))) {
                             this._itemFocused = false;
@@ -3793,7 +3795,7 @@ define([
                     }
                 },
 
-                // Avoids unnecessary UIA selection events by only updating aria-selected if it has changed 
+                // Avoids unnecessary UIA selection events by only updating aria-selected if it has changed
                 _setAriaSelected: function ListView_setAriaSelected(itemElement, isSelected) {
                     var ariaSelected = (itemElement.getAttribute("aria-selected") === "true");
 
@@ -3961,7 +3963,7 @@ define([
                 },
 
                 _fireAccessibilityAnnotationCompleteEvent: function ListView_fireAccessibilityAnnotationCompleteEvent(firstIndex, lastIndex, firstHeaderIndex, lastHeaderIndex) {
-                    // This event is fired in these cases: 
+                    // This event is fired in these cases:
                     // - When the data source count is 0, it is fired after the aria markers have been
                     //   updated. The event detail will be { firstIndex: -1, lastIndex: -1 }.
                     // - When the data source count is non-zero, it is fired after the aria markers

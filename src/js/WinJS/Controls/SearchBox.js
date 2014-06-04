@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function searchboxInit() {
     "use strict";
 
@@ -17,7 +19,7 @@ define([
         /// <event name="querysubmitted" bubbles="true" locid="WinJS.UI.SearchBox_e:querysubmitted">Raised when user clicks on search glyph or presses Enter.</event>
         /// <event name="resultsuggestionchosen" bubbles="true" locid="WinJS.UI.SearchBox_e:resultsuggestionchosen">Raised when user clicks  one of the displayed suggestions.</event>
         /// <event name="suggestionsrequested" bubbles="true" locid="WinJS.UI.SearchBox_e:suggestionsrequested">Raised when the system requests search suggestions from this app.</event>
-        /// <event name="receivingfocusonkeyboardinput" bubbles="true" locid="WinJS.UI.SearchBox_e:receivingfocusonkeyboardinput"> 
+        /// <event name="receivingfocusonkeyboardinput" bubbles="true" locid="WinJS.UI.SearchBox_e:receivingfocusonkeyboardinput">
         /// Raised when the app automatically redirects focus to the search box. This event can only be raised when the focusOnKeyboardInput property is set to true.
         /// </event>
         /// <part name="searchbox" class="win-searchbox" locid="WinJS.UI.SearchBox:search">Styles the entire Search box control.</part>
@@ -178,7 +180,7 @@ define([
 
                 /// <field type='String' locid="WinJS.UI.SearchBox.placeholderText" helpKeyword="WinJS.UI.SearchBox.placeholderText">
                 /// Gets or sets the placeholder text for the SearchBox. This text is displayed if there is no
-                /// other text in the input box. 
+                /// other text in the input box.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 placeholderText: {
@@ -192,7 +194,7 @@ define([
                 },
 
                 /// <field type='String' locid="WinJS.UI.SearchBox.queryText" helpKeyword="WinJS.UI.SearchBox.queryText">
-                /// Gets or sets the query text for the SearchBox. 
+                /// Gets or sets the query text for the SearchBox.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 queryText: {
@@ -205,7 +207,7 @@ define([
                 },
 
                 /// <field type='bool' locid="WinJS.UI.SearchBox.searchHistoryDisabled" helpKeyword="WinJS.UI.SearchBox.searchHistoryDisabled">
-                /// Gets or sets a value that specifies whether search history is disabled for the SearchBox. The default value is false. 
+                /// Gets or sets a value that specifies whether search history is disabled for the SearchBox. The default value is false.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 searchHistoryDisabled: {
@@ -224,10 +226,10 @@ define([
                 },
 
                 /// <field type='String' locid="WinJS.UI.SearchBox.searchHistoryContext" helpKeyword="WinJS.UI.SearchBox.searchHistoryContext">
-                /// Gets or sets the search history context for the SearchBox. The search history context string is used as a secondary key for storing search history. 
-                /// (The primary key is the AppId.) An app can use the search history context string to store different search histories based on the context of the application. 
-                /// If you don't set this property, the system assumes that all searches in your app occur in the same context. 
-                /// If you update this property while the search pane is open with suggestions showing, the changes won't take effect until the user enters the next character. 
+                /// Gets or sets the search history context for the SearchBox. The search history context string is used as a secondary key for storing search history.
+                /// (The primary key is the AppId.) An app can use the search history context string to store different search histories based on the context of the application.
+                /// If you don't set this property, the system assumes that all searches in your app occur in the same context.
+                /// If you update this property while the search pane is open with suggestions showing, the changes won't take effect until the user enters the next character.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 searchHistoryContext: {
@@ -246,11 +248,11 @@ define([
                 },
 
                 /// <field type='String' locid="WinJS.UI.SearchBox.focusOnKeyboardInput" helpKeyword="WinJS.UI.SearchBox.focusOnKeyboardInput">
-                /// Enable automatically focusing the search box when the user types into the app window (off by default) While this is enabled, 
-                /// input on the current thread will be intercepted and redirected to the search box. Only textual input will trigger the search box to focus. 
+                /// Enable automatically focusing the search box when the user types into the app window (off by default) While this is enabled,
+                /// input on the current thread will be intercepted and redirected to the search box. Only textual input will trigger the search box to focus.
                 /// The caller will continue to receive non-text keys (such as arrows, tab, etc
-                /// This will also not affect WIN/CTRL/ALT key combinations (except for Ctrl-V for paste). 
-                /// If the client needs more to happen than just set focus in the box (make control visible, etc.), they will need to handle the event. 
+                /// This will also not affect WIN/CTRL/ALT key combinations (except for Ctrl-V for paste).
+                /// If the client needs more to happen than just set focus in the box (make control visible, etc.), they will need to handle the event.
                 /// If enabled, the app must be sure to disable this if the user puts focus in some other edit field.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
@@ -273,9 +275,9 @@ define([
                 },
 
                 /// <field type='String' locid="WinJS.UI.SearchBox.chooseSuggestionOnEnter" helpKeyword="WinJS.UI.SearchBox.chooseSuggestionOnEnter">
-                /// Gets or sets whether the first suggestion is chosen when the user presses Enter. 
-                /// When set to true, as the user types in the search box, a focus rectangle is drawn on the first search suggestion 
-                /// (if present and no IME composition in progress).  Pressing enter will behave the same as if clicked on the focused suggestion, 
+                /// Gets or sets whether the first suggestion is chosen when the user presses Enter.
+                /// When set to true, as the user types in the search box, a focus rectangle is drawn on the first search suggestion
+                /// (if present and no IME composition in progress).  Pressing enter will behave the same as if clicked on the focused suggestion,
                 /// and the down arrow key press will put real focus to the second suggestion and the up arrow key will remove focus.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
@@ -290,7 +292,7 @@ define([
                 },
 
                 /// <field type='bool' locid="WinJS.UI.SearchBox.disabled" helpKeyword="WinJS.UI.SearchBox.disabled">
-                /// Gets or sets a value that specifies whether the SearchBox is disabled. 
+                /// Gets or sets a value that specifies whether the SearchBox is disabled.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 disabled: {
@@ -328,7 +330,7 @@ define([
                 setLocalContentSuggestionSettings: function SearchBox_setLocalContentSuggestionSettings(settings) {
                     /// <signature helpKeyword="WinJS.UI.SearchBox.SetLocalContentSuggestionSettings">
                     /// <summary locid="WinJS.UI.SearchBox.SetLocalContentSuggestionSettings">
-                    /// Specifies whether suggestions based on local files are automatically displayed in the search pane, and defines the criteria that 
+                    /// Specifies whether suggestions based on local files are automatically displayed in the search pane, and defines the criteria that
                     /// the system uses to locate and filter these suggestions.
                     /// </summary>
                     /// <param name="eventName" type="Windows.ApplicationModel.Search. LocalContentSuggestionSettings" locid="WinJS.UI.SearchBox.setLocalContentSuggestionSettings_p:settings">
@@ -387,7 +389,7 @@ define([
                 onquerychanged: createEvent(EventName.querychanged),
 
                 /// <field type="Function" locid="WinJS.UI.SearchBox.onquerysubmitted" helpKeyword="WinJS.UI.SearchBox.onquerysubmitted">
-                /// Raised when user clicks on search glyph or presses enter button. 
+                /// Raised when user clicks on search glyph or presses enter button.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 onquerysubmitted: createEvent(EventName.querysubmitted),
@@ -567,7 +569,7 @@ define([
 
                             lastPosition = hit.startPosition + hit.length;
 
-                            // Add hit highlighted text                    
+                            // Add hit highlighted text
                             var spanHitHighlightedText = this._addNewSpan(element, text.substring(hit.startPosition, lastPosition), firstChild);
                             utilities.addClass(spanHitHighlightedText, ClassName.searchBoxFlyoutHighlightText);
                         }
@@ -596,7 +598,7 @@ define([
                 },
 
                 _findNextSuggestionElementIndex: function SearchBox_findNextSuggestionElementIndex(curIndex) {
-                    // Returns -1 if there are no focusable elements after curIndex                
+                    // Returns -1 if there are no focusable elements after curIndex
                     // Returns first element if curIndex < 0
                     var startIndex = curIndex + 1;
                     if (startIndex < 0) {
@@ -612,7 +614,7 @@ define([
                 },
 
                 _findPreviousSuggestionElementIndex: function SearchBox_findPreviousSuggestionElementIndex(curIndex) {
-                    // Returns -1 if there are no focusable elements before curIndex                
+                    // Returns -1 if there are no focusable elements before curIndex
                     // Returns last element if curIndex >= suggestionsdata.length
                     var startIndex = curIndex - 1;
                     if (startIndex >= this._suggestionsData.length) {
@@ -656,7 +658,7 @@ define([
                 },
 
                 _selectSuggestionAtIndex: function SearchBox_selectSuggestionAtIndex(indexToSelect) {
-                    // Sets focus on the specified element and removes focus from others.  
+                    // Sets focus on the specified element and removes focus from others.
                     // Clears selection if index is outside of suggestiondata index range.
                     var curElement = null;
                     for (var i = 0; i < this._suggestionsData.length; i++) {
@@ -978,7 +980,7 @@ define([
                     return linguisticDetails;
                 },
 
-                _getLinguisticDetails: function SearchBox_getLinguisticDetails(useCache, createFilled) { // createFilled=false always creates an empty linguistic details object, otherwise generate it or use the cache 
+                _getLinguisticDetails: function SearchBox_getLinguisticDetails(useCache, createFilled) { // createFilled=false always creates an empty linguistic details object, otherwise generate it or use the cache
                     var linguisticDetails = null;
                     if ((this._inputElement.value === this._prevQueryText) && useCache && this._prevLinguisticDetails && createFilled) {
                         linguisticDetails = this._prevLinguisticDetails;
@@ -1507,7 +1509,7 @@ define([
                         var curHit = reducedHits[reducedHits.length - 1];
                         var curHitEndPosition = curHit.startPosition + curHit.length;
                         if (nextHit.startPosition <= curHitEndPosition) {
-                            // The next hit intersects or is next to current hit. Merge it.                        
+                            // The next hit intersects or is next to current hit. Merge it.
                             var nextHitEndPosition = nextHit.startPosition + nextHit.length;
                             if (nextHitEndPosition > curHitEndPosition) {
                                 curHit.length = nextHitEndPosition - curHit.startPosition;

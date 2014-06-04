@@ -1,4 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+@import "../mixins.less";
+
 .win-hub {
     height: 100%;
     width: 100%;
@@ -90,7 +93,7 @@ button.win-hub-section-header-tabstop:hover:active {
     min-width: 0;
     max-width: ~"calc(100% - 3px)";
     font-size: 20pt;
-    
+
     &:-ms-lang(@{rtl}) {
         padding: 0 0 0 3px;
     }
@@ -121,7 +124,7 @@ button.win-hub-section-header-tabstop:-ms-keyboard-active {
     #flex > .flex(@shrink: 0);
     display: inline-block;
     margin-left: 7px;
-    
+
     &:-ms-lang(@{rtl}) {
         margin-left: 0;
         margin-right: 7px;

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function datePickerInit() {
     "use strict";
 
@@ -116,8 +118,8 @@ define([
                 /// The DOM element that will host the DatePicker control.
                 /// </param>
                 /// <param name="options" type="Object" locid="WinJS.UI.DatePicker.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds 
-                /// to one of the control's properties or events. 
+                /// An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds
+                /// to one of the control's properties or events.
                 /// </param>
                 /// <returns type="WinJS.UI.DatePicker" locid="WinJS.UI.DatePicker.constructor_returnValue">A constructed DatePicker control.</returns>
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -511,7 +513,7 @@ define([
 
                     yearLen = yearDiff(tempCal, end) + 1;
 
-                    // Explicity use a template that's equivalent to a longdate template 
+                    // Explicity use a template that's equivalent to a longdate template
                     // as longdate/shortdate can be overriden by the user
                     var dateformat = formatCacheLookup("day month.full year", calendar).formatter;
                     var localdatepattern = dateformat.patterns[0];
@@ -633,7 +635,7 @@ define([
                             tempCal.setDateTime(curDate);
                             var monthIndex = tempCal.month - tempCal.firstMonthInThisYear;
                             if (monthIndex < 0) {
-                                // A special case is in some ThaiCalendar years first month 
+                                // A special case is in some ThaiCalendar years first month
                                 // of the year is April, last month is March and month flow is wrap-around
                                 // style; April, March .... November, December, January, February, March. So the first index
                                 // will be 4 and last index will be 3. We are handling the case to convert this wraparound behavior

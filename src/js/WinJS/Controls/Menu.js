@@ -2,7 +2,9 @@
 // Menu
 /// <dictionary>Menu,Menus,Flyout,Flyouts,Statics</dictionary>
 define([
-    './Menu/_Command'
+    './Menu/_Command',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function menuInit(_Command) {
     "use strict";
 
@@ -42,13 +44,13 @@ define([
             var Menu = WinJS.Class.derive(WinJS.UI.Flyout, function Menu_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Menu.Menu">
                 /// <summary locid="WinJS.UI.Menu.constructor">
-                /// Creates a new Menu control. 
+                /// Creates a new Menu control.
                 /// </summary>
                 /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.Menu.constructor_p:element">
                 /// The DOM element that will host the control.
                 /// </param>
                 /// <param name="options" type="Object" domElement="false" locid="WinJS.UI.Menu.constructor_p:options">
-                /// The set of properties and values to apply to the control. 
+                /// The set of properties and values to apply to the control.
                 /// </param>
                 /// <returns type="WinJS.UI.Menu" locid="WinJS.UI.Menu.constructor_returnValue">The new Menu control.</returns>
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -57,7 +59,7 @@ define([
                 // We need to be built on top of a Flyout, so stomp on the user's input
                 options = options || {};
 
-                // Make sure there's an input element            
+                // Make sure there's an input element
                 this._element = element || document.createElement("div");
                 this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -218,7 +220,7 @@ define([
                     /// property for this method call only.
                     /// </param>
                     /// <param name="alignment" type="object" domElement="false" locid="WinJS.UI.Menu.show_p:alignment">
-                    /// For 'top' or 'bottom' placement, the alignment of the Menu to the anchor's edge: 'center' (default), 'left', or 'right'. This parameter 
+                    /// For 'top' or 'bottom' placement, the alignment of the Menu to the anchor's edge: 'center' (default), 'left', or 'right'. This parameter
                     /// overrides the alignment property for this method call only.
                     /// </param>
                     /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -236,7 +238,7 @@ define([
                     this._baseFlyoutShow(anchor, placement, alignment);
 
                     // We need to check for toggles after we send the beforeshow event,
-                    // so the developer has a chance to show or hide more commands.  
+                    // so the developer has a chance to show or hide more commands.
                     // Flyout's _findPosition will make that call.
                 },
 

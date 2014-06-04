@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,Statics</dictionary>
 define([
-    './Flyout/_Overlay'
+    './Flyout/_Overlay',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function flyoutInit(_Overlay) {
     "use strict";
 
@@ -59,7 +61,7 @@ define([
                 /// The DOM element that hosts the control.
                 /// </param>
                 /// <param name="options" type="Object" domElement="false" locid="WinJS.UI.Flyout.constructor_p:options">
-                /// The set of properties and values to apply to the new Flyout. 
+                /// The set of properties and values to apply to the new Flyout.
                 /// </param>
                 /// <returns type="WinJS.UI.Flyout" locid="WinJS.UI.Flyout.constructor_returnValue">The new Flyout control.</returns>
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -68,7 +70,7 @@ define([
                 // Simplify checking later
                 options = options || {};
 
-                // Make sure there's an input element            
+                // Make sure there's an input element
                 this._element = element || document.createElement("div");
                 this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -189,7 +191,7 @@ define([
                 show: function (anchor, placement, alignment) {
                     /// <signature helpKeyword="WinJS.UI.Flyout.show">
                     /// <summary locid="WinJS.UI.Flyout.show">
-                    /// Shows the Flyout, if hidden, regardless of other states. 
+                    /// Shows the Flyout, if hidden, regardless of other states.
                     /// </summary>
                     /// <param name="anchor" type="HTMLElement" domElement="true" locid="WinJS.UI.Flyout.show_p:anchor">
                     /// The DOM element, or ID of a DOM element to anchor the Flyout, overriding the anchor property for this time only.
@@ -438,7 +440,7 @@ define([
                         this._nextBottom = this._nextTop + this._nextHeight;
                         this._hasScrolls = true;
                     }
-                    
+
                     // May need to adjust if the IHM is showing.
                     if (thisWinUI._Overlay._keyboardInfo._visible) {
                         // Use keyboard logic
@@ -810,7 +812,7 @@ define([
                 },
 
                 _handleKeyDown: function Flyout_handleKeyDown(event) {
-                    // Escape closes flyouts but if the user has a text box with an IME candidate 
+                    // Escape closes flyouts but if the user has a text box with an IME candidate
                     // window open, we want to skip the ESC key event since it is handled by the IME.
                     // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
                     if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {

@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-define(
-    ['./Pivot/_Item'],
-    function pivotInit(_Item) {
+define([
+    './Pivot/_Item',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
+    ], function pivotInit(_Item) {
         "use strict";
 
         WinJS.Namespace.define("WinJS.UI", {
@@ -1214,8 +1216,8 @@ define(
                     },
 
                     _handleItemReload: function pivot_handleItemReload(ev) {
-                        // Reload is triggered by large operations on the binding list such as reverse(). This causes 
-                        // _pendingItems to be true which ignores future insert/remove/modified/moved events until the new 
+                        // Reload is triggered by large operations on the binding list such as reverse(). This causes
+                        // _pendingItems to be true which ignores future insert/remove/modified/moved events until the new
                         // items list is applied.
                         this.items = this.items;
                     },

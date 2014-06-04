@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Semantic Zoom control
 define([
-    '../Core/_Global'
+    '../Core/_Global',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function semanticZoomInit(global) {
     "use strict";
 
@@ -439,7 +441,7 @@ define([
                     this._setLayout(this._canvasOut, "absolute", "hidden");
                     // Pinch zoom on a precision touchpad doesn't send PointerMove etc. events like ordinary touch actions. PTP has to be handled specially.
                     // PTP ignores the -ms-touch-action styles that are applied to elements, which means it ignores the style we apply to disable
-                    // optical zooming. An element can be optically zoomed via PTP but not with touch. SemanticZoom takes advantage of this fact to 
+                    // optical zooming. An element can be optically zoomed via PTP but not with touch. SemanticZoom takes advantage of this fact to
                     // implement zoom for PTPs. The _opticalViewportIn/Out elements have optical zoom properties attached to them to enable
                     // optical zoom, and we attach an MSContentZoom event handler to our root element. When we receive that event on an optical viewport,
                     // and it's in the direction for triggering a zoom, we'll trigger a zoom just like we would for scroll wheel/keyboard.
@@ -904,7 +906,7 @@ define([
                     }
 
                     if (this._pointerCount >= 2) {
-                        // When two or more pointers are down, we want to hide all of their move events from the underlying view. 
+                        // When two or more pointers are down, we want to hide all of their move events from the underlying view.
                         // If the pointer we're looking at needs to have a touch cancel event fired for it, we'll fake that now.
                         if (pointerRecord.fireCancelOnPinch) {
                             this._fakeCancelOnPointer(ev, pointerRecord);
@@ -1406,7 +1408,7 @@ define([
                 _releasePointerCapture: function (ev) {
                     var id = ev.pointerId;
                     try {
-                        // Release the pointer capture since they are going away, to allow in air touch pointers 
+                        // Release the pointer capture since they are going away, to allow in air touch pointers
                         // to be reused for multiple interactions
                         WinJS.Utilities._releasePointerCapture(this._hiddenElement, id);
                     } catch (e) {

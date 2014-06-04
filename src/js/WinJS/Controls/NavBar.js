@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './NavBar/_Command', 
-    './NavBar/_Container'
+    './NavBar/_Command',
+    './NavBar/_Container',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function NavBarInit(_Command, _Container) {
     "use strict";
 
@@ -10,7 +12,7 @@ define([
     WinJS.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.NavBar">
-        /// Displays navigation commands in a toolbar that the user can show or hide. 
+        /// Displays navigation commands in a toolbar that the user can show or hide.
         /// </summary>
         /// <compatibleWith platform="Windows" minVersion="8.1"/>
         /// </field>
@@ -43,8 +45,8 @@ define([
                 /// The DOM element that will host the new NavBar control.
                 /// </param>
                 /// <param name="options" type="Object" locid="WinJS.UI.NavBar.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds to one of the control's 
-                /// properties or events. 
+                /// An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds to one of the control's
+                /// properties or events.
                 /// </param>
                 /// <returns type="WinJS.UI.NavBar" locid="WinJS.UI.NavBar.constructor_returnValue">
                 /// The new NavBar control.
@@ -95,9 +97,9 @@ define([
                 onchildrenprocessed: createEvent(childrenProcessedEventName),
 
                 _processChildren: function NavBar_processChildren() {
-                    // The NavBar control schedules processAll on its children at idle priority to avoid hurting startup 
-                    // performance. If the NavBar is shown before the scheduler gets to the idle job, the NavBar will 
-                    // immediately call processAll on its children. If your app needs the children to be processed before 
+                    // The NavBar control schedules processAll on its children at idle priority to avoid hurting startup
+                    // performance. If the NavBar is shown before the scheduler gets to the idle job, the NavBar will
+                    // immediately call processAll on its children. If your app needs the children to be processed before
                     // the scheduled job executes, you may call processChildren to force the processAll call.
                     if (!this._processed) {
                         this._processed = true;
@@ -143,8 +145,8 @@ define([
                 },
 
                 _handleBeforeShow: function NavBar_handleBeforeShow() {
-                    // Navbar needs to ensure its elements to have their correct height and width after AppBar changes display="none" 
-                    // to  display="" and AppBar needs the elements to have their final height before it measures its own element height 
+                    // Navbar needs to ensure its elements to have their correct height and width after AppBar changes display="none"
+                    // to  display="" and AppBar needs the elements to have their final height before it measures its own element height
                     // to do the slide in animation over the correct amount of pixels.
                     if (this._disposed) {
                         return;

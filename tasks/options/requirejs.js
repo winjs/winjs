@@ -13,6 +13,10 @@
         realFileNames.push(path.join(rootPath, abspath));
     });
 
+    grunt.file.recurse('tasks/utilities', function(abspath) {
+        realFileNames.push(path.join(rootPath, abspath));
+    });
+
     // ensure that the files discovered by requireJS have appropriate
     // casing so that non-Windows builds will work.
     function done(done, output) {
@@ -21,8 +25,13 @@
         lines.splice(0, 3);
         lines.pop();
 
+        // Remove empty: pattern resources added by Less build.
+        lines = lines.filter(function(line) {
+            return line.indexOf("empty:") === -1;
+        });
+
         lines = lines.map(function(line) {
-            return path.normalize(line);
+            return path.normalize(line.replace("require-style!", ""));
         });
 
         lines.forEach(function(line) {
@@ -36,7 +45,7 @@
 
     module.exports = {
         base: {
-            options: { 
+            options: {
                 baseUrl: './src/js/',
                 optimize: 'none', // uglify2
                 useStrict: true,
@@ -51,7 +60,7 @@
             }
         },
         basePhone: {
-            options: { 
+            options: {
                 baseUrl: './src/js/',
                 optimize: 'none', // uglify2
                 useStrict: true,
@@ -66,8 +75,14 @@
             }
         },
         ui: {
-            options: { 
+            options: {
                 baseUrl: './src/js/',
+                paths: {
+                    "less": "../less",
+                    "less/phone": "empty:",
+                    "require-style": "../../tasks/utilities/require-style"
+                },
+                platform: "desktop",
                 optimize: 'none', // uglify2
                 useStrict: true,
                 name: 'ui',
@@ -81,8 +96,14 @@
             }
         },
         uiPhone: {
-            options: { 
+            options: {
                 baseUrl: './src/js/',
+                paths: {
+                    "less": "../less",
+                    "less/desktop": "empty:",
+                    "require-style": "../../tasks/utilities/require-style"
+                },
+                platform: "phone",
                 optimize: 'none', // uglify2
                 useStrict: true,
                 name: 'ui-phone',

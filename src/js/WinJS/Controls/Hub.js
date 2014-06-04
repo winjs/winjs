@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './Hub/_Section'
+    './Hub/_Section',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function hubInit(_Section) {
     "use strict";
 
@@ -93,10 +95,10 @@ define([
                 /// The DOM element that hosts the Hub control.
                 /// </param>
                 /// <param name="options" type="Object" isOptional="true" locid="WinJS.UI.Hub.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. 
-                /// Each property of the options object corresponds to one of the control's properties or events. 
-                /// Event names must begin with "on". For example, to provide a handler for the contentanimating event,  
-                /// add a property named "oncontentanimating" to the options object and set its value to the event handler. 
+                /// An object that contains one or more property/value pairs to apply to the new control.
+                /// Each property of the options object corresponds to one of the control's properties or events.
+                /// Event names must begin with "on". For example, to provide a handler for the contentanimating event,
+                /// add a property named "oncontentanimating" to the options object and set its value to the event handler.
                 /// </param>
                 /// <returns type="WinJS.UI.Hub" locid="WinJS.UI.Hub.constructor_returnValue">
                 /// The new Hub.
@@ -223,8 +225,8 @@ define([
                 },
                 /// <field type="Object" locid="WinJS.UI.Hub.headerTemplate" helpKeyword="WinJS.UI.Hub.headerTemplate" potentialValueSelector="[data-win-control='WinJS.Binding.Template']">
                 /// Gets or sets the WinJS.Binding.Template or template function that creates the DOM elements
-                /// which represent the header for each HubSection. Each header can 
-                /// contain multiple DOM elements, but we recommend that it have a single 
+                /// which represent the header for each HubSection. Each header can
+                /// contain multiple DOM elements, but we recommend that it have a single
                 /// root element.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
@@ -347,7 +349,7 @@ define([
                 onheaderinvoked: createEvent(eventNames.headerInvoked),
 
                 /// <field type="Function" locid="WinJS.UI.Hub.onloadingstatechanged" helpKeyword="WinJS.UI.Hub.onloadingstatechanged">
-                /// Raised when the loadingState of the Hub changes. 
+                /// Raised when the loadingState of the Hub changes.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 onloadingstatechanged: createEvent(eventNames.loadingStateChanged),
@@ -548,7 +550,7 @@ define([
                     if (this._pendingSections) {
                         return;
                     }
-                
+
                     var section = ev.detail.value;
                     var index = ev.detail.index;
 
@@ -600,8 +602,8 @@ define([
                     this._loadSections();
                 },
                 _handleSectionReload: function hub_handleSectionReload(ev) {
-                    // Reload is triggered by large operations on the binding list such as reverse(). This causes 
-                    // _pendingSections to be true which ignores future insert/remove/modified/moved events until the new 
+                    // Reload is triggered by large operations on the binding list such as reverse(). This causes
+                    // _pendingSections to be true which ignores future insert/remove/modified/moved events until the new
                     // sections list is applied.
                     this.sections = this.sections;
                 },
@@ -784,8 +786,8 @@ define([
                 },
                 /// <field type="String" hidden="true" locid="WinJS.UI.Hub.loadingState" helpKeyword="WinJS.UI.Hub.loadingState">
                 /// Gets a value that indicates whether the Hub is still loading or whether
-                /// loading is complete.  This property can return one of these values: 
-                /// "loading" or "complete". 
+                /// loading is complete.  This property can return one of these values:
+                /// "loading" or "complete".
                 /// </field>
                 loadingState: {
                     get: function () {
@@ -1026,7 +1028,7 @@ define([
                     // Include tab and shift tab. Note: Alt Key + Tab and Windows Key + Tab do not fire keydown with ev.key === "Tab".
                     if (ev.keyCode === Key.tab) {
                         this._tabSeenLast = true;
-                
+
                         var that = this;
                         WinJS.Utilities._yieldForEvents(function () {
                             that._tabSeenLast = false;
@@ -1166,8 +1168,8 @@ define([
                     return document.activeElement === targetSection._headerTabStopElement;
                 },
                 /// <field type="Object" locid="WinJS.UI.Hub.zoomableView" helpKeyword="WinJS.UI.Hub.zoomableView" isAdvanced="true">
-                /// Gets a ZoomableView. This API supports the SemanticZoom infrastructure 
-                /// and is not intended to be used directly from your code. 
+                /// Gets a ZoomableView. This API supports the SemanticZoom infrastructure
+                /// and is not intended to be used directly from your code.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 zoomableView: {
@@ -1252,7 +1254,7 @@ define([
                         this._sectionToFocus = item.index;
 
                         var targetScrollPosition = sectionSize.offset - offsetFromViewport;
-                        // clamp section: 
+                        // clamp section:
                         var targetScrollPosition = this._ensureVisibleMath(item.index, targetScrollPosition);
 
                         this._scrollPosition = targetScrollPosition;

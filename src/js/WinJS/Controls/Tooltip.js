@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function tooltipInit() {
     "use strict";
 
@@ -905,7 +907,7 @@ define([
                 _DELAY_RESHOW_INFOTIP_NONTOUCH: {
                     get: function () { return DELAY_RESHOW_INFOTIP_NONTOUCH; }
                 },
-                
+
                 _RESHOW_THRESHOLD: {
                     get: function () { return RESHOW_THRESHOLD; }
                 },

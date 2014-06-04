@@ -3,15 +3,17 @@
 /// <dictionary>appbar,appBars,Flyout,Flyouts,iframe,Statics,unfocus,WinJS</dictionary>
 define([
     './AppBar/_Layouts',
-    './AppBar/_Command', 
-    './AppBar/_Icon'
+    './AppBar/_Command',
+    './AppBar/_Icon',
+    'require-style!less/desktop/controls',
+    'require-style!less/phone/controls'
     ], function appBarInit(_Layouts, _Command, _Icon) {
     "use strict";
 
     WinJS.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBar">
-        /// Represents an application toolbar for display commands. 
+        /// Represents an application toolbar for display commands.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.appbar.12x12.png" width="12" height="12" />
@@ -386,7 +388,7 @@ define([
             var AppBar = WinJS.Class.derive(WinJS.UI._Overlay, function AppBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBar.AppBar">
                 /// <summary locid="WinJS.UI.AppBar.constructor">
-                /// Creates a new AppBar control. 
+                /// Creates a new AppBar control.
                 /// </summary>
                 /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.AppBar.constructor_p:element">
                 /// The DOM element that will host the control.
@@ -404,7 +406,7 @@ define([
                 // Simplify checking later
                 options = options || {};
 
-                // Make sure there's an input element            
+                // Make sure there's an input element
                 this._element = element || document.createElement("div");
                 this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -413,8 +415,8 @@ define([
                     this._element.tabIndex = -1;
                 }
 
-                    // Set layout immediately. We need to know our layout in order to correctly 
-                    // position any commands that may be getting set through the constructor. 
+                    // Set layout immediately. We need to know our layout in order to correctly
+                    // position any commands that may be getting set through the constructor.
                     this.layout = options.layout || appBarLayoutCommands;
                     delete options.layout;
 
@@ -564,7 +566,7 @@ define([
                             var commands;
                             if (!this._initializing) {
                                 // Gather commands in preparation for hand off to new layout.
-                                // We expect prev layout to return commands in the order they were set in, 
+                                // We expect prev layout to return commands in the order they were set in,
                                 // not necessarily the current DOM order the layout is using.
                                 commands = this._layout.commandsInOrder;
                                 this._layout.disconnect();
@@ -635,7 +637,7 @@ define([
                 /// <field type="Array" locid="WinJS.UI.AppBar.commands" helpKeyword="WinJS.UI.AppBar.commands" isAdvanced="true">
                 /// Sets the AppBarCommands in the AppBar. This property accepts an array of AppBarCommand objects.
                 /// </field>
-                commands: {                  
+                commands: {
                         set: function (commands) {
                         // Fail if trying to set when visible
                         if (!this.hidden) {
@@ -647,7 +649,7 @@ define([
                             // AppBarCommands defined in markup don't want to be disposed during initialization.
                             this._disposeChildren();
                         }
-                            this._layoutCommands(commands);                           
+                            this._layoutCommands(commands);
                         }
                     },
 
@@ -886,7 +888,7 @@ define([
                         }
                     }
 
-                    // If we are hiding the last lightDismiss AppBar, 
+                    // If we are hiding the last lightDismiss AppBar,
                     //   then we need to update the tabStops of the other AppBars
                     if (!this.sticky && !_isThereVisibleNonStickyBar()) {
                         _updateAllAppBarsFirstAndFinalDiv();
@@ -901,7 +903,7 @@ define([
                     WinJS.Utilities.disposeSubTree(this.element);
                     this._layout.dispose();
                     this._hide();
-                        
+
                 },
 
                 _disposeChildren: function AppBar_disposeChildren() {
@@ -913,7 +915,7 @@ define([
                     // On Left/Right arrow keys, moves focus to previous/next AppbarCommand element.
                     // On "Esc" key press hide all flyouts and light dismiss AppBars.
 
-                    // Esc closes light-dismiss AppBars in all layouts but if the user has a text box with an IME 
+                    // Esc closes light-dismiss AppBars in all layouts but if the user has a text box with an IME
                     // candidate window open, we want to skip the ESC key event since it is handled by the IME.
                     // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
                     if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
@@ -1001,7 +1003,7 @@ define([
                 _shouldStealFocus: function AppBar_shouldStealFocus() {
                     var activeElementAppBar = thisWinUI.AppBar._isAppBarOrChild(document.activeElement);
                     if (this._element === activeElementAppBar) {
-                        // This appbar already has focus and we don't want to move focus 
+                        // This appbar already has focus and we don't want to move focus
                         // from where it currently is in this appbar.
                         return false;
                     }
@@ -1053,9 +1055,9 @@ define([
 
                 _beginAnimateCommands: function AppBar_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
                     // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
-                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show. 
+                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
                     // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
-                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.                               
+                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.
                     this._layout.beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands);
                 },
 
@@ -1392,7 +1394,7 @@ define([
 
             var appBarSynchronizationPromise = WinJS.Promise.as();
 
-            // Callback for AppBar Edgy Event Command   
+            // Callback for AppBar Edgy Event Command
             AppBar._toggleAppBarEdgy = function (keyboardInvoked) {
                 var bars = _getDynamicBarsForEdgy();
 
