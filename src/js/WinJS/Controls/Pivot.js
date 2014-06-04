@@ -618,20 +618,19 @@ define(['./Pivot/_Item'], function() {
                             this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
                             this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonPrev);
                             this._prevButton.addEventListener("click", function () {
-                                that._goPrevious();
+                                that._rtl ? that._goNext() : that._goPrevious();
                             });
                             this._headersContainerElement.appendChild(this._prevButton);
-                            // Left is NOT 0px since the header track has a negative leading space for the previous header
-                            this._prevButton.style.left = leadingSpace + "px";
+                            this._prevButton.style.left = this._rtl ? "0px" : leadingSpace + "px";
 
                             this._nextButton = document.createElement("button");
                             this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
                             this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonNext);
                             this._nextButton.addEventListener("click", function () {
-                                that._goNext();
+                                that._rtl ? that._goPrevious() : that._goNext();
                             });
                             this._headersContainerElement.appendChild(this._nextButton);
-                            this._nextButton.style.right = "0px";
+                            this._nextButton.style.right = this._rtl ? leadingSpace + "px" : "0px";
                         }
                     }
                 },
