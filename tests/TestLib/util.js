@@ -249,6 +249,17 @@ var Helper;
             Helper.Assert.areArraysEqual(expectedColor.slice(0, 3), actualColor.slice(0, 3), message);
             // Verify alpha with a tolerance of 0.05
             LiveUnit.Assert.isTrue(Math.abs(expectedColor[3] - actualColor[3]) <= .05, message);
+        },
+        
+        // Verifies CSS urls. *expectedUrl* and *actualUrl* are expected to be valid CSS rules. For example,
+        // url("foo.png").
+        areUrlsEqual: function areUrlsEqual(expectedUrl, actualUrl, message) {
+            function normalizedUrl(url) {
+                var div = document.createElement("div");
+                div.style.backgroundImage = expectedUrl;
+                return getComputedStyle(div).url;
+            }
+            LiveUnit.Assert.areEqual(normalizedUrl(expectedUrl), normalizedUrl(actualUrl), message);
         }
     };
     

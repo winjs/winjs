@@ -5,6 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/util.js" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -13,6 +14,12 @@ WinJSTests.NavBarCommandTests = function () {
 
     var realNavigate;
     var Key = WinJS.Utilities.Key;
+    
+    function assertHighContrastAdjust(element, expected) {
+        if ("msHighContrastAdjust" in document.documentElement.style) {
+            LiveUnit.Assert.areEqual(expected, element.style.msHighContrastAdjust);
+        }
+    }
 
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
@@ -158,26 +165,26 @@ WinJSTests.NavBarCommandTests = function () {
         navbarCommand = new WinJS.UI.NavBarCommand(element4);
         LiveUnit.Assert.areEqual(undefined, navbarCommand.icon);
         LiveUnit.Assert.areEqual("", navbarCommand._imageSpan.style.backgroundImage);
-        LiveUnit.Assert.areEqual("", navbarCommand._imageSpan.style.msHighContrastAdjust);
+        assertHighContrastAdjust(navbarCommand._imageSpan, "");
         element4.parentNode.removeChild(element4);
 
         var element5 = document.createElement("div");
         document.body.appendChild(element5);
         navbarCommand = new WinJS.UI.NavBarCommand(element5, { icon: 'url("foo.png")' });
         LiveUnit.Assert.areEqual('url("foo.png")', navbarCommand.icon);
-        LiveUnit.Assert.areEqual('url("foo.png")', navbarCommand._imageSpan.style.backgroundImage);
-        LiveUnit.Assert.areEqual("none", navbarCommand._imageSpan.style.msHighContrastAdjust);
+        Helper.Assert.areUrlsEqual('url("foo.png")', navbarCommand._imageSpan.style.backgroundImage);
+        assertHighContrastAdjust(navbarCommand._imageSpan, "none");
 
         // BUG null leaves the background styles.
         //navbarCommand.icon = null;
         //LiveUnit.Assert.areEqual(null, navbarCommand.icon);
         //LiveUnit.Assert.areEqual("", navbarCommand._imageSpan.style.backgroundImage);
-        //LiveUnit.Assert.areEqual("", navbarCommand._imageSpan.style.msHighContrastAdjust);
+        //assertHighContrastAdjust(navbarCommand._imageSpan, "");
 
         navbarCommand.icon = 'url("foo.png")';
         LiveUnit.Assert.areEqual('url("foo.png")', navbarCommand.icon);
-        LiveUnit.Assert.areEqual('url("foo.png")', navbarCommand._imageSpan.style.backgroundImage);
-        LiveUnit.Assert.areEqual("none", navbarCommand._imageSpan.style.msHighContrastAdjust);
+        Helper.Assert.areUrlsEqual('url("foo.png")', navbarCommand._imageSpan.style.backgroundImage);
+        assertHighContrastAdjust(navbarCommand._imageSpan, "none");
         element5.parentNode.removeChild(element5);
     };
 
