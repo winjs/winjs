@@ -13,22 +13,30 @@ WinJSTests.NavBarLayoutTests = function () {
     "use strict";
 
     var Key = WinJS.Utilities.Key;
+    var canElementResize = null;
 
-    this.setUp = function () {
+    this.setUp = function (complete) {
         LiveUnit.LoggingCore.logComment("In setup");
+        this._elementWrapper = document.createElement("div");
         var newNode = document.createElement("div");
         newNode.id = "container";
         newNode.style.width = "500px";
         newNode.style.backgroundColor = "darkgreen";
-        document.body.appendChild(newNode);
+        this._elementWrapper.appendChild(newNode);
+        document.body.appendChild(this._elementWrapper);
         this._element = newNode;
+        CommonUtilities.detectMsElementResize(function(canResize) {
+            canElementResize = canResize;
+            complete();
+        });
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
-        if (this._element) {
-            WinJS.Utilities.disposeSubTree(this._element);
-            document.body.removeChild(this._element);
+        if (this._elementWrapper) {
+            WinJS.Utilities.disposeSubTree(this._elementWrapper);
+            document.body.removeChild(this._elementWrapper);
+            this._elementWrapper = null;
             this._element = null;
         }
     };
@@ -275,7 +283,7 @@ WinJSTests.NavBarLayoutTests = function () {
     })();
 
     (function () {
-        function generateTest(rtl, fixedSize) {
+        function generateTest(rtl, fixedSize, forceLayout) {
             return function (complete) {
                 if (rtl) {
                     that._element.dir = "rtl";
@@ -289,6 +297,11 @@ WinJSTests.NavBarLayoutTests = function () {
 
                 // Resize
                 that._element.style.width = "600px";
+                if (forceLayout) {
+                    navbarContainer.forceLayout();
+                } else if (!canElementResize) {
+                    window.dispatchEvent(new Event("resize"));
+                }
 
                 // Wait for the resize to fire
                 WinJS.Promise.timeout(50).then(function () {
@@ -367,9 +380,11 @@ WinJSTests.NavBarLayoutTests = function () {
                 });
             };
         }
-
-        that["testNavBarContainerLayoutSingleRowFixedSizeResize_LTR"] = generateTest(false, true);
-        that["testNavBarContainerLayoutSingleRowFixedSizeResize_RTL"] = generateTest(true, true);
+          
+        that["testNavBarContainerLayoutSingleRowFixedSizeResize_LTR"] = generateTest(false, true, false);
+        that["testNavBarContainerLayoutSingleRowFixedSizeResize_RTL"] = generateTest(true, true, false);
+        that["testNavBarContainerLayoutSingleRowFixedSizeResizeWithForceLayout_LTR"] = generateTest(false, true, true);
+        that["testNavBarContainerLayoutSingleRowFixedSizeResizeWithForceLayout_RTL"] = generateTest(true, true, true);
     })();
 
     (function () {
@@ -449,7 +464,7 @@ WinJSTests.NavBarLayoutTests = function () {
     })();
 
     (function () {
-        function generateTest(rtl) {
+        function generateTest(rtl, forceLayout) {
             return function (complete) {
                 if (rtl) {
                     that._element.dir = "rtl";
@@ -465,6 +480,11 @@ WinJSTests.NavBarLayoutTests = function () {
                 // Resize
                 that._element.style.width = "700px";
                 viewportWidth = 700;
+                if (forceLayout) {
+                    navbarContainer.forceLayout();
+                } else if (!canElementResize) {
+                    window.dispatchEvent(new Event("resize"));
+                }
 
                 // Wait for the resize event to fire
                 WinJS.Promise.timeout(50).then(function () {
@@ -526,9 +546,11 @@ WinJSTests.NavBarLayoutTests = function () {
                 });
             };
         }
-
-        that["testNavBarContainerLayoutSingleRowResize_LTR"] = generateTest(false);
-        that["testNavBarContainerLayoutSingleRowResize_RTL"] = generateTest(true);
+        
+        that["testNavBarContainerLayoutSingleRowResize_LTR"] = generateTest(false, false);
+        that["testNavBarContainerLayoutSingleRowResize_RTL"] = generateTest(true, false);
+        that["testNavBarContainerLayoutSingleRowResizeWithForceLayout_LTR"] = generateTest(false, true);
+        that["testNavBarContainerLayoutSingleRowResizeWithForceLayout_RTL"] = generateTest(true, true);
     })();
 
     this.testNavBarContainerVerticalLayoutMaxHeight = function (complete) {

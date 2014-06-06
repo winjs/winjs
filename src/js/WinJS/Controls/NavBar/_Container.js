@@ -359,11 +359,12 @@
                 forceLayout: function NavBarContainer_forceLayout() {
                     /// <signature helpKeyword="WinJS.UI.NavBarContainer.forceLayout">
                     /// <summary locid="WinJS.UI.NavBarContainer.forceLayout">
-                    /// Forces the NavBarContainer to update scroll positions and if there are internal pending measurements, it will also re-measure. 
+                    /// Forces the NavBarContainer to update scroll positions and if the NavBar has changed size, it will also re-measure. 
                     /// Use this function when making the NavBarContainer visible again after you set its style.display property to "none".
                     /// </summary>
                     /// <compatibleWith platform="Windows" minVersion="8.1"/>
                     /// </signature>
+                    this._resizeHandler();
                     if (this._measured) {
                         this._scrollPosition = WinJS.Utilities.getScrollPosition(this._viewportEl)[(this.layout === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")];
                     }
