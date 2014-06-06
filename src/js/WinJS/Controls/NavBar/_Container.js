@@ -2,6 +2,10 @@
 (function NavBarContainerInit(global, WinJS, undefined) {
     "use strict";
 
+    function nobodyHasFocus() {
+        return document.activeElement === null || document.activeElement === document.body;
+    }
+
     WinJS.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.NavBarContainer">
@@ -434,13 +438,13 @@
                         } else if (ev.detail.index === this._keyboardBehavior.currentIndex) {
                             // This clamps if the item being removed was the last item in the list
                             this._keyboardBehavior.currentIndex = this._keyboardBehavior.currentIndex;
-                            if (document.activeElement === null && this._elementHadFocus) {
+                            if (nobodyHasFocus() && this._elementHadFocus) {
                                 this._keyboardBehavior._focus();
                             }
                         }
                     } else if (ev.type === "itemchanged") {
                         if (ev.detail.index === this._keyboardBehavior.currentIndex) {
-                            if (document.activeElement === null && this._elementHadFocus) {
+                            if (nobodyHasFocus() && this._elementHadFocus) {
                                 this._keyboardBehavior._focus();
                             }
                         }
@@ -451,13 +455,13 @@
                     } else if (ev.type === "itemmoved") {
                         if (ev.detail.oldIndex === this._keyboardBehavior.currentIndex) {
                             this._keyboardBehavior.currentIndex = ev.detail.newIndex;
-                            if (document.activeElement === null && this._elementHadFocus) {
+                            if (nobodyHasFocus() && this._elementHadFocus) {
                                 this._keyboardBehavior._focus();
                             }
                         }
                     } else if (ev.type === "reload") {
                         this._keyboardBehavior.currentIndex = 0;
-                        if (document.activeElement === null && this._elementHadFocus) {
+                        if (nobodyHasFocus() && this._elementHadFocus) {
                             this._keyboardBehavior._focus();
                         }
                     }

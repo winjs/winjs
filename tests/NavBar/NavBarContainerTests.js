@@ -23,6 +23,10 @@ WinJSTests.NavBarContainerTests = function () {
     var itemWidth = 250;
     var itemWidthWithMargins = itemWidth + itemMargins + itemMargins;
     var marginAboveBelowItems = 30;
+    
+    function nobodyHasFocus() {
+        return document.activeElement === null || document.activeElement === document.body;
+    }
 
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
@@ -457,7 +461,7 @@ WinJSTests.NavBarContainerTests = function () {
 
             // Remove the last item.
             navbarContainer.data.splice(0, 1);
-            LiveUnit.Assert.areEqual(null, document.activeElement);
+            LiveUnit.Assert.isTrue(nobodyHasFocus(), "No element should have focus");
             LiveUnit.Assert.areEqual(-1, navbarContainer.currentIndex);
 
             complete();
