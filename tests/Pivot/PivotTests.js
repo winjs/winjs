@@ -12,16 +12,13 @@ WinJSTests.PivotTests = function () {
 
     var Keys = WinJS.Utilities.Key;
     var supportsSnapPoints = !!WinJS.Utilities._browserStyleEquivalents["scroll-snap-type"];
+    var PT_MOUSE = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse";
     var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
     var pivotWidth = 320;
 
     var pointerName = "Mouse";
-    var pointerdown = "mousedown";
-    var pointerup = "mouseup";
     if (window.MSPointerEvent) {
         pointerName = "Pointer";
-        pointerdown = "MSPointerDown";
-        pointerup = "MSPointerUp";
     }
 
     var pivotWrapperEl;
@@ -51,17 +48,15 @@ WinJSTests.PivotTests = function () {
     }
 
     function firePointerEvent(type, element, clientX, clientY, pointerType) {
+        pointerType = pointerType || PT_TOUCH;
+
         //PointerEvent.initPointerEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary); 
         var elementRect = element.getBoundingClientRect();
         var event = document.createEvent(pointerName + "Event");
-        event["init" + pointerName + "Event"](type, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, "touch", Date.now(), true);
-        var mouseType = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE;
-        WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE = pointerType || mouseType;
-        if (!event.pointerType) {
-            event.pointerType = pointerType || mouseType;
-        }
+        WinJS.Utilities["_init" + pointerName + "Event"](event, type, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, pointerType, Date.now(), true);
+        WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE = pointerType;
         element.dispatchEvent(event);
-        WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE = mouseType;
+        WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE = PT_MOUSE;
     }
 
     function simulateTap(element, x, y, pointerType) {
@@ -81,7 +76,7 @@ WinJSTests.PivotTests = function () {
         var clientX = Math.floor(elementRect.left + x);
         var clientY = Math.floor(elementRect.top + y);
 
-        firePointerEvent(pointerdown, element, clientX, clientY, pointerType);
+        firePointerEvent("pointerdown", element, clientX, clientY, pointerType);
     }
 
     function simulatePointerUp(element, x, y, pointerType) {
@@ -90,7 +85,7 @@ WinJSTests.PivotTests = function () {
         var clientX = Math.floor(elementRect.left + x);
         var clientY = Math.floor(elementRect.top + y);
 
-        firePointerEvent(pointerup, element, clientX, clientY, pointerType);
+        firePointerEvent("pointerup", element, clientX, clientY, pointerType);
     }
 
     function createAndAppendPivotWithItems(count) {
@@ -753,8 +748,6 @@ WinJSTests.PivotTests = function () {
 
                 // Test selectedIndex
                 pivot.selectedIndex = 1;
-                return waitForNextItemAnimationStart(pivot);
-            }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.api, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
@@ -763,8 +756,6 @@ WinJSTests.PivotTests = function () {
 
                 // Test selectedItem
                 pivot.selectedItem = pivot.items.getAt(2);
-                return waitForNextItemAnimationStart(pivot);
-            }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.api, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
@@ -1052,12 +1043,6 @@ WinJSTests.PivotTests = function () {
             var itemCount = 5;
             var pivot = createAndAppendPivotWithItems(itemCount);
 
-            if (!pivot.element.classList.contains(WinJS.UI.Pivot._ClassName.pivotNoSnap)) {
-                LiveUnit.LoggingCore.logComment("Nav buttons only supported in no-snap mode.");
-                complete();
-                return;
-            }
-
             if (rtl) {
                 pivot.element.style.direction = "rtl";
             }
@@ -1096,12 +1081,6 @@ WinJSTests.PivotTests = function () {
             var pivot = createAndAppendPivotWithItems(5);
             pivot.locked = true;
 
-            if (!pivot.element.classList.contains(WinJS.UI.Pivot._ClassName.pivotNoSnap)) {
-                LiveUnit.LoggingCore.logComment("Nav buttons only supported in no-snap mode.");
-                complete();
-                return;
-            }
-
             return waitForNextItemAnimationEnd(pivot).done(function () {
                 LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
 
@@ -1115,24 +1094,40 @@ WinJSTests.PivotTests = function () {
             });
         };
 
-        this.testShowHideNavButtons = function testShowHideNavButtons(complete) {
+        this.testShowHideNavButtonsMouse = function testShowHideNavButtonsMouse(complete) {
             var pivot = createAndAppendPivotWithItems(5);
-
-            if (!pivot.element.classList.contains(WinJS.UI.Pivot._ClassName.pivotNoSnap)) {
-                LiveUnit.LoggingCore.logComment("Nav buttons only supported in no-snap mode.");
-                complete();
-                return;
-            }
 
             return waitForNextItemAnimationEnd(pivot).done(function () {
                 LiveUnit.Assert.isFalse(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
 
-                firePointerEvent("mouseenter", pivot._headersContainerElement, 0, 0);
+                firePointerEvent("pointerenter", pivot._headersContainerElement, 0, 0, PT_MOUSE);
                 LiveUnit.Assert.isTrue(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
 
-                firePointerEvent("mouseout", pivot._headersContainerElement, 0, 0);
+                firePointerEvent("pointerout", pivot._headersContainerElement, 0, 0, PT_MOUSE);
                 LiveUnit.Assert.isFalse(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
 
+                complete();
+            });
+        };
+
+        this.testShowNavButtonsTouch = function testShowHideNavButtonsTouch(complete) {
+            var pivot = createAndAppendPivotWithItems(5);
+
+            return waitForNextItemAnimationEnd(pivot).done(function () {
+                LiveUnit.Assert.isFalse(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
+
+                firePointerEvent("pointerenter", pivot._headersContainerElement, 0, 0, PT_TOUCH);
+                LiveUnit.Assert.isFalse(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
+
+                complete();
+            });
+        };
+
+        this.testNoNavButtonsWithOnePivotItem = function testShowHideNavButtonsTouch(complete) {
+            var pivot = createAndAppendPivotWithItems(1);
+
+            return waitForNextItemAnimationEnd(pivot).done(function () {
+                LiveUnit.Assert.areEqual(0, pivot.element.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotNavButton).length);
                 complete();
             });
         };
@@ -1141,16 +1136,10 @@ WinJSTests.PivotTests = function () {
             var pivot = createAndAppendPivotWithItems(5);
             pivot.locked = true;
 
-            if (!pivot.element.classList.contains(WinJS.UI.Pivot._ClassName.pivotNoSnap)) {
-                LiveUnit.LoggingCore.logComment("Nav buttons only supported in no-snap mode.");
-                complete();
-                return;
-            }
-
             return waitForNextItemAnimationEnd(pivot).done(function () {
                 LiveUnit.Assert.isFalse(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
 
-                firePointerEvent("mouseenter", pivot._headersContainerElement, 0, 0);
+                firePointerEvent("pointerenter", pivot._headersContainerElement, 0, 0, PT_MOUSE);
                 LiveUnit.Assert.isFalse(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
 
                 complete();
@@ -1160,14 +1149,8 @@ WinJSTests.PivotTests = function () {
         this.testNavButtonsPosition = function testNavButtonsPosition(complete) {
             var pivot = createAndAppendPivotWithItems(5);
 
-            if (!pivot.element.classList.contains(WinJS.UI.Pivot._ClassName.pivotNoSnap)) {
-                LiveUnit.LoggingCore.logComment("Nav buttons only supported in no-snap mode.");
-                complete();
-                return;
-            }
-
             return waitForNextItemAnimationEnd(pivot).done(function () {
-                firePointerEvent("mouseenter", pivot._headersContainerElement, 0, 0);
+                firePointerEvent("pointerenter", pivot._headersContainerElement, 0, 0, PT_MOUSE);
                 LiveUnit.Assert.isTrue(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
 
                 var leftButton = document.elementFromPoint(pivot.element.offsetLeft + 10, pivot.element.offsetTop + 20);

@@ -28,7 +28,7 @@ WinJSTests.PivotItemTests = function () {
         var pivot = new WinJS.UI.Pivot();
 
         pivot.items.push(pivotItem);
-        WinJS.Promise.timeout().done(function () {
+        pivot.addEventListener("itemanimationend", function () {
             var header = pivot.element.querySelector("." + WinJS.UI.Pivot._ClassName.pivotHeaderSelected);
             LiveUnit.Assert.areEqual('foo1', header.textContent);
 

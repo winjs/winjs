@@ -29,6 +29,7 @@ define(['./Pivot/_Item'], function () {
                 var supportsSnapPoints = !!WinJS.Utilities._browserStyleEquivalents["scroll-snap-type"];
                 var supportsTouchDetection = !!(window.MSPointerEvent || window.TouchEvent);
 
+                var PT_MOUSE = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse";
                 var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
                 var Keys = WinJS.Utilities.Key;
 
@@ -94,6 +95,9 @@ define(['./Pivot/_Item'], function () {
                     }
                     WinJS.Utilities.addClass(this.element, WinJS.UI.Pivot._ClassName.pivot);
                     WinJS.Utilities.addClass(this.element, "win-disposable");
+                    WinJS.Utilities._addEventListener(this.element, "pointerenter", this._updatePointerType.bind(this));
+                    WinJS.Utilities._addEventListener(this.element, "pointerout", this._updatePointerType.bind(this));
+                    this._pointerType = PT_MOUSE;
 
                     this._titleElement = document.createElement("DIV");
                     this._titleElement.style.display = "none";
@@ -105,12 +109,10 @@ define(['./Pivot/_Item'], function () {
                     this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
                     this._element.appendChild(this._headersContainerElement);
                     this._element.addEventListener('click', this._elementClickedHandler.bind(this));
-                    if (!supportsSnapPoints) {
-                        WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
-                        WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
-                        WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
-                        WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler.bind(this));
-                    }
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
+                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler.bind(this));
 
                     this._tabContainer = new WinJS.UI.TabContainer(this._headersContainerElement);
 
@@ -280,6 +282,27 @@ define(['./Pivot/_Item'], function () {
                     /// </field>
                     onitemanimationend: createEvent(eventNames.itemAnimationEnd),
 
+                    _pointerType: {
+                        get: function () {
+                            return this._pointerTypeValue;
+                        },
+                        set: function (value) {
+                            if (this._pointerTypeValue === value) {
+                                return;
+                            }
+
+                            this._pointerTypeValue = value;
+                            if (value === PT_TOUCH) {
+                                this.element.classList.remove(WinJS.UI.Pivot._ClassName.pivotInputTypeMouse);
+                                this.element.classList.add(WinJS.UI.Pivot._ClassName.pivotInputTypeTouch);
+                                this._hideNavButtons();
+                            } else {
+                                this.element.classList.remove(WinJS.UI.Pivot._ClassName.pivotInputTypeTouch);
+                                this.element.classList.add(WinJS.UI.Pivot._ClassName.pivotInputTypeMouse);
+                            }
+                        }
+                    },
+
                     _getDirectionAccessor: function () {
                         return this._rtl ? "right" : "left";
                     },
@@ -289,6 +312,10 @@ define(['./Pivot/_Item'], function () {
                         var event = document.createEvent("CustomEvent");
                         event.initCustomEvent(type, !!canBubble, !!cancelable, detail);
                         return this.element.dispatchEvent(event);
+                    },
+
+                    _updatePointerType: function pivot_updatePointerType(e) {
+                        this._pointerType = e.pointerType || PT_MOUSE;
                     },
 
                     _headersKeyDown: function pivot_headersKeydown(e) {
@@ -639,32 +666,30 @@ define(['./Pivot/_Item'], function () {
                             }
                             this._headersContainerElement.style[leadingMargin] = (-1 * leadingSpace) + "px";
 
-                            if (!supportsSnapPoints) {
-                                // Create header track nav button elements
-                                this._prevButton = document.createElement("button");
-                                this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
-                                this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonPrev);
-                                this._prevButton.addEventListener("click", function () {
-                                    if (that.locked) {
-                                        return;
-                                    }
-                                    that._rtl ? that._goNext() : that._goPrevious();
-                                });
-                                this._headersContainerElement.appendChild(this._prevButton);
-                                this._prevButton.style.left = this._rtl ? "0px" : leadingSpace + "px";
+                            // Create header track nav button elements
+                            this._prevButton = document.createElement("button");
+                            this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
+                            this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonPrev);
+                            this._prevButton.addEventListener("click", function () {
+                                if (that.locked) {
+                                    return;
+                                }
+                                that._rtl ? that._goNext() : that._goPrevious();
+                            });
+                            this._headersContainerElement.appendChild(this._prevButton);
+                            this._prevButton.style.left = this._rtl ? "0px" : leadingSpace + "px";
 
-                                this._nextButton = document.createElement("button");
-                                this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
-                                this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonNext);
-                                this._nextButton.addEventListener("click", function () {
-                                    if (that.locked) {
-                                        return;
-                                    }
-                                    that._rtl ? that._goPrevious() : that._goNext();
-                                });
-                                this._headersContainerElement.appendChild(this._nextButton);
-                                this._nextButton.style.right = this._rtl ? leadingSpace + "px" : "0px";
-                            }
+                            this._nextButton = document.createElement("button");
+                            this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
+                            this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonNext);
+                            this._nextButton.addEventListener("click", function () {
+                                if (that.locked) {
+                                    return;
+                                }
+                                that._rtl ? that._goPrevious() : that._goNext();
+                            });
+                            this._headersContainerElement.appendChild(this._nextButton);
+                            this._nextButton.style.right = this._rtl ? leadingSpace + "px" : "0px";
                         }
                         var firstHeaderIndex = this._headersContainerElement.children.length > 1 ? 1 : 0;
                         this._tabContainer.childFocus = this._headersContainerElement.children[firstHeaderIndex];
@@ -689,16 +714,7 @@ define(['./Pivot/_Item'], function () {
                         var dx = e.clientX - this._headersPointerDownPoint.x;
                         dx = this._rtl ? -dx : dx;
                         var dy = e.clientY - this._headersPointerDownPoint.y;
-                        if (Math.abs(dx) < 4 && Math.abs(dy) < 4) {
-                            // Detect header click
-                            var element = e.target;
-                            while (element !== null && !element.classList.contains(WinJS.UI.Pivot._ClassName.pivotHeader)) {
-                                element = element.parentElement;
-                            }
-                            if (element !== null) {
-                                this._activateHeader(element);
-                            }
-                        } else if ((!supportsTouchDetection || (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH)) && Math.abs(dy) < 50) {
+                        if ((!supportsTouchDetection || (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH)) && Math.abs(dy) < 50) {
                             // Header swipe navigation detection
                             // If touch detection is not supported then we will detect swipe gestures for any pointer type.
                             if (dx < -50) {
@@ -1244,6 +1260,8 @@ define(['./Pivot/_Item'], function () {
                         pivotNavButtonPrev: "win-pivot-navbutton-prev",
                         pivotNavButtonNext: "win-pivot-navbutton-next",
                         pivotShowNavButtons: "win-pivot-shownavbuttons",
+                        pivotInputTypeMouse: "win-pivot-mouse",
+                        pivotInputTypeTouch: "win-pivot-touch",
                     },
                     // Names of events fired by the Pivot.
                     _EventName: {

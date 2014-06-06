@@ -602,6 +602,31 @@
             }
         },
 
+        _initEventImpl: function (initType, event, eventType) {
+            eventType = eventType.toLowerCase();
+            var mapping = eventTranslations[eventType];
+            if (mapping) {
+                switch (initType.toLowerCase()) {
+                    case "pointer":
+                        arguments[2] = mapping.mspointer;
+                        break;
+
+                    default:
+                        arguments[2] = mapping[initType.toLowerCase()];
+                        break;
+                }
+            }
+            event["init" + initType + "Event"].apply(event, Array.prototype.slice.call(arguments, 2));
+        },
+
+        _initMouseEvent: function (event, type) {
+            this._initEventImpl.apply(this, ["Mouse", event].concat(Array.prototype.slice.call(arguments, 1)));
+        },
+        
+        _initPointerEvent: function (event, type) {
+            this._initEventImpl.apply(this, ["Pointer", event].concat(Array.prototype.slice.call(arguments, 1)));
+        },
+
         _bubbleEvent: bubbleEvent,
 
         _setPointerCapture: function (element, pointerId) {
