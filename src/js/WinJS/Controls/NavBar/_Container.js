@@ -86,7 +86,8 @@
                 if (!element.getAttribute("tabIndex")) {
                     element.tabIndex = -1;
                 }
-
+                
+                this._focusCurrentItemPassivelyBound = this._focusCurrentItemPassively.bind(this);
                 this._closeSplitAndResetBound = this._closeSplitAndReset.bind(this);
                 this._currentManipulationState = MS_MANIPULATION_STATE_STOPPED;
 
@@ -378,6 +379,7 @@
                         if (this._appBarEl) {
                             this._appBarEl.removeEventListener('beforeshow', this._closeSplitAndResetBound);
                             this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
+                            this._appBarEl.removeEventListener('aftershow', this._focusCurrentItemPassivelyBound);
                         }
                     
                         var appBarEl = this.element.parentNode;
@@ -388,6 +390,7 @@
                         
                         if (this._appBarEl) {
                             this._appBarEl.addEventListener('beforeshow', this._closeSplitAndResetBound);
+                            this._appBarEl.addEventListener('aftershow', this._focusCurrentItemPassivelyBound);
                         }
                     }
                 },
@@ -461,7 +464,13 @@
                     this._ensureVisible(this._keyboardBehavior.currentIndex, true);
                     this._updatePageUI();
                 },
-
+                
+                _focusCurrentItemPassively: function NavBarContainer_focusCurrentItemPassively() {
+                    if (this.element.contains(document.activeElement)) {
+                        this._keyboardBehavior._focus();
+                    }
+                },
+                
                 _reset: function NavBarContainer_reset() {
                     this._keyboardBehavior.currentIndex = 0;
                     if (this._surfaceEl.children.length > 0) {
