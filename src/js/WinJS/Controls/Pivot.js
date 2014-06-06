@@ -104,9 +104,8 @@ define(['./Pivot/_Item'], function () {
                     WinJS.Utilities.addClass(this._headersContainerElement, WinJS.UI.Pivot._ClassName.pivotHeaders);
                     this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
                     this._element.appendChild(this._headersContainerElement);
-                    if (supportsSnapPoints) {
-                        this._element.addEventListener('click', this._elementClickedHandler.bind(this));
-                    } else {
+                    this._element.addEventListener('click', this._elementClickedHandler.bind(this));
+                    if (!supportsSnapPoints) {
                         WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
                         WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
                         WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
@@ -173,6 +172,9 @@ define(['./Pivot/_Item'], function () {
                         },
                         set: function (value) {
                             WinJS.Utilities[value ? 'addClass' : 'removeClass'](this.element, WinJS.UI.Pivot._ClassName.pivotLocked);
+                            if (value) {
+                                this._hideNavButtons();
+                            }
                         }
                     },
 
@@ -290,6 +292,10 @@ define(['./Pivot/_Item'], function () {
                     },
 
                     _headersKeyDown: function pivot_headersKeydown(e) {
+                        if (this.locked) {
+                            return;
+                        }
+
                         if (e.keyCode === Keys.leftArrow || e.keyCode === Keys.pageUp) {
                             this._rtl ? this._goNext() : this._goPrevious();
                         } else if (e.keyCode === Keys.rightArrow || e.keyCode === Keys.pageDown) {
@@ -298,12 +304,11 @@ define(['./Pivot/_Item'], function () {
                     },
 
                     _elementClickedHandler: function pivot_elementClickedHandler(ev) {
-                        var header;
-
                         if (this.locked) {
                             return;
                         }
 
+                        var header;
                         var src = ev.target;
                         if (WinJS.Utilities.hasClass(src, WinJS.UI.Pivot._ClassName.pivotHeader)) {
                             // UIA invoke clicks on the real header elements.
@@ -403,7 +408,7 @@ define(['./Pivot/_Item'], function () {
                     },
 
                     _scrollHandler: function pivot_scrollHandler() {
-                        if (this._disposed || !supportsSnapPoints) {
+                        if (!supportsSnapPoints || this._disposed) {
                             return;
                         }
 
@@ -640,6 +645,9 @@ define(['./Pivot/_Item'], function () {
                                 this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
                                 this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonPrev);
                                 this._prevButton.addEventListener("click", function () {
+                                    if (that.locked) {
+                                        return;
+                                    }
                                     that._rtl ? that._goNext() : that._goPrevious();
                                 });
                                 this._headersContainerElement.appendChild(this._prevButton);
@@ -649,6 +657,9 @@ define(['./Pivot/_Item'], function () {
                                 this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
                                 this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonNext);
                                 this._nextButton.addEventListener("click", function () {
+                                    if (that.locked) {
+                                        return;
+                                    }
                                     that._rtl ? that._goPrevious() : that._goNext();
                                 });
                                 this._headersContainerElement.appendChild(this._nextButton);
@@ -670,7 +681,8 @@ define(['./Pivot/_Item'], function () {
                     },
 
                     _headersPointerUpHandler: function pivot_headersPointerUpHandler(e) {
-                        if (!this._headersPointerDownPoint) {
+                        if (!this._headersPointerDownPoint || this.locked) {
+                            this._headersPointerDownPoint = null;
                             return;
                         }
 
@@ -917,19 +929,18 @@ define(['./Pivot/_Item'], function () {
                     },
 
                     _showNavButtons: function pivot_showNavButtons(e) {
-                        if (e.pointerType === PT_TOUCH) {
+                        if (this.locked || (e && e.pointerType === PT_TOUCH)) {
                             return;
                         }
                         this._headersContainerElement.classList.add(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
                     },
 
                     _hideNavButtons: function pivot_hideNavButtons(e) {
-                        if (this._headersContainerElement.contains(e.relatedTarget)) {
+                        if (e && this._headersContainerElement.contains(e.relatedTarget)) {
                             // Don't hide the nav button if the pointerout event is being fired from going
                             // from one element to another within the header track.
                             return;
                         }
-
                         this._headersContainerElement.classList.remove(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
                     },
 
