@@ -964,6 +964,8 @@
                 },
 
                 _scrollHandler: function NavBarContainer_scrollHandler() {
+                    if (this._disposed) { return; }
+                    
                     this._measured = false;
                     if (!this._checkingScroll) {
                         var that = this;
