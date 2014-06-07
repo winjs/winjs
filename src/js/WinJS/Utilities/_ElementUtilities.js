@@ -574,7 +574,8 @@ define([
             if (document.msElementsFromPoint) {
                 return document.msElementsFromPoint(x, y);
             } else {
-                return [document.elementFromPoint(x, y)];
+                var element = document.elementFromPoint(x, y);
+                return element ? [element] : null;
             }
         },
 
@@ -747,6 +748,18 @@ define([
                     _resizeNotifier = new ResizeNotifier();
                 }
                 return _resizeNotifier;
+            }
+        },
+
+        _setFlexStyle: function(element, grow, shrink, basis) {
+            var styleObject = element.style;
+            styleObject.msFlexPositive = grow;
+            styleObject.flexGrow = grow;
+            styleObject.msFlexNegative = shrink;
+            styleObject.flexShrink = shrink;
+            if (typeof basis !== "undefined") {
+                styleObject.msFlexPreferredSize = basis;
+                styleObject.flexBasis = basis;
             }
         },
 

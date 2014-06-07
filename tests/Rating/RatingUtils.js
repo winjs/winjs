@@ -713,21 +713,8 @@ RatingUtils.prototype = (function () {
             // Make sure the styles for the overall control are set correctly
             var ratingControlStyle = window.getComputedStyle(element);
 
-            // Some browsers have different expected display values
-            var expectedFlexDisplayValue = "inline-flex";
-            var flexItemStyleAttribute = "flex";
-            if (!("flex" in document.documentElement.style)) {
-                if ("msFlex" in document.documentElement.style) {
-                    expectedFlexDisplayValue = "-ms-inline-flexbox";
-                    flexItemStyleAttribute = "-ms-flex";
-                } else if ("webkitFlex" in document.documentElement.style) {
-                    expectedFlexDisplayValue = "-webkit-inline-flexbox";
-                    flexItemStyleAttribute = "-webkit-flex";
-                }
-            }
-
-            LiveUnit.Assert.areEqual(expectedFlexDisplayValue, ratingControlStyle.getPropertyValue("display"), "Overall element should be a flex box");
-            LiveUnit.Assert.areEqual("auto", ratingControlStyle.getPropertyValue("-ms-touch-action"), "Rating control should not block panning at its root element.");
+            LiveUnit.Assert.areEqual(Helper.translateCSSValue("display", "inline-flex"), ratingControlStyle.getPropertyValue("display"), "Overall element should be a flex box");
+            LiveUnit.Assert.areEqual("auto", ratingControlStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should not block panning at its root element.");
 
             // Walk through the divs, verifying the proper number of star divs in the proper ratio of userRating/averageRating full stars followed by empty stars up to maxRating
             var rectElem = this.getClientRect(element);
@@ -743,7 +730,8 @@ RatingUtils.prototype = (function () {
 
                 // Verify star uses a font glyph
                 if (starStyle.display !== "none") {
-                    LiveUnit.Assert.areEqual("\"\ue082\"", starBeforePartStyle.getPropertyValue("content"), "Verify star " + (i + 1) + " uses the proper glyph by default.");
+                    LiveUnit.Assert.isTrue("\ue082" === starBeforePartStyle.getPropertyValue("content") || "\"\ue082\"" === starBeforePartStyle.getPropertyValue("content"),
+                                           "Verify star " + (i + 1) + " uses the proper glyph by default.");
                 }
 
                 // Check to see if we are showing a floating-point average rating, and, if so, whether we are
@@ -761,25 +749,25 @@ RatingUtils.prototype = (function () {
                     if (expect === "disabled") {
                         LiveUnit.Assert.isTrue(this.classesMatch(this.parts.disabledFull, star.getAttribute("class")),
                             "Verify correct class used for partial star " + (i + 1) + ". Expected: '" + this.parts.disabledFull + "', Actual: '" + star.getAttribute("class") + "'");
-                        LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue("-ms-touch-action"), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
+                        LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
                     } else {
-                        LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue("-ms-touch-action"), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action: none.");
+                        LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action: none.");
                     }
 
                     LiveUnit.Assert.isTrue(this.classesMatch(this.parts.averageFull, star.getAttribute("class")),
                         "Verify correct class used for partial star " + (i + 1) + ". Expected: '" + this.parts.averageFull + "', Actual: '" + star.getAttribute("class") + "'");
 
-                    LiveUnit.Assert.areEqual(this.defaultColors[this.currentTheme].averageFull, starBeforePartStyle.getPropertyValue("color"), "Verify help star uses the correct color by default in " + this.currentTheme + " theme.");
+                    Helper.Assert.areColorsEqual(this.defaultColors[this.currentTheme].averageFull, starBeforePartStyle.getPropertyValue("color"), "Verify help star uses the correct color by default in " + this.currentTheme + " theme.");
 
                     var percentFull = rating.averageRating - Math.floor(rating.averageRating);
 
                     if (Math.floor(rating.averageRating) === rating.averageRating) {
-                        LiveUnit.Assert.areEqual("1 1 auto", starStyle[flexItemStyleAttribute], "Verify the averageRating star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 1;");
+                        LiveUnit.Assert.areEqual("1 1 auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the averageRating star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 1;");
                     } else {
                         // We are sitting on the partial-full star for a floating point averageRating.
                         //  Validate flex is the proper percentage, allowing for 1% numerical imprecision.
-                        if (Math.abs(percentFull - parseFloat(starStyle[flexItemStyleAttribute])) > 0.01) {
-                            LiveUnit.Assert.areEqual(percentFull + " " + percentFull + " auto", starStyle[flexItemStyleAttribute], "Verify the averageRating star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
+                        if (Math.abs(percentFull - parseFloat(starStyle[Helper.translateCSSProperty("flex")])) > 0.01) {
+                            LiveUnit.Assert.areEqual(percentFull + " " + percentFull + " auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the averageRating star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
                         }
                     }
 
@@ -792,27 +780,28 @@ RatingUtils.prototype = (function () {
                     starBeforePartStyle = window.getComputedStyle(star, ":before");
 
                     // Verify star uses a font glyph
-                    LiveUnit.Assert.areEqual("\"\ue082\"", starBeforePartStyle.getPropertyValue("content"), "Verify star " + (i + 1) + " uses the proper glyph by default.");
+                    LiveUnit.Assert.isTrue("\ue082" === starBeforePartStyle.getPropertyValue("content") || "\"\ue082\"" === starBeforePartStyle.getPropertyValue("content"),
+                                           "Verify star " + (i + 1) + " uses the proper glyph by default.");
 
                     if (Math.floor(rating.averageRating) === rating.averageRating) {
-                        LiveUnit.Assert.areEqual("0 0 auto", starStyle[flexItemStyleAttribute], "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");
+                        LiveUnit.Assert.areEqual("0 0 auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");
                     } else {
                         if (expect === "disabled") {
                             LiveUnit.Assert.isTrue(this.classesMatch(this.parts.disabledEmpty, star.getAttribute("class")),
                                 "Verify correct class used for partial star " + (i + 1) + ". Expected: '" + this.parts.disabledEmpty + "', Actual: '" + star.getAttribute("class") + "'");
-                            LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue("-ms-touch-action"), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
+                            LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
                         } else {
-                            LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue("-ms-touch-action"), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action: none.");
+                            LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action: none.");
                         }
 
 
                         LiveUnit.Assert.isTrue(this.classesMatch(this.parts.averageEmpty, star.getAttribute("class")),
                             "Verify correct class used for partial star " + (i + 1) + ". Expected: '" + this.parts.averageEmpty + "', Actual: '" + star.getAttribute("class") + "'");
 
-                        LiveUnit.Assert.areEqual(this.defaultColors[this.currentTheme].averageEmpty, starBeforePartStyle.getPropertyValue("color"), "Verify next star after help star uses the correct color by default in " + this.currentTheme + " theme.");
+                        Helper.Assert.areColorsEqual(this.defaultColors[this.currentTheme].averageEmpty, starBeforePartStyle.getPropertyValue("color"), "Verify next star after help star uses the correct color by default in " + this.currentTheme + " theme.");
 
-                        if (Math.abs((1 - percentFull) - starStyle[flexItemStyleAttribute]) > 0.1) {
-                            LiveUnit.Assert.areEqual((1 - percentFull) + " " + (1 - percentFull) + " auto", starStyle[flexItemStyleAttribute], "Verify the helper star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
+                        if (Math.abs((1 - percentFull) - starStyle[Helper.translateCSSProperty("flex")]) > 0.1) {
+                            LiveUnit.Assert.areEqual((1 - percentFull) + " " + (1 - percentFull) + " auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the helper star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
                         }
                     }
                 } else {
@@ -832,7 +821,7 @@ RatingUtils.prototype = (function () {
                            ) {
                             // We found a spurious extra average-full star.  Make sure it is hidden ("display: none;").
                             LiveUnit.Assert.areEqual("none", starStyle.display, "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has display: 'none';");
-                            LiveUnit.Assert.areEqual("0 0 auto", starStyle[flexItemStyleAttribute], "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");
+                            LiveUnit.Assert.areEqual("0 0 auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");
 
                             // For thoroughness, make sure we don't run into more than one of these
                             LiveUnit.Assert.isFalse(hitExtraAverageFullDiv, "Verify we only run into the extra " + this.parts.averageFull + " star 1 time");
@@ -915,9 +904,9 @@ RatingUtils.prototype = (function () {
 
                     // Verify disabled stars enable panning
                     if (expect === "disabled") {
-                        LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue("-ms-touch-action"), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
+                        LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
                     } else {
-                        LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue("-ms-touch-action"), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action.");
+                        LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action.");
                     }
 
                     LiveUnit.Assert.isTrue(this.classesMatch(expectedClassName, star.getAttribute("class")),
@@ -926,7 +915,7 @@ RatingUtils.prototype = (function () {
                     Helper.Assert.areColorsEqual(expectedColor, starBeforePartStyle.getPropertyValue("color"),
                         "Verify correct color used for star " + (i + 1) + " in " + this.currentTheme + " theme.");
 
-                    LiveUnit.Assert.areEqual("1 1 auto", starStyle[flexItemStyleAttribute], "Verify star " + (i + 1) + " has flex: 1;");
+                    LiveUnit.Assert.areEqual("1 1 auto", starStyle[Helper.translateCSSProperty("flex")], "Verify star " + (i + 1) + " has flex: 1;");
                 }
 
                 overallWidth += rectStar.width;

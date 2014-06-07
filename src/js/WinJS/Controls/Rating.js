@@ -48,12 +48,12 @@ define([
                 CANCEL = "cancel",
                 CHANGE = "change",
                 PREVIEW_CHANGE = "previewchange",
-                MOUSE_LBUTTON = 0, // Event attribute to indicate a mouse left click 
+                MOUSE_LBUTTON = 0, // Event attribute to indicate a mouse left click
                 PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch", // Pointer type to indicate a touch event
                 PT_PEN = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_PEN || "pen", // Pointer type to indicate a pen event
                 PT_MOUSE = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse"; // Pointer type to indicate a mouse event
 
-            var hiddenAverageRatingCss = "padding-left: 0px; padding-right: 0px; border-left: 0px; border-right: 0px; -ms-flex: none; display: none";
+            var hiddenAverageRatingCss = "padding-left: 0px; padding-right: 0px; border-left: 0px; border-right: 0px; -ms-flex: none; -webkit-flex: none; flex: none; display: none";
 
             // CSS class names
             var msRating = "win-rating",
@@ -232,7 +232,7 @@ define([
                 oncancel: createEvent(CANCEL),
 
                 /// <field type="Function" locid="WinJS.UI.Rating.onchange" helpKeyword="WinJS.UI.Rating.onchange">
-                /// Raised when the user commits a change to the userRating. 
+                /// Raised when the user commits a change to the userRating.
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </field>
                 onchange: createEvent(CHANGE),
@@ -535,9 +535,9 @@ define([
                 _recalculateStarProperties: function () {
                     var j = 0;
                     // If the average rating is 1 we do not have correct padding on the first star so we are reading it from the second star
-                    // When we create average rating star we are creating it from 2 divs - stars. The first one is the average rating star the second one is the regular rating star. 
-                    // If the average rating is 1 we are creating that rating on the following way - The first part of star 
-                    // (without right padding, right border) is average rating star - the second part is regular star that does not have left padding and left border anymore 
+                    // When we create average rating star we are creating it from 2 divs - stars. The first one is the average rating star the second one is the regular rating star.
+                    // If the average rating is 1 we are creating that rating on the following way - The first part of star
+                    // (without right padding, right border) is average rating star - the second part is regular star that does not have left padding and left border anymore
                     // (we set on 0 to create average rating star). In that situation the average rating star has correct left padding and left border.
                     if (this._averageRating === 1) {
                         j = 1;
@@ -859,8 +859,8 @@ define([
 
                 _resetNextElement: function (prevState) {
                     if (this._averageRatingElement.nextSibling !== null) {
+                        WinJS.Utilities._setFlexStyle(this._averageRatingElement.nextSibling, 1, 1);
                         var style = this._averageRatingElement.nextSibling.style;
-                        style.msFlexPositive = 1; style.msFlexNegative = 1;
                         var direction = getComputedStyle(this._element).direction;
                         if (prevState) {
                             if (direction === "rtl") {
@@ -962,12 +962,12 @@ define([
                         nextStyle.borderLeft = "0px";
                         nextStyle.direction = "rtl";
                     }
+                    WinJS.Utilities._setFlexStyle(this._averageRatingElement, this._floatingValue, this._floatingValue);
                     style.width = this._resizeStringValue(this._elementWidth, this._floatingValue, style.width);
-                    style.msFlexPositive = this._floatingValue; style.msFlexNegative = this._floatingValue;
                     style.backgroundSize = (100 / this._floatingValue) + "% 100%";
                     style.display = getComputedStyle(this._averageRatingElement.nextSibling).display;
                     this._averageRatingHidden = false;
-                    nextStyle.msFlexPositive = 1 - this._floatingValue; nextStyle.msFlexNegative = 1 - this._floatingValue;
+                    WinJS.Utilities._setFlexStyle(this._averageRatingElement.nextSibling, 1 - this._floatingValue, 1 - this._floatingValue);
                     nextStyle.width = this._resizeStringValue(this._elementWidth, 1 - this._floatingValue, nextStyle.width);
                     nextStyle.backgroundSize = (100 / (1 - this._floatingValue)) + "% 100%";
                 },

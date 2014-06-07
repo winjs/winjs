@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// 
+//
 // UTIL.JS
 // Put non-feature specific functions used in > 1 test file in here to share with other tests
 // and simplify maintenance across tests by avoiding copy/paste.
@@ -10,7 +10,7 @@ function unhandledTestError(msg) {
     try {
         LiveUnit.Assert.fail("unhandled test exception: " + msg);
     } catch (ex) {
-        // don't rethrow assertion failure exception 
+        // don't rethrow assertion failure exception
     }
 }
 
@@ -20,7 +20,7 @@ function isWinRTEnabled() {
 }
 
 function namedObjectContainsString(obj, string) {
-    // loop through items inside obj and return index of match, 
+    // loop through items inside obj and return index of match,
     // returns -1 if no match.
     var index = 0;
     string = string.toLowerCase();
@@ -37,7 +37,7 @@ function namedObjectContainsString(obj, string) {
 }
 
 function enableWebunitErrorHandler(enable) {
-    // if you disable the webunit error handler, it will affect all tests in the run.  
+    // if you disable the webunit error handler, it will affect all tests in the run.
     // **MAKE SURE** you put it back per test case using finally{} blocks and or proper promise error paths as necessary.
     try {
         if (enable) {
@@ -83,7 +83,7 @@ if (isWinRTEnabled()) {
             // Note: when IE is in script debug mode, msGetWeakWinRTProperty always returns null.
             return msGetWeakWinRTProperty(MemWatcher_host, id);
         },
-        // This function continuously polls to check if the object referenced by id 
+        // This function continuously polls to check if the object referenced by id
         // has been garbage collected
         // Takes in the reference id of the object, total polling duration and poll interval
         // Returns a promise that succeeds if the object is GC'ed within the total poll duration
@@ -146,22 +146,78 @@ function asyncWhile(conditionFunction, workFunction) {
 
 var Helper;
 (function (Helper) {
-    
+
+    // CSS property translation
+    Helper.cssTranslations = {
+        "touch-action": function() {
+            var obj = {property: {}, value: {}};
+            if ("touchAction" in document.documentElement.style) {
+                obj = null;
+            }
+            else if ("msTouchAction" in document.documentElement.style) {
+                obj.property["touch-action"] = "-ms-touch-action";
+            }
+            return obj;
+        },
+        "display": function() {
+            var obj = {property: {}, value: {}};
+            if ("flex" in document.documentElement.style) {
+                obj = null;
+            }
+            else if ("msFlex" in document.documentElement.style) {
+                obj.value["inline-flex"] = "-ms-inline-flexbox";
+                obj.value["flex"] = "-ms-flexbox";
+            }
+            else if ("webkitFlex" in document.documentElement.style) {
+                obj.value["inline-flex"] = "-webkit-inline-flex";
+                obj.value["flex"] = "-webkit-flex";
+            }
+            return obj;
+        },
+        "flex": function() {
+            var obj = {property: {}, value: {}};
+            if ("flex" in document.documentElement.style) {
+                obj = null;
+            }
+            else if ("msFlex" in document.documentElement.style) {
+                obj.property["flex"] = "-ms-flex";
+            }
+            else if ("webkitFlex" in document.documentElement.style) {
+                obj.property["flex"] = "-webkit-flex";
+            }
+            return obj;
+        }
+    };
+
+    Helper.translateCSSProperty = function(propertyName) {
+        var translation = Helper.cssTranslations[propertyName]();
+        if (!translation || !translation.property[propertyName])
+            return propertyName;
+        return translation.property[propertyName];
+    };
+
+    Helper.translateCSSValue = function(propertyName, value) {
+        var translation = Helper.cssTranslations[propertyName]();
+        if (!translation || !translation.value[value])
+            return value;
+        return translation.value[value];
+    };
+
     Helper.endsWith = function endsWith(s, suffix) {
         var expectedStart = s.length - suffix.length;
         return expectedStart >= 0 && s.lastIndexOf(suffix) === expectedStart;
     };
-    
+
     // Rounds *n* such that it has at most *decimalPoints* digits after the decimal point.
     Helper.round = function round(n, decimalPoints) {
         return Math.round(n * Math.pow(10, decimalPoints)) / Math.pow(10, decimalPoints);
     };
-    
+
     // Returns a random integer less than the given number
     Helper.getRandomNumberUpto = function getRandomNumberUpto(num) {
         return Math.floor(Math.random() * num);
     };
-    
+
     // Returns a random item from the given array or binding list
     Helper.getRandomItem = function getRandomItem(array) {
         var randomIndex = Helper.getRandomNumberUpto(array.length);
@@ -171,25 +227,25 @@ var Helper;
             return array.getAt(randomIndex);
         }
     };
-    
+
     Helper.enableStyleSheets = function enableStyleSheets(suffix) {
         for (var i = 0; i < document.styleSheets.length; i++) {
             var sheet = document.styleSheets[i];
             if (sheet.href && Helper.endsWith(sheet.href, suffix)) {
                 sheet.disabled = false;
             }
-        } 
+        }
     };
-    
+
     Helper.disableStyleSheets = function disableStyleSheets(suffix) {
         for (var i = 0; i < document.styleSheets.length; i++) {
             var sheet = document.styleSheets[i];
             if (sheet.href && Helper.endsWith(sheet.href, suffix)) {
                 sheet.disabled = true;
             }
-        } 
+        }
     };
-    
+
     // Parses an rgb/rgba string as returned by getComputedStyle. For example:
     // Input: "rgb(10, 24, 215)"
     // Output: [10, 24, 215, 1.0]
@@ -214,35 +270,35 @@ var Helper;
             nums.length < 4 ? 1.0 : parseFloat(nums[3].trim())
         ];
     };
-    
+
     Helper.Assert = {
         areArraysEqual: function areArraysEqual(expectedArray, actualArray, message) {
             if (!expectedArray instanceof Array || !actualArray instanceof Array) {
                 LiveUnit.Assert.fail(message);
             }
-    
+
             if (expectedArray === actualArray) {
                 return;
             }
-    
+
             LiveUnit.Assert.areEqual(expectedArray.length, actualArray.length, message);
-    
+
             for (var i = 0; i < expectedArray.length; i++) {
                 LiveUnit.Assert.areEqual(expectedArray[i], actualArray[i], message);
             }
         },
-    
+
         areSetsEqual: function areArraysEqual(expectedArray, actualArray, message) {
             var expected = expectedArray.slice().sort();
             var actual = actualArray.slice().sort();
             Helper.Assert.areArraysEqual(expected, actual, message);
         },
-        
+
         // Verifies CSS colors. *expectedColorString* and *actualColorString* are color strings of the form
         // returned by getComputedStyle. Specifically, they can look like this:
         // - "rgb(10, 24, 215)"
         // - "rgba(10, 24, 215, 0.25)"
-        areColorsEqual: function areColorsEqual(expectedColorString, actualColorString, message) {            
+        areColorsEqual: function areColorsEqual(expectedColorString, actualColorString, message) {
             var expectedColor = Helper.parseColor(expectedColorString);
             var actualColor = Helper.parseColor(actualColorString);
             // Verify red, green, blue
@@ -262,13 +318,13 @@ var Helper;
             LiveUnit.Assert.areEqual(normalizedUrl(expectedUrl), normalizedUrl(actualUrl), message);
         }
     };
-    
+
     // Returns the group key for an item as defined by createData() below
     Helper.groupKey = function groupKey(item) {
         var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
         return groupIndex.toString();
     };
-    
+
     // Returns the group data for an item as defined by createData() below
     Helper.groupData = function groupData(item) {
         var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
@@ -280,7 +336,7 @@ var Helper;
         };
         return groupData;
     };
-    
+
     // Creates an array with data item objects
     Helper.createData = function createData(size) {
         var data = [];
@@ -289,13 +345,13 @@ var Helper;
         }
         return data;
     };
-    
+
     // Creates a binding list out of the provided array (data) or
     // creates a new data array of specified size
     Helper.createBindingList = function createBindingList(size, data) {
         return (data ? new WinJS.Binding.List(data) : new WinJS.Binding.List(Helper.createData(size)));
     };
-    
+
     // Creates a VDS out of the provided array (data) or
     // creates a new data array of specified size
     Helper.createTestDataSource = function createTestDataSource(size, data, isSynchronous) {
@@ -307,7 +363,7 @@ var Helper;
         if (isSynchronous === undefined) {
             isSynchronous = true;
         }
-    
+
         // Create the datasource
         var controller = {
             directivesForMethod: function (method) {
@@ -322,7 +378,7 @@ var Helper;
                 };
             }
         };
-    
+
         // Data adapter abilities
         var abilities = {
             itemsFromIndex: true,
@@ -331,10 +387,10 @@ var Helper;
             getCount: true,
             setNotificationHandler: true
         };
-    
+
         return TestComponents.createTestDataSource(data, controller, abilities);
     };
-    
+
     // Synchronous JS template for the data item created by createData() above
     Helper.syncJSTemplate = function syncJSTemplate(itemPromise) {
         return itemPromise.then(function (item) {
@@ -347,11 +403,11 @@ var Helper;
             return element;
         });
     };
-    
+
     Helper.getOffsetRight = function getOffsetRight(element) {
         return element.offsetParent.offsetWidth - element.offsetLeft - element.offsetWidth;
     };
-    
+
     // Returns a promise which completes upon receiving a scroll event
     // from *element*.
     Helper.waitForScroll = function waitForScroll(element) {
@@ -362,14 +418,14 @@ var Helper;
             });
         });
     };
-        
+
     // Returns a promise which completes when *element* receives focus. When *includeDescendants* is true,
     // the promise completes when *element* or any of its descendants receives focus. *moveFocus* is a
-    // callback which is expected to trigger the focus change that the caller is interested in. 
+    // callback which is expected to trigger the focus change that the caller is interested in.
     Helper._waitForFocus = function focus(element, moveFocus, options) {
         options = options || {};
         var includeDescendants = options.includeDescendants;
-        
+
         var p = new WinJS.Promise(function (complete) {
             element.addEventListener("focus", function focusHandler() {
                 if (includeDescendants || document.activeElement === element) {
@@ -381,34 +437,34 @@ var Helper;
         moveFocus();
         return p;
     };
-    
+
     Helper.focus = function focus(element) {
         return Helper._waitForFocus(element, function () { element.focus(); }, {
             includeDescendants: false
         });
     };
-    
+
     Helper.waitForFocus = function focus(element, moveFocus) {
         return Helper._waitForFocus(element, moveFocus, {
             includeDescendants: false
         });
     };
-    
+
     Helper.waitForFocusWithin = function focus(element, moveFocus) {
         return Helper._waitForFocus(element, moveFocus, {
             includeDescendants: true
         });
     };
-    
+
     // Useful for disabling tests which were generated programmatically. Disables testName which
     // is part of the testObj tests. It's safest to call this function at the bottom of the
     // appropriate test file to ensure that the test has already been defined.
     //
-    // Example usage: disableTest(WinJSTests.ConfigurationTests, "testDatasourceChange_incrementalGridLayout"); 
+    // Example usage: disableTest(WinJSTests.ConfigurationTests, "testDatasourceChange_incrementalGridLayout");
     Helper.disableTest = function disableTest(testObj, testName) {
         var disabledName = "x" + testName;
-    
+
         testObj[disabledName] = testObj[testName];
         delete testObj[testName];
-    };    
+    };
 })(Helper || (Helper = {}));
