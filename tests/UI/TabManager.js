@@ -69,7 +69,7 @@ CorsicaTests.TabManager = function () {
 
     this.testGetTabIndex = function () {
         var root = document.getElementById("TabManagerTest");
-        root.innerHTML = "<div>Not focusable</div>"
+        WinJS.Utilities.setInnerHTMLUnsafe(root, "<div>Not focusable</div>"
             + "<div tabindex='-1'>Not focusable</div>"
             + "<div tabindex='0'>Focusable</div>"
             + "<div tabindex='1'>Focusable</div>"
@@ -88,7 +88,7 @@ CorsicaTests.TabManager = function () {
             + "<textarea>Focusable</textarea>"
             + "<command>Focusable</command>"
             + "<area href='http://www.microsoft.com/'>Focusable</button>"
-            + "<link href='http://www.microsoft.com/'>Focusable</button>";
+            + "<link href='http://www.microsoft.com/'>Focusable</button>");
         var getTabIndex = WinJS.Utilities.getTabIndex;
         var expectedTabIndices = [-1, -1, 0, 1, 0, 1, -1, -1, -1, 0, 1, -1, -1, 0, 0, 0, 0, 0, 0, 0];
         var curr = root.firstElementChild,
