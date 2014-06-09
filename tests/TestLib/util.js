@@ -148,13 +148,16 @@ var Helper;
 (function (Helper) {
 
     // CSS property translation
+    // Uses feature detection to map "standard" CSS property names and values to their
+    // prefixed counterparts.
+    // Best used through Helper.translateCSSProperty and Helper.translateCSSValue
+    // Please add to this list as neccessary and use it where possible in test code
     Helper.cssTranslations = {
         "touch-action": function() {
             var obj = {property: {}, value: {}};
             if ("touchAction" in document.documentElement.style) {
                 obj = null;
-            }
-            else if ("msTouchAction" in document.documentElement.style) {
+            } else if ("msTouchAction" in document.documentElement.style) {
                 obj.property["touch-action"] = "-ms-touch-action";
             }
             return obj;
@@ -163,12 +166,10 @@ var Helper;
             var obj = {property: {}, value: {}};
             if ("flex" in document.documentElement.style) {
                 obj = null;
-            }
-            else if ("msFlex" in document.documentElement.style) {
+            } else if ("msFlex" in document.documentElement.style) {
                 obj.value["inline-flex"] = "-ms-inline-flexbox";
                 obj.value["flex"] = "-ms-flexbox";
-            }
-            else if ("webkitFlex" in document.documentElement.style) {
+            } else if ("webkitFlex" in document.documentElement.style) {
                 obj.value["inline-flex"] = "-webkit-inline-flex";
                 obj.value["flex"] = "-webkit-flex";
             }
@@ -178,28 +179,32 @@ var Helper;
             var obj = {property: {}, value: {}};
             if ("flex" in document.documentElement.style) {
                 obj = null;
-            }
-            else if ("msFlex" in document.documentElement.style) {
+            } else if ("msFlex" in document.documentElement.style) {
                 obj.property["flex"] = "-ms-flex";
-            }
-            else if ("webkitFlex" in document.documentElement.style) {
+            } else if ("webkitFlex" in document.documentElement.style) {
                 obj.property["flex"] = "-webkit-flex";
             }
             return obj;
         }
     };
 
+    // Translate a standard CSS property name to the prefixed version, if one is necessary
+    // Uses feature detection
     Helper.translateCSSProperty = function(propertyName) {
         var translation = Helper.cssTranslations[propertyName]();
-        if (!translation || !translation.property[propertyName])
+        if (!translation || !translation.property[propertyName]) {
             return propertyName;
+        }
         return translation.property[propertyName];
     };
 
+    // Translate a standard CSS property value to the prefixed version, if one is necessary
+    // Uses feature detection
     Helper.translateCSSValue = function(propertyName, value) {
         var translation = Helper.cssTranslations[propertyName]();
-        if (!translation || !translation.value[value])
+        if (!translation || !translation.value[value]) {
             return value;
+        }
         return translation.value[value];
     };
 
@@ -306,7 +311,7 @@ var Helper;
             // Verify alpha with a tolerance of 0.05
             LiveUnit.Assert.isTrue(Math.abs(expectedColor[3] - actualColor[3]) <= .05, message);
         },
-        
+
         // Verifies CSS urls. *expectedUrl* and *actualUrl* are expected to be valid CSS rules. For example,
         // url("foo.png").
         areUrlsEqual: function areUrlsEqual(expectedUrl, actualUrl, message) {
