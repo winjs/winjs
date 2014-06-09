@@ -62,11 +62,20 @@ CommonUtils.prototype = (function () {
             } else if (e instanceof MouseEvent && e.isTouch) {
                 // Convert "pointerevent" to "touchevent"
                 args[0] = args[0].replace(/pointer/g, "touch");
+                if (args[0] === "touchdown")
+                    args[0] = "touchstart";
+                else if (args[0] === "touchup")
+                    args[0] = "touchend";
+                else if (args[0] === "touchout")
+                    args[0] = "touchleave";
 
                 // Get the arguments touch events care about
                 args = args.slice(0, 14);
                 e.initMouseEvent.apply(e, args);
 
+                // Throw in the changedTouches array
+                // No docs on how to construct an actual TouchList / Touch object, but this seems
+                // to work
                 e.changedTouches = [{screenX: args[5], screenY: args[6], clientX: args[7], clientY: args[8], pageX: args[7], pageY: args[8], target: args[14]}];
             }
         },

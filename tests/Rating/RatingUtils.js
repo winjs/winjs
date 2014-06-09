@@ -1331,11 +1331,13 @@ RatingUtils.prototype = (function () {
 
                 commonUtils.touchDown(element);
 
-                LiveUnit.Assert.areEqual(
-                    element.parentNode.getAttribute("callsToPointerCaptureExpected"),
-                    element.parentNode.getAttribute("controlSetPointerCapture"),
-                    "Total calls of setPointerCapture should match expected if the rating control is properly" +
-                        (!element.parentNode.winControl.disabled) ? " blocking panning when enabled." : " allowing panning when disabled.");
+                if (element.setPointerCapture) {
+                    LiveUnit.Assert.areEqual(
+                        element.parentNode.getAttribute("callsToPointerCaptureExpected"),
+                        element.parentNode.getAttribute("controlSetPointerCapture"),
+                        "Total calls of setPointerCapture should match expected if the rating control is properly" +
+                            (!element.parentNode.winControl.disabled) ? " blocking panning when enabled." : " allowing panning when disabled.");
+                }
             } else {
                 commonUtils.touchDown(element);
             }
