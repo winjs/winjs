@@ -592,7 +592,7 @@
                         }
                     }
 
-                    this._contentChanged();
+                    this._commandsUpdated();
 
                 },
 
@@ -875,7 +875,7 @@
                     // Nothing by default
                 },
 
-                _contentChanged: function _Overlay_contentChanged(needToReMeasure) {
+                _commandsUpdated: function _Overlay_commandsUpdated(needToReMeasure) {
                     // Nothing by default
                 },
 

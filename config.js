@@ -174,6 +174,7 @@
         "src/js/WinJS/Controls/Flyout/_Overlay.js",
         "src/js/WinJS/Controls/AppBar/_Icon.js",
         "src/js/WinJS/Controls/AppBar/_Command.js",
+        "src/js/WinJS/Controls/AppBar/_Layouts.js",
         "src/js/WinJS/Controls/AppBar.js",
         "src/js/WinJS/Controls/Flyout.js",
         "src/js/WinJS/Controls/Menu.js",

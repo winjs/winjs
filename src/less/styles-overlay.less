@@ -227,7 +227,7 @@ div.win-command:focus {
 }
 
 /*
-AppBar Edgy Container
+AppBar
 */
 .win-appbar {
     z-index: 1002;
@@ -239,25 +239,53 @@ AppBar Edgy Container
     position: -ms-device-fixed;
 }
 
+
 /*
-AppBar control.
+AppBar commands layout
 */
 .win-commandlayout {
-    text-align: right;
 
     /* Hide whitespace between buttons. */
     font-size: 0;
-
     min-height: 88px;
+
+    #flex > .display-flex();
+    #flex > .flex-direction(row);
+    #flex > .flex-wrap(nowrap);
+    #flex > .justify-content(center);
+    #flex > .align-items(flex-start);
 }
-.win-commandlayout .win-selection {
-    float: left;
+.win-commandlayout .win-primarygroup {
+    #flex > .order(2);
+    #flex > .display-inline-flex();
+    #flex > .flex(1; 1; auto);
+    #flex > .flex-direction(row);
+    #flex > .flex-wrap(wrap);
+    #flex > .justify-content(flex-end);
+    #flex > .align-items(flex-start);
 }
+.win-commandlayout .win-secondarygroup {
+    #flex > .order(1);
+    #flex > .display-inline-flex();
+    #flex > .flex(1; 1; auto);
+    #flex > .flex-direction(row);
+    #flex > .flex-wrap(wrap);
+    #flex > .justify-content(flex-start);
+    #flex > .align-items(flex-start);
+}
+.win-commandlayout .win-command {
+    #flex > .flex(0; 0; auto);
+}
+
+/* CommandsLayout RTL */
 .win-commandlayout:-ms-lang(@{rtl}) {
-    text-align: left;
+    #flex > .flex-direction(row-reverse);
 }
-.win-commandlayout .win-selection:-ms-lang(@{rtl}) {
-    float: right;
+.win-commandlayout:-ms-lang(@{rtl}) .win-primarygroup {
+    #flex > .flex-direction(row-reverse);
+}
+.win-commandlayout:-ms-lang(@{rtl}) .win-secondarygroup {        
+    #flex > .flex-direction(row-reverse);
 }
 
 /* Narrow buttons and no labels */

@@ -420,7 +420,7 @@
                             style.display = "inline-block";
                         }
                         if (appbarControl) {
-                            appbarControl._contentChanged();
+                            appbarControl._commandsUpdated();
                         }
                     }
                 },

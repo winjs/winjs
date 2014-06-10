@@ -60,8 +60,7 @@ CorsicaTests.MenuCommandTests = function () {
         try {
             new WinJS.UI.MenuCommand(menuCommandElement, { type: 'separator' });
             LiveUnit.Assert.fail("Expected WinJS.UI.MenuCommand.DuplicateConstruction exception");
-        } catch (e) {}
-        finally {
+        } finally {
             OverlayHelpers.disposeAndRemove(menuCommandElement);
         }
     }
