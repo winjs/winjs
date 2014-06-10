@@ -145,12 +145,12 @@ WinJSTests.PivotTests = function () {
         });
     }
 
-    function waitForNextItemAnimationStart(pivot) {
+    function waitForNextSelectionChanged(pivot) {
         return new WinJS.Promise(function (c, e, p) {
-            pivot.element.addEventListener(WinJS.UI.Pivot._EventName.itemAnimationStart, test);
+            pivot.element.addEventListener(WinJS.UI.Pivot._EventName.selectionChanged, test);
 
             function test() {
-                pivot.element.removeEventListener(WinJS.UI.Pivot._EventName.itemAnimationStart, test);
+                pivot.element.removeEventListener(WinJS.UI.Pivot._EventName.selectionChanged, test);
                 c();
             }
         });
@@ -737,7 +737,7 @@ WinJSTests.PivotTests = function () {
 
             pivotWrapperEl.appendChild(pivot.element);
 
-            waitForNextItemAnimationStart(pivot).then(function () {
+            waitForNextSelectionChanged(pivot).then(function () {
                 // Test constructor/refresh
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.api, pivot._navMode);
 
@@ -796,7 +796,7 @@ WinJSTests.PivotTests = function () {
 
                 // Pan right
                 WinJS.Utilities._zoomTo(pivot._viewportElement, { contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                return waitForNextItemAnimationStart(pivot);
+                return waitForNextSelectionChanged(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.inertia, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -806,7 +806,7 @@ WinJSTests.PivotTests = function () {
 
                 // Pan left
                 WinJS.Utilities._zoomTo(pivot._viewportElement, { contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                return waitForNextItemAnimationStart(pivot);
+                return waitForNextSelectionChanged(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.inertia, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -837,7 +837,7 @@ WinJSTests.PivotTests = function () {
 
                 // Scroll right
                 WinJS.Utilities.setScrollPosition(pivot._viewportElement, { scrollLeft: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + 50 });
-                return waitForNextItemAnimationStart(pivot);
+                return waitForNextSelectionChanged(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.scroll, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -847,7 +847,7 @@ WinJSTests.PivotTests = function () {
 
                 // Pan left
                 WinJS.Utilities.setScrollPosition(pivot._viewportElement, { scrollLeft: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - 50 });
-                return waitForNextItemAnimationStart(pivot);
+                return waitForNextSelectionChanged(pivot);
             }).then(function () {
                 LiveUnit.Assert.areEqual(WinJS.UI.Pivot._NavigationModes.scroll, pivot._navMode);
                 return waitForNextItemAnimationEnd(pivot);
@@ -1153,10 +1153,10 @@ WinJSTests.PivotTests = function () {
                 firePointerEvent("pointerenter", pivot._headersContainerElement, 0, 0, PT_MOUSE);
                 LiveUnit.Assert.isTrue(pivot._headersContainerElement.classList.contains(WinJS.UI.Pivot._ClassName.pivotShowNavButtons));
 
-                var leftButton = document.elementFromPoint(pivot.element.offsetLeft + 10, pivot.element.offsetTop + 20);
+                var leftButton = document.elementFromPoint(pivot.element.offsetLeft + 10, pivot.element.offsetTop + 50);
                 LiveUnit.Assert.isTrue(leftButton.classList.contains(WinJS.UI.Pivot._ClassName.pivotNavButtonPrev));
 
-                var rightButton = document.elementFromPoint(pivot.element.offsetLeft + pivot.element.offsetWidth - 10, pivot.element.offsetTop + 20);
+                var rightButton = document.elementFromPoint(pivot.element.offsetLeft + pivot.element.offsetWidth - 10, pivot.element.offsetTop + 50);
                 LiveUnit.Assert.isTrue(rightButton.classList.contains(WinJS.UI.Pivot._ClassName.pivotNavButtonNext));
 
                 complete();

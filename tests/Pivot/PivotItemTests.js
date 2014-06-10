@@ -10,6 +10,18 @@ var WinJSTests = WinJSTests || {};
 WinJSTests.PivotItemTests = function () {
     "use strict";
 
+    var pivotWrapperEl;
+    this.setUp = function () {
+        pivotWrapperEl = document.createElement('div');
+        pivotWrapperEl.style.cssText = "width: 320px; height: 480px; background-color: #777;"
+        document.body.appendChild(pivotWrapperEl);
+    };
+
+    this.tearDown = function () {
+        WinJS.Utilities.disposeSubTree(pivotWrapperEl);
+        document.body.removeChild(pivotWrapperEl);
+    };
+
     this.testContentElement = function () {
         var pivotItemEl = document.createElement('div');
         pivotItemEl.innerHTML = '<div class="mike"></div>';
@@ -26,6 +38,7 @@ WinJSTests.PivotItemTests = function () {
         });
 
         var pivot = new WinJS.UI.Pivot();
+        pivotWrapperEl.appendChild(pivot.element);
 
         pivot.items.push(pivotItem);
         pivot.addEventListener("itemanimationend", function () {
