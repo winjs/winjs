@@ -8,7 +8,7 @@ define([
     if (!_Global.document) {
         return;
     }
-    
+
     var zoomToDuration = 167;
 
     function removeEmpties(arr) {
@@ -627,7 +627,7 @@ define([
         _initMouseEvent: function (event, type) {
             this._initEventImpl.apply(this, ["Mouse", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
-        
+
         _initPointerEvent: function (event, type) {
             this._initEventImpl.apply(this, ["Pointer", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
@@ -662,31 +662,31 @@ define([
                     var cs = getComputedStyle(element);
                     var scrollLimitX = element.scrollWidth - parseInt(cs.width, 10) - parseInt(cs.paddingLeft, 10) - parseInt(cs.paddingRight, 10);
                     var scrollLimitY = element.scrollHeight - parseInt(cs.height, 10) - parseInt(cs.paddingTop, 10) - parseInt(cs.paddingBottom, 10);
-                    
+
                     if (typeof args.contentX !== "number") {
                         args.contentX = effectiveScrollLeft;
                     }
                     if (typeof args.contentY !== "number") {
                         args.contentY = effectiveScrollTop;
                     }
-                    
+
                     var zoomToDestX = WinJS.Utilities._clamp(args.contentX, 0, scrollLimitX);
                     var zoomToDestY = WinJS.Utilities._clamp(args.contentY, 0, scrollLimitY);
                     if (zoomToDestX === effectiveScrollLeft && zoomToDestY === effectiveScrollTop) {
                         // Scroll position is already in the proper state. This zoomTo is a no-op.
                         return;
                     }
-                    
+
                     element._zoomToId = element._zoomToId || 0;
                     element._zoomToId++;
                     element._zoomToDestX = zoomToDestX;
                     element._zoomToDestY = zoomToDestY;
-                    
+
                     var thisZoomToId = element._zoomToId;
                     var start = WinJS.Utilities._now();
                     var xFactor = (element._zoomToDestX - initialPos.scrollLeft) / zoomToDuration;
                     var yFactor = (element._zoomToDestY - initialPos.scrollTop) / zoomToDuration;
-                    
+
                     var update = function () {
                         var t = WinJS.Utilities._now() - start;
                         if (element._zoomToId !== thisZoomToId) {
@@ -700,7 +700,7 @@ define([
                             requestAnimationFrame(update);
                         }
                     };
-                    
+
                     requestAnimationFrame(update);
                 }, WinJS.Utilities.Scheduler.Priority.high, null, "WinJS.Utilities._zoomTo");
             }
@@ -718,10 +718,10 @@ define([
                     // This _setActive polyfill does have limited support for preventing scrolling: via the scroller parameter, it
                     // can prevent one scroller from scrolling. This functionality is necessary in some scenarios. For example, when using
                     // _zoomTo and _setActive together.
-                    
+
                     var scrollLeft,
                         scrollTop;
-                    
+
                     if (scroller) {
                         scrollLeft = scroller.scrollLeft;
                         scrollTop = scroller.scrollTop;
@@ -751,15 +751,22 @@ define([
             }
         },
 
-        _setFlexStyle: function(element, grow, shrink, basis) {
+        // Browser agnostic method to set element flex style
+        // Param is an object in the form {grow: flex-grow, shrink: flex-shrink, basis: flex-basis}
+        // All fields optional
+        _setFlexStyle: function(element, flexParams) {
             var styleObject = element.style;
-            styleObject.msFlexPositive = grow;
-            styleObject.flexGrow = grow;
-            styleObject.msFlexNegative = shrink;
-            styleObject.flexShrink = shrink;
-            if (typeof basis !== "undefined") {
-                styleObject.msFlexPreferredSize = basis;
-                styleObject.flexBasis = basis;
+            if (typeof flexParams.grow !== "undefined") {
+                styleObject.msFlexPositive = flexParams.grow;
+                styleObject.flexGrow = flexParams.grow;
+            }
+            if (typeof flexParams.shrink !== "undefined") {
+                styleObject.msFlexNegative = flexParams.shrink;
+                styleObject.flexShrink = flexParams.shrink;
+            }
+            if (typeof flexParams.basis !== "undefined") {
+                styleObject.msFlexPreferredSize = flexParams.basis;
+                styleObject.flexBasis = flexParams.basis;
             }
         },
 

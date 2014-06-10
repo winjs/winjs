@@ -859,7 +859,7 @@ define([
 
                 _resetNextElement: function (prevState) {
                     if (this._averageRatingElement.nextSibling !== null) {
-                        WinJS.Utilities._setFlexStyle(this._averageRatingElement.nextSibling, 1, 1);
+                        WinJS.Utilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1, shrink: 1});
                         var style = this._averageRatingElement.nextSibling.style;
                         var direction = getComputedStyle(this._element).direction;
                         if (prevState) {
@@ -962,12 +962,12 @@ define([
                         nextStyle.borderLeft = "0px";
                         nextStyle.direction = "rtl";
                     }
-                    WinJS.Utilities._setFlexStyle(this._averageRatingElement, this._floatingValue, this._floatingValue);
+                    WinJS.Utilities._setFlexStyle(this._averageRatingElement, {grow: this._floatingValue, shrink: this._floatingValue});
                     style.width = this._resizeStringValue(this._elementWidth, this._floatingValue, style.width);
                     style.backgroundSize = (100 / this._floatingValue) + "% 100%";
                     style.display = getComputedStyle(this._averageRatingElement.nextSibling).display;
                     this._averageRatingHidden = false;
-                    WinJS.Utilities._setFlexStyle(this._averageRatingElement.nextSibling, 1 - this._floatingValue, 1 - this._floatingValue);
+                    WinJS.Utilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1 - this._floatingValue, shrink: 1 - this._floatingValue});
                     nextStyle.width = this._resizeStringValue(this._elementWidth, 1 - this._floatingValue, nextStyle.width);
                     nextStyle.backgroundSize = (100 / (1 - this._floatingValue)) + "% 100%";
                 },
