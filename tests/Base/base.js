@@ -545,7 +545,7 @@ CorsicaTests.Base = function () {
     };
 
     this.testExecuteAfterDomLoaded = function () {
-        WinJS.Utilities.testReadyState = "loading";
+        WinJS.Utilities._testReadyState = "loading";
 
 
         var callbackHit = false;
@@ -567,7 +567,7 @@ CorsicaTests.Base = function () {
             LiveUnit.Assert.areEqual(true, callbackHit);
         }
         finally {
-            delete WinJS.Utilities.testReadyState;
+            delete WinJS.Utilities._testReadyState;
             window.addEventListener = oldAddEventListener;
         }
     };

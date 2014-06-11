@@ -51,7 +51,12 @@ var define;
             if(!dep) {
                 throw new Error("Undefined dependency: " + depName);
             }
-            return load(dep.dependencies, dep.factory);
+
+            if(!dep.resolved) {
+                dep.resolved = load(dep.dependencies, dep.factory);
+            }
+            
+            return dep.resolved;
         });
     }
 

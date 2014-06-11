@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function errorsInit() {
+    './_Base'
+    ], function errorsInit(_Base) {
     "use strict";
 
 
-    WinJS.Namespace.define("WinJS", {
+    _Base.Namespace.define("WinJS", {
         // ErrorFromName establishes a simple pattern for returning error codes.
         //
-        ErrorFromName: WinJS.Class.derive(Error, function (name, message) {
+        ErrorFromName: _Base.Class.derive(Error, function (name, message) {
             /// <signature helpKeyword="WinJS.ErrorFromName">
             /// <summary locid="WinJS.ErrorFromName">
             /// Creates an Error object with the specified name and message properties.
@@ -24,6 +25,8 @@ define([
             supportedForProcessing: false,
         })
     });
+
+    return WinJS.ErrorFromName;
 
 });
 

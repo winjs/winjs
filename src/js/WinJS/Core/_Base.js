@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './_Global'
-    ], function baseInit(_Global) {
+    './_Global',
+    './_BaseCoreUtils',
+    './_WriteProfilerMark'
+    ], function baseInit(_Global, _BaseCoreUtils, _WriteProfilerMark) {
     "use strict";
 
     function initializeProperties(target, members, prefix) {
@@ -118,7 +120,7 @@ define([
             if (typeof f === "string") {
                 var target = f;
                 f = function () {
-                    return WinJS.Utilities.getMember(target);
+                    return _BaseCoreUtils.getMember(target);
                 };
             }
             var name;
@@ -136,10 +138,10 @@ define([
                         case LazyStates.uninitialized:
                             state = LazyStates.working;
                             try {
-                                WinJS.Utilities._writeProfilerMark("WinJS.Namespace._lazy:" + name + ",StartTM");
+                                _WriteProfilerMark("WinJS.Namespace._lazy:" + name + ",StartTM");
                                 result = f();
                             } finally {
-                                WinJS.Utilities._writeProfilerMark("WinJS.Namespace._lazy:" + name + ",StopTM");
+                                _WriteProfilerMark("WinJS.Namespace._lazy:" + name + ",StopTM");
                                 state = LazyStates.uninitialized;
                             }
                             f = null;
@@ -203,7 +205,7 @@ define([
             /// </returns>
             /// </signature>
             constructor = constructor || function () { };
-            WinJS.Utilities.markSupportedForProcessing(constructor);
+            _BaseCoreUtils.markSupportedForProcessing(constructor);
             if (instanceMembers) {
                 initializeProperties(constructor.prototype, instanceMembers);
             }
@@ -238,7 +240,7 @@ define([
                 constructor = constructor || function () { };
                 var basePrototype = baseClass.prototype;
                 constructor.prototype = Object.create(basePrototype);
-                WinJS.Utilities.markSupportedForProcessing(constructor);
+                _BaseCoreUtils.markSupportedForProcessing(constructor);
                 Object.defineProperty(constructor.prototype, "constructor", { value: constructor, writable: true, configurable: true, enumerable: true });
                 if (instanceMembers) {
                     initializeProperties(constructor.prototype, instanceMembers);
@@ -281,5 +283,10 @@ define([
         });
 
     })(WinJS);
+
+    return {
+        Namespace: WinJS.Namespace,
+        Class: WinJS.Class
+    };
 
 });

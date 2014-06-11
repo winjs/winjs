@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function eventsInit() {
+    './_Base'
+    ], function eventsInit(_Base) {
     "use strict";
 
 
@@ -50,7 +51,7 @@ define([
         return props;
     }
 
-    var EventMixinEvent = WinJS.Class.define(
+    var EventMixinEvent = _Base.Class.define(
         function EventMixinEvent_ctor(type, detail, target) {
             this.detail = detail;
             this.target = target;
@@ -174,11 +175,17 @@ define([
         }
     };
 
-    WinJS.Namespace.define("WinJS.Utilities", {
+    _Base.Namespace.define("WinJS.Utilities", {
         _createEventProperty: createEventProperty,
         createEventProperties: createEventProperties,
         eventMixin: eventMixin
     });
+
+    return {
+        _createEventProperty: createEventProperty,
+        createEventProperties: createEventProperties,
+        eventMixin: eventMixin
+    };
 
 });
 

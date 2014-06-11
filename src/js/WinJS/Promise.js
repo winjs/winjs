@@ -1,12 +1,16 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './Core/_Global'
-    ], function promiseInit(_Global) {
+    './Core/_Global',
+    './Core/_BaseCoreUtils',
+    './Core/_Base',
+    './Core/_Events',
+    './Core/_Trace'
+    ], function promiseInit(_Global, _BaseCoreUtils, _Base, _Events, _Trace) {
     "use strict";
 
     _Global.Debug && (_Global.Debug.setNonUserCodeExceptions = true);
 
-    var ListenerType = WinJS.Class.mix(WinJS.Class.define(null, { /*empty*/ }, { supportedForProcessing: false }), WinJS.Utilities.eventMixin);
+    var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /*empty*/ }, { supportedForProcessing: false }), _Events.eventMixin);
     var promiseEventListeners = new ListenerType();
     // make sure there is a listeners collection so that we can do a more trivial check below
     promiseEventListeners._listeners = {};
@@ -332,7 +336,7 @@ define([
     // would have to remember to do things like pumping the state machine to catch state transitions.
     //
 
-    var PromiseStateMachine = WinJS.Class.define(null, {
+    var PromiseStateMachine = _Base.Class.define(null, {
         _listeners: null,
         _nextState: null,
         _state: null,
@@ -527,7 +531,7 @@ define([
         );
     }
     function done(promise, onComplete, onError, onProgress) {
-        var asyncOpID = WinJS.Utilities._traceAsyncOperationStarting("WinJS.Promise.done");
+        var asyncOpID = _Trace._traceAsyncOperationStarting("WinJS.Promise.done");
         pushListener(promise, { c: onComplete, e: onError, p: onProgress, asyncOpID: asyncOpID });
     }
     function error(promise, value, onerrorDetails, context) {
@@ -548,16 +552,16 @@ define([
             var onComplete = listener.c;
             var target = listener.promise;
 
-            WinJS.Utilities._traceAsyncOperationCompleted(listener.asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
+            _Trace._traceAsyncOperationCompleted(listener.asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
 
             if (target) {
-                WinJS.Utilities._traceAsyncCallbackStarting(listener.asyncOpID);
+                _Trace._traceAsyncCallbackStarting(listener.asyncOpID);
                 try {
                     target._setCompleteValue(onComplete ? onComplete(value) : value);
                 } catch (ex) {
                     target._setExceptionValue(ex);
                 } finally {
-                    WinJS.Utilities._traceAsyncCallbackCompleted();
+                    _Trace._traceAsyncCallbackCompleted();
                 }
                 if (target._state !== state_waiting && target._listeners) {
                     queue.push(target);
@@ -581,13 +585,13 @@ define([
             var target = listener.promise;
 
             var errorID = _Global.Debug && (value && value.name === canceledName ? Debug.MS_ASYNC_OP_STATUS_CANCELED : Debug.MS_ASYNC_OP_STATUS_ERROR);
-            WinJS.Utilities._traceAsyncOperationCompleted(listener.asyncOpID, errorID);
+            _Trace._traceAsyncOperationCompleted(listener.asyncOpID, errorID);
 
             if (target) {
                 var asyncCallbackStarted = false;
                 try {
                     if (onError) {
-                        WinJS.Utilities._traceAsyncCallbackStarting(listener.asyncOpID);
+                        _Trace._traceAsyncCallbackStarting(listener.asyncOpID);
                         asyncCallbackStarted = true;
                         if (!onError.handlesOnError) {
                             callonerror(target, value, detailsForHandledError, promise, onError);
@@ -600,7 +604,7 @@ define([
                     target._setExceptionValue(ex);
                 } finally {
                     if (asyncCallbackStarted) {
-                        WinJS.Utilities._traceAsyncCallbackCompleted();
+                        _Trace._traceAsyncCallbackCompleted();
                     }
                 }
                 if (target._state !== state_waiting && target._listeners) {
@@ -672,7 +676,7 @@ define([
     }
     function then(promise, onComplete, onError, onProgress) {
         var result = new ThenPromise(promise);
-        var asyncOpID = WinJS.Utilities._traceAsyncOperationStarting("WinJS.Promise.then");
+        var asyncOpID = _Trace._traceAsyncOperationStarting("WinJS.Promise.then");
         pushListener(promise, { promise: result, c: onComplete, e: onError, p: onProgress, asyncOpID: asyncOpID });
         return result;
     }
@@ -681,7 +685,7 @@ define([
     // Internal implementation detail promise, ThenPromise is created when a promise needs
     // to be returned from a then() method.
     //
-    var ThenPromise = WinJS.Class.derive(PromiseStateMachine,
+    var ThenPromise = _Base.Class.derive(PromiseStateMachine,
         function (creator) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
@@ -707,7 +711,7 @@ define([
     // and WinJS.Promise.wrapError.
     //
 
-    var ErrorPromise = WinJS.Class.define(
+    var ErrorPromise = _Base.Class.define(
         function ErrorPromise_ctor(value) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.errorPromise))) {
@@ -777,9 +781,7 @@ define([
                 }
                 // force the exception to be thrown asyncronously to avoid any try/catch blocks
                 //
-                WinJS.Utilities.Scheduler.schedule(function Promise_done_rethrow() {
-                    throw value;
-                }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.Promise._throwException");
+                Promise._doneHandler(value);
             },
             then: function ErrorPromise_then(unused, onError) {
                 /// <signature helpKeyword="WinJS.PromiseStateMachine.then">
@@ -839,7 +841,7 @@ define([
         }
     );
 
-    var ExceptionPromise = WinJS.Class.derive(ErrorPromise,
+    var ExceptionPromise = _Base.Class.derive(ErrorPromise,
         function ExceptionPromise_ctor(value) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.exceptionPromise))) {
@@ -855,7 +857,7 @@ define([
         }
     );
 
-    var CompletePromise = WinJS.Class.define(
+    var CompletePromise = _Base.Class.define(
         function CompletePromise_ctor(value) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.completePromise))) {
@@ -915,9 +917,7 @@ define([
                     }
                 } catch (ex) {
                     // force the exception to be thrown asynchronously to avoid any try/catch blocks
-                    WinJS.Utilities.Scheduler.schedule(function Promise_done_rethrow() {
-                        throw ex;
-                    }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.Promise._throwException");
+                    Promise._doneHandler(ex);
                 }
             },
             then: function CompletePromise_then(onComplete) {
@@ -975,7 +975,7 @@ define([
                 if (timeoutMS) {
                     id = setTimeout(c, timeoutMS);
                 } else {
-                    WinJS.Utilities._setImmediate(c);
+                    _BaseCoreUtils._setImmediate(c);
                 }
             },
             function () {
@@ -996,7 +996,7 @@ define([
 
     var staticCanceledPromise;
 
-    var Promise = WinJS.Class.derive(PromiseStateMachine,
+    var Promise = _Base.Class.derive(PromiseStateMachine,
         function Promise_ctor(init, oncancel) {
             /// <signature helpKeyword="WinJS.Promise">
             /// <summary locid="WinJS.Promise">
@@ -1408,9 +1408,15 @@ define([
 
         }
     );
-    Object.defineProperties(Promise, WinJS.Utilities.createEventProperties(errorET));
+    Object.defineProperties(Promise, _Events.createEventProperties(errorET));
 
-    var SignalPromise = WinJS.Class.derive(PromiseStateMachine,
+    Promise._doneHandler = function(value) {
+        _BaseCoreUtils._setImmediate(function Promise_done_rethrow() {
+            throw value;
+        });
+    }
+
+    var SignalPromise = _Base.Class.derive(PromiseStateMachine,
         function (cancel) {
             this._oncancel = cancel;
             this._setState(state_created);
@@ -1423,7 +1429,7 @@ define([
         }
     );
 
-    var Signal = WinJS.Class.define(
+    var Signal = _Base.Class.define(
         function Signal_ctor(oncancel) {
             this._promise = new SignalPromise(oncancel);
         }, {
@@ -1450,9 +1456,10 @@ define([
 
     // Publish WinJS.Promise
     //
-    WinJS.Namespace.define("WinJS", {
+    _Base.Namespace.define("WinJS", {
         Promise: Promise,
         _Signal: Signal
     });
 
+    return Promise;
 });

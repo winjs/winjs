@@ -1,7 +1,13 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './Core/_Global'
-    ], function schedulerInit(_Global) {
+    './Core/_Global',
+    './Core/_Base',
+    './Core/_ErrorFromName',
+    './Core/_Resources',
+    './Core/_Trace',
+    './Core/_WriteProfilerMark',
+    './Promise'
+    ], function schedulerInit(_Global, _Base, _ErrorFromName, _Resources, _Trace, _WriteProfilerMark, Promise) {
     "use strict";
 
     function linkedListMixin(name) {
@@ -51,17 +57,14 @@ define([
         return mixin;
     }
 
-    WinJS.Namespace.define("WinJS.Utilities", {
+    _Base.Namespace.define("WinJS.Utilities", {
 
         _linkedListMixin: linkedListMixin
 
     });
 
-    var Promise = WinJS.Promise;
-    var linkedListMixin = WinJS.Utilities._linkedListMixin;
-
     var strings = {
-        get jobInfoIsNoLongerValid() { return WinJS.Resources._getWinJSString("base/jobInfoIsNoLongerValid").value; }
+        get jobInfoIsNoLongerValid() { return _Resources._getWinJSString("base/jobInfoIsNoLongerValid").value; }
     };
 
     //
@@ -83,7 +86,7 @@ define([
     }
 
     function schedulerProfilerMark(operation, markerType, arg0, arg1) {
-        WinJS.Utilities._writeProfilerMark(
+        _WriteProfilerMark(
             "WinJS.Scheduler:" + operation +
             profilerMarkArgs(arg0, arg1) +
             "," + markerType
@@ -93,7 +96,7 @@ define([
     function jobProfilerMark(job, operation, markerType, arg0, arg1) {
         var argProvided = job.name || arg0 !== undefined || arg1 !== undefined;
 
-        WinJS.Utilities._writeProfilerMark(
+        _WriteProfilerMark(
             "WinJS.Scheduler:" + operation + ":" + job.id +
             (argProvided ? profilerMarkArgs(job.name, arg0, arg1) : "") +
             "," + markerType
@@ -105,7 +108,7 @@ define([
     //  schedule method. Its public interface is what is used when interacting with a job.
     //
 
-    var JobNode = WinJS.Class.define(function (id, work, priority, context, name, asyncOpID) {
+    var JobNode = _Base.Class.define(function (id, work, priority, context, name, asyncOpID) {
         this._id = id;
         this._work = work;
         this._context = context;
@@ -213,7 +216,7 @@ define([
         },
 
     });
-    WinJS.Class.mix(JobNode, linkedListMixin("Job"));
+    _Base.Class.mix(JobNode, linkedListMixin("Job"));
 
     var YieldPolicy = {
         complete: 1,
@@ -229,7 +232,7 @@ define([
     //  jobs easily block on async work.
     //
 
-    var JobInfo = WinJS.Class.define(function (shouldYield, job) {
+    var JobInfo = _Base.Class.define(function (shouldYield, job) {
         this._job = job;
         this._result = null;
         this._yieldPolicy = YieldPolicy.complete;
@@ -296,7 +299,7 @@ define([
 
         _throwIfDisabled: function () {
             if (this._publicApiDisabled) {
-                throw new WinJS.ErrorFromName("WinJS.Utilities.Scheduler.JobInfoIsNoLongerValid", strings.jobInfoIsNoLongerValid);
+                throw new _ErrorFromName("WinJS.Utilities.Scheduler.JobInfoIsNoLongerValid", strings.jobInfoIsNoLongerValid);
             }
         }
 
@@ -307,7 +310,7 @@ define([
     //  Allows cancelation of jobs in bulk.
     //
 
-    var OwnerToken = WinJS.Class.define(function OwnerToken_ctor() {
+    var OwnerToken = _Base.Class.define(function OwnerToken_ctor() {
         this._jobs = {};
     }, {
         cancelAll: function OwnerToken_cancelAll() {
@@ -359,7 +362,7 @@ define([
     // The job state machine accounts for these various states and interactions.
     //
 
-    var State = WinJS.Class.define(function (name) {
+    var State = _Base.Class.define(function (name) {
         this.name = name;
         this.enter = illegal;
         this.execute = illegal;
@@ -461,7 +464,7 @@ define([
     //
     state_canceled.enter = function (job) {
         jobProfilerMark(job, "job-canceled", "info");
-        WinJS.Utilities._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_CANCELED)
+        _Trace._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_CANCELED)
         job._removeJob();
         job._work = null;
         job._context = null;
@@ -491,13 +494,13 @@ define([
 
         var jobInfo = new JobInfo(shouldYield, job);
 
-        WinJS.Utilities._traceAsyncCallbackStarting(job._asyncOpID);
+        _Trace._traceAsyncCallbackStarting(job._asyncOpID);
         try {
             MSApp.execAtPriority(function () {
                 work.call(context, jobInfo);
             }, toWwaPriority(priority));
         } finally {
-            WinJS.Utilities._traceAsyncCallbackCompleted();
+            _Trace._traceAsyncCallbackCompleted();
             jobInfo._disablePublicApi();
         }
 
@@ -724,7 +727,7 @@ define([
     //
     state_complete.completed = true;
     state_complete.enter = function (job) {
-        WinJS.Utilities._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
+        _Trace._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
         job._work = null;
         job._context = null;
         job.owner = null;
@@ -745,7 +748,7 @@ define([
     //
     // @NOTE: Dynamic markers are NYI
     //
-    var MarkerNode = WinJS.Class.define(function (priority, name) {
+    var MarkerNode = _Base.Class.define(function (priority, name) {
         this.priority = priority;
         this.name = name;
     }, {
@@ -757,7 +760,7 @@ define([
         //},
 
     });
-    WinJS.Class.mix(MarkerNode, linkedListMixin("Job"), linkedListMixin("Marker"));
+    _Base.Class.mix(MarkerNode, linkedListMixin("Job"), linkedListMixin("Marker"));
 
     //
     // Scheduler state
@@ -1491,7 +1494,7 @@ define([
         priority = priority || Priority.normal;
         thisArg = thisArg || null;
         var jobId = ++globalJobId;
-        var asyncOpID = WinJS.Utilities._traceAsyncOperationStarting("WinJS.Utilities.Scheduler.schedule: " + jobId + profilerMarkArgs(name));
+        var asyncOpID = _Trace._traceAsyncOperationStarting("WinJS.Utilities.Scheduler.schedule: " + jobId + profilerMarkArgs(name));
         name = name || "";
         return new JobNode(jobId, work, priority, thisArg, name, asyncOpID);
     }
@@ -1531,7 +1534,7 @@ define([
             /// </returns>
             /// </signature>
             var job;
-            return new WinJS.Promise(
+            return new Promise(
                 function (c) {
                     job = schedule(function schedulePromise() {
                         c(promiseValue);
@@ -1544,7 +1547,7 @@ define([
         };
     }
 
-    WinJS.Namespace.define("WinJS.Utilities.Scheduler", {
+    _Base.Namespace.define("WinJS.Utilities.Scheduler", {
 
         Priority: Priority,
 
@@ -1610,5 +1613,7 @@ define([
         _TIME_SLICE: TIME_SLICE
 
     });
+
+    return WinJS.Utilities.Scheduler;
 
 });

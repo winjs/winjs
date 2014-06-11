@@ -1,22 +1,50 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './_Global'
-    ], function resourcesInit(_Global) {
+    './_Global',
+    './_BaseCoreUtils',
+    './_Base',
+    './_Events'
+    ], function resourcesInit(_Global, _BaseCoreUtils, _Base, _Events) {
     "use strict";
+
+    var appxVersion = "$(TARGET_DESTINATION)";
+    var developerPrefix = "Developer.";
+    if (appxVersion.indexOf(developerPrefix) === 0) {
+        appxVersion = appxVersion.substring(developerPrefix.length);
+    }
+
+    function _getWinJSString(id) {
+        return WinJS.Resources.getString("ms-resource://" + appxVersion + "/" + id);
+    }
 
     var resourceMap;
     var mrtEventHook = false;
     var contextChangedET = "contextchanged";
     var resourceContext;
 
-    var ListenerType = WinJS.Class.mix(WinJS.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), WinJS.Utilities.eventMixin);
+    var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
     var listeners = new ListenerType();
 
     var strings = {
-        get malformedFormatStringInput() { return WinJS.Resources._getWinJSString("base/malformedFormatStringInput").value; },
+        get malformedFormatStringInput() { return _getWinJSString("base/malformedFormatStringInput").value; },
     };
 
-    WinJS.Namespace.define("WinJS.Resources", {
+    _Base.Namespace.define("WinJS.Resources", {
+        _getWinJSString: _getWinJSString
+    });
+
+    function formatString(string) {
+        var args = arguments;
+        if (args.length > 1) {
+            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g, function (unused, left, right, index, illegalLeft, illegalRight) {
+                if (illegalLeft || illegalRight) { throw formatString(strings.malformedFormatStringInput, illegalLeft || illegalRight); }
+                return (left && "{") || (right && "}") || args[(index | 0) + 1];
+            });
+        }
+        return string;
+    }
+
+    _Base.Namespace.define("WinJS.Resources", {
         addEventListener: function (type, listener, useCapture) {
             /// <signature helpKeyword="WinJS.Resources.addEventListener">
             /// <summary locid="WinJS.Resources.addEventListener">
@@ -32,7 +60,7 @@ define([
             /// Set to true to register the event handler for the capturing phase; set to false to register for the bubbling phase.
             /// </param>
             /// </signature>
-            if (WinJS.Utilities.hasWinRT && !mrtEventHook) {
+            if (_BaseCoreUtils.hasWinRT && !mrtEventHook) {
                 if (type === contextChangedET) {
                     try {
                         var resContext = WinJS.Resources._getResourceContext();
@@ -57,16 +85,7 @@ define([
         removeEventListener: listeners.removeEventListener.bind(listeners),
         dispatchEvent: listeners.dispatchEvent.bind(listeners),
 
-        _formatString: function (string) {
-            var args = arguments;
-            if (args.length > 1) {
-                string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g, function (unused, left, right, index, illegalLeft, illegalRight) {
-                    if (illegalLeft || illegalRight) { throw WinJS.Resources._formatString(strings.malformedFormatStringInput, illegalLeft || illegalRight); }
-                    return (left && "{") || (right && "}") || args[(index | 0) + 1];
-                });
-            }
-            return string;
-        },
+        _formatString: formatString,
 
         _getStringWinRT: function (resourceId) {
             if (!resourceMap) {
@@ -134,7 +153,7 @@ define([
         
     });
 
-    Object.defineProperties(WinJS.Resources, WinJS.Utilities.createEventProperties(contextChangedET));
+    Object.defineProperties(WinJS.Resources, _Events.createEventProperties(contextChangedET));
 
     var getStringImpl;
 
@@ -172,5 +191,9 @@ define([
         return getStringImpl(resourceId);
     };
 
+    return {
+        _formatString: formatString,
+        _getWinJSString: _getWinJSString
+    };
 
 });

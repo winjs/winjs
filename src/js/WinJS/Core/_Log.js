@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function logInit() {
+    './_Base'
+    ], function logInit(_Base) {
     "use strict";
 
     var spaceR = /\s+/g;
@@ -33,7 +34,7 @@ define([
         // \s (whitespace) is used as separator, so don't escape it
         return s.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
     }
-    WinJS.Namespace.define("WinJS.Utilities", {
+    _Base.Namespace.define("WinJS.Utilities", {
         startLog: function (options) {
             /// <signature helpKeyword="WinJS.Utilities.startLog">
             /// <summary locid="WinJS.Utilities.startLog">

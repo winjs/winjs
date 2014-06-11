@@ -1,27 +1,19 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './_Global'
-    ], function baseUtilsInit(_Global) {
+    './_Global',
+    './_Base',
+    './_BaseCoreUtils',
+    './_ErrorFromName',
+    './_Resources',
+    './_Trace',
+    '../Promise',
+    '../Scheduler'
+    ], function baseUtilsInit(_Global, _Base, _BaseCoreUtils, _ErrorFromName, _Resources, _Trace, Promise, Scheduler) {
     "use strict";
 
-    var hasWinRT = !!_Global.Windows;
-
     var strings = {
-        get notSupportedForProcessing() { return WinJS.Resources._getWinJSString("base/notSupportedForProcessing").value; }
+        get notSupportedForProcessing() { return _Resources._getWinJSString("base/notSupportedForProcessing").value; }
     };
-
-    function nop(v) {
-        return v;
-    }
-
-    function getMemberFiltered(name, root, filter) {
-        return name.split(".").reduce(function (currentNamespace, name) {
-            if (currentNamespace) {
-                return filter(currentNamespace[name]);
-            }
-            return null;
-        }, root);
-    }
 
     function getCamelCasedName(styleName) {
         // special case -moz prefixed styles because their JS property name starts with Moz
@@ -159,11 +151,11 @@ define([
     }
 
     // Establish members of "WinJS.Utilities" namespace
-    WinJS.Namespace.define("WinJS.Utilities", {
+    _Base.Namespace.define("WinJS.Utilities", {
         // Used for mocking in tests
         _setHasWinRT: {
             value: function (value) {
-                hasWinRT = value;
+                _BaseCoreUtils.hasWinRT = value;
             },
             configurable: false,
             writable: false,
@@ -172,33 +164,14 @@ define([
 
         /// <field type="Boolean" locid="WinJS.Utilities.hasWinRT" helpKeyword="WinJS.Utilities.hasWinRT">Determine if WinRT is accessible in this script context.</field>
         hasWinRT: {
-            get: function () { return hasWinRT; },
+            get: function () { return _BaseCoreUtils.hasWinRT; },
             configurable: false,
             enumerable: true
         },
 
-        _getMemberFiltered: getMemberFiltered,
+        _getMemberFiltered: _BaseCoreUtils._getMemberFiltered,
 
-        getMember: function (name, root) {
-            /// <signature helpKeyword="WinJS.Utilities.getMember">
-            /// <summary locid="WinJS.Utilities.getMember">
-            /// Gets the leaf-level type or namespace specified by the name parameter.
-            /// </summary>
-            /// <param name="name" locid="WinJS.Utilities.getMember_p:name">
-            /// The name of the member.
-            /// </param>
-            /// <param name="root" locid="WinJS.Utilities.getMember_p:root">
-            /// The root to start in. Defaults to the global object.
-            /// </param>
-            /// <returns type="Object" locid="WinJS.Utilities.getMember_returnValue">
-            /// The leaf-level type or namespace in the specified parent namespace.
-            /// </returns>
-            /// </signature>
-            if (!name) {
-                return null;
-            }
-            return getMemberFiltered(name, root || _Global, nop);
-        },
+        getMember: _BaseCoreUtils.getMember,
 
         _browserStyleEquivalents: getBrowserStyleEquivalents(),
         _browserEventEquivalents: getBrowserEventEquivalents(),
@@ -218,7 +191,7 @@ define([
             /// If true, the callback is executed asynchronously.
             /// </param>
             /// </signature>
-            return new WinJS.Promise(function (c, e) {
+            return new Promise(function (c, e) {
                 function complete() {
                     if (callback) {
                         try {
@@ -234,7 +207,7 @@ define([
                     }
                 }
 
-                var readyState = WinJS.Utilities.testReadyState;
+                var readyState = WinJS.Utilities._testReadyState;
                 if (!readyState) {
                     if (_Global.document) {
                         readyState = document.readyState;
@@ -245,9 +218,9 @@ define([
                 }
                 if (readyState === "complete" || (_Global.document && document.body !== null)) {
                     if (async) {
-                        WinJS.Utilities.Scheduler.schedule(function WinJS_Utilities_ready() {
+                        Scheduler.schedule(function WinJS_Utilities_ready() {
                             complete();
-                        }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.Utilities.ready");
+                        }, Scheduler.Priority.normal, null, "WinJS.Utilities.ready");
                     }
                     else {
                         complete();
@@ -267,22 +240,7 @@ define([
         },
 
         markSupportedForProcessing: {
-            value: function (func) {
-                /// <signature helpKeyword="WinJS.Utilities.markSupportedForProcessing">
-                /// <summary locid="WinJS.Utilities.markSupportedForProcessing">
-                /// Marks a function as being compatible with declarative processing, such as WinJS.UI.processAll
-                /// or WinJS.Binding.processAll.
-                /// </summary>
-                /// <param name="func" type="Function" locid="WinJS.Utilities.markSupportedForProcessing_p:func">
-                /// The function to be marked as compatible with declarative processing.
-                /// </param>
-                /// <returns type="Function" locid="WinJS.Utilities.markSupportedForProcessing_returnValue">
-                /// The input function.
-                /// </returns>
-                /// </signature>
-                func.supportedForProcessing = true;
-                return func;
-            },
+            value: _BaseCoreUtils.markSupportedForProcessing,
             configurable: false,
             writable: false,
             enumerable: true
@@ -330,16 +288,14 @@ define([
                     return value;
                 }
 
-                throw new WinJS.ErrorFromName("WinJS.Utilities.requireSupportedForProcessing", WinJS.Resources._formatString(strings.notSupportedForProcessing, value));
+                throw new _ErrorFromName("WinJS.Utilities.requireSupportedForProcessing", _Resources._formatString(strings.notSupportedForProcessing, value));
             },
             configurable: false,
             writable: false,
             enumerable: true
         },
         
-        _setImmediate: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
-            setTimeout(handler, 0);
-        },
+        _setImmediate: _BaseCoreUtils._setImmediate,
         
         // Allows the browser to finish dispatching its current set of events before running
         // the callback.
@@ -388,13 +344,13 @@ define([
             return (_Global.performance && performance.now()) || Date.now();
         },
 
-        _traceAsyncOperationStarting: (_Global.Debug && Debug.msTraceAsyncOperationStarting && Debug.msTraceAsyncOperationStarting.bind(_Global.Debug)) || nop,
-        _traceAsyncOperationCompleted: (_Global.Debug && Debug.msTraceAsyncOperationCompleted && Debug.msTraceAsyncOperationCompleted.bind(_Global.Debug)) || nop,
-        _traceAsyncCallbackStarting: (_Global.Debug && Debug.msTraceAsyncCallbackStarting && Debug.msTraceAsyncCallbackStarting.bind(_Global.Debug)) || nop,
-        _traceAsyncCallbackCompleted: (_Global.Debug && Debug.msTraceAsyncCallbackCompleted && Debug.msTraceAsyncCallbackCompleted.bind(_Global.Debug)) || nop
+        _traceAsyncOperationStarting: _Trace._traceAsyncOperationStarting,
+        _traceAsyncOperationCompleted: _Trace._traceAsyncOperationCompleted,
+        _traceAsyncCallbackStarting: _Trace._traceAsyncCallbackStarting,
+        _traceAsyncCallbackCompleted: _Trace._traceAsyncCallbackCompleted
     });
 
-    WinJS.Namespace.define("WinJS", {
+    _Base.Namespace.define("WinJS", {
         validation: false,
 
         strictProcessing: {

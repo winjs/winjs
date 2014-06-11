@@ -2427,9 +2427,9 @@ CorsicaTests.Promise = function () {
     }
 
     this.testDoneSimple = function () {
-        var old = WinJS.Utilities.Scheduler.schedule;
+        var old = WinJS.Promise._doneHandler;
         try {
-            WinJS.Utilities.Scheduler.schedule = function (f) { f(); };
+            WinJS.Promise._doneHandler = function (v) { throw v; };
 
             var p = new WinJS.Promise(function (c, e) {
                 e(1);
@@ -2454,13 +2454,13 @@ CorsicaTests.Promise = function () {
             LiveUnit.Assert.areEqual(1, hitCatchCount);
         }
         finally {
-            WinJS.Utilities.Scheduler.schedule = old;
+            WinJS.Promise._doneHandler = old;
         }
     };
     this.testDoneAsynchronous = function () {
-        var old = WinJS.Utilities.Scheduler.schedule;
+        var old = WinJS.Promise._doneHandler;
         try {
-            WinJS.Utilities.Scheduler.schedule = function (f) { f(); };
+            WinJS.Promise._doneHandler = function (v) { throw v; };
 
 
             q.clear();
@@ -2500,13 +2500,13 @@ CorsicaTests.Promise = function () {
             LiveUnit.Assert.areEqual(1, hitCatchCount);
         }
         finally {
-            WinJS.Utilities.Scheduler.schedule = old;
+            WinJS.Promise._doneHandler = old;
         }
     };
     this.testDoneDoesNotLetCancelEscape = function () {
-        var old = WinJS.Utilities.Scheduler.schedule;
+        var old = WinJS.Promise._doneHandler;
         try {
-            WinJS.Utilities.Scheduler.schedule = function (f) { f(); };
+            WinJS.Promise._doneHandler = function (v) { throw v; };
 
 
             q.clear();
@@ -2547,7 +2547,7 @@ CorsicaTests.Promise = function () {
             LiveUnit.Assert.areEqual(0, hitCatchCount);
         }
         finally {
-            WinJS.Utilities.Scheduler.schedule = old;
+            WinJS.Promise._doneHandler = old;
         }
     };
 
@@ -2634,9 +2634,9 @@ CorsicaTests.Promise = function () {
     }
 
     this.testDoneUnhandledError = function(complete) {
-        var old = WinJS.Utilities.Scheduler.schedule;
+        var old = WinJS.Promise._doneHandler;
         try {
-            WinJS.Utilities.Scheduler.schedule = function (f) { f(); };
+            WinJS.Promise._doneHandler = function (v) { throw v; };
 
             // done() without error handler, expect throw() and onerror()
             var hitCount = 0;
@@ -2668,14 +2668,14 @@ CorsicaTests.Promise = function () {
             }
         }
         finally {
-            WinJS.Utilities.Scheduler.schedule = old;
+            WinJS.Promise._doneHandler = old;
         }
     }
 
     this.testDoneUnhandledError2 = function(complete) {
-        var old = WinJS.Utilities.Scheduler.schedule;
+        var old = WinJS.Promise._doneHandler;
         try {
-            WinJS.Utilities.Scheduler.schedule = function (f) { f(); };
+            WinJS.Promise._doneHandler = function (v) { throw v; };
 
             // empty done() without error handler, expect throw() and onerror()
             var hitCount = 0;
@@ -2704,7 +2704,7 @@ CorsicaTests.Promise = function () {
             }
         }
         finally {
-            WinJS.Utilities.Scheduler.schedule = old;
+            WinJS.Promise._doneHandler = old;
         }
     }
 
