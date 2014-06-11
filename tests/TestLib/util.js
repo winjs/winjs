@@ -185,6 +185,45 @@ var Helper;
                 obj.property["flex"] = "-webkit-flex";
             }
             return obj;
+        },
+        "flex-grow": function() {
+            var obj = {property: {}, value: {}};
+            if ("flexGrow" in document.documentElement.style) {
+                obj = null;
+            } else if ("msFlexGrow" in document.documentElement.style) {
+                obj.property["flex-grow"] = "-ms-flex-grow";
+            } else if ("msFlexPositive" in document.documentElement.style) {
+                obj.property["flex-positive"] = "-ms-flex-positive";
+            } else if ("webkitFlexGrow" in document.documentElement.style) {
+                obj.property["flex-grow"] = "-webkit-flex-grow";
+            }
+            return obj;
+        },
+        "flex-shrink": function() {
+            var obj = {property: {}, value: {}};
+            if ("flexShrink" in document.documentElement.style) {
+                obj = null;
+            } else if ("msFlexShrink" in document.documentElement.style) {
+                obj.property["flex-shrink"] = "-ms-flex-shrink";
+            } else if ("msFlexNegative" in document.documentElement.style) {
+                obj.property["flex-negative"] = "-ms-flex-negative";
+            } else if ("webkitFlexShrink" in document.documentElement.style) {
+                obj.property["flex-shrink"] = "-webkit-flex-shrink";
+            }
+            return obj;
+        },
+        "flex-basis": function() {
+            var obj = {property: {}, value: {}};
+            if ("flexBasis" in document.documentElement.style) {
+                obj = null;
+            } else if ("msFlexBasis" in document.documentElement.style) {
+                obj.property["flex-basis"] = "-ms-flex-basis";
+            } else if ("msFlexPreferredSize" in document.documentElement.style) {
+                obj.property["flex-preferred-size"] = "-ms-flex-preferred-size";
+            } else if ("webkitFlexBasis" in document.documentElement.style) {
+                obj.property["flex-basis"] = "-webkit-flex-basis";
+            }
+            return obj;
         }
     };
 
@@ -206,6 +245,22 @@ var Helper;
             return value;
         }
         return translation.value[value];
+    };
+
+    // Some browsers (firefox) don't store the css property values in the root property name
+    // For example flex: 1 1 auto; will not set the "flex" style attribute but instead the 3
+    // sub attributes: flex-grow, flex-shrink, and flex-basis. This helper takes a property name
+    // and re-builds the expected value out of the sub style components, which works in all supported
+    // browsers.
+    // Please add to the list of supported properties in this method as necessary.
+    Helper.getCSSPropertyValue = function(styleObject, propertyName) {
+        if (propertyName === "flex") {
+            var shrink = styleObject.getPropertyValue(Helper.translateCSSProperty("flex-grow"));
+            var grow = styleObject.getPropertyValue(Helper.translateCSSProperty("flex-shrink"));
+            var basis = styleObject.getPropertyValue(Helper.translateCSSProperty("flex-basis"));
+            return grow + " " + shrink + " " + basis;
+        }
+        return styleObject.getPropertyValue(Helper.translateCSSProperty(propertyName));
     };
 
     Helper.endsWith = function endsWith(s, suffix) {

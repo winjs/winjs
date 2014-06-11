@@ -57,7 +57,7 @@ CommonUtils.prototype = (function () {
                 args[0] = args[0].replace(/pointer/g, "mouse");
 
                 // Get the arguments mouse events care about
-                args = args.slice(0, 14);
+                args = args.slice(0, 15);
                 e.initMouseEvent.apply(e, args);
             } else if (e instanceof MouseEvent && e.isTouch) {
                 // Convert "pointerevent" to "touchevent"
@@ -70,7 +70,7 @@ CommonUtils.prototype = (function () {
                     args[0] = "touchleave";
 
                 // Get the arguments touch events care about
-                args = args.slice(0, 14);
+                args = args.slice(0, 15);
                 e.initMouseEvent.apply(e, args);
 
                 // Throw in the changedTouches array

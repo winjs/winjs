@@ -762,12 +762,12 @@ RatingUtils.prototype = (function () {
                     var percentFull = rating.averageRating - Math.floor(rating.averageRating);
 
                     if (Math.floor(rating.averageRating) === rating.averageRating) {
-                        LiveUnit.Assert.areEqual("1 1 auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the averageRating star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 1;");
+                        LiveUnit.Assert.areEqual("1 1 auto", Helper.getCSSPropertyValue(starStyle, "flex"), "Verify the averageRating star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 1;");
                     } else {
                         // We are sitting on the partial-full star for a floating point averageRating.
                         //  Validate flex is the proper percentage, allowing for 1% numerical imprecision.
-                        if (Math.abs(percentFull - parseFloat(starStyle[Helper.translateCSSProperty("flex")])) > 0.01) {
-                            LiveUnit.Assert.areEqual(percentFull + " " + percentFull + " auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the averageRating star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
+                        if (Math.abs(percentFull - parseFloat(Helper.getCSSPropertyValue(starStyle, "flex"))) > 0.01) {
+                            LiveUnit.Assert.areEqual(percentFull + " " + percentFull + " auto", Helper.getCSSPropertyValue(starStyle, "flex"), "Verify the averageRating star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
                         }
                     }
 
@@ -784,7 +784,7 @@ RatingUtils.prototype = (function () {
                                            "Verify star " + (i + 1) + " uses the proper glyph by default.");
 
                     if (Math.floor(rating.averageRating) === rating.averageRating) {
-                        LiveUnit.Assert.areEqual("0 0 auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");
+                        LiveUnit.Assert.areEqual("0 0 auto", Helper.getCSSPropertyValue(starStyle, "flex"), "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");
                     } else {
                         if (expect === "disabled") {
                             LiveUnit.Assert.isTrue(this.classesMatch(this.parts.disabledEmpty, star.getAttribute("class")),
@@ -800,8 +800,8 @@ RatingUtils.prototype = (function () {
 
                         Helper.Assert.areColorsEqual(this.defaultColors[this.currentTheme].averageEmpty, starBeforePartStyle.getPropertyValue("color"), "Verify next star after help star uses the correct color by default in " + this.currentTheme + " theme.");
 
-                        if (Math.abs((1 - percentFull) - starStyle[Helper.translateCSSProperty("flex")]) > 0.1) {
-                            LiveUnit.Assert.areEqual((1 - percentFull) + " " + (1 - percentFull) + " auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the helper star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
+                        if (Math.abs((1 - percentFull) - Helper.getCSSPropertyValue(starStyle, "flex")) > 0.1) {
+                            LiveUnit.Assert.areEqual((1 - percentFull) + " " + (1 - percentFull) + " auto", Helper.getCSSPropertyValue(starStyle, "flex"), "Verify the helper star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
                         }
                     }
                 } else {
@@ -821,7 +821,7 @@ RatingUtils.prototype = (function () {
                            ) {
                             // We found a spurious extra average-full star.  Make sure it is hidden ("display: none;").
                             LiveUnit.Assert.areEqual("none", starStyle.display, "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has display: 'none';");
-                            LiveUnit.Assert.areEqual("0 0 auto", starStyle[Helper.translateCSSProperty("flex")], "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");
+                            LiveUnit.Assert.areEqual("0 0 auto", Helper.getCSSPropertyValue(starStyle, "flex"), "Verify the extra star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has flex: 0;");
 
                             // For thoroughness, make sure we don't run into more than one of these
                             LiveUnit.Assert.isFalse(hitExtraAverageFullDiv, "Verify we only run into the extra " + this.parts.averageFull + " star 1 time");
@@ -915,7 +915,7 @@ RatingUtils.prototype = (function () {
                     Helper.Assert.areColorsEqual(expectedColor, starBeforePartStyle.getPropertyValue("color"),
                         "Verify correct color used for star " + (i + 1) + " in " + this.currentTheme + " theme.");
 
-                    LiveUnit.Assert.areEqual("1 1 auto", starStyle[Helper.translateCSSProperty("flex")], "Verify star " + (i + 1) + " has flex: 1;");
+                    LiveUnit.Assert.areEqual("1 1 auto", Helper.getCSSPropertyValue(starStyle, "flex"), "Verify star " + (i + 1) + " has flex: 1;");
                 }
 
                 overallWidth += rectStar.width;

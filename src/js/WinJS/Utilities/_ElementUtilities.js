@@ -186,6 +186,15 @@ define([
         var changedTouches = eventObject.changedTouches,
             retVal = null;
 
+        // Event object properties are not writable and Firefox throws
+        // exceptions when we try to set these properties. We can make them
+        // writable using defineProperty
+        Object.defineProperty(eventObject, "screenX", {writable: true});
+        Object.defineProperty(eventObject, "screenY", {writable: true});
+        Object.defineProperty(eventObject, "clientX", {writable: true});
+        Object.defineProperty(eventObject, "clientY", {writable: true});
+        Object.defineProperty(eventObject, "pageX", {writable: true});
+        Object.defineProperty(eventObject, "pageY", {writable: true});
         for (var i = 0, len = changedTouches.length; i < len; i++) {
             var touchObject = changedTouches[i];
             eventObject.pointerType = _MSPointerEvent.MSPOINTER_TYPE_TOUCH;
