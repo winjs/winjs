@@ -1,40 +1,20 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './Animations/_TransitionAnimation'
-    ], function animationsInit(_TransitionAnimation) {
+    './Core/_Base',
+    './Core/_BaseUtils',
+    './Core/_WriteProfilerMark',
+    './Animations/_Constants',
+    './Animations/_TransitionAnimation',
+    './Promise'
+    ], function animationsInit(_Base, _BaseUtils, _WriteProfilerMark, _Constants, _TransitionAnimation, Promise) {
     "use strict";
 
-    var thisWinUI = WinJS.UI;
-    var transformNames = WinJS.Utilities._browserStyleEquivalents["transform"];
+    var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
 
     // Default to 11 pixel from the left (or right if RTL)
     var defaultOffset = [{ top: "0px", left: "11px", rtlflip: true }];
-
-    WinJS.Namespace.define("WinJS.UI", {
-        /// <field locid="WinJS.UI.PageNavigationAnimation" helpKeyword="WinJS.UI.PageNavigationAnimation">
-        /// Specifies what animation type should be returned by WinJS.UI.Animation.createPageNavigationAnimations.
-        /// </field>
-        PageNavigationAnimation: {
-            /// <field locid="WinJS.UI.PageNavigationAnimation.turnstile" helpKeyword="WinJS.UI.PageNavigationAnimation.turnstile">
-            /// The pages will exit and enter using a turnstile animation.
-            /// </field>
-            turnstile: "turnstile",
-            /// <field locid="WinJS.UI.PageNavigationAnimation.slide" helpKeyword="WinJS.UI.PageNavigationAnimation.slide">
-            /// The pages will exit and enter using an animation that slides up/down.
-            /// </field>
-            slide: "slide",
-            /// <field locid="WinJS.UI.PageNavigationAnimation.enterPage" helpKeyword="WinJS.UI.PageNavigationAnimation.enterPage">
-            /// The pages will enter using an enterPage animation, and exit with no animation.
-            /// </field>
-            enterPage: "enterPage",
-            /// <field locid="WinJS.UI.PageNavigationAnimation.continuum" helpKeyword="WinJS.UI.PageNavigationAnimation.continuum">
-            /// The pages will exit and enter using a continuum animation.
-            /// </field>
-            continuum: "continuum"
-        }
-    });
-
-    var OffsetArray = WinJS.Class.define(function OffsetArray_ctor(offset, keyframe, defOffset) {
+    
+    var OffsetArray = _Base.Class.define(function OffsetArray_ctor(offset, keyframe, defOffset) {
         // Constructor
         defOffset = defOffset || defaultOffset;
         if (Array.isArray(offset) && offset.length > 0) {
@@ -149,7 +129,7 @@ define([
                 elemArray[i].style[transformNames.scriptName] = "translate(" + offsetArray[i].left + "px, " + offsetArray[i].top + "px)";
             }
         }
-        return thisWinUI.executeTransition(elemArray, transition);
+        return _TransitionAnimation.executeTransition(elemArray, transition);
     }
 
     function animStaggeredSlide(curve, start, end, fadeIn, page, first, second, third) {
@@ -189,7 +169,7 @@ define([
         prepareSlide(third, startOffset * 3, endOffset * 3);
         startOffsetArray = new OffsetArray(startOffsetArray);
         endOffsetArray = new OffsetArray(endOffsetArray);
-        return thisWinUI.executeTransition(
+        return _TransitionAnimation.executeTransition(
             elementArray,
             [{
                 property: transformNames.cssName,
@@ -214,17 +194,17 @@ define([
         origins = makeArray(origins);
         for (var i = 0, len = elemArray.length; i < len; i++) {
             var rtl = window.getComputedStyle(elemArray[i]).direction === "rtl";
-            elemArray[i].style[WinJS.Utilities._browserStyleEquivalents["transform-origin"].scriptName] = origins[Math.min(origins.length - 1, i)][rtl ? "rtl" : "ltr"];
+            elemArray[i].style[_BaseUtils._browserStyleEquivalents["transform-origin"].scriptName] = origins[Math.min(origins.length - 1, i)][rtl ? "rtl" : "ltr"];
         }
         function onComplete() {
             clearAnimRotationTransform(elemArray);
         }
-        return thisWinUI.executeTransition(elemArray, transition).then(onComplete, onComplete);
+        return _TransitionAnimation.executeTransition(elemArray, transition).then(onComplete, onComplete);
     }
 
     function clearAnimRotationTransform(elemArray) {
         for (var i = 0, len = elemArray.length; i < len; i++) {
-            elemArray[i].style[WinJS.Utilities._browserStyleEquivalents["transform-origin"].scriptName] = "";
+            elemArray[i].style[_BaseUtils._browserStyleEquivalents["transform-origin"].scriptName] = "";
             elemArray[i].style[transformNames.scriptName] = "";
             elemArray[i].style.opacity = "";
         }
@@ -288,10 +268,10 @@ define([
     }
 
     function writeAnimationProfilerMark(text) {
-        WinJS.Utilities._writeProfilerMark("WinJS.UI.Animation:" + text);
+        _WriteProfilerMark("WinJS.UI.Animation:" + text);
     }
 
-    var ExpandAnimation = WinJS.Class.define(function ExpandAnimation_ctor(revealedArray, affectedArray, offsetArray) {
+    var ExpandAnimation = _Base.Class.define(function ExpandAnimation_ctor(revealedArray, affectedArray, offsetArray) {
         // Constructor
         this.revealedArray = revealedArray;
         this.affectedArray = affectedArray;
@@ -299,7 +279,7 @@ define([
     }, { // Public Members
         execute: function () {
             writeAnimationProfilerMark("expandAnimation,StartTM");
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 this.revealedArray,
                 {
                     keyframe: "WinJS-opacity-in",
@@ -320,14 +300,14 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     to: ""
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("expandAnimation,StopTM"); });
         }
     }, { // Static Members
         supportedForProcessing: false,
     });
 
-    var CollapseAnimation = WinJS.Class.define(function CollapseAnimation_ctor(hiddenArray, affectedArray, offsetArray) {
+    var CollapseAnimation = _Base.Class.define(function CollapseAnimation_ctor(hiddenArray, affectedArray, offsetArray) {
         // Constructor
         this.hiddenArray = hiddenArray;
         this.affectedArray = affectedArray;
@@ -335,7 +315,7 @@ define([
     }, { // Public Members
         execute: function () {
             writeAnimationProfilerMark("collapseAnimation,StartTM");
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 this.hiddenArray,
                 {
                     keyframe: "WinJS-opacity-out",
@@ -356,14 +336,14 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     to: ""
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("collapseAnimation,StopTM"); });
         }
     }, { // Static Members
         supportedForProcessing: false,
     });
 
-    var RepositionAnimation = WinJS.Class.define(function RepositionAnimation_ctor(target, elementArray, offsetArray) {
+    var RepositionAnimation = _Base.Class.define(function RepositionAnimation_ctor(target, elementArray, offsetArray) {
         // Constructor
         this.elementArray = elementArray;
         this.offsetArray = offsetArray;
@@ -386,7 +366,7 @@ define([
         supportedForProcessing: false,
     });
 
-    var AddToListAnimation = WinJS.Class.define(function AddToListAnimation_ctor(addedArray, affectedArray, offsetArray) {
+    var AddToListAnimation = _Base.Class.define(function AddToListAnimation_ctor(addedArray, affectedArray, offsetArray) {
         // Constructor
         this.addedArray = addedArray;
         this.affectedArray = affectedArray;
@@ -395,7 +375,7 @@ define([
         execute: function () {
             writeAnimationProfilerMark("addToListAnimation,StartTM");
             var delay = this.affectedArray.length > 0 ? 240 : 0;
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 this.addedArray,
                 [{
                     keyframe: "WinJS-scale-up",
@@ -426,14 +406,14 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     to: ""
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("addToListAnimation,StopTM"); });
         }
     }, { // Static Members
         supportedForProcessing: false,
     });
 
-    var DeleteFromListAnimation = WinJS.Class.define(function DeleteFromListAnimation_ctor(deletedArray, remainingArray, offsetArray) {
+    var DeleteFromListAnimation = _Base.Class.define(function DeleteFromListAnimation_ctor(deletedArray, remainingArray, offsetArray) {
         // Constructor
         this.deletedArray = deletedArray;
         this.remainingArray = remainingArray;
@@ -441,7 +421,7 @@ define([
     }, { // Public Members
         execute: function () {
             writeAnimationProfilerMark("deleteFromListAnimation,StartTM");
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 this.deletedArray,
                 [{
                     keyframe: "WinJS-scale-down",
@@ -471,14 +451,14 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     to: ""
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("deleteFromListAnimation,StopTM"); });
         }
     }, { // Static Members
         supportedForProcessing: false,
     });
 
-    var _UpdateListAnimation = WinJS.Class.define(function _UpdateListAnimation_ctor(addedArray, affectedArray, offsetArray, deleted) {
+    var _UpdateListAnimation = _Base.Class.define(function _UpdateListAnimation_ctor(addedArray, affectedArray, offsetArray, deleted) {
         // Constructor
         this.addedArray = addedArray;
         this.affectedArray = affectedArray;
@@ -492,7 +472,7 @@ define([
             makeOffsetsRelative(this.deletedArray, this.deletedOffsetArray);
 
             var delay = 0;
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 this.deletedArray,
                 [{
                     keyframe: keyframeCallbackAnimate(this.deletedOffsetArray, "WinJS-scale-down"),
@@ -534,7 +514,7 @@ define([
                 delay += 60;
             }
 
-            var promise3 = thisWinUI.executeAnimation(
+            var promise3 = _TransitionAnimation.executeAnimation(
                 this.addedArray,
                 [{
                     keyframe: "WinJS-scale-up",
@@ -555,7 +535,7 @@ define([
                     to: 1
                 }]
             );
-            return WinJS.Promise.join([promise1, promise2, promise3])
+            return Promise.join([promise1, promise2, promise3])
                 .then(function () { writeAnimationProfilerMark("_updateListAnimation,StopTM"); });
         }
     }, { // Static Members
@@ -563,7 +543,7 @@ define([
     });
 
 
-    var AddToSearchListAnimation = WinJS.Class.define(function AddToSearchListAnimation_ctor(addedArray, affectedArray, offsetArray) {
+    var AddToSearchListAnimation = _Base.Class.define(function AddToSearchListAnimation_ctor(addedArray, affectedArray, offsetArray) {
         // Constructor
         this.addedArray = addedArray;
         this.affectedArray = affectedArray;
@@ -571,7 +551,7 @@ define([
     }, { // Public Members
         execute: function () {
             writeAnimationProfilerMark("addToSearchListAnimation,StartTM");
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 this.addedArray,
                 {
                     keyframe: "WinJS-opacity-in",
@@ -592,14 +572,14 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     to: ""
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("addToSearchListAnimation,StopTM"); });
         }
     }, { // Static Members
         supportedForProcessing: false,
     });
 
-    var DeleteFromSearchListAnimation = WinJS.Class.define(function DeleteFromSearchListAnimation_ctor(deletedArray, remainingArray, offsetArray) {
+    var DeleteFromSearchListAnimation = _Base.Class.define(function DeleteFromSearchListAnimation_ctor(deletedArray, remainingArray, offsetArray) {
         // Constructor
         this.deletedArray = deletedArray;
         this.remainingArray = remainingArray;
@@ -607,7 +587,7 @@ define([
     }, { // Public Members
         execute: function () {
             writeAnimationProfilerMark("deleteFromSearchListAnimation,StartTM");
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 this.deletedArray,
                 {
                     keyframe: "WinJS-opacity-out",
@@ -628,14 +608,14 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     to: ""
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("deleteFromSearchListAnimation,StopTM"); });
         }
     }, { // Static Members
         supportedForProcessing: false,
     });
 
-    var PeekAnimation = WinJS.Class.define(function PeekAnimation_ctor(target, elementArray, offsetArray) {
+    var PeekAnimation = _Base.Class.define(function PeekAnimation_ctor(target, elementArray, offsetArray) {
         // Constructor
         this.elementArray = elementArray;
         this.offsetArray = offsetArray;
@@ -658,7 +638,7 @@ define([
         supportedForProcessing: false,
     });
 
-    WinJS.Namespace.define("WinJS.UI.Animation", {
+    var members = {
 
         createExpandAnimation: function (revealed, affected) {
             /// <signature helpKeyword="WinJS.UI.Animation.createExpandAnimation">
@@ -742,7 +722,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("fadeIn,StartTM");
 
-            return thisWinUI.executeTransition(
+            return _TransitionAnimation.executeTransition(
                 shown,
                 {
                     property: "opacity",
@@ -770,7 +750,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("fadeOut,StartTM");
 
-            return thisWinUI.executeTransition(
+            return _TransitionAnimation.executeTransition(
                 hidden,
                 {
                     property: "opacity",
@@ -915,7 +895,7 @@ define([
             writeAnimationProfilerMark("showEdgeUI,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-showEdgeUI", [{ top: "-70px", left: "0px" }]);
-            return thisWinUI[((options && options.mechanism === "transition") ? "executeTransition" : "executeAnimation")](
+            return _TransitionAnimation[((options && options.mechanism === "transition") ? "executeTransition" : "executeAnimation")](
                 element,
                 {
                     keyframe: offsetArray.keyframe,
@@ -955,7 +935,7 @@ define([
             writeAnimationProfilerMark("showPanel,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-showPanel", [{ top: "0px", left: "364px", rtlflip: true }]);
-            return thisWinUI.executeAnimation(
+            return _TransitionAnimation.executeAnimation(
                 element,
                 {
                     keyframe: offsetArray.keyframe,
@@ -999,7 +979,7 @@ define([
             writeAnimationProfilerMark("hideEdgeUI,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-hideEdgeUI", [{ top: "-70px", left: "0px" }]);
-            return thisWinUI[((options && options.mechanism === "transition") ? "executeTransition" : "executeAnimation")](
+            return _TransitionAnimation[((options && options.mechanism === "transition") ? "executeTransition" : "executeAnimation")](
                 element,
                 {
                     keyframe: offsetArray.keyframe,
@@ -1039,7 +1019,7 @@ define([
             writeAnimationProfilerMark("hidePanel,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-hidePanel", [{ top: "0px", left: "364px", rtlflip: true }]);
-            return thisWinUI.executeAnimation(
+            return _TransitionAnimation.executeAnimation(
                 element,
                 {
                     keyframe: offsetArray.keyframe,
@@ -1076,7 +1056,7 @@ define([
             writeAnimationProfilerMark("showPopup,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-showPopup", [{ top: "50px", left: "0px" }]);
-            return thisWinUI.executeAnimation(
+            return _TransitionAnimation.executeAnimation(
                 element,
                 [{
                     keyframe: "WinJS-opacity-in",
@@ -1115,7 +1095,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("hidePopup,StartTM");
 
-            return thisWinUI.executeAnimation(
+            return _TransitionAnimation.executeAnimation(
                 element,
                 {
                     keyframe: "WinJS-opacity-out",
@@ -1147,7 +1127,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("pointerDown,StartTM");
 
-            return thisWinUI.executeTransition(
+            return _TransitionAnimation.executeTransition(
                  element,
                  {
                      property: transformNames.cssName,
@@ -1177,7 +1157,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("pointerUp,StartTM");
 
-            return thisWinUI.executeTransition(
+            return _TransitionAnimation.executeTransition(
                  element,
                  {
                      property: transformNames.cssName,
@@ -1212,7 +1192,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("dragSourceStart,StartTM");
 
-            var promise1 = thisWinUI.executeTransition(
+            var promise1 = _TransitionAnimation.executeTransition(
                 dragSource,
                 [{
                     property: transformNames.cssName,
@@ -1228,7 +1208,7 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     to: 0.65
                 }]);
-            var promise2 = thisWinUI.executeTransition(
+            var promise2 = _TransitionAnimation.executeTransition(
                 affected,
                 {
                     property: transformNames.cssName,
@@ -1237,7 +1217,7 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     to: "scale(0.95)"
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("dragSourceStart,StopTM"); });
         },
 
@@ -1273,7 +1253,7 @@ define([
             writeAnimationProfilerMark("dragSourceEnd,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-dragSourceEnd");
-            var promise1 = thisWinUI.executeTransition(
+            var promise1 = _TransitionAnimation.executeTransition(
                 dragSource,
                 [{
                     property: transformNames.cssName,
@@ -1290,7 +1270,7 @@ define([
                     to: 1
                 }]);
 
-            var promise2 = thisWinUI.executeAnimation(
+            var promise2 = _TransitionAnimation.executeAnimation(
                 dragSource,
                 {
                     keyframe: offsetArray.keyframe,
@@ -1302,7 +1282,7 @@ define([
                     to: "none"
                 });
 
-            var promise3 = thisWinUI.executeTransition(
+            var promise3 = _TransitionAnimation.executeTransition(
                  affected,
                  {
                      property: transformNames.cssName,
@@ -1311,7 +1291,7 @@ define([
                      timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                      to: ""
                  });
-            return WinJS.Promise.join([promise1, promise2, promise3])
+            return Promise.join([promise1, promise2, promise3])
                 .then(function () { writeAnimationProfilerMark("dragSourceEnd,StopTM"); });
         },
 
@@ -1347,7 +1327,7 @@ define([
             var animationPromise;
             var offsetArray = new OffsetArray(offset, "WinJS-enterContent", [{ top: "0px", left: "40px", rtlflip: true }]);
             if (options && options.mechanism === "transition") {
-                animationPromise = thisWinUI.executeTransition(
+                animationPromise = _TransitionAnimation.executeTransition(
                     incoming,
                     [{
                         property: transformNames.cssName,
@@ -1366,7 +1346,7 @@ define([
                         to: 1
                     }]);
             } else {
-                var promise1 = thisWinUI.executeAnimation(
+                var promise1 = _TransitionAnimation.executeAnimation(
                     incoming,
                     {
                         keyframe: offsetArray.keyframe,
@@ -1377,7 +1357,7 @@ define([
                         from: offsetArray.keyframe || translateCallback(offsetArray),
                         to: "none"
                     });
-                var promise2 = thisWinUI.executeTransition(
+                var promise2 = _TransitionAnimation.executeTransition(
                     incoming,
                     {
                         property: "opacity",
@@ -1387,7 +1367,7 @@ define([
                         from: 0,
                         to: 1
                     });
-                animationPromise = WinJS.Promise.join([promise1, promise2]);
+                animationPromise = Promise.join([promise1, promise2]);
             }
             return animationPromise.then(function () { writeAnimationProfilerMark("enterContent,StopTM"); });
         },
@@ -1417,7 +1397,7 @@ define([
             writeAnimationProfilerMark("exitContent,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-exit", [{ top: "0px", left: "0px" }]);
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 outgoing,
                 offset && {
                     keyframe: offsetArray.keyframe,
@@ -1429,7 +1409,7 @@ define([
                     to: offsetArray.keyframe || translateCallback(offsetArray)
                 });
 
-            var promise2 = thisWinUI.executeTransition(
+            var promise2 = _TransitionAnimation.executeTransition(
                 outgoing,
                 {
                     property: "opacity",
@@ -1438,7 +1418,7 @@ define([
                     timing: "linear",
                     to: 0
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("exitContent,StopTM"); });
         },
 
@@ -1470,7 +1450,7 @@ define([
             writeAnimationProfilerMark("dragBetweenEnter,StartTM");
 
             var offsetArray = new OffsetArray(offset, null, [{ top: "-40px", left: "0px" }, { top: "40px", left: "0px" }]);
-            return thisWinUI.executeTransition(
+            return _TransitionAnimation.executeTransition(
                 target,
                 {
                     property: transformNames.cssName,
@@ -1501,7 +1481,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("dragBetweenLeave,StartTM");
 
-            return thisWinUI.executeTransition(
+            return _TransitionAnimation.executeTransition(
                 target,
                 {
                     property: transformNames.cssName,
@@ -1533,7 +1513,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("swipeSelect,StartTM");
 
-            var promise1 = thisWinUI.executeTransition(
+            var promise1 = _TransitionAnimation.executeTransition(
                 selected,
                 {
                     property: transformNames.cssName,
@@ -1543,7 +1523,7 @@ define([
                     to: ""
                 });
 
-            var promise2 = thisWinUI.executeAnimation(
+            var promise2 = _TransitionAnimation.executeAnimation(
                 selection,
                 {
                     keyframe: "WinJS-opacity-in",
@@ -1554,7 +1534,7 @@ define([
                     from: 0,
                     to: 1
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("swipeSelect,StopTM"); });
         },
 
@@ -1578,7 +1558,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("swipeDeselect,StartTM");
 
-            var promise1 = thisWinUI.executeTransition(
+            var promise1 = _TransitionAnimation.executeTransition(
                 deselected,
                 {
                     property: transformNames.cssName,
@@ -1588,7 +1568,7 @@ define([
                     to: ""
                 });
 
-            var promise2 = thisWinUI.executeAnimation(
+            var promise2 = _TransitionAnimation.executeAnimation(
                 selection,
                 {
                     keyframe: "WinJS-opacity-out",
@@ -1599,7 +1579,7 @@ define([
                     from: 1,
                     to: 0
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("swipeDeselect,StopTM"); });
         },
 
@@ -1632,7 +1612,7 @@ define([
             writeAnimationProfilerMark("swipeReveal,StartTM");
 
             var offsetArray = new OffsetArray(offset, null, [{ top: "25px", left: "0px" }]);
-            return thisWinUI.executeTransition(
+            return _TransitionAnimation.executeTransition(
                 target,
                 {
                     property: transformNames.cssName,
@@ -1669,7 +1649,7 @@ define([
             writeAnimationProfilerMark("enterPage,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-enterPage", [{ top: "0px", left: "100px", rtlflip: true }]);
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 element,
                 {
                     keyframe: offsetArray.keyframe,
@@ -1680,7 +1660,7 @@ define([
                     from: offsetArray.keyframe || translateCallback(offsetArray),
                     to: "none"
                 });
-            var promise2 = thisWinUI.executeTransition(
+            var promise2 = _TransitionAnimation.executeTransition(
                 element,
                 {
                     property: "opacity",
@@ -1690,7 +1670,7 @@ define([
                     from: 0,
                     to: 1
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("enterPage,StopTM"); });
         },
 
@@ -1719,7 +1699,7 @@ define([
             writeAnimationProfilerMark("exitPage,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-exit", [{ top: "0px", left: "0px" }]);
-            var promise1 = thisWinUI.executeAnimation(
+            var promise1 = _TransitionAnimation.executeAnimation(
                 outgoing,
                 offset && {
                     keyframe: offsetArray.keyframe,
@@ -1731,7 +1711,7 @@ define([
                     to: offsetArray.keyframe || translateCallback(offsetArray)
                 });
 
-            var promise2 = thisWinUI.executeTransition(
+            var promise2 = _TransitionAnimation.executeTransition(
                 outgoing,
                 {
                     property: "opacity",
@@ -1740,7 +1720,7 @@ define([
                     timing: "linear",
                     to: 0
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("exitPage,StopTM"); });
         },
 
@@ -1763,7 +1743,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("crossFade,StartTM");
 
-            var promise1 = thisWinUI.executeTransition(
+            var promise1 = _TransitionAnimation.executeTransition(
                 incoming,
                 {
                     property: "opacity",
@@ -1773,7 +1753,7 @@ define([
                     to: 1
                 });
 
-            var promise2 = thisWinUI.executeTransition(
+            var promise2 = _TransitionAnimation.executeTransition(
                 outgoing,
                 {
                     property: "opacity",
@@ -1782,7 +1762,7 @@ define([
                     timing: "linear",
                     to: 0
                 });
-            return WinJS.Promise.join([promise1, promise2])
+            return Promise.join([promise1, promise2])
                 .then(function () { writeAnimationProfilerMark("crossFade,StopTM"); });
         },
 
@@ -1829,7 +1809,7 @@ define([
             writeAnimationProfilerMark("updateBadge,StartTM");
 
             var offsetArray = new OffsetArray(offset, "WinJS-updateBadge", [{ top: "24px", left: "0px" }]);
-            return thisWinUI.executeAnimation(
+            return _TransitionAnimation.executeAnimation(
                 incoming,
                 [{
                     keyframe: "WinJS-opacity-in",
@@ -2204,8 +2184,8 @@ define([
             /// </signature>
             writeAnimationProfilerMark("continuumForwardIn,StartTM");
 
-            return WinJS.Promise.join([
-                thisWinUI.executeTransition(incomingPage,
+            return Promise.join([
+                _TransitionAnimation.executeTransition(incomingPage,
                 [{
                     property: transformNames.cssName,
                     delay: 0,
@@ -2222,7 +2202,7 @@ define([
                     from: 0,
                     to: 1,
                 }]),
-                thisWinUI.executeTransition(incomingItemRoot,
+                _TransitionAnimation.executeTransition(incomingItemRoot,
                 [{
                     property: transformNames.cssName,
                     delay: 0,
@@ -2277,8 +2257,8 @@ define([
             /// </signature>
             writeAnimationProfilerMark("continuumForwardOut,StartTM");
 
-            return WinJS.Promise.join([
-                thisWinUI.executeTransition(outgoingPage,
+            return Promise.join([
+                _TransitionAnimation.executeTransition(outgoingPage,
                 [{
                     property: transformNames.cssName,
                     delay: 0,
@@ -2333,8 +2313,8 @@ define([
             /// </signature>
             writeAnimationProfilerMark("continuumBackwardIn,StartTM");
 
-            return WinJS.Promise.join([
-                thisWinUI.executeTransition(incomingPage,
+            return Promise.join([
+                _TransitionAnimation.executeTransition(incomingPage,
                 [{
                     property: transformNames.cssName,
                     delay: 0,
@@ -2386,7 +2366,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("continuumBackwardOut,StartTM");
 
-            return thisWinUI.executeTransition(outgoingPage,
+            return _TransitionAnimation.executeTransition(outgoingPage,
             [{
                 property: transformNames.cssName,
                 delay: 0,
@@ -2427,7 +2407,7 @@ define([
             /// </signature>
             var PageNavigationAnimation = WinJS.UI.PageNavigationAnimation;
             function emptyAnimationFunction() {
-                return WinJS.Promise.wrap();
+                return Promise.wrap();
             }
             if (!WinJS.Utilities.isPhone || currentPreferredAnimation === PageNavigationAnimation.enterPage || nextPreferredAnimation === PageNavigationAnimation.enterPage) {
                 return {
@@ -2452,6 +2432,10 @@ define([
                 entrance: WinJS.UI.Animation[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "In"]
             }
         }
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI.Animation", members);
+
+    return members;
 
 });

@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function selectInit() {
+    '../Core/_Base',
+    './_SafeHtml'
+    ], function selectInit(_Base, _SafeHtml) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
-        _Select: WinJS.Namespace._lazy(function () {
+    var members =  {
+        _Select: _Base.Namespace._lazy(function () {
             var encodeHtmlRegEx = /[&<>'"]/g;
             var encodeHtmlEscapeMap = {
                 "&": "&amp;",
@@ -35,7 +37,7 @@ define([
                 return dataSource;
             }
 
-            return WinJS.Class.define(function _Select_ctor(element, options) {
+            return _Base.Class.define(function _Select_ctor(element, options) {
                 // This is an implementation detail of the TimePicker and DatePicker, designed
                 // to provide a primitive "data bound" select control. This is not designed to
                 // be used outside of the TimePicker and DatePicker controls.
@@ -98,7 +100,7 @@ define([
                         var stripped = stripDirectionMarker(escaped);
                         text += "<option value='" + stripped + "'>" + escaped + "</option>";
                     }
-                    WinJS.Utilities.setInnerHTMLUnsafe(this._domElement, text);
+                    _SafeHtml.setInnerHTMLUnsafe(this._domElement, text);
                     this._domElement.selectedIndex = this._index;
                 },
 
@@ -125,5 +127,9 @@ define([
                 }
             });
         })
-    })
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+
+    return members;
 });

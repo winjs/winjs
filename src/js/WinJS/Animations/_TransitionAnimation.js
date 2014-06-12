@@ -1,7 +1,12 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../Core/_Global'
-    ], function transitionAnimationInit(_Global) {
+    '../Core/_Global',
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Promise',
+    '../Scheduler',
+    '../Utilities/_ElementUtilities'
+    ], function transitionAnimationInit(_Global, _Base, _BaseUtils, Promise, Scheduler, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -9,11 +14,10 @@ define([
         return;
     }
 
-    var Scheduler = WinJS.Utilities.Scheduler;
-    var browserStyleEquivalents = WinJS.Utilities._browserStyleEquivalents;
+    var browserStyleEquivalents = _BaseUtils._browserStyleEquivalents;
 
     function makeArray(elements) {
-        if (elements instanceof Array || elements instanceof NodeList || elements instanceof HTMLCollection) {
+        if (Array.isArray(elements) || elements instanceof NodeList || elements instanceof HTMLCollection) {
             return elements;
         } else if (elements) {
             return [elements];
@@ -32,7 +36,7 @@ define([
     }
 
     function resolveStyles(elem) {
-        window.getComputedStyle(elem, null).opacity;
+        _Global.getComputedStyle(elem, null).opacity;
     }
 
     function copyWithEvaluation(iElem, elem) {
@@ -46,7 +50,7 @@ define([
                 newObj[p] = v;
             }
             if (!newObj.exactTiming) {
-                newObj.delay += UI._libraryDelay;
+                newObj.delay += WinJS.UI._libraryDelay;
             }
             return newObj;
         };
@@ -74,7 +78,7 @@ define([
         delete activeActions[id + "|" + prop];
     }
 
-    var StyleCache = WinJS.Class.define(
+    var StyleCache = _Base.Class.define(
         // Constructor
         function StyleCache_ctor(id, desc, style) {
             this.cref = 0;
@@ -191,13 +195,13 @@ define([
     function executeElementTransition(elem, index, transitions, promises, animate) {
         if (transitions.length > 0) {
             var style = elem.style;
-            var id = WinJS.Utilities._uniqueID(elem);
+            var id = _ElementUtilities._uniqueID(elem);
             if (!uniformizeStyle) {
                 uniformizeStyle = document.createElement("DIV").style;
             }
             transitions = transitions.map(copyWithEvaluation(index, elem));
             transitions.forEach(function (transition) {
-                var scriptNameOfProperty = WinJS.Utilities._getCamelCasedName(transition.property);
+                var scriptNameOfProperty = _BaseUtils._getCamelCasedName(transition.property);
                 if (transition.hasOwnProperty("from")) {
                     style[scriptNameOfProperty] = transition.from;
                 }
@@ -212,10 +216,10 @@ define([
 
                 transitions.forEach(function (transition) {
                     var finish;
-                    promises.push(new WinJS.Promise(function (c, e, p) {
+                    promises.push(new Promise(function (c, e, p) {
                         finish = function (reason) {
                             if (onTransitionEnd) {
-                                listener.removeEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], onTransitionEnd, false);
+                                listener.removeEventListener(_BaseUtils._browserEventEquivalents["transitionEnd"], onTransitionEnd, false);
                                 unregisterAction(id, transition.property);
                                 styleCache.removeName(style, transition.propertyScriptName, reason ? elem : null, transition.skipStylesReset);
                                 clearTimeout(timeoutId);
@@ -231,7 +235,7 @@ define([
                         };
 
                         registerAction(id, transition.property, finish);
-                        listener.addEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], onTransitionEnd, false);
+                        listener.addEventListener(_BaseUtils._browserEventEquivalents["transitionEnd"], onTransitionEnd, false);
 
                         var padding = 0;
                         if (style[transition.propertyScriptName] !== transition.to) {
@@ -270,7 +274,7 @@ define([
     function executeElementAnimation(elem, index, anims, promises, animate) {
         if (animate && anims.length > 0) {
             var style = elem.style;
-            var id = WinJS.Utilities._uniqueID(elem);
+            var id = _ElementUtilities._uniqueID(elem);
             anims = anims.map(copyWithEvaluation(index, elem));
             var styleElem;
             var listener = elem.disabled ? document : elem;
@@ -290,11 +294,11 @@ define([
             var styleCache = setTemporaryStyles(elem, id, style, anims, elementAnimationProperties);
             anims.forEach(function (anim) {
                 var finish;
-                promises.push(new WinJS.Promise(function (c, e, p) {
+                promises.push(new Promise(function (c, e, p) {
 
                     finish = function (reason) {
                         if (onAnimationEnd) {
-                            listener.removeEventListener(WinJS.Utilities._browserEventEquivalents["animationEnd"], onAnimationEnd, false);
+                            listener.removeEventListener(_BaseUtils._browserEventEquivalents["animationEnd"], onAnimationEnd, false);
                             unregisterAction(id, anim.property);
                             styleCache.removeName(style, anim.keyframe);
                             clearTimeout(timeoutId);
@@ -313,7 +317,7 @@ define([
                     var timeoutId = setTimeout(function () {
                         timeoutId = setTimeout(finish, anim.delay + anim.duration);
                     }, 50);
-                    listener.addEventListener(WinJS.Utilities._browserEventEquivalents["animationEnd"], onAnimationEnd, false);
+                    listener.addEventListener(_BaseUtils._browserEventEquivalents["animationEnd"], onAnimationEnd, false);
                 }, function () { finish(reason_canceled); }));
             });
             if (styleElem) {
@@ -331,7 +335,7 @@ define([
     var animationSettings;
     function initAnimations() {
         if (!animationSettings) {
-            if (WinJS.Utilities.hasWinRT) {
+            if (_BaseUtils.hasWinRT) {
                 animationSettings = new Windows.UI.ViewManagement.UISettings();
             }
             else {
@@ -373,14 +377,14 @@ define([
             }
 
             if (promises.length) {
-                return WinJS.Promise.join(promises);
+                return Promise.join(promises);
             } else {
                 return Scheduler.schedulePromiseNormal(null, "WinJS.UI._Animation._completeActionPromise").then(null, function (error) {
                     // Convert a cancelation to the success path
                 });
             }
         } catch (e) {
-            return WinJS.Promise.wrapError(e);
+            return Promise.wrapError(e);
         }
     }
 
@@ -406,7 +410,7 @@ define([
         }
     }
 
-    var UI = WinJS.Namespace.define("WinJS.UI", {
+    var members =  {
         disableAnimations: function () {
             /// <signature helpKeyword="WinJS.UI.disableAnimations">
             /// <summary locid="WinJS.UI.disableAnimations">
@@ -483,6 +487,9 @@ define([
             }
         },
 
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+    return members;
 
 });

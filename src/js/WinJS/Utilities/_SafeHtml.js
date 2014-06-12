@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../Core/_Global'
-    ], function safeHTMLInit(_Global) {
+    '../Core/_Global',
+    '../Core/_Base',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources'
+    ], function safeHTMLInit(_Global, _Base, _ErrorFromName, _Resources) {
     "use strict";
 
 
@@ -13,7 +16,7 @@ define([
         insertAdjacentHTMLUnsafe;
 
     var strings = {
-        get nonStaticHTML() { return WinJS.Resources._getWinJSString("base/nonStaticHTML").value; },
+        get nonStaticHTML() { return _Resources._getWinJSString("base/nonStaticHTML").value; },
     };
 
     setInnerHTML = setInnerHTMLUnsafe = function (element, text) {
@@ -121,7 +124,7 @@ define([
     else if (_Global.msIsStaticHTML) {
         var check = function (str) {
             if (!_Global.msIsStaticHTML(str)) {
-                throw new WinJS.ErrorFromName("WinJS.Utitilies.NonStaticHTML", strings.nonStaticHTML);
+                throw new _ErrorFromName("WinJS.Utitilies.NonStaticHTML", strings.nonStaticHTML);
             }
         }
         // If we ever get isStaticHTML we can attempt to recreate the behavior we have in the local
@@ -180,13 +183,17 @@ define([
         };
     }
 
-    WinJS.Namespace.define("WinJS.Utilities", {
+    var members = {
         setInnerHTML: setInnerHTML,
         setInnerHTMLUnsafe: setInnerHTMLUnsafe,
         setOuterHTML: setOuterHTML,
         setOuterHTMLUnsafe: setOuterHTMLUnsafe,
         insertAdjacentHTML: insertAdjacentHTML,
         insertAdjacentHTMLUnsafe: insertAdjacentHTMLUnsafe
-    });
+    };
+
+    _Base.Namespace.define("WinJS.Utilities", members);
+
+    return members;
 
 });

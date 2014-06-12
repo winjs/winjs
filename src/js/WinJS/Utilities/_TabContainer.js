@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../Core/_Global'
-    ], function tabManagerInit(_Global) {
+    '../Core/_Global',
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    './_ElementUtilities'
+    ], function tabManagerInit(_Global, _Base, _BaseUtils, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -11,11 +14,11 @@ define([
 
     function fireEvent(element, name, forward, cancelable) {
         var event = document.createEvent('UIEvent');
-        event.initUIEvent(name, false, !!cancelable, window, forward ? 1 : 0);
+        event.initUIEvent(name, false, !!cancelable, _Global, forward ? 1 : 0);
         return !element.dispatchEvent(event);
     }
 
-    var getTabIndex = WinJS.Utilities.getTabIndex;
+    var getTabIndex = _ElementUtilities.getTabIndex;
 
     // tabbableElementsNodeFilter works with the TreeWalker to create a view of the DOM tree that is built up of what we want the focusable tree to look like.
     // When it runs into a tab contained area, it rejects anything except the childFocus element so that any potentially tabbable things that the TabContainer
@@ -131,7 +134,7 @@ define([
         }
     }
 
-    WinJS.Namespace.define("WinJS.UI.TrackTabBehavior", {
+    var TrackTabBehavior = {
         attach: function (element, tabIndex) {
             ///
             if (!element["win-trackTabHelperObject"]) {
@@ -149,10 +152,11 @@ define([
                 delete element["win-trackTabHelperObject"];
             }
         }
-    });
+    };
 
-    WinJS.Namespace.define("WinJS.UI", {
-        TabContainer: WinJS.Class.define(function TabContainer_ctor(element, options) {
+    var members = {
+        TrackTabBehavior: TrackTabBehavior,
+        TabContainer: _Base.Class.define(function TabContainer_ctor(element, options) {
             /// <signature helpKeyword="WinJS.UI.TabContainer.TabContainer">
             /// <summary locid="WinJS.UI.TabContainer.constructor">
             /// Constructs the TabContainer.
@@ -189,7 +193,7 @@ define([
             });
             element.addEventListener("keydown", function (e) {
                 var targetElement = e.target;
-                if (e.keyCode === WinJS.Utilities.Key.tab) {
+                if (e.keyCode === _ElementUtilities.Key.tab) {
                     var forwardTab = !e.shiftKey;
                     var canKeepTabbing = that._hasMoreElementsInTabOrder(targetElement, forwardTab);
                     if (!canKeepTabbing) {
@@ -226,14 +230,14 @@ define([
                             that._elementTabHelper._catcherEnd.tabIndex = that._tabIndex;
                         }
                         targetElement.addEventListener("blur", restoreTabIndicesOnBlur, false);
-                        WinJS.Utilities._yieldForEvents(function () {
+                        _BaseUtils._yieldForEvents(function () {
                             fireEvent(that._element, "onTabExit", forwardTab);
                         });
                     }
                 }
             });
 
-            this._elementTabHelper = WinJS.UI.TrackTabBehavior.attach(element, this._tabIndex);
+            this._elementTabHelper = TrackTabBehavior.attach(element, this._tabIndex);
             this._elementTabHelper._catcherBegin.tabIndex = 0;
             this._elementTabHelper._catcherEnd.tabIndex = 0;
         }, {
@@ -246,7 +250,7 @@ define([
             /// </summary>
             /// </signature>
             dispose: function () {
-                WinJS.UI.TrackTabBehavior.detach(this._element, this._tabIndex);
+                TrackTabBehavior.detach(this._element, this._tabIndex);
             },
 
             /// <field type="HTMLElement" domElement="true" locid="WinJS.UI.TabContainer.childFocus" helpKeyword="WinJS.UI.TabContainer.childFocus">
@@ -306,5 +310,10 @@ define([
         }, { // Static Members
             supportedForProcessing: false,
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+
+    return members;
+
 });

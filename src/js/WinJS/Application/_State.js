@@ -1,13 +1,16 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../Core/_Global'
-    ], function stateInit(_Global) {
+    '../Core/_Global',
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Promise'
+    ], function stateInit(_Global, _Base, _BaseUtils, Promise) {
     "use strict";
 
     function initWithWinRT() {
         var local, temp, roaming;
 
-        var IOHelper = WinJS.Class.define(
+        var IOHelper = _Base.Class.define(
         function IOHelper_ctor(folder) {
             this.folder = folder;
             this._path = folder.path;
@@ -106,7 +109,7 @@ define([
             supportedForProcessing: false,
         });
 
-        WinJS.Namespace.define("WinJS.Application", {
+        _Base.Namespace.define("WinJS.Application", {
             /// <field type="Object" helpKeyword="WinJS.Application.local" locid="WinJS.Application.local">
             /// Allows access to create files in the application local storage, which is preserved across runs
             /// of an application and does not roam.
@@ -147,7 +150,7 @@ define([
     }
 
     function initWithStub() {
-        var InMemoryHelper = WinJS.Class.define(
+        var InMemoryHelper = _Base.Class.define(
             function InMemoryHelper_ctor() {
                 this.storage = {};
             }, {
@@ -165,7 +168,7 @@ define([
                     /// </signature>
                     // force conversion to boolean
                     //
-                    return WinJS.Promise.as(this.storage[fileName] !== undefined);
+                    return Promise.as(this.storage[fileName] !== undefined);
                 },
                 remove: function (fileName) {
                     /// <signature helpKeyword="WinJS.Application.InMemoryHelper.remove">
@@ -180,7 +183,7 @@ define([
                     /// </returns>
                     /// </signature>
                     delete this.storage[fileName];
-                    return WinJS.Promise.as();
+                    return Promise.as();
                 },
                 writeText: function (fileName, str) {
                     /// <signature helpKeyword="WinJS.Application.InMemoryHelper.writeText">
@@ -198,7 +201,7 @@ define([
                     /// </returns>
                     /// </signature>
                     this.storage[fileName] = str;
-                    return WinJS.Promise.as(str.length);
+                    return Promise.as(str.length);
                 },
                 readText: function (fileName, def) {
                     /// <signature helpKeyword="WinJS.Application.InMemoryHelper.readText">
@@ -217,14 +220,14 @@ define([
                     /// </returns>
                     /// </signature>
                     var result = this.storage[fileName];
-                    return WinJS.Promise.as(typeof result === "string" ? result : def);
+                    return Promise.as(typeof result === "string" ? result : def);
                 }
             }, {
                 supportedForProcessing: false,
             }
         );
 
-        WinJS.Namespace.define("WinJS.Application", {
+        _Base.Namespace.define("WinJS.Application", {
             /// <field type="Object" helpKeyword="WinJS.Application.local" locid="WinJS.Application.local">
             /// Allows access to create files in the application local storage, which is preserved across runs
             /// of an application and does not roam.
@@ -243,14 +246,14 @@ define([
         });
     }
 
-    if (WinJS.Utilities.hasWinRT) {
+    if (_BaseUtils.hasWinRT) {
         initWithWinRT();
     }
     else {
         initWithStub();
     }
 
-    WinJS.Namespace.define("WinJS.Application", {
+    _Base.Namespace.define("WinJS.Application", {
         sessionState: {},
         _loadState: function (e) {
             var app = WinJS.Application;
@@ -271,7 +274,7 @@ define([
                     });
             }
             else {
-                return WinJS.Promise.as();
+                return Promise.as();
             }
         },
         _oncheckpoint: function (e) {

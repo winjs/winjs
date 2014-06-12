@@ -1,12 +1,16 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function navigationInit() {
+    './Core/_Base',
+    './Core/_Events',
+    './Core/_WriteProfilerMark',
+    './Promise'
+    ], function navigationInit(_Base, _Events, _WriteProfilerMark, Promise) {
     "use strict";
 
     var navigatedEventName = "navigated";
     var navigatingEventName = "navigating";
     var beforenavigateEventName = "beforenavigate";
-    var ListenerType = WinJS.Class.mix(WinJS.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), WinJS.Utilities.eventMixin);
+    var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
     var listeners = new ListenerType();
     var history = {
         backStack: [],
@@ -15,10 +19,10 @@ define([
     };
 
     var raiseBeforeNavigate = function (proposed) {
-        WinJS.Utilities._writeProfilerMark("WinJS.Navigation:navigation,StartTM");
-        return WinJS.Promise.as().
+        _WriteProfilerMark("WinJS.Navigation:navigation,StartTM");
+        return Promise.as().
             then(function () {
-                var waitForPromise = WinJS.Promise.as();
+                var waitForPromise = Promise.as();
                 var defaultPrevented = listeners.dispatchEvent(beforenavigateEventName, {
                     setPromise: function (promise) { 
                         /// <signature helpKeyword="WinJS.Navigation.beforenavigate.setPromise">
@@ -42,9 +46,9 @@ define([
             });
     };
     var raiseNavigating = function (delta) {
-        return WinJS.Promise.as().
+        return Promise.as().
             then(function () {
-                var waitForPromise = WinJS.Promise.as();
+                var waitForPromise = Promise.as();
                 listeners.dispatchEvent(navigatingEventName, {
                     setPromise: function (promise) { 
                         /// <signature helpKeyword="WinJS.Navigation.navigating.setPromise">
@@ -67,8 +71,8 @@ define([
             });
     };
     var raiseNavigated = function (value, err) {
-        WinJS.Utilities._writeProfilerMark("WinJS.Navigation:navigation,StopTM");
-        var waitForPromise = WinJS.Promise.as();
+        _WriteProfilerMark("WinJS.Navigation:navigation,StopTM");
+        var waitForPromise = Promise.as();
         var detail = {
             value: value,
             location: history.current.location,
@@ -118,10 +122,10 @@ define([
                     }
                 });
         }
-        return WinJS.Promise.wrap(false);
+        return Promise.wrap(false);
     }
 
-    WinJS.Namespace.define("WinJS.Navigation", {
+    _Base.Namespace.define("WinJS.Navigation", {
         /// <field name="canGoForward" type="Boolean" locid="WinJS.Navigation.canGoForward" helpKeyword="WinJS.Navigation.canGoForward">
         /// Determines whether it is possible to navigate forwards.
         /// </field>
@@ -285,5 +289,7 @@ define([
         }
     });
 
-    Object.defineProperties(WinJS.Navigation, WinJS.Utilities.createEventProperties(navigatedEventName, navigatingEventName, beforenavigateEventName));
+    Object.defineProperties(WinJS.Navigation, _Events.createEventProperties(navigatedEventName, navigatingEventName, beforenavigateEventName));
+
+    return WinJS.Navigation;
 });

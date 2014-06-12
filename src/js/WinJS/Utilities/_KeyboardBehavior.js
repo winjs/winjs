@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../Core/_Global'
-    ], function KeyboardBehaviorInit(_Global) {
+    '../Core/_Global',
+    '../Core/_Base',
+    './_Control',
+    './_ElementUtilities'
+    ], function KeyboardBehaviorInit(_Global, _Base, _Control, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -11,19 +14,19 @@ define([
 
     WinJS.UI._keyboardSeenLast = false;
 
-    window.addEventListener("pointerdown", function (ev) {
+    _Global.addEventListener("pointerdown", function (ev) {
         if (WinJS.UI._keyboardSeenLast) {
             WinJS.UI._keyboardSeenLast = false;
         }
     }, true);
 
-    window.addEventListener("keydown", function (ev) {
+    _Global.addEventListener("keydown", function (ev) {
         if (!WinJS.UI._keyboardSeenLast) {
             WinJS.UI._keyboardSeenLast = true;
         }
     }, true);
 
-    WinJS.Namespace.define("WinJS.UI", {
+    var members = {
         _WinKeyboard: function (element) {
             // Win Keyboard behavior is a solution that would be similar to -ms-keyboard-focus.
             // It monitors the last input (keyboard/mouse) and adds/removes a win-keyboard class
@@ -32,22 +35,22 @@ define([
             // Reminder: Touch edgy does not count as an input method.
             element.addEventListener("pointerdown", function (ev) {
                 // In case pointer down came on the active element.
-                WinJS.Utilities.removeClass(ev.target, "win-keyboard");
+                _ElementUtilities.removeClass(ev.target, "win-keyboard");
             }, true);
             element.addEventListener("keydown", function (ev) {
-                WinJS.Utilities.addClass(ev.target, "win-keyboard");
+                _ElementUtilities.addClass(ev.target, "win-keyboard");
             }, true);
-            WinJS.Utilities._addEventListener(element, "focusin", function (ev) {
-                WinJS.UI._keyboardSeenLast && WinJS.Utilities.addClass(ev.target, "win-keyboard");
+            _ElementUtilities._addEventListener(element, "focusin", function (ev) {
+                WinJS.UI._keyboardSeenLast && _ElementUtilities.addClass(ev.target, "win-keyboard");
             }, false);
-            WinJS.Utilities._addEventListener(element, "focusout", function (ev) {
-                WinJS.Utilities.removeClass(ev.target, "win-keyboard");
+            _ElementUtilities._addEventListener(element, "focusout", function (ev) {
+                _ElementUtilities.removeClass(ev.target, "win-keyboard");
             }, false);
         },
-        _KeyboardBehavior: WinJS.Namespace._lazy(function () {
-            var Key = WinJS.Utilities.Key;
+        _KeyboardBehavior: _Base.Namespace._lazy(function () {
+            var Key = _ElementUtilities.Key;
 
-            return WinJS.Class.define(function KeyboardBehavior_ctor(element, options) {
+            var _KeyboardBehavior = _Base.Class.define(function KeyboardBehavior_ctor(element, options) {
                 // KeyboardBehavior allows you to easily convert a bunch of tabable elements into a single tab stop with 
                 // navigation replaced by keyboard arrow (Up/Down/Left/Right) + Home + End + Custom keys.
                 //
@@ -105,11 +108,11 @@ define([
                 element._keyboardBehavior = this;
                 this._element = element;
 
-                this._fixedDirection = WinJS.UI._KeyboardBehavior.FixedDirection.width;
+                this._fixedDirection = _KeyboardBehavior.FixedDirection.width;
                 this._fixedSize = 1;
                 this._currentIndex = 0;
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
 
                 this._element.addEventListener('keydown', this._keyDownHandler.bind(this));
                 this._element.addEventListener('pointerdown', this._MSPointerDownHandler.bind(this));
@@ -179,7 +182,7 @@ define([
 
                 _keyDownHandler: function _KeyboardBehavior_keyDownHandler(ev) {
                     if (!ev.altKey) {
-                        if (WinJS.Utilities._matchesSelector(ev.target, ".win-interactive, .win-interactive *")) {
+                        if (_ElementUtilities._matchesSelector(ev.target, ".win-interactive, .win-interactive *")) {
                             return;
                         }
                         var blockScrolling = false;
@@ -201,7 +204,7 @@ define([
 
                             if (ev.keyCode === leftStr) {
                                 blockScrolling = true;
-                                if (this.fixedDirection === WinJS.UI._KeyboardBehavior.FixedDirection.width) {
+                                if (this.fixedDirection === _KeyboardBehavior.FixedDirection.width) {
                                     if (modFixedSize !== 0) {
                                         newIndex--;
                                     }
@@ -212,7 +215,7 @@ define([
                                 }
                             } else if (ev.keyCode === rightStr) {
                                 blockScrolling = true;
-                                if (this.fixedDirection === WinJS.UI._KeyboardBehavior.FixedDirection.width) {
+                                if (this.fixedDirection === _KeyboardBehavior.FixedDirection.width) {
                                     if (modFixedSize !== this.fixedSize - 1) {
                                         newIndex++;
                                     }
@@ -223,7 +226,7 @@ define([
                                 }
                             } else if (ev.keyCode === Key.upArrow) {
                                 blockScrolling = true;
-                                if (this.fixedDirection === WinJS.UI._KeyboardBehavior.FixedDirection.height) {
+                                if (this.fixedDirection === _KeyboardBehavior.FixedDirection.height) {
                                     if (modFixedSize !== 0) {
                                         newIndex--;
                                     }
@@ -234,7 +237,7 @@ define([
                                 }
                             } else if (ev.keyCode === Key.downArrow) {
                                 blockScrolling = true;
-                                if (this.fixedDirection === WinJS.UI._KeyboardBehavior.FixedDirection.height) {
+                                if (this.fixedDirection === _KeyboardBehavior.FixedDirection.height) {
                                     if (modFixedSize !== this.fixedSize - 1) {
                                         newIndex++;
                                     }
@@ -284,7 +287,7 @@ define([
 
                         this.currentIndex = index;
 
-                        WinJS.Utilities._setActive(elementToFocus, this.scroller);
+                        _ElementUtilities._setActive(elementToFocus, this.scroller);
                     }
                 },
 
@@ -326,8 +329,14 @@ define([
                     height: "height",
                     width: "width"
                 }
-            })
+            });
+
+            return _KeyboardBehavior;
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+
+    return _Base.Namespace.defineWithParent(null, null, members);
 
 });

@@ -150,8 +150,7 @@ define([
         return equivalents;
     }
 
-    // Establish members of "WinJS.Utilities" namespace
-    _Base.Namespace.define("WinJS.Utilities", {
+    var publicMembers = {
         // Used for mocking in tests
         _setHasWinRT: {
             value: function (value) {
@@ -348,7 +347,12 @@ define([
         _traceAsyncOperationCompleted: _Trace._traceAsyncOperationCompleted,
         _traceAsyncCallbackStarting: _Trace._traceAsyncCallbackStarting,
         _traceAsyncCallbackCompleted: _Trace._traceAsyncCallbackCompleted
-    });
+    };
+
+    // Establish members of "WinJS.Utilities" namespace
+    _Base.Namespace.define("WinJS.Utilities", publicMembers);
+
+    var moduleMembers = _Base.Namespace.defineWithParent(null, null, publicMembers);
 
     _Base.Namespace.define("WinJS", {
         validation: false,
@@ -366,5 +370,7 @@ define([
             enumerable: false
         },
     });
+
+    return moduleMembers;
 });
 

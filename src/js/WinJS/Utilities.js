@@ -7,7 +7,8 @@ define([
     './Utilities/_SafeHtml',
     './Utilities/_Select', 
     './Utilities/_TabContainer',
-    './Utilities/_UI', 
+    './Utilities/_UI',
+    './Utilities/_UIUtilities', 
     './Utilities/_Xhr' ], function() { 
 
     //wrapper module
