@@ -59,8 +59,7 @@ define([
                 }).then(null, function () {
                     // eat error
                 });
-            }
-            else {
+            } else {
                 promise = new WinJS.Promise(function (c) {
                     n.onload = n.onerror = function () {
                         c();
@@ -102,8 +101,7 @@ define([
     function getStateRecord(href, removeFromCache) {
         if (typeof href === "string") {
             return loadFromCache(href, removeFromCache);
-        }
-        else {
+        } else {
             var state = {
                 docfrag: WinJS.Utilities.data(href).docFragment
             };
@@ -126,8 +124,7 @@ define([
             then(function () {
                 if (state.document) {
                     return processDocument(href, state);
-                }
-                else {
+                } else {
                     return state;
                 }
             }).
@@ -147,12 +144,10 @@ define([
             }
             if (state.promise) {
                 return state.promise;
-            }
-            else {
+            } else {
                 return WinJS.Promise.as(state);
             }
-        }
-        else {
+        } else {
             state = {};
             if (!removeFromCache) {
                 cacheStore[fragmentId] = state;
@@ -301,8 +296,7 @@ define([
             if (target) {
                 target.appendChild(frag);
                 retVal = target;
-            }
-            else {
+            } else {
                 retVal = frag;
             }
             WinJS.Utilities._writeProfilerMark("WinJS.UI.Fragments:render" + profilerMarkIdentifier + ",StopTM");
@@ -361,11 +355,9 @@ define([
 
         if (!href) {
             cacheStore = {};
-        }
-        else if (typeof (href) == "string") {
+        } else if (typeof (href) == "string") {
             delete cacheStore[href.toLowerCase()];
-        }
-        else {
+        } else {
             delete WinJS.Utilities.data(href).docFragment;
             href.removeAttribute("data-win-hasfragment");
         }
@@ -478,8 +470,7 @@ define([
             _populateDocument: populateDocumentXHR,
             _cleanupDocument: cleanupDocumentXHR
         });
-    }
-    else {
+    } else {
         WinJS.Namespace.define("WinJS.UI.Fragments", {
             _populateDocument: populateDocumentIFrame,
             _cleanupDocument: cleanupDocumentIFrame
