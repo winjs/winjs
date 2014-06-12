@@ -435,34 +435,14 @@ CorsicaTests.Fragments = function () {
             "</body>\r\n" +
             "</html>\r\n";
 
-        var oldPop = WinJS.UI.Fragments._populateDocument;
-        var oldClean = WinJS.UI.Fragments._cleanupDocument;
-        
-        function cleanupDocument(state) {
-            if (state.document) {
-                delete state.document;
-            }
-            return WinJS.Promise.as();
+        var old = WinJS.UI.Fragments._getFragmentContents;
+
+        function getFragmentContents(href) {
+            return WinJS.Promise.as(frag);
         }
 
-        function populateDocument(state, href) {
-            var htmlDoc = document.implementation.createHTMLDocument("frag");
-            var base = htmlDoc.createElement("base");
-            htmlDoc.head.appendChild(base); 
-            var anchor = htmlDoc.createElement("a");
-            htmlDoc.body.appendChild(anchor);
-            base.href = document.location.href; // Initialize base URL to primary document URL
-            anchor.setAttribute("href", href); // Resolve the relative path to an absolute path
-            base.href = anchor.href; // Update the base URL to be the resolved absolute path
-            // 'anchor' is no longer needed at this point and will be removed by the innerHTML call
-            WinJS.Utilities.setInnerHTMLUnsafe(htmlDoc.body, frag);
-            state.document = htmlDoc;
-            return WinJS.Promise.as();
-        };
-
         WinJS.Namespace.defineWithParent(WinJS, "UI.Fragments", {
-            _populateDocument: populateDocument,
-            _cleanupDocument: cleanupDocument
+            _getFragmentContents: getFragmentContents
         });            
         
         try {
@@ -471,8 +451,8 @@ CorsicaTests.Fragments = function () {
             WinJS.UI.Fragments.clearCache("$(TESTDATA)/FragmentBasic.html");
             WinJS.UI.Fragments.render("$(TESTDATA)/FragmentBasic.html", temp).
                 then(function () {
-                    LiveUnit.Assert.areEqual(2, temp.children.length, "Missing expected child");
-                    LiveUnit.Assert.areEqual("This is just a test.", temp.children[1].textContent, "Text content does not match");
+                    LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
+                    LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                     rendered = true;
                 }
             );
@@ -480,8 +460,7 @@ CorsicaTests.Fragments = function () {
         }
         finally {
             WinJS.Namespace.defineWithParent(WinJS, "UI.Fragments", {
-                _populateDocument: oldPop,
-                _cleanupDocument: oldClean
+                _getFragmentContents: old
             });      
         }
     }
