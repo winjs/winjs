@@ -1,7 +1,17 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     './Core/_Global',
-    './BindingTemplate/_DataTemplateCompiler.js'], function dataTemplateInit(_Global, _DataTemplateCompiler) {
+    './Core/_Base',
+    './Core/_BaseUtils',
+    './Core/_WriteProfilerMark',
+    './Binding/_Declarative',
+    './BindingTemplate/_DataTemplateCompiler.js',
+    './ControlProcessor',
+    './Fragments',
+    './Promise',
+    './Utilities/_Dispose',
+    './Utilities/_ElementUtilities'
+    ], function dataTemplateInit(_Global, _Base, _BaseUtils, _WriteProfilerMark, _Declarative, _DataTemplateCompiler, ControlProcessor, Fragments, Promise, _Dispose, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -9,11 +19,10 @@ define([
         return;
     }
 
-    var P = WinJS.Promise;
-    var cancelBlocker = P._cancelBlocker;
-    var markSupportedForProcessing = WinJS.Utilities.markSupportedForProcessing;
+    var cancelBlocker = Promise._cancelBlocker;
+    var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;
 
-    WinJS.Namespace.define("WinJS.Binding", {
+    var members = {
 
         /// <field>
         /// <summary locid="WinJS.Binding.Template">
@@ -26,30 +35,30 @@ define([
         /// <icon src="base_winjs.ui.template.16x16.png" width="16" height="16" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        Template: WinJS.Namespace._lazy(function () {
+        Template: _Base.Namespace._lazy(function () {
             function interpretedRender(template, dataContext, container) {
-                WinJS.Utilities._writeProfilerMark("WinJS.Binding:templateRender" + template._profilerMarkIdentifier + ",StartTM");
+                _WriteProfilerMark("WinJS.Binding:templateRender" + template._profilerMarkIdentifier + ",StartTM");
 
                 if (++template._counter === 1 && (template.debugBreakOnRender || WinJS.Binding.Template._debugBreakOnRender)) {                   
                     debugger; // jshint ignore:line
                 }
 
-                var workPromise = WinJS.Promise.wrap();
+                var workPromise = Promise.wrap();
                 var d = container || document.createElement(template.element.tagName);
 
-                WinJS.Utilities.addClass(d, "win-template");
-                WinJS.Utilities.addClass(d, "win-loading");
+                _ElementUtilities.addClass(d, "win-template");
+                _ElementUtilities.addClass(d, "win-loading");
                 var that = template;
                 function done() {
-                    WinJS.Utilities.removeClass(d, "win-loading");
-                    WinJS.Utilities._writeProfilerMark("WinJS.Binding:templateRender" + template._profilerMarkIdentifier + ",StopTM");
+                    _ElementUtilities.removeClass(d, "win-loading");
+                    _WriteProfilerMark("WinJS.Binding:templateRender" + template._profilerMarkIdentifier + ",StopTM");
                     return extractedChild || d;
                 }
                 var initial = d.children.length;
                 var element;
                 var extractedChild;
                 var dispose = function () {
-                    var bindings = WinJS.Utilities.data(d).winBindings;
+                    var bindings = _ElementUtilities.data(d).winBindings;
                     if (bindings) {
                         bindings.forEach(function (item) {
                             item.cancel();
@@ -58,16 +67,16 @@ define([
                     workPromise.cancel();
                 };
                 if (template.extractChild) {
-                    element = WinJS.UI.Fragments.renderCopy(that.href || that.element, document.createElement(that.element.tagName)).then(function (frag) {
+                    element = Fragments.renderCopy(that.href || that.element, document.createElement(that.element.tagName)).then(function (frag) {
                         var child = frag.firstElementChild;
                         extractedChild = child;
-                        WinJS.Utilities.markDisposable(child, dispose);
+                        _Dispose.markDisposable(child, dispose);
                         d.appendChild(child);
                         return child;
                     });
                 } else {
-                    WinJS.Utilities.markDisposable(d, dispose);
-                    element = WinJS.UI.Fragments.renderCopy(that.href || that.element, d);
+                    _Dispose.markDisposable(d, dispose);
+                    element = Fragments.renderCopy(that.href || that.element, d);
                 }
                 var renderComplete = element.
                     then(function Template_renderImpl_renderComplete_then() {
@@ -100,7 +109,7 @@ define([
                                     elements.forEach(function (e) {
                                         join.push(f(e, a, b, c));
                                     });
-                                    return WinJS.Promise.join(join);
+                                    return Promise.join(join);
                                 };
                             }
                         }
@@ -117,21 +126,21 @@ define([
                         //
                         var timeout = that.processTimeout;
                         function complete() {
-                            return work(WinJS.UI.processAll).
+                            return work(ControlProcessor.processAll).
                                 then(function () { return cancelBlocker(dataContext); }).
                                 then(function Template_renderImpl_Binding_processAll(data) {
-                                    return work(WinJS.Binding.processAll, data, !extractedChild && !initial, that.bindingCache);
+                                    return work(_Declarative.processAll, data, !extractedChild && !initial, that.bindingCache);
                                 }).
                                 then(null, function (e) {
                                     if (typeof e === "object" && e.name === "Canceled") {
                                         (extractedChild || d).dispose();
                                     }
-                                    return WinJS.Promise.wrapError(e);
+                                    return Promise.wrapError(e);
                                 });
                         }
                         if (timeout) {
                             if (timeout < 0) { timeout = 0; }
-                            return WinJS.Promise.timeout(timeout).then(function () {
+                            return Promise.timeout(timeout).then(function () {
                                 workPromise = complete();
                                 return workPromise;
                             });
@@ -140,12 +149,12 @@ define([
                             workPromise = complete();
                             return workPromise;
                         }
-                    }).then(done, function (err) { done(); return WinJS.Promise.wrapError(err); });
+                    }).then(done, function (err) { done(); return Promise.wrapError(err); });
 
                 return { element: element, renderComplete: renderComplete };
             }
 
-            return WinJS.Class.define(function Template_ctor(element, options) {
+            return _Base.Class.define(function Template_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.Binding.Template.Template">
                 /// <summary locid="WinJS.Binding.Template.constructor">
                 /// Creates a template that provides a reusable declarative binding element.
@@ -162,8 +171,8 @@ define([
                 this._element = element || document.createElement("div");
                 this._element.winControl = this;
 
-                this._profilerMarkIdentifier = WinJS.Utilities._getProfilerMarkIdentifier(this._element);
-                WinJS.Utilities._writeProfilerMark("WinJS.Binding:newTemplate" + this._profilerMarkIdentifier + ",StartTM");
+                this._profilerMarkIdentifier = _BaseUtils._getProfilerMarkIdentifier(this._element);
+                _WriteProfilerMark("WinJS.Binding:newTemplate" + this._profilerMarkIdentifier + ",StartTM");
 
                 var that = this;
                 this._element.renderItem = function (itemPromise, recycled) { return that._renderItemImpl(itemPromise, recycled); };
@@ -187,7 +196,7 @@ define([
                 }
                 this.bindingCache = { expressions: {} };
 
-                WinJS.Utilities._writeProfilerMark("WinJS.Binding:newTemplate" + this._profilerMarkIdentifier + ",StopTM");
+                _WriteProfilerMark("WinJS.Binding:newTemplate" + this._profilerMarkIdentifier + ",StopTM");
             }, {
                 _shouldCompile: {
                     get: function () {
@@ -275,7 +284,7 @@ define([
                     }
                 },
 
-                render: WinJS.Utilities.markSupportedForProcessing(function (dataContext, container) {
+                render: _BaseUtils.markSupportedForProcessing(function (dataContext, container) {
                     /// <signature helpKeyword="WinJS.Binding.Template.render">
                     /// <summary locid="WinJS.Binding.Template.render">
                     /// Binds values from the specified data context to elements that are descendents of the specified root element
@@ -304,7 +313,7 @@ define([
                             this._renderImpl = this._compileTemplate({ target: "render" });
                             return this._renderImpl(dataContext, container);
                         } catch (e) {
-                            return WinJS.Promise.wrapError(e);
+                            return Promise.wrapError(e);
                         }
                     }
 
@@ -345,8 +354,8 @@ define([
                             return this._renderItemImpl(item);
                         } catch (e) {
                             return {
-                                element: WinJS.Promise.wrapError(e),
-                                renderComplete: WinJS.Promise.wrapError(e),
+                                element: Promise.wrapError(e),
+                                renderComplete: Promise.wrapError(e),
                             };
                         }
                     }
@@ -387,7 +396,7 @@ define([
                             return {
                                 element: recycled,
                                 renderComplete: item.then(function (item) {
-                                    return WinJS.Binding.processAll(recycled, item.data, true, that.bindingCache);
+                                    return _Declarative.processAll(recycled, item.data, true, that.bindingCache);
                                 }),
                             };
                         }
@@ -402,7 +411,7 @@ define([
 
                     var that = this;
 
-                    var result = WinJS.Binding._TemplateCompiler.compile(this, this.href || this.element, {
+                    var result = _DataTemplateCompiler._TemplateCompiler.compile(this, this.href || this.element, {
                         debugBreakOnRender: this.debugBreakOnRender || WinJS.Binding.Template._debugBreakOnRender,
                         defaultInitializer: this.bindingInitializer || options.defaultInitializer,
                         disableTextBindingOptimization: options.disableTextBindingOptimization || false,
@@ -417,11 +426,11 @@ define([
                         // currently will never fire. This is OK because only MutationObserver
                         // can monitor DocFragments and this feature is only for
                         // assisting authoring tools.
-                        var mo = new WinJS.Utilities._MutationObserver(function () {
+                        var mo = new _ElementUtilities._MutationObserver(function () {
                             that._reset();
                             mo.disconnect();
                         });
-                        mo.observe(WinJS.Utilities.data(this.element).docFragment, {
+                        mo.observe(_ElementUtilities.data(this.element).docFragment, {
                             childList: true,
                             attributes: true,
                             characterData: true,
@@ -467,59 +476,9 @@ define([
                 }
             });
         })
-    });
-        
-    if (WinJS.Utilities && WinJS.Utilities.QueryCollection) {
-        WinJS.Class.mix(WinJS.Utilities.QueryCollection, {
-            template: function (templateElement, data, renderDonePromiseCallback) {
-                /// <signature helpKeyword="WinJS.Utilities.QueryCollection.template">
-                /// <summary locid="WinJS.Utilities.QueryCollection.template">
-                /// Renders a template that is bound to the given data
-                /// and parented to the elements included in the QueryCollection.
-                /// If the QueryCollection contains multiple elements, the template
-                /// is rendered multiple times, once at each element in the QueryCollection
-                /// per item of data passed.
-                /// </summary>
-                /// <param name="templateElement" type="DOMElement" locid="WinJS.Utilities.QueryCollection.template_p:templateElement">
-                /// The DOM element to which the template control is attached to.
-                /// </param>
-                /// <param name="data" type="Object" locid="WinJS.Utilities.QueryCollection.template_p:data">
-                /// The data to render. If the data is an array (or any other object
-                /// that has a forEach method) then the template is rendered
-                /// multiple times, once for each item in the collection.
-                /// </param>
-                /// <param name="renderDonePromiseCallback" type="Function" locid="WinJS.Utilities.QueryCollection.template_p:renderDonePromiseCallback">
-                /// If supplied, this function is called
-                /// each time the template gets rendered, and is passed a promise
-                /// that is fulfilled when the template rendering is complete.
-                /// </param>
-                /// <returns type="WinJS.Utilities.QueryCollection" locid="WinJS.Utilities.QueryCollection.template_returnValue">
-                /// The QueryCollection.
-                /// </returns>
-                /// </signature>
-                if (templateElement instanceof WinJS.Utilities.QueryCollection) {
-                    templateElement = templateElement[0];
-                }
-                var template = templateElement.winControl;
+    };
 
-                if (data === null || data === undefined || !data.forEach) {
-                    data = [data];
-                }
-
-                renderDonePromiseCallback = renderDonePromiseCallback || function () { };
-
-                var that = this;
-                var donePromises = [];
-                data.forEach(function (datum) {
-                    that.forEach(function (element) {
-                        donePromises.push(template.render(datum, element));
-                    });
-                });
-                renderDonePromiseCallback(WinJS.Promise.join(donePromises));
-
-                return this;
-            }
-        });
-    }
+    _Base.Namespace.define("WinJS.Binding", members);
+    return _Base.Namespace.defineWithParent(null, null, members);
 
 });

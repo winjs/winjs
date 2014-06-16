@@ -40,6 +40,24 @@ define([
 
         CountError: {
             noResponse: "noResponse"
+        },
+
+        DataSourceStatus: {
+            ready: "ready",
+            waiting: "waiting",
+            failure: "failure"
+        },
+
+        FetchError: {
+            noResponse: "noResponse",
+            doesNotExist: "doesNotExist"
+        },
+
+        EditError: {
+            noResponse: "noResponse",
+            canceled: "canceled",
+            notPermitted: "notPermitted",
+            noLongerMeaningful: "noLongerMeaningful"
         }
 
     };

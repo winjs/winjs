@@ -1,29 +1,39 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../Core/_Global'
-    ], function declarativeInit(_Global) {
+    '../Core/_Global',
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Promise',
+    '../Utilities/_ElementUtilities',
+    './_BindingParser',
+    './_Data',
+    './_DomWeakRefTable'
+    ], function declarativeInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _BindingParser, _Data, _DomWeakRefTable) {
     "use strict";
 
     var uid = (Math.random() * 1000) >> 0;
 
     // If we have proper weak references then we can move away from using the element's ID property
     //
-    var optimizeBindingReferences = WinJS.Utilities.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty;
+    var optimizeBindingReferences = _BaseUtils.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty;
 
     var strings = {
-        get attributeBindingSingleProperty() { return WinJS.Resources._getWinJSString("base/attributeBindingSingleProperty").value; },
-        get cannotBindToThis() { return WinJS.Resources._getWinJSString("base/cannotBindToThis").value; },
-        get creatingNewProperty() { return WinJS.Resources._getWinJSString("base/creatingNewProperty").value; },
-        get duplicateBindingDetected() { return WinJS.Resources._getWinJSString("base/duplicateBindingDetected").value; },
-        get elementNotFound() { return WinJS.Resources._getWinJSString("base/elementNotFound").value; },
-        get errorInitializingBindings() { return WinJS.Resources._getWinJSString("base/errorInitializingBindings").value; },
-        get propertyDoesNotExist() { return WinJS.Resources._getWinJSString("base/propertyDoesNotExist").value; },
-        get idBindingNotSupported() { return WinJS.Resources._getWinJSString("base/idBindingNotSupported").value; },
-        get nestedDOMElementBindingNotSupported() { return WinJS.Resources._getWinJSString("base/nestedDOMElementBindingNotSupported").value; }
+        get attributeBindingSingleProperty() { return _Resources._getWinJSString("base/attributeBindingSingleProperty").value; },
+        get cannotBindToThis() { return _Resources._getWinJSString("base/cannotBindToThis").value; },
+        get creatingNewProperty() { return _Resources._getWinJSString("base/creatingNewProperty").value; },
+        get duplicateBindingDetected() { return _Resources._getWinJSString("base/duplicateBindingDetected").value; },
+        get elementNotFound() { return _Resources._getWinJSString("base/elementNotFound").value; },
+        get errorInitializingBindings() { return _Resources._getWinJSString("base/errorInitializingBindings").value; },
+        get propertyDoesNotExist() { return _Resources._getWinJSString("base/propertyDoesNotExist").value; },
+        get idBindingNotSupported() { return _Resources._getWinJSString("base/idBindingNotSupported").value; },
+        get nestedDOMElementBindingNotSupported() { return _Resources._getWinJSString("base/nestedDOMElementBindingNotSupported").value; }
     }
 
-    var markSupportedForProcessing = WinJS.Utilities.markSupportedForProcessing;
-    var requireSupportedForProcessing = WinJS.Utilities.requireSupportedForProcessing;
+    var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;
+    var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
 
     function registerAutoDispose(bindable, callback) {
         var d = bindable._autoDispose;
@@ -39,7 +49,7 @@ define([
                 return element;
             }
             else {
-                WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.duplicateBindingDetected, element.id), "winjs binding", "error");
+                WinJS.log && WinJS.log(_Resources._formatString(strings.duplicateBindingDetected, element.id), "winjs binding", "error");
             }
         }
         else {
@@ -103,9 +113,9 @@ define([
         var resolveWeakRef = function () {
             if (canceled) { return; }
 
-            var found = checkBindingToken(WinJS.Utilities._getWeakRefElement(ref), bindingId);
+            var found = checkBindingToken(_DomWeakRefTable._getWeakRefElement(ref), bindingId);
             if (!found) {
-                WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.elementNotFound, ref), "winjs binding", "info");
+                WinJS.log && WinJS.log(_Resources._formatString(strings.elementNotFound, ref), "winjs binding", "info");
                 if (bindResult) {
                     bindResult.cancel();
                 }
@@ -142,7 +152,7 @@ define([
     function sourceOneBinding(bind, ref, bindingId, source, e, pend, cacheEntry) {
         var bindable;
         if (source !== _Global) {
-            source = WinJS.Binding.as(source);
+            source = _Data.as(source);
         }
         if (source._getObservable) {
             bindable = source._getObservable();
@@ -164,9 +174,9 @@ define([
             var dest = bind.destination;
             if (dest.length === 1 && dest[0] === "id") {
                 if (WinJS.validation) {
-                    throw new WinJS.ErrorFromName("WinJS.Binding.IdBindingNotSupported", WinJS.Resources._formatString(strings.idBindingNotSupported, bindingStr));
+                    throw new _ErrorFromName("WinJS.Binding.IdBindingNotSupported", _Resources._formatString(strings.idBindingNotSupported, bindingStr));
                 }
-                WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.idBindingNotSupported, bindingStr), "winjs binding", "error");
+                WinJS.log && WinJS.log(_Resources._formatString(strings.idBindingNotSupported, bindingStr), "winjs binding", "error");
                 declBind.splice(bindIndex, 1);
             }
         }
@@ -178,7 +188,7 @@ define([
             var declBindCache = bindingCache.expressions[bindingStr];
             var declBind;
             if (!declBindCache) {
-                declBind = filterIdBinding(WinJS.Binding._bindingParser(bindingStr, _Global), bindingStr);
+                declBind = filterIdBinding(_BindingParser._bindingParser(bindingStr, _Global), bindingStr);
                 bindingCache.expressions[bindingStr] = declBind;
             }
             if (!declBind) {
@@ -187,19 +197,19 @@ define([
             return declBind;
         }
         else {
-            return filterIdBinding(WinJS.Binding._bindingParser(bindingStr, _Global), bindingStr);
+            return filterIdBinding(_BindingParser._bindingParser(bindingStr, _Global), bindingStr);
         }
     }
 
     function declarativeBindImpl(rootElement, dataContext, skipRoot, bindingCache, defaultInitializer, c, e, p) {
-        WinJS.Utilities._writeProfilerMark("WinJS.Binding:processAll,StartTM");
+        _WriteProfilerMark("WinJS.Binding:processAll,StartTM");
 
         var pend = {
             count: 0,
             checkComplete: function checkComplete() {
                 this.count--;
                 if (this.count === 0) {
-                    WinJS.Utilities._writeProfilerMark("WinJS.Binding:processAll,StopTM");
+                    _WriteProfilerMark("WinJS.Binding:processAll,StopTM");
                     c();
                 }
             }
@@ -217,7 +227,7 @@ define([
 
         WinJS.Utilities._DOMWeakRefTable_fastLoadPath = true;
         try {
-            var baseElementData = WinJS.Utilities.data(baseElement);
+            var baseElementData = _ElementUtilities.data(baseElement);
             baseElementData.winBindings = baseElementData.winBindings || [];
 
             for (var i = (neg ? -1 : 0), l = elements.length; i < l; i++) {
@@ -233,7 +243,7 @@ define([
                     if (typeof idcc === "function") {
                         idcc = requireSupportedForProcessing(idcc);
                         idcc(element.winControl, function (element) {
-                            return WinJS.Binding.processAll(element, dataContext, false, bindingCache, defaultInitializer);
+                            return declarativeBind(element, dataContext, false, bindingCache, defaultInitializer);
                         });
                     }
                 }
@@ -277,8 +287,8 @@ define([
                     element.id = ref = bindingId;
                 }
 
-                WinJS.Utilities._createWeakRef(element, ref);
-                var elementData = WinJS.Utilities.data(element);
+                _DomWeakRefTable._createWeakRef(element, ref);
+                var elementData = _ElementUtilities.data(element);
                 elementData.winBindings = null;
                 var cacheEntry;
                 if (bindingCache && bindingCache.elements) {
@@ -335,11 +345,11 @@ define([
         /// </returns>
         /// </signature>
 
-        return new WinJS.Promise(function (c, e, p) {
+        return new Promise(function (c, e, p) {
             declarativeBindImpl(rootElement, dataContext, skipRoot, bindingCache, defaultInitializer, c, e, p);
         }).then(null, function (e) {
-            WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.errorInitializingBindings, e && e.message), "winjs binding", "error");
-            return WinJS.Promise.wrapError(e);
+            WinJS.log && WinJS.log(_Resources._formatString(strings.errorInitializingBindings, e && e.message), "winjs binding", "error");
+            return Promise.wrapError(e);
         });
     }
 
@@ -366,29 +376,29 @@ define([
                 dest.id = ref = bindingId;
             }
 
-            WinJS.Utilities._createWeakRef(dest, ref);
+            _DomWeakRefTable._createWeakRef(dest, ref);
 
             var bindable;
             if (source !== _Global) {
-                source = WinJS.Binding.as(source);
+                source = _Data.as(source);
             }
             if (source._getObservable) {
                 bindable = source._getObservable();
             }
             if (bindable) {
                 var counter = 0;
-                var workerResult = bindWorker(WinJS.Binding.as(source), sourceProperties, function (v) {
+                var workerResult = bindWorker(_Data.as(source), sourceProperties, function (v) {
                     if (++counter === 1) {
                         if (v === initialValue) {
                             return;
                         }
                     }
-                    var found = checkBindingToken(WinJS.Utilities._getWeakRefElement(ref), bindingId);
+                    var found = checkBindingToken(_DomWeakRefTable._getWeakRefElement(ref), bindingId);
                     if (found) {
                         nestedSet(found, destProperties, convert(requireSupportedForProcessing(v)));
                     }
                     else if (workerResult) {
-                        WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.elementNotFound, ref), "winjs binding", "info");
+                        WinJS.log && WinJS.log(_Resources._formatString(strings.elementNotFound, ref), "winjs binding", "info");
                         workerResult.cancel();
                     }
                 });
@@ -421,11 +431,11 @@ define([
         for (var i = 0, len = (destProperties.length - 1) ; i < len; i++) {
             dest = requireSupportedForProcessing(dest[destProperties[i]]);
             if (!dest) {
-                WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.propertyDoesNotExist, destProperties[i], destProperties.join(".")), "winjs binding", "error");
+                WinJS.log && WinJS.log(_Resources._formatString(strings.propertyDoesNotExist, destProperties[i], destProperties.join(".")), "winjs binding", "error");
                 return;
             }
             else if (dest instanceof Node) {
-                WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.nestedDOMElementBindingNotSupported, destProperties[i], destProperties.join(".")), "winjs binding", "error");
+                WinJS.log && WinJS.log(_Resources._formatString(strings.nestedDOMElementBindingNotSupported, destProperties[i], destProperties.join(".")), "winjs binding", "error");
                 return;
             }
         }
@@ -436,7 +446,7 @@ define([
         var prop = destProperties[destProperties.length - 1];
         if (WinJS.log) {
             if (dest[prop] === undefined) {
-                WinJS.log(WinJS.Resources._formatString(strings.creatingNewProperty, prop, destProperties.join(".")), "winjs binding", "warn");
+                WinJS.log(_Resources._formatString(strings.creatingNewProperty, prop, destProperties.join(".")), "winjs binding", "warn");
             }
         }
         dest[prop] = v;
@@ -485,11 +495,11 @@ define([
             dest.id = ref = bindingId;
         }
 
-        WinJS.Utilities._createWeakRef(dest, ref);
+        _DomWeakRefTable._createWeakRef(dest, ref);
 
         var bindable;
         if (source !== _Global) {
-            source = WinJS.Binding.as(source);
+            source = _Data.as(source);
         }
         if (source._getObservable) {
             bindable = source._getObservable();
@@ -502,12 +512,12 @@ define([
                         return;
                     }
                 }
-                var found = checkBindingToken(WinJS.Utilities._getWeakRefElement(ref), bindingId);
+                var found = checkBindingToken(_DomWeakRefTable._getWeakRefElement(ref), bindingId);
                 if (found) {
                     attributeSet(found, destProperties, requireSupportedForProcessing(v));
                 }
                 else if (workerResult) {
-                    WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.elementNotFound, ref), "winjs binding", "info");
+                    WinJS.log && WinJS.log(_Resources._formatString(strings.elementNotFound, ref), "winjs binding", "info");
                     workerResult.cancel();
                 }
             });
@@ -606,7 +616,7 @@ define([
             }
             current[sourceProperties[sourceProperties.length - 1]] = func;
 
-            return WinJS.Binding.bind(bindable, root, true);
+            return _Data.bind(bindable, root, true);
         }
         else if (sourceProperties.length === 1) {
             bindable.bind(sourceProperties[0], func, true);
@@ -664,7 +674,7 @@ define([
         return markSupportedForProcessing(customInitializer);
     }
 
-    WinJS.Namespace.define("WinJS.Binding", {
+    var members = {
         processAll: declarativeBind,
         oneTime: initializer(oneTime),
         defaultBind: initializer(defaultBind),
@@ -674,6 +684,10 @@ define([
         setAttribute: initializer(setAttribute),
         setAttributeOneTime: initializer(setAttributeOneTime),
         addClassOneTime: initializer(addClassOneTime),
-    });
+    };
+
+    _Base.Namespace.define("WinJS.Binding", members);
+
+    return members;
 
 });

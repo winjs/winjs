@@ -8,24 +8,6 @@ define([
 
     WinJS.Namespace.define("WinJS.UI", {
 
-        DataSourceStatus: {
-            ready: "ready",
-            waiting: "waiting",
-            failure: "failure"
-        },
-
-        FetchError: {
-            noResponse: "noResponse",
-            doesNotExist: "doesNotExist"
-        },
-
-        EditError: {
-            noResponse: "noResponse",
-            canceled: "canceled",
-            notPermitted: "notPermitted",
-            noLongerMeaningful: "noLongerMeaningful"
-        },
-    
         VirtualizedDataSource: WinJS.Namespace._lazy(function () {
             var MAX_BEGINREFRESH_COUNT = 100;
             var uniqueID = 1;

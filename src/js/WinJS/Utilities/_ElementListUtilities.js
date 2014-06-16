@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../Core/_Global'
-    ], function elementListUtilities(_Global) {
+    '../Core/_Global',
+    '../Promise'
+    ], function elementListUtilities(_Global, Promise) {
     "use strict";
 
     // not supported in WebWorker
@@ -325,6 +326,54 @@ define([
                     });
                 }
                 return this;
+            },
+            template: function (templateElement, data, renderDonePromiseCallback) {
+                /// <signature helpKeyword="WinJS.Utilities.QueryCollection.template">
+                /// <summary locid="WinJS.Utilities.QueryCollection.template">
+                /// Renders a template that is bound to the given data
+                /// and parented to the elements included in the QueryCollection.
+                /// If the QueryCollection contains multiple elements, the template
+                /// is rendered multiple times, once at each element in the QueryCollection
+                /// per item of data passed.
+                /// </summary>
+                /// <param name="templateElement" type="DOMElement" locid="WinJS.Utilities.QueryCollection.template_p:templateElement">
+                /// The DOM element to which the template control is attached to.
+                /// </param>
+                /// <param name="data" type="Object" locid="WinJS.Utilities.QueryCollection.template_p:data">
+                /// The data to render. If the data is an array (or any other object
+                /// that has a forEach method) then the template is rendered
+                /// multiple times, once for each item in the collection.
+                /// </param>
+                /// <param name="renderDonePromiseCallback" type="Function" locid="WinJS.Utilities.QueryCollection.template_p:renderDonePromiseCallback">
+                /// If supplied, this function is called
+                /// each time the template gets rendered, and is passed a promise
+                /// that is fulfilled when the template rendering is complete.
+                /// </param>
+                /// <returns type="WinJS.Utilities.QueryCollection" locid="WinJS.Utilities.QueryCollection.template_returnValue">
+                /// The QueryCollection.
+                /// </returns>
+                /// </signature>
+                if (templateElement instanceof WinJS.Utilities.QueryCollection) {
+                    templateElement = templateElement[0];
+                }
+                var template = templateElement.winControl;
+
+                if (data === null || data === undefined || !data.forEach) {
+                    data = [data];
+                }
+
+                renderDonePromiseCallback = renderDonePromiseCallback || function () { };
+
+                var that = this;
+                var donePromises = [];
+                data.forEach(function (datum) {
+                    that.forEach(function (element) {
+                        donePromises.push(template.render(datum, element));
+                    });
+                });
+                renderDonePromiseCallback(Promise.join(donePromises));
+
+                return this;
             }
         }, {
             supportedForProcessing: false,
@@ -380,5 +429,4 @@ define([
             return new WinJS.Utilities.QueryCollection(element.children);
         }
     });
-
 });

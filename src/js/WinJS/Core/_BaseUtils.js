@@ -15,6 +15,40 @@ define([
         get notSupportedForProcessing() { return _Resources._getWinJSString("base/notSupportedForProcessing").value; }
     };
 
+    function nop(v) {
+        return v;
+    }
+
+    function getMemberFiltered(name, root, filter) {
+        return name.split(".").reduce(function (currentNamespace, name) {
+            if (currentNamespace) {
+                return filter(currentNamespace[name]);
+            }
+            return null;
+        }, root);
+    }
+
+    function getMember(name, root) {
+        /// <signature helpKeyword="WinJS.Utilities.getMember">
+        /// <summary locid="WinJS.Utilities.getMember">
+        /// Gets the leaf-level type or namespace specified by the name parameter.
+        /// </summary>
+        /// <param name="name" locid="WinJS.Utilities.getMember_p:name">
+        /// The name of the member.
+        /// </param>
+        /// <param name="root" locid="WinJS.Utilities.getMember_p:root">
+        /// The root to start in. Defaults to the global object.
+        /// </param>
+        /// <returns type="Object" locid="WinJS.Utilities.getMember_returnValue">
+        /// The leaf-level type or namespace in the specified parent namespace.
+        /// </returns>
+        /// </signature>
+        if (!name) {
+            return null;
+        }
+        return getMemberFiltered(name, root || _Global, nop);
+    }
+
     function getCamelCasedName(styleName) {
         // special case -moz prefixed styles because their JS property name starts with Moz
         if (styleName.length > 0 && styleName.indexOf("-moz") !== 0 && styleName.charAt(0) === "-") {
@@ -168,9 +202,9 @@ define([
             enumerable: true
         },
 
-        _getMemberFiltered: _BaseCoreUtils._getMemberFiltered,
+        _getMemberFiltered: getMemberFiltered,
 
-        getMember: _BaseCoreUtils.getMember,
+        getMember: getMember,
 
         _browserStyleEquivalents: getBrowserStyleEquivalents(),
         _browserEventEquivalents: getBrowserEventEquivalents(),

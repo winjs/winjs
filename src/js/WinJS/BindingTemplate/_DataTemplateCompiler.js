@@ -1,7 +1,23 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../Core/_Global'
-    ], function templateCompilerInit(_Global) {
+    '../Core/_Global',
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Binding/_BindingParser',
+    '../Binding/_Data',
+    '../Binding/_Declarative',
+    '../ControlProcessor',
+    '../ControlProcessor/_OptionsParser',
+    '../Fragments',
+    '../Promise',
+    '../_Signal',
+    '../Utilities/_Dispose',
+    '../Utilities/_SafeHtml',
+    '../Utilities/_ElementUtilities'
+    ], function templateCompilerInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _BindingParser, _Data, _Declarative, ControlProcessor, _OptionsParser, Fragments, Promise, _Signal, _Dispose, _SafeHtml, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -10,45 +26,43 @@ define([
     }
 
     var strings = {
-        get attributeBindingSingleProperty() { return WinJS.Resources._getWinJSString("base/attributeBindingSingleProperty").value; },
-        get cannotBindToThis() { return WinJS.Resources._getWinJSString("base/cannotBindToThis").value; },
-        get idBindingNotSupported() { return WinJS.Resources._getWinJSString("base/idBindingNotSupported").value; },
+        get attributeBindingSingleProperty() { return _Resources._getWinJSString("base/attributeBindingSingleProperty").value; },
+        get cannotBindToThis() { return _Resources._getWinJSString("base/cannotBindToThis").value; },
+        get idBindingNotSupported() { return _Resources._getWinJSString("base/idBindingNotSupported").value; },
     };
 
-    WinJS.Namespace.define("WinJS.Binding", {
-        _TemplateCompiler: WinJS.Namespace._lazy(function () {
+    var members = {
+        _TemplateCompiler: _Base.Namespace._lazy(function () {
 
-            var Signal = WinJS._Signal;
-            var Promise = WinJS.Promise;
             var cancelBlocker = Promise._cancelBlocker;
 
             // Eagerly bind to stuff that will be needed by the compiler
             //
-            var init_defaultBind = WinJS.Binding.defaultBind;
-            var init_oneTime = WinJS.Binding.oneTime;
-            var init_setAttribute = WinJS.Binding.setAttribute;
-            var init_setAttributeOneTime = WinJS.Binding.setAttributeOneTime;
-            var init_addClassOneTime = WinJS.Binding.addClassOneTime;
-            var binding_as = WinJS.Binding.as;
-            var promise_as = WinJS.Promise.as;
-            var supportedForProcessing = WinJS.Utilities.supportedForProcessing;
-            var requireSupportedForProcessing = WinJS.Utilities.requireSupportedForProcessing;
-            var insertAdjacentHTMLUnsafe = WinJS.Utilities.insertAdjacentHTMLUnsafe;
-            var utilities_data = WinJS.Utilities.data;
-            var markDisposable = WinJS.Utilities.markDisposable;
-            var ui_processAll = WinJS.UI.processAll;
-            var binding_processAll = WinJS.Binding.processAll;
-            var options_parser = WinJS.UI._optionsParser;
-            var CallExpression = WinJS.UI._CallExpression;
-            var IdentifierExpression = WinJS.UI._IdentifierExpression;
-            var binding_parser = WinJS.Binding._bindingParser2;
-            var scopedSelect = WinJS.UI.scopedSelect;
-            var writeProfilerMark = WinJS.Utilities._writeProfilerMark;
+            var init_defaultBind = _Declarative.defaultBind;
+            var init_oneTime = _Declarative.oneTime;
+            var init_setAttribute = _Declarative.setAttribute;
+            var init_setAttributeOneTime = _Declarative.setAttributeOneTime;
+            var init_addClassOneTime = _Declarative.addClassOneTime;
+            var binding_as = _Data.as;
+            var promise_as = Promise.as;
+            var supportedForProcessing = _BaseUtils.supportedForProcessing;
+            var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
+            var insertAdjacentHTMLUnsafe = _SafeHtml.insertAdjacentHTMLUnsafe;
+            var utilities_data = _ElementUtilities.data;
+            var markDisposable = _Dispose.markDisposable;
+            var ui_processAll = ControlProcessor.processAll;
+            var binding_processAll = _Declarative.processAll;
+            var options_parser = _OptionsParser._optionsParser;
+            var CallExpression = _OptionsParser._CallExpression;
+            var IdentifierExpression = _OptionsParser._IdentifierExpression;
+            var binding_parser = _BindingParser._bindingParser2;
+            var scopedSelect = ControlProcessor.scopedSelect;
+            var writeProfilerMark = _WriteProfilerMark;
 
             // Runtime helper functions
             //
             function disposeInstance(container, workPromise, renderCompletePromise) {
-                var bindings = WinJS.Utilities.data(container).bindTokens;
+                var bindings = _ElementUtilities.data(container).bindTokens;
                 if (bindings) {
                     bindings.forEach(function (binding) {
                         if (binding && binding.cancel) {
@@ -65,7 +79,7 @@ define([
             }
             function delayedBindingProcessing(data, defaultInitializer) {
                 return function (element) {
-                    return WinJS.Binding.processAll(element, data, false, null, defaultInitializer);
+                    return _Declarative.processAll(element, data, false, null, defaultInitializer);
                 }
             }
 
@@ -105,7 +119,7 @@ define([
                 //
                 var result = string.replace(formatRegEx, function (unused, left, right, part, illegalLeft, illegalRight, replacementIndex) {
                     if (illegalLeft || illegalRight) {
-                        throw new WinJS.ErrorFromName(
+                        throw new _ErrorFromName(
                             "Format:MalformedInputString",
                             "Did you forget to escape a: " + (illegalLeft || illegalRight) + " at: " + replacementIndex);
                     }
@@ -119,7 +133,7 @@ define([
                         result = parts[part];
                     }
                     if (result === undefined) {
-                        throw new WinJS.ErrorFromName(
+                        throw new _ErrorFromName(
                             "Format:MissingPart",
                             "Missing part '" + part + "'"
                         );
@@ -279,7 +293,7 @@ define([
 
             // Compiler helper types
             //
-            var TreeCSE = WinJS.Class.define(function (compiler, name, kind, accessExpression, filter) {
+            var TreeCSE = _Base.Class.define(function (compiler, name, kind, accessExpression, filter) {
 
                 var that = this;
                 this.compiler = compiler;
@@ -456,7 +470,7 @@ define([
 
             // Compiler
             //
-            var TemplateCompiler = WinJS.Class.define(function (templateElement, options) {
+            var TemplateCompiler = _Base.Class.define(function (templateElement, options) {
                 this._stage = Stage.initial;
                 this._staticVariables = {};
                 this._staticVariablesCount = 0;
@@ -481,7 +495,7 @@ define([
                 this._globalCSE = new TreeCSE(this, this.importSafe("global", _Global), InstanceKind.global, this.generateNormalAccess.bind(this), this.importSafe("globalSecurityCheck", requireSupportedForProcessing));
 
                 // Clone the template content and import it into its own HTML document for further processing
-                WinJS.UI.Fragments.renderCopy(this._templateElement, this._templateContent);
+                Fragments.renderCopy(this._templateElement, this._templateContent);
 
                 // If we are extracting the first child we only bother compiling the one child
                 if (this._extractChild) {
@@ -1126,7 +1140,7 @@ define([
                         var name = element.getAttribute("data-win-control");
                         // Control constructors are checked along the entirety of their path to be supported 
                         //  for processing when they are bound
-                        var ControlConstructor = WinJS.Utilities._getMemberFiltered(name.trim(), _Global, requireSupportedForProcessing);
+                        var ControlConstructor = _BaseUtils._getMemberFiltered(name.trim(), _Global, requireSupportedForProcessing);
                         if (!ControlConstructor) {
                             continue;
                         }
@@ -1658,9 +1672,9 @@ define([
 
                     if (binding.destination.length === 1 && binding.destination[0] === "id") {
                         if (WinJS.validation) {
-                            throw new WinJS.ErrorFromName("WinJS.Binding.IdBindingNotSupported", WinJS.Resources._formatString(strings.idBindingNotSupported, binding.bindingText));
+                            throw new _ErrorFromName("WinJS.Binding.IdBindingNotSupported", _Resources._formatString(strings.idBindingNotSupported, binding.bindingText));
                         }
-                        WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.idBindingNotSupported, binding.bindingText), "winjs binding", "error");
+                        WinJS.log && WinJS.log(_Resources._formatString(strings.idBindingNotSupported, binding.bindingText), "winjs binding", "error");
                         this.markBindingAsError(binding);
                         return;
                     }
@@ -1892,9 +1906,9 @@ define([
 
                     if (binding.destination.length === 1 && binding.destination[0] === "id") {
                         if (WinJS.validation) {
-                            throw new WinJS.ErrorFromName("WinJS.Binding.IdBindingNotSupported", WinJS.Resources._formatString(strings.idBindingNotSupported, binding.bindingText));
+                            throw new _ErrorFromName("WinJS.Binding.IdBindingNotSupported", _Resources._formatString(strings.idBindingNotSupported, binding.bindingText));
                         }
-                        WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.idBindingNotSupported, binding.bindingText), "winjs binding", "error");
+                        WinJS.log && WinJS.log(_Resources._formatString(strings.idBindingNotSupported, binding.bindingText), "winjs binding", "error");
                         this.markBindingAsError(binding);
                         return;
                     }
@@ -1952,7 +1966,7 @@ define([
                     compiler.analyze();
 
                     var importAliases = compiler.importAllSafe({
-                        Signal: WinJS._Signal,
+                        Signal: _Signal,
                         global: _Global,
                         document: document,
                         cancelBlocker: cancelBlocker,
@@ -2270,7 +2284,11 @@ define([
 
             return TemplateCompiler;
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.Binding", members);
+
+    return _Base.Namespace.defineWithParent(null, null, members);
 
 
 });

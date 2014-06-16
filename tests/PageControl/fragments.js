@@ -746,9 +746,9 @@ CorsicaTests.Fragments = function () {
     }
     
     this.testRenderImplProducingTracesForHref = function(complete) {
-        var realWriteProfilerMark = WinJS.Utilities._writeProfilerMark;
-        WinJS.Utilities._writeProfilerMark = function (mark) {
-            WinJS.Utilities._writeProfilerMark = realWriteProfilerMark;
+        var realWriteProfilerMark = window.msWriteProfilerMark;
+        window.msWriteProfilerMark = function (mark) {
+            window.msWriteProfilerMark = realWriteProfilerMark;
             var prefix = "WinJS.UI.Fragments:render href='destination.html'[";
             var suffix = "],StartTM";
             LiveUnit.Assert.isTrue(mark.indexOf(prefix) == 0, "expecting to start with " + prefix + ", got " + mark);
@@ -763,9 +763,9 @@ CorsicaTests.Fragments = function () {
     };
     
     this.testRenderImplProducingTracesForElement = function(complete) {
-        var realWriteProfilerMark = WinJS.Utilities._writeProfilerMark;
-        WinJS.Utilities._writeProfilerMark = function(mark) {
-            WinJS.Utilities._writeProfilerMark = realWriteProfilerMark;
+        var realWriteProfilerMark = window.msWriteProfilerMark;
+        window.msWriteProfilerMark = function(mark) {
+            window.msWriteProfilerMark = realWriteProfilerMark;
             var prefix = "WinJS.UI.Fragments:render id='testId' class='class1 class2'[";
             var suffix = "],StartTM";
             LiveUnit.Assert.isTrue(mark.indexOf(prefix) == 0, "expecting to start with " + prefix + ", got " + mark);

@@ -1,12 +1,19 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function bindingParserInit() {
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../ControlProcessor/_OptionsLexer',
+    '../ControlProcessor/_OptionsParser'
+    ], function bindingParserInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _OptionsLexer, _OptionsParser) {
     "use strict";
 
 
     var strings = {
-        get invalidBinding() { return WinJS.Resources._getWinJSString("base/invalidBinding").value; },
-        get bindingInitializerNotFound() { return WinJS.Resources._getWinJSString("base/bindingInitializerNotFound").value; },
+        get invalidBinding() { return _Resources._getWinJSString("base/invalidBinding").value; },
+        get bindingInitializerNotFound() { return _Resources._getWinJSString("base/bindingInitializerNotFound").value; },
     };
 
 /*
@@ -48,27 +55,31 @@ define([
             Identifier AccessExpressions
 
 */
-    var imports = WinJS.Namespace.defineWithParent(null, null, {
-        lexer: WinJS.Namespace._lazy("WinJS.UI._optionsLexer"),
-        tokenType: WinJS.Namespace._lazy("WinJS.UI._optionsLexer.tokenType"),
+    var imports = _Base.Namespace.defineWithParent(null, null, {
+        lexer: _Base.Namespace._lazy(function() {
+            return _OptionsLexer._optionsLexer;
+        }),
+        tokenType: _Base.Namespace._lazy(function() {
+            return _OptionsLexer._optionsLexer.tokenType;
+        }),
     });
 
-    var requireSupportedForProcessing = WinJS.Utilities.requireSupportedForProcessing;
+    var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
 
-    var local = WinJS.Namespace.defineWithParent(null, null, {
+    var local = _Base.Namespace.defineWithParent(null, null, {
 
-        BindingInterpreter: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.derive(WinJS.UI.optionsParser._BaseInterpreter, function (tokens, originalSource, context) {
+        BindingInterpreter: _Base.Namespace._lazy(function () {
+            return _Base.Class.derive(_OptionsParser.optionsParser._BaseInterpreter, function (tokens, originalSource, context) {
                 this._initialize(tokens, originalSource, context);
             }, {
                 _error: function (message) {
-                    throw new WinJS.ErrorFromName("WinJS.Binding.ParseError", WinJS.Resources._formatString(strings.invalidBinding, this._originalSource, message));
+                    throw new _ErrorFromName("WinJS.Binding.ParseError", _Resources._formatString(strings.invalidBinding, this._originalSource, message));
                 },
                 _evaluateInitializerName: function () {
                     if (this._current.type === imports.tokenType.identifier) {
                         var initializer = this._evaluateIdentifierExpression();
                         if (WinJS.log && !initializer) {
-                            WinJS.log(WinJS.Resources._formatString(strings.bindingInitializerNotFound, this._originalSource), "winjs binding", "error");
+                            WinJS.log(_Resources._formatString(strings.bindingInitializerNotFound, this._originalSource), "winjs binding", "error");
                         }
                         return requireSupportedForProcessing(initializer);
                     }
@@ -134,8 +145,8 @@ define([
             });
         }),
 
-        BindingParser: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.derive(local.BindingInterpreter, function (tokens, originalSource) {
+        BindingParser: _Base.Namespace._lazy(function () {
+            return _Base.Class.derive(local.BindingInterpreter, function (tokens, originalSource) {
                 this._initialize(tokens, originalSource, {});
             }, {
                 _readInitializerName: function () {
@@ -163,28 +174,29 @@ define([
     });
 
     function parser(text, context) {
-        WinJS.Utilities._writeProfilerMark("WinJS.Binding:bindingParser,StartTM");
+        _WriteProfilerMark("WinJS.Binding:bindingParser,StartTM");
         var tokens = imports.lexer(text);
         var interpreter = new local.BindingInterpreter(tokens, text, context || {});
         var res = interpreter.run();
-        WinJS.Utilities._writeProfilerMark("WinJS.Binding:bindingParser,StopTM");
+        _WriteProfilerMark("WinJS.Binding:bindingParser,StopTM");
         return res;
     }
 
     function parser2(text) {
-        WinJS.Utilities._writeProfilerMark("WinJS.Binding:bindingParser,StartTM");
+        _WriteProfilerMark("WinJS.Binding:bindingParser,StartTM");
         var tokens = imports.lexer(text);
         var interpreter = new local.BindingParser(tokens, text);
         var res = interpreter.run();
-        WinJS.Utilities._writeProfilerMark("WinJS.Binding:bindingParser,StopTM");
+        _WriteProfilerMark("WinJS.Binding:bindingParser,StopTM");
         return res;
     }
 
-    WinJS.Namespace.define("WinJS.Binding", {
-
+    var members = {
         _bindingParser: parser,
         _bindingParser2: parser2,
+    };
 
-    });
+    _Base.Namespace.define("WinJS.Binding", members);
+    return members;
 
 });

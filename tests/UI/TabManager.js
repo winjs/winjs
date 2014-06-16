@@ -11,15 +11,20 @@ CorsicaTests.TabManager = function () {
         var newNode = document.createElement("div");
         newNode.id = "TabManagerTest";
         document.body.appendChild(newNode);
-        WinJS.Utilities._yieldForEvents = function (callback) {
-            callback(); // Avoid async for these tests by making _yieldForEvents synchronous
-        }
+        WinJS.Utilities._require(['WinJS/Core/_BaseUtils'], function(_BaseUtils) {
+            _BaseUtils._yieldForEvents = function (callback) {
+                callback(); // Avoid async for these tests by making _yieldForEvents synchronous
+            }
+        });
+        
         complete();
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
-        WinJS.Utilities._yieldForEvents = realYieldForEvents;
+        WinJS.Utilities._require(['WinJS/Core/_BaseUtils'], function(_BaseUtils) {
+            _BaseUtils._yieldForEvents = realYieldForEvents;
+        });
         var element = document.getElementById("TabManagerTest");
         if (element) {
             WinJS.Utilities.disposeSubTree(element);

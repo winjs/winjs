@@ -117,12 +117,6 @@ define([
         };
 
         function lazy(f) {
-            if (typeof f === "string") {
-                var target = f;
-                f = function () {
-                    return _BaseCoreUtils.getMember(target);
-                };
-            }
             var name;
             var state = LazyStates.uninitialized;
             var result;

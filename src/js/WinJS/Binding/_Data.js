@@ -1,13 +1,20 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function dataInit() {
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Promise',
+    '../Scheduler',
+    './_DomWeakRefTable'
+    ], function dataInit(_Base, _BaseUtils, _ErrorFromName, _Resources, Promise, Scheduler, _DomWeakRefTable) {
     "use strict";
 
 
     var strings = {
-        get exceptionFromBindingInitializer() { return WinJS.Resources._getWinJSString("base/exceptionFromBindingInitializer").value; },
-        get propertyIsUndefined() { return WinJS.Resources._getWinJSString("base/propertyIsUndefined").value; },
-        get unsupportedDataTypeForBinding() { return WinJS.Resources._getWinJSString("base/unsupportedDataTypeForBinding").value; },
+        get exceptionFromBindingInitializer() { return _Resources._getWinJSString("base/exceptionFromBindingInitializer").value; },
+        get propertyIsUndefined() { return _Resources._getWinJSString("base/propertyIsUndefined").value; },
+        get unsupportedDataTypeForBinding() { return _Resources._getWinJSString("base/unsupportedDataTypeForBinding").value; },
     };
 
     var observableMixin = {
@@ -69,7 +76,7 @@ define([
 
                 // Binding guarantees async notification, so we do timeout()
                 //
-                cap.promise = WinJS.Utilities.Scheduler.schedulePromiseNormal(null, "WinJS.Binding.observableMixin.notify").
+                cap.promise = Scheduler.schedulePromiseNormal(null, "WinJS.Binding.observableMixin.notify").
                     then(function () {
                         // cap.promise is removed after canceled, so we use this as a signal
                         // to indicate that we should abort early
@@ -79,7 +86,7 @@ define([
                                 listeners[i](newValue, oldValue);
                             }
                             catch (e) {
-                                WinJS.log && WinJS.log(WinJS.Resources._formatString(strings.exceptionFromBindingInitializer, e.toString()), "winjs binding", "error");
+                                WinJS.log && WinJS.log(_Resources._formatString(strings.exceptionFromBindingInitializer, e.toString()), "winjs binding", "error");
                             }
                         }
                         cleanup();
@@ -89,7 +96,7 @@ define([
                 return cap.promise;
             }
 
-            return WinJS.Promise.as();
+            return Promise.as();
         },
 
         bind: function (name, action) {
@@ -220,7 +227,7 @@ define([
             /// </signature>
             var data = this._backingData[name];
             if (WinJS.log && data === undefined) {
-                WinJS.log(WinJS.Resources._formatString(strings.propertyIsUndefined, name), "winjs binding", "warn");
+                WinJS.log(_Resources._formatString(strings.propertyIsUndefined, name), "winjs binding", "warn");
             }
             return as(data);
         },
@@ -316,7 +323,7 @@ define([
                     return this.notify(name, newValue, oldValue);
                 }
             }
-            return WinJS.Promise.as();
+            return Promise.as();
         },
 
         removeProperty: function (name) {
@@ -382,21 +389,21 @@ define([
         return "bindHandler" + (bindRefId++);
     };
     var createProxy = function (func, bindStateRef) {
-        if (!WinJS.Utilities.hasWinRT) {
+        if (!_BaseUtils.hasWinRT) {
             return func;
         }
 
         var id = createBindRefId();
-        WinJS.Utilities._getWeakRefElement(bindStateRef)[id] = func;
+        _DomWeakRefTable._getWeakRefElement(bindStateRef)[id] = func;
         return function (n, o) {
-            var bindState = WinJS.Utilities._getWeakRefElement(bindStateRef);
+            var bindState = _DomWeakRefTable._getWeakRefElement(bindStateRef);
             if (bindState) {
                 bindState[id](n, o);
             }
         };
     }
     var bindImpl = function (observable, bindingDescriptor, bindStateRef) {
-        observable = WinJS.Binding.as(observable);
+        observable = as(observable);
         if (!observable) {
             return { cancel: function () { }, empty: true };
         }
@@ -405,7 +412,7 @@ define([
         if (!bindStateRef) {
             bindStateRef = createBindRefId();
             bindState = {};
-            WinJS.Utilities._createWeakRef(bindState, bindStateRef);
+            _DomWeakRefTable._createWeakRef(bindState, bindStateRef);
         }
 
         var complexLast = {};
@@ -485,7 +492,7 @@ define([
     };
 
     
-    var ObservableProxy = WinJS.Class.mix(function (data) {
+    var ObservableProxy = _Base.Class.mix(function (data) {
         this._initObservable(data);
         Object.defineProperties(this, expandProperties(data));
     }, dynamicObservableMixin);
@@ -540,14 +547,14 @@ define([
         //
         if (!data || typeof (data) !== "object" || (data instanceof Date) || (data instanceof Array)) {
             if (WinJS.validation) {
-                throw new WinJS.ErrorFromName("WinJS.Binding.UnsupportedDataType", WinJS.Resources._formatString(strings.unsupportedDataTypeForBinding));
+                throw new _ErrorFromName("WinJS.Binding.UnsupportedDataType", _Resources._formatString(strings.unsupportedDataTypeForBinding));
             }
             else {
                 return;
             }
         }
 
-        return WinJS.Class.mix(
+        return _Base.Class.mix(
             function (init) {
                 /// <signature helpKeyword="WinJS.Binding.define.return">
                 /// <summary locid="WinJS.Binding.define.return">
@@ -560,8 +567,8 @@ define([
 
                 this._initObservable(init || Object.create(data));
             },
-            WinJS.Binding.dynamicObservableMixin,
-            WinJS.Binding.expandProperties(data)
+            dynamicObservableMixin,
+            expandProperties(data)
         );
     };
 
@@ -627,7 +634,7 @@ define([
             return data;
     };
 
-    WinJS.Namespace.define("WinJS.Binding", {
+    var members = {
         // must use long form because mixin has "get" and "set" as members, so the define
         // method thinks it's a property
         mixin: { value: dynamicObservableMixin, enumerable: false, writable: true, configurable: true },
@@ -638,5 +645,8 @@ define([
         as: as,
         unwrap: unwrap,
         bind: bind
-    });
+    };
+
+    _Base.Namespace.define("WinJS.Binding", members);
+    return _Base.Namespace.defineWithParent(null, null, members);
 });

@@ -1,13 +1,18 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function optionsParserInit() {
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    './_OptionsLexer'
+    ], function optionsParserInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _OptionsLexer) {
     "use strict";
 
     var strings = {
-        get invalidOptionsRecord() { return WinJS.Resources._getWinJSString("base/invalidOptionsRecord").value; },
-        get unexpectedTokenExpectedToken() { return WinJS.Resources._getWinJSString("base/unexpectedTokenExpectedToken").value; },
-        get unexpectedTokenExpectedTokens() { return WinJS.Resources._getWinJSString("base/unexpectedTokenExpectedTokens").value; },
-        get unexpectedTokenGeneric() { return WinJS.Resources._getWinJSString("base/unexpectedTokenGeneric").value; },
+        get invalidOptionsRecord() { return _Resources._getWinJSString("base/invalidOptionsRecord").value; },
+        get unexpectedTokenExpectedToken() { return _Resources._getWinJSString("base/unexpectedTokenExpectedToken").value; },
+        get unexpectedTokenExpectedTokens() { return _Resources._getWinJSString("base/unexpectedTokenExpectedTokens").value; },
+        get unexpectedTokenGeneric() { return _Resources._getWinJSString("base/unexpectedTokenGeneric").value; },
     };
 
     /*
@@ -120,12 +125,16 @@ define([
         throw "Illegal";
     }
 
-    var imports = WinJS.Namespace.defineWithParent(null, null, {
-        lexer: WinJS.Namespace._lazy("WinJS.UI._optionsLexer"),
-        tokenType: WinJS.Namespace._lazy("WinJS.UI._optionsLexer.tokenType"),
+    var imports = _Base.Namespace.defineWithParent(null, null, {
+        lexer: _Base.Namespace._lazy(function() {
+            return _OptionsLexer._optionsLexer;
+        }),
+        tokenType: _Base.Namespace._lazy(function() {
+            return _OptionsLexer._optionsLexer.tokenType;
+        }),
     });
 
-    var requireSupportedForProcessing = WinJS.Utilities.requireSupportedForProcessing;
+    var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
 
     function tokenTypeName(type) {
         var keys = Object.keys(imports.tokenType);
@@ -137,12 +146,12 @@ define([
         return "<unknown>";
     }
 
-    var local = WinJS.Namespace.defineWithParent(null, null, {
+    var local = _Base.Namespace.defineWithParent(null, null, {
 
-        BaseInterpreter: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.define(null, {
+        BaseInterpreter: _Base.Namespace._lazy(function () {
+            return _Base.Class.define(null, {
                 _error: function (message) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.ParseError", message);
+                    throw new _ErrorFromName("WinJS.UI.ParseError", message);
                 },
                 _currentOffset: function () {
                     var l = this._tokens.length;
@@ -303,17 +312,17 @@ define([
                     if (expected) {
                         if (arguments.length == 1) {
                             expected = tokenTypeName(expected);
-                            this._error(WinJS.Resources._formatString(strings.unexpectedTokenExpectedToken, unexpected, expected, this._currentOffset()));
+                            this._error(_Resources._formatString(strings.unexpectedTokenExpectedToken, unexpected, expected, this._currentOffset()));
                         } else {
                             var names = [];
                             for (var i = 0, len = arguments.length; i < len; i++) {
                                 names.push(tokenTypeName(arguments[i]));
                             }
                             expected = names.join(", ");
-                            this._error(WinJS.Resources._formatString(strings.unexpectedTokenExpectedTokens, unexpected, expected, this._currentOffset()));
+                            this._error(_Resources._formatString(strings.unexpectedTokenExpectedTokens, unexpected, expected, this._currentOffset()));
                         }
                     } else {
-                        this._error(WinJS.Resources._formatString(strings.unexpectedTokenGeneric, unexpected, this._currentOffset()));
+                        this._error(_Resources._formatString(strings.unexpectedTokenGeneric, unexpected, this._currentOffset()));
                     }
                 }
             }, {
@@ -321,12 +330,12 @@ define([
             });
         }),
 
-        OptionsInterpreter: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.derive(local.BaseInterpreter, function (tokens, originalSource, context, functionContext) {
+        OptionsInterpreter: _Base.Namespace._lazy(function () {
+            return _Base.Class.derive(local.BaseInterpreter, function (tokens, originalSource, context, functionContext) {
                 this._initialize(tokens, originalSource, context, functionContext);
             }, {
                 _error: function (message) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.ParseError", WinJS.Resources._formatString(strings.invalidOptionsRecord, this._originalSource, message));
+                    throw new _ErrorFromName("WinJS.UI.ParseError", _Resources._formatString(strings.invalidOptionsRecord, this._originalSource, message));
                 },
                 _evaluateArrayLiteral: function () {
                     var a = [];
@@ -500,8 +509,8 @@ define([
             });
         }),
 
-        OptionsParser: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.derive(local.OptionsInterpreter, function (tokens, originalSource) {
+        OptionsParser: _Base.Namespace._lazy(function () {
+            return _Base.Class.derive(local.OptionsInterpreter, function (tokens, originalSource) {
                 this._initialize(tokens, originalSource);
             }, {
                 // When parsing it is illegal to get to any of these "evaluate" RHS productions because
@@ -591,18 +600,18 @@ define([
     // Consumers of parser2 need to be able to see the AST for RHS expression in order to emit
     //  code representing these portions of the options record
     //
-    var CallExpression = WinJS.Class.define(function (target, arg0Value) {
+    var CallExpression = _Base.Class.define(function (target, arg0Value) {
         this.target = target;
         this.arg0Value = arg0Value;
     });
     CallExpression.supportedForProcessing = false;
 
-    var IdentifierExpression = WinJS.Class.define(function (parts) {
+    var IdentifierExpression = _Base.Class.define(function (parts) {
         this.parts = parts;
     });
     IdentifierExpression.supportedForProcessing = false;
 
-    WinJS.Namespace.define("WinJS.UI", {
+    var members = {
 
         // This is the mis-named interpreter version of the options record processor.
         //
@@ -614,7 +623,11 @@ define([
         _CallExpression: CallExpression,
         _IdentifierExpression: IdentifierExpression,
 
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+
+    return members;
 
 });
 
