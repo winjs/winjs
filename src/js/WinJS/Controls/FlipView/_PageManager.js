@@ -804,6 +804,7 @@ define([
                     this._logBuffer();
                     this._notificationsStarted = this._notificationsStarted || 0;
                     this._notificationsStarted++;
+                    // _notificationsEndedSignal is also used in the FlipView unit tests for coordination in the datasource tests
                     this._notificationsEndedSignal = new WinJS._Signal();
                     this._temporaryKeys = [];
                     this._animationRecords = {};

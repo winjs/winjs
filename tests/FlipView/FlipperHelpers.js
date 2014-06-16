@@ -261,7 +261,7 @@ function verifyFlipViewPagePositions(flipView) {
     }
 }
 
-function runFlipViewTests(flipView, tests, usePageCompletedEvent) {
+function runFlipViewTests(flipView, tests) {
     var currentTest = 0;
 
     function runNextTest() {
@@ -280,10 +280,7 @@ function runFlipViewTests(flipView, tests, usePageCompletedEvent) {
         runNextTest();
     }
 
-    WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500)).then(function() {
-        flipView.addEventListener(usePageCompletedEvent ? "pagecompleted" : "pageselected", pageEventHandler, false);
-        runNextTest();
-    });
+    flipView.addEventListener("pagecompleted", pageEventHandler, false);
 }
 
 function quickNext(curr, next, horizontal) {

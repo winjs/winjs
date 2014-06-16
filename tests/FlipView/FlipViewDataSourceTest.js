@@ -72,7 +72,7 @@ WinJSTests.FlipViewDatasourceTests = function () {
                 flipView.next();
                 list.splice(2, 1);
                 list.splice(1, 1);
-                WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(2000)).then(function () {
+                flipView._pageManager._notificationsEndedSignal.promise.then(function () {
                     LiveUnit.Assert.areEqual("New DelhiIndia", flipView._pageManager._currentPage.element.textContent);
                     complete();
                 });
@@ -100,7 +100,7 @@ WinJSTests.FlipViewDatasourceTests = function () {
                 // Jump
                 flipView.currentPage = 0;
 
-                WinJS.Utilities._setImmediate(function () {
+                flipView._pageManager._notificationsEndedSignal.promise.then(function () {
                     // Change
                     list.setAt(0, { title: "Tampa", data1: "America" });
                     LiveUnit.Assert.areEqual("TampaAmerica", flipView._pageManager._currentPage.element.textContent);
@@ -363,14 +363,15 @@ WinJSTests.FlipViewDatasourceTests = function () {
     function changeToNullDataSource(element, flipView, rawData, complete) {
         var tests = [
             function () {
+                var refreshHandler = flipView._refreshHandler;
+                flipView._refreshHandler = function () {
+                    refreshHandler.call(flipView);
+                    flipView.count().done(function (count) {
+                        LiveUnit.Assert.areEqual(0, count);
+                        complete();
+                    });
+                };
                 flipView.itemDataSource = null;
-                return true;
-            },
-            function () {
-                flipView.count().done(function(count) {
-                    LiveUnit.Assert.areEqual(0, count);
-                    complete();
-                });
             }
         ];
         runFlipViewTests(flipView, tests);

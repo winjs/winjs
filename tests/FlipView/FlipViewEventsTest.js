@@ -34,24 +34,22 @@ WinJSTests.FlipViewEventsTests = function () {
     }
 
     this.generate = function (name, testFunction) {
-        function generateTest(that, orientation, useL0DomEvent, usePageCompletedEvent) {
-            that[name + "_" + orientation + (useL0DomEvent ? "_useL0DomEvent" : "") + (usePageCompletedEvent ? "_usePageCompletedEvent" : "")] = function (complete) {
+        function generateTest(that, orientation, useL0DomEvent) {
+            that[name + "_" + orientation + (useL0DomEvent ? "_useL0DomEvent" : "")] = function (complete) {
                 var element = document.getElementById("BasicFlipView"),
                     testData = createArraySource(COUNT, ["400px"], ["400px"]),
                     rawData = testData.rawData,
                     options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation };
 
                 var flipView = new WinJS.UI.FlipView(element, options);
-                testFunction(element, flipView, rawData, complete, useL0DomEvent, usePageCompletedEvent);
+                testFunction(element, flipView, rawData, complete, useL0DomEvent);
             };
         }
 
         var that = this;
-        [true, false].forEach(function(usePageCompletedEvent) {
-            [true, false].forEach(function(useL0DomEvent) {
-                generateTest(that, "horizontal", useL0DomEvent, usePageCompletedEvent);
-                generateTest(that, "vertical", useL0DomEvent, usePageCompletedEvent);
-            });
+        [true, false].forEach(function(useL0DomEvent) {
+            generateTest(that, "horizontal", useL0DomEvent);
+            generateTest(that, "vertical", useL0DomEvent);
         });
 
     }
@@ -63,7 +61,7 @@ WinJSTests.FlipViewEventsTests = function () {
         flipView.itemTemplate.verifyOutput(getDisplayedElement(flipView), rawData);
     }
     
-    function eventsTest(element, flipView, rawData, complete, useL0DomEvent, usePageCompletedEvent) {
+    function eventsTest(element, flipView, rawData, complete, useL0DomEvent) {
         var gotVisibilityChangedTrue,
             gotVisibilityChangedFalse,
             outgoingElement,
@@ -162,9 +160,7 @@ WinJSTests.FlipViewEventsTests = function () {
             }
         ];
 
-        // When usePageCompletedEvent is false, this runs the tests using the pageselected event
-        // instead of the pagecompleted event (which fires after the render completes)
-        runFlipViewTests(flipView, tests, usePageCompletedEvent);
+        runFlipViewTests(flipView, tests);
     }
 };
 
