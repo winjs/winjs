@@ -260,7 +260,7 @@ define(
                             }
                         }
                     },
-                    
+
                     dispose: function pivot_dispose() {
                         /// <signature helpKeyword="WinJS.UI.Pivot.dispose">
                         /// <summary locid="WinJS.UI.Pivot.dispose">
@@ -1002,7 +1002,7 @@ define(
 
                         this._slideHeadersAnimation = headerAnimation.then(headerCleanup, headerCleanup);
                     },
-                    
+
 
                     // Input Handlers
                     _elementClickedHandler: function pivot_elementClickedHandler(ev) {
@@ -1073,13 +1073,26 @@ define(
 
                         var dx = e.clientX - this._headersPointerDownPoint.x;
                         dx = this._rtl ? -dx : dx;
+                        var swiped = false;
                         if ((!WinJS.Utilities._supportsTouchDetection || (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH))) {
                             // Header swipe navigation detection
                             // If touch detection is not supported then we will detect swipe gestures for any pointer type.
                             if (dx < -WinJS.UI.Pivot._headerSwipeTriggerDistance) {
                                 this._goNext();
+                                swiped = true;
                             } else if (dx > WinJS.UI.Pivot._headerSwipeTriggerDistance) {
                                 this._goPrevious();
+                                swiped = true;
+                            }
+                        }
+                        if (!swiped) {
+                            // Detect header click
+                            var element = e.target;
+                            while (element !== null && !element.classList.contains(WinJS.UI.Pivot._ClassName.pivotHeader)) {
+                                element = element.parentElement;
+                            }
+                            if (element !== null) {
+                                this._activateHeader(element);
                             }
                         }
                         this._headersPointerDownPoint = null;
