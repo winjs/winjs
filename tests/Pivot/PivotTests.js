@@ -16,8 +16,13 @@ WinJSTests.PivotTests = function () {
     var pivotWidth = 320;
 
     var pointerName = "Mouse";
-    if (window.MSPointerEvent) {
+    var initFuncName = "initMouseEvent";
+    if (window.PointerEvent) {
         pointerName = "Pointer";
+        initFuncName = "initPointerEvent";
+    } else if (window.MSPointerEvent) {
+        pointerName = "MSPointer";
+        initFuncName = "initPointerEvent";
     }
 
     var pivotWrapperEl;
@@ -47,15 +52,17 @@ WinJSTests.PivotTests = function () {
     }
 
     function firePointerEvent(type, element, clientX, clientY, pointerType) {
-        pointerType = pointerType || PT_TOUCH;
-
         //PointerEvent.initPointerEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary); 
         var elementRect = element.getBoundingClientRect();
         var event = document.createEvent(pointerName + "Event");
-        WinJS.Utilities["_init" + pointerName + "Event"](event, type, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, pointerType, Date.now(), true);
-        WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE = pointerType;
+        WinJS.Utilities["_" + initFuncName](event, type, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, pointerType, Date.now(), true);
+        if (!window.MSPointerEvent) {
+            WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE = pointerType || PT_TOUCH;
+        }
         element.dispatchEvent(event);
-        WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE = PT_MOUSE;
+        if (!window.MSPointerEvent) {
+            WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE = PT_MOUSE;
+        }
     }
 
     function simulateTap(element, x, y, pointerType) {
