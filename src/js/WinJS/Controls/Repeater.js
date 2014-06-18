@@ -1,9 +1,21 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function repeaterInit() {
+    '../Core/_Base',
+    '../Core/_ErrorFromName',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../BindingList',
+    '../BindingTemplate',
+    '../Promise',
+    '../Utilities/_Control',
+    '../Utilities/_Dispose',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_UIUtilities'
+    ], function repeaterInit(_Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities, _UIUtilities) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    var members = {
         /// <field>
         /// <summary locid="WinJS.UI.Repeater">
         /// Uses templates to generate HTML from a set of data.
@@ -16,9 +28,7 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        Repeater: WinJS.Namespace._lazy(function () {
-            var UI = WinJS.UI;
-            var Utilities = WinJS.Utilities;
+        Repeater: _Base.Namespace._lazy(function () {
 
             // Constants
             var ITEMSLOADED = "itemsloaded",
@@ -33,7 +43,7 @@ define([
                 ITEMSRELOADING = "itemsreloading",
                 ITEMSRELOADED = "itemsreloaded";
 
-            var createEvent = Utilities._createEventProperty;
+            var createEvent = _Events._createEventProperty;
 
             // Class Names
             var repeaterClass = "win-repeater";
@@ -47,12 +57,12 @@ define([
 
             // Statics
             var strings = {
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get asynchronousRender() { return WinJS.Resources._getWinJSString("ui/asynchronousRender").value; },
-                get repeaterReentrancy() { return WinJS.Resources._getWinJSString("ui/repeaterReentrancy").value; },
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                get asynchronousRender() { return _Resources._getWinJSString("ui/asynchronousRender").value; },
+                get repeaterReentrancy() { return _Resources._getWinJSString("ui/repeaterReentrancy").value; },
             };
 
-            var Repeater = WinJS.Class.define(function Repeater_ctor(element, options) {
+            var Repeater = _Base.Class.define(function Repeater_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Repeater.Repeater">
                 /// <summary locid="WinJS.UI.Repeater.constructor">
                 /// Creates a new Repeater control.
@@ -72,14 +82,14 @@ define([
 
                 // Check to make sure we weren't duplicated
                 if (element && element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.Repeater.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.Repeater.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
                 this._element = element || document.createElement("div");
-                this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
+                this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
                 options = options || {};
-                Utilities.addClass(this._element, "win-repeater win-disposable");
+                _ElementUtilities.addClass(this._element, "win-repeater win-disposable");
 
                 this._render = null;
                 this._modifying = false;
@@ -103,7 +113,7 @@ define([
                 this.data = options.data;
                 this._initializing = false;
 
-                UI._setOptions(this, options, true); // Events only
+                _Control._setOptions(this, options, true); // Events only
 
                 this._repeatedDOM = [];
                 this._renderAllItems();
@@ -131,7 +141,7 @@ define([
                         if (this._data) {
                             this._removeDataListeners();
                         }
-                        this._data = data || new WinJS.Binding.List();
+                        this._data = data || new BindingList.List();
                         this._addDataListeners();
                         if (!this._initializing) {
                             this._reloadRepeater(true);
@@ -149,7 +159,7 @@ define([
                     set: function (template) {
                         this._writeProfilerMark("template.set,StartTM");
                         this._template = (template || stringifyItem);
-                        this._render = WinJS.Utilities._syncRenderer(this._template, this.element.tagName);
+                        this._render = _UIUtilities._syncRenderer(this._template, this.element.tagName);
                         if (!this._initializing) {
                             this._reloadRepeater(true);
                             this.dispatchEvent(ITEMSLOADED, {});
@@ -194,7 +204,7 @@ define([
                     this._data = null;
                     this._template = null;
                     for (var i = 0, len = this._repeatedDOM.length; i < len; i++) {
-                        WinJS.Utilities._disposeElement(this._repeatedDOM[i]);
+                        _Dispose._disposeElement(this._repeatedDOM[i]);
                     }
                 },
 
@@ -263,7 +273,7 @@ define([
                             // Move each child element from the Repeater to the Template Element
                             templateElement.appendChild(this._element.firstElementChild);
                         }
-                        return new WinJS.Binding.Template(templateElement, { extractChild: true });
+                        return new BindingTemplate.Template(templateElement, { extractChild: true });
                     }
                 },
 
@@ -272,7 +282,7 @@ define([
                     for (var i = 0, len = this._data.length; i < len; i++) {
                         var renderedItem = this._render(this._data.getAt(i));
                         if (!renderedItem) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.Repeater.AsynchronousRender", strings.asynchronousRender);
+                            throw new _ErrorFromName("WinJS.UI.Repeater.AsynchronousRender", strings.asynchronousRender);
 
                         }
                         fragment.appendChild(renderedItem);
@@ -293,7 +303,7 @@ define([
                         if (!!shouldDisposeElements) {
                             // this_dataReloadHandler uses this to defer disposal until after animations have completed,
                             // at which point it manually disposes each element.
-                            WinJS.Utilities._disposeElement(element);
+                            _Dispose._disposeElement(element);
                         }
                         if (element.parentElement === this._element) {
                             this._element.removeChild(element);
@@ -309,7 +319,7 @@ define([
 
                 _beginModification: function Repeater_beginModification() {
                     if (this._modifying) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Repeater.RepeaterModificationReentrancy", strings.repeaterReentrancy);
+                        throw new _ErrorFromName("WinJS.UI.Repeater.RepeaterModificationReentrancy", strings.repeaterReentrancy);
                     }
                     this._modifying = true;
                 },
@@ -334,7 +344,7 @@ define([
                     var index = eventInfo.detail.index;
                     var renderedItem = this._render(eventInfo.detail.newValue);
                     if (!renderedItem) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Repeater.AsynchronousRender", strings.asynchronousRender);
+                        throw new _ErrorFromName("WinJS.UI.Repeater.AsynchronousRender", strings.asynchronousRender);
                     }
 
                     // Append to the event object
@@ -365,8 +375,8 @@ define([
                     this.dispatchEvent(ITEMCHANGED, eventInfo.detail);
 
                     if (oldItem) { // Give the option to delay element disposal.
-                        WinJS.Promise.as(animationPromise).done(function () {
-                            WinJS.Utilities._disposeElement(oldItem);
+                        Promise.as(animationPromise).done(function () {
+                            _Dispose._disposeElement(oldItem);
                         }.bind(this));
                     }
                 },
@@ -378,7 +388,7 @@ define([
                     var index = eventInfo.detail.index;
                     var renderedItem = this._render(eventInfo.detail.value);
                     if (!renderedItem) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Repeater.AsynchronousRender", strings.asynchronousRender);
+                        throw new _ErrorFromName("WinJS.UI.Repeater.AsynchronousRender", strings.asynchronousRender);
                     }
 
                     var root = this._element;
@@ -458,8 +468,8 @@ define([
                     this._writeProfilerMark(ITEMREMOVED + ",info");
                     this.dispatchEvent(ITEMREMOVED, eventDetail);
 
-                    WinJS.Promise.as(animationPromise).done(function () {
-                        WinJS.Utilities._disposeElement(oldItem);
+                    Promise.as(animationPromise).done(function () {
+                        _Dispose._disposeElement(oldItem);
                     }.bind(this));
                 },
 
@@ -484,22 +494,25 @@ define([
                     this._writeProfilerMark(ITEMSRELOADED + ",info");
                     this.dispatchEvent(ITEMSRELOADED, { affectedElements: shallowCopyAfter });
 
-                    WinJS.Promise.as(animationPromise).done(function () { // Gives the option to defer disposal.
+                    Promise.as(animationPromise).done(function () { // Gives the option to defer disposal.
                         for (var i = 0, len = shallowCopyBefore.length; i < len; i++) {
-                            WinJS.Utilities._disposeElement(shallowCopyBefore[i]);
+                            _Dispose._disposeElement(shallowCopyBefore[i]);
                         }
                     }.bind(this));
                 },
 
                 _writeProfilerMark: function Repeater_writeProfilerMark(text) {
-                    WinJS.Utilities._writeProfilerMark("WinJS.UI.Repeater:" + this._id + ":" + text);
+                    _WriteProfilerMark("WinJS.UI.Repeater:" + this._id + ":" + text);
                 }
             }, {
                 isDeclarativeControlContainer: true,
             });
-            WinJS.Class.mix(Repeater, UI.DOMEventMixin);
+            _Base.Class.mix(Repeater, _Control.DOMEventMixin);
             return Repeater;
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+    return _Base.Namespace.defineWithParent(null, null, members);
 
 });

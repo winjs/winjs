@@ -1,12 +1,29 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Animations',
+    '../Animations/_TransitionAnimation',
+    '../BindingList',
+    '../ControlProcessor',
+    '../Promise',
+    '../_Signal',
+    '../Scheduler',
+    '../Utilities/_Control',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_UI',
+    '../Utilities/_UIUtilities',
     './Hub/_Section',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function hubInit(_Section) {
+    ], function hubInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _UI, _UIUtilities, _Section) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.Hub">
         /// Displays sections of content.
@@ -28,15 +45,15 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        Hub: WinJS.Namespace._lazy(function () {
-            var Key = WinJS.Utilities.Key;
+        Hub: _Base.Namespace._lazy(function () {
+            var Key = _ElementUtilities.Key;
 
             function hubDefaultHeaderTemplate(section) {
                 var element = document.createTextNode(typeof section.header === "object" ? JSON.stringify(section.header) : ('' + section.header));
                 return element;
             }
 
-            var createEvent = WinJS.Utilities._createEventProperty;
+            var createEvent = _Events._createEventProperty;
             var eventNames = {
                 contentAnimating: "contentanimating",
                 headerInvoked: "headerinvoked",
@@ -86,7 +103,7 @@ define([
                 paddingEnd: "paddingRight"
             };
 
-            var Hub = WinJS.Class.define(function Hub_ctor(element, options) {
+            var Hub = _Base.Class.define(function Hub_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Hub.Hub">
                 /// <summary locid="WinJS.UI.Hub.constructor">
                 /// Creates a new Hub control.
@@ -109,10 +126,10 @@ define([
                 options = options || {};
 
                 if (element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.Hub.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.Hub.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
-                this._id = element.id || WinJS.Utilities._uniqueID(element);
+                this._id = element.id || _ElementUtilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
 
                 this._windowKeyDownHandlerBound = this._windowKeyDownHandler.bind(this);
@@ -121,17 +138,17 @@ define([
                 // Attaching JS control to DOM element
                 element.winControl = this;
                 this._element = element;
-                WinJS.Utilities.addClass(this.element, WinJS.UI.Hub._ClassName.hub);
-                WinJS.Utilities.addClass(this.element, "win-disposable");
+                _ElementUtilities.addClass(this.element, Hub._ClassName.hub);
+                _ElementUtilities.addClass(this.element, "win-disposable");
 
                 this._viewportElement = document.createElement("DIV");
-                this._viewportElement.className = WinJS.UI.Hub._ClassName.hubViewport;
+                this._viewportElement.className = Hub._ClassName.hubViewport;
                 this._element.appendChild(this._viewportElement);
                 this._viewportElement.setAttribute("role", "group");
                 this._viewportElement.setAttribute("aria-label", strings.hubViewportAriaLabel);
 
                 this._surfaceElement = document.createElement("DIV");
-                this._surfaceElement.className = WinJS.UI.Hub._ClassName.hubSurface;
+                this._surfaceElement.className = Hub._ClassName.hubSurface;
                 this._viewportElement.appendChild(this._surfaceElement);
 
                 // Start invisible so that you do not see the content loading until the sections are ready.
@@ -139,23 +156,23 @@ define([
                 this._viewportElement.style.opacity = 0;
 
                 if (!options.orientation) {
-                    this._orientation = WinJS.UI.Orientation.horizontal;
-                    WinJS.Utilities.addClass(this.element, WinJS.UI.Hub._ClassName.hubHorizontal);
+                    this._orientation = _UI.Orientation.horizontal;
+                    _ElementUtilities.addClass(this.element, Hub._ClassName.hubHorizontal);
                 }
 
                 this._fireEntrance = true;
                 this._animateEntrance = true;
                 this._loadId = 0;
-                this.runningAnimations = new WinJS.Promise.wrap();
+                this.runningAnimations = new Promise.wrap();
                 this._currentIndexForSezo = 0;
 
                 // This internally assigns this.sections which causes section to be used (even from options) before
                 // scrollPosition or sectionOnScreen.
                 this._parse();
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
 
-                WinJS.Utilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
+                _ElementUtilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
                 this.element.addEventListener("keydown", this._keyDownHandler.bind(this));
                 this.element.addEventListener("click", this._clickHandler.bind(this));
                 this.element.addEventListener("mselementresize", this._resizeHandler.bind(this));
@@ -191,16 +208,16 @@ define([
                     },
                     set: function (value) {
                         this._measured = false;
-                        if (value === WinJS.UI.Orientation.vertical) {
-                            WinJS.Utilities.removeClass(this.element, WinJS.UI.Hub._ClassName.hubHorizontal);
-                            WinJS.Utilities.addClass(this.element, WinJS.UI.Hub._ClassName.hubVertical);
+                        if (value === _UI.Orientation.vertical) {
+                            _ElementUtilities.removeClass(this.element, Hub._ClassName.hubHorizontal);
+                            _ElementUtilities.addClass(this.element, Hub._ClassName.hubVertical);
                         } else {
-                            value = WinJS.UI.Orientation.horizontal;
-                            WinJS.Utilities.removeClass(this.element, WinJS.UI.Hub._ClassName.hubVertical);
-                            WinJS.Utilities.addClass(this.element, WinJS.UI.Hub._ClassName.hubHorizontal);
+                            value = _UI.Orientation.horizontal;
+                            _ElementUtilities.removeClass(this.element, Hub._ClassName.hubVertical);
+                            _ElementUtilities.addClass(this.element, Hub._ClassName.hubHorizontal);
                         }
                         this._orientation = value;
-                        WinJS.Utilities.Scheduler.schedule(this._updateSnapList.bind(this), WinJS.Utilities.Scheduler.Priority.idle);
+                        Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
                     }
                 },
                 /// <field type="WinJS.Binding.List" locid="WinJS.UI.Hub.sections" helpKeyword="WinJS.UI.Hub.sections">
@@ -272,7 +289,7 @@ define([
                             this._scrollPosition = targetScrollPos;
                             var newScrollPos = {};
                             newScrollPos[this._names.scrollPos] = targetScrollPos;
-                            WinJS.Utilities.setScrollPosition(this._viewportElement, newScrollPos);
+                            _ElementUtilities.setScrollPosition(this._viewportElement, newScrollPos);
                         }
                     }
                 },
@@ -366,18 +383,18 @@ define([
                     }
 
                     this._loadId++;
-                    this._setState(WinJS.UI.Hub.LoadingState.loading);
+                    this._setState(Hub.LoadingState.loading);
                     // This is to coalesce property setting operations such as sections and scrollPosition.
                     this._pendingRefresh = true;
 
-                    WinJS.Utilities.Scheduler.schedule(this._refreshImpl.bind(this), WinJS.Utilities.Scheduler.Priority.high);
+                    Scheduler.schedule(this._refreshImpl.bind(this), Scheduler.Priority.high);
                 },
                 _refreshImpl: function hub_refreshImpl() {
                     if (this._disposed) {
                         return;
                     }
 
-                    var fadeOutAnimation = WinJS.Promise.wrap();
+                    var fadeOutAnimation = Promise.wrap();
                     if (this._pendingSections) {
                         this._animateEntrance = true;
                         this._fireEntrance = !this._visible;
@@ -385,14 +402,14 @@ define([
                             this._visible = false;
                             this._viewportElement.style.opacity = 0;
 
-                            if (WinJS.UI.isAnimationEnabled()) {
-                                var animateTransition = this._fireEvent(WinJS.UI.Hub._EventName.contentAnimating, {
-                                    type: WinJS.UI.Hub.AnimationType.contentTransition
+                            if (_TransitionAnimation.isAnimationEnabled()) {
+                                var animateTransition = this._fireEvent(Hub._EventName.contentAnimating, {
+                                    type: Hub.AnimationType.contentTransition
                                 });
 
                                 if (animateTransition) {
                                     this._viewportElement.style["-ms-overflow-style"] = "none";
-                                    fadeOutAnimation = WinJS.UI.Animation.fadeOut(this._viewportElement).then(function () {
+                                    fadeOutAnimation = Animations.fadeOut(this._viewportElement).then(function () {
                                         this._viewportElement.style["-ms-overflow-style"] = "";
                                     }.bind(this));
                                 }
@@ -421,7 +438,7 @@ define([
                             var toRemove = this.element.firstElementChild;
                             toRemove.parentNode.removeChild(toRemove);
                         }
-                        WinJS.Utilities.empty(this._surfaceElement);
+                        _ElementUtilities.empty(this._surfaceElement);
                     }
 
                     if (this._pendingHeaderTemplate) {
@@ -450,7 +467,7 @@ define([
                     this._pendingScrollLocation = null;
 
                     // Using current (or new) scroll location load the sections
-                    this._setState(WinJS.UI.Hub.LoadingState.loading);
+                    this._setState(Hub.LoadingState.loading);
                     this._loadSections();
                 },
                 _handleSectionChanged: function hub_handleSectionChanged(ev) {
@@ -464,14 +481,14 @@ define([
                     newSection._setHeaderTemplate(this.headerTemplate);
                     if (newSection.element !== oldSection.element) {
                         if (newSection.element.parentNode === this._surfaceElement) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.Hub.DuplicateSection", strings.duplicateSection);
+                            throw new _ErrorFromName("WinJS.UI.Hub.DuplicateSection", strings.duplicateSection);
                         }
 
                         this._surfaceElement.insertBefore(newSection.element, oldSection.element);
                         this._surfaceElement.removeChild(oldSection.element);
                         this._measured = false;
 
-                        this._setState(WinJS.UI.Hub.LoadingState.loading);
+                        this._setState(Hub.LoadingState.loading);
                         this._loadSections();
                     }
                 },
@@ -489,8 +506,8 @@ define([
                     }
 
                     var animation;
-                    var result = this._fireEvent(WinJS.UI.Hub._EventName.contentAnimating, {
-                        type: WinJS.UI.Hub.AnimationType.insert,
+                    var result = this._fireEvent(Hub._EventName.contentAnimating, {
+                        type: Hub.AnimationType.insert,
                         index: index,
                         section: section
                     });
@@ -503,11 +520,11 @@ define([
                             affectedElements.push(this.sections.getAt(i).element);
                         }
 
-                        animation = new WinJS.UI.Animation._createUpdateListAnimation([section.element], [], affectedElements);
+                        animation = new Animations._createUpdateListAnimation([section.element], [], affectedElements);
                     }
 
                     if (section.element.parentNode === this._surfaceElement) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Hub.DuplicateSection", strings.duplicateSection);
+                        throw new _ErrorFromName("WinJS.UI.Hub.DuplicateSection", strings.duplicateSection);
                     }
 
                     section._setHeaderTemplate(this.headerTemplate);
@@ -520,10 +537,10 @@ define([
 
                     if (animation) {
                         var insertAnimation = animation.execute();
-                        this.runningAnimations = WinJS.Promise.join([this.runningAnimations, insertAnimation]);
+                        this.runningAnimations = Promise.join([this.runningAnimations, insertAnimation]);
                     }
 
-                    this._setState(WinJS.UI.Hub.LoadingState.loading);
+                    this._setState(Hub.LoadingState.loading);
                     this._loadSections();
                 },
                 _handleSectionMoved: function hub_handleSectionMoved(ev) {
@@ -542,7 +559,7 @@ define([
                     }
                     this._measured = false;
 
-                    this._setState(WinJS.UI.Hub.LoadingState.loading);
+                    this._setState(Hub.LoadingState.loading);
                     this._loadSections();
                 },
                 _handleSectionRemoved: function hub_handleSectionRemoved(ev) {
@@ -554,9 +571,9 @@ define([
                     var section = ev.detail.value;
                     var index = ev.detail.index;
 
-                    var animationPromise = WinJS.Promise.wrap();
-                    var result = this._fireEvent(WinJS.UI.Hub._EventName.contentAnimating, {
-                        type: WinJS.UI.Hub.AnimationType.remove,
+                    var animationPromise = Promise.wrap();
+                    var result = this._fireEvent(Hub._EventName.contentAnimating, {
+                        type: Hub.AnimationType.remove,
                         index: index,
                         section: section
                     });
@@ -568,7 +585,7 @@ define([
                             affectedElements.push(this.sections.getAt(i).element);
                         }
 
-                        var animation = new WinJS.UI.Animation._createUpdateListAnimation([], [section.element], affectedElements);
+                        var animation = new Animations._createUpdateListAnimation([], [section.element], affectedElements);
 
                         this._measure();
                         var offsetTop = section.element.offsetTop;
@@ -596,9 +613,9 @@ define([
 
                     // Store animation promise in case it is inserted before remove animation finishes.
                     section._animation = animationPromise;
-                    this.runningAnimations = WinJS.Promise.join([this.runningAnimations, animationPromise]);
+                    this.runningAnimations = Promise.join([this.runningAnimations, animationPromise]);
 
-                    this._setState(WinJS.UI.Hub.LoadingState.loading);
+                    this._setState(Hub.LoadingState.loading);
                     this._loadSections();
                 },
                 _handleSectionReload: function hub_handleSectionReload(ev) {
@@ -632,7 +649,7 @@ define([
                             section._animation.cancel();
                         }
                         if (section.element.parentNode === this._surfaceElement) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.Hub.DuplicateSection", strings.duplicateSection);
+                            throw new _ErrorFromName("WinJS.UI.Hub.DuplicateSection", strings.duplicateSection);
                         }
                         this._surfaceElement.appendChild(section.element);
                     }
@@ -658,13 +675,13 @@ define([
                     this._loadId++;
                     var loadId = this._loadId;
                     var that = this;
-                    var onScreenItemsAnimatedPromise = WinJS.Promise.wrap();
+                    var onScreenItemsAnimatedPromise = Promise.wrap();
                     var sectionIndicesToLoad = [];
-                    var allSectionsLoadedPromise = WinJS.Promise.wrap();
+                    var allSectionsLoadedPromise = Promise.wrap();
 
                     function loadNextSectionAfterPromise(promise) {
                         promise.then(function () {
-                            WinJS.Utilities.Scheduler.schedule(loadNextSection, WinJS.Utilities.Scheduler.Priority.idle);
+                            Scheduler.schedule(loadNextSection, Scheduler.Priority.idle);
                         });
                     }
 
@@ -681,14 +698,14 @@ define([
                     }
 
                     if (!this._showProgressPromise) {
-                        this._showProgressPromise = WinJS.Promise.timeout(progressDelay).then(function () {
+                        this._showProgressPromise = Promise.timeout(progressDelay).then(function () {
                             if (this._disposed) {
                                 return;
                             }
 
                             if (!this._progressBar) {
                                 this._progressBar = document.createElement("progress");
-                                WinJS.Utilities.addClass(this._progressBar, WinJS.UI.Hub._ClassName.hubProgress);
+                                _ElementUtilities.addClass(this._progressBar, Hub._ClassName.hubProgress);
                                 this._progressBar.max = 100;
                             }
                             if (!this._progressBar.parentNode) {
@@ -701,7 +718,7 @@ define([
                     }
 
                     if (this.sections.length) {
-                        var allSectionsLoadedSignal = new WinJS._Signal();
+                        var allSectionsLoadedSignal = new _Signal();
                         allSectionsLoadedPromise = allSectionsLoadedSignal.promise;
                         // Synchronously load the sections on screen.
                         var synchronousProcessPromises = [];
@@ -725,7 +742,7 @@ define([
                             }
                         }
 
-                        var onScreenSectionsLoadedPromise = WinJS.Promise.join(synchronousProcessPromises);
+                        var onScreenSectionsLoadedPromise = Promise.join(synchronousProcessPromises);
 
                         // In case there are overlapping load calls
                         onScreenSectionsLoadedPromise.done(function () {
@@ -738,20 +755,20 @@ define([
                                     this._progressBar.parentNode.removeChild(this._progressBar);
                                 }
 
-                                WinJS.Utilities.Scheduler.schedule(function Hub_entranceAnimation() {
+                                Scheduler.schedule(function Hub_entranceAnimation() {
                                     if (loadId === this._loadId && !that._disposed) {
                                         if (!this._visible) {
                                             this._visible = true;
                                             this._viewportElement.style.opacity = 1;
 
-                                            if (this._animateEntrance && WinJS.UI.isAnimationEnabled()) {
+                                            if (this._animateEntrance && _TransitionAnimation.isAnimationEnabled()) {
                                                 var eventDetail = {
-                                                    type: WinJS.UI.Hub.AnimationType.entrance
+                                                    type: Hub.AnimationType.entrance
                                                 };
 
-                                                if (!this._fireEntrance || this._fireEvent(WinJS.UI.Hub._EventName.contentAnimating, eventDetail)) {
+                                                if (!this._fireEntrance || this._fireEvent(Hub._EventName.contentAnimating, eventDetail)) {
                                                     this._viewportElement.style["-ms-overflow-style"] = "none";
-                                                    onScreenItemsAnimatedPromise = WinJS.UI.Animation.enterContent(this._viewportElement, [{ left: this._fireEntrance ? "100px" : "40px", top: "0px", rtlflip: true }], { mechanism: "transition" }).then(function () {
+                                                    onScreenItemsAnimatedPromise = Animations.enterContent(this._viewportElement, [{ left: this._fireEntrance ? "100px" : "40px", top: "0px", rtlflip: true }], { mechanism: "transition" }).then(function () {
                                                         this._viewportElement.style["-ms-overflow-style"] = "";
                                                     }.bind(this));
                                                 }
@@ -761,7 +778,7 @@ define([
                                             }
                                         }
                                     }
-                                }, WinJS.Utilities.Scheduler.Priority.high, this, "WinJS.UI.Hub.entranceAnimation");
+                                }, Scheduler.Priority.high, this, "WinJS.UI.Hub.entranceAnimation");
                             }
                         }.bind(this));
 
@@ -776,11 +793,11 @@ define([
                         }
                     }
 
-                    WinJS.Promise.join([this.runningAnimations, onScreenItemsAnimatedPromise, allSectionsLoadedPromise]).done(function () {
+                    Promise.join([this.runningAnimations, onScreenItemsAnimatedPromise, allSectionsLoadedPromise]).done(function () {
                         if (loadId === this._loadId && !that._disposed) {
-                            this.runningAnimations = WinJS.Promise.wrap();
-                            this._setState(WinJS.UI.Hub.LoadingState.complete);
-                            WinJS.Utilities.Scheduler.schedule(this._updateSnapList.bind(this), WinJS.Utilities.Scheduler.Priority.idle);
+                            this.runningAnimations = Promise.wrap();
+                            this._setState(Hub.LoadingState.complete);
+                            Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
                         }
                     }.bind(this));
                 },
@@ -799,7 +816,7 @@ define([
                         this._writeProfilerMark("loadingStateChanged:" + state + ",info");
                         this._loadingState = state;
                         var eventObject = document.createEvent("CustomEvent");
-                        eventObject.initCustomEvent(WinJS.UI.Hub._EventName.loadingStateChanged, true, false, { loadingState: state });
+                        eventObject.initCustomEvent(Hub._EventName.loadingStateChanged, true, false, { loadingState: state });
                         this._element.dispatchEvent(eventObject);
                     }
                 },
@@ -808,20 +825,20 @@ define([
                     var hubSectionEl = this.element.firstElementChild;
 
                     while (hubSectionEl !== this._viewportElement) {
-                        WinJS.UI.processAll(hubSectionEl);
+                        ControlProcessor.processAll(hubSectionEl);
 
                         var hubSectionContent = hubSectionEl.winControl;
                         if (hubSectionContent) {
                             hubSections.push(hubSectionContent);
                         } else {
-                            throw new WinJS.ErrorFromName("WinJS.UI.Hub.InvalidContent", strings.invalidContent);
+                            throw new _ErrorFromName("WinJS.UI.Hub.InvalidContent", strings.invalidContent);
                         }
 
                         var nextSectionEl = hubSectionEl.nextElementSibling;
                         hubSectionEl = nextSectionEl;
                     }
 
-                    this.sections = new WinJS.Binding.List(hubSections);
+                    this.sections = new BindingList.List(hubSections);
                 },
                 _fireEvent: function hub_fireEvent(type, detail) {
                     // Returns true if ev.preventDefault() was not called
@@ -832,8 +849,8 @@ define([
 
                 _findHeaderTabStop: function hub_findHeaderTabStop(element) {
                     if (element.parentNode) {
-                        if (WinJS.Utilities._matchesSelector(element, ".win-hub-section-header-tabstop, .win-hub-section-header-tabstop *")) {
-                            while (!WinJS.Utilities.hasClass(element, "win-hub-section-header-tabstop")) {
+                        if (_ElementUtilities._matchesSelector(element, ".win-hub-section-header-tabstop, .win-hub-section-header-tabstop *")) {
+                            while (!_ElementUtilities.hasClass(element, "win-hub-section-header-tabstop")) {
                                 element = element.parentElement;
                             }
                             return element;
@@ -844,7 +861,7 @@ define([
                 _isHeaderInteractive: function hub_isHeaderInteractive(element) {
                     // Helper method to skip keyboarding and clicks with a header's sub interactive content
                     if (element.parentNode) {
-                        return WinJS.Utilities._matchesSelector(element, ".win-interactive, .win-interactive *");
+                        return _ElementUtilities._matchesSelector(element, ".win-interactive, .win-interactive *");
                     }
                     return false;
                 },
@@ -854,7 +871,7 @@ define([
                         var section = headerTabStopElement.parentElement.parentElement.winControl;
                         if (!section.isHeaderStatic) {
                             var sectionIndex = this.sections.indexOf(section);
-                            this._fireEvent(WinJS.UI.Hub._EventName.headerInvoked, {
+                            this._fireEvent(Hub._EventName.headerInvoked, {
                                 index: sectionIndex,
                                 section: section
                             });
@@ -864,12 +881,12 @@ define([
                 _resizeHandler: function hub_resizeHandler(ev) {
                     // Viewport needs to be measured
                     this._measured = false;
-                    WinJS.Utilities.Scheduler.schedule(this._updateSnapList.bind(this), WinJS.Utilities.Scheduler.Priority.idle);
+                    Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
                 },
                 _contentResizeHandler: function hub_contentResizeHandler(ev) {
                     // Sections and scroll length need to be measured
                     this._measured = false;
-                    WinJS.Utilities.Scheduler.schedule(this._updateSnapList.bind(this), WinJS.Utilities.Scheduler.Priority.idle);
+                    Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
                 },
                 _scrollHandler: function hub_scrollHandler(ev) {
                     // Scroll location needs to be retrieved
@@ -891,7 +908,7 @@ define([
                                 return;
                             }
 
-                            if (this.loadingState !== WinJS.UI.Hub.LoadingState.complete) {
+                            if (this.loadingState !== Hub.LoadingState.complete) {
                                 this._loadSections();
                             }
                         }.bind(this));
@@ -907,7 +924,7 @@ define([
 
                         this._rtl = getComputedStyle(this._element, null).direction === "rtl";
 
-                        if (this.orientation === WinJS.UI.Orientation.vertical) {
+                        if (this.orientation === _UI.Orientation.vertical) {
                             this._names = verticalNames;
                         } else {
                             if (this._rtl) {
@@ -919,7 +936,7 @@ define([
 
                         this._viewportSize = this._viewportElement[this._names.offsetSize];
                         this._viewportOppositeSize = this._viewportElement[this._names.oppositeOffsetSize];
-                        this._scrollPosition = WinJS.Utilities.getScrollPosition(this._viewportElement)[this._names.scrollPos];
+                        this._scrollPosition = _ElementUtilities.getScrollPosition(this._viewportElement)[this._names.scrollPos];
                         this._scrollLength = this._viewportElement[this._names.scrollSize];
 
                         var surfaceElementComputedStyle = getComputedStyle(this._surfaceElement);
@@ -942,7 +959,7 @@ define([
                                 paddingEnd: parseFloat(computedSectionStyle[this._names.paddingEnd])
                             };
 
-                            if (this._rtl && this.orientation === WinJS.UI.Orientation.horizontal) {
+                            if (this._rtl && this.orientation === _UI.Orientation.horizontal) {
                                 this._sectionSizes[i].offset = this._viewportSize - (this._sectionSizes[i].offset + this._sectionSizes[i].size);
                             }
                         }
@@ -966,7 +983,7 @@ define([
 
                     var snapListY = "";
                     var snapListX = "";
-                    if (this.orientation === WinJS.UI.Orientation.vertical) {
+                    if (this.orientation === _UI.Orientation.vertical) {
                         snapListY = snapList;
                     } else {
                         snapListX = snapList;
@@ -1013,15 +1030,15 @@ define([
                 _scrollTo: function hub_scrollTo(scrollPos, withAnimation) {
                     this._scrollPosition = scrollPos;
                     if (withAnimation) {
-                        if (this.orientation === WinJS.UI.Orientation.vertical) {
-                            WinJS.Utilities._zoomTo(this._viewportElement, { contentX: 0, contentY: this._scrollPosition, viewportX: 0, viewportY: 0 });
+                        if (this.orientation === _UI.Orientation.vertical) {
+                            _ElementUtilities._zoomTo(this._viewportElement, { contentX: 0, contentY: this._scrollPosition, viewportX: 0, viewportY: 0 });
                         } else {
-                            WinJS.Utilities._zoomTo(this._viewportElement, { contentX: this._scrollPosition, contentY: 0, viewportX: 0, viewportY: 0 });
+                            _ElementUtilities._zoomTo(this._viewportElement, { contentX: this._scrollPosition, contentY: 0, viewportX: 0, viewportY: 0 });
                         }
                     } else {
                         var newScrollPos = {};
                         newScrollPos[this._names.scrollPos] = this._scrollPosition;
-                        WinJS.Utilities.setScrollPosition(this._viewportElement, newScrollPos);
+                        _ElementUtilities.setScrollPosition(this._viewportElement, newScrollPos);
                     }
                 },
                 _windowKeyDownHandler: function hub_windowKeyDownHandler(ev) {
@@ -1030,7 +1047,7 @@ define([
                         this._tabSeenLast = true;
 
                         var that = this;
-                        WinJS.Utilities._yieldForEvents(function () {
+                        _BaseUtils._yieldForEvents(function () {
                             that._tabSeenLast = false;
                         });
                     }
@@ -1050,7 +1067,7 @@ define([
 
                     // Always remember the focused section for SemanticZoom.
                     var sectionElement = ev.target;
-                    while (sectionElement && !WinJS.Utilities.hasClass(sectionElement, WinJS.UI.HubSection._ClassName.hubSection)) {
+                    while (sectionElement && !_ElementUtilities.hasClass(sectionElement, _Section.HubSection._ClassName.hubSection)) {
                         sectionElement = sectionElement.parentElement;
                     }
                     if (sectionElement) {
@@ -1077,13 +1094,13 @@ define([
                         for (var i = indexToFocus; i < this.sections.length; i++) {
                             var section = this.sections.getAt(i);
 
-                            var focusAttempt = WinJS.Utilities._trySetActive(section._headerTabStopElement, this._viewportElement);
+                            var focusAttempt = _UIUtilities._trySetActive(section._headerTabStopElement, this._viewportElement);
 
                             if (focusAttempt) {
                                 return;
                             }
 
-                            if (WinJS.Utilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
+                            if (_UIUtilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
                                 return;
                             }
                         }
@@ -1091,11 +1108,11 @@ define([
                         for (var i = indexToFocus - 1; i >= 0; i--) {
                             var section = this.sections.getAt(i);
 
-                            if (WinJS.Utilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
+                            if (_UIUtilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
                                 return;
                             }
 
-                            var focusAttempt = WinJS.Utilities._trySetActive(section._headerTabStopElement, this._viewportElement);
+                            var focusAttempt = _UIUtilities._trySetActive(section._headerTabStopElement, this._viewportElement);
 
                             if (focusAttempt) {
                                 return;
@@ -1116,8 +1133,8 @@ define([
                             // Page up/down go to the next/previous header and line it up with the app header. Up/Right/Down/Left
                             // move focus to the next/previous header and move it on screen (app header distance from either edge).
                             if (ev.keyCode === Key.pageDown ||
-                                (this.orientation === WinJS.UI.Orientation.horizontal && ev.keyCode === rightKey) ||
-                                (this.orientation === WinJS.UI.Orientation.vertical && ev.keyCode === Key.downArrow)) {
+                                (this.orientation === _UI.Orientation.horizontal && ev.keyCode === rightKey) ||
+                                (this.orientation === _UI.Orientation.vertical && ev.keyCode === Key.downArrow)) {
                                 // Do not include hidden headers.
                                 for (var i = currentSection + 1; i < this.sections.length; i++) {
                                     var section = this.sections.getAt(i);
@@ -1127,8 +1144,8 @@ define([
                                     }
                                 }
                             } else if (ev.keyCode === Key.pageUp ||
-                                (this.orientation === WinJS.UI.Orientation.horizontal && ev.keyCode === leftKey) ||
-                                (this.orientation === WinJS.UI.Orientation.vertical && ev.keyCode === Key.upArrow)) {
+                                (this.orientation === _UI.Orientation.horizontal && ev.keyCode === leftKey) ||
+                                (this.orientation === _UI.Orientation.vertical && ev.keyCode === Key.upArrow)) {
                                 // Do not include hidden headers.
                                 for (var i = currentSection - 1; i >= 0; i--) {
                                     var section = this.sections.getAt(i);
@@ -1163,7 +1180,7 @@ define([
                 _tryFocus: function hub_tryFocus(index) {
                     var targetSection = this.sections.getAt(index);
 
-                    WinJS.Utilities._setActive(targetSection._headerTabStopElement, this._viewportElement);
+                    _ElementUtilities._setActive(targetSection._headerTabStopElement, this._viewportElement);
 
                     return document.activeElement === targetSection._headerTabStopElement;
                 },
@@ -1182,14 +1199,14 @@ define([
                     }
                 },
                 _getPanAxis: function hub_getPanAxis() {
-                    return this.orientation === WinJS.UI.Orientation.horizontal ? "horizontal" : "vertical";
+                    return this.orientation === _UI.Orientation.horizontal ? "horizontal" : "vertical";
                 },
                 _configureForZoom: function hub_configureForZoom(isZoomedOut, isCurrentView, triggerZoom, prefetchedPages) {
                     // Nothing to configure.
                 },
                 _setCurrentItem: function hub_setCurrentItem(x, y) {
                     var offset;
-                    if (this.orientation === WinJS.UI.Orientation.horizontal) {
+                    if (this.orientation === _UI.Orientation.horizontal) {
                         offset = x;
                     } else {
                         offset = y;
@@ -1212,7 +1229,7 @@ define([
                         this._measure();
                         var index = Math.max(0, Math.min(this._currentIndexForSezo, this._sectionSizes.length));
                         var sectionSize = this._sectionSizes[index];
-                        if (this.orientation === WinJS.UI.Orientation.horizontal) {
+                        if (this.orientation === _UI.Orientation.horizontal) {
                             itemPosition = {
                                 left: Math.max(0, sectionSize.offset - sectionSize.marginStart - this._scrollPosition),
                                 top: 0,
@@ -1232,7 +1249,7 @@ define([
                         // BUGBUG: 53301 ListView and Hub should document what they expect to be returned from the
                         // getCurrentItem so that positionItem apis line up. ListView zoomed out expects an object with
                         // groupIndexHint, groupKey, or groupDescription. Hub expects an object with index.
-                        return WinJS.Promise.wrap({ item: { data: section, index: index, groupIndexHint: index }, position: itemPosition });
+                        return Promise.wrap({ item: { data: section, index: index, groupIndexHint: index }, position: itemPosition });
                     }
                 },
                 _beginZoom: function hub_beginZoom() {
@@ -1245,7 +1262,7 @@ define([
                         var sectionSize = this._sectionSizes[item.index];
 
                         var offsetFromViewport;
-                        if (this.orientation === WinJS.UI.Orientation.horizontal) {
+                        if (this.orientation === _UI.Orientation.horizontal) {
                             offsetFromViewport = position.left;
                         } else {
                             offsetFromViewport = position.top;
@@ -1260,7 +1277,7 @@ define([
                         this._scrollPosition = targetScrollPosition;
                         var newScrollPos = {};
                         newScrollPos[this._names.scrollPos] = this._scrollPosition;
-                        WinJS.Utilities.setScrollPosition(this._viewportElement, newScrollPos);
+                        _ElementUtilities.setScrollPosition(this._viewportElement, newScrollPos);
                     }
                 },
                 _endZoom: function hub_endZoom(isCurrentView) {
@@ -1269,7 +1286,7 @@ define([
                 },
                 _writeProfilerMark: function hub_writeProfilerMark(text) {
                     var message = "WinJS.UI.Hub:" + this._id + ":" + text;
-                    WinJS.Utilities._writeProfilerMark(message);
+                    _WriteProfilerMark(message);
                     WinJS.log && WinJS.log(message, null, "hubprofiler");
                 },
                 dispose: function hub_dispose() {
@@ -1352,9 +1369,9 @@ define([
                 },
             })
 
-            WinJS.Class.mix(Hub, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(Hub, _Control.DOMEventMixin);
 
-            var ZoomableView = WinJS.Class.define(function ZoomableView_ctor(hub) {
+            var ZoomableView = _Base.Class.define(function ZoomableView_ctor(hub) {
                 this._hub = hub;
             }, {
                 getPanAxis: function () {
@@ -1381,10 +1398,10 @@ define([
             });
 
             var strings = {
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get duplicateSection() { return WinJS.Resources._getWinJSString("ui/duplicateSection").value; },
-                get invalidContent() { return WinJS.Resources._getWinJSString("ui/invalidHubContent").value; },
-                get hubViewportAriaLabel() { return WinJS.Resources._getWinJSString("ui/hubViewportAriaLabel").value; }
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                get duplicateSection() { return _Resources._getWinJSString("ui/duplicateSection").value; },
+                get invalidContent() { return _Resources._getWinJSString("ui/invalidHubContent").value; },
+                get hubViewportAriaLabel() { return _Resources._getWinJSString("ui/hubViewportAriaLabel").value; }
             };
 
             return Hub;

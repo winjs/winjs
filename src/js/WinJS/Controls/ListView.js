@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     './ListView/_BrowseMode',
-    './ListView/_Constants',
+    './ItemContainer/_Constants',
     './ListView/_ErrorMessages',
     './ListView/_GroupFocusCache',
     './ListView/_GroupsContainer',
@@ -43,22 +43,9 @@ define([
         disposeControlTimeout = WinJS.Promise.timeout(DISPOSE_TIMEOUT).then(disposeControls);
     }
 
-    function ensureId(element) {
-        if (!element.id) {
-            element.id = uniqueID(element);
-        }
-    }
-
     function setFlow(from, to) {
-        WinJS.UI._setAttribute(from, "aria-flowto", to.id);
-        WinJS.UI._setAttribute(to, "x-ms-aria-flowfrom", from.id);
-    }
-
-    // Only set the attribute if its value has changed
-    function setAttribute(element, attribute, value) {
-        if (element.getAttribute(attribute) !== "" + value) {
-            element.setAttribute(attribute, value);
-        }
+        WinJS.Utilities._setAttribute(from, "aria-flowto", to.id);
+        WinJS.Utilities._setAttribute(to, "x-ms-aria-flowfrom", from.id);
     }
 
     function nodeListToArray(nodeList) {
@@ -96,9 +83,7 @@ define([
     WinJS.Namespace.define("WinJS.UI", {
         _trivialHtmlRenderer: trivialHtmlRenderer,
         _disposeControls: disposeControls,
-        _ensureId: ensureId,
         _setFlow: setFlow,
-        _setAttribute: setAttribute,
         _nodeListToArray: nodeListToArray,
         _repeat: repeat,
         _ListViewAnimationHelper: {
@@ -148,94 +133,6 @@ define([
         _ScrollToPriority: ScrollToPriority,
 
         _ViewChange: ViewChange,
-
-        /// <field locid="WinJS.UI.ListView.ObjectType" helpKeyword="WinJS.UI.ObjectType">
-        /// Specifies the type of an IListViewEntity.
-        /// </field>
-        ObjectType: {
-            /// <field locid="WinJS.UI.ListView.ObjectType.item" helpKeyword="WinJS.UI.ObjectType.item">
-            /// This value represents a ListView item.
-            /// </field>
-            item: "item",
-            /// <field locid="WinJS.UI.ListView.ObjectType.groupHeader" helpKeyword="WinJS.UI.ObjectType.groupHeader">
-            /// This value represents a ListView group header.
-            /// </field>
-            groupHeader: "groupHeader"
-        },
-
-        /// <field locid="WinJS.UI.ListView.SelectionMode" helpKeyword="WinJS.UI.SelectionMode">
-        /// Specifies the selection mode for a ListView.
-        /// </field>
-        SelectionMode: {
-            /// <field locid="WinJS.UI.ListView.SelectionMode.none" helpKeyword="WinJS.UI.SelectionMode.none">
-            /// Items cannot be selected.
-            /// </field>
-            none: "none",
-            /// <field locid="WinJS.UI.ListView.SelectionMode.single" helpKeyword="WinJS.UI.SelectionMode.single">
-            /// A single item may be selected.
-            /// <compatibleWith platform="Windows" minVersion="8.0"/>
-            /// </field>
-            single: "single",
-            /// <field locid="WinJS.UI.ListView.SelectionMode.multi" helpKeyword="WinJS.UI.SelectionMode.multi">
-            /// Multiple items may be selected.
-            /// </field>
-            multi: "multi"
-        },
-
-        /// <field locid="WinJS.UI.TapBehavior" helpKeyword="WinJS.UI.TapBehavior">
-        /// Specifies how an ItemContainer or items in a ListView respond to the tap interaction.
-        /// </field>
-        TapBehavior: {
-            /// <field locid="WinJS.UI.TapBehavior.directSelect" helpKeyword="WinJS.UI.TapBehavior.directSelect">
-            /// Tapping the item invokes it and selects it. Navigating to the item with the keyboard changes the
-            /// the selection so that the focused item is the only item that is selected.
-            /// <compatibleWith platform="Windows" minVersion="8.0"/>
-            /// </field>
-            directSelect: "directSelect",
-            /// <field locid="WinJS.UI.TapBehavior.toggleSelect" helpKeyword="WinJS.UI.TapBehavior.toggleSelect">
-            /// Tapping the item invokes it. If the item was selected, tapping it clears the selection. If the item wasn't
-            /// selected, tapping the item selects it.
-            /// Navigating to the item with the keyboard does not select or invoke it.
-            /// </field>
-            toggleSelect: "toggleSelect",
-            /// <field locid="WinJS.UI.TapBehavior.invokeOnly" helpKeyword="WinJS.UI.TapBehavior.invokeOnly">
-            /// Tapping the item invokes it. Navigating to the item with keyboard does not select it or invoke it.
-            /// </field>
-            invokeOnly: "invokeOnly",
-            /// <field locid="WinJS.UI.TapBehavior.none" helpKeyword="WinJS.UI.TapBehavior.none">
-            /// Nothing happens.
-            /// </field>
-            none: "none"
-        },
-
-        /// <field locid="WinJS.UI.GroupHeaderTapBehavior" helpKeyword="WinJS.UI.GroupHeaderTapBehavior">
-        /// Specifies how group headers in a ListView respond to the tap interaction.
-        /// </field>
-        GroupHeaderTapBehavior: {
-            /// <field locid="WinJS.UI.GroupHeaderTapBehavior.invoke" helpKeyword="WinJS.UI.GroupHeaderTapBehavior.invoke">
-            /// Tapping the group header invokes it.
-            /// </field>
-            invoke: "invoke",
-            /// <field locid="WinJS.UI.GroupHeaderTapBehavior.none" helpKeyword="WinJS.UI.GroupHeaderTapBehavior.none">
-            /// Nothing happens.
-            /// </field>
-            none: "none"
-        },
-
-        /// <field locid="WinJS.UI.SwipeBehavior" helpKeyword="WinJS.UI.SwipeBehavior">
-        /// Specifies whether items are selected when the user performs a swipe interaction.
-        /// <compatibleWith platform="Windows" minVersion="8.0"/>
-        /// </field>
-        SwipeBehavior: {
-            /// <field locid="WinJS.UI.SwipeBehavior.select" helpKeyword="WinJS.UI.SwipeBehavior.select">
-            /// The swipe interaction selects the items touched by the swipe.
-            /// </field>
-            select: "select",
-            /// <field locid="WinJS.UI.SwipeBehavior.none" helpKeyword="WinJS.UI.SwipeBehavior.none">
-            /// The swipe interaction does not change which items are selected.
-            /// </field>
-            none: "none"
-        },
 
         /// <field locid="WinJS.UI.ListView.ListViewAnimationType" helpKeyword="WinJS.UI.ListViewAnimationType">
         /// Specifies whether the ListView animation is an entrance animation or a transition animation.
@@ -3833,7 +3730,7 @@ define([
                         // Only respond to aria-selected changes coming from UIA. This check
                         // relies on the fact that, in renderSelection, we update the selection
                         // visual before aria-selected.
-                        if (itemBox && (selected !== WinJS.UI._isSelectionRendered(itemBox))) {
+                        if (itemBox && (selected !== WinJS.Utilities._isSelectionRendered(itemBox))) {
                             var index = that._view.items.index(itemBox);
                             var entry = { index: index, item: item, selected: selected };
                             (that._selectionAllowed(index) ? changedItems : unselectableItems).push(entry);
@@ -4443,12 +4340,7 @@ define([
                 "accessibilityannotationcomplete"));
             WinJS.Class.mix(ListView, WinJS.UI.DOMEventMixin);
             return ListView;
-        }),
-
-        _isSelectionRendered: function ListView_isSelectionRendered(itemBox) {
-            // The tree is changed at pointerDown but _selectedClass is added only when the user drags an item below the selection threshold so checking for _selectedClass is not reliable.
-            return itemBox.querySelectorAll(WinJS.UI._selectionPartsSelector).length > 0;
-        }
+        })
     });
 
 });

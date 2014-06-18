@@ -89,7 +89,7 @@ WinJSTests.ItemContainerTests = function () {
     }
 
     function verifySelectionVisual(element, selected) {
-        var parts = element.querySelectorAll(WinJS.UI._selectionPartsSelector);
+        var parts = element.querySelectorAll(WinJS.Utilities._selectionPartsSelector);
         if (selected) {
             LiveUnit.Assert.isTrue(utilities.hasClass(element, WinJS.UI._selectedClass));
             LiveUnit.Assert.areEqual(4, parts.length, "The control's container should have 4 selection parts");

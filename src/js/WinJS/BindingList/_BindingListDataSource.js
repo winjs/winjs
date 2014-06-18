@@ -13,7 +13,7 @@ define([
     ], function bindingListDataSourceInit(_Global, _Base, _BaseUtils, _ErrorFromName, _DomWeakRefTable, Promise, Scheduler, _UI) {
     "use strict";
 
-    _Base.Namespace.define("WinJS.Binding", {
+    var members = {
         _BindingListDataSource: _Base.Namespace._lazy(function () {
             var errors = {
                 get noLongerMeaningful() { return Promise.wrapError(new _ErrorFromName(_UI.EditError.noLongerMeaningful)); }
@@ -746,6 +746,9 @@ define([
             });
             return DataSource;
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.Binding", members);
+    return _Base.Namespace.defineWithParent(null, null, members);
 
 });

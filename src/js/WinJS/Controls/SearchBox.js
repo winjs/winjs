@@ -1,11 +1,21 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Base',
+    '../Core/_ErrorFromName',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Animations',
+    '../BindingList',
+    '../Controls/Repeater',
+    '../Utilities/_Control',
+    '../Utilities/_ElementListUtilities',
+    '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function searchboxInit() {
+    ], function searchboxInit(_Base, _ErrorFromName, _Events, _Resources, Animations, BindingList, Repeater, _Control, _ElementListUtilities, _ElementUtilities) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.SearchBox">
         /// Enables the user to perform search queries and select suggestions.
@@ -37,10 +47,9 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        SearchBox: WinJS.Namespace._lazy(function () {
-            var utilities = WinJS.Utilities;
-            var createEvent = WinJS.Utilities._createEventProperty;
-            var Key = utilities.Key;
+        SearchBox: _Base.Namespace._lazy(function () {
+            var createEvent = _Events._createEventProperty;
+            var Key = _ElementUtilities.Key;
 
             // Enums
             var ClassName = {
@@ -76,18 +85,18 @@ define([
             };
 
             var strings = {
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get invalidSearchBoxSuggestionKind() { return WinJS.Resources._getWinJSString("ui/invalidSearchBoxSuggestionKind").value; },
-                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/searchBoxAriaLabel").value; },
-                get ariaLabelInputNoPlaceHolder() { return WinJS.Resources._getWinJSString("ui/searchBoxAriaLabelInputNoPlaceHolder").value; },
-                get ariaLabelInputPlaceHolder() { return WinJS.Resources._getWinJSString("ui/searchBoxAriaLabelInputPlaceHolder").value; },
-                get ariaLabelButton() { return WinJS.Resources._getWinJSString("ui/searchBoxAriaLabelButton").value; },
-                get ariaLabelQuery() { return WinJS.Resources._getWinJSString("ui/searchBoxAriaLabelQuery").value; },
-                get ariaLabelSeparator() { return WinJS.Resources._getWinJSString("ui/searchBoxAriaLabelSeparator").value; },
-                get ariaLabelResult() { return WinJS.Resources._getWinJSString("ui/searchBoxAriaLabelResult").value; }
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                get invalidSearchBoxSuggestionKind() { return _Resources._getWinJSString("ui/invalidSearchBoxSuggestionKind").value; },
+                get ariaLabel() { return _Resources._getWinJSString("ui/searchBoxAriaLabel").value; },
+                get ariaLabelInputNoPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputNoPlaceHolder").value; },
+                get ariaLabelInputPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputPlaceHolder").value; },
+                get ariaLabelButton() { return _Resources._getWinJSString("ui/searchBoxAriaLabelButton").value; },
+                get ariaLabelQuery() { return _Resources._getWinJSString("ui/searchBoxAriaLabelQuery").value; },
+                get ariaLabelSeparator() { return _Resources._getWinJSString("ui/searchBoxAriaLabelSeparator").value; },
+                get ariaLabelResult() { return _Resources._getWinJSString("ui/searchBoxAriaLabelResult").value; }
             };
 
-            var SearchBox = WinJS.Class.define(function SearchBox_ctor(element, options) {
+            var SearchBox = _Base.Class.define(function SearchBox_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.SearchBox.SearchBox">
                 /// <summary locid="WinJS.UI.SearchBox.constructor">
                 /// Creates a new SearchBox.
@@ -111,7 +120,7 @@ define([
                 element = element || document.createElement("div");
 
                 if (element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.SearchBox.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.SearchBox.DuplicateConstruction", strings.duplicateConstruction);
                 }
                 element.winControl = this;
 
@@ -163,9 +172,9 @@ define([
 
                 this._hitFinder = null;
                 this._setElement(element);
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
                 this._setAccessibilityProperties();
-                WinJS.Utilities.addClass(element, "win-disposable");
+                _ElementUtilities.addClass(element, "win-disposable");
             }, {
 
                 /// <field type='HTMLElement' domElement='true' hidden='true' locid="WinJS.UI.SearchBox.element" helpKeyword="WinJS.UI.SearchBox.element">
@@ -309,16 +318,16 @@ define([
                             this._inputElement.disabled = false;
                             this._buttonElement.disabled = false;
                             this._domElement.disabled = false;
-                            utilities.removeClass(this.element, ClassName.searchboxDisabled);
+                            _ElementUtilities.removeClass(this.element, ClassName.searchboxDisabled);
                             if (document.activeElement === this.element) {
-                                WinJS.Utilities._setActive(this._inputElement);
+                                _ElementUtilities._setActive(this._inputElement);
                             }
                         } else {
                             // Disable control
                             if (this._isFlyoutShown) {
                                 this._hideFlyout();
                             }
-                            utilities.addClass(this.element, ClassName.searchboxDisabled);
+                            _ElementUtilities.addClass(this.element, ClassName.searchboxDisabled);
                             this._inputElement.disabled = true;
                             this._buttonElement.disabled = true;
                             this._domElement.disabled = true;
@@ -463,8 +472,8 @@ define([
 
                     // Display above vs below
                     var minPopupHeight = this._flyoutDivElement.clientHeight;
-                    if (minPopupHeight < WinJS.UI.SearchBox._Constants.MIN_POPUP_HEIGHT) {
-                        minPopupHeight = WinJS.UI.SearchBox._Constants.MIN_POPUP_HEIGHT;
+                    if (minPopupHeight < SearchBox._Constants.MIN_POPUP_HEIGHT) {
+                        minPopupHeight = SearchBox._Constants.MIN_POPUP_HEIGHT;
                     }
                     var flyoutRect = this._flyoutDivElement.getBoundingClientRect();
                     var searchBoxRect = this.element.getBoundingClientRect();
@@ -523,7 +532,7 @@ define([
                         this._flyoutOpenPromise = null;
                     }
                     var animationKeyframe = flyoutBelowSearchBox ? "WinJS-flyoutBelowSearchBox-showPopup" : "WinJS-flyoutAboveSearchBox-showPopup";
-                    this._flyoutOpenPromise = WinJS.UI.Animation.showPopup(this._flyoutDivElement, { top: "0px", left: "0px", keyframe: animationKeyframe });
+                    this._flyoutOpenPromise = Animations.showPopup(this._flyoutDivElement, { top: "0px", left: "0px", keyframe: animationKeyframe });
                 },
 
                 _hideFlyout: function SearchBox_hideFlyout() {
@@ -538,7 +547,7 @@ define([
                     var spanElement = document.createElement("span");
                     spanElement.textContent = textContent;
                     spanElement.setAttribute("aria-hidden", "true");
-                    utilities.addClass(spanElement, ClassName.searchboxHitHighlightSpan);
+                    _ElementUtilities.addClass(spanElement, ClassName.searchboxHitHighlightSpan);
                     element.insertBefore(spanElement, insertBefore)
                     return spanElement;
                 },
@@ -546,7 +555,7 @@ define([
                 _addHitHighlightedText: function SearchBox_addHitHighlightedText(element, item, text) {
                     if (text) {
                         // Remove any existing hit highlighted text spans
-                        utilities.query("." + ClassName.searchboxHitHighlightSpan, element).forEach(function (childElement) {
+                        _ElementListUtilities.query("." + ClassName.searchboxHitHighlightSpan, element).forEach(function (childElement) {
                             childElement.parentNode.removeChild(childElement);
                         });
 
@@ -558,7 +567,7 @@ define([
                             hitsProvided = this._hitFinder.find(text);
                         }
 
-                        var hits = WinJS.UI.SearchBox._sortAndMergeHits(hitsProvided);
+                        var hits = SearchBox._sortAndMergeHits(hitsProvided);
 
                         var lastPosition = 0;
                         for (var i = 0; i < hits.length; i++) {
@@ -571,7 +580,7 @@ define([
 
                             // Add hit highlighted text
                             var spanHitHighlightedText = this._addNewSpan(element, text.substring(hit.startPosition, lastPosition), firstChild);
-                            utilities.addClass(spanHitHighlightedText, ClassName.searchBoxFlyoutHighlightText);
+                            _ElementUtilities.addClass(spanHitHighlightedText, ClassName.searchBoxFlyoutHighlightText);
                         }
 
                         // Add final normal text
@@ -651,9 +660,9 @@ define([
                 _updateSearchButtonClass: function SearchBox_updateSearchButtonClass() {
                     if ((this._currentSelectedIndex !== -1) || (document.activeElement !== this._inputElement)) {
                         // Focus is not in input. remove class
-                        utilities.removeClass(this._buttonElement, ClassName.searchBoxButtonInputFocus);
+                        _ElementUtilities.removeClass(this._buttonElement, ClassName.searchBoxButtonInputFocus);
                     } else if (document.activeElement === this._inputElement) {
-                        utilities.addClass(this._buttonElement, ClassName.searchBoxButtonInputFocus);
+                        _ElementUtilities.addClass(this._buttonElement, ClassName.searchBoxButtonInputFocus);
                     }
                 },
 
@@ -664,10 +673,10 @@ define([
                     for (var i = 0; i < this._suggestionsData.length; i++) {
                         curElement = this._repeater.elementFromIndex(i);
                         if (i !== indexToSelect) {
-                            utilities.removeClass(curElement, ClassName.searchBoxSuggestionSelected);
+                            _ElementUtilities.removeClass(curElement, ClassName.searchBoxSuggestionSelected);
                             curElement.setAttribute("aria-selected", "false");
                         } else {
-                            utilities.addClass(curElement, ClassName.searchBoxSuggestionSelected);
+                            _ElementUtilities.addClass(curElement, ClassName.searchBoxSuggestionSelected);
                             this._scrollToView(curElement);
                             curElement.setAttribute("aria-selected", "true");
                         }
@@ -686,10 +695,10 @@ define([
                     if ((targetElement.offsetTop + targetElement.offsetHeight) > (this._flyoutDivElement.scrollTop + popupHeight)) {
                         // Element to scroll is below popup visible area
                         var scrollDifference = (targetElement.offsetTop + targetElement.offsetHeight) - (this._flyoutDivElement.scrollTop + popupHeight);
-                        WinJS.Utilities._zoomTo(this._flyoutDivElement, { contentX: 0, contentY: (this._flyoutDivElement.scrollTop + scrollDifference), viewportX: 0, viewportY: 0 });
+                        _ElementUtilities._zoomTo(this._flyoutDivElement, { contentX: 0, contentY: (this._flyoutDivElement.scrollTop + scrollDifference), viewportX: 0, viewportY: 0 });
                     } else if (targetElement.offsetTop < this._flyoutDivElement.scrollTop) {
                         // Element to scroll is above popup visible area
-                        WinJS.Utilities._zoomTo(this._flyoutDivElement, { contentX: 0, contentY: targetElement.offsetTop, viewportX: 0, viewportY: 0 });
+                        _ElementUtilities._zoomTo(this._flyoutDivElement, { contentX: 0, contentY: targetElement.offsetTop, viewportX: 0, viewportY: 0 });
                     }
                 },
 
@@ -699,7 +708,7 @@ define([
                     this._addHitHighlightedText(root, item, item.text);
                     root.title = item.text;
 
-                    utilities.addClass(root, ClassName.searchBoxSuggestionQuery);
+                    _ElementUtilities.addClass(root, ClassName.searchBoxSuggestionQuery);
 
                     var that = this;
                     root.addEventListener('click', function (ev) {
@@ -708,7 +717,7 @@ define([
                     });
 
                     root.setAttribute("role", "option");
-                    var ariaLabel = WinJS.Resources._formatString(strings.ariaLabelQuery, item.text);
+                    var ariaLabel = _Resources._formatString(strings.ariaLabelQuery, item.text);
                     root.setAttribute("aria-label", ariaLabel);
                     return root;
                 },
@@ -723,9 +732,9 @@ define([
                         root.appendChild(textElement);
                     }
                     root.insertAdjacentHTML("beforeend", "<hr/>");
-                    utilities.addClass(root, ClassName.searchBoxSuggestionSeparator);
+                    _ElementUtilities.addClass(root, ClassName.searchBoxSuggestionSeparator);
                     root.setAttribute("role", "separator");
-                    var ariaLabel = WinJS.Resources._formatString(strings.ariaLabelSeparator, item.text);
+                    var ariaLabel = _Resources._formatString(strings.ariaLabelSeparator, item.text);
                     root.setAttribute("aria-label", ariaLabel);
                     return root;
                 },
@@ -737,7 +746,7 @@ define([
                     var loadImage = function (url) {
                         function onload() {
                             image.removeEventListener("load", onload, false);
-                            WinJS.UI.Animation.fadeIn(image);
+                            Animations.fadeIn(image);
                         }
                         image.addEventListener("load", onload, false);
                         image.src = url;
@@ -756,7 +765,7 @@ define([
                     root.appendChild(image);
 
                     var divElement = document.createElement("div");
-                    utilities.addClass(divElement, ClassName.searchBoxSuggestionResultText);
+                    _ElementUtilities.addClass(divElement, ClassName.searchBoxSuggestionResultText);
                     this._addHitHighlightedText(divElement, item, item.text);
                     divElement.title = item.text;
                     divElement.setAttribute("aria-hidden", "true");
@@ -766,13 +775,13 @@ define([
                     divElement.appendChild(brElement);
 
                     var divDetailElement = document.createElement("span");
-                    utilities.addClass(divDetailElement, ClassName.searchBoxSuggestionResultDetailedText);
+                    _ElementUtilities.addClass(divDetailElement, ClassName.searchBoxSuggestionResultDetailedText);
                     this._addHitHighlightedText(divDetailElement, item, item.detailText);
                     divDetailElement.title = item.detailText;
                     divDetailElement.setAttribute("aria-hidden", "true");
                     divElement.appendChild(divDetailElement);
 
-                    utilities.addClass(root, ClassName.searchBoxSuggestionResult);
+                    _ElementUtilities.addClass(root, ClassName.searchBoxSuggestionResult);
 
                     var that = this;
                     root.addEventListener('click', function (ev) {
@@ -781,7 +790,7 @@ define([
                     });
 
                     root.setAttribute("role", "option");
-                    var ariaLabel = WinJS.Resources._formatString(strings.ariaLabelResult, item.text, item.detailText);
+                    var ariaLabel = _Resources._formatString(strings.ariaLabelResult, item.text, item.detailText);
                     root.setAttribute("aria-label", ariaLabel);
                     return root;
                 },
@@ -798,7 +807,7 @@ define([
                     } else if (item.kind === SearchSuggestionKind.Result) {
                         root = this._resultSuggestionRenderer(item);
                     } else {
-                        throw new WinJS.ErrorFromName("WinJS.UI.SearchBox.invalidSearchBoxSuggestionKind", strings.invalidSearchBoxSuggestionKind);
+                        throw new _ErrorFromName("WinJS.UI.SearchBox.invalidSearchBoxSuggestionKind", strings.invalidSearchBoxSuggestionKind);
                     }
 
                     return root;
@@ -806,22 +815,22 @@ define([
 
                 _setElement: function SearchBox_setElement(element) {
                     this._domElement = element;
-                    utilities.addClass(this._domElement, ClassName.searchBox);
+                    _ElementUtilities.addClass(this._domElement, ClassName.searchBox);
 
                     this._inputElement = document.createElement("input");
                     this._inputElement.type = "search";
-                    utilities.addClass(this._inputElement, ClassName.searchBoxInput);
+                    _ElementUtilities.addClass(this._inputElement, ClassName.searchBoxInput);
 
                     this._buttonElement = document.createElement("div");
                     this._buttonElement.tabIndex = -1;
-                    utilities.addClass(this._buttonElement, ClassName.searchBoxButton);
+                    _ElementUtilities.addClass(this._buttonElement, ClassName.searchBoxButton);
 
                     this._flyoutDivElement = document.createElement('div');
-                    utilities.addClass(this._flyoutDivElement, ClassName.searchBoxFlyout);
+                    _ElementUtilities.addClass(this._flyoutDivElement, ClassName.searchBoxFlyout);
 
                     this._repeaterDivElement = document.createElement('div');
-                    this._suggestionsData = new WinJS.Binding.List();
-                    this._repeater = new WinJS.UI.Repeater(this._repeaterDivElement, { data: this._suggestionsData, template: this._suggestionRendererBind });
+                    this._suggestionsData = new BindingList.List();
+                    this._repeater = new Repeater.Repeater(this._repeaterDivElement, { data: this._suggestionsData, template: this._suggestionRendererBind });
 
                     this._domElement.appendChild(this._inputElement);
                     this._domElement.appendChild(this._buttonElement);
@@ -846,7 +855,7 @@ define([
                     this._buttonElement.setAttribute("role", "button");
                     this._buttonElement.setAttribute("aria-label", strings.ariaLabelButton);
                     this._repeaterDivElement.setAttribute("role", "listbox");
-                    WinJS.UI._ensureId(this._repeaterDivElement);
+                    _ElementUtilities._ensureId(this._repeaterDivElement);
                     this._inputElement.setAttribute("aria-controls", this._repeaterDivElement.id);
                     this._repeaterDivElement.setAttribute("aria-live", "polite");
                 },
@@ -854,7 +863,7 @@ define([
                 _updateInputElementAriaLabel: function Searchbox_updateInputElementAriaLabel() {
                     var ariaLabel = strings.ariaLabelInputNoPlaceHolder;
                     if (this._inputElement.placeholder && this._inputElement.placeholder) {
-                        ariaLabel = WinJS.Resources._formatString(strings.ariaLabelInputPlaceHolder, this._inputElement.placeholder);
+                        ariaLabel = _Resources._formatString(strings.ariaLabelInputPlaceHolder, this._inputElement.placeholder);
                     }
                     this._inputElement.setAttribute("aria-label", ariaLabel);
                 },
@@ -869,11 +878,11 @@ define([
                         this._lastKeyPressLanguage = Windows.Globalization.Language.currentInputMethodLanguageTag;
                     }
 
-                    this._fireEvent(WinJS.UI.SearchBox._EventName.querysubmitted, {
+                    this._fireEvent(SearchBox._EventName.querysubmitted, {
                         language: this._lastKeyPressLanguage,
                         linguisticDetails: this._getLinguisticDetails(true /*useCache*/, fillLinguisticDetails), // allow caching, but generate empty linguistic details if suggestion is used
                         queryText: queryText,
-                        keyModifiers: WinJS.UI.SearchBox._getKeyModifiers(event)
+                        keyModifiers: SearchBox._getKeyModifiers(event)
                     });
 
                     if (this._searchSuggestionManager) {
@@ -889,9 +898,9 @@ define([
                     if (item.kind === SearchSuggestionKind.Query) {
                         this._submitQuery(item.text, false /*fillLinguisticDetails*/, event); // force empty linguistic details since explicitly chosen suggestion from list
                     } else if (item.kind === SearchSuggestionKind.Result) {
-                        this._fireEvent(WinJS.UI.SearchBox._EventName.resultsuggestionchosen, {
+                        this._fireEvent(SearchBox._EventName.resultsuggestionchosen, {
                             tag: item.tag,
-                            keyModifiers: WinJS.UI.SearchBox._getKeyModifiers(event),
+                            keyModifiers: SearchBox._getKeyModifiers(event),
                             storageFile: null
                         });
                     }
@@ -905,7 +914,7 @@ define([
                 },
 
                 _inputOrImeChangeHandler: function SearchBox_inputImeChangeHandler(event) {
-                    var isButtonDown = WinJS.Utilities._matchesSelector(this._buttonElement, ":active");
+                    var isButtonDown = _ElementUtilities._matchesSelector(this._buttonElement, ":active");
                     // swallow the IME change event that gets fired when composition is ended due to keyboarding down to the suggestion list & mouse down on the button
                     if (!this._isProcessingImeFocusLossKey() && !isButtonDown && !this._isFlyoutPointerDown) {
                         var linguisticDetails = this._getLinguisticDetails(false /*useCache*/, true /*createFilled*/); // never cache on explicit user changes
@@ -938,7 +947,7 @@ define([
                             }
                         }
 
-                        this._fireEvent(WinJS.UI.SearchBox._EventName.querychanged, {
+                        this._fireEvent(SearchBox._EventName.querychanged, {
                             language: this._lastKeyPressLanguage,
                             queryText: this._inputElement.value,
                             linguisticDetails: linguisticDetails
@@ -1118,7 +1127,7 @@ define([
                                 this._processSuggestionChosen(this._suggestionsData.getAt(this._currentSelectedIndex), event);
                             }
                             this._hideFlyout();
-                        } else if (WinJS.UI.SearchBox._isTypeToSearchKey(event)) {
+                        } else if (SearchBox._isTypeToSearchKey(event)) {
                             // Type to search on suggestions scenario.
                             if (this._currentFocusedIndex !== -1) {
                                 this._currentFocusedIndex = -1;
@@ -1180,13 +1189,13 @@ define([
                         }
                     }
 
-                    utilities.addClass(this.element, ClassName.searchBoxInputFocus);
+                    _ElementUtilities.addClass(this.element, ClassName.searchBoxInputFocus);
                     this._updateSearchButtonClass();
                 },
 
                 _searchBoxFocusOutHandler: function SearchBox_searchBoxFocusOutHandler(event) {
                     this._hideFlyoutIfLeavingSearchControl(event.relatedTarget);
-                    utilities.removeClass(this.element, ClassName.searchBoxInputFocus);
+                    _ElementUtilities.removeClass(this.element, ClassName.searchBoxInputFocus);
                     this._updateSearchButtonClass();
                     this._isProcessingDownKey = false;
                     this._isProcessingUpKey = false;
@@ -1209,7 +1218,7 @@ define([
                         var context = this._inputElement.msGetInputContext();
                         var rect = context.getCandidateWindowClientRect();
                         if (this._isIMEOccludingFlyout(rect)) {
-                            var animation = WinJS.UI.Animation.createRepositionAnimation(this._flyoutDivElement.children);
+                            var animation = Animations.createRepositionAnimation(this._flyoutDivElement.children);
                             this._flyoutDivElement.style.paddingTop = (rect.bottom - rect.top) + "px";
                             animation.execute();
                         }
@@ -1223,7 +1232,7 @@ define([
 
                 _msCandidateWindowHideHandler: function SearchBox_msCandidateWindowHideHandler(event) {
                     if (!this._isFlyoutPointerDown) {
-                        var animation = WinJS.UI.Animation.createRepositionAnimation(this._flyoutDivElement.children);
+                        var animation = Animations.createRepositionAnimation(this._flyoutDivElement.children);
                         this._flyoutDivElement.style.paddingTop = "";
                         animation.execute();
                     }
@@ -1239,13 +1248,13 @@ define([
                     this._inputElement.addEventListener("keydown", this._keyDownHandler.bind(this));
                     this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));
                     this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointerdown", this._flyoutPointerDownHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointerup", this._flyoutPointerReleasedHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointercancel", this._flyoutPointerReleasedHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._flyoutDivElement, "pointerout", this._flyoutPointerReleasedHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this.element, "focusin", this._searchBoxFocusInHandler.bind(this), false);
-                    WinJS.Utilities._addEventListener(this.element, "focusout", this._searchBoxFocusOutHandler.bind(this), false);
+                    _ElementUtilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._flyoutDivElement, "pointerdown", this._flyoutPointerDownHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._flyoutDivElement, "pointerup", this._flyoutPointerReleasedHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._flyoutDivElement, "pointercancel", this._flyoutPointerReleasedHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._flyoutDivElement, "pointerout", this._flyoutPointerReleasedHandler.bind(this));
+                    _ElementUtilities._addEventListener(this.element, "focusin", this._searchBoxFocusInHandler.bind(this), false);
+                    _ElementUtilities._addEventListener(this.element, "focusout", this._searchBoxFocusOutHandler.bind(this), false);
 
                     this._inputElement.addEventListener("compositionstart", inputOrImeChangeHandler);
                     this._inputElement.addEventListener("compositionupdate", inputOrImeChangeHandler);
@@ -1304,7 +1313,7 @@ define([
 
                     if (this._reflowImeOnPointerRelease) {
                         this._reflowImeOnPointerRelease = false;
-                        var animation = WinJS.UI.Animation.createRepositionAnimation(this._flyoutDivElement.children);
+                        var animation = Animations.createRepositionAnimation(this._flyoutDivElement.children);
                         this._flyoutDivElement.style.paddingTop = "";
                         animation.execute();
                     }
@@ -1348,7 +1357,7 @@ define([
 
                     } else if (collectionChange === Windows.Foundation.Collections.CollectionChange.itemRemoved) {
                         if ((this._suggestionsData.length === 1)) {
-                            WinJS.Utilities._setActive(this._inputElement);
+                            _ElementUtilities._setActive(this._inputElement);
 
                             this._hideFlyout();
                         }
@@ -1362,7 +1371,7 @@ define([
                         } else {
                             // If the suggestions manager gives us an identical item, it means that only the hit highlighted text has changed.
                             var existingElement = this._repeater.elementFromIndex(index);
-                            if (utilities.hasClass(existingElement, ClassName.searchBoxSuggestionQuery)) {
+                            if (_ElementUtilities.hasClass(existingElement, ClassName.searchBoxSuggestionQuery)) {
                                 this._addHitHighlightedText(existingElement, suggestion, suggestion.text);
                             }
                             else {
@@ -1391,7 +1400,7 @@ define([
 
                     var suggestionsRequestedEventDetail = event;
                     var deferral;
-                    this._fireEvent(WinJS.UI.SearchBox._EventName.suggestionsrequested, {
+                    this._fireEvent(SearchBox._EventName.suggestionsrequested, {
                         setPromise: function (promise) {
                             deferral = suggestionsRequestedEventDetail.request.getDeferral();
                             promise.then(function () {
@@ -1413,7 +1422,7 @@ define([
                 },
 
                 _requestingFocusOnKeyboardInputHandler: function SearchBox_requestingFocusOnKeyboardInputHandler(event) {
-                    this._fireEvent(WinJS.UI.SearchBox._EventName.receivingfocusonkeyboardinput, null);
+                    this._fireEvent(SearchBox._EventName.receivingfocusonkeyboardinput, null);
                     if (document.activeElement !== this._inputElement) {
                         try {
                             this._inputElement.focus();
@@ -1486,8 +1495,8 @@ define([
                         for (var i = 0; i < hitsProvided.length; i++) {
                             hits.push({ startPosition: hitsProvided[i].startPosition, length: hitsProvided[i].length });
                         }
-                        hits.sort(WinJS.UI.SearchBox._hitStartPositionAscendingSorter);
-                        hits.reduce(WinJS.UI.SearchBox._hitIntersectionReducer, reducedHits);
+                        hits.sort(SearchBox._hitStartPositionAscendingSorter);
+                        hits.reduce(SearchBox._hitIntersectionReducer, reducedHits);
                     }
                     return reducedHits;
                 },
@@ -1529,7 +1538,7 @@ define([
                     return true;
                 }
             });
-            WinJS.Class.mix(SearchBox, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(SearchBox, _Control.DOMEventMixin);
             return SearchBox;
         })
     });

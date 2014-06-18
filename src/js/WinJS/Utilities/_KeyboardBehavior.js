@@ -12,21 +12,29 @@ define([
         return;
     }
 
-    WinJS.UI._keyboardSeenLast = false;
+    var _keyboardSeenLast = false;
 
     _Global.addEventListener("pointerdown", function (ev) {
-        if (WinJS.UI._keyboardSeenLast) {
-            WinJS.UI._keyboardSeenLast = false;
+        if (_keyboardSeenLast) {
+            _keyboardSeenLast = false;
         }
     }, true);
 
     _Global.addEventListener("keydown", function (ev) {
-        if (!WinJS.UI._keyboardSeenLast) {
-            WinJS.UI._keyboardSeenLast = true;
+        if (!_keyboardSeenLast) {
+            _keyboardSeenLast = true;
         }
     }, true);
 
     var members = {
+        _keyboardSeenLast : {
+            get: function _keyboardSeenLast_get() {
+                return _keyboardSeenLast;
+            },
+            set: function _keyboardSeenLast_set(value) {
+                _keyboardSeenLast = value;
+            }
+        },
         _WinKeyboard: function (element) {
             // Win Keyboard behavior is a solution that would be similar to -ms-keyboard-focus.
             // It monitors the last input (keyboard/mouse) and adds/removes a win-keyboard class

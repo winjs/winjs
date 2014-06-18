@@ -1,8 +1,12 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     '../Core/_Global',
-    '../Promise'
-    ], function elementListUtilities(_Global, Promise) {
+    '../Core/_Base',
+    '../ControlProcessor',
+    '../Promise',
+    '../Utilities/_Control',
+    '../Utilities/_ElementUtilities'
+    ], function elementListUtilities(_Global, _Base, ControlProcessor, Promise, _Control, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -10,8 +14,8 @@ define([
         return;
     }
 
-    WinJS.Namespace.define("WinJS.Utilities", {
-        QueryCollection: WinJS.Class.derive(Array, function (items) {
+    var members = {
+        QueryCollection: _Base.Class.derive(Array, function (items) {
             /// <signature helpKeyword="WinJS.Utilities.QueryCollection">
             /// <summary locid="WinJS.Utilities.QueryCollection">
             /// Represents the result of a query selector, and provides
@@ -107,7 +111,7 @@ define([
                 /// </returns>
                 /// </signature>
                 this.forEach(function (item) {
-                    WinJS.Utilities.addClass(item, name);
+                    _ElementUtilities.addClass(item, name);
                 });
                 return this;
             },
@@ -124,7 +128,7 @@ define([
                 /// </returns>
                 /// </signature>
                 if (this.length > 0) {
-                    return WinJS.Utilities.hasClass(this[0], name);
+                    return _ElementUtilities.hasClass(this[0], name);
                 }
                 return false;
             },
@@ -141,7 +145,7 @@ define([
                 /// </returns>
                 /// </signature>
                 this.forEach(function (item) {
-                    WinJS.Utilities.removeClass(item, name);
+                    _ElementUtilities.removeClass(item, name);
                 });
                 return this;
             },
@@ -159,7 +163,7 @@ define([
                 /// </returns>
                 /// </signature>
                 this.forEach(function (item) {
-                    WinJS.Utilities.toggleClass(item, name);
+                    _ElementUtilities.toggleClass(item, name);
                 });
                 return this;
             },
@@ -320,8 +324,8 @@ define([
                 } else {
                     options = Ctor;
                     this.forEach(function (element) {
-                        WinJS.UI.process(element).done(function (control) {
-                            control && WinJS.UI.setOptions(control, options);
+                        ControlProcessor.process(element).done(function (control) {
+                            control && _Control.setOptions(control, options);
                         })
                     });
                 }
@@ -428,5 +432,9 @@ define([
             /// </signature>
             return new WinJS.Utilities.QueryCollection(element.children);
         }
-    });
+    };
+
+    _Base.Namespace.define("WinJS.Utilities", members);
+
+    return _Base.Namespace.defineWithParent(null, null, members);
 });

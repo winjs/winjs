@@ -1,13 +1,18 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Back Button
 define([
+    '../Core/_Base',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Navigation',
+    '../Utilities/_Control',
+    '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function backButtonInit() {
+    ], function backButtonInit(_Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities) {
     "use strict";
 
-    var nav = WinJS.Navigation;
-    var Key = WinJS.Utilities.Key;
+    var Key = _ElementUtilities.Key;
 
     // Class Names
     var navigationBackButtonClass = 'win-navigation-backbutton';
@@ -37,14 +42,14 @@ define([
         function backButtonGlobalKeyUpHandler(event) {
             // Navigates back when (alt + left) or BrowserBack keys are released.
             if ((event.keyCode === Key.leftArrow && event.altKey && !event.shiftKey && !event.ctrlKey) || (event.keyCode === Key.browserBack)) {
-                nav.back();
+                Navigation.back();
             }
         }
 
         function backButtonGlobalMSPointerUpHandler(event) {
             // Responds to clicks to enable navigation using 'back' mouse buttons.
             if (event.button === MOUSE_BACK_BUTTON) {
-                nav.back();
+                Navigation.back();
             }
         }
 
@@ -73,7 +78,7 @@ define([
         };
     }()); // Immediate invoke creates and returns the Singleton
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.BackButton">
         /// Provides backwards navigation functionality.
@@ -88,15 +93,15 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        BackButton: WinJS.Namespace._lazy(function () {
+        BackButton: _Base.Namespace._lazy(function () {
             // Statics
             var strings = {
-                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/backbuttonarialabel").value; },
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get badButtonElement() { return WinJS.Resources._getWinJSString("ui/badButtonElement").value; }
+                get ariaLabel() { return _Resources._getWinJSString("ui/backbuttonarialabel").value; },
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                get badButtonElement() { return _Resources._getWinJSString("ui/badButtonElement").value; }
             };
 
-            var BackButton = WinJS.Class.define(function BackButton_ctor(element, options) {
+            var BackButton = _Base.Class.define(function BackButton_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.BackButton.BackButton">
                 /// <summary locid="WinJS.UI.BackButton.constructor">
                 /// Creates a new BackButton control
@@ -116,7 +121,7 @@ define([
 
                 // Check to make sure we weren't duplicated
                 if (element && element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.BackButton.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.BackButton.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
                 this._element = element || document.createElement("button");
@@ -129,13 +134,13 @@ define([
                 // Remember ourselves
                 this._element.winControl = this;
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
 
                 // Add event handlers for this back button instance
                 this._buttonClickHandler = this._handleBackButtonClick.bind(this);
                 this._element.addEventListener('click', this._buttonClickHandler, false);
                 this._navigatedHandler = this._handleNavigatedEvent.bind(this);
-                nav.addEventListener('navigated', this._navigatedHandler, false);
+                Navigation.addEventListener('navigated', this._navigatedHandler, false);
 
                 // Increment reference count / manage add global event handlers
                 singleton.addRef();
@@ -164,7 +169,7 @@ define([
                     this._disposed = true; // Mark this control as disposed.
 
                     // Remove 'navigated' eventhandler for this BackButton
-                    nav.removeEventListener('navigated', this._navigatedHandler, false);
+                    Navigation.removeEventListener('navigated', this._navigatedHandler, false);
 
                     singleton.release(); // Decrement reference count.
 
@@ -177,7 +182,7 @@ define([
                     /// </summary>
                     /// <compatibleWith platform="Windows" minVersion="8.1"/>
                     /// </signature>
-                    if (nav.canGoBack) {
+                    if (Navigation.canGoBack) {
                         this._element.disabled = false;
                     } else {
                         this._element.disabled = true;
@@ -191,14 +196,14 @@ define([
 
                     // Verify the HTML is a button
                     if (this._element.tagName !== "BUTTON") {
-                        throw new WinJS.ErrorFromName("WinJS.UI.BackButton.BadButtonElement", strings.badButtonElement);
+                        throw new _ErrorFromName("WinJS.UI.BackButton.BadButtonElement", strings.badButtonElement);
                     }
 
                     // Attach our css classes
-                    WinJS.Utilities.addClass(this._element, navigationBackButtonClass);
+                    _ElementUtilities.addClass(this._element, navigationBackButtonClass);
 
                     // Attach disposable class.
-                    WinJS.Utilities.addClass(this._element, "win-disposable");
+                    _ElementUtilities.addClass(this._element, "win-disposable");
 
                     // Create inner glyph element
                     this._element.innerHTML = '<span class="' + glyphClass + '"></span>';
@@ -221,7 +226,7 @@ define([
 
                 _handleBackButtonClick: function (event) {
                     // Handles BackButton 'click' behavior
-                    nav.back();
+                    Navigation.back();
                 }
 
             });
@@ -229,7 +234,7 @@ define([
             BackButton._getReferenceCount = function () {
                 return singleton.getCount(); // Expose this for Unit testing.
             }
-            WinJS.Class.mix(BackButton, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(BackButton, _Control.DOMEventMixin);
             return BackButton;
         })
     });

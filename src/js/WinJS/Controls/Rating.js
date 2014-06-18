@@ -1,12 +1,19 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Base',
+    '../Core/_ErrorFromName',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Utilities/_Control',
+    '../Utilities/_ElementUtilities',
+    './Tooltip',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function ratingInit() {
+    ], function ratingInit(_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, Tooltip) {
     "use strict";
 
     // Rating control implementation
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.Rating">
         /// The Rating control allows users to give a number on a scale of 1 to maxRating (5 is the default).
@@ -31,17 +38,16 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        Rating: WinJS.Namespace._lazy(function () {
-            var utilities = WinJS.Utilities;
-            var createEvent = utilities._createEventProperty;
+        Rating: _Base.Namespace._lazy(function () {
+            var createEvent = _Events._createEventProperty;
 
             var strings = {
-                get averageRating() { return WinJS.Resources._getWinJSString("ui/averageRating").value; },
-                get clearYourRating() { return WinJS.Resources._getWinJSString("ui/clearYourRating").value; },
-                get tentativeRating() { return WinJS.Resources._getWinJSString("ui/tentativeRating").value; },
-                get tooltipStringsIsInvalid() { return WinJS.Resources._getWinJSString("ui/tooltipStringsIsInvalid").value; },
-                get unrated() { return WinJS.Resources._getWinJSString("ui/unrated").value; },
-                get userRating() { return WinJS.Resources._getWinJSString("ui/userRating").value; },
+                get averageRating() { return _Resources._getWinJSString("ui/averageRating").value; },
+                get clearYourRating() { return _Resources._getWinJSString("ui/clearYourRating").value; },
+                get tentativeRating() { return _Resources._getWinJSString("ui/tentativeRating").value; },
+                get tooltipStringsIsInvalid() { return _Resources._getWinJSString("ui/tooltipStringsIsInvalid").value; },
+                get unrated() { return _Resources._getWinJSString("ui/unrated").value; },
+                get userRating() { return _Resources._getWinJSString("ui/userRating").value; },
             };
 
             // Constants definition
@@ -51,9 +57,9 @@ define([
                 CHANGE = "change",
                 PREVIEW_CHANGE = "previewchange",
                 MOUSE_LBUTTON = 0, // Event attribute to indicate a mouse left click
-                PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch", // Pointer type to indicate a touch event
-                PT_PEN = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_PEN || "pen", // Pointer type to indicate a pen event
-                PT_MOUSE = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse"; // Pointer type to indicate a mouse event
+                PT_TOUCH = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch", // Pointer type to indicate a touch event
+                PT_PEN = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_PEN || "pen", // Pointer type to indicate a pen event
+                PT_MOUSE = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse"; // Pointer type to indicate a mouse event
 
             var hiddenAverageRatingCss = "padding-left: 0px; padding-right: 0px; border-left: 0px; border-right: 0px; -ms-flex: none; -webkit-flex: none; flex: none; display: none";
 
@@ -70,7 +76,7 @@ define([
                 msAverage = "win-average",
                 msUser = "win-user";
 
-            return WinJS.Class.define(function Rating_ctor(element, options) {
+            return _Base.Class.define(function Rating_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Rating.Rating">
                 /// <summary locid="WinJS.UI.Rating.constructor">
                 /// Creates a new Rating.
@@ -95,7 +101,7 @@ define([
                 element = element || document.createElement("div");
                 options = options || {};
                 this._element = element;
-                WinJS.Utilities.addClass(this._element, "win-disposable");
+                _ElementUtilities.addClass(this._element, "win-disposable");
 
                 //initialize properties with default value
                 this._userRating = 0;
@@ -109,7 +115,7 @@ define([
                 if (!options.tooltipStrings) {
                     this._updateTooltips(null);
                 }
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
                 this._controlUpdateNeeded = true;
                 this._forceLayout();
 
@@ -210,7 +216,7 @@ define([
                     },
                     set: function (value) {
                         if (typeof value !== "object") {
-                            throw new WinJS.ErrorFromName("WinJS.UI.Rating.TooltipStringsIsInvalid", strings.tooltipStringsIsInvalid);
+                            throw new _ErrorFromName("WinJS.UI.Rating.TooltipStringsIsInvalid", strings.tooltipStringsIsInvalid);
                         }
                         this._updateTooltips(value);
                         this._updateAccessibilityRestState();
@@ -343,7 +349,7 @@ define([
 
                 _createControl: function () {
                     // rating control could have more than one class name
-                    utilities.addClass(this._element, msRating);
+                    _ElementUtilities.addClass(this._element, msRating);
 
                     var html = "";
                     this._averageRatingHidden = true;
@@ -362,7 +368,7 @@ define([
                     while (oneStar) {
                         this._elements[i] = oneStar;
                         if (i < this._maxRating) {
-                            WinJS.Utilities.data(oneStar).msStarRating = i + 1;
+                            _ElementUtilities.data(oneStar).msStarRating = i + 1;
                         }
                         oneStar = oneStar.nextElementSibling;
                         i++;
@@ -450,7 +456,7 @@ define([
 
                     if (this._toolTips.length === 0) {
                         for (var i = 0; i < this._maxRating; i++) {
-                            this._toolTips[i] = new WinJS.UI.Tooltip(this._elements[i]);
+                            this._toolTips[i] = new Tooltip.Tooltip(this._elements[i]);
                         }
                     }
                 },
@@ -517,13 +523,13 @@ define([
 
                     var i;
                     for (i = 0; i < eventsRegisteredInLowerCase.length; ++i) {
-                        WinJS.Utilities._addEventListener(this._element, eventsRegisteredInLowerCase[i].lowerCaseName, eventsRegisteredInLowerCase[i].handler, false);
+                        _ElementUtilities._addEventListener(this._element, eventsRegisteredInLowerCase[i].lowerCaseName, eventsRegisteredInLowerCase[i].handler, false);
                     }
                     for (i = 0; i < events.length; ++i) {
                         this._element.addEventListener(events[i].name, events[i].handler, false);
                     }
 
-                    this._ariaValueNowMutationObserver = new WinJS.Utilities._MutationObserver(this._ariaValueNowChanged.bind(this));
+                    this._ariaValueNowMutationObserver = new _ElementUtilities._MutationObserver(this._ariaValueNowChanged.bind(this));
                     this._ariaValueNowMutationObserver.observe(this._element, { attributes: true, attributeFilter: ["aria-valuenow"] });
                 },
 
@@ -621,11 +627,11 @@ define([
                         this._pointerDownFocus = true;
                         if (!this._disabled) {
                             // Only capture the event when active to support block panning
-                            WinJS.Utilities._setPointerCapture(this._element, eventObject.pointerId);
+                            _ElementUtilities._setPointerCapture(this._element, eventObject.pointerId);
                             this._captured = true;
 
                             if (eventObject.pointerType === PT_TOUCH) {
-                                this._tentativeRating = WinJS.Utilities.data(eventObject.target).msStarRating || 0;
+                                this._tentativeRating = _ElementUtilities.data(eventObject.target).msStarRating || 0;
                                 // change states for all stars
                                 this._setStarClasses(msRatingTentativeFull, this._tentativeRating, msRatingTentativeEmpty);
                                 this._hideAverageStar();
@@ -645,14 +651,14 @@ define([
                     var pointerAt = this._pointerDownAt || { x: eventObject.clientX, y: eventObject.clientY };
 
                     var star;
-                    var hit = WinJS.Utilities._elementsFromPoint(eventObject.clientX, pointerAt.y);
+                    var hit = _ElementUtilities._elementsFromPoint(eventObject.clientX, pointerAt.y);
                     if (hit) {
                         for (var i = 0, len = hit.length; i < len; i++) {
                             var item = hit[i];
                             if (item.getAttribute("role") === "tooltip") {
                                 return;
                             }
-                            if (WinJS.Utilities.hasClass(item, "win-star")) {
+                            if (_ElementUtilities.hasClass(item, "win-star")) {
                                 star = item;
                                 break;
                             }
@@ -660,7 +666,7 @@ define([
                     }
                     var starNum;
                     if (star && (star.parentElement === this._element)) {
-                        starNum = WinJS.Utilities.data(star).msStarRating || 0;
+                        starNum = _ElementUtilities.data(star).msStarRating || 0;
                     }
                     else {
                         var left = 0, right = this.maxRating;
@@ -709,7 +715,7 @@ define([
 
                 _onPointerUp: function (eventObject) {
                     if (this._captured) {
-                        WinJS.Utilities._releasePointerCapture(this._element, eventObject.pointerId);
+                        _ElementUtilities._releasePointerCapture(this._element, eventObject.pointerId);
                         this._captured = false;
                         this._onUserRatingChanged();
                     }
@@ -751,7 +757,7 @@ define([
                 },
 
                 _onKeyDown: function (eventObject) {
-                    var Key = utilities.Key;
+                    var Key = _ElementUtilities.Key;
                     var keyCode = eventObject.keyCode;
                     var rtlString = getComputedStyle(this._element).direction;
                     var handled = true;
@@ -824,7 +830,7 @@ define([
                 },
 
                 _onPointerOut: function (eventObject) {
-                    if (!this._captured && !utilities.eventWithinElement(this._element, eventObject)) {
+                    if (!this._captured && !_ElementUtilities.eventWithinElement(this._element, eventObject)) {
                         this._showCurrentRating();
                         if (!this._lastEventWasChange) {
                             // only fire cancel event if we move out of the rating control, and if
@@ -861,7 +867,7 @@ define([
 
                 _resetNextElement: function (prevState) {
                     if (this._averageRatingElement.nextSibling !== null) {
-                        WinJS.Utilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1, shrink: 1});
+                        _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1, shrink: 1});
                         var style = this._averageRatingElement.nextSibling.style;
                         var direction = getComputedStyle(this._element).direction;
                         if (prevState) {
@@ -964,12 +970,12 @@ define([
                         nextStyle.borderLeft = "0px";
                         nextStyle.direction = "rtl";
                     }
-                    WinJS.Utilities._setFlexStyle(this._averageRatingElement, {grow: this._floatingValue, shrink: this._floatingValue});
+                    _ElementUtilities._setFlexStyle(this._averageRatingElement, {grow: this._floatingValue, shrink: this._floatingValue});
                     style.width = this._resizeStringValue(this._elementWidth, this._floatingValue, style.width);
                     style.backgroundSize = (100 / this._floatingValue) + "% 100%";
                     style.display = getComputedStyle(this._averageRatingElement.nextSibling).display;
                     this._averageRatingHidden = false;
-                    WinJS.Utilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1 - this._floatingValue, shrink: 1 - this._floatingValue});
+                    _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1 - this._floatingValue, shrink: 1 - this._floatingValue});
                     nextStyle.width = this._resizeStringValue(this._elementWidth, 1 - this._floatingValue, nextStyle.width);
                     nextStyle.backgroundSize = (100 / (1 - this._floatingValue)) + "% 100%";
                 },
@@ -1020,7 +1026,7 @@ define([
                         }
                         this._clearElement.style.cssText = "visiblity:hidden; position:absolute; width:0px; height:100%; left:" + distance + "px; top:0px;";
                         this._elements[0].appendChild(this._clearElement);
-                        this._toolTips[this._maxRating] = new WinJS.UI.Tooltip(this._clearElement);
+                        this._toolTips[this._maxRating] = new Tooltip.Tooltip(this._clearElement);
                         this._toolTips[this._maxRating].innerHTML = this._tooltipStrings[this._maxRating];
                         this._toolTips[this._maxRating].open(tooltipType);
                     }
@@ -1050,7 +1056,7 @@ define([
 
                 _appendClass: function (classNameToBeAdded) {
                     for (var i = 0; i <= this._maxRating; i++) {
-                        utilities.addClass(this._elements[i], classNameToBeAdded);
+                        _ElementUtilities.addClass(this._elements[i], classNameToBeAdded);
                     }
                 },
 
@@ -1065,7 +1071,7 @@ define([
                 },
 
                 _ensureAverageMSStarRating: function () {
-                    WinJS.Utilities.data(this._averageRatingElement).msStarRating = Math.ceil(this._averageRating);
+                    _ElementUtilities.data(this._averageRatingElement).msStarRating = Math.ceil(this._averageRating);
                 },
 
                 _updateControl: function () {

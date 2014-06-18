@@ -1,13 +1,30 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function NavBarContainerInit() {
+    '../../Core/_Base',
+    '../../Core/_ErrorFromName',
+    '../../Core/_Events',
+    '../../Core/_Resources',
+    '../../Core/_WriteProfilerMark',
+    '../../Animations',
+    '../../BindingList',
+    '../../ControlProcessor',
+    '../../Navigation',
+    '../../Promise',
+    '../../Scheduler',
+    '../../Utilities/_Control',
+    '../../Utilities/_ElementUtilities',
+    '../../Utilities/_KeyboardBehavior',
+    '../../Utilities/_UI',
+    '../Repeater',
+    './_Command'
+    ], function NavBarContainerInit(_Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, Repeater, _Command) {
     "use strict";
 
     function nobodyHasFocus() {
         return document.activeElement === null || document.activeElement === document.body;
     }
 
-    WinJS.Namespace.define("WinJS.UI", {
+    var members = {
         /// <field>
         /// <summary locid="WinJS.UI.NavBarContainer">
         /// Contains a group of NavBarCommand objects in a NavBar. 
@@ -36,25 +53,25 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        NavBarContainer: WinJS.Namespace._lazy(function () {
-            var Key = WinJS.Utilities.Key;
+        NavBarContainer: _Base.Namespace._lazy(function () {
+            var Key = _ElementUtilities.Key;
 
             var buttonFadeDelay = 3000;
-            var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+            var PT_TOUCH = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
             var MS_MANIPULATION_STATE_STOPPED = 0;
 
-            var createEvent = WinJS.Utilities._createEventProperty;
+            var createEvent = _Events._createEventProperty;
             var eventNames = {
                 invoked: "invoked",
                 splittoggle: "splittoggle"
             };
 
             var strings = {
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get navBarContainerViewportAriaLabel() { return WinJS.Resources._getWinJSString("ui/navBarContainerViewportAriaLabel").value; }
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                get navBarContainerViewportAriaLabel() { return _Resources._getWinJSString("ui/navBarContainerViewportAriaLabel").value; }
             };
 
-            var NavBarContainer = WinJS.Class.define(function NavBarContainer_ctor(element, options) {
+            var NavBarContainer = _Base.Class.define(function NavBarContainer_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.NavBarContainer.NavBarContainer">
                 /// <summary locid="WinJS.UI.NavBarContainer.constructor">
                 /// Creates a new NavBarContainer.
@@ -74,20 +91,20 @@ define([
                 /// </signature>
                 
                 element = element || document.createElement("DIV");
-                this._id = element.id || WinJS.Utilities._uniqueID(element);
+                this._id = element.id || _ElementUtilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
 
                 options = options || {};
 
                 if (element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.NavBarContainer.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.NavBarContainer.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
                 // Attaching JS control to DOM element
                 element.winControl = this;
                 this._element = element;
-                WinJS.Utilities.addClass(this.element, WinJS.UI.NavBarContainer._ClassName.navbarcontainer);
-                WinJS.Utilities.addClass(this.element, "win-disposable");
+                _ElementUtilities.addClass(this.element, NavBarContainer._ClassName.navbarcontainer);
+                _ElementUtilities.addClass(this.element, "win-disposable");
                 if (!element.getAttribute("tabIndex")) {
                     element.tabIndex = -1;
                 }
@@ -107,10 +124,10 @@ define([
                 this._dataChangingBound = this._dataChanging.bind(this);
                 this._dataChangedBound = this._dataChanged.bind(this);
 
-                WinJS.Navigation.addEventListener('navigated', this._closeSplitAndResetBound);
+                Navigation.addEventListener('navigated', this._closeSplitAndResetBound);
 
                 // Don't use set options for the properties so we can control the ordering to avoid rendering multiple times.
-                this.layout = options.layout || WinJS.UI.Orientation.horizontal;
+                this.layout = options.layout || _UI.Orientation.horizontal;
                 if (options.maxRows) {
                     this.maxRows = options.maxRows;
                 }
@@ -125,7 +142,7 @@ define([
                 }
 
                 // Events only
-                WinJS.UI._setOptions(this, options, true);
+                _Control._setOptions(this, options, true);
 
                 this._duringConstructor = false;
 
@@ -135,9 +152,9 @@ define([
 
                 this._updatePageUI();
                 
-                WinJS.Utilities.Scheduler.schedule(function NavBarContainer_async_initialize() {
+                Scheduler.schedule(function NavBarContainer_async_initialize() {
                     this._updateAppBarReference();
-                }, WinJS.Utilities.Scheduler.Priority.normal, this, "WinJS.UI.NavBarContainer_async_initialize");
+                }, Scheduler.Priority.normal, this, "WinJS.UI.NavBarContainer_async_initialize");
 
                 this._writeProfilerMark("constructor,StopTM");
             }, {
@@ -198,7 +215,7 @@ define([
                     }
 
                     // Create the NavBarCommand after calling render so that the reparenting in navbarCommand works.
-                    var navbarCommand = new WinJS.UI.NavBarCommand(navbarCommandEl, item);
+                    var navbarCommand = new _Command.NavBarCommand(navbarCommandEl, item);
                     return navbarCommandEl;
                 },
 
@@ -212,7 +229,7 @@ define([
                     },
                     set: function (value) {
                         if (!value) {
-                            value = new WinJS.Binding.List();
+                            value = new BindingList.List();
                         }
 
                         if (!this._duringConstructor) {
@@ -226,7 +243,7 @@ define([
 
                         if (!this._repeater) {
                             this._surfaceEl.innerHTML = "";
-                            this._repeater = new WinJS.UI.Repeater(this._surfaceEl, {
+                            this._repeater = new Repeater.Repeater(this._surfaceEl, {
                                 template: this._render.bind(this)
                             });
                         }
@@ -276,14 +293,14 @@ define([
                         return this._layout;
                     },
                     set: function (value) {
-                        if (value === WinJS.UI.Orientation.vertical) {
-                            this._layout = WinJS.UI.Orientation.vertical;
-                            WinJS.Utilities.removeClass(this.element, WinJS.UI.NavBarContainer._ClassName.horizontal);
-                            WinJS.Utilities.addClass(this.element, WinJS.UI.NavBarContainer._ClassName.vertical);
+                        if (value === _UI.Orientation.vertical) {
+                            this._layout = _UI.Orientation.vertical;
+                            _ElementUtilities.removeClass(this.element, NavBarContainer._ClassName.horizontal);
+                            _ElementUtilities.addClass(this.element, NavBarContainer._ClassName.vertical);
                         } else {
-                            this._layout = WinJS.UI.Orientation.horizontal;
-                            WinJS.Utilities.removeClass(this.element, WinJS.UI.NavBarContainer._ClassName.vertical);
-                            WinJS.Utilities.addClass(this.element, WinJS.UI.NavBarContainer._ClassName.horizontal);
+                            this._layout = _UI.Orientation.horizontal;
+                            _ElementUtilities.removeClass(this.element, NavBarContainer._ClassName.vertical);
+                            _ElementUtilities.addClass(this.element, NavBarContainer._ClassName.horizontal);
                         }
 
                         this._viewportEl.style.msScrollSnapType = "";
@@ -371,7 +388,7 @@ define([
                     /// </signature>
                     this._resizeHandler();
                     if (this._measured) {
-                        this._scrollPosition = WinJS.Utilities.getScrollPosition(this._viewportEl)[(this.layout === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")];
+                        this._scrollPosition = _ElementUtilities.getScrollPosition(this._viewportEl)[(this.layout === _UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")];
                     }
 
                     this._duringForceLayout = true;
@@ -389,7 +406,7 @@ define([
                         }
                     
                         var appBarEl = this.element.parentNode;
-                        while (appBarEl && !WinJS.Utilities.hasClass(appBarEl, 'win-appbar')) {
+                        while (appBarEl && !_ElementUtilities.hasClass(appBarEl, 'win-appbar')) {
                             appBarEl = appBarEl.parentNode;
                         }
                         this._appBarEl = appBarEl;
@@ -558,21 +575,21 @@ define([
                 },
 
                 _setupTree: function NavBarContainer_setupTree() {
-                    this._animateNextPreviousButtons = WinJS.Promise.wrap();
+                    this._animateNextPreviousButtons = Promise.wrap();
                     this._element.addEventListener('mouseleave', this._mouseleave.bind(this));
-                    WinJS.Utilities._addEventListener(this._element, 'pointerdown', this._MSPointerDown.bind(this));
-                    WinJS.Utilities._addEventListener(this._element, 'pointermove', this._MSPointerMove.bind(this));
-                    WinJS.Utilities._addEventListener(this._element, "focusin", this._focusHandler.bind(this), false);
+                    _ElementUtilities._addEventListener(this._element, 'pointerdown', this._MSPointerDown.bind(this));
+                    _ElementUtilities._addEventListener(this._element, 'pointermove', this._MSPointerMove.bind(this));
+                    _ElementUtilities._addEventListener(this._element, "focusin", this._focusHandler.bind(this), false);
 
                     this._pageindicatorsEl = document.createElement('div');
-                    WinJS.Utilities.addClass(this._pageindicatorsEl, WinJS.UI.NavBarContainer._ClassName.pageindicators);
+                    _ElementUtilities.addClass(this._pageindicatorsEl, NavBarContainer._ClassName.pageindicators);
                     this._element.appendChild(this._pageindicatorsEl);
 
                     this._ariaStartMarker = document.createElement("div");
                     this._element.appendChild(this._ariaStartMarker);
 
                     this._viewportEl = document.createElement('div');
-                    WinJS.Utilities.addClass(this._viewportEl, WinJS.UI.NavBarContainer._ClassName.viewport);
+                    _ElementUtilities.addClass(this._viewportEl, NavBarContainer._ClassName.viewport);
                     this._element.appendChild(this._viewportEl);
                     this._viewportEl.setAttribute("role", "group");
                     this._viewportEl.setAttribute("aria-label", strings.navBarContainerViewportAriaLabel);
@@ -587,44 +604,44 @@ define([
                     this._element.appendChild(this._ariaEndMarker);
 
                     this._surfaceEl = document.createElement('div');
-                    WinJS.Utilities.addClass(this._surfaceEl, WinJS.UI.NavBarContainer._ClassName.surface);
+                    _ElementUtilities.addClass(this._surfaceEl, NavBarContainer._ClassName.surface);
                     this._viewportEl.appendChild(this._surfaceEl);
 
                     this._surfaceEl.addEventListener("_invoked", this._navbarCommandInvokedHandler.bind(this));
                     this._surfaceEl.addEventListener("_splittoggle", this._navbarCommandSplitToggleHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._surfaceEl, "focusin", this._itemsFocusHandler.bind(this), false);
+                    _ElementUtilities._addEventListener(this._surfaceEl, "focusin", this._itemsFocusHandler.bind(this), false);
                     this._surfaceEl.addEventListener("keydown", this._keyDownHandler.bind(this));
 
                     // Reparent NavBarCommands which were in declarative markup
                     var tempEl = this.element.firstElementChild;
                     while (tempEl !== this._pageindicatorsEl) {
                         this._surfaceEl.appendChild(tempEl);
-                        WinJS.UI.process(tempEl);
+                        ControlProcessor.process(tempEl);
                         tempEl = this.element.firstElementChild;
                     }
 
                     this._leftArrowEl = document.createElement('div');
-                    WinJS.Utilities.addClass(this._leftArrowEl, WinJS.UI.NavBarContainer._ClassName.navleftarrow);
-                    WinJS.Utilities.addClass(this._leftArrowEl, WinJS.UI.NavBarContainer._ClassName.navarrow);
+                    _ElementUtilities.addClass(this._leftArrowEl, NavBarContainer._ClassName.navleftarrow);
+                    _ElementUtilities.addClass(this._leftArrowEl, NavBarContainer._ClassName.navarrow);
                     this._element.appendChild(this._leftArrowEl);
                     this._leftArrowEl.addEventListener('click', this._goLeft.bind(this));
                     this._leftArrowEl.style.opacity = 0;
                     this._leftArrowEl.style.visibility = 'hidden';
-                    this._leftArrowFadeOut = WinJS.Promise.wrap();
+                    this._leftArrowFadeOut = Promise.wrap();
 
                     this._rightArrowEl = document.createElement('div');
-                    WinJS.Utilities.addClass(this._rightArrowEl, WinJS.UI.NavBarContainer._ClassName.navrightarrow);
-                    WinJS.Utilities.addClass(this._rightArrowEl, WinJS.UI.NavBarContainer._ClassName.navarrow);
+                    _ElementUtilities.addClass(this._rightArrowEl, NavBarContainer._ClassName.navrightarrow);
+                    _ElementUtilities.addClass(this._rightArrowEl, NavBarContainer._ClassName.navarrow);
                     this._element.appendChild(this._rightArrowEl);
                     this._rightArrowEl.addEventListener('click', this._goRight.bind(this));
                     this._rightArrowEl.style.opacity = 0;
                     this._rightArrowEl.style.visibility = 'hidden';
-                    this._rightArrowFadeOut = WinJS.Promise.wrap();
+                    this._rightArrowFadeOut = Promise.wrap();
 
-                    this._keyboardBehavior = new WinJS.UI._KeyboardBehavior(this._surfaceEl, {
+                    this._keyboardBehavior = new _KeyboardBehavior._KeyboardBehavior(this._surfaceEl, {
                         scroller: this._viewportEl
                     });
-                    this._winKeyboard = new WinJS.UI._WinKeyboard(this._surfaceEl);
+                    this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._surfaceEl);
                 },
 
                 _goRight: function NavBarContainer_goRight() {
@@ -661,7 +678,7 @@ define([
 
                 _currentPage: {
                     get: function () {
-                        if (this.layout === WinJS.UI.Orientation.horizontal) {
+                        if (this.layout === _UI.Orientation.horizontal) {
                             this._measure();
                             if (this._sizes.viewportOffsetWidth > 0) {
                                 return Math.min(this._sizes.pages - 1, Math.round(this._scrollPosition / this._sizes.viewportOffsetWidth));
@@ -674,7 +691,7 @@ define([
                 _resizeHandler: function NavBarContainer_resizeHandler() {
                     if (this._disposed) { return; }
                     if (!this._measured) { return; }
-                    var viewportResized = this.layout === WinJS.UI.Orientation.horizontal
+                    var viewportResized = this.layout === _UI.Orientation.horizontal
                             ? this._sizes.viewportOffsetWidth !== parseFloat(getComputedStyle(this._viewportEl).width)
                             : this._sizes.viewportOffsetHeight !== parseFloat(getComputedStyle(this._viewportEl).height);
                     if (!viewportResized) { return; }
@@ -690,7 +707,7 @@ define([
 
                         if (this._appBarEl && this._appBarEl.winControl && this._appBarEl.winControl.hidden) {
                             // Do resize lazily.
-                            WinJS.Utilities.Scheduler.schedule(this._resizeImplBound, WinJS.Utilities.Scheduler.Priority.idle, null, "WinJS.UI.NavBarContainer._resizeImpl");
+                            Scheduler.schedule(this._resizeImplBound, Scheduler.Priority.idle, null, "WinJS.UI.NavBarContainer._resizeImpl");
                             this._appBarEl.addEventListener('beforeshow', this._resizeImplBound);
                         } else {
                             // Do resize now
@@ -723,7 +740,7 @@ define([
                     var keyCode = ev.keyCode
                     if (!ev.altKey && (keyCode === Key.pageUp || keyCode === Key.pageDown)) {
                         var srcElement = ev.target;
-                        if (WinJS.Utilities._matchesSelector(srcElement, ".win-interactive, .win-interactive *")) {
+                        if (_ElementUtilities._matchesSelector(srcElement, ".win-interactive, .win-interactive *")) {
                             return;
                         }
 
@@ -735,7 +752,7 @@ define([
 
                         var scrollPositionTarget = null;
                         if (keyCode === Key.pageUp) {
-                            if (this.layout === WinJS.UI.Orientation.horizontal) {
+                            if (this.layout === _UI.Orientation.horizontal) {
                                 var indexOfFirstItemOnPage = page * sizes.columnsPerPage * sizes.rowsPerPage;
                                 if (index === indexOfFirstItemOnPage && this._surfaceEl.children[index].winControl._buttonEl === document.activeElement) {
                                     // First item on page so go back 1 page.
@@ -783,9 +800,9 @@ define([
                                 this._scrollTo(scrollPositionTarget);
                             }
 
-                            WinJS.Utilities._setActive(element, this._viewportEl);
+                            _ElementUtilities._setActive(element, this._viewportEl);
                         } else {
-                            if (this.layout === WinJS.UI.Orientation.horizontal) {
+                            if (this.layout === _UI.Orientation.horizontal) {
                                 var indexOfLastItemOnPage = (page + 1) * sizes.columnsPerPage * sizes.rowsPerPage - 1;
 
                                 if (index === indexOfLastItemOnPage) {
@@ -836,7 +853,7 @@ define([
                             }
 
                             try {
-                                WinJS.Utilities._setActive(element, this._viewportEl);
+                                _ElementUtilities._setActive(element, this._viewportEl);
                             } catch (e) {
                             }
                         }
@@ -879,7 +896,7 @@ define([
                 _ensureVisible: function NavBarContainer_ensureVisible(index, withoutAnimation) {
                     this._measure();
 
-                    if (this.layout === WinJS.UI.Orientation.horizontal) {
+                    if (this.layout === _UI.Orientation.horizontal) {
                         var page = Math.floor(index / (this._sizes.rowsPerPage * this._sizes.columnsPerPage));
                         this._scrollTo(page * this._sizes.viewportOffsetWidth, withoutAnimation);
                     } else {
@@ -906,7 +923,7 @@ define([
 
                 _scrollTo: function NavBarContainer_scrollTo(targetScrollPosition, withoutAnimation) {
                     this._measure();
-                    if (this.layout === WinJS.UI.Orientation.horizontal) {
+                    if (this.layout === _UI.Orientation.horizontal) {
                         targetScrollPosition = Math.max(0, Math.min(this._scrollLength - this._sizes.viewportOffsetWidth, targetScrollPosition));
                     } else {
                         targetScrollPosition = Math.max(0, Math.min(this._scrollLength - this._sizes.viewportOffsetHeight, targetScrollPosition));
@@ -923,8 +940,8 @@ define([
                             }
 
                             var newScrollPos = {};
-                            newScrollPos[(this.layout === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")] = targetScrollPosition;
-                            WinJS.Utilities.setScrollPosition(this._viewportEl, newScrollPos);
+                            newScrollPos[(this.layout === _UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")] = targetScrollPosition;
+                            _ElementUtilities.setScrollPosition(this._viewportEl, newScrollPos);
                         }
                     } else {
                         if ((!this._zooming && Math.abs(this._scrollPosition - targetScrollPosition) > 1) || (this._zooming && Math.abs(this._zoomPosition - targetScrollPosition) > 1)) {
@@ -932,11 +949,11 @@ define([
 
                             this._zooming = true;
 
-                            if (this.layout === WinJS.UI.Orientation.horizontal) {
+                            if (this.layout === _UI.Orientation.horizontal) {
                                 this._viewportEl.style.msScrollSnapType = "none";
-                                WinJS.Utilities._zoomTo(this._viewportEl, { contentX: targetScrollPosition, contentY: 0, viewportX: 0, viewportY: 0 });
+                                _ElementUtilities._zoomTo(this._viewportEl, { contentX: targetScrollPosition, contentY: 0, viewportX: 0, viewportY: 0 });
                             } else {
-                                WinJS.Utilities._zoomTo(this._viewportEl, { contentX: 0, contentY: targetScrollPosition, viewportX: 0, viewportY: 0 });
+                                _ElementUtilities._zoomTo(this._viewportEl, { contentX: 0, contentY: targetScrollPosition, viewportX: 0, viewportY: 0 });
                             }
 
                             this._closeSplitIfOpen();
@@ -973,7 +990,7 @@ define([
                         this._checkingScroll = requestAnimationFrame(function () {
                             that._checkingScroll = null;
 
-                            var newScrollPosition = WinJS.Utilities.getScrollPosition(that._viewportEl)[(that.layout === WinJS.UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")];
+                            var newScrollPosition = _ElementUtilities.getScrollPosition(that._viewportEl)[(that.layout === _UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")];
                             if (newScrollPosition !== that._scrollPosition) {
                                 that._scrollPosition = newScrollPosition;
                                 that._closeSplitIfOpen();
@@ -990,7 +1007,7 @@ define([
                 _updateCurrentIndexIfPageChanged: function NavBarContainer_updateCurrentIndexIfPageChanged() {
                     // If you change pages via pagination arrows, mouse wheel, or panning we need to update the current
                     // item to be the first item on the new page.
-                    if (this.layout === WinJS.UI.Orientation.horizontal) {
+                    if (this.layout === _UI.Orientation.horizontal) {
                         this._measure();
                         var currentPage = this._currentPage;
                         var firstIndexOnPage = currentPage * this._sizes.rowsPerPage * this._sizes.columnsPerPage;
@@ -1064,8 +1081,8 @@ define([
                                 this._measured = true;
                             }
 
-                            if (this.layout === WinJS.UI.Orientation.horizontal) {
-                                this._scrollPosition = WinJS.Utilities.getScrollPosition(this._viewportEl).scrollLeft;
+                            if (this.layout === _UI.Orientation.horizontal) {
+                                this._scrollPosition = _ElementUtilities.getScrollPosition(this._viewportEl).scrollLeft;
 
                                 sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(getComputedStyle(this._leftArrowEl).marginRight);
                                 var usableSpace = sizes.viewportOffsetWidth - sizes.leadingEdge * 2;
@@ -1079,7 +1096,7 @@ define([
                                 this._scrollLength = sizes.viewportOffsetWidth * sizes.pages;
 
                                 this._keyboardBehavior.fixedSize = sizes.rowsPerPage;
-                                this._keyboardBehavior.fixedDirection = WinJS.UI._KeyboardBehavior.FixedDirection.height;
+                                this._keyboardBehavior.fixedDirection = _KeyboardBehavior._KeyboardBehavior.FixedDirection.height;
 
                                 this._surfaceEl.style.height = (sizes.itemHeight * sizes.rowsPerPage) + "px";
                                 this._surfaceEl.style.width = this._scrollLength + "px";
@@ -1096,7 +1113,7 @@ define([
                                 this._scrollLength = this._viewportEl.scrollHeight;
 
                                 this._keyboardBehavior.fixedSize = sizes.columnsPerPage;
-                                this._keyboardBehavior.fixedDirection = WinJS.UI._KeyboardBehavior.FixedDirection.width;
+                                this._keyboardBehavior.fixedDirection = _KeyboardBehavior._KeyboardBehavior.FixedDirection.width;
 
                                 this._surfaceEl.style.height = "";
                                 this._surfaceEl.style.width = "";
@@ -1126,7 +1143,7 @@ define([
                         var marginLeft;
                         var width = "";
 
-                        if (this.layout === WinJS.UI.Orientation.horizontal) {
+                        if (this.layout === _UI.Orientation.horizontal) {
                             var row = Math.floor(index % sizes.rowsPerPage);
                             var column = Math.floor(index / sizes.rowsPerPage);
                             var isFirstColumnOnPage = column % sizes.columnsPerPage === 0;
@@ -1181,14 +1198,14 @@ define([
                     // Always output the pagination indicators so they reserves up space.
                     if (this._indicatorCount !== this._sizes.pages) {
                         this._indicatorCount = this._sizes.pages;
-                        this._pageindicatorsEl.innerHTML = new Array(this._sizes.pages + 1).join('<span class="' + WinJS.UI.NavBarContainer._ClassName.indicator + '"></span>');
+                        this._pageindicatorsEl.innerHTML = new Array(this._sizes.pages + 1).join('<span class="' + NavBarContainer._ClassName.indicator + '"></span>');
                     }
 
                     for (var i = 0; i < this._pageindicatorsEl.children.length; i++) {
                         if (i === currentPage) {
-                            WinJS.Utilities.addClass(this._pageindicatorsEl.children[i], WinJS.UI.NavBarContainer._ClassName.currentindicator);
+                            _ElementUtilities.addClass(this._pageindicatorsEl.children[i], NavBarContainer._ClassName.currentindicator);
                         } else {
-                            WinJS.Utilities.removeClass(this._pageindicatorsEl.children[i], WinJS.UI.NavBarContainer._ClassName.currentindicator);
+                            _ElementUtilities.removeClass(this._pageindicatorsEl.children[i], NavBarContainer._ClassName.currentindicator);
                         }
                     }
 
@@ -1200,18 +1217,18 @@ define([
                         this._pageindicatorsEl.style.visibility = "hidden";
                     }
 
-                    if (this._sizes.pages <= 1 || this._layout !== WinJS.UI.Orientation.horizontal) {
+                    if (this._sizes.pages <= 1 || this._layout !== _UI.Orientation.horizontal) {
                         this._ariaStartMarker.removeAttribute("aria-flowto");
                         this._ariaEndMarker.removeAttribute("x-ms-aria-flowfrom");
                     } else {
                         var firstIndexOnCurrentPage = currentPage * this._sizes.rowsPerPage * this._sizes.columnsPerPage;
                         var firstItem = this._surfaceEl.children[firstIndexOnCurrentPage].winControl._buttonEl;
-                        WinJS.UI._ensureId(firstItem);
+                        _ElementUtilities._ensureId(firstItem);
                         this._ariaStartMarker.setAttribute("aria-flowto", firstItem.id);
 
                         var lastIndexOnCurrentPage = Math.min(this._surfaceEl.children.length - 1, (currentPage + 1) * this._sizes.rowsPerPage * this._sizes.columnsPerPage - 1);
                         var lastItem = this._surfaceEl.children[lastIndexOnCurrentPage].winControl._buttonEl;
-                        WinJS.UI._ensureId(lastItem);
+                        _ElementUtilities._ensureId(lastItem);
                         this._ariaEndMarker.setAttribute("x-ms-aria-flowfrom", lastItem.id);
                     }
                 },
@@ -1239,22 +1256,22 @@ define([
                         this._leftArrowFadeOut && this._leftArrowFadeOut.cancel();
                         this._leftArrowFadeOut = null;
                         this._leftArrowEl.style.visibility = '';
-                        this._leftArrowFadeIn = this._leftArrowFadeIn || WinJS.UI.Animation.fadeIn(this._leftArrowEl);
+                        this._leftArrowFadeIn = this._leftArrowFadeIn || Animations.fadeIn(this._leftArrowEl);
                     } else {
                         if (hasLeftContent) {
                             // If we need a delayed fade out and we are already running a delayed fade out just use that one, don't extend it.
                             // Otherwise create a delayed fade out.
-                            this._leftArrowWaitingToFadeOut = this._leftArrowWaitingToFadeOut || WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay));
+                            this._leftArrowWaitingToFadeOut = this._leftArrowWaitingToFadeOut || Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay));
                         } else {
                             // If we need a immediate fade out and already have a delayed fade out cancel that one and create an immediate one.
                             this._leftArrowWaitingToFadeOut && this._leftArrowWaitingToFadeOut.cancel();
-                            this._leftArrowWaitingToFadeOut = WinJS.Promise.wrap();
+                            this._leftArrowWaitingToFadeOut = Promise.wrap();
                         }
                         this._leftArrowWaitingToFadeOut.then(function () {
                             // After the delay cancel any fade in if running. If we already were fading out continue it otherwise start the fade out.
                             this._leftArrowFadeIn && this._leftArrowFadeIn.cancel();
                             this._leftArrowFadeIn = null;
-                            this._leftArrowFadeOut = this._leftArrowFadeOut || WinJS.UI.Animation.fadeOut(this._leftArrowEl).then(function () {
+                            this._leftArrowFadeOut = this._leftArrowFadeOut || Animations.fadeOut(this._leftArrowEl).then(function () {
                                 that._leftArrowEl.style.visibility = 'hidden';
                             });
                         }.bind(this));
@@ -1267,18 +1284,18 @@ define([
                         this._rightArrowFadeOut && this._rightArrowFadeOut.cancel();
                         this._rightArrowFadeOut = null;
                         this._rightArrowEl.style.visibility = '';
-                        this._rightArrowFadeIn = this._rightArrowFadeIn || WinJS.UI.Animation.fadeIn(this._rightArrowEl);
+                        this._rightArrowFadeIn = this._rightArrowFadeIn || Animations.fadeIn(this._rightArrowEl);
                     } else {
                         if (hasRightContent) {
-                            this._rightArrowWaitingToFadeOut = this._rightArrowWaitingToFadeOut || WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay));
+                            this._rightArrowWaitingToFadeOut = this._rightArrowWaitingToFadeOut || Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay));
                         } else {
                             this._rightArrowWaitingToFadeOut && this._rightArrowWaitingToFadeOut.cancel();
-                            this._rightArrowWaitingToFadeOut = WinJS.Promise.wrap();
+                            this._rightArrowWaitingToFadeOut = Promise.wrap();
                         }
                         this._rightArrowWaitingToFadeOut.then(function () {
                             this._rightArrowFadeIn && this._rightArrowFadeIn.cancel();
                             this._rightArrowFadeIn = null;
-                            this._rightArrowFadeOut = this._rightArrowFadeOut || WinJS.UI.Animation.fadeOut(this._rightArrowEl).then(function () {
+                            this._rightArrowFadeOut = this._rightArrowFadeOut || Animations.fadeOut(this._rightArrowEl).then(function () {
                                 that._rightArrowEl.style.visibility = 'hidden';
                             });
                         }.bind(this));
@@ -1293,7 +1310,7 @@ define([
                         srcElement = srcElement.previousSibling;
                     }
 
-                    this._fireEvent(WinJS.UI.NavBarContainer._EventName.invoked, {
+                    this._fireEvent(NavBarContainer._EventName.invoked, {
                         index: index,
                         navbarCommand: ev.target.winControl,
                         data: this._repeater ? this._repeater.data.getAt(index) : null
@@ -1316,7 +1333,7 @@ define([
                         this._currentSplitNavItem = navbarCommand;
                     }
 
-                    this._fireEvent(WinJS.UI.NavBarContainer._EventName.splitToggle, {
+                    this._fireEvent(NavBarContainer._EventName.splitToggle, {
                         opened: navbarCommand.splitOpened,
                         index: index,
                         navbarCommand: navbarCommand,
@@ -1332,7 +1349,7 @@ define([
 
                 _writeProfilerMark: function NavBarContainer_writeProfilerMark(text) {
                     var message = "WinJS.UI.NavBarContainer:" + this._id + ":" + text;
-                    WinJS.Utilities._writeProfilerMark(message);
+                    _WriteProfilerMark(message);
                     WinJS.log && WinJS.log(message, null, "navbarcontainerprofiler");
                 },
 
@@ -1353,7 +1370,7 @@ define([
                         this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
                     }
 
-                    WinJS.Navigation.removeEventListener('navigated', this._closeSplitAndResetBound);
+                    Navigation.removeEventListener('navigated', this._closeSplitAndResetBound);
 
                     this._leftArrowWaitingToFadeOut && this._leftArrowWaitingToFadeOut.cancel();
                     this._leftArrowFadeOut && this._leftArrowFadeOut.cancel();
@@ -1387,9 +1404,12 @@ define([
                     splitToggle: eventNames.splittoggle
                 }
             });
-            WinJS.Class.mix(NavBarContainer, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(NavBarContainer, _Control.DOMEventMixin);
             return NavBarContainer;
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+    return _Base.Namespace.defineWithParent(null, null, members);
 
 });

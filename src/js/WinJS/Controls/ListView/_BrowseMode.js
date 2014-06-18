@@ -7,27 +7,6 @@ define([
     // This component is responsible for handling input in Browse Mode. 
     // When the user clicks on an item in this mode itemInvoked event is fired.
     WinJS.Namespace.define("WinJS.UI", {
-        _getCursorPos: function (eventObject) {
-            var docElement = document.documentElement;
-            var docScrollPos = WinJS.Utilities.getScrollPosition(docElement);
-
-            return {
-                left: eventObject.clientX + (document.body.dir === "rtl" ? -docScrollPos.scrollLeft : docScrollPos.scrollLeft),
-                top: eventObject.clientY + docElement.scrollTop
-            };
-        },
-
-        _getElementsByClasses: function (parent, classes) {
-            var retVal = []
-
-            for (var i = 0, len = classes.length; i < len; i++) {
-                var element = parent.querySelector("." + classes[i]);
-                if (element) {
-                    retVal.push(element);
-                }
-            }
-            return retVal;
-        },
 
         _SelectionMode: WinJS.Namespace._lazy(function () {
             var utilities = WinJS.Utilities,
@@ -561,7 +540,7 @@ define([
                             (!this._pressedElement || !this._isInteractive(this._pressedElement))) {
                         this._dragging = true;
                         this._dragDataTransfer = eventObject.dataTransfer;
-                        this._pressedPosition = WinJS.UI._getCursorPos(eventObject);
+                        this._pressedPosition = WinJS.Utilities._getCursorPos(eventObject);
                         this._dragInfo = null;
                         this._lastEnteredElement = eventObject.target;
 

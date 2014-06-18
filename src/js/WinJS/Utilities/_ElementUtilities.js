@@ -236,6 +236,14 @@ define([
             return e;
         }
     }
+
+    // Only set the attribute if its value has changed
+    function setAttribute(element, attribute, value) {
+        if (element.getAttribute(attribute) !== "" + value) {
+            element.setAttribute(attribute, value);
+        }
+    }
+
     function _clamp(value, lowerBound, upperBound, defaultValue) {
         var n = Math.max(lowerBound, Math.min(upperBound, +value));
         return n === 0 ? 0 : n || Math.max(lowerBound, Math.min(upperBound, defaultValue));
@@ -773,26 +781,95 @@ define([
         }
     }
 
-        var supportsZoomTo = !!HTMLElement.prototype.msZoomTo;
-        var supportsTouchDetection = !!(window.MSPointerEvent || window.TouchEvent);
+    function getScrollPosition(element) {
+        /// <signature helpKeyword="WinJS.Utilities.getScrollPosition">
+        /// <summary locid="WinJS.Utilities.getScrollPosition">
+        /// Gets the scrollLeft and scrollTop of the specified element, adjusting the scrollLeft to change from browser specific coordinates to logical coordinates when in RTL.
+        /// </summary>
+        /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.Utilities.getScrollPosition_p:element">
+        /// The element.
+        /// </param>
+        /// <returns type="Object" locid="WinJS.Utilities.getScrollPosition_returnValue">
+        /// An object with two properties: scrollLeft and scrollTop
+        /// </returns>
+        /// </signature>
+        return getAdjustedScrollPosition(element);
+    }
 
-        // Snap point feature detection is special - On most platforms it is enough to check if 'scroll-snap-type'
-        // is a valid style, however, IE10 and WP IE claim that they are valid styles but don't support them.
-        var supportsSnapPoints = false;
-        var snapTypeStyle = WinJS.Utilities._browserStyleEquivalents["scroll-snap-type"];
-        if (snapTypeStyle) {
-            if (snapTypeStyle.cssName.indexOf("-ms-") === 0) {
-                // We are on a Microsoft platform, if zoomTo isn't supported then we know we are on IE10 and WP IE.
-                if (supportsZoomTo) {
-                    supportsSnapPoints = true;
-                }
-            } else {
-                // We are on a non-Microsoft platform, we assume that if the style is valid, it is supported.
+    function setScrollPosition(element, position) {
+        /// <signature helpKeyword="WinJS.Utilities.setScrollPosition">
+        /// <summary locid="WinJS.Utilities.setScrollPosition">
+        /// Sets the scrollLeft and scrollTop of the specified element, changing the scrollLeft from logical coordinates to browser-specific coordinates when in RTL.
+        /// </summary>
+        /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.Utilities.setScrollPosition_p:element">
+        /// The element.
+        /// </param>
+        /// <param name="position" type="Object" domElement="true" locid="WinJS.Utilities.setScrollPosition_p:position">
+        /// The element.
+        /// </param>
+        /// </signature>
+        position = position || {};
+        setAdjustedScrollPosition(element, position.scrollLeft, position.scrollTop);
+    }
+
+    var supportsZoomTo = !!HTMLElement.prototype.msZoomTo;
+    var supportsTouchDetection = !!(window.MSPointerEvent || window.TouchEvent);
+
+    // Snap point feature detection is special - On most platforms it is enough to check if 'scroll-snap-type'
+    // is a valid style, however, IE10 and WP IE claim that they are valid styles but don't support them.
+    var supportsSnapPoints = false;
+    var snapTypeStyle = WinJS.Utilities._browserStyleEquivalents["scroll-snap-type"];
+    if (snapTypeStyle) {
+        if (snapTypeStyle.cssName.indexOf("-ms-") === 0) {
+            // We are on a Microsoft platform, if zoomTo isn't supported then we know we are on IE10 and WP IE.
+            if (supportsZoomTo) {
                 supportsSnapPoints = true;
             }
+        } else {
+            // We are on a non-Microsoft platform, we assume that if the style is valid, it is supported.
+            supportsSnapPoints = true;
         }
+    }
 
     var uniqueElementIDCounter = 0;
+
+    function uniqueID(e) {
+        if (!(e.uniqueID || e._uniqueID)) {
+            e._uniqueID = "element__" + (++uniqueElementIDCounter);
+        }
+
+        return e.uniqueID || e._uniqueID;
+    }
+
+    function ensureId(element) {
+        if (!element.id) {
+            element.id = uniqueID(element);
+        }
+    }
+
+    function _getCursorPos(eventObject) {
+        var docElement = document.documentElement;
+        var docScrollPos = getScrollPosition(docElement);
+
+        return {
+            left: eventObject.clientX + (document.body.dir === "rtl" ? -docScrollPos.scrollLeft : docScrollPos.scrollLeft),
+            top: eventObject.clientY + docElement.scrollTop
+        };
+    }
+
+    function _getElementsByClasses(parent, classes) {
+        var retVal = []
+
+        for (var i = 0, len = classes.length; i < len; i++) {
+            var element = parent.querySelector("." + classes[i]);
+            if (element) {
+                retVal.push(element);
+            }
+        }
+        return retVal;
+    }
+
+    var _selectionPartsSelector = ".win-selectionborder, .win-selectionbackground, .win-selectioncheckmark, .win-selectioncheckmarkbackground";
     var _dataKey = "_msDataKey";
     var members = {
         _dataKey: _dataKey,
@@ -815,15 +892,15 @@ define([
                 }
             },
 
-        _uniqueID: function (e) {
-            if (!(e.uniqueID || e._uniqueID)) {
-                e._uniqueID = "element__" + (++uniqueElementIDCounter);
-            }
+        _uniqueID: uniqueID,
 
-            return e.uniqueID || e._uniqueID;
-        },
+        _ensureId: ensureId,
 
         _clamp: _clamp,
+
+        _getCursorPos: _getCursorPos,
+
+        _getElementsByClasses : _getElementsByClasses,
 
         _createGestureRecognizer: function () {
             if (_Global.MSGesture) {
@@ -858,6 +935,13 @@ define([
                     || element.mozMatchesSelector
                     || element.webkitMatchesSelector;
             return matchesSelector.call(element, selectorString);
+        },
+
+        _selectionPartsSelector: _selectionPartsSelector,
+
+        _isSelectionRendered: function _isSelectionRendered(itemBox) {
+            // The tree is changed at pointerDown but _selectedClass is added only when the user drags an item below the selection threshold so checking for _selectedClass is not reliable.
+            return itemBox.querySelectorAll(_selectionPartsSelector).length > 0;
         },
 
         _addEventListener: function _addEventListener(element, type, listener, useCapture) {
@@ -1613,6 +1697,8 @@ define([
 
         toggleClass: toggleClass,
 
+        _setAttribute: setAttribute,
+
         getRelativeLeft: function (element, parent) {
             /// <signature helpKeyword="WinJS.Utilities.getRelativeLeft">
             /// <summary locid="WinJS.Utilities.getRelativeLeft">
@@ -1677,36 +1763,9 @@ define([
             return top;
         },
 
-        getScrollPosition: function (element) {
-            /// <signature helpKeyword="WinJS.Utilities.getScrollPosition">
-            /// <summary locid="WinJS.Utilities.getScrollPosition">
-            /// Gets the scrollLeft and scrollTop of the specified element, adjusting the scrollLeft to change from browser specific coordinates to logical coordinates when in RTL.
-            /// </summary>
-            /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.Utilities.getScrollPosition_p:element">
-            /// The element.
-            /// </param>
-            /// <returns type="Object" locid="WinJS.Utilities.getScrollPosition_returnValue">
-            /// An object with two properties: scrollLeft and scrollTop
-            /// </returns>
-            /// </signature>
-            return getAdjustedScrollPosition(element);
-        },
+        getScrollPosition: getScrollPosition,
 
-        setScrollPosition: function (element, position) {
-            /// <signature helpKeyword="WinJS.Utilities.setScrollPosition">
-            /// <summary locid="WinJS.Utilities.setScrollPosition">
-            /// Sets the scrollLeft and scrollTop of the specified element, changing the scrollLeft from logical coordinates to browser-specific coordinates when in RTL.
-            /// </summary>
-            /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.Utilities.setScrollPosition_p:element">
-            /// The element.
-            /// </param>
-            /// <param name="position" type="Object" domElement="true" locid="WinJS.Utilities.setScrollPosition_p:position">
-            /// The element.
-            /// </param>
-            /// </signature>
-            position = position || {};
-            setAdjustedScrollPosition(element, position.scrollLeft, position.scrollTop);
-        },
+        setScrollPosition: setScrollPosition,
 
         empty: function (element) {
             /// <signature helpKeyword="WinJS.Utilities.empty">
@@ -1898,5 +1957,5 @@ define([
 
     _Base.Namespace.define("WinJS.Utilities", members);
 
-    return members;
+    return _Base.Namespace.defineWithParent(null, null, members);
 });

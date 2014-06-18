@@ -253,7 +253,7 @@ WinJSTests.ReuseTests = function () {
                 LiveUnit.Assert.areEqual(text, tile.textContent);
                 LiveUnit.Assert.areEqual(selected, utilities.hasClass(wrapper, WinJS.UI._selectedClass));
                 LiveUnit.Assert.areEqual(selected, tile.getAttribute("aria-selected") === "true");
-                LiveUnit.Assert.areEqual(selected, WinJS.UI._isSelectionRendered(wrapper));
+                LiveUnit.Assert.areEqual(selected, WinJS.Utilities._isSelectionRendered(wrapper));
             }
 
             var tests = [

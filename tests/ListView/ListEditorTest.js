@@ -388,7 +388,7 @@ WinJSTests.ListEditorTest = function () {
         function validateItemSelection(itemIndex, selected, context) {
             var items = listView._view.items,
                 itemBox = items.itemBoxAt(itemIndex),
-                visualRendered = WinJS.UI._isSelectionRendered(itemBox),
+                visualRendered = WinJS.Utilities._isSelectionRendered(itemBox),
                 ariaSelected = items.itemAt(itemIndex).getAttribute("aria-selected");
 
             LiveUnit.Assert.areEqual(selected, visualRendered, "Selection visual should be rendered " + context);
@@ -590,7 +590,7 @@ WinJSTests.ListEditorTest = function () {
                 LiveUnit.Assert.areEqual(selected, utilities.hasClass(wrapper.parentNode, WinJS.UI._selectedClass));
             }
             // Verify selection elements
-            LiveUnit.Assert.areEqual(selected, WinJS.UI._isSelectionRendered(wrapper));
+            LiveUnit.Assert.areEqual(selected, WinJS.Utilities._isSelectionRendered(wrapper));
         }
 
         var tests = [

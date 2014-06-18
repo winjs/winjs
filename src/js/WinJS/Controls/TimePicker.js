@@ -1,12 +1,19 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Utilities/_Control',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_Select',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function timePickerInit() {
+    ], function timePickerInit(_Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.TimePicker">Allows users to select time values.</summary>
         /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -19,17 +26,17 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        TimePicker: WinJS.Namespace._lazy(function () {
+        TimePicker: _Base.Namespace._lazy(function () {
             // Constants definition
             var DEFAULT_MINUTE_PATTERN = "{minute.integer(2)}",
                 DEFAULT_HOUR_PATTERN = "{hour.integer(1)}",
                 DEFAULT_PERIOD_PATTERN = "{period.abbreviated(2)}";
 
             var strings = {
-                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/timePicker").value; },
-                get selectHour() { return WinJS.Resources._getWinJSString("ui/selectHour").value; },
-                get selectMinute() { return WinJS.Resources._getWinJSString("ui/selectMinute").value; },
-                get selectAMPM() { return WinJS.Resources._getWinJSString("ui/selectAMPM").value; },
+                get ariaLabel() { return _Resources._getWinJSString("ui/timePicker").value; },
+                get selectHour() { return _Resources._getWinJSString("ui/selectHour").value; },
+                get selectMinute() { return _Resources._getWinJSString("ui/selectMinute").value; },
+                get selectAMPM() { return _Resources._getWinJSString("ui/selectAMPM").value; },
             };
 
             // date1 and date2 must be Date objects with their date portions set to the
@@ -39,7 +46,7 @@ define([
                     date1.getMinutes() === date2.getMinutes();
             };
 
-            var TimePicker = WinJS.Class.define(function TimePicker_ctor(element, options) {
+            var TimePicker = _Base.Class.define(function TimePicker_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.TimePicker.TimePicker">
                 /// <summary locid="WinJS.UI.TimePicker.constructor">Initializes a new instance of the TimePicker control</summary>
                 /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.TimePicker.constructor_p:element">
@@ -53,10 +60,10 @@ define([
                 /// </signature>
 
                 // Default to current time
-                this._currentTime = WinJS.UI.TimePicker._sentinelDate();
+                this._currentTime = TimePicker._sentinelDate();
 
                 element = element || document.createElement("div");
-                WinJS.Utilities.addClass(element, "win-disposable");
+                _ElementUtilities.addClass(element, "win-disposable");
                 element.winControl = this;
 
                 var label = element.getAttribute("aria-label");
@@ -73,7 +80,7 @@ define([
                 // Options should be set after the element is initialized which is
                 // the same order of operation as imperatively setting options.
                 this._init(element);
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
             }, {
                 _currentTime: null,
                 _clock: null,
@@ -105,21 +112,20 @@ define([
 
                 _addControlsInOrder: function (info) {
                     var that = this;
-                    var u = WinJS.Utilities;
                     info.order.forEach(function (s, index) {
                         switch (s) {
                             case "hour":
                                 that._domElement.appendChild(that._hourElement);
-                                u.addClass(that._hourElement, "win-order" + index);
+                                _ElementUtilities.addClass(that._hourElement, "win-order" + index);
                                 break;
                             case "minute":
                                 that._domElement.appendChild(that._minuteElement);
-                                u.addClass(that._minuteElement, "win-order" + index);
+                                _ElementUtilities.addClass(that._minuteElement, "win-order" + index);
                                 break;
                             case "period":
                                 if (that._ampmElement) {
                                     that._domElement.appendChild(that._ampmElement);
-                                    u.addClass(that._ampmElement, "win-order" + index);
+                                    _ElementUtilities.addClass(that._ampmElement, "win-order" + index);
                                 }
                                 break;
                         }
@@ -159,7 +165,7 @@ define([
                     get: function () {
                         var cur = this._currentTime;
                         if (cur) {
-                            var time = WinJS.UI.TimePicker._sentinelDate();
+                            var time = TimePicker._sentinelDate();
                             time.setHours(cur.getHours()); // accounts for AM/PM
                             time.setMinutes(this._getMinutesIndex(cur) * this.minuteIncrement);
                             time.setSeconds(0);
@@ -173,11 +179,11 @@ define([
                     set: function (value) {
                         var newTime;
                         if (typeof (value) === "string") {
-                            newTime = WinJS.UI.TimePicker._sentinelDate();
+                            newTime = TimePicker._sentinelDate();
                             newTime.setTime(Date.parse(newTime.toDateString() + " " + value));
                         }
                         else {
-                            newTime = WinJS.UI.TimePicker._sentinelDate();
+                            newTime = TimePicker._sentinelDate();
                             newTime.setHours(value.getHours());
                             newTime.setMinutes(value.getMinutes());
                         }
@@ -315,7 +321,7 @@ define([
                     this._domElement = this._domElement || element;
                     if (!this._domElement) { return; }
 
-                    var info = WinJS.UI.TimePicker.getInformation(this.clock, this.minuteIncrement, this._timePatterns);
+                    var info = TimePicker.getInformation(this.clock, this.minuteIncrement, this._timePatterns);
                     this._information = info;
 
                     if (info.forceLanguage) {
@@ -323,37 +329,37 @@ define([
                         this._domElement.setAttribute("dir", info.isRTL ? "rtl" : "ltr");
                     }
 
-                    WinJS.Utilities.empty(this._domElement);
-                    WinJS.Utilities.addClass(this._domElement, "win-timepicker");
+                    _ElementUtilities.empty(this._domElement);
+                    _ElementUtilities.addClass(this._domElement, "win-timepicker");
 
                     this._hourElement = document.createElement("select");
-                    WinJS.Utilities.addClass(this._hourElement, "win-timepicker-hour");
+                    _ElementUtilities.addClass(this._hourElement, "win-timepicker-hour");
 
                     this._minuteElement = document.createElement("select");
-                    WinJS.Utilities.addClass(this._minuteElement, "win-timepicker-minute");
+                    _ElementUtilities.addClass(this._minuteElement, "win-timepicker-minute");
 
                     this._ampmElement = null;
                     if (info.clock === "12HourClock") {
                         this._ampmElement = document.createElement("select");
-                        WinJS.Utilities.addClass(this._ampmElement, "win-timepicker-period");
+                        _ElementUtilities.addClass(this._ampmElement, "win-timepicker-period");
                     }
 
                     this._addControlsInOrder(info);
 
                     var hoursAmpm = this._getHoursAmpm(this.current);
-                    this._hourControl = new WinJS.UI._Select(this._hourElement, {
+                    this._hourControl = new _Select._Select(this._hourElement, {
                         dataSource: this._getInfoHours(),
                         disabled: this.disabled,
                         index: this._getHoursIndex(hoursAmpm.hours)
                     });
-                    this._minuteControl = new WinJS.UI._Select(this._minuteElement, {
+                    this._minuteControl = new _Select._Select(this._minuteElement, {
                         dataSource: info.minutes,
                         disabled: this.disabled,
                         index: this._getMinutesIndex(this.current)
                     });
                     this._ampmControl = null;
                     if (this._ampmElement) {
-                        this._ampmControl = new WinJS.UI._Select(this._ampmElement, {
+                        this._ampmControl = new _Select._Select(this._ampmElement, {
                             dataSource: info.periods,
                             disabled: this.disabled,
                             index: hoursAmpm.ampm
@@ -453,7 +459,7 @@ define([
                     if (clock) {
                         calendar = new glob.Calendar(calendar.languages, calendar.getCalendarSystem(), clock);
                     }
-                    calendar.setDateTime(WinJS.UI.TimePicker._sentinelDate());
+                    calendar.setDateTime(TimePicker._sentinelDate());
 
                     var computedClock = calendar.getClock();
                     var numberOfHours = 24;
@@ -464,7 +470,7 @@ define([
                         return {
                             getLength: function () { return 2; },
                             getValue: function (index) {
-                                var date = WinJS.UI.TimePicker._sentinelDate();
+                                var date = TimePicker._sentinelDate();
                                 if (index === 0) {
                                     date.setHours(1);
                                     var am = periodFormatter.format(date);
@@ -483,7 +489,7 @@ define([
                     // Determine minute format from the DateTimeFormatter
                     var minutes = (function (index) {
                         var minuteFormatter = newFormatter(timePatterns.minute, DEFAULT_MINUTE_PATTERN);
-                        var now = WinJS.UI.TimePicker._sentinelDate();
+                        var now = TimePicker._sentinelDate();
                         return {
                             getLength: function () { return 60 / minuteIncrement; },
                             getValue: function (index) {
@@ -498,7 +504,7 @@ define([
                     // Determine hour format from the DateTimeFormatter
                     var hours = (function (index) {
                         var hourFormatter = newFormatter(timePatterns.hour, DEFAULT_HOUR_PATTERN);
-                        var now = WinJS.UI.TimePicker._sentinelDate();
+                        var now = TimePicker._sentinelDate();
                         return {
                             getLength: function () { return numberOfHours },
                             getValue: function (index) {
@@ -567,14 +573,14 @@ define([
                     return { minutes: minutes, hours: hours, clock: clock || "12HourClock", periods: ["AM", "PM"], order: order };
                 }
             });
-            if (WinJS.Utilities.hasWinRT) {
+            if (_BaseUtils.hasWinRT) {
                 TimePicker.getInformation = TimePicker._getInformationWinRT;
             }
             else {
                 TimePicker.getInformation = TimePicker._getInformationJS;
             }
-            WinJS.Class.mix(TimePicker, WinJS.Utilities.createEventProperties("change"));
-            WinJS.Class.mix(TimePicker, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(TimePicker, _Events.createEventProperties("change"));
+            _Base.Class.mix(TimePicker, _Control.DOMEventMixin);
             return TimePicker;
         })
     });

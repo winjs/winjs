@@ -171,5 +171,5 @@ define([
     };
 
     _Base.Namespace.define("WinJS.Resources", members);
-    return members;
+    return _Base.Namespace.defineWithParent(null, null, members);
 });

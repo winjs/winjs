@@ -1,15 +1,23 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_Events',
+    '../Core/_WriteProfilerMark',
+    '../Promise',
+    '../Scheduler',
+    '../Utilities/_ElementUtilities',
+    './AppBar',
     './NavBar/_Command',
     './NavBar/_Container',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function NavBarInit(_Command, _Container) {
+    ], function NavBarInit(_Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
     "use strict";
 
     var customLayout = "custom";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.NavBar">
         /// Displays navigation commands in a toolbar that the user can show or hide.
@@ -32,11 +40,11 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        NavBar: WinJS.Namespace._lazy(function () {
+        NavBar: _Base.Namespace._lazy(function () {
             var childrenProcessedEventName = "childrenprocessed";
-            var createEvent = WinJS.Utilities._createEventProperty;
+            var createEvent = _Events._createEventProperty;
 
-            return WinJS.Class.derive(WinJS.UI.AppBar, function NavBar_ctor(element, options) {
+            var NavBar = _Base.Class.derive(WinJS.UI.AppBar, function NavBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.NavBar.NavBar">
                 /// <summary locid="WinJS.UI.NavBar.constructor">
                 /// Creates a new NavBar.
@@ -57,7 +65,7 @@ define([
                 options = options || {};
 
                 // Shallow copy object so we can modify it.
-                options = WinJS.Utilities._shallowCopy(options);
+                options = _BaseUtils._shallowCopy(options);
 
                 // Default to Placement = Top and Layout = Custom
                 options.placement = options.placement || "top";
@@ -67,12 +75,12 @@ define([
 
                 this._element.addEventListener("beforeshow", this._handleBeforeShow.bind(this));
 
-                WinJS.Utilities.addClass(this.element, WinJS.UI.NavBar._ClassName.navbar);
+                _ElementUtilities.addClass(this.element, NavBar._ClassName.navbar);
 
                 if (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled) {
                     this._processChildren();
                 } else {
-                    WinJS.Utilities.Scheduler.schedule(this._processChildren.bind(this), WinJS.Utilities.Scheduler.Priority.idle, null, "WinJS.UI.NavBar.processChildren");
+                    Scheduler.schedule(this._processChildren.bind(this), Scheduler.Priority.idle, null, "WinJS.UI.NavBar.processChildren");
                 }
             }, {
                 // Block others from setting the layout property.
@@ -106,7 +114,7 @@ define([
 
                         this._writeProfilerMark("processChildren,StartTM");
                         var that = this;
-                        var processed = WinJS.Promise.as();
+                        var processed = Promise.as();
                         if (this._processors) {
                             this._processors.forEach(function (processAll) {
                                 for (var i = 0, len = that.element.children.length; i < len; i++) {
@@ -121,15 +129,15 @@ define([
                         return processed.then(
                             function () {
                                 that._writeProfilerMark("processChildren,StopTM");
-                                that._fireEvent(WinJS.UI.NavBar._EventName.childrenProcessed);
+                                that._fireEvent(NavBar._EventName.childrenProcessed);
                             },
                             function () {
                                 that._writeProfilerMark("processChildren,StopTM");
-                                that._fireEvent(WinJS.UI.NavBar._EventName.childrenProcessed);
+                                that._fireEvent(NavBar._EventName.childrenProcessed);
                             }
                         );
                     }
-                    return WinJS.Promise.wrap();
+                    return Promise.wrap();
                 },
 
                 _show: function NavBar_show() {
@@ -165,7 +173,7 @@ define([
                 },
 
                 _writeProfilerMark: function NavBar_writeProfilerMark(text) {
-                    WinJS.Utilities._writeProfilerMark("WinJS.UI.NavBar:" + this._id + ":" + text);
+                    _WriteProfilerMark("WinJS.UI.NavBar:" + this._id + ":" + text);
                 }
             }, {
                 _ClassName: {
@@ -174,7 +182,7 @@ define([
                 _EventName: {
                     childrenProcessed: childrenProcessedEventName
                 },
-                isDeclarativeControlContainer: WinJS.Utilities.markSupportedForProcessing(function (navbar, callback) {
+                isDeclarativeControlContainer: _BaseUtils.markSupportedForProcessing(function (navbar, callback) {
                     if (navbar._processed) {
                         for (var i = 0, len = navbar.element.children.length; i < len; i++) {
                             callback(navbar.element.children[i]);
@@ -185,6 +193,8 @@ define([
                     }
                 })
             });
+
+            return NavBar;
         })
     });
 

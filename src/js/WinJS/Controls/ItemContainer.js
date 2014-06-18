@@ -1,18 +1,31 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Promise',
+    '../Scheduler',
+    '../Utilities/_Control',
+    '../Utilities/_Dispose',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_KeyboardBehavior',
+    '../Utilities/_UI',
+    './ItemContainer/_Constants',
     './ItemContainer/_ItemEventsHandler'
-    ], function itemContainerInit(_ItemEventsHandler) {
+    ], function itemContainerInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
     "use strict";
 
-    var utilities = WinJS.Utilities;
-    var createEvent = utilities._createEventProperty;
+    var createEvent = _Events._createEventProperty;
     var eventNames = {
         invoked: "invoked",
         selectionchanging: "selectionchanging",
         selectionchanged: "selectionchanged"
     };
 
-    WinJS.Namespace.define("WinJS.UI", {
+    var members = {
         /// <field>
         /// <summary locid="WinJS.UI.ItemContainer">
         /// Defines an item that can be pressed, swiped, and dragged. 
@@ -33,12 +46,12 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        ItemContainer: WinJS.Namespace._lazy(function () {
+        ItemContainer: _Base.Namespace._lazy(function () {
             var strings = {
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; }
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; }
             };
 
-            var ItemContainer = WinJS.Class.define(function ItemContainer_ctor(element, options) {
+            var ItemContainer = _Base.Class.define(function ItemContainer_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.ItemContainer.ItemContainer">
                 /// <summary locid="WinJS.UI.ItemContainer.constructor">
                 /// Creates a new ItemContainer control.
@@ -57,48 +70,48 @@ define([
                 /// </returns>
                 /// </signature>
                 element = element || document.createElement("DIV");
-                this._id = element.id || WinJS.Utilities._uniqueID(element);
+                this._id = element.id || _ElementUtilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
 
                 options = options || {};
 
                 if (element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.ItemContainer.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.ItemContainer.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
                 // Attaching JS control to DOM element
                 element.winControl = this;
 
                 this._element = element;
-                WinJS.Utilities.addClass(element, "win-disposable");
-                this._selectionMode = WinJS.UI.SelectionMode.single;
+                _ElementUtilities.addClass(element, "win-disposable");
+                this._selectionMode = _UI.SelectionMode.single;
                 this._draggable = false;
-                this._pressedEntity = { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX };
+                this._pressedEntity = { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX };
 
-                this.tapBehavior = WinJS.UI.TapBehavior.invokeOnly;
-                this.swipeOrientation = WinJS.UI.Orientation.vertical;
-                this.swipeBehavior = WinJS.UI.SwipeBehavior.select;
+                this.tapBehavior = _UI.TapBehavior.invokeOnly;
+                this.swipeOrientation = _UI.Orientation.vertical;
+                this.swipeBehavior = _UI.SwipeBehavior.select;
 
-                WinJS.Utilities.addClass(this.element, WinJS.UI.ItemContainer._ClassName.itemContainer + " " + WinJS.UI._containerClass);
+                _ElementUtilities.addClass(this.element, ItemContainer._ClassName.itemContainer + " " + _Constants._containerClass);
 
                 this._setupInternalTree();
 
-                this._selection = new WinJS.UI._SingleItemSelectionManager(element, this._itemBox);
+                this._selection = new moduleRef._SingleItemSelectionManager(element, this._itemBox);
                 this._setTabIndex();
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
 
-                this._mutationObserver = new WinJS.Utilities._MutationObserver(this._itemPropertyChange.bind(this));
+                this._mutationObserver = new _ElementUtilities._MutationObserver(this._itemPropertyChange.bind(this));
                 this._mutationObserver.observe(element, { attributes: true, attributeFilter: ["aria-selected"] });
                 this._setAriaRole();
 
                 var that = this;
                 if (!this.selectionDisabled) {
-                    WinJS.Utilities.Scheduler.schedule(function ItemContainer_async_initialize() {
+                    Scheduler.schedule(function ItemContainer_async_initialize() {
                         that._setDirectionClass();
-                    }, WinJS.Utilities.Scheduler.Priority.normal, null, "WinJS.UI.ItemContainer_async_initialize");
+                    }, Scheduler.Priority.normal, null, "WinJS.UI.ItemContainer_async_initialize");
                 }
-                this._itemEventsHandler = new WinJS.UI._ItemEventsHandler(Object.create({
+                this._itemEventsHandler = new _ItemEventsHandler._ItemEventsHandler(Object.create({
                     containerFromElement: function (element) {
                         return that.element;
                     },
@@ -106,7 +119,7 @@ define([
                         return 1;
                     },
                     indexForHeaderElement: function () {
-                        return WinJS.UI._INVALID_INDEX;
+                        return _Constants._INVALID_INDEX;
                     },
                     itemBoxAtIndex: function (index) {
                         return that._itemBox;
@@ -176,7 +189,7 @@ define([
                         enumerable: true,
                         get: function () {
                             // CSS class of the element with the aria role
-                            return WinJS.UI._containerClass;
+                            return _Constants._containerClass;
                         }
                     },
                     canvasProxy: {
@@ -206,7 +219,7 @@ define([
                     horizontal: {
                         enumerable: true,
                         get: function () {
-                            return that._swipeOrientation === WinJS.UI.Orientation.vertical;
+                            return that._swipeOrientation === _UI.Orientation.vertical;
                         }
                     },
                     customFootprintParent: {
@@ -249,7 +262,7 @@ define([
                     eventHandler("KeyDown")
                 ];
                 events.forEach(function (eventHandler) {
-                    WinJS.Utilities._addEventListener(that.element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                    _ElementUtilities._addEventListener(that.element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                 });
 
                 this._writeProfilerMark("constructor,StopTM");
@@ -273,7 +286,7 @@ define([
                     },
 
                     set: function (value) {
-                        if (utilities.isPhone) {
+                        if (WinJS.Utilities.isPhone) {
                             return;
                         }
                         if (this._draggable !== value) {
@@ -307,13 +320,13 @@ define([
                         return this._swipeOrientation;
                     },
                     set: function (value) {
-                        if (value === WinJS.UI.Orientation.vertical) {
-                            WinJS.Utilities.removeClass(this.element, WinJS.UI.ItemContainer._ClassName.horizontal);
-                            WinJS.Utilities.addClass(this.element, WinJS.UI.ItemContainer._ClassName.vertical);
+                        if (value === _UI.Orientation.vertical) {
+                            _ElementUtilities.removeClass(this.element, ItemContainer._ClassName.horizontal);
+                            _ElementUtilities.addClass(this.element, ItemContainer._ClassName.vertical);
                         } else {
-                            value = WinJS.UI.Orientation.horizontal;
-                            WinJS.Utilities.removeClass(this.element, WinJS.UI.ItemContainer._ClassName.vertical);
-                            WinJS.Utilities.addClass(this.element, WinJS.UI.ItemContainer._ClassName.horizontal);
+                            value = _UI.Orientation.horizontal;
+                            _ElementUtilities.removeClass(this.element, ItemContainer._ClassName.vertical);
+                            _ElementUtilities.addClass(this.element, ItemContainer._ClassName.horizontal);
                         }
                         this._swipeOrientation = value;
                     }
@@ -329,7 +342,7 @@ define([
                         return this._tapBehavior;
                     },
                     set: function (value) {
-                        if (utilities.isPhone && value === WinJS.UI.TapBehavior.directSelect) {
+                        if (WinJS.Utilities.isPhone && value === _UI.TapBehavior.directSelect) {
                             return;
                         }
                         this._tapBehavior = value;
@@ -358,15 +371,15 @@ define([
                 /// </field>
                 selectionDisabled: {
                     get: function () {
-                        return this._selectionMode === WinJS.UI.SelectionMode.none;
+                        return this._selectionMode === _UI.SelectionMode.none;
                     },
 
                     set: function (value) {
                         if (value) {
-                            this._selectionMode = WinJS.UI.SelectionMode.none;
+                            this._selectionMode = _UI.SelectionMode.none;
                         } else {
                             this._setDirectionClass();
-                            this._selectionMode = WinJS.UI.SelectionMode.single;
+                            this._selectionMode = _UI.SelectionMode.single;
                         }
                         this._setSwipeClass();
                         this._setAriaRole();
@@ -411,7 +424,7 @@ define([
                     this._disposed = true;
 
                     this._itemEventsHandler.dispose();
-                    WinJS.Utilities.disposeSubTree(this.element);
+                    _Dispose.disposeSubTree(this.element);
                 },
 
                 _onMSManipulationStateChanged: function ItemContainer_onMSManipulationStateChanged(eventObject) {
@@ -427,7 +440,7 @@ define([
                 },
 
                 _onPointerUp: function ItemContainer_onPointerUp(eventObject) {
-                    if (utilities.hasClass(this._itemBox, WinJS.UI._itemFocusClass)) {
+                    if (_ElementUtilities.hasClass(this._itemBox, _Constants._itemFocusClass)) {
                         this._onFocusOut(eventObject);
                     }
                     this._itemEventsHandler.onPointerUp(eventObject);
@@ -450,18 +463,18 @@ define([
                 },
 
                 _onFocusIn: function ItemContainer_onFocusIn(eventObject) {
-                    if (this._itemBox.querySelector("." + WinJS.UI._itemFocusOutlineClass) || !WinJS.UI._keyboardSeenLast) {
+                    if (this._itemBox.querySelector("." + _Constants._itemFocusOutlineClass) || !_KeyboardBehavior._keyboardSeenLast) {
                         return;
                     }
-                    utilities.addClass(this._itemBox, WinJS.UI._itemFocusClass);
+                    _ElementUtilities.addClass(this._itemBox, _Constants._itemFocusClass);
                     var outline = document.createElement("div");
-                    outline.className = WinJS.UI._itemFocusOutlineClass;
+                    outline.className = _Constants._itemFocusOutlineClass;
                     this._itemBox.appendChild(outline);
                 },
 
                 _onFocusOut: function ItemContainer_onFocusOut(eventObject) {
-                    utilities.removeClass(this._itemBox, WinJS.UI._itemFocusClass);
-                    var outline = this._itemBox.querySelector("." + WinJS.UI._itemFocusOutlineClass);
+                    _ElementUtilities.removeClass(this._itemBox, _Constants._itemFocusClass);
+                    var outline = this._itemBox.querySelector("." + _Constants._itemFocusOutlineClass);
                     if (outline) {
                         outline.parentNode.removeChild(outline);
                     }
@@ -485,9 +498,9 @@ define([
                             eventObject.dataTransfer.setDragImage(this.element, eventObject.clientX - rect.left, eventObject.clientY - rect.top);
                         }
                         // We delay setting the win-dragsource CSS class so that IE has time to create a thumbnail before me make it opaque
-                        WinJS.Utilities._yieldForDomModification(function () {
+                        _BaseUtils._yieldForDomModification(function () {
                             if (that._dragging) {
-                                utilities.addClass(that._itemBox, WinJS.UI._dragSourceClass);
+                                _ElementUtilities.addClass(that._itemBox, _Constants._dragSourceClass);
                             }
                         });
                     }
@@ -495,15 +508,15 @@ define([
 
                 _onDragEnd: function ItemContainer_onDragEnd(eventObject) {
                     this._dragging = false;
-                    utilities.removeClass(this._itemBox, WinJS.UI._dragSourceClass);
+                    _ElementUtilities.removeClass(this._itemBox, _Constants._dragSourceClass);
                     this._itemEventsHandler.resetPointerDownState();
                 },
 
                 _onKeyDown: function ItemContainer_onKeyDown(eventObject) {
                     if (!this._itemEventsHandler._isInteractive(eventObject.target)) {
-                        var Key = utilities.Key,
+                        var Key = _ElementUtilities.Key,
                             keyCode = eventObject.keyCode,
-                            swipeEnabled = this._swipeBehavior === WinJS.UI.SwipeBehavior.select;
+                            swipeEnabled = this._swipeBehavior === _UI.SwipeBehavior.select;
 
                         var handled = false;
                         if (!eventObject.ctrlKey && keyCode === Key.enter) {
@@ -519,7 +532,7 @@ define([
                             keyCode === Key.space) {
                             if (!this.selectionDisabled) {
                                 this.selected = !this.selected;
-                                handled = WinJS.Utilities._setActive(this.element);
+                                handled = _ElementUtilities._setActive(this.element);
                             }
                         } else if (keyCode === Key.escape && this.selected) {
                             this.selected = false;
@@ -550,7 +563,7 @@ define([
                 },
 
                 _setDirectionClass: function ItemContainer_setDirectionClass() {
-                    utilities[this._rtl() ? "addClass" : "removeClass"](this.element, WinJS.UI._rtlListViewClass);
+                    _ElementUtilities[this._rtl() ? "addClass" : "removeClass"](this.element, _Constants._rtlListViewClass);
                 },
 
                 _forceLayout: function ItemContainer_forceLayout() {
@@ -561,18 +574,18 @@ define([
                 _getItemPosition: function ItemContainer_getItemPosition() {
                     var container = this.element;
                     if (container) {
-                        return WinJS.Promise.wrap({
+                        return Promise.wrap({
                             left: (this._rtl() ?
                                 container.offsetParent.offsetWidth - container.offsetLeft - container.offsetWidth :
                                 container.offsetLeft),
                             top: container.offsetTop,
-                            totalWidth: utilities.getTotalWidth(container),
-                            totalHeight: utilities.getTotalHeight(container),
-                            contentWidth: utilities.getContentWidth(container),
-                            contentHeight: utilities.getContentHeight(container)
+                            totalWidth: _ElementUtilities.getTotalWidth(container),
+                            totalHeight: _ElementUtilities.getTotalHeight(container),
+                            contentWidth: _ElementUtilities.getContentWidth(container),
+                            contentHeight: _ElementUtilities.getContentHeight(container)
                         });
                     } else {
-                        return WinJS.Promise.cancel;
+                        return Promise.cancel;
                     }
                 },
 
@@ -585,30 +598,30 @@ define([
                     // Only respond to aria-selected changes coming from UIA. This check
                     // relies on the fact that, in renderSelection, we update the selection
                     // visual before aria-selected.
-                    if (ariaSelected !== WinJS.UI._isSelectionRendered(this._itemBox)) {
+                    if (ariaSelected !== _ElementUtilities._isSelectionRendered(this._itemBox)) {
                         if (this.selectionDisabled) {
                             // Revert the change made by UIA since the control has selection disabled
-                            WinJS.UI._setAttribute(container, "aria-selected", !ariaSelected);
+                            _ElementUtilities._setAttribute(container, "aria-selected", !ariaSelected);
                         } else {
                             this.selected = ariaSelected;
                             // Revert the change because the update was prevented on the selectionchanging event
                             if (ariaSelected !== this.selected) {
-                                WinJS.UI._setAttribute(container, "aria-selected", !ariaSelected);
+                                _ElementUtilities._setAttribute(container, "aria-selected", !ariaSelected);
                             }
                         }
                     }
                 },
 
                 _setSwipeClass: function ItemContainer_setSwipeClass() {
-                    if (utilities.isPhone) {
+                    if (WinJS.Utilities.isPhone) {
                         // Cross-slide is disabled on phone
                         return;
                     }
                     // We apply an -ms-touch-action style to block panning and swiping from occurring at the same time.
-                    if ((this._swipeBehavior === WinJS.UI.SwipeBehavior.select && this._selectionMode !== WinJS.UI.SelectionMode.none) || this._draggable) {
-                        utilities.addClass(this._element, WinJS.UI._swipeableClass);
+                    if ((this._swipeBehavior === _UI.SwipeBehavior.select && this._selectionMode !== _UI.SelectionMode.none) || this._draggable) {
+                        _ElementUtilities.addClass(this._element, _Constants._swipeableClass);
                     } else {
-                        utilities.removeClass(this._element, WinJS.UI._swipeableClass);
+                        _ElementUtilities.removeClass(this._element, _Constants._swipeableClass);
                     }
                 },
 
@@ -618,11 +631,11 @@ define([
                 },
 
                 _verifySelectionAllowed: function ItemContainer_verifySelectionAllowed() {
-                    if (this._selectionMode !== WinJS.UI.SelectionMode.none && (this._tapBehavior === WinJS.UI.TapBehavior.toggleSelect || this._swipeBehavior === WinJS.UI.SwipeBehavior.select)) {
+                    if (this._selectionMode !== _UI.SelectionMode.none && (this._tapBehavior === _UI.TapBehavior.toggleSelect || this._swipeBehavior === _UI.SwipeBehavior.select)) {
                         var canSelect = this._selection.fireSelectionChanging();
                         return {
                             canSelect: canSelect,
-                            canTapSelect: canSelect && this._tapBehavior === WinJS.UI.TapBehavior.toggleSelect
+                            canTapSelect: canSelect && this._tapBehavior === _UI.TapBehavior.toggleSelect
                         };
                     } else {
                         return {
@@ -634,10 +647,10 @@ define([
 
                 _setupInternalTree: function ItemContainer_setupInternalTree() {
                     var item = document.createElement("div");
-                    item.className = WinJS.UI._itemClass;
+                    item.className = _Constants._itemClass;
                     this._captureProxy = document.createElement("div");
                     this._itemBox = document.createElement("div");
-                    this._itemBox.className = WinJS.UI._itemBoxClass;
+                    this._itemBox.className = _Constants._itemBoxClass;
                     var child = this.element.firstChild;
                     while (child) {
                         var sibling = child.nextSibling;
@@ -650,7 +663,7 @@ define([
                 },
 
                 _fireInvokeEvent: function ItemContainer_fireInvokeEvent() {
-                    if (this.tapBehavior !== WinJS.UI.TapBehavior.none) {
+                    if (this.tapBehavior !== _UI.TapBehavior.none) {
                         var eventObject = document.createEvent("CustomEvent");
                         eventObject.initCustomEvent(eventNames.invoked, true, false, {});
                         this.element.dispatchEvent(eventObject);
@@ -661,18 +674,18 @@ define([
                     if (!this.element.getAttribute("role") || this._usingDefaultItemRole) {
                         this._usingDefaultItemRole = true;
                         var defaultItemRole;
-                        if (this.tapBehavior === WinJS.UI.TapBehavior.none && this.selectionDisabled) {
+                        if (this.tapBehavior === _UI.TapBehavior.none && this.selectionDisabled) {
                             defaultItemRole = "listitem";
                         } else {
                             defaultItemRole = "option";
                         }
-                        WinJS.UI._setAttribute(this.element, "role", defaultItemRole);
+                        _ElementUtilities._setAttribute(this.element, "role", defaultItemRole);
                     }
                 },
 
                 _writeProfilerMark: function ItemContainer_writeProfilerMark(text) {
                     var message = "WinJS.UI.ItemContainer:" + this._id + ":" + text;
-                    WinJS.Utilities._writeProfilerMark(message);
+                    _WriteProfilerMark(message);
                     WinJS.log && WinJS.log(message, null, "itemcontainerprofiler");
                 }
             }, {
@@ -683,12 +696,12 @@ define([
                     horizontal: "win-horizontal",
                 }
             });
-            WinJS.Class.mix(ItemContainer, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(ItemContainer, _Control.DOMEventMixin);
             return ItemContainer;
         }),
 
-        _SingleItemSelectionManager: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.define(function SingleItemSelectionManager_ctor(element, itemBox) {
+        _SingleItemSelectionManager: _Base.Namespace._lazy(function () {
+            return _Base.Class.define(function SingleItemSelectionManager_ctor(element, itemBox) {
                 this._selected = false;
                 this._element = element;
                 this._itemBox = itemBox;
@@ -702,7 +715,7 @@ define([
                         if (this._selected !== value) {
                             if (this.fireSelectionChanging()) {
                                 this._selected = value;
-                                WinJS.UI._ItemEventsHandler.renderSelection(this._itemBox, this._element, value, true, this._element);
+                                _ItemEventsHandler._ItemEventsHandler.renderSelection(this._itemBox, this._element, value, true, this._element);
                                 this.fireSelectionChanged();
                             }
                         }
@@ -766,10 +779,14 @@ define([
                 },
 
                 _getFocused: function SingleItemSelectionManager_getFocused(index) {
-                    return { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX };
+                    return { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX };
                 }
             })
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+
+    var moduleRef = _Base.Namespace.defineWithParent(null, null, members);
 
 });

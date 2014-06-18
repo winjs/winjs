@@ -1,11 +1,18 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Utilities/_Control',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_Select',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function datePickerInit() {
+    ], function datePickerInit(_Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.DatePicker">Allows users to pick a date value.</summary>
         /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -18,17 +25,17 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        DatePicker: WinJS.Namespace._lazy(function () {
+        DatePicker: _Base.Namespace._lazy(function () {
             // Constants definition
             var DEFAULT_DAY_PATTERN = 'day',
                 DEFAULT_MONTH_PATTERN = '{month.full}',
                 DEFAULT_YEAR_PATTERN = 'year.full';
 
             var strings = {
-                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/datePicker").value; },
-                get selectDay() { return WinJS.Resources._getWinJSString("ui/selectDay").value; },
-                get selectMonth() { return WinJS.Resources._getWinJSString("ui/selectMonth").value; },
-                get selectYear() { return WinJS.Resources._getWinJSString("ui/selectYear").value; },
+                get ariaLabel() { return _Resources._getWinJSString("ui/datePicker").value; },
+                get selectDay() { return _Resources._getWinJSString("ui/selectDay").value; },
+                get selectMonth() { return _Resources._getWinJSString("ui/selectMonth").value; },
+                get selectYear() { return _Resources._getWinJSString("ui/selectYear").value; },
             };
 
             var yearFormatCache = {};
@@ -111,7 +118,7 @@ define([
                 return yearCount;
             }
 
-            var DatePicker = WinJS.Class.define(function DatePicker_ctor(element, options) {
+            var DatePicker = _Base.Class.define(function DatePicker_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.DatePicker.DatePicker">
                 /// <summary locid="WinJS.UI.DatePicker.constructor">Creates a new DatePicker control.</summary>
                 /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.DatePicker.constructor_p:element">
@@ -138,7 +145,7 @@ define([
                 };
 
                 element = element || document.createElement("div");
-                WinJS.Utilities.addClass(element, "win-disposable");
+                _ElementUtilities.addClass(element, "win-disposable");
                 element.winControl = this;
 
                 var label = element.getAttribute("aria-label");
@@ -149,7 +156,7 @@ define([
                 // Options should be set after the element is initialized which is
                 // the same order of operation as imperatively setting options.
                 this._init(element);
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
             }, {
                 _information: null,
                 _currentDate: null,
@@ -220,19 +227,19 @@ define([
                     }
 
 
-                    this._yearControl = new WinJS.UI._Select(this._yearElement, {
+                    this._yearControl = new _Select._Select(this._yearElement, {
                         dataSource: this._information.years,
                         disabled: this.disabled,
                         index: index.year
                     });
 
-                    this._monthControl = new WinJS.UI._Select(this._monthElement, {
+                    this._monthControl = new _Select._Select(this._monthElement, {
                         dataSource: this._information.months(index.year),
                         disabled: this.disabled,
                         index: index.month
                     });
 
-                    this._dateControl = new WinJS.UI._Select(this._dateElement, {
+                    this._dateControl = new _Select._Select(this._dateElement, {
                         dataSource: this._information.dates(index.year, index.month),
                         disabled: this.disabled,
                         index: index.date
@@ -338,8 +345,8 @@ define([
                     this._domElement = this._domElement || element;
                     if (!this._domElement) { return; }
 
-                    WinJS.Utilities.empty(this._domElement);
-                    WinJS.Utilities.addClass(this._domElement, "win-datepicker");
+                    _ElementUtilities.empty(this._domElement);
+                    _ElementUtilities.addClass(this._domElement, "win-datepicker");
 
                     this._updateInformation();
 
@@ -425,7 +432,7 @@ define([
                     min.setFullYear(this._minYear);
                     max.setFullYear(this._maxYear);
 
-                    this._information = WinJS.UI.DatePicker.getInformation(min, max, this._calendar, this._datePatterns);
+                    this._information = DatePicker.getInformation(min, max, this._calendar, this._datePatterns);
                 },
 
                 _init: function (element) {
@@ -732,14 +739,14 @@ define([
                     };
                 }
             });
-            if (WinJS.Utilities.hasWinRT) {
+            if (_BaseUtils.hasWinRT) {
                 DatePicker.getInformation = DatePicker._getInformationWinRT;
             }
             else {
                 DatePicker.getInformation = DatePicker._getInformationJS;
             }
-            WinJS.Class.mix(DatePicker, WinJS.Utilities.createEventProperties("change"));
-            WinJS.Class.mix(DatePicker, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(DatePicker, _Events.createEventProperties("change"));
+            _Base.Class.mix(DatePicker, _Control.DOMEventMixin);
             return DatePicker;
         })
     });

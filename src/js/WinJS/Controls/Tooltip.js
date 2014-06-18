@@ -1,12 +1,19 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_Events',
+    '../Animations',
+    '../Utilities/_Control',
+    '../Utilities/_Dispose',
+    '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function tooltipInit() {
+    ], function tooltipInit(_Base, _BaseUtils, _Events, Animations, _Control, _Dispose, _ElementUtilities) {
     "use strict";
 
     // Tooltip control implementation
-    WinJS.Namespace.define("WinJS.UI", {
+    var members =  {
         /// <field>
         /// <summary locid="WinJS.UI.Tooltip">
         /// Displays a tooltip that can contain images and formatting.
@@ -24,11 +31,9 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        Tooltip: WinJS.Namespace._lazy(function () {
+        Tooltip: _Base.Namespace._lazy(function () {
             var lastCloseTime = 0;
-            var utilities = WinJS.Utilities;
-            var animation = WinJS.UI.Animation;
-            var Key = utilities.Key;
+            var Key = _ElementUtilities.Key;
 
             // Constants definition
             var DEFAULT_PLACEMENT = "top";
@@ -48,7 +53,7 @@ define([
             var OFFSET_PROGRAMMATIC_TOUCH = 20;
             var OFFSET_PROGRAMMATIC_NONTOUCH = 12;
             var SAFETY_NET_GAP = 1; // We set a 1-pixel gap between the right or bottom edge of the tooltip and the viewport to avoid possible re-layout
-            var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch"; // pointer type to indicate a touch event
+            var PT_TOUCH = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch"; // pointer type to indicate a touch event
 
             var EVENTS_INVOKE = { "keyup": "", "pointerover": "" },
                 EVENTS_UPDATE = { "pointermove": "" },
@@ -68,9 +73,9 @@ define([
 
             var hasInitWinRTSettings = false;
 
-            var createEvent = WinJS.Utilities._createEventProperty;
+            var createEvent = _Events._createEventProperty;
 
-            return WinJS.Class.define(function Tooltip_ctor(anchorElement, options) {
+            return _Base.Class.define(function Tooltip_ctor(anchorElement, options) {
                 /// <signature helpKeyword="WinJS.UI.Tooltip.Tooltip">
                 /// <summary locid="WinJS.UI.Tooltip.constructor">
                 /// Creates a new Tooltip.
@@ -92,13 +97,13 @@ define([
                 /// </signature>
                 anchorElement = anchorElement || document.createElement("div");
 
-                var tooltip = utilities.data(anchorElement).tooltip;
+                var tooltip = _ElementUtilities.data(anchorElement).tooltip;
                 if (tooltip) {
                     return tooltip;
                 }
 
                 // Set system attributes if it is in WWA, otherwise, use the default values
-                if (!hasInitWinRTSettings && WinJS.Utilities.hasWinRT) { // in WWA
+                if (!hasInitWinRTSettings && _BaseUtils.hasWinRT) { // in WWA
                     var uiSettings = new Windows.UI.ViewManagement.UISettings();
                     mouseHoverTime = uiSettings.mouseHoverTime;
                     nonInfoTooltipNonTouchShowDelay = 2 * mouseHoverTime;
@@ -129,7 +134,7 @@ define([
 
                 // Remember ourselves
                 anchorElement.winControl = this;
-                WinJS.Utilities.addClass(anchorElement, "win-disposable");
+                _ElementUtilities.addClass(anchorElement, "win-disposable");
 
                 // If anchor element's title is defined, set as the default tooltip content
                 if (anchorElement.title) {
@@ -137,9 +142,9 @@ define([
                     this._anchorElement.removeAttribute("title");
                 }
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
                 this._events();
-                utilities.data(anchorElement).tooltip = this;
+                _ElementUtilities.data(anchorElement).tooltip = this;
             }, {
                 /// <field type="String" locid="WinJS.UI.Tooltip.innerHTML" helpKeyword="WinJS.UI.Tooltip.innerHTML">
                 /// Gets or sets the HTML content of the Tooltip.
@@ -281,12 +286,12 @@ define([
                     }
 
                     this._disposed = true;
-                    WinJS.Utilities.disposeSubTree(this.element);
+                    _Dispose.disposeSubTree(this.element);
                     for (var i = 0, len = this._eventListenerRemoveStack.length; i < len; i++) {
                         this._eventListenerRemoveStack[i]();
                     }
                     this._onDismiss();
-                    var data = utilities.data(this._anchorElement);
+                    var data = _ElementUtilities.data(this._anchorElement);
                     if (data) {
                         delete data.tooltip;
                     }
@@ -377,7 +382,7 @@ define([
 
                 _cleanUpDOM: function () {
                     if (this._domElement) {
-                        WinJS.Utilities.disposeSubTree(this._domElement);
+                        _Dispose.disposeSubTree(this._domElement);
                         document.body.removeChild(this._domElement);
                         this._domElement = null;
 
@@ -391,7 +396,7 @@ define([
 
                     this._domElement = document.createElement("div");
 
-                    var id = WinJS.Utilities._uniqueID(this._domElement);
+                    var id = _ElementUtilities._uniqueID(this._domElement);
                     this._domElement.setAttribute("id", id);
 
                     // Set the direction of tooltip according to anchor element's
@@ -415,18 +420,18 @@ define([
                     }
 
                     document.body.appendChild(this._domElement);
-                    utilities.addClass(this._domElement, msTooltip);
+                    _ElementUtilities.addClass(this._domElement, msTooltip);
 
                     // In the event of user-assigned classes, add those too
                     if (this._extraClass) {
-                        utilities.addClass(this._domElement, this._extraClass);
+                        _ElementUtilities.addClass(this._domElement, this._extraClass);
                     }
 
                     // Create a phantom div on top of the tooltip div to block all interactions
                     this._phantomDiv = document.createElement("div");
                     this._phantomDiv.setAttribute("tabindex", -1);
                     document.body.appendChild(this._phantomDiv);
-                    utilities.addClass(this._phantomDiv, msTooltipPhantom);
+                    _ElementUtilities.addClass(this._phantomDiv, msTooltipPhantom);
                     var zIndex = document.defaultView.getComputedStyle(this._domElement, null).zIndex + 1;
                     this._phantomDiv.style.zIndex = zIndex;
                 },
@@ -465,10 +470,10 @@ define([
                         listener._captureLastKeyBlurOrPointerOverEvent(event, listener);
                         listener._handleEvent(event);
                     };
-                    WinJS.Utilities._addEventListener(element, eventType, handler, false);
+                    _ElementUtilities._addEventListener(element, eventType, handler, false);
 
                     this._eventListenerRemoveStack.push(function () {
-                        WinJS.Utilities._removeEventListener(element, eventType, handler, false);
+                        _ElementUtilities._removeEventListener(element, eventType, handler, false);
                     });
                 },
 
@@ -786,7 +791,7 @@ define([
                     this._createTooltipDOM();
                     var pos = this._position(contactType);
                     if (this._useAnimation) {
-                        animation.fadeIn(this._domElement)
+                        Animations.fadeIn(this._domElement)
                             .then(this._onShowAnimationEnd.bind(this));
                     } else {
                         this._onShowAnimationEnd();
@@ -864,7 +869,7 @@ define([
                     if (this._domElement) {
                         this._raiseEvent("beforeclose");
                         if (this._useAnimation) {
-                            animation.fadeOut(this._domElement)
+                            Animations.fadeOut(this._domElement)
                                 .then(this._onHideAnimationEnd.bind(this));
                         } else {
                             this._onHideAnimationEnd();
@@ -917,6 +922,10 @@ define([
                 },
             });
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+
+    return _Base.Namespace.defineWithParent(null, null, members);
 
 });

@@ -1054,19 +1054,19 @@ define([
                                 lastRealizedIndexInGroup;
 
                             if (item) {
-                                WinJS.UI._ensureId(item);
+                                WinJS.Utilities._ensureId(item);
                                 if (that._listView._groupsEnabled()) {
                                     groups = that._listView._groups;
                                     startGroup = currentGroup = groups.groupFromItem(that.begin);
                                     group = groups.group(currentGroup);
                                     lastRealizedIndexInGroup = calcLastRealizedIndexInGroup(currentGroup);
-                                    WinJS.UI._ensureId(group.header);
-                                    WinJS.UI._setAttribute(group.header, "role", that._listView._headerRole);
-                                    WinJS.UI._setAttribute(group.header, "x-ms-aria-flowfrom", startMarker.id);
+                                    WinJS.Utilities._ensureId(group.header);
+                                    WinJS.Utilities._setAttribute(group.header, "role", that._listView._headerRole);
+                                    WinJS.Utilities._setAttribute(group.header, "x-ms-aria-flowfrom", startMarker.id);
                                     WinJS.UI._setFlow(group.header, item);
-                                    WinJS.UI._setAttribute(group.header, "tabindex", that._listView._tabIndex);
+                                    WinJS.Utilities._setAttribute(group.header, "tabindex", that._listView._tabIndex);
                                 } else {
-                                    WinJS.UI._setAttribute(item, "x-ms-aria-flowfrom", startMarker.id);
+                                    WinJS.Utilities._setAttribute(item, "x-ms-aria-flowfrom", startMarker.id);
                                 }
 
                                 return new Promise(function (completeJobPromise) {
@@ -1093,13 +1093,13 @@ define([
                                             var nextItem = that.items.itemAt(index + 1);
 
                                             if (nextItem) {
-                                                WinJS.UI._ensureId(nextItem);
+                                                WinJS.Utilities._ensureId(nextItem);
                                             }
 
-                                            WinJS.UI._setAttribute(item, "role", that._listView._itemRole);
-                                            WinJS.UI._setAttribute(item, "aria-setsize", count);
-                                            WinJS.UI._setAttribute(item, "aria-posinset", index + 1);
-                                            WinJS.UI._setAttribute(item, "tabindex", that._listView._tabIndex);
+                                            WinJS.Utilities._setAttribute(item, "role", that._listView._itemRole);
+                                            WinJS.Utilities._setAttribute(item, "aria-setsize", count);
+                                            WinJS.Utilities._setAttribute(item, "aria-posinset", index + 1);
+                                            WinJS.Utilities._setAttribute(item, "tabindex", that._listView._tabIndex);
 
                                             if (that._listView._groupsEnabled()) {
                                                 if (index === lastRealizedIndexInGroup || !nextItem) {
@@ -1108,14 +1108,14 @@ define([
                                                     // If group is the last realized group, then nextGroup won't exist in the DOM.
                                                     // When this is the case, nextItem shouldn't exist.
                                                     if (nextGroup && nextGroup.header && nextItem) {
-                                                        WinJS.UI._setAttribute(nextGroup.header, "tabindex", that._listView._tabIndex);
-                                                        WinJS.UI._setAttribute(nextGroup.header, "role", that._listView._headerRole);
-                                                        WinJS.UI._ensureId(nextGroup.header);
+                                                        WinJS.Utilities._setAttribute(nextGroup.header, "tabindex", that._listView._tabIndex);
+                                                        WinJS.Utilities._setAttribute(nextGroup.header, "role", that._listView._headerRole);
+                                                        WinJS.Utilities._ensureId(nextGroup.header);
                                                         WinJS.UI._setFlow(item, nextGroup.header);
                                                         WinJS.UI._setFlow(nextGroup.header, nextItem);
                                                     } else {
                                                         // We're at the last group so flow to the end marker
-                                                        WinJS.UI._setAttribute(item, "aria-flowto", endMarker.id);
+                                                        WinJS.Utilities._setAttribute(item, "aria-flowto", endMarker.id);
                                                     }
 
                                                     currentGroup++;
@@ -1130,7 +1130,7 @@ define([
                                                 WinJS.UI._setFlow(item, nextItem);
                                             } else {
                                                 // Groups are disabled and we're at the last item, so flow to the end marker
-                                                WinJS.UI._setAttribute(item, "aria-flowto", endMarker.id);
+                                                WinJS.Utilities._setAttribute(item, "aria-flowto", endMarker.id);
                                             }
                                             if (!nextItem) {
                                                 break;
@@ -1229,8 +1229,8 @@ define([
                         WinJS.UI._setFlow(startMarker, endMarker);
                         this._listView._fireAccessibilityAnnotationCompleteEvent(-1, -1);
                     } else {
-                        WinJS.UI._ensureId(firstVisibleItem);
-                        WinJS.UI._ensureId(lastVisibleItem);
+                        WinJS.Utilities._ensureId(firstVisibleItem);
+                        WinJS.Utilities._ensureId(lastVisibleItem);
 
                         // Set startMarker's flowto
                         if (this._listView._groupsEnabled()) {
@@ -1238,20 +1238,20 @@ define([
                                 firstVisibleGroup = groups.group(groups.groupFromItem(firstIndexDisplayed));
 
                             if (firstVisibleGroup.header) {
-                                WinJS.UI._ensureId(firstVisibleGroup.header);
+                                WinJS.Utilities._ensureId(firstVisibleGroup.header);
 
                                 if (firstIndexDisplayed === firstVisibleGroup.startIndex) {
-                                    WinJS.UI._setAttribute(startMarker, "aria-flowto", firstVisibleGroup.header.id);
+                                    WinJS.Utilities._setAttribute(startMarker, "aria-flowto", firstVisibleGroup.header.id);
                                 } else {
-                                    WinJS.UI._setAttribute(startMarker, "aria-flowto", firstVisibleItem.id);
+                                    WinJS.Utilities._setAttribute(startMarker, "aria-flowto", firstVisibleItem.id);
                                 }
                             }
                         } else {
-                            WinJS.UI._setAttribute(startMarker, "aria-flowto", firstVisibleItem.id);
+                            WinJS.Utilities._setAttribute(startMarker, "aria-flowto", firstVisibleItem.id);
                         }
 
                         // Set endMarker's flowfrom
-                        WinJS.UI._setAttribute(endMarker, "x-ms-aria-flowfrom", lastVisibleItem.id);
+                        WinJS.Utilities._setAttribute(endMarker, "x-ms-aria-flowfrom", lastVisibleItem.id);
                     }
                 },
 
@@ -1263,12 +1263,12 @@ define([
                     if (WinJS.Utilities.hasClass(item, WinJS.UI._headerClass)) {
                         index = this._listView._groups.index(item);
                         type = WinJS.UI.ObjectType.groupHeader;
-                        WinJS.UI._setAttribute(item, "role", this._listView._headerRole);
+                        WinJS.Utilities._setAttribute(item, "role", this._listView._headerRole);
                     } else {
                         index = this.items.index(item);
-                        WinJS.UI._setAttribute(item, "aria-setsize", count);
-                        WinJS.UI._setAttribute(item, "aria-posinset", index + 1);
-                        WinJS.UI._setAttribute(item, "role", this._listView._itemRole);
+                        WinJS.Utilities._setAttribute(item, "aria-setsize", count);
+                        WinJS.Utilities._setAttribute(item, "aria-posinset", index + 1);
+                        WinJS.Utilities._setAttribute(item, "role", this._listView._itemRole);
                     }
 
                     if (type === WinJS.UI.ObjectType.groupHeader) {

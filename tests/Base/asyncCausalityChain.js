@@ -38,26 +38,32 @@ CorsicaTests.AsyncCausalityChain = function () {
         self.realTraceAsyncCallbackStarting = WinJS.Utilities._traceAsyncCallbackStarting;
         self.realTraceAsyncCallbackCompleted = WinJS.Utilities._traceAsyncCallbackCompleted;
 
-        WinJS.Utilities._traceAsyncOperationStarting = function (name) {
-            self.OperationStarting.push({ id: self.OperationStarting.length, name: name });
-            return self.OperationStarting.length - 1;
-        };
-        WinJS.Utilities._traceAsyncOperationCompleted = function (id, status) {
-            self.OperationCompleted.push({ id: id, status: status });
-        };
-        WinJS.Utilities._traceAsyncCallbackStarting = function (id) {
-            self.CallbackStarting.push({ id: id });
-        };
-        WinJS.Utilities._traceAsyncCallbackCompleted = function () {
-            self.CallbackCompleted.push({});
-        };
+        WinJS.Utilities._require(['WinJS/Core/_Trace'], function(_Trace) {
+
+            _Trace._traceAsyncOperationStarting = function (name) {
+                self.OperationStarting.push({ id: self.OperationStarting.length, name: name });
+                return self.OperationStarting.length - 1;
+            };
+            _Trace._traceAsyncOperationCompleted = function (id, status) {
+                self.OperationCompleted.push({ id: id, status: status });
+            };
+            _Trace._traceAsyncCallbackStarting = function (id) {
+                self.CallbackStarting.push({ id: id });
+            };
+            _Trace._traceAsyncCallbackCompleted = function () {
+                self.CallbackCompleted.push({});
+            };
+        });
     };
 
     this.tearDown = function () {
-        WinJS.Utilities._traceAsyncOperationStarting = self.realTraceAsyncOperationStarting;
-        WinJS.Utilities._traceAsyncOperationCompleted = self.realTraceAsyncOperationCompleted;
-        WinJS.Utilities._traceAsyncCallbackStarting = self.realTraceAsyncCallbackStarting;
-        WinJS.Utilities._traceAsyncCallbackCompleted = self.realTraceAsyncCallbackCompleted;
+
+        WinJS.Utilities._require(['WinJS/Core/_Trace'], function(_Trace) {
+            _Trace._traceAsyncOperationStarting = self.realTraceAsyncOperationStarting;
+            _Trace._traceAsyncOperationCompleted = self.realTraceAsyncOperationCompleted;
+            _Trace._traceAsyncCallbackStarting = self.realTraceAsyncCallbackStarting;
+            _Trace._traceAsyncCallbackCompleted = self.realTraceAsyncCallbackCompleted;
+        });
     };
 
     function verify(expected) {

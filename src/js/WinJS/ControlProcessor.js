@@ -251,5 +251,5 @@ define([
 
     _Base.Namespace.define("WinJS.UI", members);
 
-    return members;
+    return _Base.Namespace.defineWithParent(null, null, members);
 });

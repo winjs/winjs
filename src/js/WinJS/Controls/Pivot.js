@@ -1,12 +1,31 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Animations',
+    '../Animations/_TransitionAnimation',
+    '../BindingList',
+    '../ControlProcessor',
+    '../Promise',
+    '../Scheduler',
+    '../_Signal',
+    '../Utilities/_Control',
+    '../Utilities/_Dispose',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_TabContainer',
+    '../Utilities/_UIUtilities',
+    './Pivot/_Constants',
     './Pivot/_Item',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function pivotInit(_Item) {
+    ], function pivotInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _UIUtilities, _Constants, _Item) {
         "use strict";
 
-        WinJS.Namespace.define("WinJS.UI", {
+        _Base.Namespace.define("WinJS.UI", {
             /// <field>
             /// <summary locid="WinJS.UI.Pivot">
             /// Tab control which displays a item of content.
@@ -27,25 +46,25 @@ define([
             /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
             /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
             /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-            Pivot: WinJS.Namespace._lazy(function () {
-                var PT_MOUSE = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse";
-                var PT_TOUCH = WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
-                var Keys = WinJS.Utilities.Key;
+            Pivot: _Base.Namespace._lazy(function () {
+                var PT_MOUSE = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse";
+                var PT_TOUCH = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
+                var Keys = _ElementUtilities.Key;
 
                 function pivotDefaultHeaderTemplate(item) {
                     var element = document.createTextNode(typeof item.header === "object" ? JSON.stringify(item.header) : ('' + item.header));
                     return element;
                 }
 
-                var createEvent = WinJS.Utilities._createEventProperty;
+                var createEvent = _Events._createEventProperty;
                 var eventNames = {
                     selectionChanged: "selectionchanged",
                     itemAnimationStart: "itemanimationstart",
                     itemAnimationEnd: "itemanimationend",
                 };
-                var MSManipulationEventStates = WinJS.Utilities._MSManipulationEvent;
+                var MSManipulationEventStates = _ElementUtilities._MSManipulationEvent;
 
-                var Pivot = WinJS.Class.define(function Pivot_ctor(element, options) {
+                var Pivot = _Base.Class.define(function Pivot_ctor(element, options) {
                     /// <signature helpKeyword="WinJS.UI.Pivot.Pivot">
                     /// <summary locid="WinJS.UI.Pivot.constructor">
                     /// Creates a new Pivot control.
@@ -69,7 +88,7 @@ define([
                     options = options || {};
 
                     if (element.winControl) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Pivot.DuplicateConstruction", strings.duplicateConstruction);
+                        throw new _ErrorFromName("WinJS.UI.Pivot.DuplicateConstruction", strings.duplicateConstruction);
                     }
 
                     this._handleItemChangedBound = this._handleItemChanged.bind(this);
@@ -78,11 +97,11 @@ define([
                     this._handleItemRemovedBound = this._handleItemRemoved.bind(this);
                     this._handleItemReloadBound = this._handleItemReload.bind(this);
 
-                    this._id = element.id || WinJS.Utilities._uniqueID(element);
+                    this._id = element.id || _ElementUtilities._uniqueID(element);
                     this._writeProfilerMark("constructor,StartTM");
 
-                    if (!WinJS.Utilities._supportsSnapPoints) {
-                        element.classList.add(WinJS.UI.Pivot._ClassName.pivotNoSnap);
+                    if (!_ElementUtilities._supportsSnapPoints) {
+                        _ElementUtilities.addClass(element, Pivot._ClassName.pivotNoSnap);
                     }
 
                     // Attaching JS control to DOM element
@@ -92,31 +111,31 @@ define([
                     if (!this._element.getAttribute("aria-label")) {
                         this._element.setAttribute('aria-label', strings.pivotAriaLabel);
                     }
-                    WinJS.Utilities.addClass(this.element, WinJS.UI.Pivot._ClassName.pivot);
-                    WinJS.Utilities.addClass(this.element, "win-disposable");
-                    WinJS.Utilities._addEventListener(this.element, "pointerenter", this._updatePointerType.bind(this));
-                    WinJS.Utilities._addEventListener(this.element, "pointerout", this._updatePointerType.bind(this));
+                    _ElementUtilities.addClass(this.element, Pivot._ClassName.pivot);
+                    _ElementUtilities.addClass(this.element, "win-disposable");
+                    _ElementUtilities._addEventListener(this.element, "pointerenter", this._updatePointerType.bind(this));
+                    _ElementUtilities._addEventListener(this.element, "pointerout", this._updatePointerType.bind(this));
                     this._pointerType = PT_MOUSE;
 
                     this._titleElement = document.createElement("DIV");
                     this._titleElement.style.display = "none";
-                    WinJS.Utilities.addClass(this._titleElement, WinJS.UI.Pivot._ClassName.pivotTitle);
+                    _ElementUtilities.addClass(this._titleElement, Pivot._ClassName.pivotTitle);
                     this._element.appendChild(this._titleElement);
 
                     this._headersContainerElement = document.createElement("DIV");
-                    WinJS.Utilities.addClass(this._headersContainerElement, WinJS.UI.Pivot._ClassName.pivotHeaders);
+                    _ElementUtilities.addClass(this._headersContainerElement, Pivot._ClassName.pivotHeaders);
                     this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
                     this._element.appendChild(this._headersContainerElement);
                     this._element.addEventListener('click', this._elementClickedHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
-                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
-                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
+                    _ElementUtilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
+                    _ElementUtilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler.bind(this));
 
-                    this._tabContainer = new WinJS.UI.TabContainer(this._headersContainerElement);
+                    this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
 
                     this._viewportElement = document.createElement("DIV");
-                    this._viewportElement.className = WinJS.UI.Pivot._ClassName.pivotViewport;
+                    this._viewportElement.className = Pivot._ClassName.pivotViewport;
                     this._element.appendChild(this._viewportElement);
                     this._viewportElement.setAttribute("role", "group");
                     this._viewportElement.setAttribute("aria-label", strings.pivotViewportAriaLabel);
@@ -125,29 +144,29 @@ define([
                     this._viewportWidth = null;
                     this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
                     this._viewportElement.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
-                    WinJS.Utilities._addEventListener(this._viewportElement, "pointerdown", this._pointerDownHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._viewportElement, "pointerdown", this._pointerDownHandler.bind(this));
 
                     this._surfaceElement = document.createElement("DIV");
-                    this._surfaceElement.className = WinJS.UI.Pivot._ClassName.pivotSurface;
+                    this._surfaceElement.className = Pivot._ClassName.pivotSurface;
                     this._viewportElement.appendChild(this._surfaceElement);
 
                     this._offsetFromCenter = 0;
                     this._currentIndexOnScreen = 0;
                     this._loadId = 0;
-                    this._navMode = WinJS.UI.Pivot._NavigationModes.none;
+                    this._navMode = Pivot._NavigationModes.none;
                     this._currentManipulationState = MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED;
 
                     // This internally assigns this.items which causes item to be used (even from options) before selectedIndex
                     this._parse();
 
-                    options = WinJS.Utilities._shallowCopy(options);
+                    options = _BaseUtils._shallowCopy(options);
                     if (options.items) {
                         // Set this first so selectedIndex and selectedItem can work against the new items.
                         this.items = options.items;
                         delete options.items;
                     }
 
-                    WinJS.UI.setOptions(this, options);
+                    _Control.setOptions(this, options);
 
                     this._refresh();
 
@@ -169,10 +188,10 @@ define([
                     /// </field>
                     locked: {
                         get: function () {
-                            return WinJS.Utilities.hasClass(this.element, WinJS.UI.Pivot._ClassName.pivotLocked);
+                            return _ElementUtilities.hasClass(this.element, Pivot._ClassName.pivotLocked);
                         },
                         set: function (value) {
-                            WinJS.Utilities[value ? 'addClass' : 'removeClass'](this.element, WinJS.UI.Pivot._ClassName.pivotLocked);
+                            _ElementUtilities[value ? 'addClass' : 'removeClass'](this.element, Pivot._ClassName.pivotLocked);
                             if (value) {
                                 this._hideNavButtons();
                             }
@@ -240,7 +259,7 @@ define([
                                 if (this._pendingRefresh) {
                                     this._pendingIndexOnScreen = value;
                                 } else {
-                                    this._navMode = this._navMode || WinJS.UI.Pivot._NavigationModes.api;
+                                    this._navMode = this._navMode || Pivot._NavigationModes.api;
                                     this._loadItem(value);
                                 }
                             }
@@ -277,7 +296,7 @@ define([
 
                         this._updateEvents(this._items);
 
-                        WinJS.Utilities._disposeElement(this._headersContainerElement);
+                        _Dispose._disposeElement(this._headersContainerElement);
 
                         for (var i = 0, len = this.items.length; i < len; i++) {
                             this.items.getAt(i).dispose();
@@ -304,7 +323,7 @@ define([
 
                     _currentScrollTargetLocation: {
                         get: function () {
-                            if (this._viewportWidth === WinJS.UI.Pivot._invalidViewportWidth) {
+                            if (this._viewportWidth === Pivot._invalidViewportWidth) {
                                 // ViewportWidth is invalid, this means that the pivot has not been measured yet. This is either because
                                 // the pivot is not in the DOM, or there is a pending refresh operation.
                                 return 0;
@@ -326,12 +345,12 @@ define([
 
                             this._pointerTypeValue = value;
                             if (value === PT_TOUCH) {
-                                this.element.classList.remove(WinJS.UI.Pivot._ClassName.pivotInputTypeMouse);
-                                this.element.classList.add(WinJS.UI.Pivot._ClassName.pivotInputTypeTouch);
+                                _ElementUtilities.removeClass(this.element, Pivot._ClassName.pivotInputTypeMouse);
+                                _ElementUtilities.addClass(this.element, Pivot._ClassName.pivotInputTypeTouch);
                                 this._hideNavButtons();
                             } else {
-                                this.element.classList.remove(WinJS.UI.Pivot._ClassName.pivotInputTypeTouch);
-                                this.element.classList.add(WinJS.UI.Pivot._ClassName.pivotInputTypeMouse);
+                                _ElementUtilities.removeClass(this.element, Pivot._ClassName.pivotInputTypeTouch);
+                                _ElementUtilities.addClass(this.element, Pivot._ClassName.pivotInputTypeMouse);
                             }
                         }
                     },
@@ -346,11 +365,11 @@ define([
                         get: function () {
                             if (!this._viewportElWidth) {
                                 this._viewportElWidth = parseFloat(getComputedStyle(this._viewportElement).width);
-                                if (WinJS.Utilities._supportsSnapPoints) {
-                                    this._viewportElement.style[WinJS.Utilities._browserStyleEquivalents["scroll-snap-points-x"].scriptName] = "snapInterval(0%, " + Math.ceil(this._viewportElWidth) + "px)";
+                                if (_ElementUtilities._supportsSnapPoints) {
+                                    this._viewportElement.style[_BaseUtils._browserStyleEquivalents["scroll-snap-points-x"].scriptName] = "snapInterval(0%, " + Math.ceil(this._viewportElWidth) + "px)";
                                 }
                             }
-                            return this._viewportElWidth || WinJS.UI.Pivot._invalidViewportWidth;
+                            return this._viewportElWidth || Pivot._invalidViewportWidth;
                         },
                         set: function (value) {
                             this._viewportElWidth = value;
@@ -374,7 +393,7 @@ define([
                                 var toRemove = this.element.firstElementChild;
                                 toRemove.parentNode.removeChild(toRemove);
                             }
-                            WinJS.Utilities.empty(this._surfaceElement);
+                            _ElementUtilities.empty(this._surfaceElement);
                         }
 
                         this._attachItems();
@@ -394,7 +413,7 @@ define([
                             var item = this._items.getAt(i);
 
                             if (item.element.parentNode === this._surfaceElement) {
-                                throw new WinJS.ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
+                                throw new _ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
                             }
 
                             item.element.style.visibility = "hidden";
@@ -409,20 +428,20 @@ define([
                         var pivotItemEl = this.element.firstElementChild;
 
                         while (pivotItemEl !== this._titleElement) {
-                            WinJS.UI.processAll(pivotItemEl);
+                            ControlProcessor.processAll(pivotItemEl);
 
                             var pivotItemContent = pivotItemEl.winControl;
                             if (pivotItemContent) {
                                 pivotItems.push(pivotItemContent);
                             } else {
-                                throw new WinJS.ErrorFromName("WinJS.UI.Pivot.InvalidContent", strings.invalidContent);
+                                throw new _ErrorFromName("WinJS.UI.Pivot.InvalidContent", strings.invalidContent);
                             }
 
                             var nextItemEl = pivotItemEl.nextElementSibling;
                             pivotItemEl = nextItemEl;
                         }
 
-                        this.items = new WinJS.Binding.List(pivotItems);
+                        this.items = new BindingList.List(pivotItems);
                     },
 
                     _refresh: function pivot_refresh() {
@@ -433,7 +452,7 @@ define([
                         // This is to coalesce property setting operations such as items and scrollPosition.
                         this._pendingRefresh = true;
 
-                        WinJS.Utilities.Scheduler.schedule(this._applyProperties.bind(this), WinJS.Utilities.Scheduler.Priority.high);
+                        Scheduler.schedule(this._applyProperties.bind(this), Scheduler.Priority.high);
                     },
 
                     _renderHeaders: function pivot_renderHeaders(goPrevious) {
@@ -442,10 +461,10 @@ define([
                         }
 
                         var restoreFocus = this._headersContainerElement.contains(document.activeElement);
-                        var template = WinJS.Utilities._syncRenderer(pivotDefaultHeaderTemplate);
+                        var template = _UIUtilities._syncRenderer(pivotDefaultHeaderTemplate);
 
-                        WinJS.Utilities._disposeElement(this._headersContainerElement);
-                        WinJS.Utilities.empty(this._headersContainerElement);
+                        _Dispose._disposeElement(this._headersContainerElement);
+                        _ElementUtilities.empty(this._headersContainerElement);
                         var cs = getComputedStyle(this._headersContainerElement);
                         var marginLeft = parseFloat(cs.marginLeft);
                         marginLeft = marginLeft > 0 ? 0 : marginLeft;
@@ -460,12 +479,12 @@ define([
                             var headerContainerEl = document.createElement("BUTTON");
                             headerContainerEl.style.maxWidth = (0.8 * maxHeaderLength) + "px";
                             if (index === that.selectedIndex) {
-                                WinJS.Utilities.addClass(headerContainerEl, WinJS.UI.Pivot._ClassName.pivotHeaderSelected);
+                                _ElementUtilities.addClass(headerContainerEl, Pivot._ClassName.pivotHeaderSelected);
                                 headerContainerEl.setAttribute('aria-selected', true);
                             } else {
                                 headerContainerEl.setAttribute('aria-selected', false);
                             }
-                            WinJS.Utilities.addClass(headerContainerEl, WinJS.UI.Pivot._ClassName.pivotHeader);
+                            _ElementUtilities.addClass(headerContainerEl, Pivot._ClassName.pivotHeader);
                             headerContainerEl._item = item;
                             template(item, headerContainerEl)
                             headerContainerEl.setAttribute('role', 'tab');
@@ -485,7 +504,7 @@ define([
                                 }
                             }
 
-                            new WinJS.Utilities._MutationObserver(ariaSelectedMutated).observe(headerContainerEl, { attributes: true, attributeFilter: ["aria-selected"] });
+                            new _ElementUtilities._MutationObserver(ariaSelectedMutated).observe(headerContainerEl, { attributes: true, attributeFilter: ["aria-selected"] });
                         }
 
                         if (this._items.length === 1) {
@@ -527,7 +546,7 @@ define([
                                 var lastHeader = this._headersContainerElement.children[numberOfHeadersToRender - 1];
                                 lastHeader.style.opacity = start;
                                 var lastHeaderFadeInDuration = 0.167;
-                                lastHeader.style[WinJS.Utilities._browserStyleEquivalents["transition"].scriptName] = "opacity " + WinJS.UI._animationTimeAdjustment(lastHeaderFadeInDuration) + "s";
+                                lastHeader.style[_BaseUtils._browserStyleEquivalents["transition"].scriptName] = "opacity " + WinJS.UI._animationTimeAdjustment(lastHeaderFadeInDuration) + "s";
                                 getComputedStyle(lastHeader).opacity;
                                 lastHeader.style.opacity = end;
                             }
@@ -548,8 +567,8 @@ define([
 
                             // Create header track nav button elements
                             this._prevButton = document.createElement("button");
-                            this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
-                            this._prevButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonPrev);
+                            _ElementUtilities.addClass(this._prevButton, Pivot._ClassName.pivotNavButton);
+                            _ElementUtilities.addClass(this._prevButton, Pivot._ClassName.pivotNavButtonPrev);
                             this._prevButton.addEventListener("click", function () {
                                 if (that.locked) {
                                     return;
@@ -560,8 +579,8 @@ define([
                             this._prevButton.style.left = this._rtl ? "0px" : leadingSpace + "px";
 
                             this._nextButton = document.createElement("button");
-                            this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButton);
-                            this._nextButton.classList.add(WinJS.UI.Pivot._ClassName.pivotNavButtonNext);
+                            _ElementUtilities.addClass(this._nextButton, Pivot._ClassName.pivotNavButton);
+                            _ElementUtilities.addClass(this._nextButton, Pivot._ClassName.pivotNavButtonNext);
                             this._nextButton.addEventListener("click", function () {
                                 if (that.locked) {
                                     return;
@@ -617,7 +636,7 @@ define([
                             this.selectedIndex = index;
                         } else {
                             // Move focus into content for Narrator.
-                            WinJS.Utilities._setActiveFirstFocusableElement(this.selectedItem.element);
+                            _UIUtilities._setActiveFirstFocusableElement(this.selectedItem.element);
                         }
                     },
 
@@ -674,10 +693,10 @@ define([
                         }
 
                         var zooming = false;
-                        if (WinJS.Utilities._supportsSnapPoints && WinJS.Utilities._supportsZoomTo && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
+                        if (_ElementUtilities._supportsSnapPoints && _ElementUtilities._supportsZoomTo && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                             if (this._skipHeaderSlide) {
                                 WinJS.log && WinJS.log('_skipHeaderSlide index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
-                                WinJS.Utilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
+                                _ElementUtilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
                             } else {
                                 WinJS.log && WinJS.log('zoomTo index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
                                 this._viewportElement.msZoomTo({ contentX: this._currentScrollTargetLocation, contentY: 0, viewportX: 0, viewportY: 0 });
@@ -693,14 +712,14 @@ define([
                             item: item
                         };
                         this._writeProfilerMark("selectionChanged,info");
-                        this._fireEvent(WinJS.UI.Pivot._EventName.selectionChanged, true, false, selectionChangedDetail);
+                        this._fireEvent(Pivot._EventName.selectionChanged, true, false, selectionChangedDetail);
 
                         // Start it hidden until it is loaded
                         item._process().then(function () {
                             if (that._disposed || loadId !== that._loadId) {
                                 return;
                             }
-                            if (WinJS.Utilities._supportsSnapPoints) {
+                            if (_ElementUtilities._supportsSnapPoints) {
                                 // Position item:
                                 item.element.style[that._getDirectionAccessor()] = that._currentScrollTargetLocation + "px";
                                 that._showPivotItem(item.element, goPrevious);
@@ -722,23 +741,23 @@ define([
                             var recenterPromise;
                             if (zooming) {
                                 if (!that._stoppedAndRecenteredSignal) {
-                                    that._stoppedAndRecenteredSignal = new WinJS._Signal();
+                                    that._stoppedAndRecenteredSignal = new _Signal();
                                 }
                                 recenterPromise = that._stoppedAndRecenteredSignal.promise;
                             } else {
-                                recenterPromise = WinJS.Promise.wrap();
+                                recenterPromise = Promise.wrap();
                             }
-                            WinJS.Promise.join([that._slideHeadersAnimation, that._showPivotItemAnimation, that._hidePivotItemAnimation]).then(function () {
+                            Promise.join([that._slideHeadersAnimation, that._showPivotItemAnimation, that._hidePivotItemAnimation]).then(function () {
                                 recenterPromise.then(function () {
-                                    WinJS.Promise.timeout(50).then(function () {
+                                    Promise.timeout(50).then(function () {
                                         if (that._disposed || loadId !== that._loadId) {
                                             return;
                                         }
-                                        that._navMode = WinJS.UI.Pivot._NavigationModes.none;
+                                        that._navMode = Pivot._NavigationModes.none;
 
                                         // Fire event even if animation didn't occur:
                                         that._writeProfilerMark("itemAnimationStop,info");
-                                        that._fireEvent(WinJS.UI.Pivot._EventName.itemAnimationEnd, true);
+                                        that._fireEvent(Pivot._EventName.itemAnimationEnd, true);
                                     });
                                 });
                             });
@@ -747,7 +766,7 @@ define([
 
                     _MSManipulationStateChangedHandler: function pivot_MSManipulationStateChangedHandler(ev) {
                         this._currentManipulationState = ev.currentState;
-                        if (!WinJS.Utilities._supportsSnapPoints || ev.target !== this._viewportElement) {
+                        if (!_ElementUtilities._supportsSnapPoints || ev.target !== this._viewportElement) {
                             // Ignore sub scroller manipulations.
                             return;
                         }
@@ -760,21 +779,21 @@ define([
                         }
 
                         if (!this._stoppedAndRecenteredSignal) {
-                            this._stoppedAndRecenteredSignal = new WinJS._Signal();
+                            this._stoppedAndRecenteredSignal = new _Signal();
                         }
 
                         this._manipulationRecenterPromise && this._manipulationRecenterPromise.cancel();
 
                         if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
-                            if (this._navMode === WinJS.UI.Pivot._NavigationModes.scroll) {
+                            if (this._navMode === Pivot._NavigationModes.scroll) {
                                 this._scrollHandler();
                             }
-                            this._navMode = WinJS.UI.Pivot._NavigationModes.none;
+                            this._navMode = Pivot._NavigationModes.none;
 
                             var that = this;
-                            this._manipulationRecenterPromise = WinJS.Promise._cancelBlocker(
-                                WinJS.Promise.join([
-                                    WinJS.Utilities.Scheduler.schedulePromiseNormal(null, "WinJS.UI.Pivot._MSManipulationStateChangedHandler_animationPlaceholder"),
+                            this._manipulationRecenterPromise = Promise._cancelBlocker(
+                                Promise.join([
+                                    Scheduler.schedulePromiseNormal(null, "WinJS.UI.Pivot._MSManipulationStateChangedHandler_animationPlaceholder"),
                                     this._hidePivotItemAnimation,
                                     this._showPivotItemAnimation,
                                     this._slideHeadersAnimation
@@ -799,11 +818,11 @@ define([
                                 var diff = destinationX - this._currentScrollTargetLocation;
                                 if (diff > 0) {
                                     WinJS.log && WinJS.log('MSManipulation: Inertia diff > 1', "winjs pivot", "log");
-                                    this._navMode = WinJS.UI.Pivot._NavigationModes.inertia;
+                                    this._navMode = Pivot._NavigationModes.inertia;
                                     this._goNext();
                                 } else if (diff < 0) {
                                     WinJS.log && WinJS.log('MSManipulation: Stopped diff < -1', "winjs pivot", "log");
-                                    this._navMode = WinJS.UI.Pivot._NavigationModes.inertia;
+                                    this._navMode = Pivot._NavigationModes.inertia;
                                     this._goPrevious();
                                 }
                             }
@@ -811,7 +830,7 @@ define([
                     },
 
                     _scrollHandler: function pivot_scrollHandler() {
-                        if (!WinJS.Utilities._supportsSnapPoints || this._disposed) {
+                        if (!_ElementUtilities._supportsSnapPoints || this._disposed) {
                             return;
                         }
 
@@ -822,12 +841,12 @@ define([
                             return;
                         }
 
-                        if (this._navMode === WinJS.UI.Pivot._NavigationModes.none || this._navMode === WinJS.UI.Pivot._NavigationModes.scroll) {
-                            this._navMode = WinJS.UI.Pivot._NavigationModes.scroll;
+                        if (this._navMode === Pivot._NavigationModes.none || this._navMode === Pivot._NavigationModes.scroll) {
+                            this._navMode = Pivot._NavigationModes.scroll;
                             if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
-                                WinJS.log && WinJS.log('_scrollHandler ScrollPosition: ' + WinJS.Utilities.getScrollPosition(this._viewportElement).scrollLeft, "winjs pivot", "log");
+                                WinJS.log && WinJS.log('_scrollHandler ScrollPosition: ' + _ElementUtilities.getScrollPosition(this._viewportElement).scrollLeft, "winjs pivot", "log");
                                 // Check if narrator user panned/scrolled the Pivot and we are now at an unsupported location.
-                                var diff = WinJS.Utilities.getScrollPosition(this._viewportElement).scrollLeft - this._currentScrollTargetLocation;
+                                var diff = _ElementUtilities.getScrollPosition(this._viewportElement).scrollLeft - this._currentScrollTargetLocation;
                                 this._cachedRTL = getComputedStyle(this._element, null).direction === "rtl";
                                 if (diff > 0) {
                                     WinJS.log && WinJS.log('_scrollHandler diff > 1: ' + diff, "winjs pivot", "log");
@@ -841,17 +860,17 @@ define([
                     },
 
                     _recenterUI: function pivot_recenterUI() {
-                        if (!WinJS.Utilities._supportsSnapPoints) {
+                        if (!_ElementUtilities._supportsSnapPoints) {
                             return;
                         }
 
                         this._offsetFromCenter = 0;
 
-                        if (WinJS.Utilities.getScrollPosition(this._viewportElement).scrollLeft !== this._currentScrollTargetLocation) {
+                        if (_ElementUtilities.getScrollPosition(this._viewportElement).scrollLeft !== this._currentScrollTargetLocation) {
                             // If recentering causes a scroll, then we need to make sure that the next
                             // scroll event event doesn't trigger another navigation
                             this._recentering = true;
-                            this._stoppedAndRecenteredSignal = this._stoppedAndRecenteredSignal || new WinJS._Signal();
+                            this._stoppedAndRecenteredSignal = this._stoppedAndRecenteredSignal || new _Signal();
                         } else if (this._stoppedAndRecenteredSignal) {
                             this._stoppedAndRecenteredSignal.complete();
                             this._stoppedAndRecenteredSignal = null;
@@ -860,7 +879,7 @@ define([
                             this.selectedItem.element.style[this._getDirectionAccessor()] = this._currentScrollTargetLocation + 'px';
                         }
                         WinJS.log && WinJS.log('_recenterUI index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation);
-                        WinJS.Utilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
+                        _ElementUtilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
                     },
 
                     _hidePivotItem: function pivot_hidePivotItem(element, goPrevious) {
@@ -878,10 +897,10 @@ define([
 
                         var negativeTransform = (this._rtl && !goPrevious) || (goPrevious && !this._rtl);
 
-                        if (WinJS.UI.isAnimationEnabled()) {
-                            this._hidePivotItemAnimation = WinJS.UI.Animation[negativeTransform ? "slideRightOut" : "slideLeftOut"](element);
+                        if (_TransitionAnimation.isAnimationEnabled()) {
+                            this._hidePivotItemAnimation = Animations[negativeTransform ? "slideRightOut" : "slideLeftOut"](element);
                         } else {
-                            this._hidePivotItemAnimation = WinJS.Utilities.Scheduler.schedulePromiseNormal(null, "WinJS.UI.Pivot._hidePivotItem_animationPlaceholder");
+                            this._hidePivotItemAnimation = Scheduler.schedulePromiseNormal(null, "WinJS.UI.Pivot._hidePivotItem_animationPlaceholder");
                         }
 
                         this._hidePivotItemAnimation.then(cleanup, cleanup);
@@ -890,9 +909,9 @@ define([
                     _showPivotItem: function pivot_showPivotItem(element, goPrevious) {
                         // Fire the event even if animations are disabled to enable apps to know what is happening
                         this._writeProfilerMark("itemAnimationStart,info");
-                        this._fireEvent(WinJS.UI.Pivot._EventName.itemAnimationStart, true);
+                        this._fireEvent(Pivot._EventName.itemAnimationStart, true);
 
-                        if (!WinJS.UI.isAnimationEnabled()) {
+                        if (!_TransitionAnimation.isAnimationEnabled()) {
                             element.style.visibility = "";
                             element.style.opacity = "";
                             this._showPivotItemAnimation = null;
@@ -921,7 +940,7 @@ define([
 
                         element.style.visibility = "";
 
-                        this._showPivotItemAnimation = WinJS.UI.Animation[negativeTransform ? "slideRightIn" : "slideLeftIn"](element, slideGroup1Els, slideGroup2Els, slideGroup3Els);
+                        this._showPivotItemAnimation = Animations[negativeTransform ? "slideRightIn" : "slideLeftIn"](element, slideGroup1Els, slideGroup2Els, slideGroup3Els);
 
                         var that = this;
                         function showCleanup() {
@@ -959,8 +978,8 @@ define([
                         }
 
                         // Update the selected one:
-                        WinJS.Utilities.removeClass(this._headersContainerElement.children[1], WinJS.UI.Pivot._ClassName.pivotHeaderSelected);
-                        WinJS.Utilities.addClass(targetHeader, WinJS.UI.Pivot._ClassName.pivotHeaderSelected);
+                        _ElementUtilities.removeClass(this._headersContainerElement.children[1], Pivot._ClassName.pivotHeaderSelected);
+                        _ElementUtilities.addClass(targetHeader, Pivot._ClassName.pivotHeaderSelected);
 
                         var rtl = this._rtl;
 
@@ -988,18 +1007,18 @@ define([
                         }
 
                         var headerAnimation;
-                        if (WinJS.UI.isAnimationEnabled()) {
-                            headerAnimation = WinJS.UI.executeTransition(
-                            this._headersContainerElement.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotHeader),
+                        if (_TransitionAnimation.isAnimationEnabled()) {
+                            headerAnimation = _TransitionAnimation.executeTransition(
+                            this._headersContainerElement.querySelectorAll("." + Pivot._ClassName.pivotHeader),
                             {
-                                property: WinJS.Utilities._browserStyleEquivalents["transform"].cssName,
+                                property: _BaseUtils._browserStyleEquivalents["transform"].cssName,
                                 delay: 0,
-                                duration: WinJS.UI.Pivot._headerSlideAnimationDuration,
+                                duration: Pivot._headerSlideAnimationDuration,
                                 timing: "ease-out",
                                 to: "translateX(" + endPosition + "px)"
                             });
                         } else {
-                            headerAnimation = WinJS.Promise.wrap();
+                            headerAnimation = Promise.wrap();
                         }
 
                         this._slideHeadersAnimation = headerAnimation.then(headerCleanup, headerCleanup);
@@ -1014,12 +1033,12 @@ define([
 
                         var header;
                         var src = ev.target;
-                        if (WinJS.Utilities.hasClass(src, WinJS.UI.Pivot._ClassName.pivotHeader)) {
+                        if (_ElementUtilities.hasClass(src, Pivot._ClassName.pivotHeader)) {
                             // UIA invoke clicks on the real header elements.
                             header = src;
                         } else {
                             var hitSrcElement = false;
-                            var hitTargets = WinJS.Utilities._elementsFromPoint(ev.clientX, ev.clientY);
+                            var hitTargets = _ElementUtilities._elementsFromPoint(ev.clientX, ev.clientY);
                             if (hitTargets &&
                                 // Make sure there aren't any elements obscuring the Pivot headers.
                                 // WinJS.Utilities._elementsFromPoint sorts by z order.
@@ -1028,7 +1047,7 @@ define([
                                     if (hitTargets[i] === src) {
                                         hitSrcElement = true;
                                     }
-                                    if (WinJS.Utilities.hasClass(hitTargets[i], WinJS.UI.Pivot._ClassName.pivotHeader)) {
+                                    if (_ElementUtilities.hasClass(hitTargets[i], Pivot._ClassName.pivotHeader)) {
                                         header = hitTargets[i];
                                     }
                                 }
@@ -1076,13 +1095,13 @@ define([
                         var dx = e.clientX - this._headersPointerDownPoint.x;
                         dx = this._rtl ? -dx : dx;
                         var swiped = false;
-                        if ((!WinJS.Utilities._supportsTouchDetection || (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH))) {
+                        if ((!_ElementUtilities._supportsTouchDetection || (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH))) {
                             // Header swipe navigation detection
                             // If touch detection is not supported then we will detect swipe gestures for any pointer type.
-                            if (dx < -WinJS.UI.Pivot._headerSwipeTriggerDistance) {
+                            if (dx < -Pivot._headerSwipeTriggerDistance) {
                                 this._goNext();
                                 swiped = true;
-                            } else if (dx > WinJS.UI.Pivot._headerSwipeTriggerDistance) {
+                            } else if (dx > Pivot._headerSwipeTriggerDistance) {
                                 this._goPrevious();
                                 swiped = true;
                             }
@@ -1090,7 +1109,7 @@ define([
                         if (!swiped) {
                             // Detect header click
                             var element = e.target;
-                            while (element !== null && !element.classList.contains(WinJS.UI.Pivot._ClassName.pivotHeader)) {
+                            while (element !== null && !_ElementUtilities.hasClass(element, Pivot._ClassName.pivotHeader)) {
                                 element = element.parentElement;
                             }
                             if (element !== null) {
@@ -1106,7 +1125,7 @@ define([
                             // from one element to another within the header track.
                             return;
                         }
-                        this._headersContainerElement.classList.remove(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
+                        _ElementUtilities.removeClass(this._headersContainerElement, Pivot._ClassName.pivotShowNavButtons);
                     },
 
                     _pointerDownHandler: function pivot_pointerDownHandler(ev) {
@@ -1122,7 +1141,7 @@ define([
                         if (this.locked || (e && e.pointerType === PT_TOUCH)) {
                             return;
                         }
-                        this._headersContainerElement.classList.add(WinJS.UI.Pivot._ClassName.pivotShowNavButtons);
+                        _ElementUtilities.addClass(this._headersContainerElement, Pivot._ClassName.pivotShowNavButtons);
                     },
 
 
@@ -1138,7 +1157,7 @@ define([
                         var oldItem = ev.detail.oldValue;
                         if (newItem.element !== oldItem.element) {
                             if (newItem.element.parentNode === this._surfaceElement) {
-                                throw new WinJS.ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
+                                throw new _ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
                             }
 
                             newItem.element.style.visibility = "hidden";
@@ -1165,7 +1184,7 @@ define([
                         var item = ev.detail.value;
 
                         if (item.element.parentNode === this._surfaceElement) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
+                            throw new _ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
                         }
 
                         item.element.style.visibility = "hidden";
@@ -1279,7 +1298,7 @@ define([
 
                     _writeProfilerMark: function pivot_writeProfilerMark(text) {
                         var message = "WinJS.UI.Pivot:" + this._id + ":" + text;
-                        WinJS.Utilities._writeProfilerMark(message);
+                        _WriteProfilerMark(message);
                         WinJS.log && WinJS.log(message, null, "pivotprofiler");
                     },
                 }, {
@@ -1290,23 +1309,7 @@ define([
                     _headerSwipeTriggerDistance: 50,
 
                     // Names of classes used by the Pivot.
-                    _ClassName: {
-                        pivot: "win-pivot",
-                        pivotLocked: "win-pivot-locked",
-                        pivotTitle: "win-pivot-title",
-                        pivotHeaders: "win-pivot-headers",
-                        pivotHeader: "win-pivot-header",
-                        pivotHeaderSelected: "win-pivot-header-selected",
-                        pivotViewport: "win-pivot-viewport",
-                        pivotSurface: "win-pivot-surface",
-                        pivotNoSnap: "win-pivot-nosnap",
-                        pivotNavButton: "win-pivot-navbutton",
-                        pivotNavButtonPrev: "win-pivot-navbutton-prev",
-                        pivotNavButtonNext: "win-pivot-navbutton-next",
-                        pivotShowNavButtons: "win-pivot-shownavbuttons",
-                        pivotInputTypeMouse: "win-pivot-mouse",
-                        pivotInputTypeTouch: "win-pivot-touch",
-                    },
+                    _ClassName: _Constants._ClassName,
                     // Names of events fired by the Pivot.
                     _EventName: {
                         selectionChanged: eventNames.selectionChanged,
@@ -1326,14 +1329,14 @@ define([
                         scroll: "scroll",
                     }
                 })
-                WinJS.Class.mix(Pivot, WinJS.UI.DOMEventMixin);
+                _Base.Class.mix(Pivot, _Control.DOMEventMixin);
 
                 var strings = {
-                    get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
-                    get duplicateItem() { return WinJS.Resources._getWinJSString("ui/duplicateItem").value; },
-                    get invalidContent() { return WinJS.Resources._getWinJSString("ui/invalidPivotContent").value; },
-                    get pivotAriaLabel() { return WinJS.Resources._getWinJSString("ui/pivotAriaLabel").value; },
-                    get pivotViewportAriaLabel() { return WinJS.Resources._getWinJSString("ui/pivotViewportAriaLabel").value; }
+                    get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                    get duplicateItem() { return _Resources._getWinJSString("ui/duplicateItem").value; },
+                    get invalidContent() { return _Resources._getWinJSString("ui/invalidPivotContent").value; },
+                    get pivotAriaLabel() { return _Resources._getWinJSString("ui/pivotAriaLabel").value; },
+                    get pivotViewportAriaLabel() { return _Resources._getWinJSString("ui/pivotViewportAriaLabel").value; }
                 };
 
                 return Pivot;

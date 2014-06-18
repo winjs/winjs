@@ -1,9 +1,20 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function hubSectionInit() {
+    '../../Core/_Base',
+    '../../Core/_BaseUtils',
+    '../../Core/_ErrorFromName',
+    '../../Core/_Resources',
+    '../../ControlProcessor',
+    '../../Promise',
+    '../../Utilities/_Control',
+    '../../Utilities/_Dispose',
+    '../../Utilities/_ElementUtilities',
+    '../../Utilities/_KeyboardBehavior',
+    '../../Utilities/_UIUtilities'
+    ], function hubSectionInit(_Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    var members = {
         /// <field>
         /// <summary locid="WinJS.UI.HubSection">
         /// Defines a section of a Hub control. 
@@ -22,12 +33,12 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        HubSection: WinJS.Namespace._lazy(function () {
+        HubSection: _Base.Namespace._lazy(function () {
             var strings = {
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; }
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; }
             };
 
-            return WinJS.Class.define(function HubSection_ctor(element, options) {
+            var HubSection = _Base.Class.define(function HubSection_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.HubSection.HubSection">
                 /// <summary locid="WinJS.UI.HubSection.constructor">
                 /// Creates a new HubSection.
@@ -48,23 +59,23 @@ define([
                 options = options || {};
 
                 if (element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.HubSection.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.HubSection.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
                 // Attaching JS control to DOM element
                 element.winControl = this;
                 this._element = element;
-                WinJS.Utilities.addClass(this.element, WinJS.UI.HubSection._ClassName.hubSection);
-                WinJS.Utilities.addClass(this.element, "win-disposable");
+                _ElementUtilities.addClass(this.element, HubSection._ClassName.hubSection);
+                _ElementUtilities.addClass(this.element, "win-disposable");
 
                 // Not using innerHTML here because there could have been some children already.
                 this._headerElement = document.createElement("DIV");
-                this._headerElement.className = WinJS.UI.HubSection._ClassName.hubSectionHeader
+                this._headerElement.className = HubSection._ClassName.hubSectionHeader
                 this._headerElement.innerHTML =
-                    '<button type="button" role="link" class="' + WinJS.UI.HubSection._ClassName.hubSectionInteractive + ' ' + WinJS.UI.HubSection._ClassName.hubSectionHeaderTabStop + '">' +
-                        '<div class="' +  WinJS.UI.HubSection._ClassName.hubSectionHeaderWrapper + '">' +
-                            '<h2 class="' + WinJS.UI.HubSection._ClassName.hubSectionHeaderContent + ' ' + WinJS.UI.HubSection._Constants.ellipsisTypeClassName + ' ' + WinJS.UI.HubSection._Constants.xLargeTypeClassName + '"></h2>' +
-                            '<span class="' + WinJS.UI.HubSection._ClassName.hubSectionHeaderChevron + ' ' + WinJS.UI.HubSection._Constants.ellipsisTypeClassName + ' ' + WinJS.UI.HubSection._Constants.xLargeTypeClassName + '"></span>' +
+                    '<button type="button" role="link" class="' + HubSection._ClassName.hubSectionInteractive + ' ' + HubSection._ClassName.hubSectionHeaderTabStop + '">' +
+                        '<div class="' +  HubSection._ClassName.hubSectionHeaderWrapper + '">' +
+                            '<h2 class="' + HubSection._ClassName.hubSectionHeaderContent + ' ' + HubSection._Constants.ellipsisTypeClassName + ' ' + HubSection._Constants.xLargeTypeClassName + '"></h2>' +
+                            '<span class="' + HubSection._ClassName.hubSectionHeaderChevron + ' ' + HubSection._Constants.ellipsisTypeClassName + ' ' + HubSection._Constants.xLargeTypeClassName + '"></span>' +
                         '</div>' +
                     '</button>';
                 this._headerTabStopElement = this._headerElement.firstElementChild;
@@ -77,10 +88,10 @@ define([
                 this._headerChevronElement = this._headerWrapperElement.lastElementChild;
                 element.appendChild(this._headerElement);
 
-                this._winKeyboard = new WinJS.UI._WinKeyboard(this._headerElement);
+                this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headerElement);
 
                 this._contentElement = document.createElement("DIV");
-                this._contentElement.className = WinJS.UI.HubSection._ClassName.hubSectionContent;
+                this._contentElement.className = HubSection._ClassName.hubSectionContent;
                 this._contentElement.style.visibility = "hidden";
                 element.appendChild(this._contentElement);
 
@@ -92,9 +103,9 @@ define([
                     elementToMove = nextElement;
                 }
 
-                this._processors = [WinJS.UI.processAll];
+                this._processors = [ControlProcessor.processAll];
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
             }, {
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.HubSection.element" helpKeyword="WinJS.UI.HubSection.element">
                 /// Gets the DOM element that hosts the HubSection.
@@ -117,10 +128,10 @@ define([
                         this._isHeaderStatic = value;
                         if (!this._isHeaderStatic) {
                             this._headerTabStopElement.setAttribute("role", "link");
-                            WinJS.Utilities.addClass(this._headerTabStopElement, WinJS.UI.HubSection._ClassName.hubSectionInteractive);
+                            _ElementUtilities.addClass(this._headerTabStopElement, HubSection._ClassName.hubSectionInteractive);
                         } else {
                             this._headerTabStopElement.setAttribute("role", "heading");
-                            WinJS.Utilities.removeClass(this._headerTabStopElement, WinJS.UI.HubSection._ClassName.hubSectionInteractive);
+                            _ElementUtilities.removeClass(this._headerTabStopElement, HubSection._ClassName.hubSectionInteractive);
                         }
                     }
                 },
@@ -148,13 +159,13 @@ define([
                     }
                 },
                 _setHeaderTemplate: function HubSection_setHeaderTemplate(template) {
-                    this._template = WinJS.Utilities._syncRenderer(template);
+                    this._template = _UIUtilities._syncRenderer(template);
                     this._renderHeader();
                 },
                 _renderHeader: function HubSection_renderHeader() {
                     if (this._template) {
-                        WinJS.Utilities._disposeElement(this._headerContentElement);
-                        WinJS.Utilities.empty(this._headerContentElement);
+                        _Dispose._disposeElement(this._headerContentElement);
+                        _ElementUtilities.empty(this._headerContentElement);
                         this._template(this, this._headerContentElement);
                     }
                 },
@@ -165,7 +176,7 @@ define([
                         return promise.then(function () {
                             return processor(that.contentElement);
                         });
-                    }, this._processed || WinJS.Promise.as());
+                    }, this._processed || Promise.as());
                     this._processors = null;
 
                     return this._processed;
@@ -183,8 +194,8 @@ define([
                     this._disposed = true;
                     this._processors = null;
 
-                    WinJS.Utilities._disposeElement(this._headerContentElement);
-                    WinJS.Utilities.disposeSubTree(this.contentElement);
+                    _Dispose._disposeElement(this._headerContentElement);
+                    _Dispose.disposeSubTree(this.contentElement);
                 }
             }, {
                 // Names of classes used by the HubSection.
@@ -202,8 +213,8 @@ define([
                     ellipsisTypeClassName: "win-type-ellipsis",
                     xLargeTypeClassName: "win-type-x-large"
                 },
-                isDeclarativeControlContainer: WinJS.Utilities.markSupportedForProcessing(function (section, callback) {
-                    if (callback === WinJS.UI.processAll) {
+                isDeclarativeControlContainer: _BaseUtils.markSupportedForProcessing(function (section, callback) {
+                    if (callback === ControlProcessor.processAll) {
                         return;
                     }
 
@@ -216,7 +227,12 @@ define([
                     }
                 })
             });
+
+            return HubSection;
         })
-    });
+    };
+
+    _Base.Namespace.define("WinJS.UI", members);
+    return _Base.Namespace.defineWithParent(null, null, members);
 
 });

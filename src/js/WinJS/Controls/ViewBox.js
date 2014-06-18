@@ -1,12 +1,20 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // ViewBox control
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Scheduler',
+    '../Utilities/_Control',
+    '../Utilities/_Dispose',
+    '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function viewboxInit() {
+    ], function viewboxInit(_Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.ViewBox">
         /// Scales a single child element to fill the available space without
@@ -22,11 +30,10 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        ViewBox: WinJS.Namespace._lazy(function () {
-            var Scheduler = WinJS.Utilities.Scheduler;
+        ViewBox: _Base.Namespace._lazy(function () {
 
             var strings = {
-                get invalidViewBoxChildren() { return WinJS.Resources._getWinJSString("ui/invalidViewBoxChildren").value; },
+                get invalidViewBoxChildren() { return _Resources._getWinJSString("ui/invalidViewBoxChildren").value; },
             };
 
             function onresize(control) {
@@ -53,7 +60,7 @@ define([
                 }
             }
 
-            var ViewBox = WinJS.Class.define(function ViewBox_ctor(element, options) {
+            var ViewBox = _Base.Class.define(function ViewBox_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.ViewBox.ViewBox">
                 /// <summary locid="WinJS.UI.ViewBox.constructor">Initializes a new instance of the ViewBox control</summary>
                 /// <param name="element" type="HTMLElement" domElement="true" mayBeNull="true" locid="WinJS.UI.ViewBox.constructor_p:element">
@@ -69,8 +76,8 @@ define([
                 this._element = element || document.createElement("div");
                 var box = this.element;
                 box.winControl = this;
-                WinJS.Utilities.addClass(box, "win-disposable");
-                WinJS.Utilities.addClass(box, "win-viewbox");
+                _ElementUtilities.addClass(box, "win-disposable");
+                _ElementUtilities.addClass(box, "win-viewbox");
                 this.forceLayout();
             }, {
                 _sizer: null,
@@ -94,7 +101,7 @@ define([
                     if (box.firstElementChild !== this._sizer) {
                         if (WinJS.validation) {
                             if (box.childElementCount != 1) {
-                                throw new WinJS.ErrorFromName("WinJS.UI.ViewBox.InvalidChildren", strings.invalidViewBoxChildren);
+                                throw new _ErrorFromName("WinJS.UI.ViewBox.InvalidChildren", strings.invalidViewBoxChildren);
                             }
                         }
                         if (this._sizer) {
@@ -103,9 +110,9 @@ define([
                         var sizer = box.firstElementChild;
                         this._sizer = sizer;
                         if (sizer) {
-                            WinJS.Utilities._resizeNotifier.subscribe(box, onresizeBox);
+                            _ElementUtilities._resizeNotifier.subscribe(box, onresizeBox);
                             box.addEventListener("mselementresize", onresizeBox);
-                            WinJS.Utilities._resizeNotifier.subscribe(sizer, onresizeSizer);
+                            _ElementUtilities._resizeNotifier.subscribe(sizer, onresizeSizer);
                             sizer.addEventListener("mselementresize", onresizeSizer);
                         }
                         if (box.clientWidth === 0 && box.clientHeight === 0) {
@@ -132,8 +139,8 @@ define([
                         var transX = Math.abs(bw - (w * mRatio)) / 2;
                         var transY = Math.abs(bh - (h * mRatio)) / 2;
                         var rtl = this._rtl;
-                        this._sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName] = "translate(" + (rtl ? "-" : "") + transX + "px," + transY + "px) scale(" + mRatio + ")";
-                        this._sizer.style[WinJS.Utilities._browserStyleEquivalents["transform-origin"].scriptName] = rtl ? "top right" : "top left";
+                        this._sizer.style[_BaseUtils._browserStyleEquivalents["transform"].scriptName] = "translate(" + (rtl ? "-" : "") + transX + "px," + transY + "px) scale(" + mRatio + ")";
+                        this._sizer.style[_BaseUtils._browserStyleEquivalents["transform-origin"].scriptName] = rtl ? "top right" : "top left";
                     }
                 },
 
@@ -148,14 +155,14 @@ define([
                     }
 
                     if(this.element) {
-                        WinJS.Utilities._resizeNotifier.unsubscribe(this.element);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this.element);
                     }
                     if (this._sizer) {
-                        WinJS.Utilities._resizeNotifier.unsubscribe(this._sizer);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this._sizer);
                     }
 
                     this._disposed = true;
-                    WinJS.Utilities.disposeSubTree(this._element);
+                    _Dispose.disposeSubTree(this._element);
                 },
 
                 forceLayout: function () {
@@ -163,7 +170,7 @@ define([
                     this._updateLayout();
                 }
             });
-            WinJS.Class.mix(ViewBox, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(ViewBox, _Control.DOMEventMixin);
             return ViewBox;
         })
     });
