@@ -291,16 +291,15 @@ define([
                     anim.keyframe = browserStyleEquivalents.animationPrefix + anim.keyframe;
                 }
             });
-            var styleCache = setTemporaryStyles(elem, id, style, anims, elementAnimationProperties);
+            var styleCache = setTemporaryStyles(elem, id, style, anims, elementAnimationProperties),
+                animationsToCleanUp = [],
+                animationPromises = [];
             anims.forEach(function (anim) {
                 var finish;
-                promises.push(new Promise(function (c, e, p) {
-
+                animationPromises.push(new Promise(function (c, e, p) {
                     finish = function (reason) {
                         if (onAnimationEnd) {
                             listener.removeEventListener(_BaseUtils._browserEventEquivalents["animationEnd"], onAnimationEnd, false);
-                            unregisterAction(id, anim.property);
-                            styleCache.removeName(style, anim.keyframe);
                             clearTimeout(timeoutId);
                             onAnimationEnd = null;
                         }
@@ -314,6 +313,14 @@ define([
                     };
 
                     registerAction(id, anim.property, finish);
+                    // Firefox will stop all animations if we clean up that animation's properties when there're other CSS animations still running
+                    // on an element. To work around this, we delay animation style cleanup until all parts of an animation finish.
+                    animationsToCleanUp.push({
+                        id: id,
+                        property: anim.property,
+                        style: style,
+                        keyframe: anim.keyframe
+                    });
                     var timeoutId = setTimeout(function () {
                         timeoutId = setTimeout(finish, anim.delay + anim.duration);
                     }, 50);
@@ -328,6 +335,15 @@ define([
                     }
                 }, 50);
             }
+
+            var cleanupAnimations = function () {
+                for (var i = 0; i < animationsToCleanUp.length; i++) {
+                    var anim = animationsToCleanUp[i];
+                    unregisterAction(anim.id, anim.property);
+                    styleCache.removeName(anim.style, anim.keyframe);
+                }
+            };
+            promises.push(WinJS.Promise.join(animationPromises).then(cleanupAnimations, cleanupAnimations));
         }
     }
 
