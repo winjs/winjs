@@ -7,8 +7,6 @@ define([
     ], function NavBarInit(_Command, _Container) {
     "use strict";
 
-    var customLayout = "custom";
-
     WinJS.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.NavBar">
@@ -59,10 +57,15 @@ define([
                 // Shallow copy object so we can modify it.
                 options = WinJS.Utilities._shallowCopy(options);
 
-                // Default to Placement = Top and Layout = Custom
-                options.placement = options.placement || "top";
-                options.layout = customLayout;
+                // NavBar uses AppBar "custom" layout.                
+                this._layout = new WinJS.UI._AppBarBaseLayout(this._element);
 
+                // Use the options object to tell the AppBar constructor that custom HTML is ok.
+                options.layout = this._layout.type;  
+
+                // Default to Placement = Top
+                options.placement = options.placement || "top";
+                                
                 WinJS.UI.AppBar.call(this, element, options);
 
                 this._element.addEventListener("beforeshow", this._handleBeforeShow.bind(this));
@@ -83,12 +86,12 @@ define([
                 /// </field>
                 layout: {
                     get: function () {
-                        return customLayout;
+                        return this._layout.type;
                     },
                     set: function (value) {
                         // NOP
                     },
-                },
+                },                    
 
                 /// <field type="Function" locid="WinJS.UI.NavBar.onchildrenprocessed" helpKeyword="WinJS.UI.NavBar.onchildrenprocessed">
                 /// Raised when children of NavBar control have been processed by a WinJS.UI.processAll call.
