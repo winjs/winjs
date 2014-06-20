@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     './_Control',
     './_ElementUtilities'
-    ], function KeyboardBehaviorInit(_Global, _Base, _Control, _ElementUtilities) {
+    ], function KeyboardBehaviorInit(exports, _Global, _Base, _Control, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -26,7 +27,7 @@ define([
         }
     }, true);
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _keyboardSeenLast : {
             get: function _keyboardSeenLast_get() {
                 return _keyboardSeenLast;
@@ -341,10 +342,6 @@ define([
 
             return _KeyboardBehavior;
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

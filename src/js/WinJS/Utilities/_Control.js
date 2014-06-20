@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base'
-    ], function controlInit(_Global, _Base) {
+    ], function controlInit(exports, _Global, _Base) {
     "use strict";
 
     // not supported in WebWorker
@@ -53,7 +54,7 @@ define([
         }
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         DOMEventMixin: _Base.Namespace._lazy(function () {
             return {
                 _domElement: null,
@@ -123,11 +124,7 @@ define([
         setOptions: setOptions,
 
         _setOptions: _setOptions
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });
 

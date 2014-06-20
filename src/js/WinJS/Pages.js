@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './Core/_Global',
     './Core/_Base',
     './Core/_BaseUtils',
@@ -10,7 +11,7 @@ define([
     './Utilities/_Control',
     './Utilities/_Dispose',
     './Utilities/_ElementUtilities'
-    ], function pagesInit(_Global, _Base, _BaseUtils, _WriteProfilerMark, ControlProcessor, Fragments, Promise, _Control, _Dispose, _ElementUtilities) {
+    ], function pagesInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, ControlProcessor, Fragments, Promise, _Control, _Dispose, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -307,15 +308,11 @@ define([
         return control.renderComplete;
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI.Pages", {
         define: Pages_define,
         get: get,
         _remove: _remove,
         render: render
-    };
-
-    _Base.Namespace.define("WinJS.UI.Pages", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

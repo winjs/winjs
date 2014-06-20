@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -7,7 +8,7 @@ define([
     '../Promise',
     '../Scheduler',
     './_DomWeakRefTable'
-    ], function dataInit(_Base, _BaseUtils, _ErrorFromName, _Resources, Promise, Scheduler, _DomWeakRefTable) {
+    ], function dataInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, Promise, Scheduler, _DomWeakRefTable) {
     "use strict";
 
 
@@ -545,7 +546,7 @@ define([
 
         // Common unsupported types, we just coerce to be an empty record
         //
-        if (!data || typeof (data) !== "object" || (data instanceof Date) || (data instanceof Array)) {
+        if (!data || typeof (data) !== "object" || (data instanceof Date) || Array.isArray(data)) {
             if (WinJS.validation) {
                 throw new _ErrorFromName("WinJS.Binding.UnsupportedDataType", _Resources._formatString(strings.unsupportedDataTypeForBinding));
             }
@@ -593,7 +594,7 @@ define([
         var type = typeof data;
         if (type === "object"
             && !(data instanceof Date)
-            && !(data instanceof Array)) {
+            && !(Array.isArray(data))) {
                 if (data._getObservable) {
                     return data._getObservable();
                 }
@@ -634,7 +635,7 @@ define([
             return data;
     };
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
         // must use long form because mixin has "get" and "set" as members, so the define
         // method thinks it's a property
         mixin: { value: dynamicObservableMixin, enumerable: false, writable: true, configurable: true },
@@ -645,8 +646,5 @@ define([
         as: as,
         unwrap: unwrap,
         bind: bind
-    };
-
-    _Base.Namespace.define("WinJS.Binding", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 });

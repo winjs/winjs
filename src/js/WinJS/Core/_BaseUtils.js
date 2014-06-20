@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './_Global',
     './_Base',
     './_BaseCoreUtils',
@@ -8,7 +9,7 @@ define([
     './_Trace',
     '../Promise',
     '../Scheduler'
-    ], function baseUtilsInit(_Global, _Base, _BaseCoreUtils, _ErrorFromName, _Resources, _Trace, Promise, Scheduler) {
+    ], function baseUtilsInit(exports, _Global, _Base, _BaseCoreUtils, _ErrorFromName, _Resources, _Trace, Promise, Scheduler) {
     "use strict";
 
     var strings = {
@@ -184,7 +185,7 @@ define([
         return equivalents;
     }
 
-    var publicMembers = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         // Used for mocking in tests
         _setHasWinRT: {
             value: function (value) {
@@ -381,12 +382,7 @@ define([
         _traceAsyncOperationCompleted: _Trace._traceAsyncOperationCompleted,
         _traceAsyncCallbackStarting: _Trace._traceAsyncCallbackStarting,
         _traceAsyncCallbackCompleted: _Trace._traceAsyncCallbackCompleted
-    };
-
-    // Establish members of "WinJS.Utilities" namespace
-    _Base.Namespace.define("WinJS.Utilities", publicMembers);
-
-    var moduleMembers = _Base.Namespace.defineWithParent(null, null, publicMembers);
+    });
 
     _Base.Namespace.define("WinJS", {
         validation: false,
@@ -404,7 +400,5 @@ define([
             enumerable: false
         },
     });
-
-    return moduleMembers;
 });
 

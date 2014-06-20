@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     './_ElementUtilities'
-    ], function tabManagerInit(_Global, _Base, _BaseUtils, _ElementUtilities) {
+    ], function tabManagerInit(exports, _Global, _Base, _BaseUtils, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -154,7 +155,7 @@ define([
         }
     };
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         TrackTabBehavior: TrackTabBehavior,
         TabContainer: _Base.Class.define(function TabContainer_ctor(element, options) {
             /// <signature helpKeyword="WinJS.UI.TabContainer.TabContainer">
@@ -310,10 +311,6 @@ define([
         }, { // Static Members
             supportedForProcessing: false,
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_WriteProfilerMark',
     './Animations/_Constants',
     './Animations/_TransitionAnimation',
     './Promise'
-    ], function animationsInit(_Base, _BaseUtils, _WriteProfilerMark, _Constants, _TransitionAnimation, Promise) {
+    ], function animationsInit(exports, _Base, _BaseUtils, _WriteProfilerMark, _Constants, _TransitionAnimation, Promise) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -638,7 +639,7 @@ define([
         supportedForProcessing: false,
     });
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI.Animation", {
 
         createExpandAnimation: function (revealed, affected) {
             /// <signature helpKeyword="WinJS.UI.Animation.createExpandAnimation">
@@ -2432,10 +2433,6 @@ define([
                 entrance: WinJS.UI.Animation[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "In"]
             }
         }
-    };
-
-    _Base.Namespace.define("WinJS.UI.Animation", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../../Core/_Base'
-    ], function constantsInit(_Base) {
+    ], function constantsInit(exports, _Base) {
     "use strict";
 
     var members = {};
@@ -92,6 +93,22 @@ define([
 
     members._LISTVIEW_PROGRESS_DELAY = 2000;
 
-    _Base.Namespace.define("WinJS.UI", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    var ScrollToPriority = {
+        uninitialized: 0,
+        low: 1,             // used by layoutSite.invalidateLayout, forceLayout, _processReload, _update and _onMSElementResize - operations that preserve the scroll position
+        medium: 2,          // used by dataSource change, layout change and etc - operations that reset the scroll position to 0
+        high: 3             // used by indexOfFirstVisible, ensureVisible, scrollPosition - operations in which the developer explicitly sets the scroll position
+    };
+
+    var ViewChange = {
+        rebuild: 0,
+        remeasure: 1,
+        relayout: 2,
+        realize: 3
+    };
+
+    members._ScrollToPriority = ScrollToPriority;
+    members._ViewChange = ViewChange;
+
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", members);
 });

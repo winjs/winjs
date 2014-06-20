@@ -2,6 +2,7 @@
 // WinJS.Binding.ListDataSource
 //
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -10,10 +11,10 @@ define([
     '../Promise',
     '../Scheduler',
     '../Utilities/_UI'
-    ], function bindingListDataSourceInit(_Global, _Base, _BaseUtils, _ErrorFromName, _DomWeakRefTable, Promise, Scheduler, _UI) {
+    ], function bindingListDataSourceInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _DomWeakRefTable, Promise, Scheduler, _UI) {
     "use strict";
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
         _BindingListDataSource: _Base.Namespace._lazy(function () {
             var errors = {
                 get noLongerMeaningful() { return Promise.wrapError(new _ErrorFromName(_UI.EditError.noLongerMeaningful)); }
@@ -746,9 +747,6 @@ define([
             });
             return DataSource;
         })
-    };
-
-    _Base.Namespace.define("WinJS.Binding", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

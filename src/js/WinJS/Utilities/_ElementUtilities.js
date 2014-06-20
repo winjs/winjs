@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
-    '../Core/_BaseCoreUtils',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Scheduler'
-    ], function elementUtilities(_Global, _BaseCoreUtils, _Base, _BaseUtils, Scheduler) {
+    ], function elementUtilities(exports, _Global, _Base, _BaseUtils, Scheduler) {
     "use strict";
 
     // not supported in WebWorker
@@ -659,7 +659,7 @@ define([
                     this._dispatchEvent();
                     } else if (this._scheduled === false) {
                     this._scheduled = true;
-                    _BaseCoreUtils._setImmediate(this._dispatchEvent.bind(this));
+                    _BaseUtils._setImmediate(this._dispatchEvent.bind(this));
                 }
 
             },
@@ -867,7 +867,7 @@ define([
 
     var _selectionPartsSelector = ".win-selectionborder, .win-selectionbackground, .win-selectioncheckmark, .win-selectioncheckmarkbackground";
     var _dataKey = "_msDataKey";
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         _dataKey: _dataKey,
 
             _supportsSnapPoints: {
@@ -1949,9 +1949,5 @@ define([
 
             return false;
         }
-    };
-
-    _Base.Namespace.define("WinJS.Utilities", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 });

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
@@ -8,10 +9,10 @@ define([
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
     '../AppBar/_Icon'
-    ], function NavBarCommandInit(_Base, _ErrorFromName, _Resources, ControlProcessor, Navigation, _Control, _ElementUtilities, _Icon) {
+    ], function NavBarCommandInit(exports, _Base, _ErrorFromName, _Resources, ControlProcessor, Navigation, _Control, _ElementUtilities, _Icon) {
     "use strict";
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _WinPressed: _Base.Namespace._lazy(function () {
             var WinPressed = _Base.Class.define(function _WinPressed_ctor(element) {
                 // WinPressed is the combination of :hover:active
@@ -365,13 +366,13 @@ define([
                     this.element.insertAdjacentHTML("afterBegin", markup);
 
                     this._buttonEl = this.element.firstElementChild;
-                    this._buttonPressedBehavior = new internalNS._WinPressed(this._buttonEl);
+                    this._buttonPressedBehavior = new exports._WinPressed(this._buttonEl);
                     this._contentEl = this._buttonEl.firstElementChild;
                     this._imageSpan = this._contentEl.firstElementChild;
                     this._imageSpan.style.display = "none";
                     this._labelEl = this._imageSpan.nextElementSibling;
                     this._splitButtonEl = this._buttonEl.nextElementSibling;
-                    this._splitButtonPressedBehavior = new internalNS._WinPressed(this._splitButtonEl);
+                    this._splitButtonPressedBehavior = new exports._WinPressed(this._splitButtonEl);
                     this._splitButtonEl.style.display = "none";
 
                     _ElementUtilities._ensureId(this._buttonEl);
@@ -479,11 +480,6 @@ define([
             _Base.Class.mix(NavBarCommand, _Control.DOMEventMixin);
             return NavBarCommand;
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-    var internalNS = _Base.Namespace.defineWithParent(null, null, members);
-
-    return internalNS;
+    });
 
 });

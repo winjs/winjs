@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Events',
@@ -17,14 +18,14 @@ define([
     '../../Utilities/_UI',
     '../Repeater',
     './_Command'
-    ], function NavBarContainerInit(_Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, Repeater, _Command) {
+    ], function NavBarContainerInit(exports, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, Repeater, _Command) {
     "use strict";
 
     function nobodyHasFocus() {
         return document.activeElement === null || document.activeElement === document.body;
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.NavBarContainer">
         /// Contains a group of NavBarCommand objects in a NavBar. 
@@ -1407,9 +1408,6 @@ define([
             _Base.Class.mix(NavBarContainer, _Control.DOMEventMixin);
             return NavBarContainer;
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

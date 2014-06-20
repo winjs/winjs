@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_Events',
@@ -12,10 +13,10 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_UIUtilities'
-    ], function repeaterInit(_Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities, _UIUtilities) {
+    ], function repeaterInit(exports, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities, _UIUtilities) {
     "use strict";
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.Repeater">
         /// Uses templates to generate HTML from a set of data.
@@ -510,9 +511,6 @@ define([
             _Base.Class.mix(Repeater, _Control.DOMEventMixin);
             return Repeater;
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

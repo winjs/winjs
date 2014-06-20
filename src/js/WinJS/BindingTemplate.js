@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './Core/_Global',
     './Core/_Base',
     './Core/_BaseUtils',
@@ -11,7 +12,7 @@ define([
     './Promise',
     './Utilities/_Dispose',
     './Utilities/_ElementUtilities'
-    ], function dataTemplateInit(_Global, _Base, _BaseUtils, _WriteProfilerMark, _Declarative, _DataTemplateCompiler, ControlProcessor, Fragments, Promise, _Dispose, _ElementUtilities) {
+    ], function dataTemplateInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, _Declarative, _DataTemplateCompiler, ControlProcessor, Fragments, Promise, _Dispose, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -22,7 +23,7 @@ define([
     var cancelBlocker = Promise._cancelBlocker;
     var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
 
         /// <field>
         /// <summary locid="WinJS.Binding.Template">
@@ -476,9 +477,6 @@ define([
                 }
             });
         })
-    };
-
-    _Base.Namespace.define("WinJS.Binding", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Base'
-    ], function optionsLexerInit(_Base) {
+    ], function optionsLexerInit(exports, _Base) {
     "use strict";
 
     /*
@@ -20,7 +21,7 @@ StringLiteral       7.8.4
 
 */
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _optionsLexer: _Base.Namespace._lazy(function () {
 
             var tokenType = {
@@ -632,8 +633,5 @@ StringLiteral       7.8.4
             lexer.tokenType = tokenType;
             return lexer;
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 });

@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_BaseCoreUtils',
     '../Core/_Base'
-    ], function uiInit(_BaseCoreUtils, _Base) {
+    ], function uiInit(exports, _BaseCoreUtils, _Base) {
     "use strict";
 
-    var members =  {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         eventHandler: function (handler) {
             /// <signature helpKeyword="WinJS.UI.eventHandler">
             /// <summary locid="WinJS.UI.eventHandler">
@@ -148,9 +149,6 @@ define([
             none: "none"
         }
 
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

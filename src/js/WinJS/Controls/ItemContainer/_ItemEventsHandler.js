@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_WriteProfilerMark',
@@ -9,7 +10,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_UI',
     './_Constants'
-    ], function itemEventsHandlerInit(_Base, _BaseUtils, _WriteProfilerMark, Animations, _TransitionAnimation, Promise, _ElementUtilities, _UI, _Constants) {
+    ], function itemEventsHandlerInit(exports, _Base, _BaseUtils, _WriteProfilerMark, Animations, _TransitionAnimation, Promise, _ElementUtilities, _UI, _Constants) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -90,7 +91,7 @@ define([
         return transform;
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         // Expose these to the unit tests
         _rotationTransform3d: rotationTransform3d,
         _tiltTransform: tiltTransform,
@@ -1214,10 +1215,6 @@ define([
             return ItemEventsHandler;
         })
 
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

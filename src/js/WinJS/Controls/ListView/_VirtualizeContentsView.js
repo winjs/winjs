@@ -1,13 +1,29 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function virtualizeContentsViewInit() {
+    'exports',
+    '../../Core/_Base',
+    '../../Core/_BaseUtils',
+    '../../Promise',
+    '../../_Signal',
+    '../../Scheduler',
+    '../../Utilities/_Dispose',
+    '../../Utilities/_ElementUtilities',
+    '../../Utilities/_SafeHtml',
+    '../../Utilities/_UI',
+    '../ItemContainer/_Constants',
+    '../ItemContainer/_ItemEventsHandler',
+    './_Helpers',
+    './_ItemsContainer'
+    ], function virtualizeContentsViewInit(exports, _Base, _BaseUtils, Promise, _Signal, Scheduler, _Dispose, _ElementUtilities, _SafeHtml, _UI, _Constants, _ItemEventsHandler, _Helpers, _ItemsContainer) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
-        _VirtualizeContentsView: WinJS.Namespace._lazy(function () {
-            var utilities = WinJS.Utilities,
-                Promise = WinJS.Promise,
-                Scheduler = WinJS.Utilities.Scheduler;
+    function setFlow(from, to) {
+        _ElementUtilities._setAttribute(from, "aria-flowto", to.id);
+        _ElementUtilities._setAttribute(to, "x-ms-aria-flowfrom", from.id);
+    }
+
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
+        _VirtualizeContentsView: _Base.Namespace._lazy(function () {
 
             function cooperativeQueueWorker(info) {
                 var workItems = info.job._workItems;
@@ -63,12 +79,12 @@ define([
                 if (listView._isZombie()) { return Promise.wrap(); }
                 if (shouldWaitForSeZo(listView)) {
                     if (+timeout !== timeout) {
-                        timeout = WinJS.UI._VirtualizeContentsView._waitForSeZoTimeoutDuration;
+                        timeout = _VirtualizeContentsView._waitForSeZoTimeoutDuration;
                     }
                     //To improve SeZo's zoom animation and pinch detection perf, we want to ensure unimportant task 
                     //is only run while zooming or pinching is not in progress.
-                    return Promise.timeout(WinJS.UI._VirtualizeContentsView._waitForSeZoIntervalDuration).then(function () {
-                        timeout -= WinJS.UI._VirtualizeContentsView._waitForSeZoIntervalDuration;
+                    return Promise.timeout(_VirtualizeContentsView._waitForSeZoIntervalDuration).then(function () {
+                        timeout -= _VirtualizeContentsView._waitForSeZoIntervalDuration;
                         if (timeout <= 0) {
                             return true;
                         }
@@ -93,10 +109,10 @@ define([
                 return scrollToFunctor;
             }
 
-            var _VirtualizeContentsView = function VirtualizeContentsView_ctor(listView) {
+            var _VirtualizeContentsView = _Base.Class.define(function VirtualizeContentsView_ctor(listView) {
                 this._listView = listView;
                 this._forceRelayout = false;
-                this.items = new WinJS.UI._ItemsContainer(listView);
+                this.items = new _ItemsContainer._ItemsContainer(listView);
                 this.firstIndexDisplayed = -1;
                 this.lastIndexDisplayed = -1;
                 this.begin = 0;
@@ -115,23 +131,8 @@ define([
                 this._scrollbarPos = 0;
                 this._direction = "right";
                 this._scrollToFunctor = makeFunctor(0);
-            };
-
-            _VirtualizeContentsView._pagesToPrefetch = 2;
-            _VirtualizeContentsView._waitForSeZoIntervalDuration = 100;
-            _VirtualizeContentsView._waitForSeZoTimeoutDuration = 500;
-            _VirtualizeContentsView._chunkSize = 500;
-            _VirtualizeContentsView._startupChunkSize = 100;
-            _VirtualizeContentsView._maxTimePerCreateContainers = 5;
-            _VirtualizeContentsView._createContainersJobTimeslice = 15;
-            _VirtualizeContentsView._blocksToRelease = 10;
-            _VirtualizeContentsView._realizationLevel = {
-                skip: "skip",
-                realize: "realize",
-                normal: "normal"
-            };
-
-            _VirtualizeContentsView.prototype = {
+            },
+            {
 
                 _dispose: function VirtualizeContentsView_dispose() {
                     this.cleanUp();
@@ -157,7 +158,7 @@ define([
                         },
                         function (err) {
                             unavailable(itemIndex);
-                            return WinJS.Promise.wrapError(err);
+                            return Promise.wrapError(err);
                         }
                     );
                 },
@@ -184,11 +185,11 @@ define([
 
                 _setSkipRealizationForChange: function (skip) {
                     if (skip) {
-                        if (this._realizationLevel !== WinJS.UI._VirtualizeContentsView._realizationLevel.realize) {
-                            this._realizationLevel = WinJS.UI._VirtualizeContentsView._realizationLevel.skip;
+                        if (this._realizationLevel !== _VirtualizeContentsView._realizationLevel.realize) {
+                            this._realizationLevel = _VirtualizeContentsView._realizationLevel.skip;
                         }
                     } else {
-                        this._realizationLevel = WinJS.UI._VirtualizeContentsView._realizationLevel.realize;
+                        this._realizationLevel = _VirtualizeContentsView._realizationLevel.realize;
                     }
                 },
 
@@ -205,14 +206,14 @@ define([
                         rightOffscreenCount = end - lastInView - 1,
                         leftOffscreenCount = firstInView - begin;
                     var renderCompletePromises = [];
-                    var entranceAnimationSignal = new WinJS._Signal();
-                    var viewportItemsRealized = new WinJS._Signal();
-                    var frontItemsRealized = new WinJS._Signal();
+                    var entranceAnimationSignal = new _Signal();
+                    var viewportItemsRealized = new _Signal();
+                    var frontItemsRealized = new _Signal();
 
                     var that = this;
 
                     function itemIsReady(itemIndex, itemsManagerRecord) {
-                        renderCompletePromises.push(WinJS.Promise._cancelBlocker(itemsManagerRecord.renderComplete));
+                        renderCompletePromises.push(Promise._cancelBlocker(itemsManagerRecord.renderComplete));
 
                         delivered(itemIndex);
                     }
@@ -225,10 +226,10 @@ define([
                             if (!itemData.updatedSwipeableAttribute && (that._listView.itemsDraggable || that._listView.itemsReorderable || that._listView._swipeable)) {
                                 itemData.itemsManagerRecord.renderComplete.done(function () {
                                     if (that._realizePass === currentPass) {
-                                        var dragDisabledOnItem = utilities.hasClass(element, WinJS.UI._nonDraggableClass),
-                                            selectionDisabledOnItem = utilities.hasClass(element, WinJS.UI._nonSelectableClass),
+                                        var dragDisabledOnItem = _ElementUtilities.hasClass(element, _Constants._nonDraggableClass),
+                                            selectionDisabledOnItem = _ElementUtilities.hasClass(element, _Constants._nonSelectableClass),
                                             dragEnabled = (that._listView.itemsDraggable || that._listView.itemsReorderable),
-                                            swipeSelectEnabled = (that._listView._selectionAllowed() && that._listView._swipeBehavior === WinJS.UI.SwipeBehavior.select);
+                                            swipeSelectEnabled = (that._listView._selectionAllowed() && that._listView._swipeBehavior === _UI.SwipeBehavior.select);
                                         if (dragEnabled && !dragDisabledOnItem) {
                                             itemData.itemBox.draggable = true;
                                         }
@@ -236,7 +237,7 @@ define([
                                         if (that._listView._swipeable && ((dragEnabled && !swipeSelectEnabled && dragDisabledOnItem) ||
                                             (swipeSelectEnabled && !dragEnabled && selectionDisabledOnItem) ||
                                             (dragDisabledOnItem && selectionDisabledOnItem))) {
-                                            utilities.addClass(itemData.itemBox, WinJS.UI._nonSwipeableClass);
+                                            _ElementUtilities.addClass(itemData.itemBox, _Constants._nonSwipeableClass);
                                         }
                                         itemData.updatedSwipeableAttribute = true;
                                     }
@@ -259,12 +260,12 @@ define([
                                     itemData.itemBox = itemBox;
 
                                     itemBox.appendChild(element);
-                                    utilities.addClass(element, WinJS.UI._itemClass);
+                                    _ElementUtilities.addClass(element, _Constants._itemClass);
 
                                     that._listView._setupAriaSelectionObserver(element);
 
                                     if (that._listView._isSelected(itemIndex)) {
-                                        WinJS.UI._ItemEventsHandler.renderSelection(itemBox, element, true, true);
+                                        _ItemEventsHandler._ItemEventsHandler.renderSelection(itemBox, element, true, true);
                                     }
 
                                     that._listView._currentMode().renderDragSourceOnRealizedItem(itemIndex, itemBox);
@@ -284,10 +285,10 @@ define([
 
                                     itemData.container = container;
                                     if (that._listView._isSelected(itemIndex)) {
-                                        utilities.addClass(container, WinJS.UI._selectedClass);
+                                        _ElementUtilities.addClass(container, _Constants._selectedClass);
                                     }
 
-                                    utilities.removeClass(container, WinJS.UI._backdropClass);
+                                    _ElementUtilities.removeClass(container, _Constants._backdropClass);
 
                                     // elementAvailable needs to be called after fragment.appendChild. elementAvailable fulfills a promise for items requested
                                     // by the keyboard focus handler. That handler will explicitly call .focus() on the element, so in order for
@@ -336,7 +337,7 @@ define([
                                 if (!itemBox || !itemBox.parentNode) {
                                     return true;
                                 } else if (foundMissing) {
-                                    utilities.addClass(itemBox.parentNode, WinJS.UI._backdropClass);
+                                    _ElementUtilities.addClass(itemBox.parentNode, _Constants._backdropClass);
                                     itemBox.parentNode.removeChild(itemBox);
                                     return true;
                                 } else {
@@ -526,7 +527,7 @@ define([
                         // Create a promise to wrap the work in the queue. When the queue gets to the last item we can mark
                         // the work promise complete and if the work promise is canceled we cancel the queue.
                         //
-                        var workCompleteSignal = new WinJS._Signal();
+                        var workCompleteSignal = new _Signal();
 
                         // If the version manager recieves a notification we clear the work in the work queues
                         //
@@ -694,7 +695,7 @@ define([
                                 viewportItemsRealized.cancel();
 
                                 that._listView._writeProfilerMark(perfId + " canceled(created:" + createCount + " updated:" + updateCount + " clean:" + cleanCount + "),info");
-                                return WinJS.Promise.wrapError(err);
+                                return Promise.wrapError(err);
                             }
                         );
 
@@ -711,7 +712,7 @@ define([
                                         promises.push(itemData.itemsManagerRecord.itemReadyPromise);
                                     }
                                 }
-                                return WinJS.Promise._cancelBlocker(Promise.join(promises));
+                                return Promise._cancelBlocker(Promise.join(promises));
                             })
                         };
                     }
@@ -747,7 +748,7 @@ define([
                             var placeholder = that._getHeaderContainer(groupIndex);
                             if (header.element.parentNode !== placeholder) {
                                 placeholder.appendChild(header.element);
-                                utilities.addClass(header.element, WinJS.UI._headerClass);
+                                _ElementUtilities.addClass(header.element, _Constants._headerClass);
                             }
 
                             that._listView._groups.setDomElement(groupIndex, header.element);
@@ -802,7 +803,7 @@ define([
                     this._listView._writeProfilerMark("_unrealizeItem(" + itemIndex + "),info");
 
                     var focused = listView._selection._getFocused();
-                    if (focused.type !== WinJS.UI.ObjectType.groupHeader && focused.index === itemIndex) {
+                    if (focused.type !== _UI.ObjectType.groupHeader && focused.index === itemIndex) {
                         listView._unsetFocusOnItem();
                         focusedItemPurged = true;
                     }
@@ -811,9 +812,9 @@ define([
                         itemBox = itemData.itemBox;
 
                     if (itemBox && itemBox.parentNode) {
-                        utilities.removeClass(itemBox.parentNode, WinJS.UI._selectedClass);
-                        utilities.removeClass(itemBox.parentNode, WinJS.UI._footprintClass);
-                        utilities.addClass(itemBox.parentNode, WinJS.UI._backdropClass);
+                        _ElementUtilities.removeClass(itemBox.parentNode, _Constants._selectedClass);
+                        _ElementUtilities.removeClass(itemBox.parentNode, _Constants._footprintClass);
+                        _ElementUtilities.addClass(itemBox.parentNode, _Constants._backdropClass);
                         itemBox.parentNode.removeChild(itemBox);
                     }
                     itemData.container = null;
@@ -834,7 +835,7 @@ define([
                     }
 
 
-                    WinJS.Utilities._disposeElement(item);
+                    _Dispose._disposeElement(item);
 
                     if (focusedItemPurged) {
                         // If the focused item was purged, we'll still want to focus on it if it comes into view sometime in the future.
@@ -849,7 +850,7 @@ define([
                         focusedItemPurged;
 
                     var focused = this._listView._selection._getFocused();
-                    if (focused.type === WinJS.UI.ObjectType.groupHeader && this._listView._groups.group(focused.index) === group) {
+                    if (focused.type === _UI.ObjectType.groupHeader && this._listView._groups.group(focused.index) === group) {
                         this._listView._unsetFocusOnItem();
                         focusedItemPurged = true;
                     }
@@ -858,7 +859,7 @@ define([
                         headerElement.parentNode.removeChild(headerElement);
                     }
 
-                    WinJS.Utilities._disposeElement(headerElement);
+                    _Dispose._disposeElement(headerElement);
 
                     group.header = null;
                     group.left = -1;
@@ -1054,19 +1055,19 @@ define([
                                 lastRealizedIndexInGroup;
 
                             if (item) {
-                                WinJS.Utilities._ensureId(item);
+                                _ElementUtilities._ensureId(item);
                                 if (that._listView._groupsEnabled()) {
                                     groups = that._listView._groups;
                                     startGroup = currentGroup = groups.groupFromItem(that.begin);
                                     group = groups.group(currentGroup);
                                     lastRealizedIndexInGroup = calcLastRealizedIndexInGroup(currentGroup);
-                                    WinJS.Utilities._ensureId(group.header);
-                                    WinJS.Utilities._setAttribute(group.header, "role", that._listView._headerRole);
-                                    WinJS.Utilities._setAttribute(group.header, "x-ms-aria-flowfrom", startMarker.id);
-                                    WinJS.UI._setFlow(group.header, item);
-                                    WinJS.Utilities._setAttribute(group.header, "tabindex", that._listView._tabIndex);
+                                    _ElementUtilities._ensureId(group.header);
+                                    _ElementUtilities._setAttribute(group.header, "role", that._listView._headerRole);
+                                    _ElementUtilities._setAttribute(group.header, "x-ms-aria-flowfrom", startMarker.id);
+                                    setFlow(group.header, item);
+                                    _ElementUtilities._setAttribute(group.header, "tabindex", that._listView._tabIndex);
                                 } else {
-                                    WinJS.Utilities._setAttribute(item, "x-ms-aria-flowfrom", startMarker.id);
+                                    _ElementUtilities._setAttribute(item, "x-ms-aria-flowfrom", startMarker.id);
                                 }
 
                                 return new Promise(function (completeJobPromise) {
@@ -1093,13 +1094,13 @@ define([
                                             var nextItem = that.items.itemAt(index + 1);
 
                                             if (nextItem) {
-                                                WinJS.Utilities._ensureId(nextItem);
+                                                _ElementUtilities._ensureId(nextItem);
                                             }
 
-                                            WinJS.Utilities._setAttribute(item, "role", that._listView._itemRole);
-                                            WinJS.Utilities._setAttribute(item, "aria-setsize", count);
-                                            WinJS.Utilities._setAttribute(item, "aria-posinset", index + 1);
-                                            WinJS.Utilities._setAttribute(item, "tabindex", that._listView._tabIndex);
+                                            _ElementUtilities._setAttribute(item, "role", that._listView._itemRole);
+                                            _ElementUtilities._setAttribute(item, "aria-setsize", count);
+                                            _ElementUtilities._setAttribute(item, "aria-posinset", index + 1);
+                                            _ElementUtilities._setAttribute(item, "tabindex", that._listView._tabIndex);
 
                                             if (that._listView._groupsEnabled()) {
                                                 if (index === lastRealizedIndexInGroup || !nextItem) {
@@ -1108,14 +1109,14 @@ define([
                                                     // If group is the last realized group, then nextGroup won't exist in the DOM.
                                                     // When this is the case, nextItem shouldn't exist.
                                                     if (nextGroup && nextGroup.header && nextItem) {
-                                                        WinJS.Utilities._setAttribute(nextGroup.header, "tabindex", that._listView._tabIndex);
-                                                        WinJS.Utilities._setAttribute(nextGroup.header, "role", that._listView._headerRole);
-                                                        WinJS.Utilities._ensureId(nextGroup.header);
-                                                        WinJS.UI._setFlow(item, nextGroup.header);
-                                                        WinJS.UI._setFlow(nextGroup.header, nextItem);
+                                                        _ElementUtilities._setAttribute(nextGroup.header, "tabindex", that._listView._tabIndex);
+                                                        _ElementUtilities._setAttribute(nextGroup.header, "role", that._listView._headerRole);
+                                                        _ElementUtilities._ensureId(nextGroup.header);
+                                                        setFlow(item, nextGroup.header);
+                                                        setFlow(nextGroup.header, nextItem);
                                                     } else {
                                                         // We're at the last group so flow to the end marker
-                                                        WinJS.Utilities._setAttribute(item, "aria-flowto", endMarker.id);
+                                                        _ElementUtilities._setAttribute(item, "aria-flowto", endMarker.id);
                                                     }
 
                                                     currentGroup++;
@@ -1123,14 +1124,14 @@ define([
                                                     lastRealizedIndexInGroup = calcLastRealizedIndexInGroup(currentGroup);
                                                 } else {
                                                     // This is not the last item in the group so flow to the next item
-                                                    WinJS.UI._setFlow(item, nextItem);
+                                                    setFlow(item, nextItem);
                                                 }
                                             } else if (nextItem) {
                                                 // Groups are disabled so as long as we aren't at the last item, flow to the next one
-                                                WinJS.UI._setFlow(item, nextItem);
+                                                setFlow(item, nextItem);
                                             } else {
                                                 // Groups are disabled and we're at the last item, so flow to the end marker
-                                                WinJS.Utilities._setAttribute(item, "aria-flowto", endMarker.id);
+                                                _ElementUtilities._setAttribute(item, "aria-flowto", endMarker.id);
                                             }
                                             if (!nextItem) {
                                                 break;
@@ -1172,7 +1173,7 @@ define([
                     }
 
                     this.deferTimeout = this._lazilyRemoveRedundantItemsBlocks().then(function() {
-                            return WinJS.Promise.timeout(WinJS.UI._DEFERRED_ACTION);
+                            return Promise.timeout(_Constants._DEFERRED_ACTION);
                         }).
                         then(function () {
                             return waitForSeZo(that._listView);
@@ -1226,11 +1227,11 @@ define([
                     }
 
                     if (listViewIsEmpty || !firstVisibleItem || !lastVisibleItem) {
-                        WinJS.UI._setFlow(startMarker, endMarker);
+                        setFlow(startMarker, endMarker);
                         this._listView._fireAccessibilityAnnotationCompleteEvent(-1, -1);
                     } else {
-                        WinJS.Utilities._ensureId(firstVisibleItem);
-                        WinJS.Utilities._ensureId(lastVisibleItem);
+                        _ElementUtilities._ensureId(firstVisibleItem);
+                        _ElementUtilities._ensureId(lastVisibleItem);
 
                         // Set startMarker's flowto
                         if (this._listView._groupsEnabled()) {
@@ -1238,20 +1239,20 @@ define([
                                 firstVisibleGroup = groups.group(groups.groupFromItem(firstIndexDisplayed));
 
                             if (firstVisibleGroup.header) {
-                                WinJS.Utilities._ensureId(firstVisibleGroup.header);
+                                _ElementUtilities._ensureId(firstVisibleGroup.header);
 
                                 if (firstIndexDisplayed === firstVisibleGroup.startIndex) {
-                                    WinJS.Utilities._setAttribute(startMarker, "aria-flowto", firstVisibleGroup.header.id);
+                                    _ElementUtilities._setAttribute(startMarker, "aria-flowto", firstVisibleGroup.header.id);
                                 } else {
-                                    WinJS.Utilities._setAttribute(startMarker, "aria-flowto", firstVisibleItem.id);
+                                    _ElementUtilities._setAttribute(startMarker, "aria-flowto", firstVisibleItem.id);
                                 }
                             }
                         } else {
-                            WinJS.Utilities._setAttribute(startMarker, "aria-flowto", firstVisibleItem.id);
+                            _ElementUtilities._setAttribute(startMarker, "aria-flowto", firstVisibleItem.id);
                         }
 
                         // Set endMarker's flowfrom
-                        WinJS.Utilities._setAttribute(endMarker, "x-ms-aria-flowfrom", lastVisibleItem.id);
+                        _ElementUtilities._setAttribute(endMarker, "x-ms-aria-flowfrom", lastVisibleItem.id);
                     }
                 },
 
@@ -1259,19 +1260,19 @@ define([
                 // item must be in the items container.
                 updateAriaForAnnouncement: function VirtualizeContentsView_updateAriaForAnnouncement(item, count) {
                     var index = -1;
-                    var type = WinJS.UI.ObjectType.item;
-                    if (WinJS.Utilities.hasClass(item, WinJS.UI._headerClass)) {
+                    var type = _UI.ObjectType.item;
+                    if (_ElementUtilities.hasClass(item, _Constants._headerClass)) {
                         index = this._listView._groups.index(item);
-                        type = WinJS.UI.ObjectType.groupHeader;
-                        WinJS.Utilities._setAttribute(item, "role", this._listView._headerRole);
+                        type = _UI.ObjectType.groupHeader;
+                        _ElementUtilities._setAttribute(item, "role", this._listView._headerRole);
                     } else {
                         index = this.items.index(item);
-                        WinJS.Utilities._setAttribute(item, "aria-setsize", count);
-                        WinJS.Utilities._setAttribute(item, "aria-posinset", index + 1);
-                        WinJS.Utilities._setAttribute(item, "role", this._listView._itemRole);
+                        _ElementUtilities._setAttribute(item, "aria-setsize", count);
+                        _ElementUtilities._setAttribute(item, "aria-posinset", index + 1);
+                        _ElementUtilities._setAttribute(item, "role", this._listView._itemRole);
                     }
 
-                    if (type === WinJS.UI.ObjectType.groupHeader) {
+                    if (type === _UI.ObjectType.groupHeader) {
                         this._listView._fireAccessibilityAnnotationCompleteEvent(-1, -1, index, index);
                     } else {
                         this._listView._fireAccessibilityAnnotationCompleteEvent(index, index, -1, -1);
@@ -1303,13 +1304,13 @@ define([
                 },
 
                 _createHeaderContainer: function VirtualizeContentsView_createHeaderContainer(insertAfter) {
-                    return this._createSurfaceChild(WinJS.UI._headerContainerClass, insertAfter);
+                    return this._createSurfaceChild(_Constants._headerContainerClass, insertAfter);
                 },
 
                 _createItemsContainer: function VirtualizeContentsView_createItemsContainer(insertAfter) {
-                    var itemsContainer = this._createSurfaceChild(WinJS.UI._itemsContainerClass, insertAfter);
+                    var itemsContainer = this._createSurfaceChild(_Constants._itemsContainerClass, insertAfter);
                     var padder = document.createElement("div");
-                    padder.className = WinJS.UI._padderClass;
+                    padder.className = _Constants._padderClass;
                     itemsContainer.appendChild(padder);
                     return itemsContainer;
                 },
@@ -1368,12 +1369,12 @@ define([
                                     var zooming = shouldWaitForSeZo(that._listView);
 
                                     while (that._expandedRange.first.index < that.begin && !zooming && !info.shouldYield) {
-                                        var begin = Math.min(that.begin, that._expandedRange.first.index + that._blockSize * WinJS.UI._VirtualizeContentsView._blocksToRelease);
+                                        var begin = Math.min(that.begin, that._expandedRange.first.index + that._blockSize * _VirtualizeContentsView._blocksToRelease);
                                         that._forceItemsBlocksInDOM(begin, that.end);
                                     }
 
                                     while (that._expandedRange.last.index + 1 > that.end && !zooming && !info.shouldYield) {
-                                        var end = Math.max(that.end, that._expandedRange.last.index - that._blockSize * WinJS.UI._VirtualizeContentsView._blocksToRelease);
+                                        var end = Math.max(that.end, that._expandedRange.last.index - that._blockSize * _VirtualizeContentsView._blocksToRelease);
                                         that._forceItemsBlocksInDOM(that.begin, end);
                                     }
 
@@ -1437,7 +1438,7 @@ define([
 
                     function measureItemsBlock(itemsBlock) {
                         that._listView._writeProfilerMark("_itemsBlockExtent,StartTM");
-                        that._listView._itemsBlockExtent = utilities[that._listView._horizontal() ? "getTotalWidth" : "getTotalHeight"](itemsBlock.element);
+                        that._listView._itemsBlockExtent = _ElementUtilities[that._listView._horizontal() ? "getTotalWidth" : "getTotalHeight"](itemsBlock.element);
                         that._listView._writeProfilerMark("_itemsBlockExtent(" + that._listView._itemsBlockExtent + "),info");
                         that._listView._writeProfilerMark("_itemsBlockExtent,StopTM");
                     }
@@ -1643,7 +1644,7 @@ define([
                     if (this._listView._versionManager.locked) {
                         this._listView._versionManager.unlocked.done(function () {
                             if (!that._listView._isZombie()) {
-                                that._listView._batchViewUpdates(WinJS.UI._ViewChange.realize, WinJS.UI._ScrollToPriority.low, that._listView.scrollPosition);
+                                that._listView._batchViewUpdates(_Constants._ViewChange.realize, _Constants._ScrollToPriority.low, that._listView.scrollPosition);
                             }
                         });
                         this._listView._writeProfilerMark(perfId + ",StopTM");
@@ -1651,7 +1652,7 @@ define([
                     }
 
                     return new Promise(function (c) {
-                        var renderingCompleteSignal = new WinJS._Signal();
+                        var renderingCompleteSignal = new _Signal();
 
                         function complete() {
                             c();
@@ -1689,7 +1690,7 @@ define([
                         if (count) {
                             // While the zoom animation is played we want to minimize the # of pages 
                             // being fetched to improve TtFF for SeZo scenarios
-                            var pagesToPrefetch = WinJS.UI._VirtualizeContentsView._pagesToPrefetch;
+                            var pagesToPrefetch = _VirtualizeContentsView._pagesToPrefetch;
                             if (that._listView._zooming) {
                                 pagesToPrefetch = 0;
                             }
@@ -1706,14 +1707,14 @@ define([
                                 that.lastIndexDisplayed = -1;
                                 finish(count);
                             } else {
-                                var begin = utilities._clamp(range.firstIndex, 0, count - 1),
-                                    end = utilities._clamp(range.lastIndex + 1, 0, count);
+                                var begin = _ElementUtilities._clamp(range.firstIndex, 0, count - 1),
+                                    end = _ElementUtilities._clamp(range.lastIndex + 1, 0, count);
 
                                 var inView = that._listView._layout.itemsFromRange(that._scrollbarPos, that._scrollbarPos + viewportLength - 1),
-                                    firstInView = utilities._clamp(inView.firstIndex, 0, count - 1),
-                                    lastInView = utilities._clamp(inView.lastIndex, 0, count - 1);
+                                    firstInView = _ElementUtilities._clamp(inView.firstIndex, 0, count - 1),
+                                    lastInView = _ElementUtilities._clamp(inView.lastIndex, 0, count - 1);
 
-                                if (that._realizationLevel === WinJS.UI._VirtualizeContentsView._realizationLevel.skip && !that.lastRealizePass && firstInView === that.firstIndexDisplayed && lastInView === that.lastIndexDisplayed) {
+                                if (that._realizationLevel === _VirtualizeContentsView._realizationLevel.skip && !that.lastRealizePass && firstInView === that.firstIndexDisplayed && lastInView === that.lastIndexDisplayed) {
                                     that.begin = begin;
                                     that.end = begin + Object.keys(that.items._itemData).length;
                                     that._updateHeaders(that._listView._canvas, that.begin, that.end).done(function () {
@@ -1770,7 +1771,7 @@ define([
                                                 that.begin = -1;
                                                 that.end = -1;
                                             }
-                                            return WinJS.Promise.wrapError(e);
+                                            return Promise.wrapError(e);
                                         }
                                     );
 
@@ -1857,7 +1858,7 @@ define([
                             }
                         });
                     } else {
-                        return WinJS.Promise.wrap(newPosition);
+                        return Promise.wrap(newPosition);
                     }
                 },
 
@@ -1865,8 +1866,8 @@ define([
                     var that = this;
                     this._listView._writeProfilerMark(this._state.name + "_waitForEntityPosition" + "(" + entity.type + ": " + entity.index + ")" + ",info");
                     return Promise._cancelBlocker(this._state.waitForEntityPosition(entity).then(function () {
-                        if ((entity.type !== WinJS.UI.ObjectType.groupHeader && entity.index >= that.containers.length) ||
-                            (entity.type === WinJS.UI.ObjectType.groupHeader && that._listView._groups.group(entity.index).startIndex >= that.containers.length)) {
+                        if ((entity.type !== _UI.ObjectType.groupHeader && entity.index >= that.containers.length) ||
+                            (entity.type === _UI.ObjectType.groupHeader && that._listView._groups.group(entity.index).startIndex >= that.containers.length)) {
                             return that._creatingContainersWork && that._creatingContainersWork.promise;
                         }
                     }).then(function () {
@@ -1935,7 +1936,7 @@ define([
                                 item.parentNode.parentNode.removeChild(item.parentNode);
                             }
                             listView._itemsManager.releaseItem(item);
-                            WinJS.Utilities._disposeElement(item);
+                            _Dispose._disposeElement(item);
                         });
 
                         this.items.removeItems();
@@ -1976,7 +1977,7 @@ define([
                     var itemsManager = this._listView._itemsManager;
                     this.items.each(function (index, item) {
                         itemsManager.releaseItem(item);
-                        WinJS.Utilities._disposeElement(item);
+                        _Dispose._disposeElement(item);
                     });
                     this._listView._unsetFocusOnItem();
                     this.items.removeItems();
@@ -2030,7 +2031,7 @@ define([
                             oldSize = children.length,
                             toAdd = Math.min(groupSize - itemsContainer.items.length, chunkSize);
 
-                        utilities.insertAdjacentHTMLUnsafe(itemsContainer.element, "beforeend", WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", toAdd));
+                        _SafeHtml.insertAdjacentHTMLUnsafe(itemsContainer.element, "beforeend", _Helpers._repeat("<div class='win-container win-backdrop'></div>", toAdd));
 
                         for (var i = 0; i < toAdd; i++) {
                             var container = children[oldSize + i];
@@ -2082,7 +2083,7 @@ define([
 
                         if (lastExistingBlock && lastExistingBlock.items.length < blockSize) {
                             var fix = Math.min(toAdd, blockSize - lastExistingBlock.items.length);
-                            utilities.insertAdjacentHTMLUnsafe(lastExistingBlock.element, "beforeend", WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", fix));
+                            _SafeHtml.insertAdjacentHTMLUnsafe(lastExistingBlock.element, "beforeend", _Helpers._repeat("<div class='win-container win-backdrop'></div>", fix));
 
                             var oldSize = lastExistingBlock.items.length;
                             children = lastExistingBlock.element.children;
@@ -2103,23 +2104,23 @@ define([
                         var blocks = Math.floor(toAdd / blockSize),
                             lastBlockSize = toAdd % blockSize;
 
-                        var blockMarkup = "<div class='win-itemsblock'>" + WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", blockSize) + "</div>",
-                            markup = WinJS.UI._repeat(blockMarkup, blocks);
+                        var blockMarkup = "<div class='win-itemsblock'>" + _Helpers._repeat("<div class='win-container win-backdrop'></div>", blockSize) + "</div>",
+                            markup = _Helpers._repeat(blockMarkup, blocks);
 
                         if (lastBlockSize) {
-                            markup += "<div class='win-itemsblock'>" + WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", lastBlockSize) + "</div>";
+                            markup += "<div class='win-itemsblock'>" + _Helpers._repeat("<div class='win-container win-backdrop'></div>", lastBlockSize) + "</div>";
                             blocks++;
                         }
 
                         var blocksTemp = document.createElement("div");
-                        utilities.setInnerHTMLUnsafe(blocksTemp, markup);
+                        _SafeHtml.setInnerHTMLUnsafe(blocksTemp, markup);
                         var children = blocksTemp.children;
 
                         for (var i = 0; i < blocks; i++) {
                             var block = children[i],
                                 blockNode = {
                                     element: block,
-                                    items: WinJS.UI._nodeListToArray(block.children)
+                                    items: _Helpers._nodeListToArray(block.children)
                                 };
                             itemsContainer.itemsBlocks.push(blockNode);
                             for (var n = 0; n < blockNode.items.length; n++) {
@@ -2181,16 +2182,16 @@ define([
 
                                     skipWait = false;
 
-                                    var end = WinJS.Utilities._now() + _VirtualizeContentsView._createContainersJobTimeslice,
+                                    var end = _BaseUtils._now() + _VirtualizeContentsView._createContainersJobTimeslice,
                                         groups = that._getGroups(count),
                                         startLength = that.containers.length,
                                         realizedToEnd = that.end === that.containers.length,
-                                        chunkSize = WinJS.UI._VirtualizeContentsView._chunkSize;
+                                        chunkSize = _VirtualizeContentsView._chunkSize;
 
                                     do {
                                         that._blockSize ? that._createChunkWithBlocks(groups, count, that._blockSize, chunkSize) : that._createChunk(groups, count, chunkSize);
                                         counter++;
-                                    } while (that.containers.length < count && WinJS.Utilities._now() < end);
+                                    } while (that.containers.length < count && _BaseUtils._now() < end);
 
                                     that._listView._writeProfilerMark("createContainers yields containers(" + that.containers.length + "),info");
 
@@ -2229,7 +2230,7 @@ define([
                 },
 
                 _scheduleLazyTreeCreation: function VirtualizeContentsView_scheduleLazyTreeCreation() {
-                    return utilities.Scheduler.schedule(this._generateCreateContainersWorker(), utilities.Scheduler.Priority.idle, this, "WinJS.UI.ListView.LazyTreeCreation");
+                    return Scheduler.schedule(this._generateCreateContainersWorker(), Scheduler.Priority.idle, this, "WinJS.UI.ListView.LazyTreeCreation");
                 },
 
                 _createContainers: function VirtualizeContentsView_createContainers() {
@@ -2266,11 +2267,11 @@ define([
 
                         var groups = that._getGroups(count);
 
-                        var end = WinJS.Utilities._now() + WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers,
-                            chunkSize = Math.min(WinJS.UI._VirtualizeContentsView._startupChunkSize, WinJS.UI._VirtualizeContentsView._chunkSize);
+                        var end = _BaseUtils._now() + _VirtualizeContentsView._maxTimePerCreateContainers,
+                            chunkSize = Math.min(_VirtualizeContentsView._startupChunkSize, _VirtualizeContentsView._chunkSize);
                         do {
                             var stop = blockSize ? that._createChunkWithBlocks(groups, count, blockSize, chunkSize) : that._createChunk(groups, count, chunkSize);
-                        } while (WinJS.Utilities._now() < end && that.containers.length < count && !stop);
+                        } while (_BaseUtils._now() < end && that.containers.length < count && !stop);
 
                         that._listView._writeProfilerMark("createContainers created(" + that.containers.length + "),info");
 
@@ -2297,7 +2298,7 @@ define([
 
                     function createNewBlock() {
                         var element = document.createElement("div");
-                        element.className = WinJS.UI._itemsBlockClass;
+                        element.className = _Constants._itemsBlockClass;
                         return element;
                     }
 
@@ -2447,13 +2448,13 @@ define([
 
                     for (var i = 0, len = modifiedElements.length; i < len; i++) {
                         if (modifiedElements[i]._itemBox && modifiedElements[i]._itemBox.parentNode) {
-                            utilities.removeClass(modifiedElements[i]._itemBox.parentNode, WinJS.UI._selectedClass);
+                            _ElementUtilities.removeClass(modifiedElements[i]._itemBox.parentNode, _Constants._selectedClass);
                         }
                     }
 
                     this.items.each(function (index, item, itemData) {
-                        itemData.container && utilities.removeClass(itemData.container, WinJS.UI._selectedClass);
-                        itemData.container && utilities.addClass(itemData.container, WinJS.UI._backdropClass);
+                        itemData.container && _ElementUtilities.removeClass(itemData.container, _Constants._selectedClass);
+                        itemData.container && _ElementUtilities.addClass(itemData.container, _Constants._backdropClass);
                     });
 
                     var removedGroups = this._listView._updateContainers(this._getGroups(count), count, delta, modifiedElements);
@@ -2469,7 +2470,7 @@ define([
                                 throw "Container missing after updateContainers.";
                             }
                         } else {
-                            utilities.removeClass(modifiedElement.element, WinJS.UI._backdropClass);
+                            _ElementUtilities.removeClass(modifiedElement.element, _Constants._backdropClass);
                         }
                     }
 
@@ -2492,12 +2493,12 @@ define([
                                     that._deferredReparenting.push({ itemBox: itemBox, container: container });
                                 }
                             }
-                            utilities.removeClass(container, WinJS.UI._backdropClass);
+                            _ElementUtilities.removeClass(container, _Constants._backdropClass);
                             itemData.container = container;
 
-                            utilities[that._listView.selection._isIncluded(index) ? "addClass" : "removeClass"](container, WinJS.UI._selectedClass);
-                            if (!that._listView.selection._isIncluded(index) && utilities.hasClass(itemBox, WinJS.UI._selectedClass)) {
-                                WinJS.UI._ItemEventsHandler.renderSelection(itemBox, itemData.element, false, true);
+                            _ElementUtilities[that._listView.selection._isIncluded(index) ? "addClass" : "removeClass"](container, _Constants._selectedClass);
+                            if (!that._listView.selection._isIncluded(index) && _ElementUtilities.hasClass(itemBox, _Constants._selectedClass)) {
+                                _ItemEventsHandler._ItemEventsHandler.renderSelection(itemBox, itemData.element, false, true);
                             }
                         }
                     });
@@ -2535,13 +2536,13 @@ define([
                             activeElement = document.activeElement;
                         }
 
-                        utilities.empty(container);
+                        _ElementUtilities.empty(container);
                         container.appendChild(itemBox);
 
                         if (this._requireFocusRestore && activeElement === this._listView._keyboardEventsHelper) {
                             var focused = this._listView._selection._getFocused();
-                            if (focused.type === WinJS.UI.ObjectType.item && this.items.itemBoxAt(focused.index) === itemBox) {
-                                WinJS.Utilities._setActive(this._requireFocusRestore);
+                            if (focused.type === _UI.ObjectType.item && this.items.itemBoxAt(focused.index) === itemBox) {
+                                _ElementUtilities._setActive(this._requireFocusRestore);
                                 this._requireFocusRestore = null;
                             }
                         }
@@ -2578,8 +2579,8 @@ define([
                 hitTest: function VirtualizeContentsView_hitTest(x, y) {
                     if (!this._realizedRangeLaidOut) {
                         var retVal = this._listView._layout.hitTest(x, y);
-                        retVal.index = utilities._clamp(retVal.index, -1, this._listView._cachedCount - 1, 0);
-                        retVal.insertAfterIndex = utilities._clamp(retVal.insertAfterIndex, -1, this._listView._cachedCount - 1, 0);
+                        retVal.index = _ElementUtilities._clamp(retVal.index, -1, this._listView._cachedCount - 1, 0);
+                        retVal.insertAfterIndex = _ElementUtilities._clamp(retVal.insertAfterIndex, -1, this._listView._cachedCount - 1, 0);
                         return retVal;
                     } else {
                         return {
@@ -2591,7 +2592,7 @@ define([
 
                 _createTreeBuildingSignal: function VirtualizeContentsView__createTreeBuildingSignal() {
                     if (!this._creatingContainersWork) {
-                        this._creatingContainersWork = new WinJS._Signal();
+                        this._creatingContainersWork = new _Signal();
 
                         var that = this;
                         this._creatingContainersWork.promise.done(
@@ -2609,7 +2610,7 @@ define([
                     var that = this;
 
                     if (!this._layoutCompleted) {
-                        this._layoutCompleted = new WinJS._Signal();
+                        this._layoutCompleted = new _Signal();
 
                         this._layoutCompleted.promise.done(
                             function () {
@@ -2622,7 +2623,7 @@ define([
                     }
 
                     if (!this._realizedRangeLaidOut) {
-                        this._realizedRangeLaidOut = new WinJS._Signal();
+                        this._realizedRangeLaidOut = new _Signal();
                         this._realizedRangeLaidOut.promise.done(
                             function () {
                                 that._realizedRangeLaidOut = null;
@@ -2635,7 +2636,7 @@ define([
                 },
 
                 _getLayoutCompleted: function VirtualizeContentsView_getLayoutCompleted() {
-                    return this._layoutCompleted ? WinJS.Promise._cancelBlocker(this._layoutCompleted.promise) : Promise.wrap();
+                    return this._layoutCompleted ? Promise._cancelBlocker(this._layoutCompleted.promise) : Promise.wrap();
                 },
 
                 _createSurfaceChild: function VirtualizeContentsView_createSurfaceChild(className, insertAfter) {
@@ -2659,7 +2660,21 @@ define([
                         that._direction = scroll.direction || "right";
                     });
                 }
-            };
+            },{
+                _pagesToPrefetch: 2,
+                _waitForSeZoIntervalDuration: 100,
+                _waitForSeZoTimeoutDuration: 500,
+                _chunkSize: 500,
+                _startupChunkSize: 100,
+                _maxTimePerCreateContainers: 5,
+                _createContainersJobTimeslice: 15,
+                _blocksToRelease:10,
+                _realizationLevel: {
+                    skip: "skip",
+                    realize: "realize",
+                    normal: "normal"
+                }
+            });
 
 
             function nop() { }
@@ -2668,7 +2683,7 @@ define([
             View is in this state before reload is called so during startup, after datasource change etc. 
             */
 
-            var CreatedState = WinJS.Class.define(function CreatedState_ctor(view) {
+            var CreatedState = _Base.Class.define(function CreatedState_ctor(view) {
                 this.view = view;
                 this.view._createTreeBuildingSignal();
                 this.view._createLayoutSignal();
@@ -2702,7 +2717,7 @@ define([
             
             BuildingState => LayingoutState | CreatedState
             */
-            var BuildingState = WinJS.Class.define(function BuildingState_ctor(view) {
+            var BuildingState = _Base.Class.define(function BuildingState_ctor(view) {
                 this.view = view;
             }, {
                 name: 'BuildingState',
@@ -2715,7 +2730,7 @@ define([
 
                     // Use a signal to guarantee that this.promise is set before the promise
                     // handler is executed.
-                    var promiseStoredSignal = new WinJS._Signal();
+                    var promiseStoredSignal = new _Signal();
                     this.promise = promiseStoredSignal.promise.then(function () {
                         return that.view._createContainers();
                     }).then(
@@ -2758,7 +2773,7 @@ define([
                 
             LayingoutState => RealizingState | BuildingState | CanceledState | CompletedState | LayoutCanceledState
             */
-            var LayingoutState = WinJS.Class.define(function LayingoutState_ctor(view, NextStateType) {
+            var LayingoutState = _Base.Class.define(function LayingoutState_ctor(view, NextStateType) {
                 this.view = view;
                 this.nextStateType = NextStateType || RealizingState;
             }, {
@@ -2772,7 +2787,7 @@ define([
 
                     // Use a signal to guarantee that this.promise is set before the promise
                     // handler is executed.
-                    var promiseStoredSignal = new WinJS._Signal();
+                    var promiseStoredSignal = new _Signal();
                     this.promise = promiseStoredSignal.promise.then(function () {
                         return that.view._layoutItems();
                     }).then(function (layoutPromises) {
@@ -2860,7 +2875,7 @@ define([
                     
             LayoutCanceledState => LayingoutState | BuildingState
             */
-            var LayoutCanceledState = WinJS.Class.define(function LayoutCanceledState_ctor(view) {
+            var LayoutCanceledState = _Base.Class.define(function LayoutCanceledState_ctor(view) {
                 this.view = view;
             }, {
                 name: 'LayoutCanceledState',
@@ -2892,7 +2907,7 @@ define([
                     
             RealizingState => RealizingAnimatingState | UnrealizingState | LayingoutState | BuildingState | CanceledState
             */
-            var RealizingState = WinJS.Class.define(function RealizingState_ctor(view) {
+            var RealizingState = _Base.Class.define(function RealizingState_ctor(view) {
                 this.view = view;
                 this.nextState = UnrealizingState;
                 this.relayoutNewContainers = true;
@@ -2900,7 +2915,7 @@ define([
                 name: 'RealizingState',
                 enter: function RealizingState_enter() {
                     var that = this;
-                    var promiseStoredSignal = new WinJS._Signal();
+                    var promiseStoredSignal = new _Signal();
                     this.promise = promiseStoredSignal.promise.then(function () {
                         return that.view._executeScrollToFunctor();
                     }).then(function () {
@@ -2968,7 +2983,7 @@ define([
             
             CanceledState => RealizingState | ScrollingState | LayingoutState | BuildingState 
             */
-            var CanceledState = WinJS.Class.define(function CanceledState_ctor(view) {
+            var CanceledState = _Base.Class.define(function CanceledState_ctor(view) {
                 this.view = view;
             }, {
                 name: 'CanceledState',
@@ -3006,7 +3021,7 @@ define([
             
             ScrollingState => RealizingAnimatingState | ScrollingPausedState | LayingoutState | BuildingState | CanceledState
             */
-            var ScrollingState = WinJS.Class.derive(RealizingState, function ScrollingState_ctor(view) {
+            var ScrollingState = _Base.Class.derive(RealizingState, function ScrollingState_ctor(view) {
                 this.view = view;
                 this.nextState = ScrollingPausedState;
                 this.relayoutNewContainers = true;
@@ -3021,7 +3036,7 @@ define([
             
             ScrollingPausedState => RealizingAnimatingState | ScrollingPausedState | LayingoutState | BuildingState | CanceledState
             */
-            var ScrollingPausedState = WinJS.Class.derive(CanceledState, function ScrollingPausedState_ctor(view) {
+            var ScrollingPausedState = _Base.Class.derive(CanceledState, function ScrollingPausedState_ctor(view) {
                 this.view = view;
             }, {
                 name: 'ScrollingPausedState',
@@ -3043,7 +3058,7 @@ define([
                             
             UnrealizingState => CompletedState | RealizingState | ScrollingState | LayingoutState | BuildingState | CanceledState
             */
-            var UnrealizingState = WinJS.Class.define(function UnrealizingState_ctor(view) {
+            var UnrealizingState = _Base.Class.define(function UnrealizingState_ctor(view) {
                 this.view = view;
             }, {
                 name: 'UnrealizingState',
@@ -3089,7 +3104,7 @@ define([
             
             RealizingAnimatingState => RealizingState | UnrealizingState | LayingoutState | BuildingState | CanceledState
             */
-            var RealizingAnimatingState = WinJS.Class.define(function RealizingStateAnimating_ctor(view, realizePromise) {
+            var RealizingAnimatingState = _Base.Class.define(function RealizingStateAnimating_ctor(view, realizePromise) {
                 this.view = view;
                 this.realizePromise = realizePromise;
                 this.realizeId = 1;
@@ -3101,7 +3116,7 @@ define([
 
                     this.animating = true;
                     this.animatePromise = this.view._startAnimations();
-                    this.animateSignal = new WinJS._Signal();
+                    this.animateSignal = new _Signal();
                     this.view._executeAnimations = false;
 
                     this.animatePromise.done(
@@ -3189,7 +3204,7 @@ define([
                         this.delta = delta;
                         this.modifiedElements = modifiedElements;
 
-                        return previousModifiedElements ? WinJS.Promise.cancel : this.animatePromise;
+                        return previousModifiedElements ? Promise.cancel : this.animatePromise;
                     } else {
                         return this.view._updateTreeImpl(count, delta, modifiedElements);
                     }
@@ -3205,7 +3220,7 @@ define([
                         
             CompletedState => RealizingState | ScrollingState | LayingoutState | BuildingState | LayingoutNewContainersState
             */
-            var CompletedState = WinJS.Class.derive(CanceledState, function CompletedState_ctor(view) {
+            var CompletedState = _Base.Class.derive(CanceledState, function CompletedState_ctor(view) {
                 this.view = view;
             }, {
                 name: 'CompletedState',
@@ -3213,7 +3228,7 @@ define([
                     this._stopped = false;
                     this.view._setupDeferredActions();
 
-                    this.view._realizationLevel = WinJS.UI._VirtualizeContentsView._realizationLevel.normal;
+                    this.view._realizationLevel = _VirtualizeContentsView._realizationLevel.normal;
                     this.view._listView._raiseViewComplete();
 
                     // _raiseViewComplete will cause user event listener code to run synchronously.
@@ -3242,7 +3257,7 @@ define([
             
             LayingoutNewContainersState => RealizingState | ScrollingState | LayingoutState | BuildingState
             */
-            var LayingoutNewContainersState = WinJS.Class.derive(CanceledState, function LayingoutNewContainersState(view) {
+            var LayingoutNewContainersState = _Base.Class.derive(CanceledState, function LayingoutNewContainersState(view) {
                 this.view = view;
             }, {
                 name: 'LayingoutNewContainersState',
@@ -3250,7 +3265,7 @@ define([
                     var that = this;
 
                     // _layoutWork is completed when the previous layout pass is done. _getLayoutCompleted will be completed when these new containers are laid out
-                    this.promise = WinJS.Promise.join([this.view.deferTimeout, this.view._layoutWork]);
+                    this.promise = Promise.join([this.view.deferTimeout, this.view._layoutWork]);
                     this.promise.then(function () {
                         that.view._relayoutInComplete = false;
                         that.relayout(CanceledState);

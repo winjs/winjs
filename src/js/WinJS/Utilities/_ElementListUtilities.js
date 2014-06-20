@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../ControlProcessor',
     '../Promise',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities'
-    ], function elementListUtilities(_Global, _Base, ControlProcessor, Promise, _Control, _ElementUtilities) {
+    ], function elementListUtilities(exports, _Global, _Base, ControlProcessor, Promise, _Control, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -14,7 +15,7 @@ define([
         return;
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         QueryCollection: _Base.Class.derive(Array, function (items) {
             /// <signature helpKeyword="WinJS.Utilities.QueryCollection">
             /// <summary locid="WinJS.Utilities.QueryCollection">
@@ -432,9 +433,5 @@ define([
             /// </signature>
             return new WinJS.Utilities.QueryCollection(element.children);
         }
-    };
-
-    _Base.Namespace.define("WinJS.Utilities", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 });

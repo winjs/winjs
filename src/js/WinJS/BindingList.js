@@ -3,6 +3,7 @@
 // WinJS.Binding.List
 //
 define([
+    'exports',
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_ErrorFromName',
@@ -10,7 +11,7 @@ define([
     './Core/_Resources',
     './Binding/_Data',
     './BindingList/_BindingListDataSource'
-    ], function listInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _Data, _BindingListDataSource) {
+    ], function listInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _Data, _BindingListDataSource) {
     "use strict";
 
     var strings = {
@@ -541,7 +542,7 @@ define([
 
                     // Set this to an empty list and tell everyone that they need to reload to avoid
                     //  consumers null-refing on an empty list.
-                    this._list = new internalRef.List();
+                    this._list = new exports.List();
                     this._listReload();
                 },
 
@@ -1545,7 +1546,7 @@ define([
         }),
     });
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
         List: _Base.Namespace._lazy(function () {
             return _Base.Class.derive(ns.ListBaseWithMutators, function (list, options) {
                 /// <signature helpKeyword="WinJS.Binding.List.List">
@@ -2077,12 +2078,6 @@ define([
                 supportedForProcessing: false,
             });
         })
-    };
-
-    var internalRef = _Base.Namespace.defineWithParent(null, null, members);
-
-    _Base.Namespace.define("WinJS.Binding", members);
-
-    return internalRef;
+    });
 
 });

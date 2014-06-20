@@ -61,8 +61,10 @@ WinJSTests.ListViewAnimation2Test = function () {
         itemId = 0;
         transitionEnd = [];
 
-        WinJS.UI.executeTransition = executeTransition;
-
+        WinJS.Utilities._require('WinJS/Animations/_TransitionAnimation', function(_TransitionAnimation) {
+            _TransitionAnimation.executeTransition = executeTransition;
+        });
+        
         WinJS.UI.enableAnimations();
 
         listViewEl = document.createElement('div');
@@ -72,24 +74,21 @@ WinJSTests.ListViewAnimation2Test = function () {
         listViewEl.style.backgroundColor = "#777";
         document.body.appendChild(listViewEl);
 
-        listViewEl.addEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], onTransitionEnd, true);
         appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
-        WinJS.UI.executeTransition = _WinJSUIexecuteTransition;
+
+        WinJS.Utilities._require('WinJS/Animations/_TransitionAnimation', function(_TransitionAnimation) {
+            _TransitionAnimation.executeTransition = _WinJSUIexecuteTransition;
+        });
 
         LiveUnit.LoggingCore.logComment("In tearDown");
         WinJS.UI.disableAnimations();
-        listViewEl.removeEventListener(WinJS.Utilities._browserEventEquivalents["transitionEnd"], onTransitionEnd, true);
         WinJS.Utilities.disposeSubTree(listViewEl);
         document.body.removeChild(listViewEl);
         removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     };
-
-    function onTransitionEnd(ev) {
-        //transitionEnd.push(ev.target); //WinBlue: 68076
-    }
 
     function getRandomColor() {
         return "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")";

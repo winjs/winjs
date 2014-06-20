@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Scheduler'
-    ], function DOMWeakRefTableInit(_Global, _Base, _BaseUtils, Scheduler) {
+    ], function DOMWeakRefTableInit(exports, _Global, _Base, _BaseUtils, Scheduler) {
     "use strict";
 
     if (_BaseUtils.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty) {
@@ -121,7 +122,7 @@ define([
         }
     }
 
-    var members =  {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities",  {
         _DOMWeakRefTable_noTimeoutUnderDebugger: true,
         _DOMWeakRefTable_sweepPeriod: SWEEP_PERIOD,
         _DOMWeakRefTable_timeout: TIMEOUT,
@@ -130,9 +131,6 @@ define([
         _createWeakRef: createWeakRef,
         _getWeakRefElement: getWeakRefElement
 
-    };
-
-    _Base.Namespace.define("WinJS.Utilities", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

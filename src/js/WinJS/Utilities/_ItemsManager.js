@@ -2,49 +2,78 @@
 // Items Manager
 
 define([
-    ], function itemsManagerInit() {
+    'exports',
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Promise',
+    '../_Signal',
+    '../Scheduler',
+    '../Utilities/_ElementUtilities',
+    './_ParallelWorkQueue',
+    './_VersionManager'
+    ], function itemsManagerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _Signal, Scheduler, _ElementUtilities, _ParallelWorkQueue, _VersionManager) {
     "use strict";
 
-    var markSupportedForProcessing = WinJS.Utilities.markSupportedForProcessing;
+    var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;
+    var uniqueID = _ElementUtilities._uniqueID;
 
-    WinJS.Namespace.define("WinJS.UI", {
+    function simpleItemRenderer(f) {
+        return markSupportedForProcessing(function (itemPromise, element) {
+            return itemPromise.then(function (item) {
+                return (item ? f(item, element) : null);
+            });
+        });
+    }
+
+    var trivialHtmlRenderer = simpleItemRenderer(function (item) {
+        if (_ElementUtilities._isDOMElement(item.data)) {
+            return item.data;
+        }
+
+        var data = item.data;
+        if (data === undefined) {
+            data = "undefined";
+        } else if (data === null) {
+            data = "null";
+        } else if (typeof data === "object") {
+            data = JSON.stringify(data);
+        }
+
+        var element = document.createElement("span");
+        element.textContent = data.toString();
+        return element;
+    });
+
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _normalizeRendererReturn: function (v) {
             if (v) {
                 if (typeof v === "object" && v.element) {
-                    var elementPromise = WinJS.Promise.as(v.element);
-                    return elementPromise.then(function (e) { return { element: e, renderComplete: WinJS.Promise.as(v.renderComplete) } });
+                    var elementPromise = Promise.as(v.element);
+                    return elementPromise.then(function (e) { return { element: e, renderComplete: Promise.as(v.renderComplete) } });
                 }
                 else {
-                    var elementPromise = WinJS.Promise.as(v);
-                    return elementPromise.then(function (e) { return { element: e, renderComplete: WinJS.Promise.as() } });
+                    var elementPromise = Promise.as(v);
+                    return elementPromise.then(function (e) { return { element: e, renderComplete: Promise.as() } });
                 }
             }
             else {
-                return { element: null, renderComplete: WinJS.Promise.as() };
+                return { element: null, renderComplete: Promise.as() };
             }
         },
-        simpleItemRenderer: function (f) {
-            return markSupportedForProcessing(function (itemPromise, element) {
-                return itemPromise.then(function (item) {
-                    return (item ? f(item, element) : null);
-                });
-            });
-        }
+        simpleItemRenderer: simpleItemRenderer,
+        _trivialHtmlRenderer: trivialHtmlRenderer
     });
-
-    var Promise = WinJS.Promise;
-    var Signal = WinJS._Signal;
-    var Scheduler = WinJS.Utilities.Scheduler;
-    var uniqueID = WinJS.Utilities._uniqueID;
-    var UI = WinJS.UI;
 
     // Private statics
 
     var strings = {
-        get listDataSourceIsInvalid() { return WinJS.Resources._getWinJSString("ui/listDataSourceIsInvalid").value; },
-        get itemRendererIsInvalid() { return WinJS.Resources._getWinJSString("ui/itemRendererIsInvalid").value; },
-        get itemIsInvalid() { return WinJS.Resources._getWinJSString("ui/itemIsInvalid").value; },
-        get invalidItemsManagerCallback() { return WinJS.Resources._getWinJSString("ui/invalidItemsManagerCallback").value; }
+        get listDataSourceIsInvalid() { return _Resources._getWinJSString("ui/listDataSourceIsInvalid").value; },
+        get itemRendererIsInvalid() { return _Resources._getWinJSString("ui/itemRendererIsInvalid").value; },
+        get itemIsInvalid() { return _Resources._getWinJSString("ui/itemIsInvalid").value; },
+        get invalidItemsManagerCallback() { return _Resources._getWinJSString("ui/invalidItemsManagerCallback").value; }
     };
 
     var imageLoader;
@@ -97,7 +126,7 @@ define([
     }
 
     // Exposing the seenUrl related members to use them in unit tests
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _seenUrl: seenUrl,
         _getSeenUrls: function () {
             return seenUrls;
@@ -111,9 +140,9 @@ define([
 
     function loadImage(srcUrl, image, data) {
         var imageId = nextImageLoaderId++;
-        imageLoader = imageLoader || new WinJS.UI._ParallelWorkQueue(6);
+        imageLoader = imageLoader || new _ParallelWorkQueue(6);
         return imageLoader.queue(function () {
-            return new WinJS.Promise(function (c, e, p) {
+            return new Promise(function (c, e, p) {
                 Scheduler.schedule(function ImageLoader_async_loadImage(jobInfo) {
                     if (!image) {
                         image = document.createElement("img");
@@ -122,7 +151,7 @@ define([
                     var seen = seenUrls[srcUrl];
 
                     if (!seen) {
-                        jobInfo.setPromise(new WinJS.Promise(function (imageLoadComplete) {
+                        jobInfo.setPromise(new Promise(function (imageLoadComplete) {
                             var tempImage = document.createElement("img");
 
                             var cleanup = function () {
@@ -183,15 +212,15 @@ define([
     // Type-checks a callback parameter, since a failure will be hard to diagnose when it occurs
     function checkCallback(callback, name) {
         if (typeof callback !== "function") {
-            throw new WinJS.ErrorFromName("WinJS.UI.ItemsManager.CallbackIsInvalid", WinJS.Resources._formatString(strings.invalidItemsManagerCallback, name));
+            throw new _ErrorFromName("WinJS.UI.ItemsManager.CallbackIsInvalid", _Resources._formatString(strings.invalidItemsManagerCallback, name));
         }
     }
 
     // Public definitions
 
-    WinJS.Namespace.define("WinJS.UI", {
-        _createItemsManager: WinJS.Namespace._lazy(function () {
-            var ListNotificationHandler = WinJS.Class.define(function ListNotificationHandler_ctor(itemsManager) {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
+        _createItemsManager: _Base.Namespace._lazy(function () {
+            var ListNotificationHandler = _Base.Class.define(function ListNotificationHandler_ctor(itemsManager) {
                 // Constructor
 
                 this._itemsManager = itemsManager;
@@ -253,14 +282,14 @@ define([
                 supportedForProcessing: false,
             });
 
-            var ItemsManager = WinJS.Class.define(function ItemsManager_ctor(listDataSource, itemRenderer, elementNotificationHandler, options) {
+            var ItemsManager = _Base.Class.define(function ItemsManager_ctor(listDataSource, itemRenderer, elementNotificationHandler, options) {
                 // Constructor
 
                 if (!listDataSource) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.ItemsManager.ListDataSourceIsInvalid", strings.listDataSourceIsInvalid);
+                    throw new _ErrorFromName("WinJS.UI.ItemsManager.ListDataSourceIsInvalid", strings.listDataSourceIsInvalid);
                 }
                 if (!itemRenderer) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.ItemsManager.ItemRendererIsInvalid", strings.itemRendererIsInvalid);
+                    throw new _ErrorFromName("WinJS.UI.ItemsManager.ItemRendererIsInvalid", strings.itemRendererIsInvalid);
                 }
 
                 this.$pipeline_callbacksMap = {};
@@ -278,7 +307,7 @@ define([
                         this._ownerElement = options.ownerElement;
                     }
                     this._profilerId = options.profilerId;
-                    this._versionManager = options.versionManager || new WinJS.UI._VersionManager();
+                    this._versionManager = options.versionManager || new _VersionManager._VersionManager();
                 }
 
                 this._indexInView = options && options.indexInView;
@@ -315,7 +344,7 @@ define([
                     var itemPromise = this._itemPromiseAtIndex(index)
                     this._itemFromItemPromise(itemPromise).then(null, function (e) {
                         itemPromise.cancel();
-                        return WinJS.Promise.wrapError(e);
+                        return Promise.wrapError(e);
                     });
                 },
                 _itemPromiseAtIndex: function (index) {
@@ -323,7 +352,7 @@ define([
                 },
                 _waitForElement: function (possiblePlaceholder) {
                     var that = this;
-                    return new WinJS.Promise(function (c, e, p) {
+                    return new Promise(function (c, e, p) {
                         if (possiblePlaceholder) {
                             if (!that.isPlaceholder(possiblePlaceholder)) {
                                 c(possiblePlaceholder);
@@ -471,8 +500,8 @@ define([
                 _renderItem: function (itemPromise, record, callerThrottlesStage1) {
                     var that = this;
                     var indexInView = that._indexInView || function () { return true; };
-                    var stage1Signal = new Signal();
-                    var readySignal = new Signal();
+                    var stage1Signal = new _Signal();
+                    var readySignal = new _Signal();
                     var perfItemPromiseId = "_renderItem(" + record.item.index + "):itemPromise";
 
                     var stage0RunningSync = true;
@@ -506,7 +535,7 @@ define([
                             itemForRenderer.isImageCached = isImageCached;
                             return itemForRenderer;
                         } else {
-                            return WinJS.Promise.cancel;
+                            return Promise.cancel;
                         }
                     });
 
@@ -541,11 +570,11 @@ define([
                     var perfItemReadyId = "_renderItem(" + record.item.index + "):itemReady";
 
                     this._writeProfilerMark(perfRendererWorkId + ",StartTM");
-                    var rendererPromise = WinJS.Promise.as(that._itemRenderer(itemForRendererPromise, record.element)).
-                        then(WinJS.UI._normalizeRendererReturn).
+                    var rendererPromise = Promise.as(that._itemRenderer(itemForRendererPromise, record.element)).
+                        then(exports._normalizeRendererReturn).
                         then(function (v) {
                             if (that._released) {
-                                return WinJS.Promise.cancel;
+                                return Promise.cancel;
                             }
 
                             itemForRendererPromise.then(function (item) {
@@ -683,7 +712,7 @@ define([
                     var record = this._elementMap[uniqueID(element)];
                     if (!record) {
                         this._writeProfilerMark("_recordFromElement:ItemIsInvalidError,info");
-                        throw new WinJS.ErrorFromName("WinJS.UI.ItemsManager.ItemIsInvalid", strings.itemIsInvalid);
+                        throw new _ErrorFromName("WinJS.UI.ItemsManager.ItemIsInvalid", strings.itemIsInvalid);
                     }
 
                     return record;
@@ -704,7 +733,7 @@ define([
                 _recordFromHandle: function (handle, ignoreFailure) {
                     var record = this._handleMap[handle];
                     if (!record && !ignoreFailure) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.ItemsManager.ItemIsInvalid", strings.itemIsInvalid);
+                        throw new _ErrorFromName("WinJS.UI.ItemsManager.ItemIsInvalid", strings.itemIsInvalid);
                     }
                     return record;
                 },
@@ -763,7 +792,7 @@ define([
                     record.newItem = newItem;
 
                     var that = this;
-                    var newItemPromise = WinJS.Promise.as(newItem);
+                    var newItemPromise = Promise.as(newItem);
                     newItemPromise.handle = record.itemPromise.handle;
                     record.renderPromise = this._renderItem(newItemPromise, record).
                         then(function (v) {
@@ -820,7 +849,7 @@ define([
                                     var itemToRender = record.newItem || record.item;
                                     itemToRender.index = newIndex;
 
-                                    var newItemPromise = WinJS.Promise.as(itemToRender);
+                                    var newItemPromise = Promise.as(itemToRender);
                                     newItemPromise.handle = record.itemPromise.handle;
 
                                     var that = this;
@@ -922,7 +951,7 @@ define([
 
                 _writeProfilerMark: function (text) {
                     var message = "WinJS.UI._ItemsManager:" + (this._profilerId ? (this._profilerId + ":") : ":") + text;
-                    WinJS.Utilities._writeProfilerMark(message);
+                    _WriteProfilerMark(message);
                 }
             }, { // Static Members
                 supportedForProcessing: false,

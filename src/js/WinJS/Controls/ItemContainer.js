@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -15,7 +16,7 @@ define([
     '../Utilities/_UI',
     './ItemContainer/_Constants',
     './ItemContainer/_ItemEventsHandler'
-    ], function itemContainerInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
+    ], function itemContainerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
     "use strict";
 
     var createEvent = _Events._createEventProperty;
@@ -25,7 +26,7 @@ define([
         selectionchanged: "selectionchanged"
     };
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.ItemContainer">
         /// Defines an item that can be pressed, swiped, and dragged. 
@@ -96,7 +97,7 @@ define([
 
                 this._setupInternalTree();
 
-                this._selection = new moduleRef._SingleItemSelectionManager(element, this._itemBox);
+                this._selection = new exports._SingleItemSelectionManager(element, this._itemBox);
                 this._setTabIndex();
 
                 _Control.setOptions(this, options);
@@ -783,10 +784,5 @@ define([
                 }
             })
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    var moduleRef = _Base.Namespace.defineWithParent(null, null, members);
-
+    });
 });

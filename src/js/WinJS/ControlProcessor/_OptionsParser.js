@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
     '../Core/_Resources',
     './_OptionsLexer'
-    ], function optionsParserInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _OptionsLexer) {
+    ], function optionsParserInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _OptionsLexer) {
     "use strict";
 
     var strings = {
@@ -611,7 +612,7 @@ define([
     });
     IdentifierExpression.supportedForProcessing = false;
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
 
         // This is the mis-named interpreter version of the options record processor.
         //
@@ -623,11 +624,7 @@ define([
         _CallExpression: CallExpression,
         _IdentifierExpression: IdentifierExpression,
 
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });
 

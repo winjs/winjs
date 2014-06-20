@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './Core/_Global',
     './Core/_Base',
     './Core/_ErrorFromName',
@@ -7,7 +8,7 @@ define([
     './Core/_Trace',
     './Core/_WriteProfilerMark',
     './Promise'
-    ], function schedulerInit(_Global, _Base, _ErrorFromName, _Resources, _Trace, _WriteProfilerMark, Promise) {
+    ], function schedulerInit(exports, _Global, _Base, _ErrorFromName, _Resources, _Trace, _WriteProfilerMark, Promise) {
     "use strict";
 
     function linkedListMixin(name) {
@@ -1547,7 +1548,7 @@ define([
         };
     }
 
-    _Base.Namespace.define("WinJS.Utilities.Scheduler", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities.Scheduler", {
 
         Priority: Priority,
 
@@ -1613,7 +1614,5 @@ define([
         _TIME_SLICE: TIME_SLICE
 
     });
-
-    return WinJS.Utilities.Scheduler;
 
 });

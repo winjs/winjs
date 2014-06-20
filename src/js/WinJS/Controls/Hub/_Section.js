@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -11,10 +12,10 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_KeyboardBehavior',
     '../../Utilities/_UIUtilities'
-    ], function hubSectionInit(_Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities) {
+    ], function hubSectionInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities) {
     "use strict";
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.HubSection">
         /// Defines a section of a Hub control. 
@@ -230,9 +231,6 @@ define([
 
             return HubSection;
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

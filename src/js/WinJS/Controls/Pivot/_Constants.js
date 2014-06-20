@@ -25,6 +25,6 @@ define([
         }
     };
 
-    return _Base.Namespace.defineWithParent(null, null, members);
+    return members;
 
 });

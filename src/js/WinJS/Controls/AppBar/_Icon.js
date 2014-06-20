@@ -2,9 +2,10 @@
 // Glyph Enumeration
 /// <dictionary>Segoe</dictionary>
 define([
+     'exports',
      '../../Core/_Base',
      '../../Core/_Resources'
-     ], function appBarIconInit(_Base, _Resources) {
+     ], function appBarIconInit(exports, _Base, _Resources) {
     "use strict";
 
     var glyphs = ["previous",
@@ -213,6 +214,5 @@ define([
        return fixedIcons;
      }, {});
 
-    _Base.Namespace.define("WinJS.UI.AppBarIcon", icons);
-    return _Base.Namespace.defineWithParent(null, null, icons);
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI.AppBarIcon", icons);
 });

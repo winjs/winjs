@@ -15,10 +15,16 @@ var define;
             dependencies = [];
         }
 
-        defined[id] = {
+        var mod = {
             dependencies: normalize(id, dependencies),
             factory: factory
         };
+
+        if(dependencies.indexOf('exports') !== -1) {
+            mod.exports = {};
+        }
+
+        defined[id] = mod;
     }
     /*jshint +W020*/
 
@@ -45,23 +51,30 @@ var define;
         });
     }
 
-    function resolve(dependencies) {
+    function resolve(dependencies, exports) {
         return dependencies.map(function(depName) {
+            if(depName === 'exports') {
+                return exports;
+            }
             var dep = defined[depName];
             if(!dep) {
                 throw new Error("Undefined dependency: " + depName);
             }
 
             if(!dep.resolved) {
-                dep.resolved = load(dep.dependencies, dep.factory);
+                dep.resolved = load(dep.dependencies, dep.factory, dep.exports);
+                // exports shadows whatever the module factory returns
+                if(dep.exports) {
+                    dep.resolved = dep.exports;
+                }
             }
             
             return dep.resolved;
         });
     }
 
-    function load(dependencies, factory) {
-        var deps = resolve(dependencies);
+    function load(dependencies, factory, exports) {
+        var deps = resolve(dependencies, exports);
         if(factory && factory.apply) {
             return factory.apply(null, deps);
         } else {

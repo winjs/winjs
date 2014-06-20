@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -11,10 +12,10 @@ define([
     '../../Utilities/_Dispose',
     '../../Utilities/_ElementUtilities',
     './_Constants'
-    ], function pivotItemInit(_Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Constants) {
+    ], function pivotItemInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Constants) {
     "use strict";
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.PivotItem">
         /// Defines a Item of a Pivot control. 
@@ -178,10 +179,6 @@ define([
 
             return PivotItem;
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

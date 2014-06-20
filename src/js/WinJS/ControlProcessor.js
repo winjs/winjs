@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './Core/_Global',
     './Core/_Base',
     './Core/_BaseUtils',
@@ -8,7 +9,7 @@ define([
     './ControlProcessor/_OptionsParser',
     './Promise',
     './Utilities/_ElementUtilities'
-    ], function declarativeControlsInit(_Global, _Base, _BaseUtils, _Resources, _WriteProfilerMark, _OptionsParser, Promise, _ElementUtilities) {
+    ], function declarativeControlsInit(exports, _Global, _Base, _BaseUtils, _Resources, _WriteProfilerMark, _OptionsParser, Promise, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -243,13 +244,9 @@ define([
         }
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         scopedSelect: scopedSelect,
         processAll: processAll,
         process: process
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 });

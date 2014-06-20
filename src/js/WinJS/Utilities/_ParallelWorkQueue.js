@@ -1,11 +1,15 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function parallelWorkQueueInit() {
+    'exports',
+    '../Core/_Base',
+    '../Promise',
+    '../Scheduler'
+    ], function parallelWorkQueueInit(exports, _Base, Promise, Scheduler) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
-        _ParallelWorkQueue : WinJS.Namespace._lazy(function () {
-            return WinJS.Class.define(function ParallelWorkQueue_ctor(maxRunning) {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
+        _ParallelWorkQueue : _Base.Namespace._lazy(function () {
+            return _Base.Class.define(function ParallelWorkQueue_ctor(maxRunning) {
                 var workIndex = 0;
                 var workItems = {};
                 var workQueue = [];
@@ -21,7 +25,7 @@ define([
                     // recurse. This avoids stack overflow in the sync case.
                     // 
                     if (!processing) {
-                        WinJS.Utilities.Scheduler.schedule(run, WinJS.Utilities.Scheduler.Priority.normal,
+                        Scheduler.schedule(run, Scheduler.Priority.normal,
                             null, "WinJS._ParallelWorkQueue.runNext");
                     }
                 }
@@ -57,7 +61,7 @@ define([
                 function queue(f, data, first) {
                     var id = "w" + (workIndex++);
                     var workPromise;
-                    return new WinJS.Promise(
+                    return new Promise(
                         function (c, e, p) {
                             var w = function () {
                                 workPromise = f().then(c, e, p);

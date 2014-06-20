@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Promise',
     '../Scheduler',
     '../Utilities/_ElementUtilities'
-    ], function transitionAnimationInit(_Global, _Base, _BaseUtils, Promise, Scheduler, _ElementUtilities) {
+    ], function transitionAnimationInit(exports, _Global, _Base, _BaseUtils, Promise, Scheduler, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -383,7 +384,7 @@ define([
             var promises = [];
 
             for (var i = 0; i < elems.length; i++) {
-                if (elems[i] instanceof Array) {
+                if (Array.isArray(elems[i])) {
                     for (var j = 0; j < elems[i].length; j++) {
                         execAction(elems[i][j], i, actions, promises, animate);
                     }
@@ -426,7 +427,7 @@ define([
         }
     }
 
-    var members =  {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         disableAnimations: function () {
             /// <signature helpKeyword="WinJS.UI.disableAnimations">
             /// <summary locid="WinJS.UI.disableAnimations">
@@ -503,9 +504,6 @@ define([
             }
         },
 
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

@@ -1,28 +1,46 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    './ListView/_BrowseMode',
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Events',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Animations/_TransitionAnimation',
+    '../BindingList',
+    '../Promise',
+    '../Scheduler',
+    '../_Signal',
+    '../Utilities/_Control',
+    '../Utilities/_Dispose',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_ItemsManager',
+    '../Utilities/_SafeHtml',
+    '../Utilities/_TabContainer',
+    '../Utilities/_UI',
+    '../Utilities/_UIUtilities',
+    '../Utilities/_VersionManager',
     './ItemContainer/_Constants',
+    './ItemContainer/_ItemEventsHandler',
+    './ListView/_BrowseMode',
     './ListView/_ErrorMessages',
     './ListView/_GroupFocusCache',
     './ListView/_GroupsContainer',
+    './ListView/_Helpers',
     './ListView/_ItemsContainer',
-    './ListView/_ItemsManager',
     './ListView/_Layouts',
-    './ListView/_ParallelWorkQueue',
     './ListView/_SelectionManager',
-    './ListView/_StorageDataSource',
-    './ListView/_VersionManager',
     './ListView/_VirtualizeContentsView',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function listViewImplInit(_BrowseMode, _Constants, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _ItemsContainer, _ItemsManager, _Layouts, _ParallelWorkQueue, _SelectionManager, _StorageDataSource, _VersionManager, _VirtualizeContentsView) {
+    ], function listViewImplInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _ItemsManager, _SafeHtml, _TabContainer, _UI, _UIUtilities, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
-    var transformNames = WinJS.Utilities._browserStyleEquivalents["transform"];
+    var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
     var DISPOSE_TIMEOUT = 1000;
     var controlsToDispose = [];
     var disposeControlTimeout;
-    var uniqueID = WinJS.Utilities._uniqueID;
+    var uniqueID = _ElementUtilities._uniqueID;
 
     function disposeControls() {
         var temp = controlsToDispose;
@@ -40,114 +58,43 @@ define([
     function scheduleForDispose(lv) {
         controlsToDispose.push(lv);
         disposeControlTimeout && disposeControlTimeout.cancel();
-        disposeControlTimeout = WinJS.Promise.timeout(DISPOSE_TIMEOUT).then(disposeControls);
-    }
-
-    function setFlow(from, to) {
-        WinJS.Utilities._setAttribute(from, "aria-flowto", to.id);
-        WinJS.Utilities._setAttribute(to, "x-ms-aria-flowfrom", from.id);
-    }
-
-    function nodeListToArray(nodeList) {
-        return Array.prototype.slice.call(nodeList);
-    }
-
-    function repeat(markup, count) {
-        return new Array(count + 1).join(markup);
+        disposeControlTimeout = Promise.timeout(DISPOSE_TIMEOUT).then(disposeControls);
     }
 
     function getOffsetRight(element) {
         return element.offsetParent ? (element.offsetParent.offsetWidth - element.offsetLeft - element.offsetWidth) : 0;
     }
 
-    // Default renderer for Listview
-    var trivialHtmlRenderer = WinJS.UI.simpleItemRenderer(function (item) {
-        if (utilities._isDOMElement(item.data)) {
-            return item.data;
-        }
-
-        var data = item.data;
-        if (data === undefined) {
-            data = "undefined";
-        } else if (data === null) {
-            data = "null";
-        } else if (typeof data === "object") {
-            data = JSON.stringify(data);
-        }
-
-        var element = document.createElement("span");
-        element.textContent = data.toString();
-        return element;
-    });
-
-    WinJS.Namespace.define("WinJS.UI", {
-        _trivialHtmlRenderer: trivialHtmlRenderer,
-        _disposeControls: disposeControls,
-        _setFlow: setFlow,
-        _nodeListToArray: nodeListToArray,
-        _repeat: repeat,
-        _ListViewAnimationHelper: {
-            fadeInElement: function (element) {
-                return WinJS.UI.Animation.fadeIn(element);
-            },
-            fadeOutElement: function (element) {
-                return WinJS.UI.Animation.fadeOut(element);
-            },
-            animateEntrance: function (canvas, firstEntrance) {
-                return WinJS.UI.Animation.enterContent(canvas, [{ left: firstEntrance ? "100px" : "40px", top: "0px", rtlflip: true }], { mechanism: "transition" });
-            },
-        }
-    });
-
-    var ScrollToPriority = {
-        uninitialized: 0,
-        low: 1,             // used by layoutSite.invalidateLayout, forceLayout, _processReload, _update and _onMSElementResize - operations that preserve the scroll position
-        medium: 2,          // used by dataSource change, layout change and etc - operations that reset the scroll position to 0
-        high: 3             // used by indexOfFirstVisible, ensureVisible, scrollPosition - operations in which the developer explicitly sets the scroll position
-    };
-
-    var ViewChange = {
-        rebuild: 0,
-        remeasure: 1,
-        relayout: 2,
-        realize: 3
-    };
-
-    var thisWinUI = WinJS.UI,
-        utilities = WinJS.Utilities,
-        Promise = WinJS.Promise,
-        Scheduler = utilities.Scheduler,
-        AnimationHelper = WinJS.UI._ListViewAnimationHelper;
+    var AnimationHelper = _Helpers._ListViewAnimationHelper;
 
     var strings = {
-        get notCompatibleWithSemanticZoom() { return WinJS.Resources._getWinJSString("ui/notCompatibleWithSemanticZoom").value; },
-        get listViewInvalidItem() { return WinJS.Resources._getWinJSString("ui/listViewInvalidItem").value; },
-        get listViewViewportAriaLabel() { return WinJS.Resources._getWinJSString("ui/listViewViewportAriaLabel").value; }
+        get notCompatibleWithSemanticZoom() { return _Resources._getWinJSString("ui/notCompatibleWithSemanticZoom").value; },
+        get listViewInvalidItem() { return _Resources._getWinJSString("ui/listViewInvalidItem").value; },
+        get listViewViewportAriaLabel() { return _Resources._getWinJSString("ui/listViewViewportAriaLabel").value; }
     };
 
-    var requireSupportedForProcessing = WinJS.Utilities.requireSupportedForProcessing;
+    var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
+
+    var ListViewAnimationType = {
+        /// <field locid="WinJS.UI.ListView.ListViewAnimationType.entrance" helpKeyword="WinJS.UI.ListViewAnimationType.entrance">
+        /// The animation plays when the ListView is first displayed.
+        /// </field>
+        entrance: "entrance",
+        /// <field locid="WinJS.UI.ListView.ListViewAnimationType.contentTransition" helpKeyword="WinJS.UI.ListViewAnimationType.contentTransition">
+        /// The animation plays when the ListView is changing its content.
+        /// </field>
+        contentTransition: "contentTransition"
+    }
 
     // ListView implementation
 
-    WinJS.Namespace.define("WinJS.UI", {
-        _ScrollToPriority: ScrollToPriority,
-
-        _ViewChange: ViewChange,
+    _Base.Namespace.define("WinJS.UI", {
 
         /// <field locid="WinJS.UI.ListView.ListViewAnimationType" helpKeyword="WinJS.UI.ListViewAnimationType">
         /// Specifies whether the ListView animation is an entrance animation or a transition animation.
         /// <compatibleWith platform="Windows" minVersion="8.0"/>
         /// </field>
-        ListViewAnimationType: {
-            /// <field locid="WinJS.UI.ListView.ListViewAnimationType.entrance" helpKeyword="WinJS.UI.ListViewAnimationType.entrance">
-            /// The animation plays when the ListView is first displayed.
-            /// </field>
-            entrance: "entrance",
-            /// <field locid="WinJS.UI.ListView.ListViewAnimationType.contentTransition" helpKeyword="WinJS.UI.ListViewAnimationType.contentTransition">
-            /// The animation plays when the ListView is changing its content.
-            /// </field>
-            contentTransition: "contentTransition"
-        },
+        ListViewAnimationType: ListViewAnimationType,
 
         /// <field>
         /// <summary locid="WinJS.UI.ListView">
@@ -183,8 +130,8 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        ListView: WinJS.Namespace._lazy(function () {
-            var AffectedRange = WinJS.Class.define(function () {
+        ListView: _Base.Namespace._lazy(function () {
+            var AffectedRange = _Base.Class.define(function () {
                 this.clear();
             }, {
                 // Marks the union of the current affected range and range as requiring layout
@@ -222,7 +169,7 @@ define([
                 }
             });
 
-            var ZoomableView = WinJS.Class.define(function ZoomableView_ctor(listView) {
+            var ZoomableView = _Base.Class.define(function ZoomableView_ctor(listView) {
                 // Constructor
 
                 this._listView = listView;
@@ -258,7 +205,7 @@ define([
                 }
             });
 
-            var ListView = WinJS.Class.define(function ListView_ctor(element, options) {
+            var ListView = _Base.Class.define(function ListView_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.ListView.ListView">
                 /// <summary locid="WinJS.UI.ListView.constructor">
                 /// Creates a new ListView.
@@ -284,9 +231,9 @@ define([
 
                 // Attaching JS control to DOM element
                 element.winControl = this;
-                WinJS.Utilities.addClass(element, "win-disposable");
+                _ElementUtilities.addClass(element, "win-disposable");
                 this._affectedRange = new AffectedRange();
-                this._mutationObserver = new WinJS.Utilities._MutationObserver(this._itemPropertyChange.bind(this));
+                this._mutationObserver = new _ElementUtilities._MutationObserver(this._itemPropertyChange.bind(this));
                 this._versionManager = null;
                 this._insertedItems = {};
                 this._element = element;
@@ -298,51 +245,51 @@ define([
                 this._pinching = false;
                 this._itemsManager = null;
                 this._canvas = null;
-                this._cachedCount = WinJS.UI._UNINITIALIZED;
+                this._cachedCount = _Constants._UNINITIALIZED;
                 this._loadingState = this._LoadingState.complete;
                 this._firstTimeDisplayed = true;
                 this._currentScrollPosition = 0;
                 this._lastScrollPosition = 0;
                 this._notificationHandlers = [];
                 this._itemsBlockExtent = -1;
-                this._viewportWidth = WinJS.UI._UNINITIALIZED;
-                this._viewportHeight = WinJS.UI._UNINITIALIZED;
-                this._manipulationState = WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
+                this._viewportWidth = _Constants._UNINITIALIZED;
+                this._viewportHeight = _Constants._UNINITIALIZED;
+                this._manipulationState = _ElementUtilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
                 this._maxDeferredItemCleanup = Number.MAX_VALUE;
                 this._groupsToRemove = {};
                 this._setupInternalTree();
                 this._isCurrentZoomView = true;
                 this._dragSource = false;
                 this._reorderable = false;
-                this._groupFocusCache = new WinJS.UI._UnsupportedGroupFocusCache();
-                this._viewChange = ViewChange.rebuild;
+                this._groupFocusCache = new _GroupFocusCache._UnsupportedGroupFocusCache();
+                this._viewChange = _Constants._ViewChange.rebuild;
                 this._scrollToFunctor = null;
                 this._setScrollbarPosition = false;
                 // The view needs to be initialized after the internal tree is setup, because the view uses the canvas node immediately to insert an element in its constructor
-                this._view = new WinJS.UI._VirtualizeContentsView(this);
-                this._selection = new WinJS.UI._SelectionManager(this);
+                this._view = new _VirtualizeContentsView._VirtualizeContentsView(this);
+                this._selection = new _SelectionManager._SelectionManager(this);
                 this._createTemplates();
                 var that = this;
-                this._groupHeaderRenderer = WinJS.UI._trivialHtmlRenderer;
-                this._itemRenderer = WinJS.UI._trivialHtmlRenderer;
+                this._groupHeaderRenderer = _ItemsManager._trivialHtmlRenderer;
+                this._itemRenderer = _ItemsManager._trivialHtmlRenderer;
                 this._groupHeaderRelease = null;
                 this._itemRelease = null;
                 if (!options.itemDataSource) {
-                    var list = new WinJS.Binding.List();
+                    var list = new BindingList.List();
                     this._dataSource = list.dataSource;
                 } else {
                     this._dataSource = options.itemDataSource;
                 }
-                this._selectionMode = WinJS.UI.SelectionMode.multi;
-                this._tap = WinJS.UI.TapBehavior.invokeOnly;
-                this._groupHeaderTap = WinJS.UI.GroupHeaderTapBehavior.invoke;
-                this._swipeBehavior = WinJS.UI.SwipeBehavior.select;
-                this._mode = new WinJS.UI._SelectionMode(this);
+                this._selectionMode = _UI.SelectionMode.multi;
+                this._tap = _UI.TapBehavior.invokeOnly;
+                this._groupHeaderTap = _UI.GroupHeaderTapBehavior.invoke;
+                this._swipeBehavior = _UI.SwipeBehavior.select;
+                this._mode = new _BrowseMode._SelectionMode(this);
 
                 // Call after swipeBehavior and modes are set
                 this._setSwipeClass();
 
-                this._groups = new WinJS.UI._NoGroups(this);
+                this._groups = new _GroupsContainer._NoGroups(this);
                 this._updateItemsAriaRoles();
                 this._updateGroupHeadersAriaRoles();
                 this._element.setAttribute("aria-multiselectable", this._multiSelection());
@@ -353,15 +300,15 @@ define([
                 }
                 this._updateItemsManager();
                 if (!options.layout) {
-                    this._updateLayout(new WinJS.UI.GridLayout());
+                    this._updateLayout(new _Layouts.GridLayout());
                 }
                 this._attachEvents();
 
                 this._runningInit = true;
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
                 this._runningInit = false;
 
-                this._batchViewUpdates(ViewChange.rebuild, ScrollToPriority.medium, 0);
+                this._batchViewUpdates(_Constants._ViewChange.rebuild, _Constants._ScrollToPriority.medium, 0);
                 this._writeProfilerMark("constructor,StopTM");
             }, {
                 // Public properties
@@ -386,7 +333,7 @@ define([
                         if (!this._runningInit) {
                             this._view.reset();
                             this._updateItemsManager();
-                            this._batchViewUpdates(ViewChange.rebuild, ScrollToPriority.medium, 0, true);
+                            this._batchViewUpdates(_Constants._ViewChange.rebuild, _Constants._ScrollToPriority.medium, 0, true);
                         }
                     }
                 },
@@ -401,10 +348,10 @@ define([
                 /// </field>
                 pagesToLoad: {
                     get: function () {
-                        return (WinJS.UI._VirtualizeContentsView._pagesToPrefetch * 2) + 1;
+                        return (_VirtualizeContentsView._VirtualizeContentsView._pagesToPrefetch * 2) + 1;
                     },
                     set: function (newValue) {
-                        utilities._deprecated(WinJS.UI._strings.pagesToLoadIsDeprecated);
+                        _UIUtilities._deprecated(_ErrorMessages.pagesToLoadIsDeprecated);
                     }
                 },
 
@@ -422,7 +369,7 @@ define([
                         return 0;
                     },
                     set: function (newValue) {
-                        utilities._deprecated(WinJS.UI._strings.pagesToLoadThresholdIsDeprecated);
+                        _UIUtilities._deprecated(_ErrorMessages.pagesToLoadThresholdIsDeprecated);
                     }
                 },
 
@@ -439,7 +386,7 @@ define([
                         var that = this;
 
                         function groupStatusChanged(eventObject) {
-                            if (eventObject.detail === thisWinUI.DataSourceStatus.failure) {
+                            if (eventObject.detail === _UI.DataSourceStatus.failure) {
                                 that.itemDataSource = null;
                                 that.groupDataSource = null;
                             }
@@ -450,7 +397,7 @@ define([
                         }
 
                         this._groupDataSource = newValue;
-                        this._groupFocusCache = (newValue && this._supportsGroupHeaderKeyboarding) ? new WinJS.UI._GroupFocusCache(this) : new WinJS.UI._UnsupportedGroupFocusCache();
+                        this._groupFocusCache = (newValue && this._supportsGroupHeaderKeyboarding) ? new _GroupFocusCache._GroupFocusCache(this) : new _GroupFocusCache._UnsupportedGroupFocusCache();
 
                         if (this._groupDataSource && this._groupDataSource.addEventListener) {
                             this._groupDataSource.addEventListener("statuschanged", groupStatusChanged, false);
@@ -462,7 +409,7 @@ define([
                             this._view.reset();
                             this._pendingLayoutReset = true;
                             this._pendingGroupWork = true;
-                            this._batchViewUpdates(ViewChange.rebuild, ScrollToPriority.medium, 0, true);
+                            this._batchViewUpdates(_Constants._ViewChange.rebuild, _Constants._ScrollToPriority.medium, 0, true);
                         } else {
                             this._updateGroupWork();
                             this._resetLayout();
@@ -474,9 +421,9 @@ define([
                     this._pendingGroupWork = false;
 
                     if (this._groupDataSource) {
-                        utilities.addClass(this._element, WinJS.UI._groupsClass);
+                        _ElementUtilities.addClass(this._element, _Constants._groupsClass);
                     } else {
-                        utilities.removeClass(this._element, WinJS.UI._groupsClass);
+                        _ElementUtilities.removeClass(this._element, _Constants._groupsClass);
                     }
                     this._resetLayout();
                 },
@@ -494,7 +441,7 @@ define([
                         return false;
                     },
                     set: function (newValue) {
-                        utilities._deprecated(WinJS.UI._strings.automaticallyLoadPagesIsDeprecated);
+                        _UIUtilities._deprecated(_ErrorMessages.automaticallyLoadPagesIsDeprecated);
                     }
                 },
 
@@ -509,7 +456,7 @@ define([
                         return "randomAccess";
                     },
                     set: function (newValue) {
-                        utilities._deprecated(WinJS.UI._strings.loadingBehaviorIsDeprecated);
+                        _UIUtilities._deprecated(_ErrorMessages.loadingBehaviorIsDeprecated);
                     }
                 },
 
@@ -523,7 +470,7 @@ define([
                     set: function (newMode) {
                         if (typeof newMode === "string") {
                             if (newMode.match(/^(none|single|multi)$/)) {
-                                if (utilities.isPhone && newMode === WinJS.UI.SelectionMode.single) {
+                                if (WinJS.Utilities.isPhone && newMode === _UI.SelectionMode.single) {
                                     return;
                                 }
                                 this._selectionMode = newMode;
@@ -534,11 +481,11 @@ define([
                                 return;
                             }
                         }
-                        throw new WinJS.ErrorFromName("WinJS.UI.ListView.ModeIsInvalid", WinJS.UI._strings.modeIsInvalid);
+                        throw new _ErrorFromName("WinJS.UI.ListView.ModeIsInvalid", _ErrorMessages.modeIsInvalid);
                     }
                 },
 
-                /// <field type="String" oamOptionsDatatype="WinJS.UI.TapBehavior" locid="WinJS.UI.ListView.tapBehavior" helpKeyword="WinJS.UI.ListView.tapBehavior">
+                /// <field type="String" oamOptionsDatatype="_UI.TapBehavior" locid="WinJS.UI.ListView.tapBehavior" helpKeyword="WinJS.UI.ListView.tapBehavior">
                 /// Gets or sets how the ListView reacts when the user taps or clicks an item.
                 /// The tap or click can invoke the item, select it and invoke it, or have no
                 /// effect.
@@ -548,7 +495,7 @@ define([
                         return this._tap;
                     },
                     set: function (tap) {
-                        if (utilities.isPhone && tap === WinJS.UI.TapBehavior.directSelect) {
+                        if (WinJS.Utilities.isPhone && tap === _UI.TapBehavior.directSelect) {
                             return;
                         }
                         this._tap = tap;
@@ -595,7 +542,7 @@ define([
                     },
                     set: function (newData) {
                         this._writeProfilerMark("set_itemDataSource,info");
-                        this._dataSource = newData || new WinJS.Binding.List().dataSource;
+                        this._dataSource = newData || new BindingList.List().dataSource;
                         this._groupFocusCache.clear();
 
                         if (!this._runningInit) {
@@ -603,7 +550,7 @@ define([
                             this._cancelAsyncViewWork(true);
                             this._updateItemsManager();
                             this._pendingLayoutReset = true;
-                            this._batchViewUpdates(ViewChange.rebuild, ScrollToPriority.medium, 0, true);
+                            this._batchViewUpdates(_Constants._ViewChange.rebuild, _Constants._ScrollToPriority.medium, 0, true);
                         }
                     }
                 },
@@ -624,7 +571,7 @@ define([
                             this._cancelAsyncViewWork(true);
                             this._updateItemsManager();
                             this._pendingLayoutReset = true;
-                            this._batchViewUpdates(ViewChange.rebuild, ScrollToPriority.medium, 0, true);
+                            this._batchViewUpdates(_Constants._ViewChange.rebuild, _Constants._ScrollToPriority.medium, 0, true);
                         }
                     }
                 },
@@ -641,7 +588,7 @@ define([
                         return this._itemRelease;
                     },
                     set: function (release) {
-                        utilities._deprecated(WinJS.UI._strings.resetItemIsDeprecated);
+                        _UIUtilities._deprecated(_ErrorMessages.resetItemIsDeprecated);
                         this._itemRelease = release;
                     }
                 },
@@ -661,7 +608,7 @@ define([
                         if (!this._runningInit) {
                             this._cancelAsyncViewWork(true);
                             this._pendingLayoutReset = true;
-                            this._batchViewUpdates(ViewChange.rebuild, ScrollToPriority.medium, 0, true);
+                            this._batchViewUpdates(_Constants._ViewChange.rebuild, _Constants._ScrollToPriority.medium, 0, true);
                         }
                     }
                 },
@@ -678,7 +625,7 @@ define([
                         return this._groupHeaderRelease;
                     },
                     set: function (release) {
-                        utilities._deprecated(WinJS.UI._strings.resetGroupHeaderIsDeprecated);
+                        _UIUtilities._deprecated(_ErrorMessages.resetGroupHeaderIsDeprecated);
                         this._groupHeaderRelease = release;
                     }
                 },
@@ -721,27 +668,27 @@ define([
                         this._raiseViewLoading(true);
 
                         var that = this;
-                        this._batchViewUpdates(ViewChange.realize, ScrollToPriority.high, function () {
+                        this._batchViewUpdates(_Constants._ViewChange.realize, _Constants._ScrollToPriority.high, function () {
                             var range;
-                            return that._entityInRange({ type: WinJS.UI.ObjectType.item, index: itemIndex }).then(function (validated) {
+                            return that._entityInRange({ type: _UI.ObjectType.item, index: itemIndex }).then(function (validated) {
                                 if (!validated.inRange) {
                                     return {
                                         position: 0,
                                         direction: "left"
                                     };
                                 } else {
-                                    return that._getItemOffset({ type: WinJS.UI.ObjectType.item, index: validated.index }).then(function (r) {
+                                    return that._getItemOffset({ type: _UI.ObjectType.item, index: validated.index }).then(function (r) {
                                         range = r;
-                                        return that._ensureFirstColumnRange(WinJS.UI.ObjectType.item);
+                                        return that._ensureFirstColumnRange(_UI.ObjectType.item);
                                     }).then(function () {
-                                        range = that._correctRangeInFirstColumn(range, WinJS.UI.ObjectType.item);
+                                        range = that._correctRangeInFirstColumn(range, _UI.ObjectType.item);
                                         range = that._convertFromCanvasCoordinates(range);
 
                                         return that._view.waitForValidScrollPosition(range.begin);
                                     }).then(function (begin) {
                                         var direction = (begin < that._lastScrollPosition) ? "left" : "right";
                                         var max = that._viewport[that._scrollLength] - that._getViewportLength();
-                                        begin = utilities._clamp(begin, 0, max);
+                                        begin = _ElementUtilities._clamp(begin, 0, max);
 
                                         return {
                                             position: begin,
@@ -783,18 +730,18 @@ define([
                             hasFocus: !!this._hasKeyboardFocus,
                             showFocus: false
                         };
-                        if (focused.type === WinJS.UI.ObjectType.groupHeader) {
+                        if (focused.type === _UI.ObjectType.groupHeader) {
                             var group = this._groups.group(focused.index);
                             if (group) {
                                 retVal.key = group.key;
-                                retVal.showFocus = !!(group.header && WinJS.Utilities.hasClass(group.header, WinJS.UI._itemFocusClass));
+                                retVal.showFocus = !!(group.header && _ElementUtilities.hasClass(group.header, _Constants._itemFocusClass));
                             }
                         } else {
                             var item = this._view.items.itemAt(focused.index);
                             if (item) {
                                 var record = this._itemsManager._recordFromElement(item);
                                 retVal.key = record.item && record.item.key;
-                                retVal.showFocus = !!item.parentNode.querySelector("." + thisWinUI._itemFocusOutlineClass);
+                                retVal.showFocus = !!item.parentNode.querySelector("." + _Constants._itemFocusOutlineClass);
                             }
                         }
                         return retVal;
@@ -813,7 +760,7 @@ define([
                             } else {
                                 that._tabManager.childFocus = (isInTree ? item : null);
                             }
-                            if (entity.type !== WinJS.UI.ObjectType.groupHeader) {
+                            if (entity.type !== _UI.ObjectType.groupHeader) {
                                 that._updateFocusCache(entity.index);
                                 if (that._updater) {
                                     that._updater.newSelectionPivot = entity.index;
@@ -824,29 +771,29 @@ define([
                         }
 
                         if (data.key &&
-                            ((data.type !== WinJS.UI.ObjectType.groupHeader && this._dataSource.itemFromKey) ||
-                            (data.type === WinJS.UI.ObjectType.groupHeader && this._groupDataSource && this._groupDataSource.itemFromKey))) {
+                            ((data.type !== _UI.ObjectType.groupHeader && this._dataSource.itemFromKey) ||
+                            (data.type === _UI.ObjectType.groupHeader && this._groupDataSource && this._groupDataSource.itemFromKey))) {
                             if (this.oldCurrentItemKeyFetch) {
                                 this.oldCurrentItemKeyFetch.cancel();
                             }
-                            var dataSource = (data.type === WinJS.UI.ObjectType.groupHeader ? this._groupDataSource : this._dataSource);
+                            var dataSource = (data.type === _UI.ObjectType.groupHeader ? this._groupDataSource : this._dataSource);
                             this.oldCurrentItemKeyFetch = dataSource.itemFromKey(data.key).then(function (item) {
                                 that.oldCurrentItemKeyFetch = null;
                                 if (item) {
-                                    var element = (data.type === WinJS.UI.ObjectType.groupHeader ? that._groups.group(item.index).header : that._view.items.itemAt(item.index));
-                                    setItemFocused(element, !!element, { type: data.type || WinJS.UI.ObjectType.item, index: item.index });
+                                    var element = (data.type === _UI.ObjectType.groupHeader ? that._groups.group(item.index).header : that._view.items.itemAt(item.index));
+                                    setItemFocused(element, !!element, { type: data.type || _UI.ObjectType.item, index: item.index });
                                 }
                             });
                         } else {
                             if (data.index !== undefined) {
                                 var element;
-                                if (data.type === WinJS.UI.ObjectType.groupHeader) {
+                                if (data.type === _UI.ObjectType.groupHeader) {
                                     var group = that._groups.group(data.index);
                                     element = group && group.header;
                                 } else {
                                     element = that._view.items.itemAt(data.index);
                                 }
-                                setItemFocused(element, !!element, { type: data.type || WinJS.UI.ObjectType.item, index: data.index });
+                                setItemFocused(element, !!element, { type: data.type || _UI.ObjectType.item, index: data.index });
                             }
                         }
                     }
@@ -876,7 +823,7 @@ define([
                     },
 
                     set: function (value) {
-                        if (utilities.isPhone) {
+                        if (WinJS.Utilities.isPhone) {
                             return;
                         }
                         if (this._dragSource !== value) {
@@ -896,7 +843,7 @@ define([
                     },
 
                     set: function (value) {
-                        if (utilities.isPhone) {
+                        if (WinJS.Utilities.isPhone) {
                             return;
                         }
                         if (this._reorderable !== value) {
@@ -971,7 +918,7 @@ define([
                     /// The index of the ListView item or IListViewEntity to bring into view.
                     /// </param>
                     /// </signature>
-                    var type = WinJS.UI.ObjectType.item,
+                    var type = _UI.ObjectType.item,
                         itemIndex = value;
                     if (+value !== value) {
                         type = value.type;
@@ -986,7 +933,7 @@ define([
                     this._raiseViewLoading(true);
 
                     var that = this;
-                    this._batchViewUpdates(ViewChange.realize, ScrollToPriority.high, function () {
+                    this._batchViewUpdates(_Constants._ViewChange.realize, _Constants._ScrollToPriority.high, function () {
                         var range;
 
                         return that._entityInRange({ type: type, index: itemIndex }).then(function (validated) {
@@ -1011,14 +958,14 @@ define([
                                     range = that._convertFromCanvasCoordinates(range);
 
                                     var handled = false;
-                                    if (type === WinJS.UI.ObjectType.groupHeader && left <= range.begin) {
+                                    if (type === _UI.ObjectType.groupHeader && left <= range.begin) {
                                         // EnsureVisible on a group where the entire header is fully visible does not
                                         // scroll. This prevents tabbing from an item in a very large group to align
                                         // the scroll to the header element.
                                         var header = that._groups.group(validated.index).header;
                                         if (header) {
                                             var headerEnd;
-                                            var margins = WinJS.UI._getMargins(header);
+                                            var margins = _Layouts._getMargins(header);
                                             if (that._horizontalLayout) {
                                                 var rtl = that._rtl();
                                                 var headerStart = (rtl ? getOffsetRight(header) - margins.right : header.offsetLeft - margins.left);
@@ -1045,7 +992,7 @@ define([
 
                                     var direction = (newPosition < that._lastScrollPosition) ? "left" : "right";
                                     var max = that._viewport[that._scrollLength] - viewportLength;
-                                    newPosition = utilities._clamp(newPosition, 0, max);
+                                    newPosition = _ElementUtilities._clamp(newPosition, 0, max);
 
                                     return {
                                         position: newPosition,
@@ -1066,7 +1013,7 @@ define([
                     /// </deprecated>
                     /// </summary>
                     /// </signature>
-                    utilities._deprecated(WinJS.UI._strings.loadMorePagesIsDeprecated);
+                    _UIUtilities._deprecated(_ErrorMessages.loadMorePagesIsDeprecated);
                 },
 
                 recalculateItemPosition: function ListView_recalculateItemPosition() {
@@ -1076,7 +1023,7 @@ define([
                     /// </summary>
                     /// </signature>
                     this._writeProfilerMark("recalculateItemPosition,info");
-                    this._forceLayoutImpl(ViewChange.relayout);
+                    this._forceLayoutImpl(_Constants._ViewChange.relayout);
                 },
 
                 forceLayout: function ListView_forceLayout() {
@@ -1087,20 +1034,20 @@ define([
                     /// </summary>
                     /// </signature>
                     this._writeProfilerMark("forceLayout,info");
-                    this._forceLayoutImpl(ViewChange.remeasure);
+                    this._forceLayoutImpl(_Constants._ViewChange.remeasure);
                 },
 
                 _entityInRange: function ListView_entityInRange(entity) {
-                    if (entity.type === WinJS.UI.ObjectType.item) {
+                    if (entity.type === _UI.ObjectType.item) {
                         return this._itemsCount().then(function (itemsCount) {
-                            var index = utilities._clamp(entity.index, 0, itemsCount - 1);
+                            var index = _ElementUtilities._clamp(entity.index, 0, itemsCount - 1);
                             return {
                                 inRange: index >= 0 && index < itemsCount,
                                 index: index
                             };
                         });
                     } else {
-                        var index = utilities._clamp(entity.index, 0, this._groups.length() - 1);
+                        var index = _ElementUtilities._clamp(entity.index, 0, this._groups.length() - 1);
                         return Promise.wrap({
                             inRange: index >= 0 && index < this._groups.length(),
                             index: index
@@ -1117,7 +1064,7 @@ define([
                         that._pendingLayoutReset = true;
                         that._resizeViewport();
 
-                        that._batchViewUpdates(viewChange, ScrollToPriority.low, function () {
+                        that._batchViewUpdates(viewChange, _Constants._ScrollToPriority.low, function () {
                             return {
                                 position: that._lastScrollPosition,
                                 direction: "right"
@@ -1127,11 +1074,11 @@ define([
                 },
 
                 _configureSelectionMode: function () {
-                    if (utilities.isPhone) {
-                        if (this.tapBehavior === WinJS.UI.TapBehavior.toggleSelect && this.selectionMode === WinJS.UI.SelectionMode.multi) {
-                            utilities.addClass(this._canvas, WinJS.UI._selectionModeClass);
+                    if (WinJS.Utilities.isPhone) {
+                        if (this.tapBehavior === _UI.TapBehavior.toggleSelect && this.selectionMode === _UI.SelectionMode.multi) {
+                            _ElementUtilities.addClass(this._canvas, _Constants._selectionModeClass);
                         } else {
-                            utilities.removeClass(this._canvas, WinJS.UI._selectionModeClass);
+                            _ElementUtilities.removeClass(this._canvas, _Constants._selectionModeClass);
                         }
                     }
                 },
@@ -1144,13 +1091,13 @@ define([
 
                 _viewportScrollPosition: {
                     get: function () {
-                        this._currentScrollPosition = WinJS.Utilities.getScrollPosition(this._viewport)[this._scrollProperty];
+                        this._currentScrollPosition = _ElementUtilities.getScrollPosition(this._viewport)[this._scrollProperty];
                         return this._currentScrollPosition;
                     },
                     set: function (value) {
                         var newScrollPos = {};
                         newScrollPos[this._scrollProperty] = value;
-                        WinJS.Utilities.setScrollPosition(this._viewport, newScrollPos);
+                        _ElementUtilities.setScrollPosition(this._viewport, newScrollPos);
                         this._currentScrollPosition = value;
                     }
                 },
@@ -1180,10 +1127,10 @@ define([
                     },
                     set: function (newPosition) {
                         var that = this;
-                        this._batchViewUpdates(ViewChange.realize, ScrollToPriority.high, function () {
+                        this._batchViewUpdates(_Constants._ViewChange.realize, _Constants._ScrollToPriority.high, function () {
                             return that._view.waitForValidScrollPosition(newPosition).then(function () {
                                 var max = that._viewport[that._scrollLength] - that._getViewportLength();
-                                newPosition = utilities._clamp(newPosition, 0, max);
+                                newPosition = _ElementUtilities._clamp(newPosition, 0, max);
                                 var direction = (newPosition < that._lastScrollPosition) ? "left" : "right";
                                 return {
                                     position: newPosition,
@@ -1198,14 +1145,14 @@ define([
                     var renderer;
                     if (!newRenderer) {
                         if (WinJS.validation) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.ListView.invalidTemplate", WinJS.UI._strings.invalidTemplate);
+                            throw new _ErrorFromName("WinJS.UI.ListView.invalidTemplate", _ErrorMessages.invalidTemplate);
                         }
                         renderer = trivialHtmlRenderer;
                     } else if (typeof newRenderer === "function") {
                         renderer = newRenderer;
                     } else if (typeof newRenderer === "object") {
                         if (WinJS.validation && !newRenderer.renderItem) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.ListView.invalidTemplate", WinJS.UI._strings.invalidTemplate);
+                            throw new _ErrorFromName("WinJS.UI.ListView.invalidTemplate", _ErrorMessages.invalidTemplate);
                         }
                         renderer = newRenderer.renderItem;
                     }
@@ -1221,7 +1168,7 @@ define([
 
                 _renderWithoutReuse: function ListView_renderWithoutReuse(itemPromise, oldElement) {
                     if (oldElement) {
-                        WinJS.Utilities._disposeElement(oldElement);
+                        _Dispose._disposeElement(oldElement);
                     }
                     return this._itemRenderer(itemPromise);
                 },
@@ -1262,10 +1209,10 @@ define([
                     }
 
                     var viewChange = this._viewChange;
-                    this._viewChange = ViewChange.realize;
+                    this._viewChange = _Constants._ViewChange.realize;
 
                     function functorWrapper() {
-                        that._scrollToPriority = ScrollToPriority.uninitialized;
+                        that._scrollToPriority = _Constants._ScrollToPriority.uninitialized;
                         var setScrollbarPosition = that._setScrollbarPosition;
                         that._setScrollbarPosition = false;
 
@@ -1286,7 +1233,7 @@ define([
                         );
                     }
 
-                    if (viewChange === ViewChange.rebuild) {
+                    if (viewChange === _Constants._ViewChange.rebuild) {
                         if (this._pendingGroupWork) {
                             this._updateGroupWork();
                         }
@@ -1299,13 +1246,13 @@ define([
                         }
                         this._view.reload(functorWrapper, true);
                         this._setFocusOnItem(this._selection._getFocused());
-                    } else if (viewChange === ViewChange.remeasure) {
+                    } else if (viewChange === _Constants._ViewChange.remeasure) {
                         this._view.resetItems(true);
                         this._resetLayout();
                         resetCache();
                         this._view.refresh(functorWrapper);
                         this._setFocusOnItem(this._selection._getFocused());
-                    } else if (viewChange === ViewChange.relayout) {
+                    } else if (viewChange === _Constants._ViewChange.relayout) {
                         if (this._pendingLayoutReset) {
                             this._resetLayout();
                             resetCache();
@@ -1330,13 +1277,13 @@ define([
                         this._raiseViewLoading();
 
                         var that = this;
-                        this._batchingViewUpdatesSignal = new WinJS._Signal();
+                        this._batchingViewUpdatesSignal = new _Signal();
                         this._batchingViewUpdates = Promise.any([this._batchingViewUpdatesSignal.promise, Scheduler.schedulePromiseHigh(null, "WinJS.UI.ListView._updateView")]).then(function () {
                             if (that._isZombie()) { return; }
 
                             // If we're displaying for the first time, or there were no items visible in the view, we can skip the fade out animation
                             // and go straight to the refresh. _view.items._itemData.length is the most trustworthy way to find how many items are visible.
-                            if (that._viewChange === ViewChange.rebuild && !that._firstTimeDisplayed && Object.keys(that._view.items._itemData).length !== 0 && !skipFadeout) {
+                            if (that._viewChange === _Constants._ViewChange.rebuild && !that._firstTimeDisplayed && Object.keys(that._view.items._itemData).length !== 0 && !skipFadeout) {
                                 return that._fadeOutViewport();
                             }
                         }).then(
@@ -1375,15 +1322,15 @@ define([
                 },
 
                 _setupInternalTree: function ListView_setupInternalTree() {
-                    utilities.addClass(this._element, WinJS.UI._listViewClass);
-                    utilities[this._rtl() ? "addClass" : "removeClass"](this._element, WinJS.UI._rtlListViewClass);
+                    _ElementUtilities.addClass(this._element, _Constants._listViewClass);
+                    _ElementUtilities[this._rtl() ? "addClass" : "removeClass"](this._element, _Constants._rtlListViewClass);
 
                     this._element.innerHTML =
-                        '<div tabIndex="-1" role="group" class="' + WinJS.UI._viewportClass + ' ' + WinJS.UI._horizontalClass + '">' +
-                            '<div class="' + WinJS.UI._scrollableClass + '">' +
+                        '<div tabIndex="-1" role="group" class="' + _Constants._viewportClass + ' ' + _Constants._horizontalClass + '">' +
+                            '<div class="' + _Constants._scrollableClass + '">' +
                                 // Create a proxy element inside the canvas so that during an MSPointerDown event we can call
                                 // msSetPointerCapture on it. This allows hover to not be passed to it which saves a large invalidation.
-                                '<div class="' + WinJS.UI._proxyClass + '"></div>' +
+                                '<div class="' + _Constants._proxyClass + '"></div>' +
                             '</div>' +
                             '<div></div>' +
                         '</div>' +
@@ -1399,15 +1346,15 @@ define([
                     // The deleteWrapper div is used to maintain the scroll width (after delete(s)) until the animation is done
                     this._deleteWrapper = this._canvas.nextElementSibling;
                     this._keyboardEventsHelper = this._viewport.nextElementSibling;
-                    this._tabIndex = WinJS.Utilities.getTabIndex(this._element);
+                    this._tabIndex = _ElementUtilities.getTabIndex(this._element);
                     if (this._tabIndex < 0) {
                         this._tabIndex = 0;
                     }
-                    this._tabManager = new WinJS.UI.TabContainer(this._viewport);
+                    this._tabManager = new _TabContainer.TabContainer(this._viewport);
                     this._tabManager.tabIndex = this._tabIndex;
 
                     this._progressBar = document.createElement("progress");
-                    utilities.addClass(this._progressBar, WinJS.UI._progressClass);
+                    _ElementUtilities.addClass(this._progressBar, _Constants._progressClass);
                     this._progressBar.style.position = "absolute";
                     this._progressBar.max = 100;
                 },
@@ -1431,7 +1378,7 @@ define([
                         // from the viewport to the keyboardEventsHelper when scrolling with Narrator Touch.
                         if (document.activeElement !== this._viewport && this._hasKeyboardFocus) {
                             this._keyboardEventsHelper._shouldHaveFocus = true;
-                            WinJS.Utilities._setActive(this._keyboardEventsHelper);
+                            _ElementUtilities._setActive(this._keyboardEventsHelper);
                         }
                     }
                     this._itemFocused = false;
@@ -1461,7 +1408,7 @@ define([
                             }
                             // The requestItem promise just completed so _cachedCount will
                             // be initialized.
-                            that._view.updateAriaForAnnouncement(item, (entity.type === WinJS.UI.ObjectType.groupHeader ? that._groups.length() : that._cachedCount));
+                            that._view.updateAriaForAnnouncement(item, (entity.type === _UI.ObjectType.groupHeader ? that._groups.length() : that._cachedCount));
 
                             // Some consumers of ListView listen for item invoked events and hide the listview when an item is clicked.
                             // Since keyboard interactions rely on async operations, sometimes an invoke event can be received before we get
@@ -1469,11 +1416,11 @@ define([
                             // is raised for trying to focus on an invisible item. Checking visibility is non-trivial, so it's best
                             // just to catch the exception and ignore it.
                             that._itemFocused = true;
-                            WinJS.Utilities._setActive(item);
+                            _ElementUtilities._setActive(item);
                         }
                     };
 
-                    if (entity.type !== WinJS.UI.ObjectType.groupHeader) {
+                    if (entity.type !== _UI.ObjectType.groupHeader) {
                         this._focusRequest = this._view.items.requestItem(entity.index);
                     } else {
                         this._focusRequest = this._groups.requestHeader(entity.index);
@@ -1524,7 +1471,7 @@ define([
                     this._cachedStyleDir = this._element.style.direction;
 
                     elementObservers.forEach(function (elementObserver) {
-                        new WinJS.Utilities._MutationObserver(elementObserver.handler).observe(that._element, { attributes: true, attributeFilter: elementObserver.filter });
+                        new _ElementUtilities._MutationObserver(elementObserver.handler).observe(that._element, { attributes: true, attributeFilter: elementObserver.filter });
                     });
 
                     // KeyDown handler needs to be added explicitly via addEventListener instead of using attachEvent.
@@ -1545,7 +1492,7 @@ define([
                         modeHandler("MSManipulationStateChanged", true, true)
                     ];
                     events.forEach(function (eventHandler) {
-                        WinJS.Utilities._addEventListener(that._viewport, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                        _ElementUtilities._addEventListener(that._viewport, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
 
                     var elementEvents = [
@@ -1556,7 +1503,7 @@ define([
                         listViewHandler("MSElementResize", false, false)
                     ];
                     elementEvents.forEach(function (eventHandler) {
-                        WinJS.Utilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
+                        _ElementUtilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
 
                     var viewportEvents = [
@@ -1602,7 +1549,7 @@ define([
                                         }
 
                                         if (elementInfo.itemBox) {
-                                            utilities.addClass(newItem, WinJS.UI._itemClass);
+                                            _ElementUtilities.addClass(newItem, _Constants._itemClass);
                                             that._setupAriaSelectionObserver(newItem);
 
                                             var next = oldItem.nextElementSibling;
@@ -1618,7 +1565,7 @@ define([
                                             itemsManagerRecord: elementInfo.itemsManagerRecord
                                         });
                                         delete that._updater.elements[uniqueID(oldItem)];
-                                        WinJS.Utilities._disposeElement(oldItem);
+                                        _Dispose._disposeElement(oldItem);
                                         that._updater.elements[uniqueID(newItem)] = {
                                             item: newItem,
                                             container: elementInfo.container,
@@ -1628,8 +1575,8 @@ define([
                                             itemsManagerRecord: elementInfo.itemsManagerRecord
                                         };
                                     } else if (elementInfo.itemBox && elementInfo.container) {
-                                        WinJS.UI._ItemEventsHandler.renderSelection(elementInfo.itemBox, newItem, selected, true);
-                                        utilities[selected ? "addClass" : "removeClass"](elementInfo.container, WinJS.UI._selectedClass);
+                                        _ItemEventsHandler._ItemEventsHandler.renderSelection(elementInfo.itemBox, newItem, selected, true);
+                                        _ElementUtilities[selected ? "addClass" : "removeClass"](elementInfo.container, _Constants._selectedClass);
                                     }
                                     that._updater.changed = true;
                                 }
@@ -1647,7 +1594,7 @@ define([
                                 function removeFromSelection(index) {
                                     that._updater.updateDrag = true;
                                     if (that._currentMode()._dragging && that._currentMode()._draggingUnselectedItem && that._currentMode()._dragInfo._isIncluded(index)) {
-                                        that._updater.newDragInfo = new WinJS.UI._Selection(that, []);
+                                        that._updater.newDragInfo = new _SelectionManager._Selection(that, []);
                                     }
 
                                     var firstRange = that._updater.selectionFirst[index],
@@ -1701,7 +1648,7 @@ define([
                                         index = itemObject && itemObject.index;
                                     }
 
-                                    if (that._updater.oldFocus.type !== WinJS.UI.ObjectType.groupHeader && that._updater.oldFocus.index === index) {
+                                    if (that._updater.oldFocus.type !== _UI.ObjectType.groupHeader && that._updater.oldFocus.index === index) {
                                         that._updater.newFocus.index = index; // If index is too high, it'll be fixed in endNotifications
                                         that._updater.focusedItemRemoved = true;
                                     }
@@ -1756,11 +1703,11 @@ define([
                                     that._updater.itemsMoved = true;
                                 }
                                 if (that._currentMode()._dragging && that._currentMode()._draggingUnselectedItem && that._currentMode()._dragInfo._isIncluded(oldIndex)) {
-                                    that._updater.newDragInfo = new WinJS.UI._Selection(that, [{ firstIndex: newIndex, lastIndex: newIndex }]);
+                                    that._updater.newDragInfo = new _SelectionManager._Selection(that, [{ firstIndex: newIndex, lastIndex: newIndex }]);
                                     that._updater.updateDrag = true;
                                 }
 
-                                if (that._updater.oldFocus.type !== WinJS.UI.ObjectType.groupHeader && that._updater.oldFocus.index === oldIndex) {
+                                if (that._updater.oldFocus.type !== _UI.ObjectType.groupHeader && that._updater.oldFocus.index === oldIndex) {
                                     that._updater.newFocus.index = newIndex;
                                     that._updater.changed = true;
                                 }
@@ -1857,7 +1804,7 @@ define([
                         };
 
                     function statusChanged(eventObject) {
-                        if (eventObject.detail === thisWinUI.DataSourceStatus.failure) {
+                        if (eventObject.detail === _UI.DataSourceStatus.failure) {
                             that.itemDataSource = null;
                             that.groupDataSource = null;
                         }
@@ -1867,7 +1814,7 @@ define([
                         this._versionManager._dispose();
                     }
 
-                    this._versionManager = new WinJS.UI._VersionManager();
+                    this._versionManager = new _VersionManager._VersionManager();
                     this._updater = null;
 
                     var ranges = this._selection.getRanges();
@@ -1887,9 +1834,9 @@ define([
                         this._itemsCountPromise.cancel();
                         this._itemsCountPromise = null;
                     }
-                    this._cachedCount = WinJS.UI._UNINITIALIZED;
+                    this._cachedCount = _Constants._UNINITIALIZED;
 
-                    this._itemsManager = thisWinUI._createItemsManager(
+                    this._itemsManager = _ItemsManager._createItemsManager(
                         this._dataSource,
                         this._renderWithoutReuse.bind(this),
                         notificationHandler,
@@ -1924,12 +1871,12 @@ define([
                     this._selection._reset();
                     this._updateItemsManager();
                     this._pendingLayoutReset = true;
-                    this._batchViewUpdates(ViewChange.rebuild, ScrollToPriority.low, this.scrollPosition);
+                    this._batchViewUpdates(_Constants._ViewChange.rebuild, _Constants._ScrollToPriority.low, this.scrollPosition);
                 },
 
                 _createUpdater: function ListView_createUpdater() {
                     if (!this._updater) {
-                        if (this.itemDataSource instanceof WinJS.UI.VirtualizedDataSource) {
+                        if (this.itemDataSource._isVirtualizedDataSource) {
                             // VDS doesn't support the _updateAffectedRange notification so assume
                             // that everything needs to be relaid out.
                             this._affectedRange.addAll();
@@ -1946,12 +1893,12 @@ define([
                             selectionFirst: {},
                             selectionLast: {},
                             selectionHandles: {},
-                            oldSelectionPivot: { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX },
-                            newSelectionPivot: { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX },
+                            oldSelectionPivot: { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX },
+                            newSelectionPivot: { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX },
                             removed: [],
                             selectionChanged: false,
-                            oldFocus: { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX },
-                            newFocus: { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX },
+                            oldFocus: { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX },
+                            newFocus: { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX },
                             hadKeyboardFocus: this._hasKeyboardFocus,
                             itemsMoved: false,
                             lastVisible: this.indexOfLastVisible,
@@ -2038,7 +1985,7 @@ define([
                         }
 
                         if (updater.selectionChanged) {
-                            var newSelectionItems = new WinJS.UI._Selection(this, newSelection);
+                            var newSelectionItems = new _SelectionManager._Selection(this, newSelection);
 
                             // We do not allow listeners to cancel the selection
                             // change because the cancellation would also have to
@@ -2052,9 +1999,9 @@ define([
                         }
                         this._selection._updateCount(this._cachedCount);
                         updater.newSelectionPivot = Math.min(this._cachedCount - 1, updater.newSelectionPivot);
-                        this._selection._pivot = (updater.newSelectionPivot >= 0 ? updater.newSelectionPivot : WinJS.UI._INVALID_INDEX);
+                        this._selection._pivot = (updater.newSelectionPivot >= 0 ? updater.newSelectionPivot : _Constants._INVALID_INDEX);
 
-                        if (updater.newFocus.type !== WinJS.UI.ObjectType.groupHeader) {
+                        if (updater.newFocus.type !== _UI.ObjectType.groupHeader) {
                             updater.newFocus.index = Math.max(0, Math.min(this._cachedCount - 1, updater.newFocus.index));
                         }
                         this._selection._setFocused(updater.newFocus, this._selection._keyboardFocused());
@@ -2168,12 +2115,12 @@ define([
 
                         var that = this;
                         return this._groups.synchronizeGroups().then(function () {
-                            if (updater.newFocus.type === WinJS.UI.ObjectType.groupHeader) {
+                            if (updater.newFocus.type === _UI.ObjectType.groupHeader) {
                                 updater.newFocus.index = Math.min(that._groups.length() - 1, updater.newFocus.index);
 
                                 if (updater.newFocus.index < 0) {
                                     // An empty listview has currentFocus = item 0
-                                    updater.newFocus = { type: WinJS.UI.ObjectType.item, index: 0 };
+                                    updater.newFocus = { type: _UI.ObjectType.item, index: 0 };
                                 }
                                 that._selection._setFocused(updater.newFocus, that._selection._keyboardFocused());
                             }
@@ -2252,11 +2199,11 @@ define([
                             this._verifyRealizationNeededForChange();
                             this._synchronize().then(function (scrollbarPos) {
                                 that._writeProfilerMark("update,StopTM");
-                                that._batchViewUpdates(ViewChange.relayout, ScrollToPriority.low, scrollbarPos).complete();
+                                that._batchViewUpdates(_Constants._ViewChange.relayout, _Constants._ScrollToPriority.low, scrollbarPos).complete();
                             });
                         } else {
                             // Even if nothing important changed we need to restart aria work if it was canceled.
-                            this._batchViewUpdates(ViewChange.relayout, ScrollToPriority.low, this._lastScrollPosition).complete();
+                            this._batchViewUpdates(_Constants._ViewChange.relayout, _Constants._ScrollToPriority.low, this._lastScrollPosition).complete();
                         }
                     }
                 },
@@ -2281,9 +2228,9 @@ define([
                     }
 
                     if (this._groupDataSource) {
-                        this._groups = new WinJS.UI._UnvirtualizedGroupsContainer(this, this._groupDataSource);
+                        this._groups = new _GroupsContainer._UnvirtualizedGroupsContainer(this, this._groupDataSource);
                     } else {
-                        this._groups = new WinJS.UI._NoGroups(this);
+                        this._groups = new _GroupsContainer._NoGroups(this);
                     }
                 },
 
@@ -2294,7 +2241,7 @@ define([
                             that._pendingLayoutReset = true;
                             var orientationChanged = (that._layout.orientation === "horizontal") !== that._horizontalLayout;
                             that._affectedRange.addAll();
-                            that._batchViewUpdates(ViewChange.rebuild, ScrollToPriority.low, orientationChanged ? 0 : that.scrollPosition, false, true);
+                            that._batchViewUpdates(_Constants._ViewChange.rebuild, _Constants._ScrollToPriority.low, orientationChanged ? 0 : that.scrollPosition, false, true);
                         },
                         itemFromIndex: function (itemIndex) {
                             return that._itemsManager._itemPromiseAtIndex(itemIndex);
@@ -2313,7 +2260,7 @@ define([
                             return that._groups.groupFromItem(itemIndex);
                         },
                         renderItem: function (itemPromise) {
-                            return WinJS.Promise._cancelBlocker(that._itemsManager._itemFromItemPromise(itemPromise)).then(function (element) {
+                            return Promise._cancelBlocker(that._itemsManager._itemFromItemPromise(itemPromise)).then(function (element) {
                                 if (element) {
                                     var record = that._itemsManager._recordFromElement(element);
                                     if (record.pendingReady) {
@@ -2322,28 +2269,28 @@ define([
 
                                     element = element.cloneNode(true);
 
-                                    utilities.addClass(element, WinJS.UI._itemClass);
+                                    _ElementUtilities.addClass(element, _Constants._itemClass);
 
                                     var itemBox = document.createElement("div");
-                                    utilities.addClass(itemBox, thisWinUI._itemBoxClass);
+                                    _ElementUtilities.addClass(itemBox, _Constants._itemBoxClass);
                                     itemBox.appendChild(element);
 
                                     var container = document.createElement("div");
-                                    utilities.addClass(container, thisWinUI._containerClass);
+                                    _ElementUtilities.addClass(container, _Constants._containerClass);
                                     container.appendChild(itemBox);
 
                                     return container;
                                 } else {
-                                    return WinJS.Promise.cancel;
+                                    return Promise.cancel;
                                 }
                             });
                         },
                         renderHeader: function (group) {
-                            var rendered = WinJS.UI._normalizeRendererReturn(that.groupHeaderTemplate(Promise.wrap(group)));
+                            var rendered = _ItemsManager._normalizeRendererReturn(that.groupHeaderTemplate(Promise.wrap(group)));
                             return rendered.then(function (headerRecord) {
-                                utilities.addClass(headerRecord.element, thisWinUI._headerClass);
+                                _ElementUtilities.addClass(headerRecord.element, _Constants._headerClass);
                                 var container = document.createElement("div");
-                                utilities.addClass(container, thisWinUI._headerContainerClass);
+                                _ElementUtilities.addClass(container, _Constants._headerContainerClass);
                                 container.appendChild(headerRecord.element);
                                 return container;
                             });
@@ -2459,8 +2406,8 @@ define([
                         this._scrollProperty = "scrollLeft";
                         this._scrollLength = "scrollWidth";
                         this._deleteWrapper.style.minHeight = "";
-                        utilities.addClass(this._viewport, WinJS.UI._horizontalClass);
-                        utilities.removeClass(this._viewport, WinJS.UI._verticalClass);
+                        _ElementUtilities.addClass(this._viewport, _Constants._horizontalClass);
+                        _ElementUtilities.removeClass(this._viewport, _Constants._verticalClass);
                         if (resetScrollPosition) {
                             this._viewport.scrollTop = 0;
                         }
@@ -2469,10 +2416,10 @@ define([
                         this._scrollProperty = "scrollTop";
                         this._scrollLength = "scrollHeight";
                         this._deleteWrapper.style.minWidth = "";
-                        utilities.addClass(this._viewport, WinJS.UI._verticalClass);
-                        utilities.removeClass(this._viewport, WinJS.UI._horizontalClass);
+                        _ElementUtilities.addClass(this._viewport, _Constants._verticalClass);
+                        _ElementUtilities.removeClass(this._viewport, _Constants._horizontalClass);
                         if (resetScrollPosition) {
-                            WinJS.Utilities.setScrollPosition(this._viewport, {scrollLeft: 0});
+                            _ElementUtilities.setScrollPosition(this._viewport, {scrollLeft: 0});
                         }
                     }
                 },
@@ -2504,17 +2451,17 @@ define([
                     } else if (layoutObject && (layoutObject.initialize)) {
                         layoutImpl = layoutObject;
                     } else {
-                        layoutImpl = new WinJS.UI.GridLayout(layoutObject);
+                        layoutImpl = new _Layouts.GridLayout(layoutObject);
                     }
 
                     hadPreviousLayout && this._resetCanvas();
 
                     this._layoutImpl = layoutImpl;
-                    this._layout = new WinJS.UI._LayoutWrapper(layoutImpl);
+                    this._layout = new _Layouts._LayoutWrapper(layoutImpl);
 
                     hadPreviousLayout && this._unsetFocusOnItem();
-                    this._setFocusOnItem({ type: WinJS.UI.ObjectType.item, index: 0 });
-                    this._selection._setFocused({ type: WinJS.UI.ObjectType.item, index: 0 });
+                    this._setFocusOnItem({ type: _UI.ObjectType.item, index: 0 });
+                    this._selection._setFocused({ type: _UI.ObjectType.item, index: 0 });
 
                     this._horizontalLayout = this._initializeLayout();
                     this._resetLayoutOrientation(hadPreviousLayout);
@@ -2532,45 +2479,45 @@ define([
                     // We apply an -ms-touch-action style to block panning and swiping from occurring at the same time. It is
                     // possible to pan in the margins between items and on lists without the swipe ability.
                     // Phone does not support swipe; therefore, we don't add them swipeable CSS class.
-                    if (!utilities.isPhone && ((this._currentMode() instanceof WinJS.UI._SelectionMode && this._selectionAllowed() && this._swipeBehavior === WinJS.UI.SwipeBehavior.select) ||
+                    if (!WinJS.Utilities.isPhone && ((this._currentMode() instanceof _BrowseMode._SelectionMode && this._selectionAllowed() && this._swipeBehavior === _UI.SwipeBehavior.select) ||
                         this._dragSource || this._reorderable)) {
                         this._swipeable = true;
-                        utilities.addClass(this._element, WinJS.UI._swipeableClass);
+                        _ElementUtilities.addClass(this._element, _Constants._swipeableClass);
                     } else {
                         this._swipeable = false;
-                        utilities.removeClass(this._element, WinJS.UI._swipeableClass);
+                        _ElementUtilities.removeClass(this._element, _Constants._swipeableClass);
                     }
                     var dragEnabled = (this.itemsDraggable || this.itemsReorderable),
-                        swipeSelectEnabled = (this._selectionAllowed() && this._swipeBehavior === WinJS.UI.SwipeBehavior.select),
+                        swipeSelectEnabled = (this._selectionAllowed() && this._swipeBehavior === _UI.SwipeBehavior.select),
                         swipeEnabled = this._swipeable;
 
                     this._view.items.each(function (index, item, itemData) {
                         if (itemData.itemBox) {
-                            var dragDisabledOnItem = utilities.hasClass(item, WinJS.UI._nonDraggableClass),
-                                selectionDisabledOnItem = utilities.hasClass(item, WinJS.UI._nonSelectableClass),
-                                nonSwipeable = utilities.hasClass(itemData.itemBox, WinJS.UI._nonSwipeableClass);
+                            var dragDisabledOnItem = _ElementUtilities.hasClass(item, _Constants._nonDraggableClass),
+                                selectionDisabledOnItem = _ElementUtilities.hasClass(item, _Constants._nonSelectableClass),
+                                nonSwipeable = _ElementUtilities.hasClass(itemData.itemBox, _Constants._nonSwipeableClass);
                             itemData.itemBox.draggable = (dragEnabled && !dragDisabledOnItem);
                             if (!swipeEnabled && nonSwipeable) {
-                                utilities.removeClass(itemData.itemBox, WinJS.UI._nonSwipeableClass);
+                                _ElementUtilities.removeClass(itemData.itemBox, _Constants._nonSwipeableClass);
                             } else if (swipeEnabled) {
                                 var makeNonSwipeable = (dragEnabled && !swipeSelectEnabled && dragDisabledOnItem) ||
                                                         (swipeSelectEnabled && !dragEnabled && selectionDisabledOnItem) ||
                                                         (dragDisabledOnItem && selectionDisabledOnItem);
                                 if (makeNonSwipeable && !nonSwipeable) {
-                                    utilities.addClass(itemData.itemBox, WinJS.UI._nonSwipeableClass);
+                                    _ElementUtilities.addClass(itemData.itemBox, _Constants._nonSwipeableClass);
                                 } else if (!makeNonSwipeable && nonSwipeable) {
-                                    utilities.removeClass(itemData.itemBox, WinJS.UI._nonSwipeableClass);
+                                    _ElementUtilities.removeClass(itemData.itemBox, _Constants._nonSwipeableClass);
                                 }
                             }
-                            var makeNonSelectable = utilities.isPhone && selectionDisabledOnItem;
-                            utilities[makeNonSelectable ? "addClass" : "removeClass"](itemData.itemBox, WinJS.UI._nonSelectableClass);
+                            var makeNonSelectable = WinJS.Utilities.isPhone && selectionDisabledOnItem;
+                            _ElementUtilities[makeNonSelectable ? "addClass" : "removeClass"](itemData.itemBox, _Constants._nonSelectableClass);
                         }
                     });
                 },
 
                 _resizeViewport: function ListView_resizeViewport() {
-                    this._viewportWidth = WinJS.UI._UNINITIALIZED;
-                    this._viewportHeight = WinJS.UI._UNINITIALIZED;
+                    this._viewportWidth = _Constants._UNINITIALIZED;
+                    this._viewportHeight = _Constants._UNINITIALIZED;
                 },
 
                 _onMSElementResize: function ListView_onResize() {
@@ -2578,7 +2525,7 @@ define([
                     Scheduler.schedule(function ListView_async_msElementResize() {
                         if (this._isZombie()) { return; }
                         // If these values are uninitialized there is already a realization pass pending.
-                        if (this._viewportWidth !== WinJS.UI._UNINITIALIZED && this._viewportHeight !== WinJS.UI._UNINITIALIZED) {
+                        if (this._viewportWidth !== _Constants._UNINITIALIZED && this._viewportHeight !== _Constants._UNINITIALIZED) {
                             var newWidth = this._element.offsetWidth,
                                 newHeight = this._element.offsetHeight;
                             if ((this._previousWidth !== newWidth) || (this._previousHeight !== newHeight)) {
@@ -2592,7 +2539,7 @@ define([
 
                                 var that = this;
                                 this._affectedRange.addAll();
-                                this._batchViewUpdates(ViewChange.relayout, ScrollToPriority.low, function () {
+                                this._batchViewUpdates(_Constants._ViewChange.relayout, _Constants._ScrollToPriority.low, function () {
                                     return {
                                         position: that.scrollPosition,
                                         direction: "right"
@@ -2636,20 +2583,20 @@ define([
                             element = this._groups.headerFrom(event.target),
                             winItem = null;
                         if (element) {
-                            entity.type = WinJS.UI.ObjectType.groupHeader;
+                            entity.type = _UI.ObjectType.groupHeader;
                             entity.index = this._groups.index(element);
                         } else {
                             entity.index = items.index(event.target);
-                            entity.type = WinJS.UI.ObjectType.item;
+                            entity.type = _UI.ObjectType.item;
                             element = items.itemBoxAt(entity.index);
                             winItem = items.itemAt(entity.index);
                         }
 
                         // In the old layouts, index will be -1 if a group header got focus
-                        if (entity.index !== WinJS.UI._INVALID_INDEX) {
+                        if (entity.index !== _Constants._INVALID_INDEX) {
                             if (this._keyboardFocusInbound || this._selection._keyboardFocused()) {
-                                if ((entity.type === WinJS.UI.ObjectType.groupHeader && event.target === element) ||
-                                        (entity.type === WinJS.UI.ObjectType.item && event.target.parentNode === element)) {
+                                if ((entity.type === _UI.ObjectType.groupHeader && event.target === element) ||
+                                        (entity.type === _UI.ObjectType.item && event.target.parentNode === element)) {
                                     // For items we check the parentNode because the srcElement is win-item and element is win-itembox,
                                     // for header, they should both be the win-groupheader
                                     this._drawFocusRectangle(element);
@@ -2658,7 +2605,7 @@ define([
                             if (this._tabManager.childFocus !== element && this._tabManager.childFocus !== winItem) {
                                 this._selection._setFocused(entity, this._keyboardFocusInbound || this._selection._keyboardFocused());
                                 this._keyboardFocusInbound = false;
-                                element = entity.type === WinJS.UI.ObjectType.groupHeader ? element : items.itemAt(entity.index);
+                                element = entity.type === _UI.ObjectType.groupHeader ? element : items.itemAt(entity.index);
                                 this._tabManager.childFocus = element;
 
                                 if (that._updater) {
@@ -2699,12 +2646,12 @@ define([
                     this._manipulationState = ev.currentState;
                     that._writeProfilerMark("_onMSManipulationStateChanged state(" + ev.currentState + "),info");
 
-                    if (this._manipulationState !== WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED && !this._manipulationEndSignal) {
-                        this._manipulationEndSignal = new WinJS._Signal();
+                    if (this._manipulationState !== _ElementUtilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED && !this._manipulationEndSignal) {
+                        this._manipulationEndSignal = new _Signal();
                         this._manipulationEndSignal.promise.done(done, done);
                     }
 
-                    if (this._manipulationState === WinJS.Utilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
+                    if (this._manipulationState === _ElementUtilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED) {
                         this._manipulationEndSignal.complete();
                     }
                 },
@@ -2735,7 +2682,7 @@ define([
                                 direction: direction
                             };
                         },
-                            this._manipulationEndSignal ? this._manipulationEndSignal.promise : Promise.timeout(WinJS.UI._DEFERRED_SCROLL_END));
+                            this._manipulationEndSignal ? this._manipulationEndSignal.promise : Promise.timeout(_Constants._DEFERRED_SCROLL_END));
                     } else {
                         this._pendingScroll = null;
                     }
@@ -2761,7 +2708,7 @@ define([
                         if (dirChanged) {
                             that._cachedStyleDir = record.target.style.direction;
                             that._cachedRTL = null;
-                            utilities[that._rtl() ? "addClass" : "removeClass"](that._element, WinJS.UI._rtlListViewClass);
+                            _ElementUtilities[that._rtl() ? "addClass" : "removeClass"](that._element, _Constants._rtlListViewClass);
 
                             that._lastScrollPosition = 0;
                             that._viewportScrollPosition = 0;
@@ -2785,7 +2732,7 @@ define([
 
                 _getCanvasMargins: function ListView_getCanvasMargins() {
                     if (!this._canvasMargins) {
-                        this._canvasMargins = WinJS.UI._getMargins(this._canvas);
+                        this._canvasMargins = _Layouts._getMargins(this._canvas);
                     }
                     return this._canvasMargins;
                 },
@@ -2824,9 +2771,9 @@ define([
 
                 // Methods in the site interface used by ScrollView
                 _getViewportSize: function ListView_getViewportSize() {
-                    if (this._viewportWidth === WinJS.UI._UNINITIALIZED || this._viewportHeight === WinJS.UI._UNINITIALIZED) {
-                        this._viewportWidth = Math.max(0, utilities.getContentWidth(this._element));
-                        this._viewportHeight = Math.max(0, utilities.getContentHeight(this._element));
+                    if (this._viewportWidth === _Constants._UNINITIALIZED || this._viewportHeight === _Constants._UNINITIALIZED) {
+                        this._viewportWidth = Math.max(0, _ElementUtilities.getContentWidth(this._element));
+                        this._viewportHeight = Math.max(0, _ElementUtilities.getContentHeight(this._element));
                         this._writeProfilerMark("viewportSizeDetected width:" + this._viewportWidth + " height:" + this._viewportHeight);
 
                         this._previousWidth = this._element.offsetWidth;
@@ -2844,14 +2791,14 @@ define([
                         that._itemsCountPromise = null;
                     }
 
-                    if (this._cachedCount !== WinJS.UI._UNINITIALIZED) {
+                    if (this._cachedCount !== _Constants._UNINITIALIZED) {
                         return Promise.wrap(this._cachedCount);
                     } else {
                         var retVal;
                         if (!this._itemsCountPromise) {
                             retVal = this._itemsCountPromise = this._itemsManager.dataSource.getCount().then(
                                 function (count) {
-                                    if (count === thisWinUI.CountResult.unknown) {
+                                    if (count === _UI.CountResult.unknown) {
                                         count = 0;
                                     }
                                     that._cachedCount = count;
@@ -2859,7 +2806,7 @@ define([
                                     return count;
                                 },
                                 function () {
-                                    return WinJS.Promise.cancel;
+                                    return Promise.cancel;
                                 }
                             );
 
@@ -2943,7 +2890,7 @@ define([
                         return element;
                     }
 
-                    this._itemBoxTemplate = createNodeWithClass(WinJS.UI._itemBoxClass, true);
+                    this._itemBoxTemplate = createNodeWithClass(_Constants._itemBoxClass, true);
                 },
 
                 // Methods used by SelectionManager
@@ -2961,11 +2908,11 @@ define([
 
                     var that = this;
                     this._view.items.each(function (index, element, itemData) {
-                        if (itemData.itemBox && !utilities.hasClass(itemData.itemBox, thisWinUI._swipeClass)) {
+                        if (itemData.itemBox && !_ElementUtilities.hasClass(itemData.itemBox, _Constants._swipeClass)) {
                             var selected = selectAll || !!selectionMap[index];
-                            WinJS.UI._ItemEventsHandler.renderSelection(itemData.itemBox, element, selected, true);
+                            _ItemEventsHandler._ItemEventsHandler.renderSelection(itemData.itemBox, element, selected, true);
                             if (itemData.container) {
-                                utilities[selected ? "addClass" : "removeClass"](itemData.container, WinJS.UI._selectedClass);
+                                _ElementUtilities[selected ? "addClass" : "removeClass"](itemData.container, _Constants._selectedClass);
                             }
                         }
                     });
@@ -2996,7 +2943,7 @@ define([
                             this._progressIndicatorDelayTimer.cancel();
                         }
                         var that = this;
-                        this._progressIndicatorDelayTimer = Promise.timeout(WinJS.UI._LISTVIEW_PROGRESS_DELAY).then(function () {
+                        this._progressIndicatorDelayTimer = Promise.timeout(_Constants._LISTVIEW_PROGRESS_DELAY).then(function () {
                             if (!that._isZombie()) {
                                 parent.appendChild(progressBar);
                                 AnimationHelper.fadeInElement(progressBar);
@@ -3034,7 +2981,7 @@ define([
                 _configureForZoom: function (isZoomedOut, isCurrentView, triggerZoom, pagesToPrefetch) {
                     if (WinJS.validation) {
                         if (!this._view.realizePage || typeof this._view.begin !== "number") {
-                            throw new WinJS.ErrorFromName("WinJS.UI.ListView.NotCompatibleWithSemanticZoom", strings.notCompatibleWithSemanticZoom);
+                            throw new _ErrorFromName("WinJS.UI.ListView.NotCompatibleWithSemanticZoom", strings.notCompatibleWithSemanticZoom);
                         }
                     }
 
@@ -3058,7 +3005,7 @@ define([
                     }
 
                     var result = this._view.hitTest(x, y),
-                        entity = { type: result.type ? result.type : WinJS.UI.ObjectType.item, index: result.index };
+                        entity = { type: result.type ? result.type : _UI.ObjectType.item, index: result.index };
                     if (entity.index >= 0) {
                         if (this._hasKeyboardFocus) {
                             this._changeFocus(entity, true, false, true);
@@ -3071,8 +3018,8 @@ define([
                 _getCurrentItem: function () {
                     var focused = this._selection._getFocused();
 
-                    if (focused.type === WinJS.UI.ObjectType.groupHeader) {
-                        focused = { type: WinJS.UI.ObjectType.item, index: this._groups.group(focused.index).startIndex };
+                    if (focused.type === _UI.ObjectType.groupHeader) {
+                        focused = { type: _UI.ObjectType.item, index: this._groups.group(focused.index).startIndex };
                     }
 
                     if (typeof focused.index !== "number") {
@@ -3107,7 +3054,7 @@ define([
                         that = this;
 
                     for (var i = this._view.firstIndexDisplayed, len = Math.min(this._cachedCount, this._view.lastIndexDisplayed + 1) ; i < len; i++) {
-                        promises.push(this._view.waitForEntityPosition({ type: WinJS.UI.ObjectType.item, index: i }).then(function () {
+                        promises.push(this._view.waitForEntityPosition({ type: _UI.ObjectType.item, index: i }).then(function () {
                             containersOnScreen.push(that._view.items.containerAt(i));
                             var itemRow = 0;
                             if (that.layout._getItemPosition) {
@@ -3133,8 +3080,8 @@ define([
                         }
                     }
 
-                    return WinJS.Promise.join(promises).then(function () {
-                        return (containersOnScreen.length === 0 ? WinJS.Promise.wrap() : WinJS.UI.executeTransition(
+                    return Promise.join(promises).then(function () {
+                        return (containersOnScreen.length === 0 ? Promise.wrap() : _TransitionAnimation.executeTransition(
                             containersOnScreen,
                             {
                                 property: transformNames.cssName,
@@ -3165,7 +3112,7 @@ define([
                                 };
                                 this._zoomAnimationPromise = zoomPromise = this._animateItemsForPhoneZoom().then(animationComplete, animationComplete);
                             } else {
-                                this._zoomAnimationPromise = new WinJS._Signal();
+                                this._zoomAnimationPromise = new _Signal();
                                 zoomPromise = this._zoomAnimationPromise.promise;
                             }
                         }
@@ -3174,9 +3121,9 @@ define([
                         var horizontal = this._horizontal(),
                             scrollOffset = -this.scrollPosition;
 
-                        utilities.addClass(this._viewport, horizontal ? WinJS.UI._zoomingXClass : WinJS.UI._zoomingYClass);
+                        _ElementUtilities.addClass(this._viewport, horizontal ? _Constants._zoomingXClass : _Constants._zoomingYClass);
                         this._canvasStart = scrollOffset;
-                        utilities.addClass(this._viewport, horizontal ? WinJS.UI._zoomingYClass : WinJS.UI._zoomingXClass);
+                        _ElementUtilities.addClass(this._viewport, horizontal ? _Constants._zoomingYClass : _Constants._zoomingXClass);
                     }
                     return zoomPromise;
                 },
@@ -3213,7 +3160,7 @@ define([
 
                             scrollPosition = adjustedScrollPosition;
 
-                            var entity = { type: WinJS.UI.ObjectType.item, index: index }
+                            var entity = { type: _UI.ObjectType.item, index: index }
                             if (that._hasKeyboardFocus) {
                                 that._changeFocus(entity, true);
                             } else {
@@ -3267,7 +3214,7 @@ define([
 
                             if (WinJS.validation) {
                                 if (description === undefined) {
-                                    throw new WinJS.ErrorFromName("WinJS.UI.ListView.InvalidItem", strings.listViewInvalidItem);
+                                    throw new _ErrorFromName("WinJS.UI.ListView.InvalidItem", strings.listViewInvalidItem);
                                 }
                             }
 
@@ -3290,8 +3237,8 @@ define([
                         var horizontal = this._horizontal(),
                             scrollOffset = this._canvasStart;
 
-                        utilities.removeClass(this._viewport, WinJS.UI._zoomingYClass);
-                        utilities.removeClass(this._viewport, WinJS.UI._zoomingXClass);
+                        _ElementUtilities.removeClass(this._viewport, _Constants._zoomingYClass);
+                        _ElementUtilities.removeClass(this._viewport, _Constants._zoomingXClass);
                         this._canvasStart = 0;
                         this._viewportScrollPosition = -scrollOffset;
                     }
@@ -3303,9 +3250,9 @@ define([
 
                 _getItemOffsetPosition: function (index) {
                     var that = this;
-                    return this._getItemOffset({ type: WinJS.UI.ObjectType.item, index: index }).then(function (position) {
-                        return that._ensureFirstColumnRange(WinJS.UI.ObjectType.item).then(function () {
-                            position = that._correctRangeInFirstColumn(position, WinJS.UI.ObjectType.item);
+                    return this._getItemOffset({ type: _UI.ObjectType.item, index: index }).then(function (position) {
+                        return that._ensureFirstColumnRange(_UI.ObjectType.item).then(function () {
+                            position = that._correctRangeInFirstColumn(position, _UI.ObjectType.item);
                             position = that._convertFromCanvasCoordinates(position);
                             if (that._horizontal()) {
                                 position.left = position.begin;
@@ -3347,9 +3294,9 @@ define([
                         return;
                     }
                     var targetItem;
-                    if (newFocus.type !== WinJS.UI.ObjectType.groupHeader) {
+                    if (newFocus.type !== _UI.ObjectType.groupHeader) {
                         targetItem = this._view.items.itemAt(newFocus.index);
-                        if (!skipSelection && targetItem && utilities.hasClass(targetItem, WinJS.UI._nonSelectableClass)) {
+                        if (!skipSelection && targetItem && _ElementUtilities.hasClass(targetItem, _Constants._nonSelectableClass)) {
                             skipSelection = true;
                         }
                         this._updateFocusCache(newFocus.index);
@@ -3379,7 +3326,7 @@ define([
                 // - set Trident's focus to newFocus when ListView doesn't have focus
                 _changeFocusPassively: function (newFocus) {
                     var targetItem;
-                    if (newFocus.type !== WinJS.UI.ObjectType.groupHeader) {
+                    if (newFocus.type !== _UI.ObjectType.groupHeader) {
                         targetItem = this._view.items.itemAt(newFocus.index);
                         this._updateFocusCache(newFocus.index);
                     } else {
@@ -3392,16 +3339,16 @@ define([
                 },
 
                 _drawFocusRectangle: function (item) {
-                    if (WinJS.Utilities.hasClass(item, thisWinUI._headerClass)) {
-                        WinJS.Utilities.addClass(item, thisWinUI._itemFocusClass);
+                    if (_ElementUtilities.hasClass(item, _Constants._headerClass)) {
+                        _ElementUtilities.addClass(item, _Constants._itemFocusClass);
                     } else {
                         var itemBox = this._view.items.itemBoxFrom(item);
-                        if (itemBox.querySelector("." + thisWinUI._itemFocusOutlineClass)) {
+                        if (itemBox.querySelector("." + _Constants._itemFocusOutlineClass)) {
                             return;
                         }
-                        utilities.addClass(itemBox, thisWinUI._itemFocusClass);
+                        _ElementUtilities.addClass(itemBox, _Constants._itemFocusClass);
                         var outline = document.createElement("div");
-                        outline.className = thisWinUI._itemFocusOutlineClass;
+                        outline.className = _Constants._itemFocusOutlineClass;
                         itemBox.appendChild(outline);
                     }
                 },
@@ -3413,21 +3360,21 @@ define([
 
                     var itemBox = this._view.items.itemBoxFrom(item);
                     if (itemBox) {
-                        utilities.removeClass(itemBox, thisWinUI._itemFocusClass);
-                        var outline = itemBox.querySelector("." + thisWinUI._itemFocusOutlineClass);
+                        _ElementUtilities.removeClass(itemBox, _Constants._itemFocusClass);
+                        var outline = itemBox.querySelector("." + _Constants._itemFocusOutlineClass);
                         if (outline) {
                             outline.parentNode.removeChild(outline);
                         }
                     } else {
                         var header = this._groups.headerFrom(item);
                         if (header) {
-                            utilities.removeClass(header, thisWinUI._itemFocusClass);
+                            _ElementUtilities.removeClass(header, _Constants._itemFocusClass);
                         }
                     }
                 },
 
                 _defaultInvoke: function (entity) {
-                    if (this._isZoomedOut || (WinJS.Utilities.isPhone && this._triggerZoom && entity.type === WinJS.UI.ObjectType.groupHeader)) {
+                    if (this._isZoomedOut || (WinJS.Utilities.isPhone && this._triggerZoom && entity.type === _UI.ObjectType.groupHeader)) {
                         this._changeFocusPassively(entity);
                         this._triggerZoom();
                     }
@@ -3435,20 +3382,20 @@ define([
 
                 _selectionAllowed: function ListView_selectionAllowed(itemIndex) {
                     var item = (itemIndex !== undefined ? this.elementFromIndex(itemIndex) : null),
-                        itemSelectable = !(item && utilities.hasClass(item, WinJS.UI._nonSelectableClass));
-                    return itemSelectable && this._selectionMode !== WinJS.UI.SelectionMode.none;
+                        itemSelectable = !(item && _ElementUtilities.hasClass(item, _Constants._nonSelectableClass));
+                    return itemSelectable && this._selectionMode !== _UI.SelectionMode.none;
                 },
 
                 _multiSelection: function ListView_multiSelection() {
-                    return this._selectionMode === WinJS.UI.SelectionMode.multi;
+                    return this._selectionMode === _UI.SelectionMode.multi;
                 },
 
                 _selectOnTap: function ListView_selectOnTap() {
-                    return this._tap === WinJS.UI.TapBehavior.toggleSelect || this._tap === WinJS.UI.TapBehavior.directSelect;
+                    return this._tap === _UI.TapBehavior.toggleSelect || this._tap === _UI.TapBehavior.directSelect;
                 },
 
                 _selectFocused: function ListView_selectFocused(ctrlKeyDown) {
-                    return this._tap === WinJS.UI.TapBehavior.directSelect && this._selectionMode === WinJS.UI.SelectionMode.multi && !ctrlKeyDown;
+                    return this._tap === _UI.TapBehavior.directSelect && this._selectionMode === _UI.SelectionMode.multi && !ctrlKeyDown;
                 },
 
                 _dispose: function () {
@@ -3529,9 +3476,9 @@ define([
                                 that._waitingEntranceAnimationPromise.cancel();
                                 that._waitingEntranceAnimationPromise = null;
                             }
-                            var eventDetails = that._fireAnimationEvent(WinJS.UI.ListViewAnimationType.contentTransition);
+                            var eventDetails = that._fireAnimationEvent(ListViewAnimationType.contentTransition);
                             that._firedAnimationEvent = true;
-                            var overflowStyle = WinJS.Utilities._browserStyleEquivalents["overflow-style"];
+                            var overflowStyle = _BaseUtils._browserStyleEquivalents["overflow-style"];
                             var animatedElement = overflowStyle ? that._viewport : that._canvas;
                             if (!eventDetails.prevented) {
                                 that._fadingViewportOut = true;
@@ -3559,7 +3506,7 @@ define([
                         animationPromise: Promise.wrap()
                     };
                     var that = this;
-                    var overflowStyle = WinJS.Utilities._browserStyleEquivalents["overflow-style"];
+                    var overflowStyle = _BaseUtils._browserStyleEquivalents["overflow-style"];
                     var animatedElement = overflowStyle ? this._viewport : this._canvas;
                     function resetViewOpacity() {
                         that._canvas.style.opacity = 1;
@@ -3578,7 +3525,7 @@ define([
                     }
 
                     if (!this._firedAnimationEvent) {
-                        eventDetails = this._fireAnimationEvent(WinJS.UI.ListViewAnimationType.entrance);
+                        eventDetails = this._fireAnimationEvent(ListViewAnimationType.entrance);
                     } else {
                         this._firedAnimationEvent = false;
                     }
@@ -3619,7 +3566,7 @@ define([
                     animationEvent.initCustomEvent("contentanimating", true, true, {
                         type: type
                     });
-                    if (type === WinJS.UI.ListViewAnimationType.entrance) {
+                    if (type === ListViewAnimationType.entrance) {
                         animationEvent.detail.setPromise = function (delayPromise) {
                             animationPromise = delayPromise;
                         };
@@ -3680,7 +3627,7 @@ define([
 
                 _updateGroupHeadersAriaRoles: function ListView_updateGroupHeadersAriaRoles() {
                     var that = this,
-                        headerRole = (this.groupHeaderTapBehavior === WinJS.UI.GroupHeaderTapBehavior.none ? "separator" : "link");
+                        headerRole = (this.groupHeaderTapBehavior === _UI.GroupHeaderTapBehavior.none ? "separator" : "link");
                     if (this._headerRole !== headerRole) {
                         this._headerRole = headerRole;
                         for (var i = 0, len = this._groups.length() ; i < len; i++) {
@@ -3712,7 +3659,7 @@ define([
                     if (this._isZombie()) { return; }
 
                     var that = this;
-                    var singleSelection = that._selectionMode === WinJS.UI.SelectionMode.single;
+                    var singleSelection = that._selectionMode === _UI.SelectionMode.single;
                     var changedItems = [];
                     var unselectableItems = [];
 
@@ -3730,14 +3677,14 @@ define([
                         // Only respond to aria-selected changes coming from UIA. This check
                         // relies on the fact that, in renderSelection, we update the selection
                         // visual before aria-selected.
-                        if (itemBox && (selected !== WinJS.Utilities._isSelectionRendered(itemBox))) {
+                        if (itemBox && (selected !== _ElementUtilities._isSelectionRendered(itemBox))) {
                             var index = that._view.items.index(itemBox);
                             var entry = { index: index, item: item, selected: selected };
                             (that._selectionAllowed(index) ? changedItems : unselectableItems).push(entry);
                         }
                     }
                     if (changedItems.length > 0) {
-                        var signal = new WinJS._Signal();
+                        var signal = new _Signal();
                         that.selection._synchronize(signal).then(function () {
                             var newSelection = that.selection._cloneSelection();
 
@@ -3770,7 +3717,7 @@ define([
                 _getItemPosition: function ListView_getItemPosition(entity, preserveItemsBlocks) {
                     var that = this;
                     return this._view.waitForEntityPosition(entity).then(function () {
-                        var container = (entity.type === WinJS.UI.ObjectType.groupHeader ? that._view._getHeaderContainer(entity.index) : that._view.getContainer(entity.index));
+                        var container = (entity.type === _UI.ObjectType.groupHeader ? that._view._getHeaderContainer(entity.index) : that._view.getContainer(entity.index));
                         if (container) {
                             that._writeProfilerMark("WinJS.UI.ListView:getItemPosition,info");
 
@@ -3781,7 +3728,7 @@ define([
                                 preserveItemsBlocks = false;
                             }
 
-                            if (entity.type === WinJS.UI.ObjectType.item) {
+                            if (entity.type === _UI.ObjectType.item) {
                                 preserveItemsBlocks = !!preserveItemsBlocks;
                                 preserveItemsBlocks &= that._view._ensureContainerInDOM(entity.index);
                             } else {
@@ -3792,10 +3739,10 @@ define([
                                 position = {
                                     left: (that._rtl() ? getOffsetRight(container) - margins.right : container.offsetLeft - margins.left),
                                     top: container.offsetTop - margins.top,
-                                    totalWidth: utilities.getTotalWidth(container),
-                                    totalHeight: utilities.getTotalHeight(container),
-                                    contentWidth: utilities.getContentWidth(container),
-                                    contentHeight: utilities.getContentHeight(container)
+                                    totalWidth: _ElementUtilities.getTotalWidth(container),
+                                    totalHeight: _ElementUtilities.getTotalHeight(container),
+                                    contentWidth: _ElementUtilities.getContentWidth(container),
+                                    contentHeight: _ElementUtilities.getContentHeight(container)
                                 };
 
                             if (preserveItemsBlocks) {
@@ -3806,7 +3753,7 @@ define([
                             // If we're not zooming, we need to convert the position to canvas coordinates before returning.
                             return (that._zooming && that._canvasStart !== 0 ? position : that._convertToCanvasCoordinates(position));
                         } else {
-                            return WinJS.Promise.cancel;
+                            return Promise.cancel;
                         }
                     });
                 },
@@ -3830,7 +3777,7 @@ define([
                 },
 
                 _getItemMargins: function ListView_getItemMargins(type) {
-                    type = type || WinJS.UI.ObjectType.item;
+                    type = type || _UI.ObjectType.item;
                     var that = this;
                     var calculateMargins = function (className) {
                         var item = that._canvas.querySelector("." + className),
@@ -3838,13 +3785,13 @@ define([
 
                         if (!item) {
                             item = document.createElement("div"),
-                            utilities.addClass(item, className);
+                            _ElementUtilities.addClass(item, className);
                             that._viewport.appendChild(item);
 
                             cleanup = true;
                         }
 
-                        var margins = WinJS.UI._getMargins(item);
+                        var margins = _Layouts._getMargins(item);
 
                         if (cleanup) {
                             that._viewport.removeChild(item);
@@ -3852,10 +3799,10 @@ define([
                         return margins;
                     };
 
-                    if (type !== WinJS.UI.ObjectType.groupHeader) {
-                        return (this._itemMargins ? this._itemMargins : (this._itemMargins = calculateMargins(WinJS.UI._containerClass)));
+                    if (type !== _UI.ObjectType.groupHeader) {
+                        return (this._itemMargins ? this._itemMargins : (this._itemMargins = calculateMargins(_Constants._containerClass)));
                     } else {
-                        return (this._headerMargins ? this._headerMargins : (this._headerMargins = calculateMargins(WinJS.UI._headerContainerClass)));
+                        return (this._headerMargins ? this._headerMargins : (this._headerMargins = calculateMargins(_Constants._headerContainerClass)));
                     }
                 },
 
@@ -3879,7 +3826,7 @@ define([
                 },
 
                 _ensureFirstColumnRange: function ListView_ensureFirstColumnRange(type) {
-                    var propName = (type === WinJS.UI.ObjectType.item ? "_firstItemRange" : "_firstHeaderRange");
+                    var propName = (type === _UI.ObjectType.item ? "_firstItemRange" : "_firstHeaderRange");
                     if (!this[propName]) {
                         var that = this;
                         return this._getItemOffset({ type: type, index: 0 }, true).then(function (firstRange) {
@@ -3891,7 +3838,7 @@ define([
                 },
 
                 _correctRangeInFirstColumn: function ListView_correctRangeInFirstColumn(range, type) {
-                    var firstRange = (type === WinJS.UI.ObjectType.groupHeader ? this._firstHeaderRange : this._firstItemRange);
+                    var firstRange = (type === _UI.ObjectType.groupHeader ? this._firstHeaderRange : this._firstItemRange);
                     if (firstRange.begin === range.begin) {
                         if (this._horizontal()) {
                             range.begin = -this._getCanvasMargins()[this._rtl() ? "right" : "left"];
@@ -3914,7 +3861,7 @@ define([
 
                     function createContainer() {
                         var element = document.createElement("div");
-                        element.className = WinJS.UI._containerClass;
+                        element.className = _Constants._containerClass;
                         return element;
                     }
 
@@ -3933,7 +3880,7 @@ define([
                         if (delta > 0) {
                             if (lastBlock && lastBlock.items.length < that._view._blockSize) {
                                 var toAdd = Math.min(delta, that._view._blockSize - lastBlock.items.length);
-                                utilities.insertAdjacentHTMLUnsafe(lastBlock.element, "beforeend", WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", toAdd));
+                                _SafeHtml.insertAdjacentHTMLUnsafe(lastBlock.element, "beforeend", _Helpers._repeat("<div class='win-container win-backdrop'></div>", toAdd));
 
                                 oldSize = lastBlock.items.length;
                                 children = lastBlock.element.children;
@@ -3948,23 +3895,23 @@ define([
                             var blocksCount = Math.floor(delta / that._view._blockSize),
                                 lastBlockSize = delta % that._view._blockSize;
 
-                            var blockMarkup = "<div class='win-itemsblock'>" + WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", that._view._blockSize) + "</div>",
-                                markup = WinJS.UI._repeat(blockMarkup, blocksCount);
+                            var blockMarkup = "<div class='win-itemsblock'>" + _Helpers._repeat("<div class='win-container win-backdrop'></div>", that._view._blockSize) + "</div>",
+                                markup = _Helpers._repeat(blockMarkup, blocksCount);
 
                             if (lastBlockSize) {
-                                markup += "<div class='win-itemsblock'>" + WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", lastBlockSize) + "</div>";
+                                markup += "<div class='win-itemsblock'>" + _Helpers._repeat("<div class='win-container win-backdrop'></div>", lastBlockSize) + "</div>";
                                 blocksCount++;
                             }
 
                             var blocksTemp = document.createElement("div");
-                            utilities.setInnerHTMLUnsafe(blocksTemp, markup);
+                            _SafeHtml.setInnerHTMLUnsafe(blocksTemp, markup);
 
                             var children = blocksTemp.children;
                             for (var j = 0; j < blocksCount; j++) {
                                 var block = children[j],
                                     blockNode = {
                                         element: block,
-                                        items: WinJS.UI._nodeListToArray(block.children)
+                                        items: _Helpers._nodeListToArray(block.children)
                                     };
                                 itemsContainer.itemsBlocks.push(blockNode);
                             }
@@ -4032,7 +3979,7 @@ define([
                             var children = itemsContainer.element.children,
                                 oldSize = children.length;
 
-                            utilities.insertAdjacentHTMLUnsafe(itemsContainer.element, "beforeend", WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", delta));
+                            _SafeHtml.insertAdjacentHTMLUnsafe(itemsContainer.element, "beforeend", _Helpers._repeat("<div class='win-container win-backdrop'></div>", delta));
 
                             for (var n = 0; n < delta; n++) {
                                 var container = children[oldSize + n];
@@ -4114,7 +4061,7 @@ define([
                                 var children = itemsContainer.element.children,
                                     oldSize = children.length;
 
-                                utilities.insertAdjacentHTMLUnsafe(itemsContainer.element, "afterBegin", WinJS.UI._repeat("<div class='win-container win-backdrop'></div>", delta));
+                                _SafeHtml.insertAdjacentHTMLUnsafe(itemsContainer.element, "afterBegin", _Helpers._repeat("<div class='win-container win-backdrop'></div>", delta));
 
                                 for (var n = 0; n < delta; n++) {
                                     var container = children[n];
@@ -4183,8 +4130,8 @@ define([
                             var container = group.itemsContainer.items[groupIndex.item];
                             container.parentNode.removeChild(container);
 
-                            if (utilities.hasClass(itemBox, WinJS.UI._selectedClass)) {
-                                utilities.addClass(container, WinJS.UI._selectedClass);
+                            if (_ElementUtilities.hasClass(itemBox, _Constants._selectedClass)) {
+                                _ElementUtilities.addClass(container, _Constants._selectedClass);
                             }
 
                             group.itemsContainer.items.splice(groupIndex.item, 1);
@@ -4280,12 +4227,12 @@ define([
                             var container;
                             if (removedContainers.length) {
                                 container = removedContainers.pop();
-                                utilities.empty(container);
+                                _ElementUtilities.empty(container);
                             } else {
                                 container = createContainer();
                             }
-                            if (utilities.hasClass(itemBox, WinJS.UI._selectedClass)) {
-                                utilities.addClass(container, WinJS.UI._selectedClass);
+                            if (_ElementUtilities.hasClass(itemBox, _Constants._selectedClass)) {
+                                _ElementUtilities.addClass(container, _Constants._selectedClass);
                             }
                             container.appendChild(itemBox);
                             modifiedElements[i].element = container;
@@ -4304,7 +4251,7 @@ define([
 
                 _writeProfilerMark: function ListView_writeProfilerMark(text) {
                     var message = "WinJS.UI.ListView:" + this._id + ":" + text;
-                    WinJS.Utilities._writeProfilerMark(message);
+                    _WriteProfilerMark(message);
                     WinJS.log && WinJS.log(message, null, "listviewprofiler");
                 }
             }, {
@@ -4318,11 +4265,11 @@ define([
                     /// the disposal service manually.
                     /// </summary>
                     /// </signature>
-                    WinJS.UI._disposeControls();
+                    disposeControls();
                 }
 
             });
-            WinJS.Class.mix(ListView, WinJS.Utilities.createEventProperties(
+            _Base.Class.mix(ListView, _Events.createEventProperties(
                 "iteminvoked",
                 "groupheaderinvoked",
                 "selectionchanging",
@@ -4338,7 +4285,7 @@ define([
                 "itemdragchanged",
                 "itemdragdrop",
                 "accessibilityannotationcomplete"));
-            WinJS.Class.mix(ListView, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(ListView, _Control.DOMEventMixin);
             return ListView;
         })
     });

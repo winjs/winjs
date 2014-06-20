@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Base',
     './_SafeHtml'
-    ], function selectInit(_Base, _SafeHtml) {
+    ], function selectInit(exports, _Base, _SafeHtml) {
     "use strict";
 
-    var members =  {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _Select: _Base.Namespace._lazy(function () {
             var encodeHtmlRegEx = /[&<>'"]/g;
             var encodeHtmlEscapeMap = {
@@ -127,9 +128,5 @@ define([
                 }
             });
         })
-    };
-
-    _Base.Namespace.define("WinJS.UI", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 });

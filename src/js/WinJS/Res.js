@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_ErrorFromName',
     './Core/_Resources',
     './ControlProcessor/_OptionsParser',
     './Promise'
-    ], function resInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _OptionsParser, Promise) {
+    ], function resInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _OptionsParser, Promise) {
     "use strict";
 
     var readyComplete = false;
@@ -166,10 +167,7 @@ define([
             }
         }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Resources", {
         processAll: processAll
-    };
-
-    _Base.Namespace.define("WinJS.Resources", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 });

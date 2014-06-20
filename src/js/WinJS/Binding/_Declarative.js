@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -11,7 +12,7 @@ define([
     './_BindingParser',
     './_Data',
     './_DomWeakRefTable'
-    ], function declarativeInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _BindingParser, _Data, _DomWeakRefTable) {
+    ], function declarativeInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _BindingParser, _Data, _DomWeakRefTable) {
     "use strict";
 
     var uid = (Math.random() * 1000) >> 0;
@@ -569,10 +570,10 @@ define([
         var value = getValue(source, sourceProperties);
         if (Array.isArray(value)) {
             value.forEach(function(className) {
-                dest.classList.add(className);
+                _ElementUtilities.addClass(dest, className);
             });
         } else if (value) {
-            dest.classList.add(value);
+            _ElementUtilities.addClass(dest, value);
         }
     }
 
@@ -674,7 +675,7 @@ define([
         return markSupportedForProcessing(customInitializer);
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
         processAll: declarativeBind,
         oneTime: initializer(oneTime),
         defaultBind: initializer(defaultBind),
@@ -684,10 +685,6 @@ define([
         setAttribute: initializer(setAttribute),
         setAttributeOneTime: initializer(setAttributeOneTime),
         addClassOneTime: initializer(addClassOneTime),
-    };
-
-    _Base.Namespace.define("WinJS.Binding", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

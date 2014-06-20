@@ -1,14 +1,19 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function groupsContainerInit() {
+    'exports',
+    '../../Core/_Base',
+    '../../Promise',
+    '../../Utilities/_Dispose',
+    '../../Utilities/_ElementUtilities',
+    '../../Utilities/_ItemsManager',
+    '../../Utilities/_UI',
+    '../ItemContainer/_Constants'
+    ], function groupsContainerInit(exports, _Base, Promise, _Dispose, _ElementUtilities, _ItemsManager, _UI, _Constants) {
     "use strict";
 
-    var utilities = WinJS.Utilities,
-        Promise = WinJS.Promise;
-
-    WinJS.Namespace.define("WinJS.UI", {
-        _GroupsContainerBase: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.define(function () {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
+        _GroupsContainerBase: _Base.Namespace._lazy(function () {
+            return _Base.Class.define(function () {
             }, {
                 index: function (element) {
                     var header = this.headerFrom(element);
@@ -19,11 +24,11 @@ define([
                             }
                         }
                     }
-                    return WinJS.UI._INVALID_INDEX;
+                    return _Constants._INVALID_INDEX;
                 },
 
                 headerFrom: function (element) {
-                    while (element && !utilities.hasClass(element, WinJS.UI._headerClass)) {
+                    while (element && !_ElementUtilities.hasClass(element, _Constants._headerClass)) {
                         element = element.parentNode;
                     }
                     return element;
@@ -134,7 +139,7 @@ define([
                         return Promise.join(that.pendingChanges);
                     }).then(function () {
                         if (that._listView._ifZombieDispose()) {
-                            return WinJS.Promise.cancel;
+                            return Promise.cancel;
                         }
                     }).then(
                         function () {
@@ -142,7 +147,7 @@ define([
                         },
                         function (error) {
                             that.ignoreChanges = false;
-                            return WinJS.Promise.wrapError(error);
+                            return Promise.wrapError(error);
                         }
                     );
                 },
@@ -175,8 +180,8 @@ define([
             });
         }),
 
-        _UnvirtualizedGroupsContainer: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.derive(WinJS.UI._GroupsContainerBase, function (listView, groupDataSource) {
+        _UnvirtualizedGroupsContainer: _Base.Namespace._lazy(function () {
+            return _Base.Class.derive(exports._GroupsContainerBase, function (listView, groupDataSource) {
                 this._listView = listView;
                 this.groupDataSource = groupDataSource;
                 this.groups = [];
@@ -353,7 +358,7 @@ define([
                             group.tabIndex = -1;
                             header.tabIndex = -1;
 
-                            that._listView._groupsToRemove[WinJS.Utilities._uniqueID(header)] = { group: group, header: header };
+                            that._listView._groupsToRemove[_ElementUtilities._uniqueID(header)] = { group: group, header: header };
                         }
                     },
 
@@ -389,7 +394,7 @@ define([
                         if (group.header) {
                             var parentNode = group.header.parentNode;
                             if (parentNode) {
-                                WinJS.Utilities.disposeSubTree(group.header);
+                                _Dispose.disposeSubTree(group.header);
                                 parentNode.removeChild(group.header);
                             }
                             group.header = null;
@@ -434,7 +439,7 @@ define([
                         },
                         function (error) {
                             that._listView._writeProfilerMark("GroupsContainer_initialize,StopTM");
-                            return WinJS.Promise.wrapError(error);
+                            return Promise.wrapError(error);
                         });
                     return this.initializePromise;
                 },
@@ -442,7 +447,7 @@ define([
                 renderGroup: function UnvirtualizedGroupsContainer_renderGroup(index) {
                     if (this._listView.groupHeaderTemplate) {
                         var group = this.groups[index];
-                        return Promise.wrap(this._listView._groupHeaderRenderer(Promise.wrap(group.userData))).then(WinJS.UI._normalizeRendererReturn);
+                        return Promise.wrap(this._listView._groupHeaderRenderer(Promise.wrap(group.userData))).then(_ItemsManager._normalizeRendererReturn);
                     } else {
                         return Promise.wrap(null);
                     }
@@ -464,7 +469,7 @@ define([
                             header = group.header,
                             groupData = group.group;
 
-                        if (!focusedItemPurged && focused.type === WinJS.UI.ObjectType.groupHeader && groupData.userData.index === focused.index) {
+                        if (!focusedItemPurged && focused.type === _UI.ObjectType.groupHeader && groupData.userData.index === focused.index) {
                             this._listView._unsetFocusOnItem();
                             focusedItemPurged = true;
                         }
@@ -472,7 +477,7 @@ define([
                         if (header) {
                             var parentNode = header.parentNode;
                             if (parentNode) {
-                                WinJS.Utilities._disposeElement(header);
+                                _Dispose._disposeElement(header);
                                 parentNode.removeChild(header);
                             }
                         }
@@ -503,18 +508,18 @@ define([
             });
         }),
 
-        _NoGroups: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.derive(WinJS.UI._GroupsContainerBase, function (listView) {
+        _NoGroups: _Base.Namespace._lazy(function () {
+            return _Base.Class.derive(exports._GroupsContainerBase, function (listView) {
                 this._listView = listView;
                 this.groups = [{ startIndex: 0 }];
                 this.dirty = true;
             }, {
                 synchronizeGroups: function () {
-                    return WinJS.Promise.wrap();
+                    return Promise.wrap();
                 },
 
                 addItem: function (itemIndex, itemPromise) {
-                    return WinJS.Promise.wrap(this.groups[0]);
+                    return Promise.wrap(this.groups[0]);
                 },
 
                 resetGroups: function () {
@@ -525,15 +530,15 @@ define([
                 },
 
                 renderGroup: function () {
-                    return WinJS.Promise.wrap(null);
+                    return Promise.wrap(null);
                 },
 
                 ensureFirstGroup: function () {
-                    return WinJS.Promise.wrap(this.groups[0]);
+                    return Promise.wrap(this.groups[0]);
                 },
 
                 groupOf: function (item) {
-                    return WinJS.Promise.wrap(this.groups[0]);
+                    return Promise.wrap(this.groups[0]);
                 },
 
                 removeElements: function () {

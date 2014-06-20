@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -7,7 +8,7 @@ define([
     '../Core/_WriteProfilerMark',
     '../ControlProcessor/_OptionsLexer',
     '../ControlProcessor/_OptionsParser'
-    ], function bindingParserInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _OptionsLexer, _OptionsParser) {
+    ], function bindingParserInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _OptionsLexer, _OptionsParser) {
     "use strict";
 
 
@@ -191,12 +192,9 @@ define([
         return res;
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
         _bindingParser: parser,
         _bindingParser2: parser2,
-    };
-
-    _Base.Namespace.define("WinJS.Binding", members);
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

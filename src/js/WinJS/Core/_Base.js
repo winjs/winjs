@@ -165,6 +165,14 @@ define([
             }
         }
 
+        // helper for defining AMD module members
+        function moduleDefine(exports, name, members) {
+            if(name) {
+                define(name, members);
+            }
+            return defineWithParent(exports, null, members);
+        }
+
         // Establish members of the "WinJS.Namespace" namespace
         Object.defineProperties(_rootNamespace.Namespace, {
 
@@ -173,6 +181,8 @@ define([
             define: { value: define, writable: true, enumerable: true, configurable: true },
 
             _lazy: { value: lazy, writable: true, enumerable: true, configurable: true },
+
+            _moduleDefine: { value: moduleDefine, writable: true, enumerable: true, configurable: true }
 
         });
 

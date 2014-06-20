@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Base',
     '../Core/_WriteProfilerMark',
     './_ElementUtilities'
-    ], function (_Base, _WriteProfilerMark, _ElementUtilities) {
+    ], function (exports, _Base, _WriteProfilerMark, _ElementUtilities) {
     "use strict";
 
     function markDisposable(element, disposeImpl) {
@@ -94,16 +95,12 @@ define([
         }
     }
     
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
 
         markDisposable: markDisposable,
 
         disposeSubTree: disposeSubTree,
 
         _disposeElement: _disposeElement
-    };
-
-    _Base.Namespace.define("WinJS.Utilities", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 });

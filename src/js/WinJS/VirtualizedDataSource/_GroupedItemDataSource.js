@@ -2,10 +2,12 @@
 // Grouped Item Data Source
 
 define([
-    ], function groupedItemDataSourceInit() {
+    '../Core/_Base',
+    './_GroupDataSource'
+    ], function groupedItemDataSourceInit(_Base, _GroupDataSource) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
 
         computeDataSourceGroups: function (listDataSource, groupKey, groupData, options) {
             /// <signature helpKeyword="WinJS.UI.computeDataSourceGroups">
@@ -181,7 +183,7 @@ define([
             Object.defineProperty(groupedItemDataSource, "groups", {
                 get: function () {
                     if (!groupDataSource) {
-                        groupDataSource = new WinJS.UI._GroupDataSource(listDataSource, groupKey, groupData, options);
+                        groupDataSource = new _GroupDataSource._GroupDataSource(listDataSource, groupKey, groupData, options);
                     }
                     return groupDataSource;
                 },

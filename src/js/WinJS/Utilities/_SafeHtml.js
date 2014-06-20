@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_Resources'
-    ], function safeHTMLInit(_Global, _Base, _ErrorFromName, _Resources) {
+    ], function safeHTMLInit(exports, _Global, _Base, _ErrorFromName, _Resources) {
     "use strict";
 
 
@@ -183,17 +184,13 @@ define([
         };
     }
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         setInnerHTML: setInnerHTML,
         setInnerHTMLUnsafe: setInnerHTMLUnsafe,
         setOuterHTML: setOuterHTML,
         setOuterHTMLUnsafe: setOuterHTMLUnsafe,
         insertAdjacentHTML: insertAdjacentHTML,
         insertAdjacentHTMLUnsafe: insertAdjacentHTMLUnsafe
-    };
-
-    _Base.Namespace.define("WinJS.Utilities", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
+    });
 
 });

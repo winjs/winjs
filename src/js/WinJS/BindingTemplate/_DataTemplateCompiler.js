@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -17,7 +18,7 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_SafeHtml',
     '../Utilities/_ElementUtilities'
-    ], function templateCompilerInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _BindingParser, _Data, _Declarative, ControlProcessor, _OptionsParser, Fragments, Promise, _Signal, _Dispose, _SafeHtml, _ElementUtilities) {
+    ], function templateCompilerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _BindingParser, _Data, _Declarative, ControlProcessor, _OptionsParser, Fragments, Promise, _Signal, _Dispose, _SafeHtml, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -31,7 +32,7 @@ define([
         get idBindingNotSupported() { return _Resources._getWinJSString("base/idBindingNotSupported").value; },
     };
 
-    var members = {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
         _TemplateCompiler: _Base.Namespace._lazy(function () {
 
             var cancelBlocker = Promise._cancelBlocker;
@@ -2284,11 +2285,6 @@ define([
 
             return TemplateCompiler;
         })
-    };
-
-    _Base.Namespace.define("WinJS.Binding", members);
-
-    return _Base.Namespace.defineWithParent(null, null, members);
-
+    });
 
 });

@@ -1,11 +1,13 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    ], function GroupFocusCacheInit() {
+    'exports',
+    '../../Core/_Base'
+    ], function GroupFocusCacheInit(exports, _Base) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
-        _GroupFocusCache: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.define(function GroupFocusCache_ctor(listView) {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
+        _GroupFocusCache: _Base.Namespace._lazy(function () {
+            return _Base.Class.define(function GroupFocusCache_ctor(listView) {
                 this._listView = listView;
                 this.clear();
             }, {
@@ -68,8 +70,8 @@ define([
             });
         }),
 
-        _UnsupportedGroupFocusCache: WinJS.Namespace._lazy(function () {
-            return WinJS.Class.define(null, {
+        _UnsupportedGroupFocusCache: _Base.Namespace._lazy(function () {
+            return _Base.Class.define(null, {
                 updateCache: function (groupKey, itemKey, itemIndex) {
                 },
 
