@@ -140,8 +140,7 @@ if (!window.Windows) {
             LiveUnit.Assert.isTrue(eventFired, "resultsuggestionchosen event was not fired");
         };
 
-        // GitHub issue #150
-        this.xtestChooseSuggestionOnEnterEnabled = function searchBoxTest_ChooseSuggestionOnEnterEnabled() {
+        this.testChooseSuggestionOnEnterEnabled = function searchBoxTest_ChooseSuggestionOnEnterEnabled(complete) {
             var searchBox = document.getElementById("SearchBoxID").winControl;
             searchBox.chooseSuggestionOnEnter = true;
             var eventFired = false;
@@ -156,8 +155,11 @@ if (!window.Windows) {
             searchBox._inputElement.value = "Test query";
             searchBox._inputOrImeChangeHandler(null);
             searchBox._inputElement.focus();
-            CommonUtilities.keydown(searchBox._inputElement, Key.enter, "ja-JP");
-            LiveUnit.Assert.isTrue(eventFired, "querysubmitted event was not fired");
+            WinJS.Promise.timeout().done(function () {
+                CommonUtilities.keydown(searchBox._inputElement, Key.enter, "ja-JP");
+                LiveUnit.Assert.isTrue(eventFired, "querysubmitted event was not fired");
+                complete();
+            });
         };
 
         this.testSetLocalContentSuggestionSettings = function searchBoxTest_testSetLocalContentSuggestionSettings() {

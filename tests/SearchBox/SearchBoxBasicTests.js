@@ -174,15 +174,13 @@ SearchBoxTests.BasicTests = function () {
         searchBox.chooseSuggestionOnEnter = chooseSuggestionOnEnter;
         LiveUnit.Assert.areEqual(chooseSuggestionOnEnter, searchBox.chooseSuggestionOnEnter, "Unable to set searchBox.chooseSuggestionOnEnter");
 
-        var disabled = false;
-        LiveUnit.Assert.areEqual(disabled, searchBox.disabled, "Incorrect default value for disabled");
-        LiveUnit.Assert.areEqual(disabled, searchBox._inputElement.disabled, "Incorrect default value for disabled for input element.");
-        LiveUnit.Assert.areEqual(disabled, searchBox._buttonElement.disabled, "Incorrect default value for disabled for button element.");
-        var disabled = true;
-        searchBox.disabled = disabled;
-        LiveUnit.Assert.areEqual(disabled, searchBox.disabled, "Unable to set searchBox.disabled");
-        LiveUnit.Assert.areEqual(disabled, searchBox._inputElement.disabled, "SearchBox did not disable input element.");
-        LiveUnit.Assert.areEqual(disabled, searchBox._buttonElement.disabled, "SearchBox did not disable button element.");
+        LiveUnit.Assert.isFalse(searchBox.disabled, "Incorrect default value for disabled");
+        LiveUnit.Assert.isFalse(searchBox._inputElement.disabled, "Incorrect default value for disabled for input element.");
+        LiveUnit.Assert.isFalse(searchBox._buttonElement.disabled, "Incorrect default value for disabled for button element.");
+        searchBox.disabled = true;
+        LiveUnit.Assert.isTrue(searchBox.disabled, "Unable to set searchBox.disabled");
+        LiveUnit.Assert.isTrue(searchBox._inputElement.disabled, "SearchBox did not disable input element.");
+        LiveUnit.Assert.isTrue(searchBox._buttonElement.disabled, "SearchBox did not disable button element.");
     };
 
     this.testQueryChanged = function searchBoxTest_QueryChanged() {
@@ -389,9 +387,8 @@ SearchBoxTests.BasicTests = function () {
         }
     };
 
-    // GitHub issue #150
     // Ensure after a focus loss on tab/enter that we still get query change events
-    this.xtestQueryChangeAfterFocusLoss = function searchBoxTest_QueryChangeAfterFocusLoss() {
+    this.testQueryChangeAfterFocusLoss = function searchBoxTest_QueryChangeAfterFocusLoss(complete) {
         var searchBox = document.getElementById("SearchBoxID").winControl;
         var inputElement = searchBox.element.querySelector("input");
         var that = this;
@@ -411,27 +408,43 @@ SearchBoxTests.BasicTests = function () {
         LiveUnit.Assert.areEqual(inputElement, document.activeElement);
 
         var keys = [Key.tab, Key.enter, Key.upArrow, Key.downArrow]; // only Tab (always moves focus) & Enter (if apps handles QuerySubmitted and moves focus) are actually expected to occur; include up/down for test completeness only
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            LiveUnit.LoggingCore.logComment("Testing " + key + " key.");
 
-            CommonUtilities.keydown(inputElement, key, "en-US");
-            otherInputElement.focus();
-            LiveUnit.Assert.areEqual(otherInputElement, document.activeElement);
+        function runTest(key) {
+            return WinJS.Promise.wrap().then(function () {
+                LiveUnit.LoggingCore.logComment("Testing " + key + " key.");
 
-            // key up event goes to another control & never reaches inputElement
-            CommonUtilities.keyup(otherInputElement, key, "en-US");
+                CommonUtilities.keydown(inputElement, key, "en-US");
+                otherInputElement.focus();
 
-            // now put focus back
-            inputElement.focus();
-            LiveUnit.Assert.areEqual(inputElement, document.activeElement);
+                return WinJS.Promise.timeout();
+            }).then(function () {
+                LiveUnit.Assert.areEqual(otherInputElement, document.activeElement);
 
-            // ensure query events are still fired
-            changedEventFired = false;
-            inputElement.value = 'a' + key;
-            inputElement.dispatchEvent(createCustomEvent("input"));
-            LiveUnit.Assert.isTrue(changedEventFired, "QueryChanged event was not fired");
+                // key up event goes to another control & never reaches inputElement
+                CommonUtilities.keyup(otherInputElement, key, "en-US");
+
+                // now put focus back
+                inputElement.focus();
+
+                return WinJS.Promise.timeout();
+            }).then(function () {
+                LiveUnit.Assert.areEqual(inputElement, document.activeElement);
+
+                // ensure query events are still fired
+                changedEventFired = false;
+                inputElement.value = 'a' + key;
+                inputElement.dispatchEvent(createCustomEvent("input"));
+                LiveUnit.Assert.isTrue(changedEventFired, "QueryChanged event was not fired");
+            });
         }
+
+        runTest(Key.tab).then(function () {
+            return runTest(Key.enter);
+        }).then(function () {
+            return runTest(Key.upArrow);
+        }).then(function () {
+            return runTest(Key.downArrow);
+        }).done(complete);
     };
 
     // Ensure after the IME ate the enter/tab keys that we still get query change events
