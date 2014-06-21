@@ -7,7 +7,7 @@ define([
     './AppBar/_Icon',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function appBarInit(_Layouts, _Command, _Icon) {
+], function appBarInit(_Layouts, _Command, _Icon) {
     "use strict";
 
     WinJS.Namespace.define("WinJS.UI", {
@@ -35,11 +35,11 @@ define([
             var Key = WinJS.Utilities.Key;
 
             // Class Names
-                var appBarClass = "win-appbar",
-                reducedClass = "win-reduced",
-                settingsFlyoutClass = "win-settingsflyout",
-                topClass = "win-top",
-                    bottomClass = "win-bottom";
+            var appBarClass = "win-appbar",
+            reducedClass = "win-reduced",
+            settingsFlyoutClass = "win-settingsflyout",
+            topClass = "win-top",
+                bottomClass = "win-bottom";
 
             var firstDivClass = "win-firstdiv",
                 finalDivClass = "win-finaldiv";
@@ -415,15 +415,15 @@ define([
                     this._element.tabIndex = -1;
                 }
 
-                    // Set layout immediately. We need to know our layout in order to correctly
-                    // position any commands that may be getting set through the constructor.
-                    this.layout = options.layout || appBarLayoutCommands;
-                    delete options.layout;
+                // Set layout immediately. We need to know our layout in order to correctly
+                // position any commands that may be getting set through the constructor.
+                this.layout = options.layout || appBarLayoutCommands;
+                delete options.layout;
 
                 // validate that if they didn't set commands, but want command
                 // layout that the HTML only contains commands.  Do this first
                 // so that we don't leave partial AppBars in the DOM.
-                    if (this.layout !== appBarLayoutCustom && !options.commands && this._element) {
+                if (this.layout !== appBarLayoutCustom && !options.commands && this._element) {
                     // Shallow copy object so we can modify it.
                     options = WinJS.Utilities._shallowCopy(options);
                     options.commands = this._verifyCommandsOnly(this._element, "WinJS.UI.AppBarCommand");
@@ -545,10 +545,10 @@ define([
                 /// </field>
                 layout: {
                     get: function () {
-                            return this._layout.type;
+                        return this._layout.type;
                     },
-                        set: function (layout) {
-                            if (layout !== appBarLayoutCommands && layout !== appBarLayoutCustom) {
+                    set: function (layout) {
+                        if (layout !== appBarLayoutCommands && layout !== appBarLayoutCustom) {
                             throw new WinJS.ErrorFromName("WinJS.UI.AppBar.BadLayout", strings.badLayout);
                         }
 
@@ -559,32 +559,32 @@ define([
                             wasShown = true;
                         }
 
-                            if (!this.hidden && !this._initializing) {
+                        if (!this.hidden && !this._initializing) {
                             throw new WinJS.ErrorFromName("WinJS.UI.AppBar.CannotChangeLayoutWhenVisible", strings.cannotChangeLayoutWhenVisible);
                         }
 
-                            var commands;
-                            if (!this._initializing) {
-                                // Gather commands in preparation for hand off to new layout.
-                                // We expect prev layout to return commands in the order they were set in,
-                                // not necessarily the current DOM order the layout is using.
-                                commands = this._layout.commandsInOrder;
-                                this._layout.disconnect();
-                            }
-
-                            // Set layout
-                            if (layout === appBarLayoutCommands) {
-                                this._layout = new WinJS.UI._AppBarCommandsLayout();
-                        } else {
-                                // Custom layout uses Base AppBar Layout class.
-                                this._layout = new WinJS.UI._AppBarBaseLayout();
+                        var commands;
+                        if (!this._initializing) {
+                            // Gather commands in preparation for hand off to new layout.
+                            // We expect prev layout to return commands in the order they were set in,
+                            // not necessarily the current DOM order the layout is using.
+                            commands = this._layout.commandsInOrder;
+                            this._layout.disconnect();
                         }
-                            this._layout.connect(this._element);
 
-                            if (commands && commands.length) {
-                                // Reset AppBar since layout changed.
-                                this._layoutCommands(commands);
-                            }
+                        // Set layout
+                        if (layout === appBarLayoutCommands) {
+                            this._layout = new WinJS.UI._AppBarCommandsLayout();
+                        } else {
+                            // Custom layout uses Base AppBar Layout class.
+                            this._layout = new WinJS.UI._AppBarBaseLayout();
+                        }
+                        this._layout.connect(this._element);
+
+                        if (commands && commands.length) {
+                            // Reset AppBar since layout changed.
+                            this._layoutCommands(commands);
+                        }
 
                         // Show again if we hid ourselves for the designer
                         if (wasShown) {
@@ -638,32 +638,32 @@ define([
                 /// Sets the AppBarCommands in the AppBar. This property accepts an array of AppBarCommand objects.
                 /// </field>
                 commands: {
-                        set: function (commands) {
+                    set: function (commands) {
                         // Fail if trying to set when visible
                         if (!this.hidden) {
                             throw new WinJS.ErrorFromName("WinJS.UI.AppBar.CannotChangeCommandsWhenVisible", WinJS.Resources._formatString(thisWinUI._Overlay.commonstrings.cannotChangeCommandsWhenVisible, "AppBar"));
                         }
 
-                            // Dispose old commands before tossing them out.
+                        // Dispose old commands before tossing them out.
                         if (!this._initializing) {
                             // AppBarCommands defined in markup don't want to be disposed during initialization.
                             this._disposeChildren();
                         }
-                            this._layoutCommands(commands);
-                        }
-                    },
+                        this._layoutCommands(commands);
+                    }
+                },
 
-                    _layoutCommands: function AppBar_layoutCommands(commands){
-                        // Empties AppBar HTML and repopulates with passed in commands.
+                _layoutCommands: function AppBar_layoutCommands(commands) {
+                    // Empties AppBar HTML and repopulates with passed in commands.
 
-                        WinJS.Utilities.empty(this._element);
+                    WinJS.Utilities.empty(this._element);
 
-                        // In case they had only one command to set...
-                        if (!Array.isArray(commands)) {
-                            commands = [commands];
+                    // In case they had only one command to set...
+                    if (!Array.isArray(commands)) {
+                        commands = [commands];
                     }
 
-                        this._layout.layout(commands);
+                    this._layout.layout(commands);
                 },
 
                 getCommandById: function (id) {
