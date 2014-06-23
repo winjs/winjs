@@ -989,6 +989,7 @@ define([
                     if (!this._checkingScroll) {
                         var that = this;
                         this._checkingScroll = requestAnimationFrame(function () {
+                            if (that._disposed) { return; }
                             that._checkingScroll = null;
 
                             var newScrollPosition = _ElementUtilities.getScrollPosition(that._viewportEl)[(that.layout === _UI.Orientation.horizontal ? "scrollLeft" : "scrollTop")];

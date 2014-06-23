@@ -156,7 +156,7 @@ define([
                 this._splitOpened = false;
                 this._buildDom();
                 element.addEventListener('keydown', this._keydownHandler.bind(this));
-
+                
                 _Control.setOptions(this, options);
             }, {
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.NavBarCommand.element" helpKeyword="WinJS.UI.NavBarCommand.element">
@@ -271,7 +271,7 @@ define([
                     set: function (value) {
                         this._split = value;
                         if (this._split) {
-                            this._splitButtonEl.style.display = "flex";
+                            this._splitButtonEl.style.display = "";
                         } else {
                             this._splitButtonEl.style.display = "none";
                         }

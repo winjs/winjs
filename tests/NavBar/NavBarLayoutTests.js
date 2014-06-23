@@ -14,6 +14,12 @@ WinJSTests.NavBarLayoutTests = function () {
 
     var Key = WinJS.Utilities.Key;
     var canElementResize = null;
+    
+    function fireWindowResize() {
+        var event = document.createEvent("Event");
+        event.initEvent("resize", false, false);
+        window.dispatchEvent(event);
+    }
 
     this.setUp = function (complete) {
         LiveUnit.LoggingCore.logComment("In setup");
@@ -300,7 +306,7 @@ WinJSTests.NavBarLayoutTests = function () {
                 if (forceLayout) {
                     navbarContainer.forceLayout();
                 } else if (!canElementResize) {
-                    window.dispatchEvent(new Event("resize"));
+                    fireWindowResize();
                 }
 
                 // Wait for the resize to fire
@@ -483,7 +489,7 @@ WinJSTests.NavBarLayoutTests = function () {
                 if (forceLayout) {
                     navbarContainer.forceLayout();
                 } else if (!canElementResize) {
-                    window.dispatchEvent(new Event("resize"));
+                    fireWindowResize();
                 }
 
                 // Wait for the resize event to fire
