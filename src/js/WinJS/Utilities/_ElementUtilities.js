@@ -427,8 +427,6 @@ define([
         Object.defineProperty(eventObject, "screenY", {writable: true});
         Object.defineProperty(eventObject, "clientX", {writable: true});
         Object.defineProperty(eventObject, "clientY", {writable: true});
-        Object.defineProperty(eventObject, "pageX", {writable: true});
-        Object.defineProperty(eventObject, "pageY", {writable: true});
         for (var i = 0, len = changedTouches.length; i < len; i++) {
             var touchObject = changedTouches[i];
             eventObject.pointerType = _MSPointerEvent.MSPOINTER_TYPE_TOUCH;
@@ -437,8 +435,6 @@ define([
             eventObject.screenY = touchObject.screenY;
             eventObject.clientX = touchObject.clientX;
             eventObject.clientY = touchObject.clientY;
-            eventObject.pageX = touchObject.pageX;
-            eventObject.pageY = touchObject.pageY;
             eventObject.radiusX = touchObject.radiusX;
             eventObject.radiusY = touchObject.radiusY;
             eventObject.rotationAngle = touchObject.rotationAngle;
