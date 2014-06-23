@@ -12,7 +12,7 @@ define([
     './NavBar/_Container',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function NavBarInit(_Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
+], function NavBarInit(_Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
     "use strict";
 
     var customLayout = "custom";
@@ -94,7 +94,7 @@ define([
                         return customLayout;
                     },
                     set: function (value) {
-                        // NOP
+                        Object.getOwnPropertyDescriptor(WinJS.UI.AppBar.prototype, "layout").set.call(this, customLayout);
                     },
                 },
 
