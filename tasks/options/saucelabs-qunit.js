@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function() { 
+(function() {
     "use strict";
 
     var config = require("../../config.js");
@@ -41,36 +41,50 @@
         return index;
     }
 
-    function onTestComplete(details) {
-        var component = details.result.url.split('/')[5];
-        var browserIndex = getBrowserIndex(details.platform);
-        console.log("======================================================\n" +
-                    "Passed: " + details.result.passed + "\n" +
-                    "Failed: " + details.result.failed + "\n" +
-                    "Total: " + details.result.total + "\n" + 
-                    "Component: " +  component + "\n" + 
-                    "Time: " + details.result.runtime + "ms"
-                    );
-        
-        var componentResults = getComponentResults(component);
-        if (componentResults) {
-            componentResults["e" + browserIndex] = {
-                "url": details.url,
-                "passed": details.result.passed,
-                "total": details.result.total,
-                "time": Math.ceil(parseFloat(details.result.runtime) / 1000)
+    function onTestComplete(details, callback) {
+        try {
+            if (!details) {
+                throw "details argument is null ";
             }
-        }
 
-        if (!reportingStatus) {
-            reportingStatus = true;
-            setInterval(function() {
-                // Log status to avoid termination from Travis for long running tests
-                console.log("Running saucelabs jobs...");
-            }, 1000*60);
-        }
+            if (!details.result || !details.result.url) {
+                throw "empty url in details argument " + JSON.stringify(details);
+            }
 
-        return true;
+            var component = details.result.url.split('/')[5];
+            var browserIndex = getBrowserIndex(details.platform);
+            console.log("======================================================\n" +
+                        "Passed: " + details.result.passed + "\n" +
+                        "Failed: " + details.result.failed + "\n" +
+                        "Total: " + details.result.total + "\n" + 
+                        "Component: " +  component + "\n" + 
+                        "Time: " + details.result.runtime + "ms"
+                        );
+            
+            var componentResults = getComponentResults(component);
+            if (componentResults) {
+                componentResults["e" + browserIndex] = {
+                    "url": details.url,
+                    "passed": details.result.passed,
+                    "total": details.result.total,
+                    "time": Math.ceil(parseFloat(details.result.runtime) / 1000)
+                }
+            }
+
+            if (!reportingStatus) {
+                reportingStatus = true;
+                setInterval(function() {
+                    // Log status to avoid termination from Travis for long running tests
+                    console.log("Running saucelabs jobs...");
+                }, 1000*60);
+            }
+        } catch(e) {
+            console.log("onTestComplete error: " + e);
+        } finally {
+            // Always indicate that the test passed so that we can finish the grunt task successfully.
+            // The config.tests_results object will store the correct information for each the test run.
+            callback(null, true);
+        }
     }
 
     function getComponentResults(component) {
@@ -128,13 +142,13 @@
                     "http://127.0.0.1:9999/bin/tests/UI/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/ViewBox/test.html?fastanimations=true&autostart=true",
                     "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?fastanimations=true&autostart=true", 
-                    "http://127.0.0.1:9999/bin/tests/Pivot/test.html?fastanimations=true&autostart=true&testtimeout=10000"
+                    "http://127.0.0.1:9999/bin/tests/Pivot/test.html?fastanimations=false&autostart=true&testtimeout=10000"
                 ],
                 build: process.env.TRAVIS_JOB_ID,
                 testInterval: 1000,
+                throttled: 20,
                 browsers: browsers,
-                throttled:4,
-                maxDuration: 180,
+                "max-duration": 180,
                 testname: "winjs qunit tests",
                 tags: ["winjs"],
                 onTestComplete: onTestComplete
@@ -146,12 +160,12 @@
                       "http://127.0.0.1:9999/bin/tests/ListView/test.html?fastanimations=true&autostart=true&testtimeout=10000",
                       "http://127.0.0.1:9999/bin/tests/ListViewIntegration/test.html?fastanimations=true&autostart=true&testtimeout=10000",
                       "http://127.0.0.1:9999/bin/tests/Tooltip/test.html?fastanimations=true&autostart=true&testtimeout=10000",
-                      "http://127.0.0.1:9999/bin/tests/Rating/test.html?fastanimations=true&autostart=true&testtimeout=3000"
+                      "http://127.0.0.1:9999/bin/tests/Rating/test.html?fastanimations=true&autostart=true&testtimeout=3000" 
                 ],
                 build: process.env.TRAVIS_JOB_ID,
                 testInterval: 1000,
-                maxDuration: 500,
-                throttled:10,
+                "max-duration": 500,
+                throttled: 20,
                 browsers: [{
                     browserName: "internet explorer",
                     platform: "WIN8.1",
@@ -163,4 +177,4 @@
             }
         }
     };
-})(); 
+})();
