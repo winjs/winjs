@@ -1093,11 +1093,11 @@ define([
             return success;
         },
 
-            _MutationObserver: _MutationObserver,
+        _MutationObserver: _MutationObserver,
 
-            _resizeNotifier: {
-                get: function () {
-                    if (!_resizeNotifier) {
+        _resizeNotifier: {
+            get: function () {
+                if (!_resizeNotifier) {
                     _resizeNotifier = new ResizeNotifier();
                 }
                 return _resizeNotifier;
@@ -1107,7 +1107,7 @@ define([
         // Browser agnostic method to set element flex style
         // Param is an object in the form {grow: flex-grow, shrink: flex-shrink, basis: flex-basis}
         // All fields optional
-            _setFlexStyle: function (element, flexParams) {
+        _setFlexStyle: function (element, flexParams) {
             var styleObject = element.style;
             if (typeof flexParams.grow !== "undefined") {
                 styleObject.msFlexPositive = flexParams.grow;
