@@ -36,6 +36,11 @@ TooltipHidingTests = function () {
     // This test basically triggers the tooltip using one method, and then tries dismissing it using another
     // method.  We then verify whether is should have immediately hid or not.
     testTooltip_Hiding = function (signalTestCaseCompleted, inputMethod, hideMethod, shouldHide) {
+        if (hideMethod === "touchOut" && !tooltipUtils.pointerOutSupported) {
+            signalTestCaseCompleted();
+            return;
+        }
+        
         LiveUnit.LoggingCore.logComment("When the tooltip is triggered by:  " + inputMethod);
         LiveUnit.LoggingCore.logComment("And the following event is fired:  " + hideMethod);
         LiveUnit.LoggingCore.logComment("We expect the tooltip to hide: " + shouldHide);

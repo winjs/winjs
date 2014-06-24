@@ -55,12 +55,29 @@ define([
             var OFFSET_PROGRAMMATIC_TOUCH = 20;
             var OFFSET_PROGRAMMATIC_NONTOUCH = 12;
             var SAFETY_NET_GAP = 1; // We set a 1-pixel gap between the right or bottom edge of the tooltip and the viewport to avoid possible re-layout
+            var PT_MOUSE = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse"; // pointer type to indicate a mouse event
             var PT_TOUCH = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch"; // pointer type to indicate a touch event
 
-            var EVENTS_INVOKE = { "keyup": "", "pointerover": "" },
+            var EVENTS_INVOKE = { "keyup": "", "pointerover": "", "pointerdown": "" },
                 EVENTS_UPDATE = { "pointermove": "" },
-            EVENTS_DISMISS = { "pointerdown": "", "keydown": "", "focusout": "", "pointerout": "", "pointercancel": "", "pointerup": "" },
-            EVENTS_BY_CHILD = { "pointerover": "", "pointerout": "" };
+                EVENTS_DISMISS = { "pointerdown": "", "keydown": "", "focusout": "", "pointerout": "", "pointercancel": "", "pointerup": "" },
+                EVENTS_BY_CHILD = { "pointerover": "", "pointerout": "" };
+            
+            function isInvokeEvent(eventType, pointerType) {
+                if (eventType === "pointerdown") {
+                    return pointerType === PT_TOUCH;
+                } else {
+                    return eventType in EVENTS_INVOKE;
+                }
+            }
+            
+            function isDismissEvent(eventType, pointerType) {
+                if (eventType === "pointerdown") {
+                    return pointerType !== PT_TOUCH;
+                } else {
+                    return eventType in EVENTS_DISMISS;
+                }
+            }
 
             // CSS class names
             var msTooltip = "win-tooltip",
@@ -447,19 +464,19 @@ define([
                 },
 
                 // Support for keyboard navigation
-                _captureLastKeyBlurOrPointerOverEvent: function (event, listener) {
-                    listener._lastKeyOrBlurEvent = listener._currentKeyOrBlurEvent;
+                _captureLastKeyBlurOrPointerOverEvent: function (event) {
+                    this._lastKeyOrBlurEvent = this._currentKeyOrBlurEvent;
                     switch (event.type) {
                         case "keyup":
                             if (event.keyCode === Key.shift) {
-                                listener._currentKeyOrBlurEvent = null;
+                                this._currentKeyOrBlurEvent = null;
                             } else {
-                                listener._currentKeyOrBlurEvent = "keyboard";
+                                this._currentKeyOrBlurEvent = "keyboard";
                             }
                             break;
                         case "focusout":
                             //anchor element no longer in focus, clear up the stack
-                            listener._currentKeyOrBlurEvent = null;
+                            this._currentKeyOrBlurEvent = null;
                             break;
                         default:
                             break;
@@ -467,10 +484,11 @@ define([
                     }
                 },
 
-                _registerEventToListener: function (element, eventType, listener) {
+                _registerEventToListener: function (element, eventType) {
+                    var that = this;
                     var handler = function (event) {
-                        listener._captureLastKeyBlurOrPointerOverEvent(event, listener);
-                        listener._handleEvent(event);
+                        that._captureLastKeyBlurOrPointerOverEvent(event);
+                        that._handleEvent(event);
                     };
                     _ElementUtilities._addEventListener(element, eventType, handler, false);
 
@@ -481,67 +499,64 @@ define([
 
                 _events: function () {
                     for (var eventType in EVENTS_INVOKE) {
-                        this._registerEventToListener(this._anchorElement, eventType, this);
+                        this._registerEventToListener(this._anchorElement, eventType);
                     }
                     for (var eventType in EVENTS_UPDATE) {
-                        this._registerEventToListener(this._anchorElement, eventType, this);
+                        this._registerEventToListener(this._anchorElement, eventType);
                     }
                     for (eventType in EVENTS_DISMISS) {
-                        this._registerEventToListener(this._anchorElement, eventType, this);
+                        this._registerEventToListener(this._anchorElement, eventType);
                     }
-                    this._registerEventToListener(this._anchorElement, "contextmenu", this);
-                    this._registerEventToListener(this._anchorElement, "MSHoldVisual", this);
+                    this._registerEventToListener(this._anchorElement, "contextmenu");
+                    this._registerEventToListener(this._anchorElement, "MSHoldVisual");
                 },
 
-                _handleEvent: function (event) {
+                _handleEvent: function (event) {                    
                     var eventType = event._normalizedType || event.type;
                     if (!this._triggerByOpen) {
                         // If the anchor element has children, we should ignore events that are caused within the anchor element
                         // Please note that we are not using event.target here as in bubbling phases from the child, the event target
                         // is usually the child
-                        if (eventType in EVENTS_BY_CHILD) {
-                            var elem = event.relatedTarget;
-
-                            while (elem && elem !== this._anchorElement && elem !== document.body) {
-                                try {
-                                    elem = elem.parentNode;
-                                }
-                                catch (e) {
-                                    if (e instanceof Error && e.message === 'Permission denied') {
-                                        //Permission denied error, if we can't access the node's
-                                        //information, we should not handle the event
-                                        //Put this guard prior Bug 484666 is fixed
-                                        return;
-                                    }
-                                    else {
-                                        throw e;
-                                    }
-                                }
-                            }
-                            if (elem === this._anchorElement) {
-                                return;
-                            }
-                        }
-                        if (eventType in EVENTS_INVOKE) {
+                        if (eventType in EVENTS_BY_CHILD && _ElementUtilities.eventWithinElement(this._anchorElement, event)) {
+                            return;
+                        } else if (isInvokeEvent(eventType, event.pointerType)) {
                             if (event.pointerType === PT_TOUCH) {
+                                if (!this._isShown) {
+                                    this._showTrigger = "touch";
+                                }
                                 this._onInvoke("touch", "never", event);
-                                this._showTrigger = "touch";
+                            } else if (this._skipMouseOver && event.pointerType === PT_MOUSE && eventType === "pointerover") {
+                                // In browsers which use touch (instead of pointer) events, when the user taps their finger on
+                                // an element which has a tooltip, we receive the following sequence of events:
+                                //   - pointerdown (from touchstart; causes the Tooltip to show)
+                                //   - pointerup (from touchend; causes the Tooltip to hide)
+                                //   - pointerover (from mouseover; causes the Tooltip to show)
+                                // At the end, the Tooltip should be hidden but instead it'll be shown due to mouseover coming
+                                // after touchend. To avoid this problem, we use the _skipMouseOver flag to ignore the mouseover
+                                // that follows touchend. 
+                                this._skipMouseOver = false;
+                                return;
                             } else {
                                 var type = eventType.substring(0, 3) === "key" ? "keyboard" : "mouse";
+                                if (!this._isShown) {
+                                    this._showTrigger = type;
+                                }
                                 this._onInvoke(type, "auto", event);
-                                this._showTrigger = type;
                             }
                         } else if (eventType in EVENTS_UPDATE) {
                             this._contactPoint = { x: event.clientX, y: event.clientY };
-                        } else if (eventType in EVENTS_DISMISS) {
+                        } else if (isDismissEvent(eventType, event.pointerType)) {
                             var eventTrigger;
                             if (event.pointerType === PT_TOUCH) {
-                                if (eventType === "pointerdown") {
-                                    return;
+                                if (eventType === "pointerup") {
+                                    this._skipMouseOver = true;
+                                    var that = this;
+                                    _BaseUtils._yieldForEvents(function () {
+                                        that._skipMouseOver = false;
+                                    });
                                 }
                                 eventTrigger = "touch";
-                            }
-                            else {
+                            } else {
                                 eventTrigger = eventType.substring(0, 3) === "key" ? "keyboard" : "mouse";
                             }
                             if (eventType !== "focusout" && eventTrigger !== this._showTrigger) {

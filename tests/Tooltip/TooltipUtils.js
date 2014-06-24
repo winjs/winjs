@@ -27,7 +27,9 @@ TooltipUtils.prototype = (function () {
         // Constants just for our tests.
         defaultElementID: "elementID",
         TIMEOUT_DIDNT_RECEIVE_EVENTS: 30000,
-
+        pointerOutSupported: window.PointerEvent || window.MSPointerEvent,
+        pointerOverSupported: window.PointerEvent || window.MSPointerEvent,
+        
         //-----------------------------------------------------------------------------------
         // Default/constant values for tooltip.  We could get these dynamically from the tooltip, but
         // we don't want to in case there's a bug in the tooltip (this would be rare).  The downside
@@ -41,7 +43,7 @@ TooltipUtils.prototype = (function () {
         DEFAULT_PLACEMENT: "top",
         DEFAULT_INFOTIP: false,
         get DELAY_INITIAL_TOUCH_SHORT() { return WinJS.UI.Tooltip._DELAY_INITIAL_TOUCH_SHORT; },
-        get DELAY_INITIAL_TOUCH_LONG() { return WinJS.UI.Tooltip._DELAY_INITIAL_TOUCH_SHORT; },
+        get DELAY_INITIAL_TOUCH_LONG() { return WinJS.UI.Tooltip._DELAY_INITIAL_TOUCH_LONG; },
         get DEFAULT_MOUSE_HOVER_TIME() { return WinJS.UI.Tooltip._DEFAULT_MOUSE_HOVER_TIME; },
         get DEFAULT_MESSAGE_DURATION() { return WinJS.UI.Tooltip._DEFAULT_MESSAGE_DURATION; },
         get DELAY_RESHOW_NONINFOTIP_TOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_NONINFOTIP_TOUCH; },
@@ -59,13 +61,16 @@ TooltipUtils.prototype = (function () {
             ///  String specifying id of element to create.
             /// </param>
             LiveUnit.LoggingCore.logComment("In setup");
+            var callerIsDone = WinJS.Promise.timeout();
 
             if (typeof (WebUnit) === 'undefined') {
                 // We could use the "light style" too
                 // commonUtils.addCss("ui-light.css");
                 var dark = commonUtils.addCss("ui-dark.css");
                 var tooltip = commonUtils.addCss("Tooltip.css", true);
-                WinJS.Promise.join([dark, tooltip]).then(complete);
+                WinJS.Promise.join([callerIsDone, dark, tooltip]).then(complete);
+            } else {
+                callerIsDone.then(complete);
             }
             // Create a default "anchor/trigger" element the tooltip will be attached to
             // and give it a border and default text so it's easier to see when visually
@@ -449,7 +454,11 @@ TooltipUtils.prototype = (function () {
             LiveUnit.LoggingCore.logComment("Triggering tooltip using " + inputMethod);
             switch (inputMethod) {
                 case "touch":
-                    commonUtils.touchOver(null, element);
+                    if (this.pointerOverSupported) {
+                        commonUtils.touchOver(null, element);
+                    } else {
+                        commonUtils.touchDown(element);
+                    }
                     break;
                 case "touchProgrammatic":
                     tooltip.open("touch");

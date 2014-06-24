@@ -14,6 +14,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/util.js" />
 /// <reference path="TooltipUtils.js"/>
 /// <reference path="Tooltip.css"/>
 
@@ -274,7 +275,7 @@ TooltipDisplayingTests = function () {
                     //}
                     var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
                     LiveUnit.LoggingCore.logComment(tooltipStyle.zIndex);
-                    LiveUnit.Assert.areEqual(tooltipStyle.zIndex, 9999);
+                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9999);
                     LiveUnit.LoggingCore.logComment(tooltipStyle.position);
                     LiveUnit.Assert.areEqual(tooltipStyle.position, "fixed");
 
@@ -344,7 +345,7 @@ TooltipDisplayingTests = function () {
 
                     var tooltipStyle = window.getComputedStyle(tooltip._phantomDiv, null);
                     LiveUnit.LoggingCore.logComment(tooltipStyle.backgroundColor);
-                    LiveUnit.Assert.areEqual(tooltipStyle.backgroundColor, "transparent");
+                    Helper.Assert.areColorsEqual(tooltipStyle.backgroundColor, "transparent");
 
                     // Make sure we can't tab to the phantom tooltip div
                     var tabindex = tooltip._phantomDiv.getAttribute("tabindex");
@@ -428,11 +429,11 @@ TooltipDisplayingTests = function () {
                     // fontFamily is in the default stylesheet, but not specifically the tooltip section.
                     // Make sure we can override it.
                     LiveUnit.LoggingCore.logComment(tooltipStyle.fontFamily);
-                    LiveUnit.Assert.areEqual(tooltipStyle.fontFamily, "Courier New");
+                    Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
 
                     // zIndex is specifically in .win-tooltip.  Make sure we can override it.
                     LiveUnit.LoggingCore.logComment(tooltipStyle.zIndex);
-                    LiveUnit.Assert.areEqual(tooltipStyle.zIndex, 9998);
+                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
 
                     // fire mouse out which should dismiss the tooltip.
                     commonUtils.mouseOverUsingMiP(element, null);
@@ -481,7 +482,7 @@ TooltipDisplayingTests = function () {
                 case "beforeopen+1":
                     // zIndex is specifically in .win-tooltip.  Make sure we can override it using our extraClass.
                     var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
-                    LiveUnit.Assert.areEqual(tooltipStyle.zIndex, 9998);
+                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
                     window.tooltipEventListener = null;
                     break;
                 case "opened":
@@ -489,10 +490,10 @@ TooltipDisplayingTests = function () {
 
                     // fontFamily is in the default stylesheet, but not specifically the tooltip section.
                     // Make sure we can override it using our extraClass.
-                    LiveUnit.Assert.areEqual(tooltipStyle.fontFamily, "Courier New");
+                    Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
 
                     // zIndex is specifically in .win-tooltip.  Make sure we can override it using extraClass.
-                    LiveUnit.Assert.areEqual(tooltipStyle.zIndex, 9998);
+                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
 
                     // Now remove the class and verify it does NOT get removed.  This is by design.
                     tooltip.extraClass = "";
@@ -503,8 +504,8 @@ TooltipDisplayingTests = function () {
                 case "beforeclose":
                     // Verify the extraClass is still affecting us now.
                     var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
-                    LiveUnit.Assert.areEqual(tooltipStyle.fontFamily, "Courier New");
-                    LiveUnit.Assert.areEqual(tooltipStyle.zIndex, 9998);
+                    Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
+                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
                     break;
                 case "closed":
                     tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
@@ -550,12 +551,12 @@ TooltipDisplayingTests = function () {
                     // Make sure it's not being affected.
                     // zIndex is specifically in the win-tooltip section.
                     if (timesTooltipOpened == 1) {
-                        LiveUnit.Assert.areEqual(tooltipStyle.fontFamily, "Courier New");
-                        LiveUnit.Assert.areEqual(tooltipStyle.zIndex, 9998);
+                        Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
+                        LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
                     }
                     else {
-                        LiveUnit.Assert.areNotEqual(tooltipStyle.fontFamily, "Courier New");
-                        LiveUnit.Assert.areEqual(tooltipStyle.zIndex, 9999);
+                        Helper.Assert.areFontFamiliesNotEqual(tooltipStyle.fontFamily, "Courier New");
+                        LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9999);
                     }
 
                     // fire mouse out which should dismiss the tooltip.
@@ -873,7 +874,7 @@ TooltipDisplayingTests = function () {
     
     
 
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved = function (signalTestCaseCompleted) {
+    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved = function (signalTestCaseCompleted) {        
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
 
         // Set up the anchor/trigger element.

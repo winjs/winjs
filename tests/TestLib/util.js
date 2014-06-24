@@ -330,6 +330,27 @@ var Helper;
             nums.length < 4 ? 1.0 : parseFloat(nums[3].trim())
         ];
     };
+    
+    function normalizedCssValue(attributeName, value) {
+        var div = document.createElement("div");
+        document.body.appendChild(div);
+        
+        div.style[attributeName] = value;
+        var normalizedValue = getComputedStyle(div)[attributeName];
+        
+        document.body.removeChild(div);
+        return normalizedValue;
+    }
+    
+    function makeNormalizedCssValueAssertion(assertionFunction, attributeName) {
+        return function (expected, actual, message) {
+            assertionFunction(
+                normalizedCssValue(attributeName, expected),
+                normalizedCssValue(attributeName, actual),
+                message
+            );
+        };
+    }
 
     Helper.Assert = {
         areArraysEqual: function areArraysEqual(expectedArray, actualArray, message) {
@@ -369,14 +390,10 @@ var Helper;
 
         // Verifies CSS urls. *expectedUrl* and *actualUrl* are expected to be valid CSS rules. For example,
         // url("foo.png").
-        areUrlsEqual: function areUrlsEqual(expectedUrl, actualUrl, message) {
-            function normalizedUrl(url) {
-                var div = document.createElement("div");
-                div.style.backgroundImage = expectedUrl;
-                return getComputedStyle(div).url;
-            }
-            LiveUnit.Assert.areEqual(normalizedUrl(expectedUrl), normalizedUrl(actualUrl), message);
-        }
+        areUrlsEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "backgroundImage"),
+        
+        areFontFamiliesEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "fontFamily"),
+        areFontFamiliesNotEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areNotEqual.bind(LiveUnit.Assert), "fontFamily")
     };
 
     // Returns the group key for an item as defined by createData() below

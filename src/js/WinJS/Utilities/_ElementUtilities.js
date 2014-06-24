@@ -483,7 +483,7 @@ define([
             mouse: "mouseover"
         },
         pointerout: {
-            touch: "touchleave",
+            touch: null,
             mspointer: "MSPointerOut",
             mouse: "mouseout"
         },
@@ -916,7 +916,7 @@ define([
         _MSGestureEvent: _MSGestureEvent,
         _MSManipulationEvent: _MSManipulationEvent,
 
-            _elementsFromPoint: function (x, y) {
+        _elementsFromPoint: function (x, y) {
             if (document.msElementsFromPoint) {
                 return document.msElementsFromPoint(x, y);
             } else {

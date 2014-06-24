@@ -66,7 +66,11 @@ TooltipInfotipTests = function () {
                     openedTime = (new Date()).getTime();
                     if (useTouch) {
                         // Touch will display the tooltip forever, so let's just immediately dismiss it.
-                        commonUtils.touchOver(element, null);
+                        if (tooltipUtils.pointerOverSupported) {
+                            commonUtils.touchOver(element, null);
+                        } else {
+                            commonUtils.touchUp(element);
+                        }
                     }
                     break;
                 case "beforeclose":
