@@ -15,12 +15,12 @@ define([
         _Base.Namespace.define("WinJS.Utilities", {
 
             _createWeakRef: function (element, id) {
-                msSetWeakWinRTProperty(host, id, element);
+                _Global.msSetWeakWinRTProperty(host, id, element);
                 return id;
             },
 
             _getWeakRefElement: function (id) {
-                return msGetWeakWinRTProperty(host, id);
+                return _Global.msGetWeakWinRTProperty(host, id);
             }
 
         });

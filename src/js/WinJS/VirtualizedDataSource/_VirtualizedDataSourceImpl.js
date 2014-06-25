@@ -2581,7 +2581,7 @@ define([
                 function resetRefreshState() {
                     if (++beginRefreshCount > MAX_BEGINREFRESH_COUNT) {
                         if (identifyRefreshCycle()) {
-                            setState(DataSourceStatus.failure);
+                            setStatus(DataSourceStatus.failure);
                             return;
                         }
                     }

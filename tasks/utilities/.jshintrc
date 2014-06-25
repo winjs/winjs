@@ -21,7 +21,7 @@
     "nonew": false, // Prohibits the use of constructor functions for side-effects.
     "plusplus": false, // Prohibits the use of unary increment and decrement operators.
     "quotmark": false, // Enforces the consistency of quotation marks used throughout your code. 
-    "undef": false, // Prohibits the use of explicitly undeclared variables.
+    "undef": true, // Prohibits the use of explicitly undeclared variables.
     "unused": false, // Warns when you define and never use your variables.
     "strict": false, // Requires all functions to run in ECMAScript 5's strict mode.
     "trailing": false, // Makes it an error to leave a trailing whitespace in your code.
@@ -84,6 +84,12 @@
         https://www.npmjs.org/package/grunt-contrib-jshint
     */
     "globals": {
+        "define": true,
+        "Debug": true,
+        "requestAnimationFrame": true,
+        "MSApp": true,
+        "NodeList": true,
+        "HTMLCollection": true,
 		"WinJS": true,
 		"Windows": false
     }

@@ -1147,7 +1147,7 @@ define([
                         if (WinJS.validation) {
                             throw new _ErrorFromName("WinJS.UI.ListView.invalidTemplate", _ErrorMessages.invalidTemplate);
                         }
-                        renderer = trivialHtmlRenderer;
+                        renderer = _ItemsManager.trivialHtmlRenderer;
                     } else if (typeof newRenderer === "function") {
                         renderer = newRenderer;
                     } else if (typeof newRenderer === "object") {

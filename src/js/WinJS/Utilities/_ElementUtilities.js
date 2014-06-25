@@ -900,7 +900,7 @@ define([
 
         _createGestureRecognizer: function () {
             if (_Global.MSGesture) {
-                return new MSGesture();
+                return new _Global.MSGesture();
             }
 
             var doNothing = function () {

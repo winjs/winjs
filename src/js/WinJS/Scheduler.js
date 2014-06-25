@@ -1171,7 +1171,7 @@ define([
 
     // Performance.now is not defined in web workers.
     //
-    var now = (_Global.performance && performance.now.bind(performance)) || Date.now.bind(Date);
+    var now = (_Global.performance && _Global.performance.now.bind(_Global.performance)) || Date.now.bind(Date);
 
     // Main scheduler pump.
     //

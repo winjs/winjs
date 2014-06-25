@@ -6,10 +6,11 @@ define([
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_WriteProfilerMark',
+    '../Animations',
     '../Promise',
     '../Utilities/_UI',
     './_VirtualizedDataSourceImpl'
-    ], function storageDataSourceInit(exports, _Base, _ErrorFromName, _WriteProfilerMark, Promise, _UI, VirtualizedDataSource) {
+    ], function storageDataSourceInit(exports, _Base, _ErrorFromName, _WriteProfilerMark, Animations, Promise, _UI, VirtualizedDataSource) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
