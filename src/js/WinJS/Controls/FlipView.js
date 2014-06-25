@@ -69,7 +69,7 @@ define([
 
             function flipViewPropertyChanged(list) {
                 var that = list[0].target.winControl;
-                if (that && that instanceof exports.FlipView) {
+                if (that && that instanceof FlipView) {
                     if (list.some(function (record) {
                         if (record.attributeName === "dir") {
                             return true;
@@ -88,7 +88,7 @@ define([
 
             function flipviewResized(e) {
                 var that = e.target && e.target.winControl;
-                if (that && that instanceof exports.FlipView) {
+                if (that && that instanceof FlipView) {
                     _WriteProfilerMark("WinJS.UI.FlipView:resize,StartTM");
                     that._resize();
                 }
