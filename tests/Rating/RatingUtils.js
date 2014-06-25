@@ -708,7 +708,8 @@ RatingUtils.prototype = (function () {
 
             LiveUnit.LoggingCore.logComment("verifyLayout: Expect '" + expect + "' styles");
 
-            LiveUnit.Assert.areEqual(rating.maxRating + 1, element.childNodes.length, "Verify there are a total of maxRating+1 " + expect + "-rating stars under the element rating was created out of.");
+            var numStars = element.querySelectorAll(".win-star").length;
+            LiveUnit.Assert.areEqual(rating.maxRating + 1, numStars, "Verify there are a total of maxRating+1 " + expect + "-rating stars under the element rating was created out of.");
 
             // Make sure the styles for the overall control are set correctly
             var ratingControlStyle = window.getComputedStyle(element);

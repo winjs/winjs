@@ -120,6 +120,9 @@ define([
                 this._controlUpdateNeeded = true;
                 this._forceLayout();
 
+                // Register for notification when we are added to DOM
+                WinJS.Utilities._addInsertedNotifier(this._element);
+
                 // Remember ourselves
                 element.winControl = this;
                 this._events();
@@ -519,7 +522,7 @@ define([
                             ratingHandler("PointerOut")
                     ];
                     var events = [
-                            ratingHandler("DOMNodeInserted")
+                        ratingHandler("WinJSNodeInserted")
                     ];
 
                     var i;
@@ -534,11 +537,9 @@ define([
                     this._ariaValueNowMutationObserver.observe(this._element, { attributes: true, attributeFilter: ["aria-valuenow"] });
                 },
 
-                _onDOMNodeInserted: function (eventObject) {
-                    if (eventObject.target === this._element) {
-                        this._recalculateStarProperties();
-                        this._updateControl();
-                    }
+                _onWinJSNodeInserted: function (eventObject) {
+                    this._recalculateStarProperties();
+                    this._updateControl();
                 },
 
                 _recalculateStarProperties: function () {
