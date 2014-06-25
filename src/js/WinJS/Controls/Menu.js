@@ -2,13 +2,22 @@
 // Menu
 /// <dictionary>Menu,Menus,Flyout,Flyouts,Statics</dictionary>
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Utilities/_ElementUtilities',
+    './AppBar/_Constants',
+    './Flyout',
+    './Flyout/_Overlay',
     './Menu/_Command',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function menuInit(_Command) {
+    ], function menuInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _ElementUtilities, _Constants, Flyout, _Overlay, _Command) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.Menu">Represents a menu flyout for displaying commands.</summary>
         /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -27,21 +36,16 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        Menu: WinJS.Namespace._lazy(function () {
-            var thisWinUI = WinJS.UI;
-            var Key = WinJS.Utilities.Key;
-
-            // Class Names
-            var menuClass = "win-menu";
-            var menuToggleClass = "win-menu-toggle";
+        Menu: _Base.Namespace._lazy(function () {
+            var Key = _ElementUtilities.Key;
 
             var strings = {
-                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/menuAriaLabel").value; },
-                get requiresCommands() { return WinJS.Resources._getWinJSString("ui/requiresCommands").value; },
-                get nullCommand() { return WinJS.Resources._getWinJSString("ui/nullCommand").value; },
+                get ariaLabel() { return _Resources._getWinJSString("ui/menuAriaLabel").value; },
+                get requiresCommands() { return _Resources._getWinJSString("ui/requiresCommands").value; },
+                get nullCommand() { return _Resources._getWinJSString("ui/nullCommand").value; },
             };
 
-            var Menu = WinJS.Class.derive(WinJS.UI.Flyout, function Menu_ctor(element, options) {
+            var Menu = _Base.Class.derive(Flyout.Flyout, function Menu_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Menu.Menu">
                 /// <summary locid="WinJS.UI.Menu.constructor">
                 /// Creates a new Menu control.
@@ -61,7 +65,7 @@ define([
 
                 // Make sure there's an input element
                 this._element = element || document.createElement("div");
-                this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
+                this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
                 // validate that if they didn't set commands, in which
@@ -69,7 +73,7 @@ define([
                 // so that we don't leave partial Menus in the DOM.
                 if (!options.commands && this._element) {
                     // Shallow copy object so we can modify it.
-                    options = WinJS.Utilities._shallowCopy(options);
+                    options = _BaseUtils._shallowCopy(options);
                     options.commands = this._verifyCommandsOnly(this._element, "WinJS.UI.MenuCommand");
                 }
 
@@ -92,7 +96,7 @@ define([
                 this._element.addEventListener("keydown", this._handleKeyDown, true);
 
                 // Attach our css class
-                WinJS.Utilities.addClass(this._element, menuClass);
+                _ElementUtilities.addClass(this._element, _Constants.menuClass);
 
                 // Need to set our commands, making sure we're hidden first
                 this.hide();
@@ -108,11 +112,11 @@ define([
                     set: function (value) {
                         // Fail if trying to set when visible
                         if (!this.hidden) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.Menu.CannotChangeCommandsWhenVisible", WinJS.Resources._formatString(thisWinUI._Overlay.commonstrings.cannotChangeCommandsWhenVisible, "Menu"));
+                            throw new _ErrorFromName("WinJS.UI.Menu.CannotChangeCommandsWhenVisible", _Resources._formatString(_Overlay._Overlay.commonstrings.cannotChangeCommandsWhenVisible, "Menu"));
                         }
 
                         // Start from scratch
-                        WinJS.Utilities.empty(this._element);
+                        _ElementUtilities.empty(this._element);
 
                         // In case they had only one...
                         if (!Array.isArray(value)) {
@@ -167,7 +171,7 @@ define([
                     /// <compatibleWith platform="Windows" minVersion="8.0"/>
                     /// </signature>
                     if (!commands) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Menu.RequiresCommands", strings.requiresCommands);
+                        throw new _ErrorFromName("WinJS.UI.Menu.RequiresCommands", strings.requiresCommands);
                     }
 
                     this._showCommands(commands, true);
@@ -184,7 +188,7 @@ define([
                     /// <compatibleWith platform="Windows" minVersion="8.0"/>
                     /// </signature>
                     if (!commands) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Menu.RequiresCommands", strings.requiresCommands);
+                        throw new _ErrorFromName("WinJS.UI.Menu.RequiresCommands", strings.requiresCommands);
                     }
 
                     this._hideCommands(commands, true);
@@ -201,7 +205,7 @@ define([
                     /// <compatibleWith platform="Windows" minVersion="8.0"/>
                     /// </signature>
                     if (!commands) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Menu.RequiresCommands", strings.requiresCommands);
+                        throw new _ErrorFromName("WinJS.UI.Menu.RequiresCommands", strings.requiresCommands);
                     }
 
                     this._showOnlyCommands(commands, true);
@@ -244,12 +248,12 @@ define([
 
                 _addCommand: function Menu_addCommand(command) {
                     if (!command) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Menu.NullCommand", strings.nullCommand);
+                        throw new _ErrorFromName("WinJS.UI.Menu.NullCommand", strings.nullCommand);
                     }
                     // See if it's a command already
                     if (!command._element) {
                         // Not a command, so assume it's options for a command
-                        command = new WinJS.UI.MenuCommand(null, command);
+                        command = new _Command.MenuCommand(null, command);
                     }
                     // If we were attached somewhere else, detach us
                     if (command._element.parentElement) {
@@ -275,9 +279,9 @@ define([
                         }
                     }
                     if (hasToggle) {
-                        WinJS.Utilities.addClass(this._element, menuToggleClass);
+                        _ElementUtilities.addClass(this._element, _Constants.menuToggleClass);
                     } else {
-                        WinJS.Utilities.removeClass(this._element, menuToggleClass);
+                        _ElementUtilities.removeClass(this._element, _Constants.menuToggleClass);
                     }
                 },
 
@@ -302,13 +306,13 @@ define([
                         this.winControl.hide();
                     } else if (event.keyCode === Key.upArrow) {
                         var that = this;
-                        thisWinUI.Menu._focusOnPreviousElement(that);
+                        Menu._focusOnPreviousElement(that);
 
                         // Prevent the page from scrolling
                         event.preventDefault();
                     } else if (event.keyCode === Key.downArrow) {
                         that = this;
-                        thisWinUI.Menu._focusOnNextElement(that);
+                        Menu._focusOnNextElement(that);
 
                         // Prevent the page from scrolling
                         event.preventDefault();
@@ -318,7 +322,7 @@ define([
                 },
 
                 _writeProfilerMark: function Menu_writeProfilerMark(text) {
-                    WinJS.Utilities._writeProfilerMark("WinJS.UI.Menu:" + this._id + ":" + text);
+                    _WriteProfilerMark("WinJS.UI.Menu:" + this._id + ":" + text);
                 }
             });
 

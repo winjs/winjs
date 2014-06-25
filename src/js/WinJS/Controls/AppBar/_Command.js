@@ -2,10 +2,21 @@
 // AppBarCommand
 /// <dictionary>appbar,appbars,Flyout,Flyouts,onclick,Statics</dictionary>
 define([
-    ], function appBarCommandInit() {
+    'exports',
+    '../../Core/_Base',
+    '../../Core/_ErrorFromName',
+    '../../Core/_Resources',
+    '../../Utilities/_Control',
+    '../../Utilities/_Dispose',
+    '../../Utilities/_ElementUtilities',
+    '../Flyout/_Overlay',
+    '../Tooltip',
+    './_Constants',
+    './_Icon'
+    ], function appBarCommandInit(exports, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBarCommand">
         /// Represents a command to display in an AppBar. 
@@ -22,29 +33,16 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        AppBarCommand: WinJS.Namespace._lazy(function () {
-            var thisWinUI = WinJS.UI;
+        AppBarCommand: _Base.Namespace._lazy(function () {
 
-            // Class Names
-            var appBarCommandClass = "win-command",
-                appBarCommandGlobalClass = "win-global",
-                appBarCommandSelectionClass = "win-selection",
-                reducedClass = "win-reduced",
-                typeSeparator = "separator",
-                typeButton = "button",
-                typeToggle = "toggle",
-                typeFlyout = "flyout",
-                typeContent = "content",
-                sectionSelection = "selection",
-                sectionGlobal = "global";
 
             function _handleClick(event) {
                 var command = this.winControl;
                 if (command) {
-                    if (command._type === typeToggle) {
+                    if (command._type === _Constants.typeToggle) {
                         command.selected = !command.selected;
-                    } else if (command._type === typeFlyout && command._flyout) {
-                        var parentAppBar = thisWinUI._Overlay._getParentControlUsingClassName(this, "win-appbar");
+                    } else if (command._type === _Constants.typeFlyout && command._flyout) {
+                        var parentAppBar = _Overlay._Overlay._getParentControlUsingClassName(this, _Constants.appBarClass);
                         var placement = "top";
                         if (parentAppBar && parentAppBar.placement === "top") {
                             placement = "bottom";
@@ -68,15 +66,15 @@ define([
             }
 
             var strings = {
-                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/appBarCommandAriaLabel").value; },
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get badClick() { return WinJS.Resources._getWinJSString("ui/badClick").value; },
-                get badDivElement() { return WinJS.Resources._getWinJSString("ui/badDivElement").value; },
-                get badHrElement() { return WinJS.Resources._getWinJSString("ui/badHrElement").value; },
-                get badButtonElement() { return WinJS.Resources._getWinJSString("ui/badButtonElement").value; }
+                get ariaLabel() { return _Resources._getWinJSString("ui/appBarCommandAriaLabel").value; },
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                get badClick() { return _Resources._getWinJSString("ui/badClick").value; },
+                get badDivElement() { return _Resources._getWinJSString("ui/badDivElement").value; },
+                get badHrElement() { return _Resources._getWinJSString("ui/badHrElement").value; },
+                get badButtonElement() { return _Resources._getWinJSString("ui/badButtonElement").value; }
             };
 
-            return WinJS.Class.define(function AppBarCommand_ctor(element, options) {
+            return _Base.Class.define(function AppBarCommand_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBarCommand.AppBarCommand">
                 /// <summary locid="WinJS.UI.AppBarCommand.constructor">
                 /// Creates a new AppBarCommand control.
@@ -94,7 +92,7 @@ define([
 
                 // Check to make sure we weren't duplicated
                 if (element && element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.AppBarCommand.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
                 this._disposed = false;
@@ -106,31 +104,31 @@ define([
 
                 // Need a type before we can create our element
                 if (!options.type) {
-                    this._type = typeButton;
+                    this._type = _Constants.typeButton;
                 }
 
-                options.section = options.section || sectionGlobal;
+                options.section = options.section || _Constants.sectionGlobal;
 
                 // Go ahead and create it, separator and content types look different than buttons
                 // Don't forget to use passed in element if one was provided.
                 this._element = element;
 
-                if (options.type === typeContent) {
+                if (options.type === _Constants.typeContent) {
                     this._createContent();
                 }
-                else if (options.type === typeSeparator) {
+                else if (options.type === _Constants.typeSeparator) {
                     this._createSeparator();
                 } else {
                     // This will also set the icon & label
                     this._createButton();
                 }
-                WinJS.Utilities.addClass(this._element, "win-disposable");
+                _ElementUtilities.addClass(this._element, "win-disposable");
 
                 // Remember ourselves
                 this._element.winControl = this;
 
                 // Attach our css class
-                WinJS.Utilities.addClass(this._element, appBarCommandClass);
+                _ElementUtilities.addClass(this._element, _Constants.appBarCommandClass);
 
                 if (options.onclick) {
                     this.onclick = options.onclick;
@@ -138,31 +136,31 @@ define([
                 // We want to handle some clicks
                 options.onclick = _handleClick;
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
 
-                if (this._type === typeToggle && !options.selected) {
+                if (this._type === _Constants.typeToggle && !options.selected) {
                     this.selected = false;
                 }
 
                 // Set up pointerdown handler and clean up ARIA if needed
-                if (this._type !== typeSeparator) {
+                if (this._type !== _Constants.typeSeparator) {
 
                     // Hide the modern focus rect on click or touch
                     var that = this;
-                    WinJS.Utilities._addEventListener(this._element, "pointerdown", function () { thisWinUI._Overlay._addHideFocusClass(that._element); }, false);
+                    _ElementUtilities._addEventListener(this._element, "pointerdown", function () { _Overlay._Overlay._addHideFocusClass(that._element); }, false);
 
                     // Make sure we have an ARIA role
                     var role = this._element.getAttribute("role");
                     if (role === null || role === "" || role === undefined) {
-                        if (this._type === typeToggle) {
+                        if (this._type === _Constants.typeToggle) {
                             role = "menuitemcheckbox";
-                        } else if (this._type === typeContent) {
+                        } else if (this._type === _Constants.typeContent) {
                             role = "group";
                         } else {
                             role = "menuitem";
                         }
                         this._element.setAttribute("role", role);
-                        if (this._type === typeFlyout) {
+                        if (this._type === _Constants.typeFlyout) {
                             this._element.setAttribute("aria-haspopup", true);
                         }
                     }
@@ -199,8 +197,8 @@ define([
                     set: function (value) {
                         // we allow setting first time only. otherwise we ignore it.
                         if (!this._type) {
-                            if (value !== typeContent && value !== typeFlyout && value !== typeToggle && value !== typeSeparator) {
-                                this._type = typeButton;
+                            if (value !== _Constants.typeContent && value !== _Constants.typeFlyout && value !== _Constants.typeToggle && value !== _Constants.typeSeparator) {
+                                this._type = _Constants.typeButton;
                             } else {
                                 this._type = value;
                             }
@@ -244,7 +242,7 @@ define([
                     },
                     set: function (value) {
 
-                        this._icon = WinJS.UI.AppBarIcon[value] || value;
+                        this._icon = _Icon[value] || value;
 
                         if (this._imageSpan) {
                             // If the icon's a single character, presume a glyph
@@ -272,7 +270,7 @@ define([
                     },
                     set: function (value) {
                         if (value && typeof value !== "function") {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.BadClick", WinJS.Resources._formatString(strings.badClick, "AppBarCommand"));
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadClick", _Resources._formatString(strings.badClick, "AppBarCommand"));
                         }
                         this._onclick = value;
                     }
@@ -311,7 +309,7 @@ define([
                                     id = id.id;
                                 } else {
                                     // No id, have to fake one
-                                    id.id = WinJS.Utilities._uniqueID(id);
+                                    id.id = _ElementUtilities._uniqueID(id);
                                     id = id.id;
                                 }
                             }
@@ -401,9 +399,9 @@ define([
                         return this._element.style.visibility === "hidden";
                     },
                     set: function (value) {
-                        var appbarControl = thisWinUI._Overlay._getParentControlUsingClassName(this._element, "win-appbar");
+                        var appbarControl = _Overlay._Overlay._getParentControlUsingClassName(this._element, _Constants.appBarClass);
                         if (appbarControl && !appbarControl.hidden) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.CannotChangeHiddenProperty", WinJS.Resources._formatString(thisWinUI._Overlay.commonstrings.cannotChangeHiddenProperty, "AppBar"));
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.CannotChangeHiddenProperty", _Resources._formatString(_Overlay._Overlay.commonstrings.cannotChangeHiddenProperty, "AppBar"));
                         }
 
                         if (value === this.hidden) {
@@ -471,8 +469,8 @@ define([
                         this._tooltipControl.dispose();
                     }
 
-                    if (this._type === typeContent) {
-                        WinJS.Utilities.disposeSubTree(this.element);
+                    if (this._type === _Constants.typeContent) {
+                        _Dispose.disposeSubTree(this.element);
                     }
                 },
 
@@ -513,10 +511,10 @@ define([
                     },
                     set: function (value) {
                         if (this._extraClass) {
-                            WinJS.Utilities.removeClass(this._element, this._extraClass);
+                            _ElementUtilities.removeClass(this._element, this._extraClass);
                         }
                         this._extraClass = value;
-                        WinJS.Utilities.addClass(this._element, this._extraClass);
+                        _ElementUtilities.addClass(this._element, this._extraClass);
                     }
                 },
 
@@ -532,7 +530,7 @@ define([
                     } else {
                         // Verify the element was a div
                         if (this._element.tagName !== "DIV") {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.BadDivElement", strings.badDivElement);
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadDivElement", strings.badDivElement);
                         }
                     }
 
@@ -549,7 +547,7 @@ define([
                     } else {
                         // Verify the element was an hr
                         if (this._element.tagName !== "HR") {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.BadHrElement", strings.badHrElement);
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadHrElement", strings.badHrElement);
                         }
                     }
                 },
@@ -561,7 +559,7 @@ define([
                     } else {
                         // Verify the element was a button
                         if (this._element.tagName !== "BUTTON") {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.BadButtonElement", strings.badButtonElement);
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadButtonElement", strings.badButtonElement);
                         }
                         // Make sure it has a type="button"
                         var type = this._element.getAttribute("type");
@@ -598,10 +596,10 @@ define([
 
                     // Attach a tooltip - Note: we're going to stomp on it's setControl so we don't have to make another DOM element to hang it off of.
                     // This private _tooltipControl attribute is used by other pieces, changing the name could break them.
-                    this._tooltipControl = new WinJS.UI.Tooltip(this._element);
+                    this._tooltipControl = new Tooltip.Tooltip(this._element);
                     var that = this;
                     this._tooltipControl.addEventListener("beforeopen", function () {
-                        if (that._hideIfFullSize && !thisWinUI._Overlay._getParentControlUsingClassName(that._element.parentElement, reducedClass)) {
+                        if (that._hideIfFullSize && !_Overlay._Overlay._getParentControlUsingClassName(that._element.parentElement, _Constants.reducedClass)) {
                             that._tooltipControl.close();
                         }
                     }, false);
@@ -609,22 +607,22 @@ define([
 
                 _setSection: function AppBarCommand_setSection(section) {
                     if (!section) {
-                        section = sectionGlobal;
+                        section = _Constants.sectionGlobal;
                     }
                     if (this._section) {
                         // Remove the old section class
-                        if (this._section === sectionGlobal) {
-                            WinJS.Utilities.removeClass(this._element, appBarCommandGlobalClass);
-                        } else if (this.section === sectionSelection) {
-                            WinJS.Utilities.removeClass(this._element, appBarCommandSelectionClass);
+                        if (this._section === _Constants.sectionGlobal) {
+                            _ElementUtilities.removeClass(this._element, _Constants.appBarCommandGlobalClass);
+                        } else if (this.section === _Constants.sectionSelection) {
+                            _ElementUtilities.removeClass(this._element, _Constants.appBarCommandSelectionClass);
                         }
                     }
                     // Add the new section class
                     this._section = section;
-                    if (section === sectionGlobal) {
-                        WinJS.Utilities.addClass(this._element, appBarCommandGlobalClass);
-                    } else if (section === sectionSelection) {
-                        WinJS.Utilities.addClass(this._element, appBarCommandSelectionClass);
+                    if (section === _Constants.sectionGlobal) {
+                        _ElementUtilities.addClass(this._element, _Constants.appBarCommandGlobalClass);
+                    } else if (section === _Constants.sectionSelection) {
+                        _ElementUtilities.addClass(this._element, _Constants.appBarCommandSelectionClass);
                     }
                 },
 
@@ -640,7 +638,7 @@ define([
                 },
 
                 _isFocusable: function AppBarCommand_isFocusable() {
-                    return (!this.hidden && this._type !== typeSeparator && !this.element.disabled &&
+                    return (!this.hidden && this._type !== _Constants.typeSeparator && !this.element.disabled &&
                         (this.firstElementFocus.tabIndex >= 0 || this.lastElementFocus.tabIndex >= 0))
                 },
             });

@@ -16,9 +16,10 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_KeyboardBehavior',
     '../../Utilities/_UI',
+    '../AppBar/_Constants',
     '../Repeater',
     './_Command'
-    ], function NavBarContainerInit(exports, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, Repeater, _Command) {
+    ], function NavBarContainerInit(exports, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
     "use strict";
 
     function nobodyHasFocus() {
@@ -407,7 +408,7 @@ define([
                         }
                     
                         var appBarEl = this.element.parentNode;
-                        while (appBarEl && !_ElementUtilities.hasClass(appBarEl, 'win-appbar')) {
+                        while (appBarEl && !_ElementUtilities.hasClass(appBarEl, _Constants.appBarClass)) {
                             appBarEl = appBarEl.parentNode;
                         }
                         this._appBarEl = appBarEl;

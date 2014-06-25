@@ -2,10 +2,21 @@
 // AppBarCommand
 /// <dictionary>appbar,appbars,Flyout,Flyouts,onclick,Statics</dictionary>
 define([
-    ], function appBarCommandInit() {
+    'exports',
+    '../../Core/_Base',
+    '../../Core/_ErrorFromName',
+    '../../Core/_Resources',
+    '../../Utilities/_Control',
+    '../../Utilities/_Dispose',
+    '../../Utilities/_ElementUtilities',
+    '../Flyout/_Overlay',
+    '../Tooltip',
+    './_Constants',
+    './_Icon'
+    ], function appBarCommandInit(exports, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBarCommand">
         /// Represents a command to display in an AppBar. 
@@ -18,23 +29,13 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        AppBarCommand: WinJS.Namespace._lazy(function () {
-            var thisWinUI = WinJS.UI;
+        AppBarCommand: _Base.Namespace._lazy(function () {
             var core = Windows.UI.WebUI.Core;
-
-            // Class Names
-            var appBarCommandClass = "win-command",
-                appBarCommandGlobalClass = "win-global",
-                appBarCommandSelectionClass = "win-selection",
-                typeButton = "button",
-                typeToggle = "toggle",
-                sectionSelection = "selection",
-                sectionGlobal = "global";
 
             function _handleClick(event) {
                 var command = this.winControl;
                 if (command) {
-                    if (command._type === typeToggle) {
+                    if (command._type === _Constants.typeToggle) {
                         command.selected = !command.selected;
                     }
                     if (command.onclick) {
@@ -46,7 +47,7 @@ define([
             // Duplicate code from Overlay static member function.
             function _getParentControlUsingClassName(element, className) {
                 while (element && element !== document.body) {
-                    if (WinJS.Utilities.hasClass(element, className)) {
+                    if (_ElementUtilities.hasClass(element, className)) {
                         return element.winControl;
                     }
                     element = element.parentNode;
@@ -55,15 +56,15 @@ define([
             }
 
             var strings = {
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get badClick() { return WinJS.Resources._getWinJSString("ui/badClick").value; },
-                get badDivElement() { return WinJS.Resources._getWinJSString("ui/badDivElement").value; },
-                get badHrElement() { return WinJS.Resources._getWinJSString("ui/badHrElement").value; },
-                get badButtonElement() { return WinJS.Resources._getWinJSString("ui/badButtonElement").value; },
-                get cannotChangeHiddenProperty() { return WinJS.Resources._getWinJSString("ui/cannotChangeHiddenProperty").value; } // Duplicate string getter from overlay
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                get badClick() { return _Resources._getWinJSString("ui/badClick").value; },
+                get badDivElement() { return _Resources._getWinJSString("ui/badDivElement").value; },
+                get badHrElement() { return _Resources._getWinJSString("ui/badHrElement").value; },
+                get badButtonElement() { return _Resources._getWinJSString("ui/badButtonElement").value; },
+                get cannotChangeHiddenProperty() { return _Resources._getWinJSString("ui/cannotChangeHiddenProperty").value; } // Duplicate string getter from overlay
             };
 
-            return WinJS.Class.define(function AppBarCommand_ctor(element, options) {
+            return _Base.Class.define(function AppBarCommand_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBarCommand.AppBarCommand">
                 /// <summary locid="WinJS.UI.AppBarCommand.constructor">
                 /// Creates a new AppBarCommand control.
@@ -81,7 +82,7 @@ define([
 
                 // Check to make sure we weren't duplicated
                 if (element && element.winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.AppBarCommand.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
                 this._disposed = false;
@@ -90,11 +91,11 @@ define([
                 options = options || {};
 
                 // Need a type before we can create our element
-                options.type = options.type || typeButton;
+                options.type = options.type || _Constants.typeButton;
 
                 options.disabled = options.disabled || false;
 
-                options.section = options.section || sectionGlobal;
+                options.section = options.section || _Constants.sectionGlobal;
 
                 // Don't forget to use passed in element if one was provided.
                 this._element = element;
@@ -102,13 +103,13 @@ define([
                 // This will also set the icon & label
                 this._createButton();
 
-                WinJS.Utilities.addClass(this._element, "win-disposable");
+                _ElementUtilities.addClass(this._element, "win-disposable");
 
                 // Remember ourselves
                 this._element.winControl = this;
 
                 // Attach our css class
-                WinJS.Utilities.addClass(this._element, appBarCommandClass);
+                _ElementUtilities.addClass(this._element, _Constants.appBarCommandClass);
 
                 if (options.onclick) {
                     this.onclick = options.onclick;
@@ -122,9 +123,9 @@ define([
                 // We want to handle some clicks
                 options.onclick = _handleClick;
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
 
-                if (this._type === typeToggle && !options.selected) {
+                if (this._type === _Constants.typeToggle && !options.selected) {
                     this.selected = false;
                 }
 
@@ -150,16 +151,16 @@ define([
                 /// </field>
                 type: {
                     get: function () {
-                        return (this._commandBarIconButton.isToggleButton ? typeToggle : typeButton);
+                        return (this._commandBarIconButton.isToggleButton ? _Constants.typeToggle : _Constants.typeButton);
                     },
                     set: function (value) {
                         // we allow setting first time only. otherwise we ignore it.
                         if (!this._type) {
-                            if (value === typeToggle) {
+                            if (value === _Constants.typeToggle) {
                                 this._type = value;
                                 this._commandBarIconButton.isToggleButton = true;
                             } else {
-                                this._type = typeButton;
+                                this._type = _Constants.typeButton;
                                 this._commandBarIconButton.isToggleButton = false;
                             }
                         }
@@ -190,7 +191,7 @@ define([
                     },
                     set: function (value) {
 
-                        this._icon = WinJS.UI.AppBarIcon[value] || value;
+                        this._icon = _Icon[value] || value;
 
                         if (this._imageSpan) {
                             // If the icon's a single character, presume a glyph
@@ -235,7 +236,7 @@ define([
                     },
                     set: function (value) {
                         if (value && typeof value !== "function") {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.BadClick", WinJS.Resources._formatString(strings.badClick, "AppBarCommand"));
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadClick", _Resources._formatString(strings.badClick, "AppBarCommand"));
                         }
                         this._onclick = value;
                     }
@@ -299,9 +300,9 @@ define([
                         return this._hidden;
                     },
                     set: function (value) {
-                        var appbarControl = _getParentControlUsingClassName(this._element, "win-appbar");
+                        var appbarControl = _getParentControlUsingClassName(this._element, _Constants.appBarClass);
                         if (appbarControl && !appbarControl.hidden) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.CannotChangeHiddenProperty", WinJS.Resources._formatString(strings.cannotChangeHiddenProperty, "AppBar"));
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.CannotChangeHiddenProperty", _Resources._formatString(strings.cannotChangeHiddenProperty, "AppBar"));
                         }
 
                         // Ensure its a boolean.
@@ -372,10 +373,10 @@ define([
                     },
                     set: function (value) {
                         if (this._extraClass) {
-                            WinJS.Utilities.removeClass(this._element, this._extraClass);
+                            _ElementUtilities.removeClass(this._element, this._extraClass);
                         }
                         this._extraClass = value;
-                        WinJS.Utilities.addClass(this._element, this._extraClass);
+                        _ElementUtilities.addClass(this._element, this._extraClass);
                     }
                 },
 
@@ -386,7 +387,7 @@ define([
                     } else {
                         // Verify the element was a button
                         if (this._element.tagName !== "BUTTON") {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBarCommand.BadButtonElement", strings.badButtonElement);
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadButtonElement", strings.badButtonElement);
                         }
                         // Make sure it has a type="button"
                         var type = this._element.getAttribute("type");
@@ -418,22 +419,22 @@ define([
 
                 _setSection: function AppBarCommand_setSection(section) {
                     if (!section) {
-                        section = sectionGlobal;
+                        section = _Constants.sectionGlobal;
                     }
                     if (this._section) {
                         // Remove the old section class
-                        if (this._section === sectionGlobal) {
-                            WinJS.Utilities.removeClass(this._element, appBarCommandGlobalClass);
-                        } else if (this.section === sectionSelection) {
-                            WinJS.Utilities.removeClass(this._element, appBarCommandSelectionClass);
+                        if (this._section === _Constants.sectionGlobal) {
+                            _ElementUtilities.removeClass(this._element, _Constants.appBarCommandGlobalClass);
+                        } else if (this.section === _Constants.sectionSelection) {
+                            _ElementUtilities.removeClass(this._element, _Constants.appBarCommandSelectionClass);
                         }
                     }
                     // Add the new section class
                     this._section = section;
-                    if (section === sectionGlobal) {
-                        WinJS.Utilities.addClass(this._element, appBarCommandGlobalClass);
-                    } else if (section === sectionSelection) {
-                        WinJS.Utilities.addClass(this._element, appBarCommandSelectionClass);
+                    if (section === _Constants.sectionGlobal) {
+                        _ElementUtilities.addClass(this._element, _Constants.appBarCommandGlobalClass);
+                    } else if (section === _Constants.sectionSelection) {
+                        _ElementUtilities.addClass(this._element, _Constants.appBarCommandSelectionClass);
                     }
                 },
             });

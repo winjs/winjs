@@ -1,12 +1,26 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,registeredforsettings,SettingsFlyout,Statics,Syriac</dictionary>
 define([
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Animations',
+    '../Pages',
+    '../Promise',
+    '../Utilities/_Dispose',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_ElementListUtilities',
+    '../Utilities/_UIUtilities',
+    './AppBar/_Constants',
+    './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function settingsFlyoutInit() {
+    ], function settingsFlyoutInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _UIUtilities, _Constants, _Overlay) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.SettingsFlyout">Provides users with fast, in-context access to settings that affect the current app.</summary>
         /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -31,21 +45,10 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        SettingsFlyout: WinJS.Namespace._lazy(function () {
-            var thisWinUI = WinJS.UI;
-            var Key = WinJS.Utilities.Key;
+        SettingsFlyout: _Base.Namespace._lazy(function () {
+            var Key = _ElementUtilities.Key;
 
             var settingsPageIsFocusedOnce;
-
-            // Class Names
-            var settingsFlyoutClass = "win-settingsflyout",
-                fullSettingsFlyoutClassName = "." + settingsFlyoutClass,
-                settingsFlyoutLightClass = "win-ui-light",
-                narrowClass = "win-narrow",
-                wideClass = "win-wide";
-
-            var firstDivClass = "win-firstdiv";
-            var finalDivClass = "win-finaldiv";
 
             // Constants for width
             var settingsNarrow = "narrow",
@@ -53,7 +56,7 @@ define([
 
             // Determine if the settings pane (system language) is RTL or not.
             function _shouldAnimateFromLeft() {
-                if (WinJS.Utilities.hasWinRT && Windows.UI.ApplicationSettings.SettingsEdgeLocation) {
+                if (_BaseUtils.hasWinRT && Windows.UI.ApplicationSettings.SettingsEdgeLocation) {
                     var appSettings = Windows.UI.ApplicationSettings;
                     return (appSettings.SettingsPane.edge === appSettings.SettingsEdgeLocation.left);
                 } else {
@@ -64,7 +67,7 @@ define([
             // Get the settings control by matching the settingsCommandId
             // if no match we'll try to match element id
             function _getChildSettingsControl(parentElement, id) {
-                var settingElements = parentElement.querySelectorAll(fullSettingsFlyoutClassName);
+                var settingElements = parentElement.querySelectorAll(_Constants.settingsFlyoutSelector);
                 var retValue,
                     control;
                 for (var i = 0; i < settingElements.length; i++) {
@@ -83,7 +86,7 @@ define([
                 return retValue;
             }
 
-            var SettingsFlyout = WinJS.Class.derive(WinJS.UI._Overlay, function SettingsFlyout_ctor(element, options) {
+            var SettingsFlyout = _Base.Class.derive(_Overlay._Overlay, function SettingsFlyout_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.SettingsFlyout.SettingsFlyout">
                 /// <summary locid="WinJS.UI.SettingsFlyout.constructor">Creates a new SettingsFlyout control.</summary>
                 /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.SettingsFlyout.constructor_p:element">
@@ -98,7 +101,7 @@ define([
 
                 // Make sure there's an input element
                 this._element = element || document.createElement("div");
-                this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
+                this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
                 // Call the base overlay constructor helper
@@ -111,20 +114,20 @@ define([
                 this._element.addEventListener("keydown", this._handleKeyDown, true);
 
                 // Make a click eating div
-                thisWinUI._Overlay._createClickEatingDivAppBar();
+                _Overlay._Overlay._createClickEatingDivAppBar();
 
                 // Start settings hidden
                 this._element.style.visibilty = "hidden";
                 this._element.style.display = "none";
 
                 // Attach our css class
-                WinJS.Utilities.addClass(this._element, settingsFlyoutClass);
+                _ElementUtilities.addClass(this._element, _Constants.settingsFlyoutClass);
 
                 // apply the light theme styling to the win-content elements inside the SettingsFlyout
-                WinJS.Utilities.query("div.win-content", this._element).
+                _ElementListUtilities.query("div.win-content", this._element).
                     forEach(function (e) {
-                        if (!WinJS.Utilities._matchesSelector(e, '.win-ui-dark, .win-ui-dark *')){
-                            WinJS.Utilities.addClass(e, settingsFlyoutLightClass);
+                        if (!_ElementUtilities._matchesSelector(e, '.win-ui-dark, .win-ui-dark *')){
+                            _ElementUtilities.addClass(e, _Constants.flyoutLightClass);
                         }
                     });
 
@@ -161,23 +164,23 @@ define([
                     },
 
                     set: function (value) {
-                        WinJS.Utilities._deprecated(strings.widthDeprecationMessage);
+                        _UIUtilities._deprecated(strings.widthDeprecationMessage);
                         if (value === this._width) {
                             return;
                         }
                         // Get rid of old class
                         if (this._width === settingsNarrow) {
-                            WinJS.Utilities.removeClass(this._element, narrowClass);
+                            _ElementUtilities.removeClass(this._element, _Constants.narrowClass);
                         } else if (this._width === settingsWide) {
-                            WinJS.Utilities.removeClass(this._element, wideClass);
+                            _ElementUtilities.removeClass(this._element, _Constants.wideClass);
                         }
                         this._width = value;
 
                         // Attach our new css class
                         if (this._width === settingsNarrow) {
-                            WinJS.Utilities.addClass(this._element, narrowClass);
+                            _ElementUtilities.addClass(this._element, _Constants.narrowClass);
                         } else if (this._width === settingsWide) {
-                            WinJS.Utilities.addClass(this._element, wideClass);
+                            _ElementUtilities.addClass(this._element, _Constants.wideClass);
                         }
                     }
                 },
@@ -214,7 +217,7 @@ define([
                 },
 
                 _dispose: function SettingsFlyout_dispose() {
-                    WinJS.Utilities.disposeSubTree(this.element);
+                    _Dispose.disposeSubTree(this.element);
                     this._dismiss();
                 },
 
@@ -223,7 +226,7 @@ define([
                     this._baseShow();
                     // Need click-eating div to be visible,
                     // (even if now hiding, we'll show and need click eater)
-                    thisWinUI._Overlay._showClickEatingDivAppBar();
+                    _Overlay._Overlay._showClickEatingDivAppBar();
                 },
 
                 _endShow: function SettingsFlyout_endShow() {
@@ -236,7 +239,7 @@ define([
 
                     // Verify that the firstDiv and finalDiv are in the correct location.
                     // Move them to the correct location or add them if they are not.
-                    if (!WinJS.Utilities.hasClass(this.element.children[0], firstDivClass)) {
+                    if (!_ElementUtilities.hasClass(this.element.children[0], _Constants.firstDivClass)) {
                         var firstDiv = this.element.querySelectorAll(".win-first");
                         if (firstDiv && firstDiv.length > 0) {
                             firstDiv.item(0).parentNode.removeChild(firstDiv.item(0));
@@ -247,11 +250,11 @@ define([
 
                     // Set focus to the firstDiv
                     if (this.element.children[0]) {
-                        WinJS.Utilities._addEventListener(this.element.children[0], "focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
+                        _ElementUtilities._addEventListener(this.element.children[0], "focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
                         this.element.children[0].focus();
                     }
 
-                    if (!WinJS.Utilities.hasClass(this.element.children[this.element.children.length - 1], finalDivClass)) {
+                    if (!_ElementUtilities.hasClass(this.element.children[this.element.children.length - 1], _Constants.finalDivClass)) {
                         var finalDiv = this.element.querySelectorAll(".win-final");
                         if (finalDiv && finalDiv.length > 0) {
                             finalDiv.item(0).parentNode.removeChild(finalDiv.item(0));
@@ -289,7 +292,7 @@ define([
                 _hide: function SettingsFlyout_hide() {
                     if (this._baseHide()) {
                         // Need click-eating div to be hidden
-                        thisWinUI._Overlay._hideClickEatingDivAppBar();
+                        _Overlay._Overlay._hideClickEatingDivAppBar();
                     }
                 },
 
@@ -297,8 +300,8 @@ define([
                 _animateSlideIn: function SettingsFlyout_animateSlideIn() {
                     var animateFromLeft = _shouldAnimateFromLeft();
                     var offset = animateFromLeft ? "-100px" : "100px";
-                    WinJS.Utilities.query("div.win-content", this._element).
-                        forEach(function (e) { WinJS.UI.Animation.enterPage(e, { left: offset }) });
+                    _ElementListUtilities.query("div.win-content", this._element).
+                        forEach(function (e) { Animations.enterPage(e, { left: offset }) });
 
                     var where,
                         width = this._element.offsetWidth;
@@ -318,7 +321,7 @@ define([
                     this._element.style.opacity = 1;
                     this._element.style.visibility = "visible";
 
-                    return WinJS.UI.Animation.showPanel(this._element, where);
+                    return Animations.showPanel(this._element, where);
                 },
 
                 _animateSlideOut: function SettingsFlyout_animateSlideOut() {
@@ -336,7 +339,7 @@ define([
                         this._element.style.left = "auto";
                     }
 
-                    return WinJS.UI.Animation.showPanel(this._element, where);
+                    return Animations.showPanel(this._element, where);
                 },
 
                 _fragmentDiv: {
@@ -351,9 +354,9 @@ define([
 
                 _unloadPage: function SettingsFlyout_unloadPage(event) {
                     var settingsControl = event.currentTarget.winControl;
-                    settingsControl.removeEventListener(thisWinUI._Overlay.afterHide, this._unloadPage, false);
+                    settingsControl.removeEventListener(_Overlay._Overlay.afterHide, this._unloadPage, false);
 
-                    WinJS.Promise.as().then(function () {
+                    Promise.as().then(function () {
                         if (settingsControl._fragmentDiv) {
                             document.body.removeChild(settingsControl._fragmentDiv);
                             settingsControl._fragmentDiv = null;
@@ -362,7 +365,7 @@ define([
                 },
 
                 _dismiss: function SettingsFlyout_dismiss() {
-                    this.addEventListener(thisWinUI._Overlay.afterHide, this._unloadPage, false);
+                    this.addEventListener(_Overlay._Overlay.afterHide, this._unloadPage, false);
                     this._hide();
                 },
 
@@ -394,7 +397,7 @@ define([
 
                 _focusOnLastFocusableElementFromParent: function SettingsFlyout_focusOnLastFocusableElementFromParent() {
                     var active = document.activeElement;
-                    if (!settingsPageIsFocusedOnce || !active || !WinJS.Utilities.hasClass(active, firstDivClass)) {
+                    if (!settingsPageIsFocusedOnce || !active || !_ElementUtilities.hasClass(active, _Constants.firstDivClass)) {
                         return;
                     }
 
@@ -433,7 +436,7 @@ define([
 
                 _focusOnFirstFocusableElementFromParent: function SettingsFlyout_focusOnFirstFocusableElementFromParent() {
                     var active = document.activeElement;
-                    if (!active || !WinJS.Utilities.hasClass(active, finalDivClass)) {
+                    if (!active || !_ElementUtilities.hasClass(active, _Constants.finalDivClass)) {
                         return;
                     }
                     var _elms = this.parentElement.getElementsByTagName("*");
@@ -479,12 +482,12 @@ define([
                         }
                     }
                     var firstDiv = document.createElement("div");
-                    firstDiv.className = firstDivClass;
+                    firstDiv.className = _Constants.firstDivClass;
                     firstDiv.style.display = "inline";
                     firstDiv.setAttribute("role", "menuitem");
                     firstDiv.setAttribute("aria-hidden", "true");
                     firstDiv.tabIndex = _minTab;
-                    WinJS.Utilities._addEventListener(firstDiv, "focusin", this._focusOnLastFocusableElementFromParent, false);
+                    _ElementUtilities._addEventListener(firstDiv, "focusin", this._focusOnLastFocusableElementFromParent, false);
 
                     // add to beginning
                     if (this._element.children[0]) {
@@ -504,18 +507,18 @@ define([
                         }
                     }
                     var finalDiv = document.createElement("div");
-                    finalDiv.className = finalDivClass;
+                    finalDiv.className = _Constants.finalDivClass;
                     finalDiv.style.display = "inline";
                     finalDiv.setAttribute("role", "menuitem");
                     finalDiv.setAttribute("aria-hidden", "true");
                     finalDiv.tabIndex = _maxTab;
-                    WinJS.Utilities._addEventListener(finalDiv, "focusin", this._focusOnFirstFocusableElementFromParent, false);
+                    _ElementUtilities._addEventListener(finalDiv, "focusin", this._focusOnFirstFocusableElementFromParent, false);
 
                     this._element.appendChild(finalDiv);
                 },
 
                 _writeProfilerMark: function SettingsFlyout_writeProfilerMark(text) {
-                    WinJS.Utilities._writeProfilerMark("WinJS.UI.SettingsFlyout:" + this._id + ":" + text);
+                    _WriteProfilerMark("WinJS.UI.SettingsFlyout:" + this._id + ":" + text);
                 }
             });
 
@@ -528,7 +531,7 @@ define([
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </signature>
                 /// Show the main settings pane
-                if (WinJS.Utilities.hasWinRT) {
+                if (_BaseUtils.hasWinRT) {
                     Windows.UI.ApplicationSettings.SettingsPane.show();
                 }
                 // And hide the WWA one
@@ -561,7 +564,7 @@ define([
                     Object.keys(_settingsEvent.event.applicationcommands).forEach(function (name) {
                         var setting = _settingsEvent.event.applicationcommands[name];
                         if (!setting.title) { setting.title = name; }
-                        var command = new n.SettingsCommand(name, setting.title, thisWinUI.SettingsFlyout._onSettingsCommand);
+                        var command = new n.SettingsCommand(name, setting.title, SettingsFlyout._onSettingsCommand);
                         _settingsEvent.event.e.request.applicationCommands.append(command);
                     });
                 }
@@ -570,7 +573,7 @@ define([
             SettingsFlyout._onSettingsCommand = function (command) {
                 var id = command.id;
                 if (_settingsEvent.event.applicationcommands && _settingsEvent.event.applicationcommands[id]) {
-                    thisWinUI.SettingsFlyout.showSettings(id, _settingsEvent.event.applicationcommands[id].href);
+                    SettingsFlyout.showSettings(id, _settingsEvent.event.applicationcommands[id].href);
                 }
             };
 
@@ -593,7 +596,7 @@ define([
                 } else if (path) {
                     var divElement = document.createElement("div");
                     divElement = document.body.appendChild(divElement);
-                    WinJS.UI.Pages.render(path, divElement).then(function () {
+                    Pages.render(path, divElement).then(function () {
                         control = _getChildSettingsControl(divElement, id);
                         if (control) {
                             control._fragmentDiv = divElement;
@@ -603,15 +606,15 @@ define([
                         }
                     });
                 } else {
-                    throw new WinJS.ErrorFromName("WinJS.UI.SettingsFlyout.BadReference", strings.badReference);
+                    throw new _ErrorFromName("WinJS.UI.SettingsFlyout.BadReference", strings.badReference);
                 }
             };
 
             var strings = {
-                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/settingsFlyoutAriaLabel").value; },
-                get badReference() { return WinJS.Resources._getWinJSString("ui/badReference").value; },
-                get backbuttonAriaLabel() { return WinJS.Resources._getWinJSString("ui/backbuttonarialabel").value; },
-                get widthDeprecationMessage() { return WinJS.Resources._getWinJSString("ui/settingsFlyoutWidthIsDeprecated").value; },
+                get ariaLabel() { return _Resources._getWinJSString("ui/settingsFlyoutAriaLabel").value; },
+                get badReference() { return _Resources._getWinJSString("ui/badReference").value; },
+                get backbuttonAriaLabel() { return _Resources._getWinJSString("ui/backbuttonarialabel").value; },
+                get widthDeprecationMessage() { return _Resources._getWinJSString("ui/settingsFlyoutWidthIsDeprecated").value; },
             };
 
             return SettingsFlyout;

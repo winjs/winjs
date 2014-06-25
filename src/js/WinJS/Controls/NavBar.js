@@ -44,7 +44,7 @@ define([
             var childrenProcessedEventName = "childrenprocessed";
             var createEvent = _Events._createEventProperty;
 
-            var NavBar = _Base.Class.derive(WinJS.UI.AppBar, function NavBar_ctor(element, options) {
+            var NavBar = _Base.Class.derive(AppBar.AppBar, function NavBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.NavBar.NavBar">
                 /// <summary locid="WinJS.UI.NavBar.constructor">
                 /// Creates a new NavBar.
@@ -71,7 +71,7 @@ define([
                 options.placement = options.placement || "top";
                 options.layout = customLayout;
 
-                WinJS.UI.AppBar.call(this, element, options);
+                AppBar.AppBar.call(this, element, options);
 
                 this._element.addEventListener("beforeshow", this._handleBeforeShow.bind(this));
 
@@ -94,7 +94,7 @@ define([
                         return customLayout;
                     },
                     set: function (value) {
-                        Object.getOwnPropertyDescriptor(WinJS.UI.AppBar.prototype, "layout").set.call(this, customLayout);
+                        Object.getOwnPropertyDescriptor(AppBar.AppBar.prototype, "layout").set.call(this, customLayout);
                     },
                 },
 
@@ -148,7 +148,7 @@ define([
                     }
                     var that = this;
                     this._processChildren().then(function () {
-                        WinJS.UI.AppBar.prototype._show.call(that);
+                        AppBar.AppBar.prototype._show.call(that);
                     });
                 },
 

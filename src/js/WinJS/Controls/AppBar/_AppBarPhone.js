@@ -2,12 +2,23 @@
 // AppBar
 /// <dictionary>appbar,appBars,Flyout,Flyouts,iframe,Statics,unfocus,WinJS</dictionary>
 define([
-    './_CommandPhone', 
+    '../../Core/_Base',
+    '../../Core/_BaseUtils',
+    '../../Core/_ErrorFromName',
+    '../../Core/_Events',
+    '../../Core/_Resources',
+    '../../Core/_WriteProfilerMark',
+    '../../Scheduler',
+    '../../Utilities/_Control',
+    '../../Utilities/_Dispose',
+    '../../Utilities/_ElementUtilities',
+    './_CommandPhone',
+    './_Constants',
     './_Icon'
-    ], function appBarInit(_CommandPhone, _Icon) {
+    ], function appBarInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Scheduler, _Control, _Dispose, _ElementUtilities, _CommandPhone, _Constants, _Icon) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBar">
         /// Represents an application toolbar for display commands. 
@@ -27,7 +38,7 @@ define([
         /// <resource type="javascript" src="//Microsoft.Phone.WinJS.2.1/js/base.js" shared="true" />
         /// <resource type="javascript" src="//Microsoft.Phone.WinJS.2.1/js/ui.js" shared="true" />
         /// <resource type="css" src="//Microsoft.Phone.WinJS.2.1/css/ui-dark.css" shared="true" />
-        AppBar: WinJS.Namespace._lazy(function () {
+        AppBar: _Base.Namespace._lazy(function () {
 
             var appBarCounter = 0;
             var currentAppBar = null;
@@ -35,21 +46,7 @@ define([
             var commandBar; // One static commandBar to be shared by all WinJS AppBar instances.
             var core = Windows.UI.WebUI.Core;
 
-            var thisWinUI = WinJS.UI;
-            var createEvent = WinJS.Utilities._createEventProperty;
-
-            // Class Names
-            var commandClass = "win-commandlayout",
-                appBarClass = "win-appbar",
-                overlayClass = "win-overlay",
-                bottomClass = "win-bottom";
-
-            // Constants for placement
-            var appBarPlacementBottom = "bottom";
-
-            // Constants for layout
-            var appBarLayoutCustom = "custom",
-                appBarLayoutCommands = "commands";
+            var createEvent = _Events._createEventProperty;
 
             // Event Names
             var BEFORESHOW = "beforeshow";
@@ -62,14 +59,14 @@ define([
             var closedDisplayMinimal = "minimal";
 
             var strings = {
-                get requiresCommands() { return WinJS.Resources._getWinJSString("ui/requiresCommands").value; },
-                get nullCommand() { return WinJS.Resources._getWinJSString("ui/nullCommand").value; },
-                get cannotChangePlacementWhenVisible() { return WinJS.Resources._getWinJSString("ui/cannotChangePlacementWhenVisible").value; },
-                get badLayout() { return WinJS.Resources._getWinJSString("ui/badLayout").value; },
-                get cannotChangeLayoutWhenVisible() { return WinJS.Resources._getWinJSString("ui/cannotChangeLayoutWhenVisible").value; },
-                get cannotChangeCommandsWhenVisible() { return WinJS.Resources._getWinJSString("ui/cannotChangeCommandsWhenVisible").value; }, // duplicate string getter from Overlay.        
-                get mustContainCommands() { return WinJS.Resources._getWinJSString("ui/mustContainCommands").value; }, // duplicate string getter from Overlay.  
-                get duplicateConstruction() { return WinJS.Resources._getWinJSString("ui/duplicateConstruction").value; }, // duplicate string getter from Overlay.  
+                get requiresCommands() { return _Resources._getWinJSString("ui/requiresCommands").value; },
+                get nullCommand() { return _Resources._getWinJSString("ui/nullCommand").value; },
+                get cannotChangePlacementWhenVisible() { return _Resources._getWinJSString("ui/cannotChangePlacementWhenVisible").value; },
+                get badLayout() { return _Resources._getWinJSString("ui/badLayout").value; },
+                get cannotChangeLayoutWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeLayoutWhenVisible").value; },
+                get cannotChangeCommandsWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeCommandsWhenVisible").value; }, // duplicate string getter from Overlay.        
+                get mustContainCommands() { return _Resources._getWinJSString("ui/mustContainCommands").value; }, // duplicate string getter from Overlay.  
+                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; }, // duplicate string getter from Overlay.  
             };
 
             // Send one of our events, duplicate of private _Overlay member function
@@ -167,9 +164,9 @@ define([
                 var commands = new Array(children.length);
                 for (var i = 0; i < children.length; i++) {
                     // If constructed they have win-command class, otherwise they have data-win-control
-                    if (!WinJS.Utilities.hasClass(children[i], "win-command") && children[i].getAttribute("data-win-control") !== type) {
+                    if (!_ElementUtilities.hasClass(children[i], "win-command") && children[i].getAttribute("data-win-control") !== type) {
                         //Not an AppBarCommand
-                        throw new WinJS.ErrorFromName("WinJS.UI.AppBar.MustContainCommands", strings.mustContainCommands);
+                        throw new _ErrorFromName("WinJS.UI.AppBar.MustContainCommands", strings.mustContainCommands);
                     } else {
                         // Instantiate the commands.
                         WinJS.UI.processAll(children[i]);
@@ -185,7 +182,7 @@ define([
                 commandBar.secondaryCommands.clear();
             }
 
-            var AppBar = WinJS.Class.define(function AppBar_ctor(element, options) {
+            var AppBar = _Base.Class.define(function AppBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBar.AppBar">
                 /// <summary locid="WinJS.UI.AppBar.constructor">
                 /// Creates a new AppBar control. 
@@ -217,7 +214,7 @@ define([
 
                 // Make sure there's an input element            
                 this._element = element || document.createElement("div");
-                this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
+                this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
                 // validate that if they didn't set commands, that the HTML 
@@ -225,14 +222,14 @@ define([
                 // leave partial AppBars in the DOM.
                 if (!options.commands && this._element) {
                     // Shallow copy object so we can modify it.
-                    options = WinJS.Utilities._shallowCopy(options);
+                    options = _BaseUtils._shallowCopy(options);
                     options.commands = _verifyCommandsOnly(this._element, "WinJS.UI.AppBarCommand");
                 }
 
                 // Check to make sure we weren't duplicated
                 var winControl = this._element.winControl;
                 if (winControl) {
-                    throw new WinJS.ErrorFromName("WinJS.UI.AppBar.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.AppBar.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
                 this._disposed = false;
@@ -254,15 +251,15 @@ define([
                 this._element.winControl = this;
 
                 // Attach our css classes
-                WinJS.Utilities.addClass(this._element, overlayClass);
-                WinJS.Utilities.addClass(this._element, "win-disposable");
-                WinJS.Utilities.addClass(this._element, appBarClass);
-                WinJS.Utilities.addClass(this._element, bottomClass);
-                WinJS.Utilities.addClass(this._element, commandClass);
+                _ElementUtilities.addClass(this._element, _Constants.overlayClass);
+                _ElementUtilities.addClass(this._element, "win-disposable");
+                _ElementUtilities.addClass(this._element, _Constants.appBarClass);
+                _ElementUtilities.addClass(this._element, _Constants.bottomClass);
+                _ElementUtilities.addClass(this._element, _Constants.commandClass);
 
                 this._wireUpEvents();
 
-                WinJS.UI.setOptions(this, options);
+                _Control.setOptions(this, options);
 
                 this._initializing = false;
 
@@ -270,7 +267,7 @@ define([
                 if (document.body.contains(this.element)) {
                     this._updateCommandBarColors();
                 } else {
-                    WinJS.Utilities.Scheduler.schedule(this._updateCommandBarColors, WinJS.Utilities.Scheduler.Priority.high, this, "WinJS.UI.AppBar._updateCommandBarColorsAsync");
+                    Scheduler.schedule(this._updateCommandBarColors, Scheduler.Priority.high, this, "WinJS.UI.AppBar._updateCommandBarColorsAsync");
                 }
 
                 this._writeProfilerMark("constructor,StopTM");
@@ -354,7 +351,7 @@ define([
                 placement: {
                     get: function () {
                         // Always bottom for phone
-                        return appBarPlacementBottom;
+                        return _Constants.appBarPlacementBottom;
                     },
                     set: function (value) {
                         //NOP on phone
@@ -367,11 +364,11 @@ define([
                 layout: {
                     get: function () {
                         // Always commands on phone
-                        return appBarLayoutCommands;
+                        return _Constants.appBarLayoutCommands;
                     },
                     set: function (value) {
-                        if (value !== appBarLayoutCommands && value !== appBarLayoutCustom) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBar.BadLayout", strings.badLayout);
+                        if (value !== _Constants.appBarLayoutCommands && value !== _Constants.appBarLayoutCustom) {
+                            throw new _ErrorFromName("WinJS.UI.AppBar.BadLayout", strings.badLayout);
                         }
                         // NOP on phone
                     },
@@ -396,7 +393,7 @@ define([
                     set: function (value) {
                         // Fail if trying to set when visible
                         if (!this.hidden) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBar.CannotChangeCommandsWhenVisible", WinJS.Resources._formatString(strings.cannotChangeCommandsWhenVisible, "AppBar")); // Duplicate string from Overlay
+                            throw new _ErrorFromName("WinJS.UI.AppBar.CannotChangeCommandsWhenVisible", _Resources._formatString(strings.cannotChangeCommandsWhenVisible, "AppBar")); // Duplicate string from Overlay
                         }
 
                         // Start from scratch
@@ -477,7 +474,7 @@ define([
                     /// </signature>
                     if (!this.disabled) {
                         if (!commands) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
+                            throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
                         }
 
                         _showCommands.call(this, commands);
@@ -494,7 +491,7 @@ define([
                     /// </signature>
                     if (!this.disabled) {
                         if (!commands) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
+                            throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
                         }
 
                         _hideCommands.call(this, commands);
@@ -513,7 +510,7 @@ define([
                     /// </signature>
                     if (!this.disabled) {
                         if (!commands) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
+                            throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
                         }
 
                         _showOnlyCommands.call(this, commands);
@@ -635,22 +632,22 @@ define([
                     var length = children.length;
                     for (var i = 0; i < length; i++) {
                         var element = children[i];
-                        if (this.layout === appBarLayoutCommands) {
+                        if (this.layout === _Constants.appBarLayoutCommands) {
                             element.winControl.dispose();
                         } else {
-                            WinJS.Utilities.disposeSubTree(element);
+                            _Dispose.disposeSubTree(element);
                         }
                     }
                 },
 
                 _addCommand: function AppBar_addCommand(command) {
                     if (!command) {
-                        throw new WinJS.ErrorFromName("WinJS.UI.AppBar.NullCommand", strings.nullCommand);
+                        throw new _ErrorFromName("WinJS.UI.AppBar.NullCommand", strings.nullCommand);
                     }
                     // See if it's a command already
                     if (!command._element) {
                         // Not a command, so assume it is options for the command's constructor.
-                        command = new WinJS.UI.AppBarCommand(null, command);
+                        command = new _CommandPhone.AppBarCommand(null, command);
                     }
                     // If we were attached somewhere else, detach us
                     if (command._element.parentElement) {
@@ -676,7 +673,7 @@ define([
 
                 _setCommands: function AppBar_setCommands(commands) {
                     // Clear everything.
-                    WinJS.Utilities.empty(this._element);
+                    _ElementUtilities.empty(this._element);
                     if (!this.disabled) {
                         _clearCommandBar();
                     }
@@ -824,7 +821,7 @@ define([
                 },
 
                 _writeProfilerMark: function AppBar_writeProfilerMark(text) {
-                    WinJS.Utilities._writeProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
+                    _WriteProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
                 },
             },
             {
@@ -835,7 +832,7 @@ define([
                 }
             });
 
-            WinJS.Class.mix(AppBar, WinJS.UI.DOMEventMixin);
+            _Base.Class.mix(AppBar, _Control.DOMEventMixin);
 
             return AppBar;
         })

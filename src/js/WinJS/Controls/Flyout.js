@@ -1,13 +1,25 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,Statics</dictionary>
 define([
+    'exports',
+    '../Core/_Global',
+    '../Core/_Base',
+    '../Core/_BaseUtils',
+    '../Core/_ErrorFromName',
+    '../Core/_Resources',
+    '../Core/_WriteProfilerMark',
+    '../Animations',
+    '../Utilities/_Dispose',
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_UIUtilities',
+    './AppBar/_Constants',
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function flyoutInit(_Overlay) {
+    ], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _UIUtilities, _Constants, _Overlay) {
     "use strict";
 
-    WinJS.Namespace.define("WinJS.UI", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.Flyout">
         /// Displays lightweight UI that is either informational, or requires user interaction.
@@ -27,32 +39,21 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        Flyout: WinJS.Namespace._lazy(function () {
-            var thisWinUI = WinJS.UI;
-            var Key = WinJS.Utilities.Key;
-
-            // Class Names
-            var appBarCommandClass = "win-command";
-            var flyoutClass = "win-flyout";
-            var flyoutLightClass = "win-ui-light";
-            var menuClass = "win-menu";
-            var scrollsClass = "win-scrolls";
-
-            var finalDivClass = "win-finaldiv";
-            var firstDivClass = "win-firstdiv";
+        Flyout: _Base.Namespace._lazy(function () {
+            var Key = _ElementUtilities.Key;
 
             function getDimension(element, property) {
-                return parseFloat(element, window.getComputedStyle(element, null)[property]);
+                return parseFloat(element, _Global.getComputedStyle(element, null)[property]);
             }
 
             var strings = {
-                get ariaLabel() { return WinJS.Resources._getWinJSString("ui/flyoutAriaLabel").value; },
-                get noAnchor() { return WinJS.Resources._getWinJSString("ui/noAnchor").value; },
-                get badPlacement() { return WinJS.Resources._getWinJSString("ui/badPlacement").value; },
-                get badAlignment() { return WinJS.Resources._getWinJSString("ui/badAlignment").value; }
+                get ariaLabel() { return _Resources._getWinJSString("ui/flyoutAriaLabel").value; },
+                get noAnchor() { return _Resources._getWinJSString("ui/noAnchor").value; },
+                get badPlacement() { return _Resources._getWinJSString("ui/badPlacement").value; },
+                get badAlignment() { return _Resources._getWinJSString("ui/badAlignment").value; }
             };
 
-            var Flyout = WinJS.Class.derive(WinJS.UI._Overlay, function Flyout_ctor(element, options) {
+            var Flyout = _Base.Class.derive(_Overlay._Overlay, function Flyout_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Flyout.Flyout">
                 /// <summary locid="WinJS.UI.Flyout.constructor">
                 /// Creates a new Flyout control.
@@ -72,16 +73,16 @@ define([
 
                 // Make sure there's an input element
                 this._element = element || document.createElement("div");
-                this._id = this._element.id || WinJS.Utilities._uniqueID(this._element);
+                this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
                 this._baseFlyoutConstructor(this._element, options);
 
                 var _elms = this._element.getElementsByTagName("*");
                 var firstDiv = this._addFirstDiv();
-                firstDiv.tabIndex = WinJS.Utilities._getLowestTabIndexInList(_elms);
+                firstDiv.tabIndex = _UIUtilities._getLowestTabIndexInList(_elms);
                 var finalDiv = this._addFinalDiv();
-                finalDiv.tabIndex = WinJS.Utilities._getHighestTabIndexInList(_elms);
+                finalDiv.tabIndex = _UIUtilities._getHighestTabIndexInList(_elms);
 
                 // Handle "esc" & "tab" key presses
                 this._element.addEventListener("keydown", this._handleKeyDown, true);
@@ -102,20 +103,20 @@ define([
                     this._baseOverlayConstructor(element, options);
 
                     // Make a click eating div
-                    thisWinUI._Overlay._createClickEatingDivFlyout();
+                    _Overlay._Overlay._createClickEatingDivFlyout();
 
                     // Start flyouts hidden
                     this._element.style.visibilty = "hidden";
                     this._element.style.display = "none";
 
                     // Attach our css class
-                    WinJS.Utilities.addClass(this._element, flyoutClass);
-                    WinJS.Utilities.addClass(this._element, flyoutLightClass);
+                    _ElementUtilities.addClass(this._element, _Constants.flyoutClass);
+                    _ElementUtilities.addClass(this._element, _Constants.flyoutLightClass);
 
                     // Make sure we have an ARIA role
                     var role = this._element.getAttribute("role");
                     if (role === null || role === "" || role === undefined) {
-                        if (WinJS.Utilities.hasClass(this._element, menuClass)) {
+                        if (_ElementUtilities.hasClass(this._element, _Constants.menuClass)) {
                             this._element.setAttribute("role", "menu");
                         } else {
                             this._element.setAttribute("role", "dialog");
@@ -159,7 +160,7 @@ define([
                     set: function (value) {
                         if (value !== "top" && value !== "bottom" && value !== "left" && value !== "right" && value !== "auto") {
                             // Not a legal placement value
-                            throw new WinJS.ErrorFromName("WinJS.UI.Flyout.BadPlacement", strings.badPlacement);
+                            throw new _ErrorFromName("WinJS.UI.Flyout.BadPlacement", strings.badPlacement);
                         }
                         this._placement = value;
                     }
@@ -176,14 +177,14 @@ define([
                     set: function (value) {
                         if (value !== "right" && value !== "left" && value !== "center") {
                             // Not a legal alignment value
-                            throw new WinJS.ErrorFromName("WinJS.UI.Flyout.BadAlignment", strings.badAlignment);
+                            throw new _ErrorFromName("WinJS.UI.Flyout.BadAlignment", strings.badAlignment);
                         }
                         this._alignment = value;
                     }
                 },
 
                 _dispose: function Flyout_dispose() {
-                    WinJS.Utilities.disposeSubTree(this.element);
+                    _Dispose.disposeSubTree(this.element);
                     this._hide();
                     this.anchor = null;
                 },
@@ -234,16 +235,16 @@ define([
                         if (this._previousFocus
                            && active
                            && (this._element.contains(active)
-                               || WinJS.Utilities.hasClass(active, thisWinUI._Overlay._clickEatingFlyoutClass))
+                               || _ElementUtilities.hasClass(active, _Overlay._Overlay._clickEatingFlyoutClass))
                            && this._previousFocus.focus !== undefined) {
 
                             // _isAppBarOrChild may return a CED or sentinal
-                            var appBar = thisWinUI.AppBar._isAppBarOrChild(this._previousFocus);
+                            var appBar = _Overlay._Overlay._isAppBarOrChild(this._previousFocus);
                             if (!appBar || (appBar.winControl && !appBar.winControl.hidden && !appBar.winAnimating)) {
                                 // Don't move focus back to a appBar that is hidden
                                 // We cannot rely on element.style.visibility because it will be visible while animating
                                 var role = this._previousFocus.getAttribute("role");
-                                var fHideRole = thisWinUI._Overlay._keyboardInfo._visible && !this._keyboardWasUp;
+                                var fHideRole = _Overlay._Overlay._keyboardInfo._visible && !this._keyboardWasUp;
                                 if (fHideRole) {
                                     // Convince IHM to dismiss because it only came up after the flyout was up.
                                     // Change aria role and back to get IHM to dismiss.
@@ -253,7 +254,7 @@ define([
                                 if (this._keyboardInvoked) {
                                     this._previousFocus.focus();
                                 } else {
-                                    thisWinUI._Overlay._trySetActive(this._previousFocus);
+                                    _Overlay._Overlay._trySetActive(this._previousFocus);
                                 }
                                 active = document.activeElement;
 
@@ -261,7 +262,7 @@ define([
                                     // Restore the role so that css is applied correctly
                                     var previousFocus = this._previousFocus;
                                     if (previousFocus) {
-                                        WinJS.Utilities._yieldForDomModification(function () {
+                                        _BaseUtils._yieldForDomModification(function () {
                                             previousFocus.setAttribute("role", role);
                                         });
                                     }
@@ -270,7 +271,7 @@ define([
 
                             // If the anchor gained focus we want to hide the focus in the non-keyboarding scenario
                             if (!this._keyboardInvoked && (this._previousFocus === active) && appBar && active) {
-                                thisWinUI._Overlay._addHideFocusClass(active);
+                                _Overlay._Overlay._addHideFocusClass(active);
                             }
                         }
 
@@ -278,7 +279,7 @@ define([
 
                         // Need click-eating div to be hidden if there are no other visible flyouts
                         if (!this._isThereVisibleFlyout()) {
-                            thisWinUI._Overlay._hideClickEatingDivFlyout();
+                            _Overlay._Overlay._hideClickEatingDivFlyout();
                         }
                     }
                 },
@@ -310,7 +311,7 @@ define([
                     if (!anchor) {
                         // If we have _nextLeft, etc., then we were continuing an old animation, so that's OK
                         if (!this._retryLast) {
-                            throw new WinJS.ErrorFromName("WinJS.UI.Flyout.NoAnchor", strings.noAnchor);
+                            throw new _ErrorFromName("WinJS.UI.Flyout.NoAnchor", strings.noAnchor);
                         }
                         // Last call was incomplete, so use the previous _current values.
                         this._retryLast = null;
@@ -324,7 +325,7 @@ define([
 
                     // Need click-eating div to be visible, no matter what
                     if (!this._sticky) {
-                        thisWinUI._Overlay._showClickEatingDivFlyout();
+                        _Overlay._Overlay._showClickEatingDivFlyout();
                     }
 
                     // If we're animating (eg baseShow is going to fail), then don't mess up our current state.
@@ -338,31 +339,31 @@ define([
                     // We call our base _baseShow to handle the actual animation
                     if (this._baseShow()) {
                         // (_baseShow shouldn't ever fail because we tested winAnimating above).
-                        if (!WinJS.Utilities.hasClass(this.element, "win-menu")) {
+                        if (!_ElementUtilities.hasClass(this.element, "win-menu")) {
                             // Verify that the firstDiv is in the correct location.
                             // Move it to the correct location or add it if not.
                             var _elms = this._element.getElementsByTagName("*");
                             var firstDiv = this.element.querySelectorAll(".win-first");
-                            if (this.element.children.length && !WinJS.Utilities.hasClass(this.element.children[0], firstDivClass)) {
+                            if (this.element.children.length && !_ElementUtilities.hasClass(this.element.children[0], _Constants.firstDivClass)) {
                                 if (firstDiv && firstDiv.length > 0) {
                                     firstDiv.item(0).parentNode.removeChild(firstDiv.item(0));
                                 }
 
                                 firstDiv = this._addFirstDiv();
                             }
-                            firstDiv.tabIndex = WinJS.Utilities._getLowestTabIndexInList(_elms);
+                            firstDiv.tabIndex = _UIUtilities._getLowestTabIndexInList(_elms);
 
                             // Verify that the finalDiv is in the correct location.
                             // Move it to the correct location or add it if not.
                             var finalDiv = this.element.querySelectorAll(".win-final");
-                            if (!WinJS.Utilities.hasClass(this.element.children[this.element.children.length - 1], finalDivClass)) {
+                            if (!_ElementUtilities.hasClass(this.element.children[this.element.children.length - 1], _Constants.finalDivClass)) {
                                 if (finalDiv && finalDiv.length > 0) {
                                     finalDiv.item(0).parentNode.removeChild(finalDiv.item(0));
                                 }
 
                                 finalDiv = this._addFinalDiv();
                             }
-                            finalDiv.tabIndex = WinJS.Utilities._getHighestTabIndexInList(_elms);
+                            finalDiv.tabIndex = _UIUtilities._getHighestTabIndexInList(_elms);
                         }
 
                         // Hide all other flyouts
@@ -378,17 +379,17 @@ define([
                     // Remember if the IHM was up since we may need to hide it when the flyout hides.
                     // This check needs to happen after the IHM has a chance to hide itself after we force hide
                     // all other visible Flyouts.
-                    this._keyboardWasUp = thisWinUI._Overlay._keyboardInfo._visible;
+                    this._keyboardWasUp = _Overlay._Overlay._keyboardInfo._visible;
 
-                    if (!WinJS.Utilities.hasClass(this.element, "win-menu")) {
+                    if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
                         // Put focus on the first child in the Flyout
                         this._focusOnFirstFocusableElementOrThis();
 
                         // Prevent what is gaining focus from showing that it has focus
-                        thisWinUI._Overlay._addHideFocusClass(document.activeElement);
+                        _Overlay._Overlay._addHideFocusClass(document.activeElement);
                     } else {
                         // Make sure the menu has focus, but don't show a focus rect
-                        thisWinUI._Overlay._trySetActive(this._element);
+                        _Overlay._Overlay._trySetActive(this._element);
                     }
                 },
 
@@ -434,7 +435,7 @@ define([
 
                     // Adjust height/scrollbar
                     if (this._nextHeight !== null) {
-                        WinJS.Utilities.addClass(this._element, scrollsClass);
+                        _ElementUtilities.addClass(this._element, _Constants.scrollsClass);
                         this._lastMaxHeight = this._element.style.maxHeight;
                         this._element.style.maxHeight = this._nextHeight + "px";
                         this._nextBottom = this._nextTop + this._nextHeight;
@@ -442,7 +443,7 @@ define([
                     }
 
                     // May need to adjust if the IHM is showing.
-                    if (thisWinUI._Overlay._keyboardInfo._visible) {
+                    if (_Overlay._Overlay._keyboardInfo._visible) {
                         // Use keyboard logic
                         this._checkKeyboardFit();
 
@@ -486,10 +487,10 @@ define([
                     flyout.marginBottom = getDimension(this._element, "marginBottom");
                     flyout.marginLeft = getDimension(this._element, "marginLeft");
                     flyout.marginRight = getDimension(this._element, "marginRight");
-                    flyout.width = WinJS.Utilities.getTotalWidth(this._element);
-                    flyout.height = WinJS.Utilities.getTotalHeight(this._element);
-                    flyout.innerWidth = WinJS.Utilities.getContentWidth(this._element);
-                    flyout.innerHeight = WinJS.Utilities.getContentHeight(this._element);
+                    flyout.width = _ElementUtilities.getTotalWidth(this._element);
+                    flyout.height = _ElementUtilities.getTotalHeight(this._element);
+                    flyout.innerWidth = _ElementUtilities.getContentWidth(this._element);
+                    flyout.innerHeight = _ElementUtilities.getContentHeight(this._element);
                     this._nextMarginPadding = (flyout.height - flyout.innerHeight);
 
                     // Check fit for requested this._currentPlacement, doing fallback if necessary
@@ -506,7 +507,7 @@ define([
                             if (!this._fitBottom(anchor, flyout)) {
                                 // Didn't fit, needs scrollbar
                                 this._nextTop = -1;
-                                this._nextHeight = thisWinUI._Overlay._keyboardInfo._visibleDocHeight - anchor.bottom - this._nextMarginPadding;
+                                this._nextHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - anchor.bottom - this._nextMarginPadding;
                             }
                             this._centerHorizontally(anchor, flyout, this._currentAlignment);
                             break;
@@ -545,7 +546,7 @@ define([
                                     } else {
                                         // Bottom, won't fit, needs scrollbar
                                         this._nextTop = -1;
-                                        this._nextHeight = thisWinUI._Overlay._keyboardInfo._visibleDocHeight - anchor.bottom - this._nextMarginPadding;
+                                        this._nextHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - anchor.bottom - this._nextMarginPadding;
                                     }
                                     this._centerHorizontally(anchor, flyout, this._currentAlignment);
                                 } else {
@@ -555,7 +556,7 @@ define([
                             break;
                         default:
                             // Not a legal this._currentPlacement value
-                            throw new WinJS.ErrorFromName("WinJS.UI.Flyout.BadPlacement", strings.badPlacement);
+                            throw new _ErrorFromName("WinJS.UI.Flyout.BadPlacement", strings.badPlacement);
                     }
 
                     // Remember "bottom" in case we need to consider keyboard later, only tested for top-pinned bars
@@ -564,11 +565,11 @@ define([
 
                 // If the anchor is centered vertically, would the flyout fit above it?
                 _sometimesFitsAbove: function Flyout_sometimesFitsAbove(anchor, flyout) {
-                    return ((thisWinUI._Overlay._keyboardInfo._visibleDocHeight - anchor.height) / 2) >= flyout.height;
+                    return ((_Overlay._Overlay._keyboardInfo._visibleDocHeight - anchor.height) / 2) >= flyout.height;
                 },
 
                 _topHasMoreRoom: function Flyout_topHasMoreRoom(anchor) {
-                    return anchor.top > thisWinUI._Overlay._keyboardInfo._visibleDocHeight - anchor.bottom;
+                    return anchor.top > _Overlay._Overlay._keyboardInfo._visibleDocHeight - anchor.bottom;
                 },
 
                 // See if we can fit in various places, fitting in the main view,
@@ -577,33 +578,33 @@ define([
                     this._nextTop = anchor.top - flyout.height;
                     this._nextAnimOffset = { top: "50px", left: "0px", keyframe: "WinJS-showFlyoutTop" };
                     return (this._nextTop >= 0 &&
-                            this._nextTop + flyout.height <= thisWinUI._Overlay._keyboardInfo._visibleDocBottom);
+                            this._nextTop + flyout.height <= _Overlay._Overlay._keyboardInfo._visibleDocBottom);
                 },
 
                 _fitBottom: function Flyout_fitBottom(anchor, flyout) {
                     this._nextTop = anchor.bottom;
                     this._nextAnimOffset = { top: "-50px", left: "0px", keyframe: "WinJS-showFlyoutBottom" };
                     return (this._nextTop >= 0 &&
-                            this._nextTop + flyout.height <= thisWinUI._Overlay._keyboardInfo._visibleDocBottom);
+                            this._nextTop + flyout.height <= _Overlay._Overlay._keyboardInfo._visibleDocBottom);
                 },
 
                 _fitLeft: function Flyout_fitLeft(anchor, flyout) {
                     this._nextLeft = anchor.left - flyout.width;
                     this._nextAnimOffset = { top: "0px", left: "50px", keyframe: "WinJS-showFlyoutLeft" };
-                    return (this._nextLeft >= 0 && this._nextLeft + flyout.width <= thisWinUI._Overlay._keyboardInfo._visualViewportWidth);
+                    return (this._nextLeft >= 0 && this._nextLeft + flyout.width <= _Overlay._Overlay._keyboardInfo._visualViewportWidth);
                 },
 
                 _fitRight: function Flyout_fitRight(anchor, flyout) {
                     this._nextLeft = anchor.right;
                     this._nextAnimOffset = { top: "0px", left: "-50px", keyframe: "WinJS-showFlyoutRight" };
-                    return (this._nextLeft >= 0 && this._nextLeft + flyout.width <= thisWinUI._Overlay._keyboardInfo._visualViewportWidth);
+                    return (this._nextLeft >= 0 && this._nextLeft + flyout.width <= _Overlay._Overlay._keyboardInfo._visualViewportWidth);
                 },
 
                 _centerVertically: function Flyout_centerVertically(anchor, flyout) {
                     this._nextTop = anchor.top + anchor.height / 2 - flyout.height / 2;
                     if (this._nextTop < 0) {
                         this._nextTop = 0;
-                    } else if (this._nextTop + flyout.height >= thisWinUI._Overlay._keyboardInfo._visibleDocBottom) {
+                    } else if (this._nextTop + flyout.height >= _Overlay._Overlay._keyboardInfo._visibleDocBottom) {
                         // Flag to put on bottom
                         this._nextTop = -1;
                     }
@@ -617,7 +618,7 @@ define([
                     } else if (alignment === "right") {
                         this._nextLeft = anchor.right - flyout.width;
                     } else {
-                        throw new WinJS.ErrorFromName("WinJS.UI.Flyout.BadAlignment", strings.badAlignment);
+                        throw new _ErrorFromName("WinJS.UI.Flyout.BadAlignment", strings.badAlignment);
                     }
                     if (this._nextLeft < 0) {
                         this._nextLeft = 0;
@@ -635,21 +636,21 @@ define([
                     this._element.style.right = "auto";
 
                     // Scrolling may not be necessary
-                    WinJS.Utilities.removeClass(this._element, scrollsClass);
+                    _ElementUtilities.removeClass(this._element, _Constants.scrollsClass);
                     if (this._lastMaxHeight !== null) {
                         this._element.style.maxHeight = this._lastMaxHeight;
                         this._lastMaxHeight = null;
                     }
                     // Alignment
                     if (alignment === "center") {
-                        WinJS.Utilities.removeClass(this._element, "win-leftalign");
-                        WinJS.Utilities.removeClass(this._element, "win-rightalign");
+                        _ElementUtilities.removeClass(this._element, "win-leftalign");
+                        _ElementUtilities.removeClass(this._element, "win-rightalign");
                     } else if (alignment === "left") {
-                        WinJS.Utilities.addClass(this._element, "win-leftalign");
-                        WinJS.Utilities.removeClass(this._element, "win-rightalign");
+                        _ElementUtilities.addClass(this._element, "win-leftalign");
+                        _ElementUtilities.removeClass(this._element, "win-rightalign");
                     } else if (alignment === "right") {
-                        WinJS.Utilities.addClass(this._element, "win-rightalign");
-                        WinJS.Utilities.removeClass(this._element, "win-leftalign");
+                        _ElementUtilities.addClass(this._element, "win-rightalign");
+                        _ElementUtilities.removeClass(this._element, "win-leftalign");
                     }
                 },
 
@@ -670,7 +671,7 @@ define([
                         // Pop out immediately, then move to new spot
                         this._element.style.opacity = 0;
                         var that = this;
-                        setTimeout(function () { that._adjustForKeyboard(); that._baseAnimateIn(); }, thisWinUI._Overlay._keyboardInfo._animationShowLength);
+                        setTimeout(function () { that._adjustForKeyboard(); that._baseAnimateIn(); }, _Overlay._Overlay._keyboardInfo._animationShowLength);
                     }
                 },
 
@@ -686,7 +687,7 @@ define([
                     if (this._keyboardHiding) {
                         // Hiding keyboard, update our position, giving the anchor a chance to update first.
                         var that = this;
-                        WinJS.Utilities._setImmediate(function () { that._findPosition(); });
+                        _BaseUtils._setImmediate(function () { that._findPosition(); });
                         this._keyboardHiding = false;
                     }
                 },
@@ -694,8 +695,8 @@ define([
                 _checkKeyboardFit: function Flyout_checkKeyboardFit() {
                     // Check for moving to fit keyboard:
                     // - Too Tall, above top, or below bottom.
-                    var height = WinJS.Utilities.getTotalHeight(this._element);
-                    var viewportHeight = thisWinUI._Overlay._keyboardInfo._visibleDocHeight - this._nextMarginPadding;
+                    var height = _ElementUtilities.getTotalHeight(this._element);
+                    var viewportHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - this._nextMarginPadding;
                     if (height > viewportHeight) {
                         // Too Tall, pin to top with max height
                         this._keyboardMovedUs = true;
@@ -708,7 +709,7 @@ define([
                         // Above the top of the viewport
                         this._scrollTop = 0;
                         this._keyboardMovedUs = true;
-                    } else if (this._nextBottom > thisWinUI._Overlay._keyboardInfo._visibleDocBottom) {
+                    } else if (this._nextBottom > _Overlay._Overlay._keyboardInfo._visibleDocBottom) {
                         // Below the bottom of the viewport
                         this._scrollTop = -1;
                         this._keyboardMovedUs = true;
@@ -720,7 +721,7 @@ define([
                     if (this._keyboardSquishedUs) {
                         // Add scrollbar if we didn't already have scrollsClass
                         if (!this._hasScrolls) {
-                            WinJS.Utilities.addClass(this._element, scrollsClass);
+                            _ElementUtilities.addClass(this._element, _Constants.scrollsClass);
                             this._lastMaxHeight = this._element.style.maxHeight;
                         }
                         // Adjust height
@@ -740,13 +741,13 @@ define([
 
                     // Snap to the final position
                     // We'll either just reveal the current space or resize the window
-                    if (thisWinUI._Overlay._keyboardInfo._isResized) {
+                    if (_Overlay._Overlay._keyboardInfo._isResized) {
                         // Flag resize that we'll need an updated position
                         this._keyboardHiding = true;
                     } else {
                         // Not resized, update our final position, giving the anchor a chance to update first.
                         var that = this;
-                        WinJS.Utilities._setImmediate(function () { that._findPosition(); });
+                        _BaseUtils._setImmediate(function () { that._findPosition(); });
                     }
                 },
 
@@ -758,7 +759,7 @@ define([
                     // May need to adjust top by viewport offset
                     if (this._scrollTop < 0) {
                         // Need to attach to bottom
-                        this._element.style.bottom = thisWinUI._Overlay._keyboardInfo._visibleDocBottomOffset + "px";
+                        this._element.style.bottom = _Overlay._Overlay._keyboardInfo._visibleDocBottomOffset + "px";
                         this._element.style.top = "auto";
                     } else {
                         // Normal, attach to top
@@ -774,7 +775,7 @@ define([
                     } else {
                         this._element.style.opacity = 1;
                         this._element.style.visibility = "visible";
-                        return WinJS.UI.Animation.showPopup(this._element, this._nextAnimOffset);
+                        return Animations.showPopup(this._element, this._nextAnimOffset);
                     }
                 },
 
@@ -783,13 +784,13 @@ define([
                         return this._baseAnimateOut();
                     } else {
                         this._element.style.opacity = 0;
-                        return WinJS.UI.Animation.hidePopup(this._element, this._nextAnimOffset);
+                        return Animations.hidePopup(this._element, this._nextAnimOffset);
                     }
                 },
 
                 // Hide all other flyouts besides this one
                 _hideAllOtherFlyouts: function Flyout_hideAllOtherFlyouts(thisFlyout) {
-                    var flyouts = document.querySelectorAll(".win-flyout");
+                    var flyouts = document.querySelectorAll(_Constants.flyoutSelector);
                     for (var i = 0; i < flyouts.length; i++) {
                         var flyoutControl = flyouts[i].winControl;
                         if (flyoutControl && !flyoutControl.hidden && (flyoutControl !== thisFlyout)) {
@@ -800,7 +801,7 @@ define([
 
                 // Returns true if there is a flyout in the DOM that is not hidden
                 _isThereVisibleFlyout: function Flyout_isThereVisibleFlyout() {
-                    var flyouts = document.querySelectorAll(".win-flyout");
+                    var flyouts = document.querySelectorAll(_Constants.flyoutSelector);
                     for (var i = 0; i < flyouts.length; i++) {
                         var flyoutControl = flyouts[i].winControl;
                         if (flyoutControl && !flyoutControl.hidden) {
@@ -838,7 +839,7 @@ define([
                 // Create and add a new first div as the first child
                 _addFirstDiv: function Flyout_addFirstDiv() {
                     var firstDiv = document.createElement("div");
-                    firstDiv.className = firstDivClass;
+                    firstDiv.className = _Constants.firstDivClass;
                     firstDiv.style.display = "inline";
                     firstDiv.setAttribute("role", "menuitem");
                     firstDiv.setAttribute("aria-hidden", "true");
@@ -851,7 +852,7 @@ define([
                     }
 
                     var that = this;
-                    WinJS.Utilities._addEventListener(firstDiv, "focusin", function () { that._focusOnLastFocusableElementOrThis(); }, false);
+                    _ElementUtilities._addEventListener(firstDiv, "focusin", function () { that._focusOnLastFocusableElementOrThis(); }, false);
 
                     return firstDiv;
                 },
@@ -859,20 +860,20 @@ define([
                 // Create and add a new final div as the last child
                 _addFinalDiv: function Flyout_addFinalDiv() {
                     var finalDiv = document.createElement("div");
-                    finalDiv.className = finalDivClass;
+                    finalDiv.className = _Constants.finalDivClass;
                     finalDiv.style.display = "inline";
                     finalDiv.setAttribute("role", "menuitem");
                     finalDiv.setAttribute("aria-hidden", "true");
 
                     this._element.appendChild(finalDiv);
                     var that = this;
-                    WinJS.Utilities._addEventListener(finalDiv, "focusin", function () { that._focusOnFirstFocusableElementOrThis(); }, false);
+                    _ElementUtilities._addEventListener(finalDiv, "focusin", function () { that._focusOnFirstFocusableElementOrThis(); }, false);
 
                     return finalDiv;
                 },
 
                 _writeProfilerMark: function Flyout_writeProfilerMark(text) {
-                    WinJS.Utilities._writeProfilerMark("WinJS.UI.Flyout:" + this._id + ":" + text);
+                    _WriteProfilerMark("WinJS.UI.Flyout:" + this._id + ":" + text);
                 }
             });
             return Flyout;
