@@ -174,7 +174,8 @@ WinJSTests.ListViewDragDropTest = function () {
 
             // Issue #135
             if (fullName === "DisabledDragBetweenListLayoutBindingList_ltr" || 
-                fullName === "DisabledDragBetweenGridLayoutVDS_ltr") {
+                fullName === "DisabledDragBetweenGridLayoutVDS_ltr" ||
+                fullName === "DraggableAttributeGridLayoutVDS_rtl" ) {
                 return;
             }
 
