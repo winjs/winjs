@@ -61,6 +61,7 @@ input[type=tel], input[type=url], input[type=search] {
     min-height: 28px;
     background-clip: border-box;
     padding: 0px 8px;
+    outline: 0;
     .win-type-medium-internal();
 }
 
@@ -118,6 +119,7 @@ textarea, .win-textarea {
     background-clip: border-box;
     overflow-y: scroll;
     word-wrap: break-word;
+    outline: 0;
     .win-type-medium-internal();
 
     &:-ms-lang(@{rtl}) {
@@ -206,6 +208,7 @@ select {
     border-style: solid;
     background-clip: border-box;
     margin: 4px 0px;
+    outline: 0;
     .win-type-medium-internal();
 
     &::-ms-value {
