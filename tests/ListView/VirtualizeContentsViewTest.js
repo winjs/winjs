@@ -4802,7 +4802,8 @@ WinJSTests.VirtualizedViewTests = function () {
     };
     this.testAriaWorkerCancellation.timeout = 30000;
 
-    this.testDeleteDoesNotLoseFocusRectangle = function (complete) {
+    // issue #342
+    this.xtestDeleteDoesNotLoseFocusRectangle = function (complete) {
         initUnhandledErrors();
 
         var data = [];

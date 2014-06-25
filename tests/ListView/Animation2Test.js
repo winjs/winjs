@@ -255,7 +255,8 @@ WinJSTests.ListViewAnimation2Test = function () {
         }
     }
 
-    this.testExpandItemsContainerForReflowNeeded = function (complete) {
+    // issue #342
+    this.xtestExpandItemsContainerForReflowNeeded = function (complete) {
         var bindingList = getBindingList(100);
         var listView = new WinJS.UI.ListView(listViewEl);
         listView.layout = new WinJS.UI.GridLayout();
@@ -282,7 +283,8 @@ WinJSTests.ListViewAnimation2Test = function () {
             });
     };
 
-    this.testExpandItemsContainerForReflowNotNeeded = function (complete) {
+    // issue #342
+    this.xtestExpandItemsContainerForReflowNotNeeded = function (complete) {
         var bindingList = getBindingList(100);
         var listView = new WinJS.UI.ListView(listViewEl);
         listView.layout = new WinJS.UI.GridLayout();
