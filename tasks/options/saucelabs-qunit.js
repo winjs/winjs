@@ -24,6 +24,10 @@
         browserName: "googlechrome",
         platform: "Win8.1",
         version: "34"
+    }, {
+        browserName: "iPhone",
+        platform: "OS X 10.9",
+        version: "7.1"
     }];
 
     function getBrowserIndex(browser) {
