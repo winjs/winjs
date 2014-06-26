@@ -42,7 +42,7 @@ CorsicaTests.Log = function () {
         WinJS.Utilities.stopLog();
     };
     this.testConsole = function () {
-        delete WinJS.log;
+        WinJS.log = null;
         var logC = 0;
         var errorC = 0;
         var warnC = 0;

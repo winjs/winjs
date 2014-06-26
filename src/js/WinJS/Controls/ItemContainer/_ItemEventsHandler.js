@@ -121,7 +121,7 @@ define([
                 this._swipeClassTracker = {};
 
                 // The gesture recognizer is used for SRG, which is not supported on Phone
-                if (!WinJS.Utilities.isPhone && this._selectionAllowed()) {
+                if (!_BaseUtils.isPhone && this._selectionAllowed()) {
                     var that = this;
                     setTimeout(function () {
                         if (!that._gestureRecognizer && !site.isZombie()) {
@@ -152,7 +152,7 @@ define([
                         if (this._site.pressedEntity.index !== _Constants._INVALID_INDEX) {
                             this._site.pressedItemBox = this._site.itemBoxAtIndex(this._site.pressedEntity.index);
                             this._site.pressedContainer = this._site.containerAtIndex(this._site.pressedEntity.index);
-                            this._site.animatedElement = WinJS.Utilities.isPhone ? this._site.pressedItemBox : this._site.pressedContainer;
+                            this._site.animatedElement = _BaseUtils.isPhone ? this._site.pressedItemBox : this._site.pressedContainer;
                             this._site.pressedHeader = null;
                             var allowed = this._site.verifySelectionAllowed(this._site.pressedEntity);
                             this._canSelect = allowed.canSelect;
@@ -234,7 +234,7 @@ define([
                             if (this._site.pressedEntity.type !== _UI.ObjectType.groupHeader) {
                                 this._site.pressedItemBox = site.itemBoxAtIndex(this._site.pressedEntity.index);
                                 this._site.pressedContainer = site.containerAtIndex(this._site.pressedEntity.index);
-                                this._site.animatedElement = WinJS.Utilities.isPhone ? this._site.pressedItemBox : this._site.pressedContainer;
+                                this._site.animatedElement = _BaseUtils.isPhone ? this._site.pressedItemBox : this._site.pressedContainer;
                                 this._site.pressedHeader = null;
                                 this._togglePressed(true, false, eventObject);
                                 this._site.pressedContainer.addEventListener('dragstart', this._DragStartBound);
@@ -246,7 +246,7 @@ define([
                             } else {
                                 this._site.pressedHeader = this._site.headerFromElement(eventObject.target);
                                 // Interactions with the headers on phone show an animation
-                                if (WinJS.Utilities.isPhone) {
+                                if (_BaseUtils.isPhone) {
                                     this._site.animatedElement = this._site.pressedHeader;
                                     this._togglePressed(true, false, eventObject);
                                 } else {
@@ -266,7 +266,7 @@ define([
                             }
 
                             // The gesture recognizer is used for SRG, which is not supported on Phone
-                            if (this._canSelect && !WinJS.Utilities.isPhone) {
+                            if (this._canSelect && !_BaseUtils.isPhone) {
                                 if (!this._gestureRecognizer) {
                                     this._gestureRecognizer = this._createGestureRecognizer();
                                 }
@@ -572,7 +572,7 @@ define([
 
                     this._site.animatedDownPromise && this._site.animatedDownPromise.cancel();
 
-                    if (WinJS.Utilities.isPhone && !isHeader && _ElementUtilities.hasClass(this._site.pressedItemBox, _Constants._nonSelectableClass)) {
+                    if (_BaseUtils.isPhone && !isHeader && _ElementUtilities.hasClass(this._site.pressedItemBox, _Constants._nonSelectableClass)) {
                         return;
                     }
 
@@ -582,7 +582,7 @@ define([
                                 _WriteProfilerMark("WinJS.UI._ItemEventsHandler:applyPressedUI,info");
                                 _ElementUtilities.addClass(this._site.animatedElement, _Constants._pressedClass);
 
-                                if (eventObject && WinJS.Utilities.isPhone) {
+                                if (eventObject && _BaseUtils.isPhone) {
                                     var boundingElement = isHeader ? that._site.pressedHeader : that._site.pressedContainer;
                                     var transform = tiltTransform(eventObject.clientX, eventObject.clientY, boundingElement.getBoundingClientRect());
                                     // Timeout prevents item from looking like it was pressed down during swipes and pans
@@ -645,7 +645,7 @@ define([
                     function applyUpVisual(element, expectingStyle) {
                         _WriteProfilerMark("WinJS.UI._ItemEventsHandler:removePressedUI,info");
                         _ElementUtilities.removeClass(element, _Constants._pressedClass);
-                        if (WinJS.Utilities.isPhone) {
+                        if (_BaseUtils.isPhone) {
                             if (that._containsTransform(element, expectingStyle)) {
                                 _TransitionAnimation.executeTransition(element, {
                                     property: transformNames.cssName,

@@ -50,7 +50,7 @@ define([
                 _ElementUtilities.addClass(ev.target, "win-keyboard");
             }, true);
             _ElementUtilities._addEventListener(element, "focusin", function (ev) {
-                WinJS.UI._keyboardSeenLast && _ElementUtilities.addClass(ev.target, "win-keyboard");
+                exports._keyboardSeenLast && _ElementUtilities.addClass(ev.target, "win-keyboard");
             }, false);
             _ElementUtilities._addEventListener(element, "focusout", function (ev) {
                 _ElementUtilities.removeClass(ev.target, "win-keyboard");

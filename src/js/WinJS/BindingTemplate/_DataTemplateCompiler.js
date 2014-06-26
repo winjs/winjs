@@ -5,6 +5,7 @@ define([
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Binding/_BindingParser',
@@ -18,7 +19,7 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_SafeHtml',
     '../Utilities/_ElementUtilities'
-    ], function templateCompilerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _BindingParser, _Data, _Declarative, ControlProcessor, _OptionsParser, Fragments, Promise, _Signal, _Dispose, _SafeHtml, _ElementUtilities) {
+    ], function templateCompilerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, _BindingParser, _Data, _Declarative, ControlProcessor, _OptionsParser, Fragments, Promise, _Signal, _Dispose, _SafeHtml, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -1672,16 +1673,16 @@ define([
                 oneTimeTreeBinding: function (binding) {
 
                     if (binding.destination.length === 1 && binding.destination[0] === "id") {
-                        if (WinJS.validation) {
+                        if (_BaseUtils.validation) {
                             throw new _ErrorFromName("WinJS.Binding.IdBindingNotSupported", _Resources._formatString(strings.idBindingNotSupported, binding.bindingText));
                         }
-                        WinJS.log && WinJS.log(_Resources._formatString(strings.idBindingNotSupported, binding.bindingText), "winjs binding", "error");
+                        _Log.log && _Log.log(_Resources._formatString(strings.idBindingNotSupported, binding.bindingText), "winjs binding", "error");
                         this.markBindingAsError(binding);
                         return;
                     }
 
                     if (binding.destination.length === 0) {
-                        WinJS.log && WinJS.log(strings.cannotBindToThis, "winjs binding", "error");
+                        _Log.log && _Log.log(strings.cannotBindToThis, "winjs binding", "error");
                         this.markBindingAsError(binding);
                         return;
                     }
@@ -1906,16 +1907,16 @@ define([
                 setAttributeOneTimeTreeBinding: function (binding) {
 
                     if (binding.destination.length === 1 && binding.destination[0] === "id") {
-                        if (WinJS.validation) {
+                        if (_BaseUtils.validation) {
                             throw new _ErrorFromName("WinJS.Binding.IdBindingNotSupported", _Resources._formatString(strings.idBindingNotSupported, binding.bindingText));
                         }
-                        WinJS.log && WinJS.log(_Resources._formatString(strings.idBindingNotSupported, binding.bindingText), "winjs binding", "error");
+                        _Log.log && _Log.log(_Resources._formatString(strings.idBindingNotSupported, binding.bindingText), "winjs binding", "error");
                         this.markBindingAsError(binding);
                         return;
                     }
 
                     if (binding.destination.length !== 1 || !binding.destination[0]) {
-                        WinJS.log && WinJS.log(strings.attributeBindingSingleProperty, "winjs binding", "error");
+                        _Log.log && _Log.log(strings.attributeBindingSingleProperty, "winjs binding", "error");
                         this.markBindingAsError(binding);
                         return;
                     }

@@ -3,15 +3,17 @@
 define([
     'exports',
     '../Core/_Base',
+    '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
     '../Core/_Events',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Promise',
     '../Scheduler',
     '../_Signal',
     '../Utilities/_UI'
-    ], function listDataSourceInit(exports, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Promise, Scheduler, _Signal, _UI) {
+    ], function listDataSourceInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Promise, Scheduler, _Signal, _UI) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -183,12 +185,12 @@ define([
                 function profilerMarkStart(text) {
                     var message = "WinJS.UI.VirtualizedDataSource:" + dataSourceID + ":" + text + ",StartTM";
                     _WriteProfilerMark(message);
-                    WinJS.log && WinJS.log(message, "winjs vds", "perf");
+                    _Log.log && _Log.log(message, "winjs vds", "perf");
                 }
                 function profilerMarkEnd(text) {
                     var message = "WinJS.UI.VirtualizedDataSource:" + dataSourceID + ":" + text + ",StopTM";
                     _WriteProfilerMark(message);
-                    WinJS.log && WinJS.log(message, "winjs vds", "perf");
+                    _Log.log && _Log.log(message, "winjs vds", "perf");
                 }
 
                 function isNonNegativeNumber(n) {
@@ -1894,7 +1896,7 @@ define([
                     } else if (!result.key) {
                         throw new _ErrorFromName("WinJS.UI.ListDataSource.InvalidKeyReturned", strings.invalidKeyReturned);
                     } else {
-                        if (WinJS.validation) {
+                        if (_BaseUtils.validation) {
                             validateKey(result.key);
                         }
                         return keyMap[result.key];
@@ -2567,10 +2569,10 @@ define([
                             }
                         }
                         if (match) {
-                            if (WinJS.log) {
-                                WinJS.log(strings.refreshCycleIdentified, "winjs vds", "error");
+                            if (_Log.log) {
+                                _Log.log(strings.refreshCycleIdentified, "winjs vds", "error");
                                 for (var i = start; i < end; i++) {
-                                    WinJS.log("" + (i - start) + ": " + JSON.stringify(refreshHistory[i]), "winjs vds", "error");
+                                    _Log.log("" + (i - start) + ": " + JSON.stringify(refreshHistory[i]), "winjs vds", "error");
                                 }
                             }
                         }

@@ -51,7 +51,7 @@ define([
                 newObj[p] = v;
             }
             if (!newObj.exactTiming) {
-                newObj.delay += WinJS.UI._libraryDelay;
+                newObj.delay += exports._libraryDelay;
             }
             return newObj;
         };
@@ -344,7 +344,7 @@ define([
                     styleCache.removeName(anim.style, anim.keyframe);
                 }
             };
-            promises.push(WinJS.Promise.join(animationPromises).then(cleanupAnimations, cleanupAnimations));
+            promises.push(Promise.join(animationPromises).then(cleanupAnimations, cleanupAnimations));
         }
     }
 
@@ -361,7 +361,7 @@ define([
         }
     }
 
-    function isAnimationEnabled() {
+    var isAnimationEnabled = function isAnimationEnabledImpl() {
         /// <signature helpKeyword="WinJS.UI.isAnimationEnabled">
         /// <summary locid="WinJS.UI.isAnimationEnabled">
         /// Determines whether the WinJS Animation Library will perform animations.
@@ -373,11 +373,11 @@ define([
         /// </signature>
         initAnimations();
         return enableCount + animationSettings.animationsEnabled > 0;
-    }
+    };
 
     function applyAction(element, action, execAction) {
         try {
-            var animate = WinJS.UI.isAnimationEnabled();
+            var animate = exports.isAnimationEnabled();
             var elems = makeArray(element);
             var actions = makeArray(action);
 
@@ -411,8 +411,8 @@ define([
                 return fastAnimation(animation);
             });
         } else if (animation) {
-            animation.delay = WinJS.UI._animationTimeAdjustment(animation.delay);
-            animation.duration = WinJS.UI._animationTimeAdjustment(animation.duration);
+            animation.delay = animationTimeAdjustment(animation.delay);
+            animation.duration = animationTimeAdjustment(animation.duration);
             return animation;
         } else {
             return;
@@ -420,12 +420,23 @@ define([
     }
 
     function animationAdjustment(animation) {
-        if (WinJS.Utilities._fastAnimations) {
+        if (fastAnimations) {
             return fastAnimation(animation);
         } else {
             return animation;
         }
     }
+
+    var animationTimeAdjustment = function _animationTimeAdjustmentImpl(v) {
+        if (fastAnimations) {
+            return v / 20;
+        } else {
+            return v;
+        }
+    };
+
+    var fastAnimations = false;
+    var libraryDelay = 0;
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         disableAnimations: function () {
@@ -448,9 +459,23 @@ define([
             enableCount++;
         },
 
-        isAnimationEnabled: isAnimationEnabled,
+        isAnimationEnabled: {
+            get: function() {
+                return isAnimationEnabled;
+            },
+            set: function(value) {
+                isAnimationEnabled = value;
+            }
+        },
 
-        _libraryDelay: 0,
+        _libraryDelay: {
+            get: function() {
+                return libraryDelay;
+            },
+            set: function(value) {
+                libraryDelay = value;
+            }
+        },
 
         executeAnimation: function (element, animation) {
             /// <signature helpKeyword="WinJS.UI.executeAnimation">
@@ -496,14 +521,26 @@ define([
             return applyAction(element, animationAdjustment(transition), executeElementTransition);
         },
 
-        _animationTimeAdjustment: function (v) {
-            if (WinJS.Utilities._fastAnimations) {
-                return v / 20;
-            } else {
-                return v;
+        _animationTimeAdjustment: {
+            get: function() {
+                return animationTimeAdjustment;
+            },
+            set: function(value) {
+                animationTimeAdjustment = value;
             }
-        },
+        }
 
+    });
+
+    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
+        _fastAnimations: {
+            get: function() {
+                return fastAnimations;
+            },
+            set: function(value) {
+                fastAnimations = value;
+            }
+        }
     });
 
 });

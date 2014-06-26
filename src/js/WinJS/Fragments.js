@@ -408,7 +408,7 @@ define([
         // want to force the href to only support local package content when running
         // in the local context. When running in the web context, this will be a no-op.
         //
-        href = WinJS.UI.Fragments._forceLocal(href);
+        href = forceLocal(href);
     
         var htmlDoc = document.implementation.createHTMLDocument("frag");
         var base = htmlDoc.createElement("base");
@@ -420,11 +420,13 @@ define([
         base.href = anchor.href; // Update the base URL to be the resolved absolute path
         // 'anchor' is no longer needed at this point and will be removed by the innerHTML call
         state.document = htmlDoc;
-        return WinJS.UI.Fragments._getFragmentContents(href).then(function (text) {
+        return getFragmentContents(href).then(function (text) {
             _SafeHtml.setInnerHTMLUnsafe(htmlDoc.documentElement, text);
             htmlDoc.head.appendChild(base);
         });
     }
+
+    var getFragmentContents = getFragmentContentsXHR;
 
     function getFragmentContentsXHR(href) {
         return _Xhr({ url: href }).then(function (req) {
@@ -439,6 +441,13 @@ define([
         clearCache: clearCache,
         _cacheStore: { get: function () { return cacheStore; } },
         _forceLocal: forceLocal,
-        _getFragmentContents: getFragmentContentsXHR
+        _getFragmentContents: {
+            get: function() {
+                return getFragmentContents;
+            },
+            set: function(value) {
+                getFragmentContents = value;
+            }
+        }
     });
 });

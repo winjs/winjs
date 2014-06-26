@@ -4,9 +4,11 @@ define([
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Events',
+    '../../Core/_Log',
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
     '../../Animations',
+    '../../Animations/_TransitionAnimation',
     '../../BindingList',
     '../../ControlProcessor',
     '../../Navigation',
@@ -19,7 +21,7 @@ define([
     '../AppBar/_Constants',
     '../Repeater',
     './_Command'
-    ], function NavBarContainerInit(exports, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
+    ], function NavBarContainerInit(exports, _Base, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
     "use strict";
 
     function nobodyHasFocus() {
@@ -1264,7 +1266,7 @@ define([
                         if (hasLeftContent) {
                             // If we need a delayed fade out and we are already running a delayed fade out just use that one, don't extend it.
                             // Otherwise create a delayed fade out.
-                            this._leftArrowWaitingToFadeOut = this._leftArrowWaitingToFadeOut || Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay));
+                            this._leftArrowWaitingToFadeOut = this._leftArrowWaitingToFadeOut || Promise.timeout(_TransitionAnimation._animationTimeAdjustment(buttonFadeDelay));
                         } else {
                             // If we need a immediate fade out and already have a delayed fade out cancel that one and create an immediate one.
                             this._leftArrowWaitingToFadeOut && this._leftArrowWaitingToFadeOut.cancel();
@@ -1290,7 +1292,7 @@ define([
                         this._rightArrowFadeIn = this._rightArrowFadeIn || Animations.fadeIn(this._rightArrowEl);
                     } else {
                         if (hasRightContent) {
-                            this._rightArrowWaitingToFadeOut = this._rightArrowWaitingToFadeOut || Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay));
+                            this._rightArrowWaitingToFadeOut = this._rightArrowWaitingToFadeOut || Promise.timeout(_TransitionAnimation._animationTimeAdjustment(buttonFadeDelay));
                         } else {
                             this._rightArrowWaitingToFadeOut && this._rightArrowWaitingToFadeOut.cancel();
                             this._rightArrowWaitingToFadeOut = Promise.wrap();
@@ -1353,7 +1355,7 @@ define([
                 _writeProfilerMark: function NavBarContainer_writeProfilerMark(text) {
                     var message = "WinJS.UI.NavBarContainer:" + this._id + ":" + text;
                     _WriteProfilerMark(message);
-                    WinJS.log && WinJS.log(message, null, "navbarcontainerprofiler");
+                    _Log.log && _Log.log(message, null, "navbarcontainerprofiler");
                 },
 
                 dispose: function NavBarContainer_dispose() {

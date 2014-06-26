@@ -814,7 +814,7 @@ define([
     // Snap point feature detection is special - On most platforms it is enough to check if 'scroll-snap-type'
     // is a valid style, however, IE10 and WP IE claim that they are valid styles but don't support them.
     var supportsSnapPoints = false;
-    var snapTypeStyle = WinJS.Utilities._browserStyleEquivalents["scroll-snap-type"];
+    var snapTypeStyle = _BaseUtils._browserStyleEquivalents["scroll-snap-type"];
     if (snapTypeStyle) {
         if (snapTypeStyle.cssName.indexOf("-ms-") === 0) {
             // We are on a Microsoft platform, if zoomTo isn't supported then we know we are on IE10 and WP IE.
@@ -1653,7 +1653,7 @@ define([
             if (!element[_dataKey]) {
                 element[_dataKey] = {};
             }
-            return element[WinJS.Utilities._dataKey];
+            return element[_dataKey];
         },
 
         hasClass: function (e, name) {

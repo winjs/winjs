@@ -4,13 +4,14 @@ define([
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_Events',
+    './Core/_Log',
     './Core/_WriteProfilerMark',
     './Application/_State',
     './Navigation',
     './Promise',
     './_Signal',
     './Scheduler'
-    ], function applicationInit(_Global, _Base, _BaseUtils, _Events, _WriteProfilerMark, _State, Navigation, Promise, _Signal, Scheduler) {
+    ], function applicationInit(_Global, _Base, _BaseUtils, _Events, _Log, _WriteProfilerMark, _State, Navigation, Promise, _Signal, Scheduler) {
     "use strict";
 
     _Global.Debug && (_Global.Debug.setNonUserCodeExceptions = true);
@@ -275,7 +276,7 @@ define([
                     return;
                 }
 
-                WinJS.log && WinJS.log(safeSerialize(e), "winjs", "error");
+                _Log.log && _Log.log(safeSerialize(e), "winjs", "error");
 
                 if (useWinRT && WinJS.Application._terminateApp) {
                     var data = e.detail;

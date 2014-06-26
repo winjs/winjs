@@ -4,12 +4,13 @@ define([
     './Core/_Global',
     './Core/_Base',
     './Core/_BaseUtils',
+    './Core/_Log',
     './Core/_Resources',
     './Core/_WriteProfilerMark',
     './ControlProcessor/_OptionsParser',
     './Promise',
     './Utilities/_ElementUtilities'
-    ], function declarativeControlsInit(exports, _Global, _Base, _BaseUtils, _Resources, _WriteProfilerMark, _OptionsParser, Promise, _ElementUtilities) {
+    ], function declarativeControlsInit(exports, _Global, _Base, _BaseUtils, _Log, _Resources, _WriteProfilerMark, _OptionsParser, Promise, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -89,7 +90,7 @@ define([
                 checkComplete();
             }
             catch (err) {
-                WinJS.log && WinJS.log(_Resources._formatString(strings.errorActivatingControl, err && err.message), "winjs controls", "error");
+                _Log.log && _Log.log(_Resources._formatString(strings.errorActivatingControl, err && err.message), "winjs controls", "error");
                 error(err);
             }
         });

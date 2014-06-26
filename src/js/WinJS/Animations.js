@@ -73,7 +73,7 @@ define([
         return function (i, elem) {
             return window.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
         };
-    }
+        }
 
     function makeArray(elements) {
         if (Array.isArray(elements) || elements instanceof NodeList || elements instanceof HTMLCollection) {
@@ -2406,31 +2406,30 @@ define([
             /// Returns an object containing the exit and entrance animations to play based on the parameters given.
             /// </returns>
             /// </signature>
-            var PageNavigationAnimation = WinJS.UI.PageNavigationAnimation;
+            var PageNavigationAnimation = _Constants.PageNavigationAnimation;
             function emptyAnimationFunction() {
                 return Promise.wrap();
             }
-            if (!WinJS.Utilities.isPhone || currentPreferredAnimation === PageNavigationAnimation.enterPage || nextPreferredAnimation === PageNavigationAnimation.enterPage) {
+            if (!_BaseUtils.isPhone || currentPreferredAnimation === PageNavigationAnimation.enterPage || nextPreferredAnimation === PageNavigationAnimation.enterPage) {
                 return {
                     exit: emptyAnimationFunction,
-                    entrance: WinJS.UI.Animation.enterPage
+                    entrance: exports.enterPage
                 };
             }
             if (!nextPreferredAnimation) {
                 nextPreferredAnimation = PageNavigationAnimation.turnstile;
             }
-
             if ((currentPreferredAnimation === PageNavigationAnimation.slide && movingBackwards) ||
                 (nextPreferredAnimation === PageNavigationAnimation.slide && !movingBackwards)) {
                 return {
-                    exit: movingBackwards ? WinJS.UI.Animation.slideDown : emptyAnimationFunction,
-                    entrance: movingBackwards ? emptyAnimationFunction : WinJS.UI.Animation.slideUp
+                    exit: movingBackwards ? exports.slideDown : emptyAnimationFunction,
+                    entrance: movingBackwards ? emptyAnimationFunction : exports.slideUp
                 };
             }
 
             return {
-                exit: WinJS.UI.Animation[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "Out"],
-                entrance: WinJS.UI.Animation[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "In"]
+                exit: exports[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "Out"],
+                entrance: exports[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "In"]
             };
         }
     });

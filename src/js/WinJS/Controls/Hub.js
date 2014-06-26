@@ -4,6 +4,7 @@ define([
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
     '../Core/_Events',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Animations',
@@ -20,7 +21,7 @@ define([
     './Hub/_Section',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function hubInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _UI, _UIUtilities, _Section) {
+    ], function hubInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _UI, _UIUtilities, _Section) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -1287,7 +1288,7 @@ define([
                 _writeProfilerMark: function hub_writeProfilerMark(text) {
                     var message = "WinJS.UI.Hub:" + this._id + ":" + text;
                     _WriteProfilerMark(message);
-                    WinJS.log && WinJS.log(message, null, "hubprofiler");
+                    _Log.log && _Log.log(message, null, "hubprofiler");
                 },
                 dispose: function hub_dispose() {
                     /// <signature helpKeyword="WinJS.UI.Hub.dispose">

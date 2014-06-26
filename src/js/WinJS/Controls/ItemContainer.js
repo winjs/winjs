@@ -5,6 +5,7 @@ define([
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
     '../Core/_Events',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Promise',
@@ -16,7 +17,7 @@ define([
     '../Utilities/_UI',
     './ItemContainer/_Constants',
     './ItemContainer/_ItemEventsHandler'
-    ], function itemContainerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
+    ], function itemContainerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
     "use strict";
 
     var createEvent = _Events._createEventProperty;
@@ -287,7 +288,7 @@ define([
                     },
 
                     set: function (value) {
-                        if (WinJS.Utilities.isPhone) {
+                        if (_BaseUtils.isPhone) {
                             return;
                         }
                         if (this._draggable !== value) {
@@ -343,7 +344,7 @@ define([
                         return this._tapBehavior;
                     },
                     set: function (value) {
-                        if (WinJS.Utilities.isPhone && value === _UI.TapBehavior.directSelect) {
+                        if (_BaseUtils.isPhone && value === _UI.TapBehavior.directSelect) {
                             return;
                         }
                         this._tapBehavior = value;
@@ -614,7 +615,7 @@ define([
                 },
 
                 _setSwipeClass: function ItemContainer_setSwipeClass() {
-                    if (WinJS.Utilities.isPhone) {
+                    if (_BaseUtils.isPhone) {
                         // Cross-slide is disabled on phone
                         return;
                     }
@@ -687,7 +688,7 @@ define([
                 _writeProfilerMark: function ItemContainer_writeProfilerMark(text) {
                     var message = "WinJS.UI.ItemContainer:" + this._id + ":" + text;
                     _WriteProfilerMark(message);
-                    WinJS.log && WinJS.log(message, null, "itemcontainerprofiler");
+                    _Log.log && _Log.log(message, null, "itemcontainerprofiler");
                 }
             }, {
                 // Names of classes used by the ItemContainer.

@@ -4,6 +4,7 @@ define([
     './Core/_Global',
     './Core/_Base',
     './Core/_BaseUtils',
+    './Core/_Log',
     './Core/_WriteProfilerMark',
     './Binding/_Declarative',
     './BindingTemplate/_DataTemplateCompiler.js',
@@ -12,7 +13,7 @@ define([
     './Promise',
     './Utilities/_Dispose',
     './Utilities/_ElementUtilities'
-    ], function dataTemplateInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, _Declarative, _DataTemplateCompiler, ControlProcessor, Fragments, Promise, _Dispose, _ElementUtilities) {
+    ], function dataTemplateInit(exports, _Global, _Base, _BaseUtils, _Log, _WriteProfilerMark, _Declarative, _DataTemplateCompiler, ControlProcessor, Fragments, Promise, _Dispose, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -40,7 +41,7 @@ define([
             function interpretedRender(template, dataContext, container) {
                 _WriteProfilerMark("WinJS.Binding:templateRender" + template._profilerMarkIdentifier + ",StartTM");
 
-                if (++template._counter === 1 && (template.debugBreakOnRender || WinJS.Binding.Template._debugBreakOnRender)) {                   
+                if (++template._counter === 1 && (template.debugBreakOnRender || Template._debugBreakOnRender)) {                   
                     debugger; // jshint ignore:line
                 }
 
@@ -155,7 +156,7 @@ define([
                 return { element: element, renderComplete: renderComplete };
             }
 
-            return _Base.Class.define(function Template_ctor(element, options) {
+            var Template = _Base.Class.define(function Template_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.Binding.Template.Template">
                 /// <summary locid="WinJS.Binding.Template.constructor">
                 /// Creates a template that provides a reusable declarative binding element.
@@ -205,7 +206,7 @@ define([
                         //  by default opt-in with an opt-out switch.
                         //
                         var shouldCompile = true;
-                        shouldCompile = shouldCompile && !WinJS.Binding.Template._interpretAll;
+                        shouldCompile = shouldCompile && !Template._interpretAll;
                         shouldCompile = shouldCompile && !this.disableOptimizedProcessing;
 
                         if (shouldCompile) {
@@ -213,7 +214,7 @@ define([
                             shouldCompile = shouldCompile && (!this.href || this.href instanceof HTMLElement);
 
                             if (!shouldCompile) {
-                                WinJS.log && WinJS.log("Cannot compile templates which use processTimeout or href properties", "winjs binding", "warn");
+                                _Log.log && _Log.log("Cannot compile templates which use processTimeout or href properties", "winjs binding", "warn");
                             }
                         }
 
@@ -413,7 +414,7 @@ define([
                     var that = this;
 
                     var result = _DataTemplateCompiler._TemplateCompiler.compile(this, this.href || this.element, {
-                        debugBreakOnRender: this.debugBreakOnRender || WinJS.Binding.Template._debugBreakOnRender,
+                        debugBreakOnRender: this.debugBreakOnRender || Template._debugBreakOnRender,
                         defaultInitializer: this.bindingInitializer || options.defaultInitializer,
                         disableTextBindingOptimization: options.disableTextBindingOptimization || false,
                         target: options.target,
@@ -472,10 +473,12 @@ define([
                         /// either the object in the container parameter or the created DIV.
                         /// </returns>
                         /// </signature>
-                        return new WinJS.Binding.Template(null, { href: href }).render(dataContext, container);
+                        return new Template(null, { href: href }).render(dataContext, container);
                     }
                 }
             });
+
+            return Template;
         })
     });
 

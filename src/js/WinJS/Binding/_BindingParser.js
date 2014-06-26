@@ -4,11 +4,12 @@ define([
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../ControlProcessor/_OptionsLexer',
     '../ControlProcessor/_OptionsParser'
-    ], function bindingParserInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _OptionsLexer, _OptionsParser) {
+    ], function bindingParserInit(exports, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, _OptionsLexer, _OptionsParser) {
     "use strict";
 
 
@@ -79,8 +80,8 @@ define([
                 _evaluateInitializerName: function () {
                     if (this._current.type === imports.tokenType.identifier) {
                         var initializer = this._evaluateIdentifierExpression();
-                        if (WinJS.log && !initializer) {
-                            WinJS.log(_Resources._formatString(strings.bindingInitializerNotFound, this._originalSource), "winjs binding", "error");
+                        if (_Log.log && !initializer) {
+                            _Log.log(_Resources._formatString(strings.bindingInitializerNotFound, this._originalSource), "winjs binding", "error");
                         }
                         return requireSupportedForProcessing(initializer);
                     }

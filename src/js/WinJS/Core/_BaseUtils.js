@@ -16,6 +16,9 @@ define([
         get notSupportedForProcessing() { return _Resources._getWinJSString("base/notSupportedForProcessing").value; }
     };
 
+    var isPhone = false;
+    var validation = false;
+
     function nop(v) {
         return v;
     }
@@ -211,7 +214,7 @@ define([
         _browserEventEquivalents: getBrowserEventEquivalents(),
         _getCamelCasedName: getCamelCasedName,
 
-        ready: function (callback, async) {
+        ready: function ready(callback, async) {
             /// <signature helpKeyword="WinJS.Utilities.ready">
             /// <summary locid="WinJS.Utilities.ready">
             /// Ensures that the specified function executes only after the DOMContentLoaded event has fired
@@ -241,7 +244,7 @@ define([
                     }
                 }
 
-                var readyState = WinJS.Utilities._testReadyState;
+                var readyState = ready._testReadyState;
                 if (!readyState) {
                     if (_Global.document) {
                         readyState = document.readyState;
@@ -381,12 +384,34 @@ define([
         _traceAsyncOperationStarting: _Trace._traceAsyncOperationStarting,
         _traceAsyncOperationCompleted: _Trace._traceAsyncOperationCompleted,
         _traceAsyncCallbackStarting: _Trace._traceAsyncCallbackStarting,
-        _traceAsyncCallbackCompleted: _Trace._traceAsyncCallbackCompleted
+        _traceAsyncCallbackCompleted: _Trace._traceAsyncCallbackCompleted,
+
+        /// <field type="Boolean" locid="WinJS.Utilities.isPhone" helpKeyword="WinJS.Utilities.isPhone">Determine if we are currently running in the Phone.</field>
+        isPhone: {
+            get: function () { return isPhone; },
+            configurable: false,
+            enumerable: true
+        },
+        _setIsPhone: {
+            set: function(value) {
+                isPhone = value;
+            }
+        }
     });
 
-    _Base.Namespace.define("WinJS", {
-        validation: false,
+    _Base.Namespace._moduleDefine(exports, "WinJS", {
+        validation: {
+            get: function() {
+                return validation;
+            },
+            set: function(value) {
+                validation = value;
+            }
+        }
+    });
 
+    // strictProcessing also exists as a module member
+    _Base.Namespace.define("WinJS", {
         strictProcessing: {
             value: function () {
                 /// <signature helpKeyword="WinJS.strictProcessing">
@@ -398,7 +423,7 @@ define([
             configurable: false,
             writable: false,
             enumerable: false
-        },
+        }
     });
 });
 

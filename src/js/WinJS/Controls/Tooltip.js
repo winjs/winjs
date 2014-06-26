@@ -5,12 +5,13 @@ define([
     '../Core/_BaseUtils',
     '../Core/_Events',
     '../Animations',
+    '../Animations/_TransitionAnimation',
     '../Utilities/_Control',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function tooltipInit(exports, _Base, _BaseUtils, _Events, Animations, _Control, _Dispose, _ElementUtilities) {
+    ], function tooltipInit(exports, _Base, _BaseUtils, _Events, Animations, _TransitionAnimation, _Control, _Dispose, _ElementUtilities) {
     "use strict";
 
     // Tooltip control implementation
@@ -38,16 +39,16 @@ define([
 
             // Constants definition
             var DEFAULT_PLACEMENT = "top";
-            var DELAY_INITIAL_TOUCH_SHORT = WinJS.UI._animationTimeAdjustment(400);
-            var DELAY_INITIAL_TOUCH_LONG = WinJS.UI._animationTimeAdjustment(1200);
-            var DEFAULT_MOUSE_HOVER_TIME = WinJS.UI._animationTimeAdjustment(400); // 0.4 second
-            var DEFAULT_MESSAGE_DURATION = WinJS.UI._animationTimeAdjustment(5000); // 5 secs
-            var DELAY_RESHOW_NONINFOTIP_TOUCH = WinJS.UI._animationTimeAdjustment(0);
-            var DELAY_RESHOW_NONINFOTIP_NONTOUCH = WinJS.UI._animationTimeAdjustment(600);
-            var DELAY_RESHOW_INFOTIP_TOUCH = WinJS.UI._animationTimeAdjustment(400);
-            var DELAY_RESHOW_INFOTIP_NONTOUCH = WinJS.UI._animationTimeAdjustment(600);
-            var RESHOW_THRESHOLD = WinJS.UI._animationTimeAdjustment(200);
-            var HIDE_DELAY_MAX = WinJS.UI._animationTimeAdjustment(300000); // 5 mins
+            var DELAY_INITIAL_TOUCH_SHORT = _TransitionAnimation._animationTimeAdjustment(400);
+            var DELAY_INITIAL_TOUCH_LONG = _TransitionAnimation._animationTimeAdjustment(1200);
+            var DEFAULT_MOUSE_HOVER_TIME = _TransitionAnimation._animationTimeAdjustment(400); // 0.4 second
+            var DEFAULT_MESSAGE_DURATION = _TransitionAnimation._animationTimeAdjustment(5000); // 5 secs
+            var DELAY_RESHOW_NONINFOTIP_TOUCH = _TransitionAnimation._animationTimeAdjustment(0);
+            var DELAY_RESHOW_NONINFOTIP_NONTOUCH = _TransitionAnimation._animationTimeAdjustment(600);
+            var DELAY_RESHOW_INFOTIP_TOUCH = _TransitionAnimation._animationTimeAdjustment(400);
+            var DELAY_RESHOW_INFOTIP_NONTOUCH = _TransitionAnimation._animationTimeAdjustment(600);
+            var RESHOW_THRESHOLD = _TransitionAnimation._animationTimeAdjustment(200);
+            var HIDE_DELAY_MAX = _TransitionAnimation._animationTimeAdjustment(300000); // 5 mins
             var OFFSET_KEYBOARD = 12;
             var OFFSET_MOUSE = 20;
             var OFFSET_TOUCH = 45;

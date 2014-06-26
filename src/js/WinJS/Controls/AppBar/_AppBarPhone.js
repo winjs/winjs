@@ -8,6 +8,7 @@ define([
     '../../Core/_Events',
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
+    '../../ControlProcessor',
     '../../Scheduler',
     '../../Utilities/_Control',
     '../../Utilities/_Dispose',
@@ -15,7 +16,7 @@ define([
     './_CommandPhone',
     './_Constants',
     './_Icon'
-    ], function appBarInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Scheduler, _Control, _Dispose, _ElementUtilities, _CommandPhone, _Constants, _Icon) {
+    ], function appBarInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, ControlProcessor, Scheduler, _Control, _Dispose, _ElementUtilities, _CommandPhone, _Constants, _Icon) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -169,7 +170,7 @@ define([
                         throw new _ErrorFromName("WinJS.UI.AppBar.MustContainCommands", strings.mustContainCommands);
                     } else {
                         // Instantiate the commands.
-                        WinJS.UI.processAll(children[i]);
+                        ControlProcessor.processAll(children[i]);
                         commands[i] = children[i].winControl;
                     }
                 }

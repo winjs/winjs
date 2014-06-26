@@ -187,22 +187,21 @@ define([
 
                 _addControlsInOrder: function () {
                     var e = this._domElement;
-                    var u = WinJS.Utilities;
                     var that = this;
                     var orderIndex = 0; // don't use forEach's index, because "era" is in the list
                     that._information.order.forEach(function (s) {
                         switch (s) {
                             case "month":
                                 e.appendChild(that._monthElement);
-                                u.addClass(that._monthElement, "win-order" + (orderIndex++));
+                                _ElementUtilities.addClass(that._monthElement, "win-order" + (orderIndex++));
                                 break;
                             case "date":
                                 e.appendChild(that._dateElement);
-                                u.addClass(that._dateElement, "win-order" + (orderIndex++));
+                                _ElementUtilities.addClass(that._dateElement, "win-order" + (orderIndex++));
                                 break;
                             case "year":
                                 e.appendChild(that._yearElement);
-                                u.addClass(that._yearElement, "win-order" + (orderIndex++));
+                                _ElementUtilities.addClass(that._yearElement, "win-order" + (orderIndex++));
                                 break;
                         }
                     });

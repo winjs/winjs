@@ -4,11 +4,12 @@ define([
     './Core/_Global',
     './Core/_Base',
     './Core/_ErrorFromName',
+    './Core/_Log',
     './Core/_Resources',
     './Core/_Trace',
     './Core/_WriteProfilerMark',
     './Promise'
-    ], function schedulerInit(exports, _Global, _Base, _ErrorFromName, _Resources, _Trace, _WriteProfilerMark, Promise) {
+    ], function schedulerInit(exports, _Global, _Base, _ErrorFromName, _Log, _Resources, _Trace, _WriteProfilerMark, Promise) {
     "use strict";
 
     function linkedListMixin(name) {
@@ -210,7 +211,7 @@ define([
 
         _setState: function (state, arg0, arg1) {
             if (this._state) {
-                WinJS.log && WinJS.log("Transitioning job (" + this.id + ") from: " + this._state.name + " to: " + state.name, "winjs scheduler", "log");
+                _Log.log && _Log.log("Transitioning job (" + this.id + ") from: " + this._state.name + " to: " + state.name, "winjs scheduler", "log");
             }
             this._state = state;
             this._state.enter(this, arg0, arg1);
@@ -830,12 +831,12 @@ define([
 
     function dumpList(type, reverse) {
         function dumpMarker(marker, pos) {
-            WinJS.log && WinJS.log(pos + ": MARKER: " + marker.name, "winjs scheduler", "log");
+            _Log.log && _Log.log(pos + ": MARKER: " + marker.name, "winjs scheduler", "log");
         }
         function dumpJob(job, pos) {
-            WinJS.log && WinJS.log(pos + ": JOB(" + job.id + "): state: " + (job._state ? job._state.name : "") + (job.name ? ", name: " + job.name : ""), "winjs scheduler", "log");
+            _Log.log && _Log.log(pos + ": JOB(" + job.id + "): state: " + (job._state ? job._state.name : "") + (job.name ? ", name: " + job.name : ""), "winjs scheduler", "log");
         }
-        WinJS.log && WinJS.log("highWaterMark: " + highWaterMark, "winjs scheduler", "log");
+        _Log.log && _Log.log("highWaterMark: " + highWaterMark, "winjs scheduler", "log");
         var pos = 0;
         var head = reverse ? priorities[priorities.length - 1] : priorities[0];
         var current = head;

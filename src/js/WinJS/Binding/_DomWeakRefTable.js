@@ -12,7 +12,7 @@ define([
 
         var host = new Windows.Foundation.Uri("about://blank");
 
-        _Base.Namespace.define("WinJS.Utilities", {
+        _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
 
             _createWeakRef: function (element, id) {
                 _Global.msSetWeakWinRTProperty(host, id, element);
@@ -29,20 +29,20 @@ define([
 
     }
 
-    var U = WinJS.Utilities;
-
     // Defaults 
     var SWEEP_PERIOD = 500;
     var TIMEOUT = 1000;
     var table = {};
     var cleanupToken;
+    var noTimeoutUnderDebugger = true;
+    var fastLoadPath = false;
 
     function cleanup() {
-        if (U._DOMWeakRefTable_sweepPeriod === 0) {     // If we're using post
-            cleanupToken = 0;                           // indicate that cleanup has run
+        if (SWEEP_PERIOD === 0) {     // If we're using post
+            cleanupToken = 0;          // indicate that cleanup has run
         }
         var keys = Object.keys(table);
-        var time = Date.now() - U._DOMWeakRefTable_timeout;
+        var time = Date.now() - TIMEOUT;
         var i, len;
         for (i = 0, len = keys.length; i < len; i++) {
             var id = keys[i];
@@ -54,24 +54,22 @@ define([
     }
 
     function scheduleCleanupIfNeeded() {
-        if ((_Global.Debug && Debug.debuggerEnabled && U._DOMWeakRefTable_noTimeoutUnderDebugger) || cleanupToken) {
+        if ((_Global.Debug && Debug.debuggerEnabled && noTimeoutUnderDebugger) || cleanupToken) {
             return;
         }
-        var period = U._DOMWeakRefTable_sweepPeriod;
-        if (period === 0) {
+        if (SWEEP_PERIOD === 0) {
             Scheduler.schedule(cleanup, Scheduler.Priority.idle, null, "WinJS.Utilities._DOMWeakRefTable.cleanup");
             cleanupToken = 1;
         } else {
-            cleanupToken = setInterval(cleanup, U._DOMWeakRefTable_sweepPeriod);
+            cleanupToken = setInterval(cleanup, SWEEP_PERIOD);
         }
     }
 
     function unscheduleCleanupIfNeeded() {
-        if (_Global.Debug && Debug.debuggerEnabled && U._DOMWeakRefTable_noTimeoutUnderDebugger) {
+        if (_Global.Debug && Debug.debuggerEnabled && noTimeoutUnderDebugger) {
             return;
         }
-        var period = U._DOMWeakRefTable_sweepPeriod;
-        if (period === 0) {                                 // if we're using post
+        if (SWEEP_PERIOD === 0) {                           // if we're using post
             if (!cleanupToken) {                            // and there isn't already one scheduled
                 if (Object.keys(table).length !== 0) {      // and there are items in the table
                     Scheduler.schedule(     // schedule another call to cleanup
@@ -97,7 +95,7 @@ define([
     }
 
     function getWeakRefElement(id) {
-        if (WinJS.Utilities._DOMWeakRefTable_fastLoadPath) {
+        if (fastLoadPath) {
             var entry = table[id];
             if (entry) {
                 return entry.element;
@@ -123,11 +121,39 @@ define([
     }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities",  {
-        _DOMWeakRefTable_noTimeoutUnderDebugger: true,
-        _DOMWeakRefTable_sweepPeriod: SWEEP_PERIOD,
-        _DOMWeakRefTable_timeout: TIMEOUT,
+        _DOMWeakRefTable_noTimeoutUnderDebugger: {
+            get: function() {
+                return noTimeoutUnderDebugger;
+            },
+            set: function(value) {
+                noTimeoutUnderDebugger = value;
+            }
+        },
+        _DOMWeakRefTable_sweepPeriod: {
+            get: function() {
+                return SWEEP_PERIOD;
+            },
+            set: function(value) {
+                SWEEP_PERIOD = value;
+            }
+        },
+        _DOMWeakRefTable_timeout: {
+            get: function() {
+                return TIMEOUT;
+            },
+            set: function(value) {
+                TIMEOUT = value;
+            }
+        },
         _DOMWeakRefTable_tableSize: { get: function () { return Object.keys(table).length; } },
-        _DOMWeakRefTable_fastLoadPath: false,
+        _DOMWeakRefTable_fastLoadPath: {
+            get: function() {
+                return fastLoadPath;
+            },
+            set: function(value) {
+                fastLoadPath = value;
+            }
+        },
         _createWeakRef: createWeakRef,
         _getWeakRefElement: getWeakRefElement
 

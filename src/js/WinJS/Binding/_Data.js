@@ -4,11 +4,12 @@ define([
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Promise',
     '../Scheduler',
     './_DomWeakRefTable'
-    ], function dataInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, Promise, Scheduler, _DomWeakRefTable) {
+    ], function dataInit(exports, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, Promise, Scheduler, _DomWeakRefTable) {
     "use strict";
 
 
@@ -87,7 +88,7 @@ define([
                                 listeners[i](newValue, oldValue);
                             }
                             catch (e) {
-                                WinJS.log && WinJS.log(_Resources._formatString(strings.exceptionFromBindingInitializer, e.toString()), "winjs binding", "error");
+                                _Log.log && _Log.log(_Resources._formatString(strings.exceptionFromBindingInitializer, e.toString()), "winjs binding", "error");
                             }
                         }
                         cleanup();
@@ -227,8 +228,8 @@ define([
             /// </returns>
             /// </signature>
             var data = this._backingData[name];
-            if (WinJS.log && data === undefined) {
-                WinJS.log(_Resources._formatString(strings.propertyIsUndefined, name), "winjs binding", "warn");
+            if (_Log.log && data === undefined) {
+                _Log.log(_Resources._formatString(strings.propertyIsUndefined, name), "winjs binding", "warn");
             }
             return as(data);
         },
@@ -547,7 +548,7 @@ define([
         // Common unsupported types, we just coerce to be an empty record
         //
         if (!data || typeof (data) !== "object" || (data instanceof Date) || Array.isArray(data)) {
-            if (WinJS.validation) {
+            if (_BaseUtils.validation) {
                 throw new _ErrorFromName("WinJS.Binding.UnsupportedDataType", _Resources._formatString(strings.unsupportedDataTypeForBinding));
             }
             else {

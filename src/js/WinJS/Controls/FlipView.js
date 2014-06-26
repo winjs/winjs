@@ -921,7 +921,7 @@ define([
                 },
 
                 _navigate: function FlipView_navigate(goForward, cancelAnimationCallback) {
-                    if (WinJS.validation && this._refreshTimer) {
+                    if (_BaseUtils.validation && this._refreshTimer) {
                         throw new _ErrorFromName("WinJS.UI.FlipView.NavigationDuringStateChange", strings.navigationDuringStateChange);
                     }
 
@@ -1192,7 +1192,7 @@ define([
                     }
 
                     var that = this;
-                    this._buttonFadePromise = (immediately ? Promise.wrap() : Promise.timeout(WinJS.UI._animationTimeAdjustment(buttonFadeDelay))).then(function () {
+                    this._buttonFadePromise = (immediately ? Promise.wrap() : Promise.timeout(_TransitionAnimation._animationTimeAdjustment(buttonFadeDelay))).then(function () {
                         that._fadeOutButton("prev");
                         that._fadeOutButton("next");
                         that._buttonFadePromise = null;

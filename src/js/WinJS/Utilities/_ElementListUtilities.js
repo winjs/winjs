@@ -265,7 +265,7 @@ define([
                 /// executing the query on all the elements in the collection.
                 /// </returns>
                 /// </signature>
-                var newCollection = new WinJS.Utilities.QueryCollection();
+                var newCollection = new exports.QueryCollection();
                 this.forEach(function (item) {
                     newCollection.include(item.querySelectorAll(query));
                 });
@@ -358,7 +358,7 @@ define([
                 /// The QueryCollection.
                 /// </returns>
                 /// </signature>
-                if (templateElement instanceof WinJS.Utilities.QueryCollection) {
+                if (templateElement instanceof exports.QueryCollection) {
                     templateElement = templateElement[0];
                 }
                 var template = templateElement.winControl;
@@ -400,7 +400,7 @@ define([
             /// The QueryCollection that contains the results of the query.
             /// </returns>
             /// </signature>
-            return new WinJS.Utilities.QueryCollection((element || document).querySelectorAll(query));
+            return new exports.QueryCollection((element || document).querySelectorAll(query));
         },
 
         id: function (id) {
@@ -416,7 +416,7 @@ define([
             /// </returns>
             /// </signature>
             var e = document.getElementById(id);
-            return new WinJS.Utilities.QueryCollection(e ? [e] : []);
+            return new exports.QueryCollection(e ? [e] : []);
         },
 
         children: function (element) {
@@ -431,7 +431,7 @@ define([
             /// The QueryCollection that contains the children of the element.
             /// </returns>
             /// </signature>
-            return new WinJS.Utilities.QueryCollection(element.children);
+            return new exports.QueryCollection(element.children);
         }
     });
 });

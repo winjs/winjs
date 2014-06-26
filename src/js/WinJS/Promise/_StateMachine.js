@@ -690,7 +690,7 @@ define([
         function (creator) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.thenPromise))) {
-                this._stack = WinJS.Promise._getStack();
+                this._stack = Promise._getStack();
             }
 
             this._creator = creator;
@@ -716,7 +716,7 @@ define([
         function ErrorPromise_ctor(value) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.errorPromise))) {
-                this._stack = WinJS.Promise._getStack();
+                this._stack = Promise._getStack();
             }
 
             this._value = value;
@@ -846,7 +846,7 @@ define([
         function ExceptionPromise_ctor(value) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.exceptionPromise))) {
-                this._stack = WinJS.Promise._getStack();
+                this._stack = Promise._getStack();
             }
 
             this._value = value;
@@ -862,7 +862,7 @@ define([
         function CompletePromise_ctor(value) {
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.completePromise))) {
-                this._stack = WinJS.Promise._getStack();
+                this._stack = Promise._getStack();
             }
 
             if (value && typeof value === "object" && typeof value.then === "function") {
@@ -971,7 +971,7 @@ define([
 
     function timeout(timeoutMS) {
         var id;
-        return new WinJS.Promise(
+        return new Promise(
             function (c) {
                 if (timeoutMS) {
                     id = setTimeout(c, timeoutMS);
@@ -1018,7 +1018,7 @@ define([
             /// </signature>
 
             if (tagWithStack && (tagWithStack === true || (tagWithStack & tag.promise))) {
-                this._stack = WinJS.Promise._getStack();
+                this._stack = Promise._getStack();
             }
 
             this._oncancel = oncancel;
@@ -1089,7 +1089,7 @@ define([
                                 function (e) {
                                     if (e instanceof Error && e.name === canceledName) {
                                         if ((++canceled) === keys.length) {
-                                            complete(WinJS.Promise.cancel);
+                                            complete(Promise.cancel);
                                         }
                                         return;
                                     }
@@ -1201,7 +1201,7 @@ define([
                                         }
                                     });
                                     if (canceledCount === errorCount) {
-                                        complete(WinJS.Promise.cancel);
+                                        complete(Promise.cancel);
                                     } else {
                                         error(errors);
                                     }
@@ -1390,7 +1390,7 @@ define([
                 }
                 var complete;
                 var error;
-                var output = new WinJS.Promise(
+                var output = new Promise(
                     function (c, e) {
                         complete = c;
                         error = e;

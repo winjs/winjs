@@ -4,6 +4,7 @@ define([
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
     '../Core/_Events',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Animations/_TransitionAnimation',
@@ -33,7 +34,7 @@ define([
     './ListView/_VirtualizeContentsView',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function listViewImplInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _ItemsManager, _SafeHtml, _TabContainer, _UI, _UIUtilities, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
+    ], function listViewImplInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _ItemsManager, _SafeHtml, _TabContainer, _UI, _UIUtilities, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -470,7 +471,7 @@ define([
                     set: function (newMode) {
                         if (typeof newMode === "string") {
                             if (newMode.match(/^(none|single|multi)$/)) {
-                                if (WinJS.Utilities.isPhone && newMode === _UI.SelectionMode.single) {
+                                if (_BaseUtils.isPhone && newMode === _UI.SelectionMode.single) {
                                     return;
                                 }
                                 this._selectionMode = newMode;
@@ -495,7 +496,7 @@ define([
                         return this._tap;
                     },
                     set: function (tap) {
-                        if (WinJS.Utilities.isPhone && tap === _UI.TapBehavior.directSelect) {
+                        if (_BaseUtils.isPhone && tap === _UI.TapBehavior.directSelect) {
                             return;
                         }
                         this._tap = tap;
@@ -823,7 +824,7 @@ define([
                     },
 
                     set: function (value) {
-                        if (WinJS.Utilities.isPhone) {
+                        if (_BaseUtils.isPhone) {
                             return;
                         }
                         if (this._dragSource !== value) {
@@ -843,7 +844,7 @@ define([
                     },
 
                     set: function (value) {
-                        if (WinJS.Utilities.isPhone) {
+                        if (_BaseUtils.isPhone) {
                             return;
                         }
                         if (this._reorderable !== value) {
@@ -1074,7 +1075,7 @@ define([
                 },
 
                 _configureSelectionMode: function () {
-                    if (WinJS.Utilities.isPhone) {
+                    if (_BaseUtils.isPhone) {
                         if (this.tapBehavior === _UI.TapBehavior.toggleSelect && this.selectionMode === _UI.SelectionMode.multi) {
                             _ElementUtilities.addClass(this._canvas, _Constants._selectionModeClass);
                         } else {
@@ -1144,14 +1145,14 @@ define([
                 _setRenderer: function ListView_setRenderer(newRenderer, isGroupHeaderRenderer) {
                     var renderer;
                     if (!newRenderer) {
-                        if (WinJS.validation) {
+                        if (_BaseUtils.validation) {
                             throw new _ErrorFromName("WinJS.UI.ListView.invalidTemplate", _ErrorMessages.invalidTemplate);
                         }
                         renderer = _ItemsManager.trivialHtmlRenderer;
                     } else if (typeof newRenderer === "function") {
                         renderer = newRenderer;
                     } else if (typeof newRenderer === "object") {
-                        if (WinJS.validation && !newRenderer.renderItem) {
+                        if (_BaseUtils.validation && !newRenderer.renderItem) {
                             throw new _ErrorFromName("WinJS.UI.ListView.invalidTemplate", _ErrorMessages.invalidTemplate);
                         }
                         renderer = newRenderer.renderItem;
@@ -2479,7 +2480,7 @@ define([
                     // We apply an -ms-touch-action style to block panning and swiping from occurring at the same time. It is
                     // possible to pan in the margins between items and on lists without the swipe ability.
                     // Phone does not support swipe; therefore, we don't add them swipeable CSS class.
-                    if (!WinJS.Utilities.isPhone && ((this._currentMode() instanceof _BrowseMode._SelectionMode && this._selectionAllowed() && this._swipeBehavior === _UI.SwipeBehavior.select) ||
+                    if (!_BaseUtils.isPhone && ((this._currentMode() instanceof _BrowseMode._SelectionMode && this._selectionAllowed() && this._swipeBehavior === _UI.SwipeBehavior.select) ||
                         this._dragSource || this._reorderable)) {
                         this._swipeable = true;
                         _ElementUtilities.addClass(this._element, _Constants._swipeableClass);
@@ -2509,7 +2510,7 @@ define([
                                     _ElementUtilities.removeClass(itemData.itemBox, _Constants._nonSwipeableClass);
                                 }
                             }
-                            var makeNonSelectable = WinJS.Utilities.isPhone && selectionDisabledOnItem;
+                            var makeNonSelectable = _BaseUtils.isPhone && selectionDisabledOnItem;
                             _ElementUtilities[makeNonSelectable ? "addClass" : "removeClass"](itemData.itemBox, _Constants._nonSelectableClass);
                         }
                     });
@@ -2979,7 +2980,7 @@ define([
                 },
 
                 _configureForZoom: function (isZoomedOut, isCurrentView, triggerZoom, pagesToPrefetch) {
-                    if (WinJS.validation) {
+                    if (_BaseUtils.validation) {
                         if (!this._view.realizePage || typeof this._view.begin !== "number") {
                             throw new _ErrorFromName("WinJS.UI.ListView.NotCompatibleWithSemanticZoom", strings.notCompatibleWithSemanticZoom);
                         }
@@ -3098,7 +3099,7 @@ define([
                     this._zooming = true;
                     var zoomPromise = null;
 
-                    if (WinJS.Utilities.isPhone) {
+                    if (_BaseUtils.isPhone) {
                         if (this._isZoomedOut) {
                             this._zoomAnimationPromise && this._zoomAnimationPromise.cancel();
                             // The phone's zoom animations need to be handled in two different spots.
@@ -3145,7 +3146,7 @@ define([
                                 headerSize = layoutSizes[headerSizeProp];
                             }
                             // Align the leading edge
-                            var start = (WinJS.Utilities.isPhone ? headerSize : position[that._startProperty]),
+                            var start = (_BaseUtils.isPhone ? headerSize : position[that._startProperty]),
                                 startMax = viewportSize - (horizontal ? posCanvas.width : posCanvas.height);
 
                             // Ensure the item ends up within the viewport
@@ -3169,7 +3170,7 @@ define([
 
                             that._raiseViewLoading(true);
                             // Since a zoom is in progress, adjust the div position
-                            if (!WinJS.Utilities.isPhone) {
+                            if (!_BaseUtils.isPhone) {
                                 var scrollOffset = -scrollPosition;
                                 that._canvasStart = scrollOffset;
                             } else {
@@ -3177,7 +3178,7 @@ define([
                             }
                             that._view.realizePage(scrollPosition, true);
 
-                            if (WinJS.Utilities.isPhone && that._isZoomedOut) {
+                            if (_BaseUtils.isPhone && that._isZoomedOut) {
                                 var animationComplete = function animationComplete() {
                                     that._zoomAnimationPromise && that._zoomAnimationPromise.complete && that._zoomAnimationPromise.complete();
                                     that._zoomAnimationPromise = null;
@@ -3212,7 +3213,7 @@ define([
                         } else {
                             var description = (this._isZoomedOut ? item.groupDescription : item.firstItemDescription);
 
-                            if (WinJS.validation) {
+                            if (_BaseUtils.validation) {
                                 if (description === undefined) {
                                     throw new _ErrorFromName("WinJS.UI.ListView.InvalidItem", strings.listViewInvalidItem);
                                 }
@@ -3233,7 +3234,7 @@ define([
                     }
 
                     // Crop the content again and re-enable the scrollbar
-                    if (!WinJS.Utilities.isPhone) {
+                    if (!_BaseUtils.isPhone) {
                         var horizontal = this._horizontal(),
                             scrollOffset = this._canvasStart;
 
@@ -3374,7 +3375,7 @@ define([
                 },
 
                 _defaultInvoke: function (entity) {
-                    if (this._isZoomedOut || (WinJS.Utilities.isPhone && this._triggerZoom && entity.type === _UI.ObjectType.groupHeader)) {
+                    if (this._isZoomedOut || (_BaseUtils.isPhone && this._triggerZoom && entity.type === _UI.ObjectType.groupHeader)) {
                         this._changeFocusPassively(entity);
                         this._triggerZoom();
                     }
@@ -3460,7 +3461,7 @@ define([
                         return true;
                     }
 
-                    return !WinJS.UI.isAnimationEnabled();
+                    return !_TransitionAnimation.isAnimationEnabled();
                 },
 
                 _fadeOutViewport: function ListView_fadeOutViewport() {
@@ -3531,7 +3532,7 @@ define([
                     }
 
                     // The listview does not have an entrance animation on Phone
-                    if (eventDetails.prevented || WinJS.Utilities.isPhone) {
+                    if (eventDetails.prevented || _BaseUtils.isPhone) {
                         resetViewOpacity();
                         return Promise.wrap();
                     } else {
@@ -4252,7 +4253,7 @@ define([
                 _writeProfilerMark: function ListView_writeProfilerMark(text) {
                     var message = "WinJS.UI.ListView:" + this._id + ":" + text;
                     _WriteProfilerMark(message);
-                    WinJS.log && WinJS.log(message, null, "listviewprofiler");
+                    _Log.log && _Log.log(message, null, "listviewprofiler");
                 }
             }, {
                 // Static members

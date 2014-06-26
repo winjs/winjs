@@ -5,6 +5,7 @@ define([
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
+    '../../Core/_Log',
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
     '../../Animations',
@@ -15,7 +16,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_TabContainer',
     './_Constants'
-    ], function flipperPageManagerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, _Signal, Scheduler, _Dispose, _ElementUtilities, _TabContainer, _Constants) {
+    ], function flipperPageManagerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Animations, Promise, _Signal, Scheduler, _Dispose, _ElementUtilities, _TabContainer, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -206,7 +207,7 @@ define([
                     this._writeProfilerMark("WinJS.UI.FlipView:resetState,info");
                     if (initialIndex !== 0) {
                         var indexValid = this.jumpToIndex(initialIndex, true);
-                        if (!indexValid && WinJS.validation) {
+                        if (!indexValid && _BaseUtils.validation) {
                             throw new _ErrorFromName("WinJS.UI.FlipView.BadCurrentPage", strings.badCurrentPage);
                         }
                         return indexValid;
@@ -1027,8 +1028,8 @@ define([
 
                 _writeProfilerMark: function(message) {
                     _WriteProfilerMark(message);
-                    if (WinJS.UI.FlipView._enabledDebug) {
-                        WinJS.log && WinJS.log(message, null, "flipviewdebug");
+                    if (this._flipperDiv.winControl.constructor._enabledDebug) {
+                        _Log.log && _Log.log(message, null, "flipviewdebug");
                     }
                 },
 
@@ -1289,12 +1290,12 @@ define([
                 },
 
                 _logBuffer: function () {
-                    if (WinJS.UI.FlipView._enabledDebug) {
-                        WinJS.log && WinJS.log(this._currentPage.next.next.next.elementUniqueID + "\t@:" + this._currentPage.next.next.next.location + (this._currentPage.next.next.next.element ? ("\t" + this._currentPage.next.next.next.element.textContent) : ""), null, "flipviewdebug");
-                        WinJS.log && WinJS.log(this._currentPage.next.next.next.next.elementUniqueID + "\t@:" + this._currentPage.next.next.next.next.location + (this._currentPage.next.next.next.next.element ? ("\t" + this._currentPage.next.next.next.next.element.textContent) : ""), null, "flipviewdebug");
-                        WinJS.log && WinJS.log("> " + this._currentPage.elementUniqueID + "\t@:" + this._currentPage.location + (this._currentPage.element ? ("\t" + this._currentPage.element.textContent) : ""), null, "flipviewdebug");
-                        WinJS.log && WinJS.log(this._currentPage.next.elementUniqueID + "\t@:" + this._currentPage.next.location + (this._currentPage.next.element ? ("\t" + this._currentPage.next.element.textContent) : ""), null, "flipviewdebug");
-                        WinJS.log && WinJS.log(this._currentPage.next.next.elementUniqueID + "\t@:" + this._currentPage.next.next.location + (this._currentPage.next.next.element ? ("\t" + this._currentPage.next.next.element.textContent) : ""), null, "flipviewdebug");
+                    if (this._flipperDiv.winControl.constructor._enabledDebug) {
+                        _Log.log && _Log.log(this._currentPage.next.next.next.elementUniqueID + "\t@:" + this._currentPage.next.next.next.location + (this._currentPage.next.next.next.element ? ("\t" + this._currentPage.next.next.next.element.textContent) : ""), null, "flipviewdebug");
+                        _Log.log && _Log.log(this._currentPage.next.next.next.next.elementUniqueID + "\t@:" + this._currentPage.next.next.next.next.location + (this._currentPage.next.next.next.next.element ? ("\t" + this._currentPage.next.next.next.next.element.textContent) : ""), null, "flipviewdebug");
+                        _Log.log && _Log.log("> " + this._currentPage.elementUniqueID + "\t@:" + this._currentPage.location + (this._currentPage.element ? ("\t" + this._currentPage.element.textContent) : ""), null, "flipviewdebug");
+                        _Log.log && _Log.log(this._currentPage.next.elementUniqueID + "\t@:" + this._currentPage.next.location + (this._currentPage.next.element ? ("\t" + this._currentPage.next.element.textContent) : ""), null, "flipviewdebug");
+                        _Log.log && _Log.log(this._currentPage.next.next.elementUniqueID + "\t@:" + this._currentPage.next.next.location + (this._currentPage.next.next.element ? ("\t" + this._currentPage.next.next.element.textContent) : ""), null, "flipviewdebug");
 
                         var keys = Object.keys(this._itemsManager._elementMap);
                         var bufferKeys = [];
@@ -1303,7 +1304,7 @@ define([
                                 bufferKeys.push(page.elementUniqueID);
                             }
                         });
-                        WinJS.log && WinJS.log("itemsmanager  = [" + keys.join(" ") + "] flipview [" + bufferKeys.join(" ") + "]", null, "flipviewdebug");
+                        _Log.log && _Log.log("itemsmanager  = [" + keys.join(" ") + "] flipview [" + bufferKeys.join(" ") + "]", null, "flipviewdebug");
                     }
                 },
 

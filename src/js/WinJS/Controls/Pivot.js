@@ -4,6 +4,7 @@ define([
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
     '../Core/_Events',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Animations',
@@ -22,7 +23,7 @@ define([
     './Pivot/_Item',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function pivotInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _UIUtilities, _Constants, _Item) {
+    ], function pivotInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _UIUtilities, _Constants, _Item) {
         "use strict";
 
         _Base.Namespace.define("WinJS.UI", {
@@ -546,7 +547,7 @@ define([
                                 var lastHeader = this._headersContainerElement.children[numberOfHeadersToRender - 1];
                                 lastHeader.style.opacity = start;
                                 var lastHeaderFadeInDuration = 0.167;
-                                lastHeader.style[_BaseUtils._browserStyleEquivalents["transition"].scriptName] = "opacity " + WinJS.UI._animationTimeAdjustment(lastHeaderFadeInDuration) + "s";
+                                lastHeader.style[_BaseUtils._browserStyleEquivalents["transition"].scriptName] = "opacity " + _TransitionAnimation._animationTimeAdjustment(lastHeaderFadeInDuration) + "s";
                                 getComputedStyle(lastHeader).opacity;
                                 lastHeader.style.opacity = end;
                             }
@@ -606,7 +607,7 @@ define([
                         // Invalidate the viewportWidth
                         this._viewportWidth = null;
                         if (oldViewportWidth !== this._viewportWidth) {
-                            WinJS.log && WinJS.log('_resizeHandler from:' + oldViewportWidth + " to: " + this._viewportWidth);
+                            _Log.log && _Log.log('_resizeHandler from:' + oldViewportWidth + " to: " + this._viewportWidth);
 
                             this._hidePivotItemAnimation && this._hidePivotItemAnimation.cancel();
                             this._showPivotItemAnimation && this._showPivotItemAnimation.cancel();
@@ -616,7 +617,7 @@ define([
 
                             this._renderHeaders();
                         } else {
-                            WinJS.log && WinJS.log('_resizeHandler worthless resize');
+                            _Log.log && _Log.log('_resizeHandler worthless resize');
                         }
                     },
 
@@ -695,10 +696,10 @@ define([
                         var zooming = false;
                         if (_ElementUtilities._supportsSnapPoints && _ElementUtilities._supportsZoomTo && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                             if (this._skipHeaderSlide) {
-                                WinJS.log && WinJS.log('_skipHeaderSlide index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
+                                _Log.log && _Log.log('_skipHeaderSlide index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
                                 _ElementUtilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
                             } else {
-                                WinJS.log && WinJS.log('zoomTo index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
+                                _Log.log && _Log.log('zoomTo index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
                                 this._viewportElement.msZoomTo({ contentX: this._currentScrollTargetLocation, contentY: 0, viewportX: 0, viewportY: 0 });
                                 zooming = this._offsetFromCenter !== 0 && this.items.length > 1;
                             }
@@ -771,11 +772,11 @@ define([
                             return;
                         }
                         if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
-                            WinJS.log && WinJS.log('MSManipulation: Stopped', "winjs pivot", "log");
+                            _Log.log && _Log.log('MSManipulation: Stopped', "winjs pivot", "log");
                         } else if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
-                            WinJS.log && WinJS.log('MSManipulation: Inertia', "winjs pivot", "log");
+                            _Log.log && _Log.log('MSManipulation: Inertia', "winjs pivot", "log");
                         } else {
-                            WinJS.log && WinJS.log('MSManipulation: Active', "winjs pivot", "log");
+                            _Log.log && _Log.log('MSManipulation: Active', "winjs pivot", "log");
                         }
 
                         if (!this._stoppedAndRecenteredSignal) {
@@ -804,7 +805,7 @@ define([
                                 }
                                 if (that._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
                                     // If we are still "stopped" we should recenter.
-                                    WinJS.log && WinJS.log('Still in Stopped state: calling _recenterUI', "winjs pivot", "log");
+                                    _Log.log && _Log.log('Still in Stopped state: calling _recenterUI', "winjs pivot", "log");
                                     that._recenterUI();
                                 } else {
                                     this._stoppedAndRecenteredSignal.complete();
@@ -814,14 +815,14 @@ define([
                         } else if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                             var destinationX = ev.inertiaDestinationX;
                             if (+destinationX === destinationX) {
-                                WinJS.log && WinJS.log('MSManipulation: inertiaDestinationX: ' + destinationX);
+                                _Log.log && _Log.log('MSManipulation: inertiaDestinationX: ' + destinationX);
                                 var diff = destinationX - this._currentScrollTargetLocation;
                                 if (diff > 0) {
-                                    WinJS.log && WinJS.log('MSManipulation: Inertia diff > 1', "winjs pivot", "log");
+                                    _Log.log && _Log.log('MSManipulation: Inertia diff > 1', "winjs pivot", "log");
                                     this._navMode = Pivot._NavigationModes.inertia;
                                     this._goNext();
                                 } else if (diff < 0) {
-                                    WinJS.log && WinJS.log('MSManipulation: Stopped diff < -1', "winjs pivot", "log");
+                                    _Log.log && _Log.log('MSManipulation: Stopped diff < -1', "winjs pivot", "log");
                                     this._navMode = Pivot._NavigationModes.inertia;
                                     this._goPrevious();
                                 }
@@ -844,15 +845,15 @@ define([
                         if (this._navMode === Pivot._NavigationModes.none || this._navMode === Pivot._NavigationModes.scroll) {
                             this._navMode = Pivot._NavigationModes.scroll;
                             if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED) {
-                                WinJS.log && WinJS.log('_scrollHandler ScrollPosition: ' + _ElementUtilities.getScrollPosition(this._viewportElement).scrollLeft, "winjs pivot", "log");
+                                _Log.log && _Log.log('_scrollHandler ScrollPosition: ' + _ElementUtilities.getScrollPosition(this._viewportElement).scrollLeft, "winjs pivot", "log");
                                 // Check if narrator user panned/scrolled the Pivot and we are now at an unsupported location.
                                 var diff = _ElementUtilities.getScrollPosition(this._viewportElement).scrollLeft - this._currentScrollTargetLocation;
                                 this._cachedRTL = getComputedStyle(this._element, null).direction === "rtl";
                                 if (diff > 0) {
-                                    WinJS.log && WinJS.log('_scrollHandler diff > 1: ' + diff, "winjs pivot", "log");
+                                    _Log.log && _Log.log('_scrollHandler diff > 1: ' + diff, "winjs pivot", "log");
                                     this._goNext();
                                 } else if (diff < 0) {
-                                    WinJS.log && WinJS.log('_scrollHandler diff < -1: ' + diff, "winjs pivot", "log");
+                                    _Log.log && _Log.log('_scrollHandler diff < -1: ' + diff, "winjs pivot", "log");
                                     this._goPrevious();
                                 }
                             }
@@ -878,7 +879,7 @@ define([
                         if (this.selectedItem) {
                             this.selectedItem.element.style[this._getDirectionAccessor()] = this._currentScrollTargetLocation + 'px';
                         }
-                        WinJS.log && WinJS.log('_recenterUI index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation);
+                        _Log.log && _Log.log('_recenterUI index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation);
                         _ElementUtilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
                     },
 
@@ -1129,7 +1130,7 @@ define([
                     },
 
                     _pointerDownHandler: function pivot_pointerDownHandler(ev) {
-                        WinJS.log && WinJS.log('_pointerDown', "winjs pivot", "log");
+                        _Log.log && _Log.log('_pointerDown', "winjs pivot", "log");
                         // Don't do recentering if a finger is down.
                         this._manipulationRecenterPromise && this._manipulationRecenterPromise.cancel();
                         // If another finger comes down stop animations.
@@ -1299,7 +1300,7 @@ define([
                     _writeProfilerMark: function pivot_writeProfilerMark(text) {
                         var message = "WinJS.UI.Pivot:" + this._id + ":" + text;
                         _WriteProfilerMark(message);
-                        WinJS.log && WinJS.log(message, null, "pivotprofiler");
+                        _Log.log && _Log.log(message, null, "pivotprofiler");
                     },
                 }, {
                     _invalidViewportWidth: -1,

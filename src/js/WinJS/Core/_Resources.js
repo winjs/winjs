@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './_Global',
     './_BaseCoreUtils',
     './_Base',
     './_Events'
-    ], function resourcesInit(_Global, _BaseCoreUtils, _Base, _Events) {
+    ], function resourcesInit(exports, _Global, _BaseCoreUtils, _Base, _Events) {
     "use strict";
 
     var appxVersion = "$(TARGET_DESTINATION)";
@@ -14,7 +15,7 @@ define([
     }
 
     function _getWinJSString(id) {
-        return WinJS.Resources.getString("ms-resource://" + appxVersion + "/" + id);
+        return getString("ms-resource://" + appxVersion + "/" + id);
     }
 
     var resourceMap;
@@ -24,6 +25,7 @@ define([
 
     var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
     var listeners = new ListenerType();
+    var createEvent = _Events._createEventProperty;
 
     var strings = {
         get malformedFormatStringInput() { return _getWinJSString("base/malformedFormatStringInput").value; },
@@ -44,7 +46,7 @@ define([
         return string;
     }
 
-    _Base.Namespace.define("WinJS.Resources", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Resources", {
         addEventListener: function (type, listener, useCapture) {
             /// <signature helpKeyword="WinJS.Resources.addEventListener">
             /// <summary locid="WinJS.Resources.addEventListener">
@@ -63,16 +65,16 @@ define([
             if (_BaseCoreUtils.hasWinRT && !mrtEventHook) {
                 if (type === contextChangedET) {
                     try {
-                        var resContext = WinJS.Resources._getResourceContext();
+                        var resContext = exports._getResourceContext();
                         if (resContext) {
                             resContext.qualifierValues.addEventListener("mapchanged", function (e) {
-                                WinJS.Resources.dispatchEvent(contextChangedET, { qualifier: e.key, changed: e.target[e.key] });
+                                exports.dispatchEvent(contextChangedET, { qualifier: e.key, changed: e.target[e.key] });
                             }, false);
 
                         } else {
                             // The API can be called in the Background thread (web worker).
                             Windows.ApplicationModel.Resources.Core.ResourceManager.current.defaultContext.qualifierValues.addEventListener("mapchanged", function (e) {
-                                WinJS.Resources.dispatchEvent(contextChangedET, { qualifier: e.key, changed: e.target[e.key] });
+                                exports.dispatchEvent(contextChangedET, { qualifier: e.key, changed: e.target[e.key] });
                             }, false);
                         }
                         mrtEventHook = true;
@@ -104,7 +106,7 @@ define([
             var langValue;
             var resCandidate;
             try {
-                var resContext = WinJS.Resources._getResourceContext();
+                var resContext = exports._getResourceContext();
                 if (resContext) {
                     resCandidate = resourceMap.getValue(resourceId, resContext);
                 } else {
@@ -149,15 +151,15 @@ define([
                 }
             }
             return resourceContext;
-        }
+        },
+
+        oncontextchanged: createEvent(contextChangedET)
         
     });
 
-    Object.defineProperties(WinJS.Resources, _Events.createEventProperties(contextChangedET));
+    var getStringImpl = _BaseCoreUtils.hasWinRT ? exports._getStringWinRT : exports._getStringJS;
 
-    var getStringImpl;
-
-    WinJS.Resources.getString = function (resourceId) {
+    var getString = function (resourceId) {
         /// <signature helpKeyword="WinJS.Resources.getString">
         /// <summary locid='WinJS.Resources.getString'>
         /// Retrieves the resource string that has the specified resource id.
@@ -181,19 +183,25 @@ define([
         /// for multi-language resources.
         /// 
         /// </returns>
-        /// </signature>
-        getStringImpl =
-            getStringImpl ||
-                (WinJS.Utilities.hasWinRT
-                    ? WinJS.Resources._getStringWinRT
-                    : WinJS.Resources._getStringJS);
+        /// </signature>          
 
         return getStringImpl(resourceId);
     };
 
-    return {
+    _Base.Namespace._moduleDefine(exports, null, {
         _formatString: formatString,
         _getWinJSString: _getWinJSString
-    };
+    });
+
+    _Base.Namespace._moduleDefine(exports, "WinJS.Resources", {
+        getString: {
+            get: function() {
+                return getString;
+            },
+            set: function(value) {
+                getString = value;
+            }
+        }
+    });
 
 });

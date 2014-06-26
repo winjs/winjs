@@ -64,7 +64,7 @@ define([
             }
 
         }
-        else if (WinJS.validation) {
+        else if (_BaseUtils.validation) {
             throw new _ErrorFromName("WinJS.Res.NestingExceeded", _Resources._getWinJSString("base/nestingExceeded").value);
         }
 
@@ -78,7 +78,7 @@ define([
             var name = names[k];
             var value = descriptor[name];
 
-            var data = WinJS.Resources.getString(value);
+            var data = _Resources.getString(value);
 
             if (!data || !data.empty) {
                 root.setAttribute(name, data.value);
@@ -90,7 +90,7 @@ define([
                         root.lang = data.lang;
                     }
             }
-            else if (WinJS.validation) {
+            else if (_BaseUtils.validation) {
                 notFound(value);
             }
         }
@@ -109,7 +109,7 @@ define([
             var value = descriptor[name];
 
             if (typeof value === "string") {
-                var data = WinJS.Resources.getString(value);
+                var data = _Resources.getString(value);
 
                 if (!data || !data.empty) {
                     target[name] = data.value;
@@ -125,7 +125,7 @@ define([
                         processAllImpl(target, count + 1);
                     }
                 }
-                else if (WinJS.validation) {
+                else if (_BaseUtils.validation) {
                     notFound(value);
                 }
             }
