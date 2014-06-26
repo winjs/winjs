@@ -37,8 +37,7 @@
                 }
                 if (host === "vs") {
                     command += " /vs";
-                }
-                else {
+                } else {
                     command += " /host:" + host;
                 }
                 command += " @res.txt";
