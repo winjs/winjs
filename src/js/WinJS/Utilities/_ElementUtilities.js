@@ -88,7 +88,7 @@ define([
                 var namesToAdd = name.split(" ");
                 removeEmpties(namesToAdd);
                 for (var i = 0; i < l; i++) {
-                    var found = namesToAdd.indexOf(names[i])
+                    var found = namesToAdd.indexOf(names[i]);
                     if (found >= 0) {
                         namesToAdd.splice(found, 1);
                     }
@@ -522,7 +522,7 @@ define([
                         return mouseEventTranslator(callback, eventObject);
                     }
                     touchHandled = false;
-                }
+                };
                 element.addEventListener(translations.mouse, mouseWrapper, capture);
             }
             if (translations.touch) {
@@ -530,7 +530,7 @@ define([
                     eventObject._normalizedType = eventNameLowercase;
                     touchHandled = true;
                     return touchEventTranslator(callback, eventObject);
-                }
+                };
                 element.addEventListener(translations.touch, touchWrapper, capture);
             }
         }
@@ -854,7 +854,7 @@ define([
     }
 
     function _getElementsByClasses(parent, classes) {
-        var retVal = []
+        var retVal = [];
 
         for (var i = 0, len = classes.length; i < len; i++) {
             var element = parent.querySelector("." + classes[i]);

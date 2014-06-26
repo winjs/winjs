@@ -821,7 +821,7 @@ define([
                     }
                 },
                 _parse: function hub_parse() {
-                    var hubSections = []
+                    var hubSections = [];
                     var hubSectionEl = this.element.firstElementChild;
 
                     while (hubSectionEl !== this._viewportElement) {
@@ -1367,7 +1367,7 @@ define([
                     headerInvoked: eventNames.headerInvoked,
                     loadingStateChanged: eventNames.loadingStateChanged
                 },
-            })
+            });
 
             _Base.Class.mix(Hub, _Control.DOMEventMixin);
 

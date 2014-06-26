@@ -465,7 +465,7 @@ define([
     //
     state_canceled.enter = function (job) {
         jobProfilerMark(job, "job-canceled", "info");
-        _Trace._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_CANCELED)
+        _Trace._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_CANCELED);
         job._removeJob();
         job._work = null;
         job._context = null;
@@ -970,7 +970,7 @@ define([
             prev._insertMarkerAfter(current);
         }
         return current;
-    })
+    });
 
     //
     // Draining mechanism

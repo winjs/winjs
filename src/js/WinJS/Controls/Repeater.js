@@ -457,7 +457,7 @@ define([
                     var eventDetail = { affectedElement: oldItem, index: eventInfo.detail.index, item: eventInfo.detail.item };
                     eventDetail.setPromise = function setPromise(delayPromise) {
                         animationPromise = delayPromise;
-                    }
+                    };
 
                     this._writeProfilerMark(ITEMREMOVING + ",info");
                     this.dispatchEvent(ITEMREMOVING, eventDetail);
@@ -484,7 +484,7 @@ define([
                     var eventDetail = { affectedElements: shallowCopyBefore };
                     eventDetail.setPromise = function (delayPromise) {
                         animationPromise = delayPromise;
-                    }
+                    };
 
                     this._writeProfilerMark(ITEMSRELOADING + ",info");
                     this.dispatchEvent(ITEMSRELOADING, eventDetail);

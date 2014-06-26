@@ -93,7 +93,7 @@ define([
                 }
             }, {
                 winPressed: "win-pressed"
-            })
+            });
 
             return WinPressed;
         }),

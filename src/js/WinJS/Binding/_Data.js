@@ -73,7 +73,7 @@ define([
 
                 var cleanup = function () {
                     delete that._pendingNotifications[x];
-                }
+                };
 
                 // Binding guarantees async notification, so we do timeout()
                 //
@@ -384,7 +384,7 @@ define([
         /// </returns>
         /// </signature>
         return bindImpl(observable, bindingDescriptor);
-    }
+    };
     var bindRefId = 0;
     var createBindRefId = function () {
         return "bindHandler" + (bindRefId++);
@@ -402,7 +402,7 @@ define([
                 bindState[id](n, o);
             }
         };
-    }
+    };
     var bindImpl = function (observable, bindingDescriptor, bindStateRef) {
         observable = as(observable);
         if (!observable) {
@@ -489,7 +489,7 @@ define([
                 cancelSimple();
                 Object.keys(complexLast).forEach(function (k) { cancelComplex(k); });
             }
-        }
+        };
     };
 
     

@@ -424,7 +424,7 @@ define([
                     },
 
                     _parse: function pivot_parse() {
-                        var pivotItems = []
+                        var pivotItems = [];
                         var pivotItemEl = this.element.firstElementChild;
 
                         while (pivotItemEl !== this._titleElement) {
@@ -486,7 +486,7 @@ define([
                             }
                             _ElementUtilities.addClass(headerContainerEl, Pivot._ClassName.pivotHeader);
                             headerContainerEl._item = item;
-                            template(item, headerContainerEl)
+                            template(item, headerContainerEl);
                             headerContainerEl.setAttribute('role', 'tab');
                             that._headersContainerElement.appendChild(headerContainerEl);
 
@@ -969,7 +969,7 @@ define([
                             if (index < oldIndex) {
                                 index += this._items.length;
                             }
-                            targetHeader = this._headersContainerElement.children[1 + index - oldIndex]
+                            targetHeader = this._headersContainerElement.children[1 + index - oldIndex];
                         }
 
                         if (!targetHeader) {
@@ -1328,7 +1328,7 @@ define([
                         none: "",
                         scroll: "scroll",
                     }
-                })
+                });
                 _Base.Class.mix(Pivot, _Control.DOMEventMixin);
 
                 var strings = {

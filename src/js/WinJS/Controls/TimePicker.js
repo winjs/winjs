@@ -453,7 +453,7 @@ define([
                             formatter = dtf.DateTimeFormatter(pattern, formatter.languages, formatter.geographicRegion, formatter.calendar, clock);
                         }
                         return formatter;
-                    }
+                    };
 
                     var glob = Windows.Globalization;
                     var calendar = new glob.Calendar();
@@ -512,7 +512,7 @@ define([
                                 now.setHours(index);
                                 return hourFormatter.format(now);
                             }
-                        }
+                        };
                     })();
 
                     // Determine the order of the items from the DateTimeFormatter.
@@ -555,7 +555,7 @@ define([
                     var hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
                     var minutes = {};
-                    minutes.getLength = function () { return 60 / minuteIncrement; }
+                    minutes.getLength = function () { return 60 / minuteIncrement; };
                     minutes.getValue = function (index) {
                         var display = index * minuteIncrement;
                         if (display < 10) {

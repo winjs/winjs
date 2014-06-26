@@ -52,7 +52,7 @@ define([
             }
 
             return selected || document.querySelector(selector);
-        }
+        };
         return markSupportedForProcessing(result);
     }
 
@@ -124,7 +124,7 @@ define([
                     _WriteProfilerMark("WinJS.UI:processAll,StopTM");
                     complete(rootElement);
                 }
-            }
+            };
 
             // First go through and determine which elements to activate
             //

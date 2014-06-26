@@ -159,7 +159,7 @@ define([
                             return {
                                 group: group,
                                 index: i
-                            }
+                            };
                         }
                     }
                     return null;
@@ -172,7 +172,7 @@ define([
                             return {
                                 group: group,
                                 index: i
-                            }
+                            };
                         }
                     }
                     return null;

@@ -40,7 +40,7 @@ define([
                         } while (next && !nextWork);
 
                         if (nextWork) {
-                            delete workItems[next]
+                            delete workItems[next];
                             try {
                                 nextWork().then(runNext, runNext);
                             }

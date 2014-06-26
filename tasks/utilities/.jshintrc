@@ -10,7 +10,7 @@
     "eqeqeq": false, // Prohibits the use of == and != in favor of === and !==
     "es3": false, // Prohibits the use of syntax beynd ECMAScript 3 specification.
     "forin": false, // Requires all for in loops to filter object's items.
-    "freeze": false, // Prohibits overwriting prototypes of native objects such as Array, Date and so on.
+    "freeze": true, // Prohibits overwriting prototypes of native objects such as Array, Date and so on.
     "immed": false, // Prohibits the use of immediate function invocations without wrapping them in parentheses.
     "indent": false, // Enforces specific tab width for your code. 
     "latedef": false, // Prohibits the use of a variable before it was defined
@@ -35,7 +35,7 @@
         RELAXING Options: When set to true, (or in some cases an integer value) these options will make JSHint produce less warnings about your code
         http://www.jshint.com/docs/options/#relaxing-options
     */
-    "asi": true, // Suppresses warnings about missing semicolons.
+    "asi": false, // Suppresses warnings about missing semicolons.
     "boss": true, // Suppresses warnings about the use of assignments in cases where comparisons are expected. More often than not, code like if (a = 10) {} is a typo.
     "debug": false, // Suppresses warnings about the debugger statements in your code.
     "eqnull": true, // Suppresses warnings about == null comparisons. 

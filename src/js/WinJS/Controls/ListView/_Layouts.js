@@ -1172,7 +1172,7 @@ define([
                             if (that._itemsPerBar > 1) {
                                 var maxDistance = that._itemsPerBar * that._sizes.containerCrossSize + that._getHeaderSizeContentAdjustment() +
                                     that._sizes.containerMargins[horizontal ? "top" : (site.rtl ? "right" : "left")] +
-                                    (horizontal ? that._sizes.layoutOriginY : that._sizes.layoutOriginX)
+                                    (horizontal ? that._sizes.layoutOriginY : that._sizes.layoutOriginX);
                                 for (var i = 0, len = itemMoveRecords.length; i < len; i++) {
                                     var cachedItemRecord = itemMoveRecords[i];
                                     if (cachedItemRecord[oldReflowLayoutProperty] > cachedItemRecord[reflowLayoutProperty]) {
@@ -1206,7 +1206,7 @@ define([
 
                     if (exports.Layout._debugAnimations) {
                         requestAnimationFrame(function () {
-                            startAnimations()
+                            startAnimations();
                         });
                     } else {
                         startAnimations();
@@ -1223,7 +1223,7 @@ define([
                                 if (exports.Layout._debugAnimations) {
                                     requestAnimationFrame(function () {
                                         nextPhaseCallback();
-                                    })
+                                    });
                                 } else {
                                     nextPhaseCallback();
                                 }
@@ -1336,7 +1336,7 @@ define([
                     function reflowPhase(itemsPerBar) {
                         site._writeProfilerMark("Animation:setupReflowAnimation,StartTM");
 
-                        var itemContainersLastBarIndices = {}
+                        var itemContainersLastBarIndices = {};
                         for (var i = 0, len = reflowItemRecords.length; i < len; i++) {
                             var reflowItemRecord = reflowItemRecords[i];
                             var xOffset = reflowItemRecord.xOffset;
@@ -1361,7 +1361,7 @@ define([
                             maxOffset = Math.max(maxOffset, horizontal ? xOffset : yOffset);
                             var itemsContainer = container.parentNode;
                             if (!_ElementUtilities.hasClass(itemsContainer, "win-itemscontainer")) {
-                                itemsContainer = itemsContainer.parentNode
+                                itemsContainer = itemsContainer.parentNode;
                             }
 
                             // The itemscontainer element is always overflow:hidden for two reasons:
@@ -1860,7 +1860,7 @@ define([
                 _resetStylesForInsertedRecords: function _LayoutCommon_resetStylesForInsertedRecords(insertedRecords) {
                     var insertedRecordKeys = Object.keys(insertedRecords);
                     for (var i = 0, len = insertedRecordKeys.length; i < len; i++) {
-                        var insertedElement = insertedRecords[insertedRecordKeys[i]]
+                        var insertedElement = insertedRecords[insertedRecordKeys[i]];
                         insertedElement.style.opacity = 1;
                     }
                 },
@@ -3597,7 +3597,7 @@ define([
                     this._layout._site._writeProfilerMark("Layout:_UniformFlowGroup:setItemsContainerHeight,info");
                     this._itemsContainer.style.height = this.count * this._layout._sizes.containerHeight + "px";
                 }
-            })
+            });
         }),
 
         CellSpanningGroup: _Base.Namespace._lazy(function () {
@@ -4106,7 +4106,7 @@ define([
                             return {
                                 index: index,
                                 item: this.occupancyMap[index].index
-                            }
+                            };
                         } else {
                             index = this.occupancyMap.length - 1;
                         }
@@ -4358,14 +4358,14 @@ define([
                     get: function () {
                         return "vertical";
                     }
-                }
+                };
                 if (layout.orientation !== undefined) {
                     propertyDefinition.get = function () {
                         return layout.orientation;
-                    }
+                    };
                     propertyDefinition.set = function (value) {
                         layout.orientation = value;
-                    }
+                    };
                 }
                 Object.defineProperty(this, "orientation", propertyDefinition);
 

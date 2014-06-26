@@ -25,5 +25,5 @@
             this.filesSrc.forEach(validateFile);
         });
 
-    }
+    };
 })();

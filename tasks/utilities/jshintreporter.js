@@ -26,7 +26,7 @@
                     // Finish prev table.
                     if (tableRows !== []) {
                         appendTableRows();
-                        tableRows = []
+                        tableRows = [];
                     }
 
                     // Begin new table.

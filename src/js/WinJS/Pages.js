@@ -148,7 +148,7 @@ define([
             /// </signature>
             return Promise.wrapError(err);
         }
-    }
+    };
 
     function Pages_define(uri, members) {
         /// <signature helpKeyword="WinJS.UI.Pages.define">
@@ -278,7 +278,7 @@ define([
     function _remove(uri) {
         uri = abs(uri);
         Fragments.clearCache(uri);
-        delete viewMap[uri.toLowerCase()]
+        delete viewMap[uri.toLowerCase()];
     }
 
     function render(uri, element, options, parentedPromise) {

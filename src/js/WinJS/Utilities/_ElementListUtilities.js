@@ -327,7 +327,7 @@ define([
                     this.forEach(function (element) {
                         ControlProcessor.process(element).done(function (control) {
                             control && _Control.setOptions(control, options);
-                        })
+                        });
                     });
                 }
                 return this;

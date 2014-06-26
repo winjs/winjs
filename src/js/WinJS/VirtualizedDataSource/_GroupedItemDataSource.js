@@ -114,7 +114,7 @@ define([
                         if (listBinding[listBindingMethod]) {
                             groupedItemListBinding[listBindingMethod] = function () {
                                 return createGroupedItemPromise(listBinding[listBindingMethod].apply(listBinding, arguments));
-                            }
+                            };
                         }
                     })(listBindingMethods[i]);
                 }
@@ -165,7 +165,7 @@ define([
                     if (listDataSource[listDataSourceMethod]) {
                         groupedItemDataSource[listDataSourceMethod] = function () {
                             return createGroupedItemPromise(listDataSource[listDataSourceMethod].apply(listDataSource, arguments));
-                        }
+                        };
                     }
                 })(listDataSourceMethods[i]);
             }
@@ -174,7 +174,7 @@ define([
                 if (listDataSource[methodName]) {
                     groupedItemDataSource[methodName] = function () {
                         return listDataSource[methodName].apply(listDataSource, arguments);
-                    }
+                    };
                 }
             });
 

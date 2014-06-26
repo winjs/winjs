@@ -284,7 +284,7 @@ define([
                 disabled: {
                     get: function () {
                         // Use the command bar element to keep in-sync
-                        return !this._commandBarIconButton.enabled
+                        return !this._commandBarIconButton.enabled;
                     },
                     set: function (value) {
                         this._commandBarIconButton.enabled = !value;

@@ -1515,7 +1515,7 @@ define([
 
                                 var setFlowAttribute = function (source, target, attributeName) {
                                     source.setAttribute(attributeName, target.id);
-                                }
+                                };
 
                                 var isEnd = !page.next.element || page === manager._prevMarker.prev;
                                 if (isEnd) {

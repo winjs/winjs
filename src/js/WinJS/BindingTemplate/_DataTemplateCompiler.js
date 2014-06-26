@@ -81,7 +81,7 @@ define([
             function delayedBindingProcessing(data, defaultInitializer) {
                 return function (element) {
                     return _Declarative.processAll(element, data, false, null, defaultInitializer);
-                }
+                };
             }
 
             function targetSecurityCheck(value) {
@@ -907,7 +907,7 @@ define([
                     var suffix = name ? name.replace(identifierCharacterRegEx, "_") : "";
                     var identifier = createIdentifier(StaticKindPrefixes[kind], this._staticVariablesCount, suffix);
                     var that = this;
-                    identifier.definition = function () { return assignment(identifier, definition()); }
+                    identifier.definition = function () { return assignment(identifier, definition()); };
                     identifier.kind = kind;
                     this._staticVariables[name || identifier] = identifier;
                     this._staticVariablesCount++;

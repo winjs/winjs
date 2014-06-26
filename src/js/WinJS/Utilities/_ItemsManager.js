@@ -168,7 +168,7 @@ define([
                                     lastSort = currentDate;
                                     imageLoader.sort(compareImageLoadPriority);
                                 }
-                            }
+                            };
 
                             var loadComplete = function () {
                                 imageLoadComplete(jobComplete);
@@ -334,14 +334,14 @@ define([
                 }
             }, {
                 _itemFromItemPromise: function (itemPromise) {
-                    return this._waitForElement(this._elementForItem(itemPromise))
+                    return this._waitForElement(this._elementForItem(itemPromise));
                 },
                 // If stage 0 is not yet complete, caller is responsible for transitioning the item from stage 0 to stage 1
                 _itemFromItemPromiseThrottled: function (itemPromise) {
-                    return this._waitForElement(this._elementForItem(itemPromise, true))
+                    return this._waitForElement(this._elementForItem(itemPromise, true));
                 },
                 _itemAtIndex: function (index) {
-                    var itemPromise = this._itemPromiseAtIndex(index)
+                    var itemPromise = this._itemPromiseAtIndex(index);
                     this._itemFromItemPromise(itemPromise).then(null, function (e) {
                         itemPromise.cancel();
                         return Promise.wrapError(e);
@@ -552,7 +552,7 @@ define([
                             record.startStage1 = function () {
                                 record.startStage1 = null;
                                 queueAsyncStage1();
-                            }
+                            };
                         } else {
                             queueAsyncStage1();
                         }
@@ -588,7 +588,7 @@ define([
                                         readySignal.complete(item);
                                         that._writeProfilerMark(perfItemReadyId + ",StopTM");
                                     }
-                                }
+                                };
                                 if (!that._viewCallsReady) {
                                     var job = Scheduler.schedule(record.pendingReady, Scheduler.Priority.normal,
                                         record, "WinJS.UI._ItemsManager._pendingReady");

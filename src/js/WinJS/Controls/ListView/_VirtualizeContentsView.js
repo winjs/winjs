@@ -62,7 +62,7 @@ define([
                 job.dispose = function () {
                     this.cancel();
                     this._workItems.length = 0;
-                }
+                };
 
                 return job;
             }
@@ -2477,7 +2477,7 @@ define([
                     // We only need to restore focus if the current focus is within surface
                     var activeElement = document.activeElement;
                     if (this._listView._canvas.contains(activeElement)) {
-                        this._requireFocusRestore = activeElement
+                        this._requireFocusRestore = activeElement;
                     }
 
                     this._deferredReparenting = [];

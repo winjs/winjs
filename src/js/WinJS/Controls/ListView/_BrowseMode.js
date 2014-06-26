@@ -904,7 +904,7 @@ define([
                         if (ensureVisibleAtEnd) {
                             site.ensureVisible(site._selection._getFocused());
                         }
-                    }
+                    };
                     reorderedItems.getItems().then(function (items) {
                         var ds = site.itemDataSource;
                         if (dropIndex === -1) {

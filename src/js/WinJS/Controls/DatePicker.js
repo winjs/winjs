@@ -466,7 +466,7 @@ define([
                         var index = that._information.getIndex(that._currentDate);
 
                         // Changing the month (or year, if the current date is 2/29) changes the day range, and could have made the day selection invalid
-                        that._monthControl.dataSource = that._information.months(index.year)
+                        that._monthControl.dataSource = that._information.months(index.year);
                         that._monthControl.index = index.month;
                         that._dateControl.dataSource = that._information.dates(index.year, index.month);
                         that._dateControl.index = index.date;
@@ -548,7 +548,7 @@ define([
 
                                 return formatYear(datePatterns.year, calendar, DEFAULT_YEAR_PATTERN, datePatterns, order, tempCal);
                             }
-                        }
+                        };
                     })();
 
                     var monthSource = function (yearIndex) {

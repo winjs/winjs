@@ -597,7 +597,7 @@ define([
                         if (!onError.handlesOnError) {
                             callonerror(target, value, detailsForHandledError, promise, onError);
                         }
-                        target._setCompleteValue(onError(value))
+                        target._setCompleteValue(onError(value));
                     } else {
                         target._setChainedErrorValue(value, promise);
                     }
@@ -988,8 +988,8 @@ define([
     }
 
     function timeoutWithPromise(timeout, promise) {
-        var cancelPromise = function () { promise.cancel(); }
-        var cancelTimeout = function () { timeout.cancel(); }
+        var cancelPromise = function () { promise.cancel(); };
+        var cancelTimeout = function () { timeout.cancel(); };
         timeout.then(cancelPromise);
         promise.then(cancelTimeout, cancelTimeout);
         return promise;
@@ -1415,7 +1415,7 @@ define([
         _BaseCoreUtils._setImmediate(function Promise_done_rethrow() {
             throw value;
         });
-    }
+    };
 
     return {
         PromiseStateMachine: PromiseStateMachine,

@@ -8,7 +8,6 @@ var define;
 (function() {
 
     var defined = {};
-    /*jshint -W020*/
     define = function(id, dependencies, factory) {
         if(!Array.isArray(dependencies)) {
             factory = dependencies;
@@ -25,8 +24,7 @@ var define;
         }
 
         defined[id] = mod;
-    }
-    /*jshint +W020*/
+    };
 
     // WinJS/Core depends on ./Core/_Base
     // should return WinJS/Core/_Base
@@ -81,12 +79,12 @@ var define;
             return factory;
         }
     }
-    require = function(dependencies, factory) {
+    require = function(dependencies, factory) { //jshint ignore:line
         if(!Array.isArray(dependencies)) {
             dependencies = [dependencies];
         }
         load(dependencies, factory);
-    }
+    };
 
 
 })();

@@ -1003,7 +1003,7 @@ define([
                         // a bottom appbar is not in the process of showing.
                         return true;
                     }
-                    return false
+                    return false;
                 },
 
                 // Set focus to the passed in AppBar

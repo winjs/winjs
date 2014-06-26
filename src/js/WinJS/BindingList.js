@@ -434,7 +434,7 @@ define([
 
             }, {
                 supportedForProcessing: false,
-            })
+            });
             _Base.Class.mix(ListBase, _Data.observableMixin);
             _Base.Class.mix(ListBase, _Events.eventMixin);
             return ListBase;
@@ -507,7 +507,7 @@ define([
                 // ABSTRACT: _spliceFromKey(key, howMany, values...)
             }, {
                 supportedForProcessing: false,
-            })
+            });
         }),
 
         ListProjection: _Base.Namespace._lazy(function () {
@@ -608,7 +608,7 @@ define([
 
             }, {
                 supportedForProcessing: false,
-            })
+            });
         }),
 
         FilteredListProjection: _Base.Namespace._lazy(function () {
@@ -822,7 +822,7 @@ define([
                 }
             }, {
                 supportedForProcessing: false,
-            })
+            });
         }),
 
         SortedListProjection: _Base.Namespace._lazy(function () {
@@ -1115,7 +1115,7 @@ define([
                 }
             }, {
                 supportedForProcessing: false,
-            })
+            });
         }),
 
         // This projection sorts the underlying list by group key and within a group
@@ -1277,7 +1277,7 @@ define([
                 }
             }, {
                 supportedForProcessing: false,
-            })
+            });
         }),
 
         // This is really an implementation detail of GroupedSortedListProjection and takes a
@@ -1542,7 +1542,7 @@ define([
                 }
             }, {
                 supportedForProcessing: false,
-            })
+            });
         }),
     });
 
@@ -1941,7 +1941,7 @@ define([
                         if (this._data) {
                             this._modifyingData++;
                             try {
-                                this._data.push(arguments[i])
+                                this._data.push(arguments[i]);
                             } finally {
                                 this._modifyingData--;
                             }
@@ -2000,7 +2000,7 @@ define([
                         if (this._data) {
                             this._modifyingData++;
                             try {
-                                this._data.unshift(arguments[i])
+                                this._data.unshift(arguments[i]);
                             } finally {
                                 this._modifyingData--;
                             }

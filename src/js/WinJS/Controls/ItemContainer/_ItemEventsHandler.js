@@ -848,11 +848,11 @@ define([
                             }
 
                             return Animations.swipeReveal(itemBox, { top: top, left: left });
-                        }
+                        };
 
                         var swipeHide = function () {
                             return finished ? Promise.wrap() : Animations.swipeReveal(itemBox, { top: "0px", left: "0px" });
-                        }
+                        };
 
                         var cleanUp = function (selectionHint) {
                             if (!site.isZombie()) {
@@ -861,7 +861,7 @@ define([
                                 }
                                 that._clearItem(site.pressedEntity, site.selection._isIncluded(index));
                             }
-                        }
+                        };
 
                         // Immediately begins the last phase of the SRG animation which animates the item back to its original location
                         var finishAnimation = function () {
@@ -873,7 +873,7 @@ define([
                                 itemBox.style[transformNames.scriptName] = "";
                                 cleanUp(selectionHint);
                             });
-                        }
+                        };
 
                         this._prepareItem(this._site.pressedEntity, itemBox, selected);
                         this._showSelectionHintCheckmark();

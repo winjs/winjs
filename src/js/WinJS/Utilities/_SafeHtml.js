@@ -127,7 +127,7 @@ define([
             if (!_Global.msIsStaticHTML(str)) {
                 throw new _ErrorFromName("WinJS.Utitilies.NonStaticHTML", strings.nonStaticHTML);
             }
-        }
+        };
         // If we ever get isStaticHTML we can attempt to recreate the behavior we have in the local
         // compartment, in the mean-time all we can do is sanitize the input.
         //

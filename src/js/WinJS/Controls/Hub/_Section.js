@@ -71,7 +71,7 @@ define([
 
                 // Not using innerHTML here because there could have been some children already.
                 this._headerElement = document.createElement("DIV");
-                this._headerElement.className = HubSection._ClassName.hubSectionHeader
+                this._headerElement.className = HubSection._ClassName.hubSectionHeader;
                 this._headerElement.innerHTML =
                     '<button type="button" role="link" class="' + HubSection._ClassName.hubSectionInteractive + ' ' + HubSection._ClassName.hubSectionHeaderTabStop + '">' +
                         '<div class="' +  HubSection._ClassName.hubSectionHeaderWrapper + '">' +

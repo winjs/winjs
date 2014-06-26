@@ -29,13 +29,13 @@ define([
 
         function hookUpBackButtonGlobalEventHandlers() {
             // Subscribes to global events on the window object
-            window.addEventListener('keyup', backButtonGlobalKeyUpHandler, false)
+            window.addEventListener('keyup', backButtonGlobalKeyUpHandler, false);
             window.addEventListener('pointerup', backButtonGlobalMSPointerUpHandler, false);
         }
 
         function unHookBackButtonGlobalEventHandlers() {
             // Unsubscribes from global events on the window object
-            window.removeEventListener('keyup', backButtonGlobalKeyUpHandler, false)
+            window.removeEventListener('keyup', backButtonGlobalKeyUpHandler, false);
             window.removeEventListener('pointerup', backButtonGlobalMSPointerUpHandler, false);
         }
 
@@ -233,7 +233,7 @@ define([
             // Private Static Method.
             BackButton._getReferenceCount = function () {
                 return singleton.getCount(); // Expose this for Unit testing.
-            }
+            };
             _Base.Class.mix(BackButton, _Control.DOMEventMixin);
             return BackButton;
         })

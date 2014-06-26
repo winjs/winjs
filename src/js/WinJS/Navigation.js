@@ -123,7 +123,7 @@ define([
                 });
         }
         return Promise.wrap(false);
-    }
+    };
 
     _Base.Namespace.define("WinJS.Navigation", {
         /// <field name="canGoForward" type="Boolean" locid="WinJS.Navigation.canGoForward" helpKeyword="WinJS.Navigation.canGoForward">

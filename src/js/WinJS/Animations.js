@@ -72,7 +72,7 @@ define([
         var keyframeRtl = keyframe + "-rtl";
         return function (i, elem) {
             return window.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
-        }
+        };
     }
 
     function makeArray(elements) {
@@ -2414,7 +2414,7 @@ define([
                 return {
                     exit: emptyAnimationFunction,
                     entrance: WinJS.UI.Animation.enterPage
-                }
+                };
             }
             if (!nextPreferredAnimation) {
                 nextPreferredAnimation = PageNavigationAnimation.turnstile;
@@ -2425,13 +2425,13 @@ define([
                 return {
                     exit: movingBackwards ? WinJS.UI.Animation.slideDown : emptyAnimationFunction,
                     entrance: movingBackwards ? emptyAnimationFunction : WinJS.UI.Animation.slideUp
-                }
+                };
             }
 
             return {
                 exit: WinJS.UI.Animation[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "Out"],
                 entrance: WinJS.UI.Animation[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "In"]
-            }
+            };
         }
     });
 

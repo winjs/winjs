@@ -866,7 +866,7 @@ define([
                             // Overlays can light dismiss on horizontal resize.
                             var newWidth = document.documentElement.offsetWidth;
                             if (this._currentDocumentWidth !== newWidth) {
-                                this._currentDocumentWidth = newWidth
+                                this._currentDocumentWidth = newWidth;
                                 if (!this._sticky) {
                                     this._hideOrDismiss();
                                 }
@@ -1102,7 +1102,7 @@ define([
 
                 _hideAllFlyouts: function () {
                     _Overlay._hideFlyouts(document, true);
-                    _Overlay._hideSettingsFlyouts(document, true)
+                    _Overlay._hideSettingsFlyouts(document, true);
                 },
 
                 _createClickEatingDivTemplate: function (divClass, hideClickEatingDivFunction) {
@@ -1508,7 +1508,7 @@ define([
                     },
 
                     get _visualViewportSpace() {
-                        var className = "win-visualviewport-space"
+                        var className = "win-visualviewport-space";
                         var visualViewportSpace = document.body.querySelector("." + className);
                         if (!visualViewportSpace) {
                             visualViewportSpace = document.createElement("DIV");

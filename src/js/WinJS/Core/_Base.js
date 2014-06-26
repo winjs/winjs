@@ -20,7 +20,7 @@ define([
                         member.enumerable = enumerable;
                     }
                     if (prefix && member.setName && typeof member.setName === 'function') {
-                        member.setName(prefix + "." + key)
+                        member.setName(prefix + "." + key);
                     }
                     properties = properties || {};
                     properties[key] = member;
@@ -29,7 +29,7 @@ define([
             }
             if (!enumerable) {
                 properties = properties || {};
-                properties[key] = { value: member, enumerable: enumerable, configurable: true, writable: true }
+                properties[key] = { value: member, enumerable: enumerable, configurable: true, writable: true };
                 continue;
             }
             target[key] = member;
@@ -162,7 +162,7 @@ define([
                 },
                 enumerable: true,
                 configurable: true,
-            }
+            };
         }
 
         // helper for defining AMD module members

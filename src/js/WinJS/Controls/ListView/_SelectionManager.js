@@ -294,7 +294,7 @@ define([
                             }
                             left.lastPromise = that._getListBinding().fromIndex(left.lastIndex).retain();
                         }
-                    }
+                    };
 
                     for (var i = 0, len = this._ranges.length; i < len; i++) {
                         range = this._ranges[i];
@@ -428,7 +428,7 @@ define([
                         } else {
                             return Promise.wrap();
                         }
-                    }
+                    };
 
                     for (var i = 0, len = this._ranges.length; i < len; i++) {
                         var range = this._ranges[i];

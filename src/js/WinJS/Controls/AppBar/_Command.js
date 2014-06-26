@@ -639,7 +639,7 @@ define([
 
                 _isFocusable: function AppBarCommand_isFocusable() {
                     return (!this.hidden && this._type !== _Constants.typeSeparator && !this.element.disabled &&
-                        (this.firstElementFocus.tabIndex >= 0 || this.lastElementFocus.tabIndex >= 0))
+                        (this.firstElementFocus.tabIndex >= 0 || this.lastElementFocus.tabIndex >= 0));
                 },
             });
         })

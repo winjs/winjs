@@ -548,7 +548,7 @@ define([
                     spanElement.textContent = textContent;
                     spanElement.setAttribute("aria-hidden", "true");
                     _ElementUtilities.addClass(spanElement, ClassName.searchboxHitHighlightSpan);
-                    element.insertBefore(spanElement, insertBefore)
+                    element.insertBefore(spanElement, insertBefore);
                     return spanElement;
                 },
 

@@ -69,7 +69,7 @@ define([
 
     function captureDeferral(obj) {
         var id = "def" + (pendingDeferralID++);
-        return { deferral: pendingDeferrals[id] = obj.getDeferral(), id: id }
+        return { deferral: pendingDeferrals[id] = obj.getDeferral(), id: id };
     }
     function completeDeferral(deferral, deferralID) {
         // If we have a deferralID we our table to find the
@@ -349,7 +349,7 @@ define([
                 if (prev !== terminateAppHandler) {
                     prev(d, e);
                 }
-            }
+            };
             dispatchEvent({
                 type: errorET,
                 detail: {

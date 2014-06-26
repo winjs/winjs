@@ -132,7 +132,7 @@ define([
         this.updateTabIndex = function (tabIndex) {
             catcherBegin.tabIndex = tabIndex;
             catcherEnd.tabIndex = tabIndex;
-        }
+        };
     }
 
     var TrackTabBehavior = {
@@ -229,7 +229,7 @@ define([
                             }
                             that._elementTabHelper._catcherBegin.tabIndex = that._tabIndex;
                             that._elementTabHelper._catcherEnd.tabIndex = that._tabIndex;
-                        }
+                        };
                         targetElement.addEventListener("blur", restoreTabIndicesOnBlur, false);
                         _BaseUtils._yieldForEvents(function () {
                             fireEvent(that._element, "onTabExit", forwardTab);

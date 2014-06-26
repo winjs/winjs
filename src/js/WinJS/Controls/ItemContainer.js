@@ -552,7 +552,7 @@ define([
                     if (!currentTabIndex) {
                         // Set the tabindex to 0 only if the application did not already
                         // provide a tabindex
-                        this.element.setAttribute("tabindex", "0")
+                        this.element.setAttribute("tabindex", "0");
                     }
                 },
 
@@ -782,7 +782,7 @@ define([
                 _getFocused: function SingleItemSelectionManager_getFocused(index) {
                     return { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX };
                 }
-            })
+            });
         })
     });
 });

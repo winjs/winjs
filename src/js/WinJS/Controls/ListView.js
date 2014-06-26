@@ -84,7 +84,7 @@ define([
         /// The animation plays when the ListView is changing its content.
         /// </field>
         contentTransition: "contentTransition"
-    }
+    };
 
     // ListView implementation
 
@@ -2366,7 +2366,7 @@ define([
                                 return {
                                     firstPixel: Math.max(0, that.scrollPosition - 2 * that._getViewportLength()),
                                     lastPixel: that.scrollPosition + 3 * that._getViewportLength() - 1
-                                }
+                                };
                             }
                         },
                         visibleRange: {
@@ -2375,7 +2375,7 @@ define([
                                 return {
                                     firstPixel: that.scrollPosition,
                                     lastPixel: that.scrollPosition + that._getViewportLength() - 1
-                                }
+                                };
                             }
                         },
                         itemCount: {
@@ -2574,7 +2574,7 @@ define([
                     } else {
                         if (this._mode.inboundFocusHandled) {
                             this._mode.inboundFocusHandled = false;
-                            return
+                            return;
                         }
 
                         // In the event that .focus() is explicitly called on an element, we need to figure out what item got focus and set our state appropriately.
@@ -3071,7 +3071,7 @@ define([
                     function rowStaggerDelay(minRow, rows, delayBetweenRows) {
                         return function (index) {
                             return ((rows[index] - minRow) * delayBetweenRows);
-                        }
+                        };
                     }
 
                     function clearTransform() {
@@ -3160,7 +3160,7 @@ define([
 
                             scrollPosition = adjustedScrollPosition;
 
-                            var entity = { type: _UI.ObjectType.item, index: index }
+                            var entity = { type: _UI.ObjectType.item, index: index };
                             if (that._hasKeyboardFocus) {
                                 that._changeFocus(entity, true);
                             } else {
@@ -3403,7 +3403,7 @@ define([
                         this._disposed = true;
                         var clear = function clear(e) {
                             e && (e.textContent = "");
-                        }
+                        };
 
                         this._batchingViewUpdates && this._batchingViewUpdates.cancel();
 
@@ -3575,7 +3575,7 @@ define([
                     return {
                         prevented: prevented,
                         animationPromise: animationPromise
-                    }
+                    };
                 },
 
                 // If they don't yet exist, create the start and end markers which are required
@@ -3766,11 +3766,11 @@ define([
                         var margins = that._getItemMargins(entity.type);
                         if (that._horizontal()) {
                             var rtl = that._rtl();
-                            pos.begin = pos.left - margins[rtl ? "left" : "right"],
-                            pos.end = pos.left + pos.totalWidth + margins[rtl ? "right" : "left"]
+                            pos.begin = pos.left - margins[rtl ? "left" : "right"];
+                            pos.end = pos.left + pos.totalWidth + margins[rtl ? "right" : "left"];
                         } else {
-                            pos.begin = pos.top - margins.bottom,
-                            pos.end = pos.top + pos.totalHeight + margins.top
+                            pos.begin = pos.top - margins.bottom;
+                            pos.end = pos.top + pos.totalHeight + margins.top;
                         }
                         return pos;
                     });
@@ -3819,7 +3819,7 @@ define([
                         lastIndex: lastIndex,
                         firstHeaderIndex: (+firstHeaderIndex) || -1,
                         lastHeaderIndex: (+lastHeaderIndex) || -1
-                    }
+                    };
                     var eventObject = document.createEvent("CustomEvent");
                     eventObject.initCustomEvent("accessibilityannotationcomplete", true, false, detail);
                     this._element.dispatchEvent(eventObject);

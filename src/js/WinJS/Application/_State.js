@@ -287,7 +287,7 @@ define([
             if ((sessionState && Object.keys(sessionState).length > 0) || app._sessionStateLoaded) {
                 var stateString;
                 try {
-                    stateString = JSON.stringify(sessionState)
+                    stateString = JSON.stringify(sessionState);
                 } catch (e) {
                     stateString = "";
                     WinJS.Application.queueEvent({ type: "error", detail: e });

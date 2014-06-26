@@ -14,7 +14,7 @@ define([
     var resourceMap;
     var resourceLoader;
 
-    var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing
+    var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
 
     function processAllImpl(rootElement, count) {
         rootElement = rootElement || document.body;

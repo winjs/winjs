@@ -20,7 +20,7 @@ define([
 
             var strings = {
                 get nullCommand() { return _Resources._getWinJSString("ui/nullCommand").value; }
-            }
+            };
 
             var _AppBarBaseLayout = _Base.Class.define(function _AppBarBaseLayout_ctor(appBarEl, options) {
                 this._disposed = false;
@@ -147,7 +147,7 @@ define([
             var layoutType = "commands";
 
             var _AppBarCommandsLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarCommandsLayout_ctor(appBarEl) {
-                exports._AppBarBaseLayout.call(this, appBarEl, {_className: layoutClassName, _type: layoutType})
+                exports._AppBarBaseLayout.call(this, appBarEl, {_className: layoutClassName, _type: layoutType});
                 this._commandLayoutsInit(appBarEl);
             }, {
                 _getWidthOfCommands: function _AppBarCommandsLayout_getWidthOfCommands(commands) {
@@ -171,7 +171,7 @@ define([
                         for (var i = 0, len = commands.length; i < len; i++) {
                             command = commands[i].winControl || commands[i];
                             if (command._type === _Constants.typeSeparator) {
-                                separatorsCount++
+                                separatorsCount++;
                             } else if (command._type !== _Constants.typeContent) {
                                 // button, toggle, and flyout types all have the same width.
                                 buttonsCount++;
@@ -207,7 +207,7 @@ define([
                             }
                         }
                         return focusableCommands;
-                    }
+                    };
 
                     // Determines which set of commands the user could potentially reach through Home, End, and arrow keys.
                     // All commands in the commands layout AppBar, from left to right are in reach. Selection then Global.
@@ -447,5 +447,5 @@ define([
                 this.commandsUpdated();
             }
         },
-    }
+    };
 });

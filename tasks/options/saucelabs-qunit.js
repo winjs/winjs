@@ -72,7 +72,7 @@
                     "passed": details.result.passed,
                     "total": details.result.total,
                     "time": Math.ceil(parseFloat(details.result.runtime) / 1000)
-                }
+                };
             }
 
             if (!reportingStatus) {

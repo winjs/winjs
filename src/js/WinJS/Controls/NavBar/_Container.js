@@ -739,7 +739,7 @@ define([
                 },
 
                 _keyDownHandler: function NavBarContainer_keyDownHandler(ev) {
-                    var keyCode = ev.keyCode
+                    var keyCode = ev.keyCode;
                     if (!ev.altKey && (keyCode === Key.pageUp || keyCode === Key.pageDown)) {
                         var srcElement = ev.target;
                         if (_ElementUtilities._matchesSelector(srcElement, ".win-interactive, .win-interactive *")) {

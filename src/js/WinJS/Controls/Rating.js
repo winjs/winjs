@@ -901,7 +901,7 @@ define([
                     var number = parseFloat(string);
                     if (isNaN(number)) {
                         if (curString !== null) {
-                            return curString
+                            return curString;
                         } else {
                             return string;
                         }

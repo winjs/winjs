@@ -29,7 +29,7 @@ define([
                 }
             },
             enumerable: true
-        }
+        };
     }
 
     function createEventProperties(events) {

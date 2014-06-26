@@ -379,7 +379,7 @@ define([
                 /// </field>
                 sticky: {
                     get: function () {
-                        return false // Always false on phone.
+                        return false; // Always false on phone.
                     },
                     set: function (value) {
                         // NOP on phone
@@ -422,7 +422,7 @@ define([
                     set: function (value) {
                         this._closedDisplayMode = value;
                         if (!this.disabled) {
-                            var closedDisplayEnum = core.WebUICommandBarClosedDisplayMode
+                            var closedDisplayEnum = core.WebUICommandBarClosedDisplayMode;
                             if (value === closedDisplayMinimal) {
                                 commandBar.closedDisplayMode = closedDisplayEnum.minimal;
                             } else {

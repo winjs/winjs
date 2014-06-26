@@ -31,7 +31,7 @@ define([
         get propertyDoesNotExist() { return _Resources._getWinJSString("base/propertyDoesNotExist").value; },
         get idBindingNotSupported() { return _Resources._getWinJSString("base/idBindingNotSupported").value; },
         get nestedDOMElementBindingNotSupported() { return _Resources._getWinJSString("base/nestedDOMElementBindingNotSupported").value; }
-    }
+    };
 
     var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;
     var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
@@ -122,7 +122,7 @@ define([
                 }
             }
             return found;
-        }
+        };
         var bindingAction = function (v) {
             var found = resolveWeakRef();
             if (found) {

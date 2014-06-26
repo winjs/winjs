@@ -79,7 +79,7 @@
             if(bundle2.indexOf(file) !== -1) {
                 grunt.fail.warn("File duplicated in build output:\n " + file + ". Duplicate location:\n " + bundle2Name);
             }
-        })
+        });
     }
 
     function endsWith(str, target) {

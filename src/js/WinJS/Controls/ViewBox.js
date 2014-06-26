@@ -121,7 +121,7 @@ define([
                             // in the synchronous block in which _initialize was called.
                             Scheduler.schedule(function ViewBox_async_initialize() {
                                 that._updateLayout();
-                            }, Scheduler.Priority.normal, null, "WinJS.UI.ViewBox._updateLayout")
+                            }, Scheduler.Priority.normal, null, "WinJS.UI.ViewBox._updateLayout");
                         }
                     }
                 },

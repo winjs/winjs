@@ -348,7 +348,7 @@ define([
                         _currentElement = menu;
                     }
 
-                } while (_currentElement !== document.activeElement)
+                } while (_currentElement !== document.activeElement);
             };
 
             // Set focus to previous focusable element in the menu (loop if necessary).
@@ -371,7 +371,7 @@ define([
                         _currentElement = menu;
                     }
 
-                } while (_currentElement !== document.activeElement)
+                } while (_currentElement !== document.activeElement);
             };
 
             return Menu;

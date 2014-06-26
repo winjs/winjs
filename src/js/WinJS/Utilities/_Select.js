@@ -29,11 +29,11 @@ define([
             function stockGetLength() { return this.length; }
             function fixDataSource(dataSource) {
                 if (!dataSource.getValue) {
-                    dataSource.getValue = stockGetValue
+                    dataSource.getValue = stockGetValue;
                 }
 
                 if (!dataSource.getLength) {
-                    dataSource.getLength = stockGetLength
+                    dataSource.getLength = stockGetLength;
                 }
                 return dataSource;
             }

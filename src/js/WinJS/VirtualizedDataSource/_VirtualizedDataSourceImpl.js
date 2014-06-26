@@ -627,7 +627,7 @@ define([
                                     deleteUnnecessarySlot(slotToDelete);
                                 }
                             }
-                        }
+                        };
 
                         while (slotPrev || slotNext) {
                             if (slotPrev) {
@@ -1157,7 +1157,7 @@ define([
                                     completePromises(item, listeners);
                                 });
                             }
-                        }
+                        };
 
                         if (directFetchListeners) {
                             slot.directFetchListeners = null;
@@ -5425,7 +5425,7 @@ define([
                                 function () {
                                     if (--count === 0) {
                                         // when the count reaches zero cancel the incoming promise
-                                        signal.promise.cancel()
+                                        signal.promise.cancel();
                                         incomingPromise.cancel();
                                         if (currentGetCountPromise === getCountPromise) {
                                             getCountPromise = null;
@@ -5439,7 +5439,7 @@ define([
                         },
                         cancel: function () {
                             // if explicitly asked to cancel the incoming promise
-                            signal.promise.cancel()
+                            signal.promise.cancel();
                             incomingPromise.cancel();
                             if (currentGetCountPromise === getCountPromise) {
                                 getCountPromise = null;
@@ -5447,7 +5447,7 @@ define([
                         }
                     };
                     return currentGetCountPromise;
-                }
+                };
 
                 this.getCount = function () {
                     /// <signature helpKeyword="WinJS.UI.IListDataSource.getCount">
