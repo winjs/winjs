@@ -23,7 +23,7 @@
     "quotmark": false, // Enforces the consistency of quotation marks used throughout your code. 
     "undef": true, // Prohibits the use of explicitly undeclared variables.
     "unused": false, // Warns when you define and never use your variables.
-    "strict": false, // Requires all functions to run in ECMAScript 5's strict mode.
+    "strict": true, // Requires all functions to run in ECMAScript 5's strict mode.
     "trailing": false, // Makes it an error to leave a trailing whitespace in your code.
     "maxparams": false, // Lets you set the max number of formal parameters allowed per function.
     "maxdepth": false, // Lets you control how nested do you want your blocks to be.
@@ -54,7 +54,7 @@
     "moz": true, // Options tells JSHint that your code uses Mozilla JavaScript extensions. 
     "multistr": true, // Suppresses warnings about multi-line strings. Multi-line strings can be dangerous if you accidentally put a whitespace in between the escape character (\) and a new line.
     "notypeof": true, // Suppresses warnings about invalid typeof operator values. 
-    "proto": true, // Suppresses warnings about the __proto__ property.
+    "proto": false, // Suppresses warnings about the __proto__ property.
     "scripturl": true, // Suppresses warnings about the use of script-targeted URL's such as javascript:....
     "smarttabs": true, // Suppresses warnings about mixed tabs and spaces when the latter are used for alignmnent only.
     "shadow": true, // Suppresses warnings about variable shadowing i.e. declaring a variable that had been already declared somewhere in the outer scope.

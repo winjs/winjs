@@ -20,6 +20,7 @@ define([
     'WinJS/Controls/Tooltip',
     'WinJS/Controls/ViewBox'
     ], function() {
+    "use strict";
 
     return WinJS;
 });

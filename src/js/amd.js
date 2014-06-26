@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+"use strict";
 /*jshint -W079*/
 var require;
 /*jshint +W079*/
 var define;
 
 (function() {
-    "use strict";
 
     var defined = {};
     /*jshint -W020*/

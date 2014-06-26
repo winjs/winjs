@@ -17,6 +17,7 @@ define([
     'WinJS/ControlProcessor', 
     'WinJS/Controls/HtmlControl'
     ], function() {
+    "use strict";
 
 
     WinJS.Namespace.define("WinJS.Utilities", {

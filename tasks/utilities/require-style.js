@@ -2,6 +2,7 @@
 // Has special WinJS-specific behavior that wasn't achievable with libraries like require-less
 // Requires the 'platform' key to exist in the RequireJS config, with a value of 'desktop' or 'phone'
 define(['require'], function(req) {
+    "use strict";
 
     var api = {};
     var lessImports = [];
