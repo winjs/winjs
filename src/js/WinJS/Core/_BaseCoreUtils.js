@@ -24,7 +24,7 @@ define([
     }
 
     return {
-        _hasWinRT: hasWinRT,
+        hasWinRT: hasWinRT,
         markSupportedForProcessing: markSupportedForProcessing,
         _setImmediate: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
             setTimeout(handler, 0);
