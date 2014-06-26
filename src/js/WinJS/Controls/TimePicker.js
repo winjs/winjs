@@ -376,8 +376,9 @@ define([
                 },
 
                 _updateLayout: function () {
-                    if (!this._domElement)
+                    if (!this._domElement) {
                         return;
+                    }
                     this._updateValues();
                 },
 

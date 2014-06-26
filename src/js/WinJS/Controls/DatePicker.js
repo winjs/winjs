@@ -440,8 +440,9 @@ define([
                 },
 
                 _updateDisplay: function () {
-                    if (!this._domElement)
+                    if (!this._domElement) {
                         return;
+                    }
 
                     // all controls get populated at the same time, so any check is OK
                     //

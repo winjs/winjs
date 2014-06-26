@@ -35,11 +35,13 @@ define(['require'], function(req) {
     // Used to get the full path to a resource by name
     api.normalize = function(name, normalize) {
         var relativePath = name;
-        if (!relativePath.match(/\.less$/))
+        if (!relativePath.match(/\.less$/)) {
             relativePath += ".less";
+        }
         var filePath = req.toUrl(relativePath);
-        if (!moduleNames[filePath])
+        if (!moduleNames[filePath]) {
             moduleNames[filePath] = name;
+        }
         return filePath;
     };
 

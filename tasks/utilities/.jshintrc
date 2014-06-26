@@ -6,7 +6,7 @@
     */
     "bitwise": false, // Prohibits the use of bitwise operators. Bitwise operators are very rare in JavaScript programs and quite often & is simply a mistyped &&.
     "camelcase": false, // Allows you to force all variable names to use either camelCase style or UPPER_CASE with underscores.
-    "curly": false, // Requires you to always put curly braces around blocks in loops and conditionals. 
+    "curly": true, // Requires you to always put curly braces around blocks in loops and conditionals. 
     "eqeqeq": false, // Prohibits the use of == and != in favor of === and !==
     "es3": false, // Prohibits the use of syntax beynd ECMAScript 3 specification.
     "forin": false, // Requires all for in loops to filter object's items.

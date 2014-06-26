@@ -629,10 +629,12 @@ define([
         /// If the specified object is an observable proxy, the original object is returned, otherwise the same object is returned.
         /// </returns>
         /// </signature>
-        if (data && data.backingData)
+        if (data && data.backingData) {
             return data.backingData;
-        else
+        }
+        else {
             return data;
+        }
     };
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {

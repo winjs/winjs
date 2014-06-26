@@ -1719,8 +1719,9 @@ define([
             while (e) {
                 left -= e.offsetLeft;
 
-                if (e === parent)
+                if (e === parent) {
                     break;
+                }
                 e = e.parentNode;
             }
 
@@ -1751,8 +1752,9 @@ define([
             while (e) {
                 top -= e.offsetTop;
 
-                if (e === parent)
+                if (e === parent) {
                     break;
+                }
                 e = e.parentNode;
             }
 
