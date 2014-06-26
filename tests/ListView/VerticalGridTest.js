@@ -58,13 +58,13 @@ WinJSTests.VerticalGridTests = function () {
                 rowsPerPage: 1,
                 columnsPerPage: 1,
                 pages: 5
+            },
+            {
+                rowsPerPage: 4,
+                columnsPerPage: 3,
+                pages: 5
             }
         ];
-
-        // issue #342
-        if (name === "testSetScrollPosition") {
-            return;
-        }
 
         configurations.forEach(function (options) {
             var testName = name + "_VGrid_" + options.rowsPerPage + 'X' + options.columnsPerPage + 'X' + options.pages;
@@ -107,6 +107,7 @@ WinJSTests.VerticalGridTests = function () {
 
         var scrollMax = 0;
         var increment = 50;
+        var that = this;
         this.lvUtils.waitForReady(lv)().done(function () {
             new asyncWhile(function () {
                 scrollMax = viewport.scrollHeight - viewport.clientHeight;
@@ -116,8 +117,7 @@ WinJSTests.VerticalGridTests = function () {
                     var targetScrollPosition = Math.min(viewport.scrollTop + increment, scrollMax);
                     lv.scrollPosition = targetScrollPosition;
 
-                    //use requestAnimationFrame to match ListView's timing
-                    requestAnimationFrame(function () {
+                    that.lvUtils.waitForReady(lv)().done(function () {
                         LiveUnit.Assert.areEqual(targetScrollPosition, viewport.scrollTop);
                         c();
                     });
@@ -131,6 +131,7 @@ WinJSTests.VerticalGridTests = function () {
         var viewport = lv.element.querySelector(".win-viewport");
 
         var increment = 50;
+        var that = this;
         new asyncWhile(function () {
             var scrollMax = viewport.scrollHeight - viewport.clientHeight;
             return WinJS.Promise.wrap(viewport.scrollTop < scrollMax);
@@ -138,8 +139,7 @@ WinJSTests.VerticalGridTests = function () {
             return new WinJS.Promise(function (c) {
                 viewport.scrollTop += increment;
 
-                //use requestAnimationFrame to match ListView's timing
-                requestAnimationFrame(function () {
+                that.lvUtils.waitForReady(lv)().done(function () {
                     checkFirstLastVisible(lv);
                     c();
                 });
@@ -163,6 +163,7 @@ WinJSTests.VerticalGridTests = function () {
         var viewport = lv.element.querySelector(".win-viewport");
 
         var increment = 50;
+        var that = this;
         new asyncWhile(function () {
             var scrollMax = viewport.scrollHeight - viewport.clientHeight;
             return WinJS.Promise.wrap(viewport.scrollTop < scrollMax);
@@ -170,8 +171,7 @@ WinJSTests.VerticalGridTests = function () {
             return new WinJS.Promise(function (c) {
                 viewport.scrollTop += increment;
 
-                //use requestAnimationFrame to match ListView's timing
-                requestAnimationFrame(function () {
+                that.lvUtils.waitForReady(lv)().done(function () {
                     checkFirstLastVisible(lv);
                     c();
                 });
