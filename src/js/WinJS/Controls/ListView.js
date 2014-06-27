@@ -203,6 +203,15 @@ define([
 
                 endZoom: function (isCurrentView) {
                     this._listView._endZoom(isCurrentView);
+                },
+
+                pinching: {
+                    get: function() {
+                        return this._listView._pinching;
+                    },
+                    set: function(value) {
+                        this._listView._pinching = value;
+                    }
                 }
             });
 

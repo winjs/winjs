@@ -1513,13 +1513,8 @@ define([
 
                 _pinching: {
                     set: function (value) {
-                        if (this._elementInIsListView) {
-                            this._elementIn.winControl._pinching = value;
-                        }
-
-                        if (this._elementOutIsListView) {
-                            this._elementOut.winControl._pinching = value;
-                        }
+                        this._viewIn.pinching = value;
+                        this._viewOut.pinching = value;
                     }
                 }
             });

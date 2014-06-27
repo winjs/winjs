@@ -738,6 +738,49 @@ WinJSTests.SemanticZoomTests = function () {
             complete();
         });
     };
+
+    this.testSezoPinching = function () {
+        var sezoDiv = document.getElementById("sezoDiv"),
+            childDiv1 = document.getElementById("child1"),
+            childDiv2 = document.getElementById("child2");
+
+        childDiv1.winControl = {
+            zoomableView: {
+                pinching: false,
+                getPanAxis: function() {
+                    return "horizontal";
+                },
+                configureForZoom: function() {
+                    //noop
+                }
+            }
+        }
+
+        childDiv2.winControl = {
+            zoomableView: {
+                pinching: false,
+                getPanAxis: function() {
+                    return "horizontal";
+                },
+                configureForZoom: function() {
+                    //noop
+                }
+            }
+        }
+
+        var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
+
+        LiveUnit.Assert.areEqual(false, childDiv1.winControl.zoomableView.pinching);
+        LiveUnit.Assert.areEqual(false, childDiv2.winControl.zoomableView.pinching);
+
+        sezo._pinching = true;
+        LiveUnit.Assert.areEqual(true, childDiv1.winControl.zoomableView.pinching);
+        LiveUnit.Assert.areEqual(true, childDiv2.winControl.zoomableView.pinching);
+        
+        sezo._pinching = false;
+        LiveUnit.Assert.areEqual(false, childDiv1.winControl.zoomableView.pinching);
+        LiveUnit.Assert.areEqual(false, childDiv2.winControl.zoomableView.pinching);
+    };
 };
 
 if (WinJS.UI.SemanticZoom) {
