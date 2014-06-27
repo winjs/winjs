@@ -488,8 +488,8 @@ define([
                     for (eventType in EVENTS_DISMISS) {
                         this._registerEventToListener(this._anchorElement, eventType, this);
                     }
-
-
+                    this._registerEventToListener(this._anchorElement, "contextmenu", this);
+                    this._registerEventToListener(this._anchorElement, "MSHoldVisual", this);
                 },
 
                 _handleEvent: function (event) {
@@ -547,6 +547,8 @@ define([
                                 return;
                             }
                             this._onDismiss();
+                        } else if (eventType === "contextmenu" || eventType === "MSHoldVisual") {
+                            event.preventDefault();
                         }
                     }
                 },
