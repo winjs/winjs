@@ -9,15 +9,10 @@ define([
     'WinJS/Controls/FlipView',
     'WinJS/Controls/ItemContainer',
     'WinJS/Controls/Repeater',
+    'WinJS/Controls/ToggleSwitch',
     'WinJS/Controls/SemanticZoom',
     'WinJS/Controls/Pivot',
-    'WinJS/Controls/Flyout',
     'WinJS/Controls/AppBar/_AppBarPhone',
-    'WinJS/Controls/Menu',
-    'WinJS/Controls/SearchBox',
-    'WinJS/Controls/SettingsFlyout',
-    'WinJS/Controls/NavBar',
-    'WinJS/Controls/Tooltip',
     'WinJS/Controls/ViewBox'
     ], function() {
     "use strict";
