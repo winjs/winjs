@@ -259,7 +259,7 @@ define([
             /// </field>
             childFocus: {
                 set: function (e) {
-                    if (e != this._focusElement) {
+                    if (e !== this._focusElement) {
                         if (e && e.parentNode) {
                             this._focusElement = e;
                         } else {

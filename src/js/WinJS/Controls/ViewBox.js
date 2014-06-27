@@ -99,8 +99,8 @@ define([
                 _initialize: function () {
                     var box = this.element;
                     if (box.firstElementChild !== this._sizer) {
-                        if (_BaseUtils.validation) {
-                            if (box.childElementCount != 1) {
+                        if (WinJS.validation) {
+                            if (box.childElementCount !== 1) {
                                 throw new _ErrorFromName("WinJS.UI.ViewBox.InvalidChildren", strings.invalidViewBoxChildren);
                             }
                         }

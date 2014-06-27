@@ -1042,7 +1042,7 @@ define([
                             // Move to last element
                             this._currentFocusedIndex = this._findPreviousSuggestionElementIndex(this._suggestionsData.length);
                         }
-                        if (this._currentFocusedIndex != -1) {
+                        if (this._currentFocusedIndex !== -1) {
                             this._selectSuggestionAtIndex(this._currentFocusedIndex);
                             this._updateQueryTextWithSuggestionText(this._currentFocusedIndex);
                             this._updateSearchButtonClass();

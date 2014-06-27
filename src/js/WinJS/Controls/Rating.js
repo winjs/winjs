@@ -954,7 +954,7 @@ define([
                 _updateAverageStar: function () {
                     var style = this._averageRatingElement.style;
                     var nextStyle = this._averageRatingElement.nextSibling.style;
-                    if (getComputedStyle(this._element).direction == "rtl") {
+                    if (getComputedStyle(this._element).direction === "rtl") {
                         style.backgroundPosition = "right";
                         style.paddingRight = this._elementPadding;
                         style.borderRight = this._elementBorder;
@@ -1096,7 +1096,7 @@ define([
                                     var elementStyle = getComputedStyle(this._elements[i]);
                                     this._elementWidth = elementStyle.width;
 
-                                    if (getComputedStyle(this._element).direction == "rtl") {
+                                    if (getComputedStyle(this._element).direction === "rtl") {
                                         this._elementPadding = elementStyle.paddingRight;
                                         this._elementBorder = elementStyle.borderRight;
                                     } else {

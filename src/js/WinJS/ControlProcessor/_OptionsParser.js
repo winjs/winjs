@@ -311,7 +311,7 @@ define([
                 _unexpectedToken: function (expected) {
                     var unexpected = (this._current.type === imports.tokenType.error ? "'" + this._current.value + "'" : tokenTypeName(this._current.type));
                     if (expected) {
-                        if (arguments.length == 1) {
+                        if (arguments.length === 1) {
                             expected = tokenTypeName(expected);
                             this._error(_Resources._formatString(strings.unexpectedTokenExpectedToken, unexpected, expected, this._currentOffset()));
                         } else {
@@ -393,7 +393,7 @@ define([
                             return this._evaluateArrayLiteral();
 
                         case imports.tokenType.identifier:
-                            if (this._peek(imports.tokenType.identifier).type == imports.tokenType.leftParentheses) {
+                            if (this._peek(imports.tokenType.identifier).type === imports.tokenType.leftParentheses) {
                                 return requireSupportedForProcessing(this._evaluateObjectQueryExpression());
                             }
                             return requireSupportedForProcessing(this._evaluateIdentifierExpression());
@@ -541,7 +541,7 @@ define([
                             return this._evaluateArrayLiteral();
 
                         case imports.tokenType.identifier:
-                            if (this._peek(imports.tokenType.identifier).type == imports.tokenType.leftParentheses) {
+                            if (this._peek(imports.tokenType.identifier).type === imports.tokenType.leftParentheses) {
                                 return this._readObjectQueryExpression();
                             }
                             return this._readIdentifierExpression();

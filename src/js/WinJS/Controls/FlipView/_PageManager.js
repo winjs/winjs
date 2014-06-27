@@ -55,7 +55,7 @@ define([
                         if (record.attributeName === "dir") {
                             dirChanged = true;
                         } else if (record.attributeName === "style") {
-                            dirChanged = (that._cachedStyleDir != element.style.direction);
+                            dirChanged = (that._cachedStyleDir !== element.style.direction);
                         }
                         if (dirChanged) {
                             that._cachedStyleDir = element.style.direction;
@@ -1651,7 +1651,7 @@ define([
 
                             // We started at the item before prevMarker (going backwards), so we will exit if all
                             // the pages in the buffer are empty.
-                            if (endNonEmptyPage == this._prevMarker.prev) {
+                            if (endNonEmptyPage === this._prevMarker.prev) {
                                 break;
                             }
                         }
@@ -1661,7 +1661,7 @@ define([
 
                             // We started at prevMarker (going forward), so we will exit if all the pages in the
                             // buffer are empty.
-                            if (startNonEmptyPage == this._prevMarker) {
+                            if (startNonEmptyPage === this._prevMarker) {
                                 break;
                             }
                         }

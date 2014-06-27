@@ -1255,7 +1255,7 @@ define([
 
                         if (index < this._currentIndexOnScreen) {
                             this._currentIndexOnScreen--;
-                        } else if (index == this._currentIndexOnScreen) {
+                        } else if (index === this._currentIndexOnScreen) {
                             this.selectedIndex = Math.min(this.items.length - 1, this._currentIndexOnScreen);
                         }
 

@@ -3450,7 +3450,7 @@ define([
                                 slotRefreshFirst = slotRefreshLast = slotRefresh;
                                 sequenceLength = 1;
                             }
-                            for (slot = sequenceOld.first; slot != sequenceOld.last; slot = slot.next) {
+                            for (slot = sequenceOld.first; slot !== sequenceOld.last; slot = slot.next) {
                                 var slotRefreshNext = slotRefreshFromSlot(slot.next);
 
                                 if (slotRefresh && slotRefreshNext && (slotRefresh.lastInSequence || slotRefresh.next !== slotRefreshNext)) {

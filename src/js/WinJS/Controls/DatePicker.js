@@ -106,7 +106,7 @@ define([
             function yearDiff(start, end) {
                 var yearCount = 0;
 
-                if (start.era == end.era) {
+                if (start.era === end.era) {
                     yearCount = end.year - start.year;
                 }
                 else {
@@ -290,7 +290,7 @@ define([
                         }
 
                         var oldDate = this._currentDate;
-                        if (oldDate != newDate) {
+                        if (oldDate !== newDate) {
                             this._currentDate = newDate;
                             this._updateDisplay();
                         }

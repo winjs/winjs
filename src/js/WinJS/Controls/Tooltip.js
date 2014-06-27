@@ -112,7 +112,7 @@ define([
                     infoTooltipNonTouchShowDelay = 2.5 * mouseHoverTime;
                     messageDuration = uiSettings.messageDuration * 1000;  // uiSettings.messageDuration is in seconds.
                     var handedness = uiSettings.handPreference;
-                    isLeftHanded = (handedness == Windows.UI.ViewManagement.HandPreference.leftHanded);
+                    isLeftHanded = (handedness === Windows.UI.ViewManagement.HandPreference.leftHanded);
                 }
                 hasInitWinRTSettings = true;
 
@@ -523,7 +523,7 @@ define([
                             }
                         }
                         if (eventType in EVENTS_INVOKE) {
-                            if (event.pointerType == PT_TOUCH) {
+                            if (event.pointerType === PT_TOUCH) {
                                 this._onInvoke("touch", "never", event);
                                 this._showTrigger = "touch";
                             } else {
@@ -535,8 +535,8 @@ define([
                             this._contactPoint = { x: event.clientX, y: event.clientY };
                         } else if (eventType in EVENTS_DISMISS) {
                             var eventTrigger;
-                            if (event.pointerType == PT_TOUCH) {
-                                if (eventType == "pointerdown") {
+                            if (event.pointerType === PT_TOUCH) {
+                                if (eventType === "pointerdown") {
                                     return;
                                 }
                                 eventTrigger = "touch";
@@ -544,7 +544,7 @@ define([
                             else {
                                 eventTrigger = eventType.substring(0, 3) === "key" ? "keyboard" : "mouse";
                             }
-                            if (eventType != "focusout" && eventTrigger != this._showTrigger) {
+                            if (eventType !== "focusout" && eventTrigger !== this._showTrigger) {
                                 return;
                             }
                             this._onDismiss();
@@ -588,7 +588,7 @@ define([
                     var value;
                     this._useAnimation = true;
 
-                    if (type == "nodelay") {
+                    if (type === "nodelay") {
                         value = 0;
                         this._useAnimation = false;
                     }
@@ -597,14 +597,14 @@ define([
                         // If the mouse is moved immediately from another anchor that has
                         // tooltip open, we should use a shorter delay
                         if (curTime - lastCloseTime <= RESHOW_THRESHOLD) {
-                            if (type == "touch") {
+                            if (type === "touch") {
                                 value = this._infotip ? DELAY_RESHOW_INFOTIP_TOUCH : DELAY_RESHOW_NONINFOTIP_TOUCH;
                             }
                             else {
                                 value = this._infotip ? DELAY_RESHOW_INFOTIP_NONTOUCH : DELAY_RESHOW_NONINFOTIP_NONTOUCH;
                             }
                             this._useAnimation = false;
-                        } else if (type == "touch") {
+                        } else if (type === "touch") {
                             value = this._infotip ? DELAY_INITIAL_TOUCH_LONG : DELAY_INITIAL_TOUCH_SHORT;
                         } else {
                             value = this._infotip ? infoTooltipNonTouchShowDelay : nonInfoTooltipNonTouchShowDelay;
@@ -671,7 +671,7 @@ define([
                             // If the right boundary is outside the window, set it to align with the window right boundary
                             left = Math.min(Math.max(left, 0), viewport.width - tip.width - SAFETY_NET_GAP);
 
-                            top = (placement == "top") ? anchor.y - tip.height - this._offset : anchor.y + anchor.height + this._offset;
+                            top = (placement === "top") ? anchor.y - tip.height - this._offset : anchor.y + anchor.height + this._offset;
                             break;
                         case "left":
                         case "right":
@@ -682,7 +682,7 @@ define([
                             // If the bottom boundary is outside the window, set it to align with the window bottom boundary
                             top = Math.min(Math.max(top, 0), viewport.height - tip.height - SAFETY_NET_GAP);
 
-                            left = (placement == "left") ? anchor.x - tip.width - this._offset : anchor.x + anchor.width + this._offset;
+                            left = (placement === "left") ? anchor.x - tip.width - this._offset : anchor.x + anchor.width + this._offset;
                             break;
                     }
 
@@ -741,7 +741,7 @@ define([
                     var order = fallback_order[this._placement];
                     var length = order.length;
                     for (var i = 0; i < length; i++) {
-                        if (i == length - 1 || this._canPositionOnSide(order[i], viewport, anchor, tip)) {
+                        if (i === length - 1 || this._canPositionOnSide(order[i], viewport, anchor, tip)) {
                             this._positionOnSide(order[i], viewport, anchor, tip);
                             break;
                         }
@@ -782,7 +782,7 @@ define([
                     this._removeTooltip = function (event) {
                         var current = that._anchorElement;
                         while (current) {
-                            if (event.target == current) {
+                            if (event.target === current) {
                                 document.body.removeEventListener("DOMNodeRemoved", that._removeTooltip, false);
                                 that._cleanUpDOM();
                                 break;
@@ -813,7 +813,7 @@ define([
 
                     // To handle keyboard support, we only want to display tooltip on the first tab key event only
                     if (event && event.type === "keyup") {
-                        if (this._lastKeyOrBlurEvent == "keyboard" ||
+                        if (this._lastKeyOrBlurEvent === "keyboard" ||
                             !this._lastKeyOrBlurEvent && event.keyCode !== Key.tab) {
                             return;
                         }
@@ -826,7 +826,7 @@ define([
                     if (event) { // Open through interaction
                         this._contactPoint = { x: event.clientX, y: event.clientY };
                         // Tooltip display offset differently for touch events and non-touch events
-                        if (type == "touch") {
+                        if (type === "touch") {
                             this._offset = OFFSET_TOUCH;
                         } else if (type === "keyboard") {
                             this._offset = OFFSET_KEYBOARD;
@@ -834,7 +834,7 @@ define([
                             this._offset = OFFSET_MOUSE;
                         }
                     } else { // Open Programmatically
-                        if (type == "touch") {
+                        if (type === "touch") {
                             this._offset = OFFSET_PROGRAMMATIC_TOUCH;
                         } else {
                             this._offset = OFFSET_PROGRAMMATIC_NONTOUCH;

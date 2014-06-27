@@ -292,7 +292,7 @@ define([
             var leftKey = rtl ? Key.rightArrow : Key.leftArrow;
             var rightKey = rtl ? Key.leftArrow : Key.rightArrow;
 
-            if (event.keyCode === leftKey || event.keyCode == rightKey || event.keyCode === Key.home || event.keyCode === Key.end) {
+            if (event.keyCode === leftKey || event.keyCode === rightKey || event.keyCode === Key.home || event.keyCode === Key.end) {
 
                 var globalCommandHasFocus = this._primaryCommands.contains(document.activeElement);
                 var focusableCommands = this._getFocusableCommandsInLogicalOrder(globalCommandHasFocus);

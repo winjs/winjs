@@ -421,7 +421,7 @@ define([
                     /// <param name="eventCallback" type="Function" locid="WinJS.UI.ToggleSwitch.addEventListener_p:eventCallback">The event handler function to associate with this event.</param>
                     /// <param name="capture" type="Boolean" locid="WinJS.UI.ToggleSwitch.addEventListener_p:capture">Set to true to register the event handler for the capturing phase; set to false to register for the bubbling phase.</param>
                     /// </signature>
-                    if (eventName == "change") {
+                    if (eventName === "change") {
                         // Set the capture to be false explicitly because we want the change events for Toggle to be listened only in bubble up phase
                         // Therefore, the change events would only happen when users have finished their actions.
                         capture = false;
@@ -439,7 +439,7 @@ define([
                     /// <param name="eventCallback" type="Function" locid="WinJS.UI.ToggleSwitch.removeEventListener_p:eventCallback">The event handler function to remove.</param>
                     /// <param name="capture" type="Boolean" locid="WinJS.UI.ToggleSwitch.removeEventListener_p:capture">Set to true to unregister the event handler for the capturing phase; otherwise, set to false to unregister the event handler for the bubbling phase.</param>
                     /// </signature>
-                    if (eventName == "change") {
+                    if (eventName === "change") {
                         // Set the capture to be false explicitly because we only allow the user to add change events that are listened to in bubble up phase.
                         // Therefore it is not possible to remove a change event that is listened to in the capture phase.
                         capture = false;

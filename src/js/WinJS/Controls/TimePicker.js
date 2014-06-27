@@ -280,7 +280,7 @@ define([
                     //prevent divide by 0, and leave user's input intact
                     get: function () { return Math.max(1, Math.abs(this._minuteIncrement | 0) % 60); },
                     set: function (value) {
-                        if (this._minuteIncrement != value) {
+                        if (this._minuteIncrement !== value) {
                             this._minuteIncrement = value;
                             this._init();
                         }

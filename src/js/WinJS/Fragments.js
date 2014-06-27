@@ -220,7 +220,7 @@ define([
             //
             if (e.href !== "") {
                 var href = e.getAttribute("href");
-                if (href && href[0] != "#") {
+                if (href && href[0] !== "#") {
                     e.href = e.href;
                 }
             }
@@ -367,7 +367,7 @@ define([
 
         if (!href) {
             cacheStore = {};
-        } else if (typeof (href) == "string") {
+        } else if (typeof (href) === "string") {
             delete cacheStore[href.toLowerCase()];
         } else {
             delete _ElementUtilities.data(href).docFragment;

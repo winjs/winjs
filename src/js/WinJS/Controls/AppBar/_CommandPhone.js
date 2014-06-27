@@ -264,7 +264,7 @@ define([
                         return this._commandBarIconButton.isChecked;
                     },
                     set: function (value) {
-                        value == !!value;
+                        value = !!value;
                         this._commandBarIconButton.isChecked = value;
                     }
                 },

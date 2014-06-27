@@ -74,7 +74,7 @@ define([
                         if (record.attributeName === "dir") {
                             return true;
                     } else if (record.attributeName === "style") {
-                            return (that._cachedStyleDir != record.target.style.direction);
+                            return (that._cachedStyleDir !== record.target.style.direction);
                     } else {
                             return false;
                     }

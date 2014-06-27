@@ -1417,7 +1417,7 @@ define([
                             return element;
                         }
                         if (_ElementUtilities.hasClass(element, "win-flyout")
-                         && element != element.winControl._previousFocus) {
+                         && element !== element.winControl._previousFocus) {
                             var flyoutControl = element.winControl;
                             // If _previousFocus was in a light dismissable AppBar, then this Flyout is considered of an extension of it and that AppBar will not close.
                             // Hook up a 'focusout' listener to this Flyout element to make sure that light dismiss AppBars close if focus moves anywhere other than back to an AppBar.

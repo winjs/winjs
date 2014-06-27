@@ -1975,7 +1975,7 @@ define([
                         for (var i in updater.selectionFirst) {
                             if (updater.selectionFirst.hasOwnProperty(i)) {
                                 var range = updater.selectionFirst[i];
-                                updater.selectionChanged = updater.selectionChanged || ((range.newLastIndex - range.newFirstIndex) != (range.oldLastIndex - range.oldFirstIndex));
+                                updater.selectionChanged = updater.selectionChanged || ((range.newLastIndex - range.newFirstIndex) !== (range.oldLastIndex - range.oldFirstIndex));
                                 if (range.newFirstIndex <= range.newLastIndex) {
                                     newSelection.push({
                                         firstIndex: range.newFirstIndex,
@@ -2704,7 +2704,7 @@ define([
                         if (record.attributeName === "dir") {
                             dirChanged = true;
                         } else if (record.attributeName === "style") {
-                            dirChanged = (that._cachedStyleDir != record.target.style.direction);
+                            dirChanged = (that._cachedStyleDir !== record.target.style.direction);
                         }
                         if (dirChanged) {
                             that._cachedStyleDir = record.target.style.direction;

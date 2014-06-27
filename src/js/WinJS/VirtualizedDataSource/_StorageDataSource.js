@@ -287,7 +287,7 @@ define([
 
                                 // If we have the full resolution thumbnail, we can cancel further updates and complete the promise
                                 // when current work is complete.
-                                if ((thumbnail.type != Windows.Storage.FileProperties.ThumbnailType.icon) && !thumbnail.returnedSmallerCachedSize) {
+                                if ((thumbnail.type !== Windows.Storage.FileProperties.ThumbnailType.icon) && !thumbnail.returnedSmallerCachedSize) {
                                     _WriteProfilerMark("WinJS.UI.StorageDataSource:loadThumbnail complete,info");
                                     item.data.removeEventListener("thumbnailupdated", thumbnailUpdateHandler);
                                     shouldRespondToThumbnailUpdate = false;

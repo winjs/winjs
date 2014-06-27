@@ -28,7 +28,7 @@ define([
 
     function getClassName(e) {
         var name = e.className || "";
-        if (typeof (name) == "string") {
+        if (typeof (name) === "string") {
             return name;
         }
         else {
@@ -40,7 +40,7 @@ define([
         // so this logic makes the comparison a bit more compact.
         //
         var name = e.className || "";
-        if (typeof (name) == "string") {
+        if (typeof (name) === "string") {
             e.className = value;
         }
         else {
@@ -208,7 +208,7 @@ define([
             var l = names.length;
             var found = false;
             for (var i = 0; i < l; i++) {
-                if (names[i] == name) {
+                if (names[i] === name) {
                     found = true;
                 }
             }
@@ -222,7 +222,7 @@ define([
             }
             else {
                 setClassName(e, names.reduce(function (r, e) {
-                    if (e == name) {
+                    if (e === name) {
                         return r;
                     }
                     else if (r && r.length > 0) {
@@ -1679,7 +1679,7 @@ define([
                 var names = className.trim().split(" ");
                 var l = names.length;
                 for (var i = 0; i < l; i++) {
-                    if (names[i] == name) {
+                    if (names[i] === name) {
                         return true;
                     }
                 }

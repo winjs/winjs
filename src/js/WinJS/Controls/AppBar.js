@@ -173,8 +173,8 @@ define([
             function _setFocusToPreviousAppBarHelperNeither(startIndex, appBars) {
                 for (var i = startIndex; i >= 0; i--) {
                     if (appBars[i].winControl
-                     && appBars[i].winControl.placement != _Constants.appBarPlacementBottom
-                     && appBars[i].winControl.placement != _Constants.appBarPlacementTop
+                     && appBars[i].winControl.placement !== _Constants.appBarPlacementBottom
+                     && appBars[i].winControl.placement !== _Constants.appBarPlacementTop
                      && !appBars[i].winControl.hidden
                      && appBars[i].winControl._focusOnLastFocusableElement
                      && appBars[i].winControl._focusOnLastFocusableElement()) {
@@ -246,8 +246,8 @@ define([
             function _setFocusToNextAppBarHelperNeither(startIndex, appBars) {
                 for (var i = startIndex; i < appBars.length; i++) {
                     if (appBars[i].winControl
-                     && appBars[i].winControl.placement != _Constants.appBarPlacementBottom
-                     && appBars[i].winControl.placement != _Constants.appBarPlacementTop
+                     && appBars[i].winControl.placement !== _Constants.appBarPlacementBottom
+                     && appBars[i].winControl.placement !== _Constants.appBarPlacementTop
                      && !appBars[i].winControl.hidden
                      && appBars[i].winControl._focusOnFirstFocusableElement
                      && appBars[i].winControl._focusOnFirstFocusableElement()) {
@@ -1219,11 +1219,11 @@ define([
                     appBarFinalDiv = appBarFinalDiv.length >= 1 ? appBarFinalDiv[0] : null;
 
                     // Remove the firstDiv & finalDiv if they are not at the appropriate locations
-                    if (appBarFirstDiv && (this._element.children[0] != appBarFirstDiv)) {
+                    if (appBarFirstDiv && (this._element.children[0] !== appBarFirstDiv)) {
                         appBarFirstDiv.parentNode.removeChild(appBarFirstDiv);
                         appBarFirstDiv = null;
                     }
-                    if (appBarFinalDiv && (this._element.children[this._element.children.length - 1] != appBarFinalDiv)) {
+                    if (appBarFinalDiv && (this._element.children[this._element.children.length - 1] !== appBarFinalDiv)) {
                         appBarFinalDiv.parentNode.removeChild(appBarFinalDiv);
                         appBarFinalDiv = null;
                     }
