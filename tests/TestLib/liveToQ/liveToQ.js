@@ -22,40 +22,30 @@
         qunitTestFixtureDiv = document.querySelector("#qunit-fixture");
 
         function addOptions() {
+            function createOption(id, label, initiallyChecked) {
+                var cb = document.createElement("input");
+                cb.type = "checkbox";
+                cb.id = id;
+                cb.checked = initiallyChecked;
+                var span = document.createElement("span");
+                span.innerHTML = label;
+                toolBar.appendChild(cb);
+                toolBar.appendChild(span);
+            }
+
             var toolBar = document.querySelector("#qunit-testrunner-toolbar");
             if (!toolBar) {
                 setTimeout(addOptions);
                 return;
             }
 
-            var cb = document.createElement("input");
-            cb.id = "breakOnAssertFail";
-            cb.type = "checkbox";
-            cb.checked = (QUnit.urlParams.breakonassertfail === "true" || QUnit.urlParams.breakonassertfail === true);
-            var span = document.createElement("span");
-            span.innerHTML = "Break on Assert fail";
-            toolBar.appendChild(cb);
-            toolBar.appendChild(span);
-
-            cb = document.createElement("input");
-            cb.id = "disableTestTimeout";
-            cb.type = "checkbox";
-            cb.checked = (QUnit.urlParams.disabletesttimeout === "true" || QUnit.urlParams.disabletesttimeout === true);
-            var span = document.createElement("span");
-            span.innerHTML = "Disable test timeout";
-            toolBar.appendChild(cb);
-            toolBar.appendChild(span);
-
-            cb = document.createElement("input");
-            cb.id = "fastAnimations";
-            cb.type = "checkbox";
-            cb.checked = (QUnit.urlParams.fastanimations === "true" || QUnit.urlParams.fastanimations === true);
-            var span = document.createElement("span");
-            span.innerHTML = "Fast Animations";
-            toolBar.appendChild(cb);
-            toolBar.appendChild(span);
+            createOption("breakOnAssertFail", "Break on Assert fail", QUnit.urlParams.breakonassertfail === "true" || QUnit.urlParams.breakonassertfail === true);
+            createOption("disableTestTimeout", "Disable test timeout", QUnit.urlParams.disabletesttimeout === "true" || QUnit.urlParams.disabletesttimeout === true);
+            createOption("fastAnimations", "Fast Animations", QUnit.urlParams.fastanimations === "true" || QUnit.urlParams.fastanimations === true);
+            createOption("loopTests", "Loop Tests", QUnit.urlParams.loop === "true" || QUnit.urlParams.loop === true);
 
             var btn = document.createElement("button");
+            btn.id = "startButton";
             btn.style.borderColor = btn.style.color = "#5E740B";
             btn.style.marginLeft = "4px";
             btn.innerHTML = "Start";
@@ -64,10 +54,11 @@
                 if (!hasRun && (WinJS.Utilities._fastAnimations === document.querySelector("#fastAnimations").checked)) {
                     start();
                 } else {
-                    var qs = "?autostart=true";
-                    qs += "&breakonassertfail=" + document.querySelector("#breakOnAssertFail").checked;
+                    var qs = "?breakonassertfail=" + document.querySelector("#breakOnAssertFail").checked;
                     qs += "&disabletesttimeout=" + document.querySelector("#disableTestTimeout").checked;
                     qs += "&fastanimations=" + document.querySelector("#fastAnimations").checked;
+                    qs += "&loop=" + document.querySelector("#loopTests").checked;
+                    qs += "&autostart=true";
                     if (QUnit.urlParams.module) {
                         qs += "&module=" + QUnit.urlParams.module;
                     }
@@ -182,18 +173,22 @@
     });
 
     QUnit.done(function (test_results) {
-        var tests = log.map(function (details) {
-            return {
-                name: details.name,
-                result: details.result,
-                expected: details.expected,
-                actual: details.actual,
-                source: details.source
-            }
-        });
-        test_results.tests = tests;
-        test_results.url = document.location.href;
-        window.global_test_results = test_results;
+        if (document.querySelector("#loopTests").checked) {
+            document.querySelector("#startButton").click();
+        } else {
+            var tests = log.map(function (details) {
+                return {
+                    name: details.name,
+                    result: details.result,
+                    expected: details.expected,
+                    actual: details.actual,
+                    source: details.source
+                }
+            });
+            test_results.tests = tests;
+            test_results.url = document.location.href;
+            window.global_test_results = test_results;
+        }
     });
 
     function formatString(string) {
