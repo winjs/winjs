@@ -10,6 +10,7 @@
     var phoneBase = config.phoneOutput + "js/base.js";
     var desktopUI = config.desktopOutput + "js/ui.js";
     var phoneUI = config.phoneOutput + "js/ui.js";
+    var desktopSingleFile = config.desktopOutput + "js/WinJS.js";
 
     var desktopBaseFiles = [];
     var phoneBaseFiles = [];
@@ -143,6 +144,27 @@
                 wrap: {
                     startFile: 'src/js/build/startUI.js',
                     endFile: 'src/js/build/endUI-phone.js'
+                },
+                done: done
+            }
+        },
+        singleFile: {
+            options: {
+                baseUrl: './src/js/',
+                paths: {
+                    "less": "../less",
+                    "less/phone": "empty:",
+                    "require-style": "../../tasks/utilities/require-style"
+                },
+                platform: "desktop",
+                optimize: 'none', // uglify2
+                useStrict: true,
+                name: 'amd',
+                include: ['WinJS'],
+                out: desktopSingleFile,
+                wrap: {
+                    startFile: 'src/js/build/startWinJS.js',
+                    endFile: 'src/js/build/endWinJS.js'
                 },
                 done: done
             }
