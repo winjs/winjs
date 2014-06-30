@@ -4,6 +4,8 @@
 
     var chalk = require("chalk");
     var table = require("text-table");
+    var config = require("../../config.js");
+    var grunt = config.grunt;
 
     module.exports = {
         reporter: function (results) {
@@ -50,6 +52,10 @@
             if (str) {
                 console.log(str + "\n\n " + chalk.red(chalk.bold(len + " lint error" +
                   ((len === 1) ? "" : "s") + "\n")));
+            }
+
+            if(len > 0) {
+                grunt.fail.warn(len + " lint error" + ((len === 1) ? "" : "s"));
             }
         }
 
