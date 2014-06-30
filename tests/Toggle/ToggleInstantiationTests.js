@@ -22,7 +22,7 @@ ToggleInstantiationTests = function () {
     var toggleUtils = new ToggleUtils();
 
     this.setUp = function (complete) {
-        toggleUtils.setUp(complete);
+        toggleUtils.setUp().then(complete);
     };
 
     this.tearDown = function () {

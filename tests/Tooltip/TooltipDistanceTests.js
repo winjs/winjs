@@ -26,7 +26,7 @@ TooltipDistanceTests = function () {
     var DISTANCE_TOLERANCE = 1;
 
     this.setUp = function (complete) {
-        tooltipUtils.setUp(complete);
+        tooltipUtils.setUp().then(complete);
     };
 
     this.tearDown = function () {

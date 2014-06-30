@@ -64,9 +64,15 @@ ToggleUtils.prototype = (function () {
             /// </summary>
             LiveUnit.LoggingCore.logComment("In setup");
             commonUtils.addTag("div", "toggle");
+            var cssLoadedPromise;
+            
             if (typeof (WebUnit) === 'undefined') {
-                commonUtils.addCss("ui-dark.css").then(complete);
+                cssLoadedPromise = commonUtils.addCss("ui-dark.css").then(complete);
+            } else {
+                cssLoadedPromise = WinJS.Promise.wrap();
             }
+            
+            return cssLoadedPromise;
         },
 
         //-----------------------------------------------------------------------------------

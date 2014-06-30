@@ -22,7 +22,7 @@ RatingTouchTests = function () {
     var commonUtils = new CommonUtils();
 
     this.setUp = function (complete) {
-        ratingUtils.setUp(complete);
+        ratingUtils.setUp().then(complete);
     };
 
     this.tearDown = function () {

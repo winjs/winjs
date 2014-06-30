@@ -23,7 +23,7 @@ var OptionTests = function () {
     var ratingUtils = new RatingUtils();
 
     this.setUp = function (complete) {
-        ratingUtils.setUp(complete);
+        ratingUtils.setUp().then(complete);
     };
 
     this.tearDown = function () {

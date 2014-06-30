@@ -35,7 +35,7 @@ TooltipPositionTests = function () {
         // Add a parent element.  This helps us with scrolling the anchor element when inside a <span>
         commonUtils.addTag("span", "parentElement");
         var parentElement = document.getElementById("parentElement");
-        tooltipUtils.setUp(complete);
+        var cssReady = tooltipUtils.setUp();
         // Move the anchor element beneath a <span> so we can test scrolling the <span>
         var span1 = document.createElement("span");
         span1.innerHTML = "AAAAAAA BBBBBBB CCCCCCC DDDDDD";
@@ -52,6 +52,8 @@ TooltipPositionTests = function () {
         commonUtils.addTag("div", "siblingAfterElement");
         var siblingAfterElement = document.getElementById("siblingAfterElement");
         siblingAfterElement.innerHTML = "siblingAfterElement";
+        
+        cssReady.then(complete);
     };
 
     this.tearDown = function () {

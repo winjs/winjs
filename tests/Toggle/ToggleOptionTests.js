@@ -25,7 +25,7 @@ var ToggleOptionTests = function() {
     var commonUtils = new CommonUtils();
 
     this.setUp = function(complete) {
-        toggleUtils.setUp(complete);
+        toggleUtils.setUp().then(complete);
     };
 
     this.tearDown = function() {

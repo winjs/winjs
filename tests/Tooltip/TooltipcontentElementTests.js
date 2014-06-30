@@ -22,7 +22,7 @@ TooltipContentElementTests = function () {
     var commonUtils = new CommonUtils();
 
     this.setUp = function (complete) {
-        tooltipUtils.setUp(complete);
+        tooltipUtils.setUp().then(complete);
     };
 
     this.tearDown = function () {

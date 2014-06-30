@@ -104,22 +104,25 @@ RatingUtils.prototype = (function () {
         cancelListener: null,
 
         //-----------------------------------------------------------------------------------
-        setUp: function (complete) {
+        setUp: function () {
             /// <summary>
             ///  Test setup to run prior to every test case.
             /// </summary>
             LiveUnit.LoggingCore.logComment("In setup");
             commonUtils.addTag("div", "rating");
+            var cssLoadedPromise;
 
             // Randomly included one of the WWA stylesheets.
             if (typeof (WebUnit) === 'undefined') {
                 if (Math.floor(Math.random() * 2)) {
-                    commonUtils.addCss("ui-light.css").then(complete);
+                    cssLoadedPromise = commonUtils.addCss("ui-light.css");
                     this.currentTheme = "light";
                 } else {
-                    commonUtils.addCss("ui-dark.css").then(complete);
+                    cssLoadedPromise = commonUtils.addCss("ui-dark.css");
                     this.currentTheme = "dark";
                 }
+            } else {
+                cssLoadedPromise = WinJS.Promise.wrap();
             }
 
             //WinBlue:280045
@@ -132,6 +135,8 @@ RatingUtils.prototype = (function () {
                     LiveUnit.LoggingCore.logComment("Caught exception for WinBlue:280045 ... " + e.message);
                 }
             };
+            
+            return cssLoadedPromise;
         },
 
         //-----------------------------------------------------------------------------------

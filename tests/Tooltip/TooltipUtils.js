@@ -61,16 +61,16 @@ TooltipUtils.prototype = (function () {
             ///  String specifying id of element to create.
             /// </param>
             LiveUnit.LoggingCore.logComment("In setup");
-            var callerIsDone = WinJS.Promise.timeout();
+            var cssLoadedPromise;
 
             if (typeof (WebUnit) === 'undefined') {
                 // We could use the "light style" too
                 // commonUtils.addCss("ui-light.css");
                 var dark = commonUtils.addCss("ui-dark.css");
                 var tooltip = commonUtils.addCss("Tooltip.css", true);
-                WinJS.Promise.join([callerIsDone, dark, tooltip]).then(complete);
+                cssLoadedPromise = WinJS.Promise.join([dark, tooltip]).then(complete);
             } else {
-                callerIsDone.then(complete);
+                cssLoadedPromise = WinJS.Promise.wrap();
             }
             // Create a default "anchor/trigger" element the tooltip will be attached to
             // and give it a border and default text so it's easier to see when visually
@@ -86,7 +86,9 @@ TooltipUtils.prototype = (function () {
             commonUtils.addTag("span", "temp");
             var element = document.getElementById("temp");
             element.tabIndex = "1";
-            },
+            
+            return cssLoadedPromise;
+        },
 
         //-----------------------------------------------------------------------------------
         cleanUp: function (id) {
