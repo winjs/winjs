@@ -6,10 +6,11 @@ define([
     '../Core/_Resources',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_SafeHtml',
     './Tooltip',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function ratingInit(_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, Tooltip) {
+    ], function ratingInit(_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, _SafeHtml, Tooltip) {
     "use strict";
 
     // Rating control implementation
@@ -362,7 +363,7 @@ define([
                             html = html + "<div class='" + msRatingUserEmpty + "'></div>";
                         }
                     }
-                    this._element.innerHTML = html;
+                    _SafeHtml.setInnerHTMLUnsafe(this._element, html);
                     var oneStar = this._element.firstElementChild;
                     var i = 0;
                     while (oneStar) {
