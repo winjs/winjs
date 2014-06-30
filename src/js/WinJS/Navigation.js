@@ -26,7 +26,7 @@ define([
             then(function () {
                 var waitForPromise = Promise.as();
                 var defaultPrevented = listeners.dispatchEvent(beforenavigateEventName, {
-                    setPromise: function (promise) { 
+                    setPromise: function (promise) {
                         /// <signature helpKeyword="WinJS.Navigation.beforenavigate.setPromise">
                         /// <summary locid="WinJS.Navigation.beforenavigate.setPromise">
                         /// Used to inform the ListView that asynchronous work is being performed, and that this
@@ -37,7 +37,7 @@ define([
                         /// </param>
                         /// </signature>
                     
-                        waitForPromise = waitForPromise.then(function() { return promise; }); 
+                        waitForPromise = waitForPromise.then(function() { return promise; });
                     },
                     location: proposed.location,
                     state: proposed.state
@@ -52,7 +52,7 @@ define([
             then(function () {
                 var waitForPromise = Promise.as();
                 listeners.dispatchEvent(navigatingEventName, {
-                    setPromise: function (promise) { 
+                    setPromise: function (promise) {
                         /// <signature helpKeyword="WinJS.Navigation.navigating.setPromise">
                         /// <summary locid="WinJS.Navigation.navigating.setPromise">
                         /// Used to inform the ListView that asynchronous work is being performed, and that this
@@ -63,7 +63,7 @@ define([
                         /// </param>
                         /// </signature>
                     
-                        waitForPromise = waitForPromise.then(function() { return promise; }); 
+                        waitForPromise = waitForPromise.then(function() { return promise; });
                     },
                     location: history.current.location,
                     state: history.current.state,
@@ -79,7 +79,7 @@ define([
             value: value,
             location: history.current.location,
             state: history.current.state,
-            setPromise: function (promise) { 
+            setPromise: function (promise) {
                 /// <signature helpKeyword="WinJS.Navigation.navigated.setPromise">
                 /// <summary locid="WinJS.Navigation.navigated.setPromise">
                 /// Used to inform the ListView that asynchronous work is being performed, and that this
@@ -90,7 +90,7 @@ define([
                 /// </param>
                 /// </signature>
             
-                waitForPromise = waitForPromise.then(function() { return promise; }); 
+                waitForPromise = waitForPromise.then(function() { return promise; });
             }
         };
         if (!value && err) {

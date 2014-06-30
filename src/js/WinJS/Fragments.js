@@ -432,7 +432,7 @@ define([
         return _Xhr({ url: href }).then(function (req) {
             return req.responseText;
         });
-    } 
+    }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI.Fragments", {
         renderCopy: renderCopy,

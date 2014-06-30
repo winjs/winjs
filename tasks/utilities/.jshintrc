@@ -15,16 +15,16 @@
     "indent": false, // Enforces specific tab width for your code. 
     "latedef": false, // Prohibits the use of a variable before it was defined
     "newcap": false, // Requires you to capitalize names of constructor functionsz
-    "noarg": false, // Prohibits the use of arguments.caller and arguments.callee. 
+    "noarg": true, // Prohibits the use of arguments.caller and arguments.callee. 
     "noempty": false, // Warns when you have an empty block in your code.
-    "nonbsp": false, // Warns about "non-breaking whitespace" characters.
-    "nonew": false, // Prohibits the use of constructor functions for side-effects.
+    "nonbsp": true, // Warns about "non-breaking whitespace" characters.
+    "nonew": true, // Prohibits the use of constructor functions for side-effects.
     "plusplus": false, // Prohibits the use of unary increment and decrement operators.
     "quotmark": false, // Enforces the consistency of quotation marks used throughout your code. 
     "undef": true, // Prohibits the use of explicitly undeclared variables.
     "unused": false, // Warns when you define and never use your variables.
     "strict": true, // Requires all functions to run in ECMAScript 5's strict mode.
-    "trailing": false, // Makes it an error to leave a trailing whitespace in your code.
+    "trailing": true, // Makes it an error to leave a trailing whitespace in your code.
     "maxparams": false, // Lets you set the max number of formal parameters allowed per function.
     "maxdepth": false, // Lets you control how nested do you want your blocks to be.
     "maxstatements": false, // Lets you set the max number of statements allowed per function.

@@ -189,7 +189,7 @@ define([
                     /// </returns>
                     /// </signature>
                     return this._repeatedDOM[index];
-                },           
+                },
 
                 dispose: function Repeater_dispose() {
                     /// <signature helpKeyword="WinJS.UI.Repeater.dispose">

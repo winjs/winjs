@@ -232,7 +232,7 @@ define([
                 });
             }
             function createIdentifier(prefix, count, suffix) {
-                if (suffix) {                   
+                if (suffix) {
                     return new String("" + prefix + count + "_" + suffix);
                 } else {
                     return new String("" + prefix + count);
@@ -2040,7 +2040,7 @@ define([
 "// Capture Definitions                                                                                  \n" +
 "{capture_definitions};                                                                                  \n" +
 "{set_msParentSelectorScope};                                                                            \n" +
-"                                                                                                        \n" 
+"                                                                                                        \n"
 );
 
             var renderImplControlAndBindingProcessing = trimLinesRight(
@@ -2160,7 +2160,7 @@ define([
 "    {writeProfilerMark}({profilerMarkIdentifierStop});                                                  \n" +
 "                                                                                                        \n" +
 "    return result;                                                                                      \n" +
-"}}                                                                                                      \n" 
+"}}                                                                                                      \n"
 );
 
             var renderItemImplMainCodeSuffixTemplate = trimLinesRight(
@@ -2221,7 +2221,7 @@ define([
 "}}).then(function (item) {{                                                                             \n" +
 "    {delayed_binding_processing};                                                                       \n" +
 "    return element;                                                                                     \n" +
-"}});                                                                                                    \n" 
+"}});                                                                                                    \n"
 );
 
             var renderItemImplCodeAsyncTemplate = trimLinesRight(
@@ -2270,15 +2270,15 @@ define([
 );
 
             var linkerCodeTemplate = trimLinesRight(
-"\"use strict\";                                                                                         \n" + 
-"                                                                                                        \n" + 
-"// statics                                                                                              \n" + 
-"var {static_variable_declarations};                                                                     \n" + 
-"{static_variable_definitions};                                                                          \n" + 
-"                                                                                                        \n" + 
-"// generated template rendering function                                                                \n" + 
+"\"use strict\";                                                                                         \n" +
+"                                                                                                        \n" +
+"// statics                                                                                              \n" +
+"var {static_variable_declarations};                                                                     \n" +
+"{static_variable_definitions};                                                                          \n" +
+"                                                                                                        \n" +
+"// generated template rendering function                                                                \n" +
 "return {body};                                                                                          \n"
-);          
+);
 
             //
             // End Templates

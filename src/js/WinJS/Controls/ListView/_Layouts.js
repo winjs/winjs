@@ -197,7 +197,7 @@ define([
             // Set up the DOM
             var flexRoot = document.createElement("div");
             flexRoot.style.cssText += "width: 500px; height: 200px; display: -webkit-flex; display: flex";
-            _SafeHtml.setInnerHTMLUnsafe(flexRoot, 
+            _SafeHtml.setInnerHTMLUnsafe(flexRoot,
                 "<div style='height: 100%; display: -webkit-flex; display: flex; flex-flow: column wrap; align-content: flex-start; -webkit-flex-flow: column wrap; -webkit-align-content: flex-start'>" +
                     "<div style='width: 100px; height: 100px'></div>" +
                     "<div style='width: 100px; height: 100px'></div>" +
@@ -394,7 +394,7 @@ define([
                             }
 
                             if (!that._envInfo.nestedFlexTooLarge && // Disabling structural nodes works around this issue
-                                    !that._envInfo.nestedFlexTooSmall && 
+                                    !that._envInfo.nestedFlexTooSmall &&
                                     allGroupsAreUniform()) {
                                 that._usingStructuralNodes = exports._LayoutCommon._barsPerItemsBlock > 0;
                                 return exports._LayoutCommon._barsPerItemsBlock * that._itemsPerBar;

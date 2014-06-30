@@ -41,7 +41,7 @@ define([
             function interpretedRender(template, dataContext, container) {
                 _WriteProfilerMark("WinJS.Binding:templateRender" + template._profilerMarkIdentifier + ",StartTM");
 
-                if (++template._counter === 1 && (template.debugBreakOnRender || Template._debugBreakOnRender)) {                   
+                if (++template._counter === 1 && (template.debugBreakOnRender || Template._debugBreakOnRender)) {
                     debugger; // jshint ignore:line
                 }
 

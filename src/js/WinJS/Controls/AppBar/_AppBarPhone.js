@@ -237,7 +237,7 @@ define([
 
                 if (!options.disabled) {
                     // Explicity set to false to ensure sure that setOptions sees the 'disabled' property on the options object.
-                    options.disabled = false; 
+                    options.disabled = false;
                 } else {
                     // If we're supposed to be disabled, set the disabled property immediately to 
                     // disconnect from the commandBar before setOptions() is called.
@@ -310,7 +310,7 @@ define([
                                 this._disabled = false;
 
                                 currentAppBar = this._uniqueId;
-                                if (!this._initializing) { 
+                                if (!this._initializing) {
                                     // An AppBar that was previously disabled is not guaranteed to be in sync with the commandBar when that AppBar is re-enabled. 
                                     // Re-load this AppBar's state into the commandBar.
                                     this.closedDisplayMode = this.closedDisplayMode;
@@ -706,7 +706,7 @@ define([
                         };
                     }
 
-                    if (!this.disabled) {                        
+                    if (!this.disabled) {
 
                         // Use AppBar element backgroundColor (RGBA) to set the new WebUICommandBar.backgroundColor and WebUICommandBar.opacity values
                         var bgColorString = getComputedStyle(this.element).backgroundColor;
@@ -828,7 +828,7 @@ define([
             {
                 _currentAppBarId: { // Expose this static member for unit testing.
                     get: function () {
-                        return currentAppBar; 
+                        return currentAppBar;
                     },
                 }
             });

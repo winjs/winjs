@@ -76,7 +76,7 @@ define([
                         cleanup,
                         Scheduler.Priority.idle,
                         null, "WinJS.Utilities._DOMWeakRefTable.cleanup"
-                    );           
+                    );
                     cleanupToken = 1;                       // and protect against overscheduling
                 }
             }

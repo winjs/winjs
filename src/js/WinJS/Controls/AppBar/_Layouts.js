@@ -134,7 +134,7 @@ define([
                 },
                 resize: function _AppBarBaseLayout_resize(event) {
                     // NOP
-                },                
+                },
             });
             return _AppBarBaseLayout;
         }),
