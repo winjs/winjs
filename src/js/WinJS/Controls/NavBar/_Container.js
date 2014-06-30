@@ -204,7 +204,7 @@ define([
                     }
                 },
 
-                _render: function NavBarContainer_render(item, wrapperElement) {
+                _render: function NavBarContainer_render(item) {
                     var navbarCommandEl = document.createElement('div');
 
                     var template = this._template;
@@ -220,7 +220,7 @@ define([
 
                     // Create the NavBarCommand after calling render so that the reparenting in navbarCommand works.
                     var navbarCommand = new _Command.NavBarCommand(navbarCommandEl, item);
-                    return navbarCommandEl;
+                    return navbarCommand._element;
                 },
 
                 /// <field type="WinJS.Binding.List" locid="WinJS.UI.NavBarContainer.data" helpKeyword="WinJS.UI.NavBarContainer.data">
@@ -525,7 +525,7 @@ define([
                     }
                 },
 
-                _addDataChangedEvents: function NavBarContainer_addDataChangedEvents(bindingList) {
+                _addDataChangedEvents: function NavBarContainer_addDataChangedEvents() {
                     if (this._repeater) {
                         this._repeater.data.addEventListener("itemchanged", this._dataChangedBound);
                         this._repeater.data.addEventListener("iteminserted", this._dataChangedBound);
@@ -553,7 +553,7 @@ define([
                     bindingList.addEventListener("reload", this._dataChangingBound);
                 },
 
-                _mouseleave: function NavBarContainer_mouseleave(ev) {
+                _mouseleave: function NavBarContainer_mouseleave() {
                     if (this._mouseInViewport) {
                         this._mouseInViewport = false;
                         this._updateArrows();
@@ -1149,7 +1149,6 @@ define([
                         var width = "";
 
                         if (this.layout === _UI.Orientation.horizontal) {
-                            var row = Math.floor(index % sizes.rowsPerPage);
                             var column = Math.floor(index / sizes.rowsPerPage);
                             var isFirstColumnOnPage = column % sizes.columnsPerPage === 0;
                             var isLastColumnOnPage = column % sizes.columnsPerPage === sizes.columnsPerPage - 1;

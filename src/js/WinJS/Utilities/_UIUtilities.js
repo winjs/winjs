@@ -188,8 +188,6 @@ define([
             var _highestTabIndex = this._getHighestTabIndexInList(_elms);
             var _nextHighestTabIndex = 0;
 
-            var previousActiveElement = document.activeElement;
-
             // Try all tabIndex 0 first. After this conditional the _highestTabIndex
             // should be equal to the highest positive tabIndex.
             if (_highestTabIndex === 0) {

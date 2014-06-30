@@ -361,7 +361,7 @@ define([
                         switchFocus();
                     };
 
-                    var pointerUpHandler = function(e) {
+                    var pointerUpHandler = function() {
                         if (that._switchElement.disabled) {
                             return;
                         }

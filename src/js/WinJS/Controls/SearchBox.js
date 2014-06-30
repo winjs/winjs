@@ -913,7 +913,7 @@ define([
                     this._hideFlyout();
                 },
 
-                _inputOrImeChangeHandler: function SearchBox_inputImeChangeHandler(event) {
+                _inputOrImeChangeHandler: function SearchBox_inputImeChangeHandler() {
                     var isButtonDown = _ElementUtilities._matchesSelector(this._buttonElement, ":active");
                     // swallow the IME change event that gets fired when composition is ended due to keyboarding down to the suggestion list & mouse down on the button
                     if (!this._isProcessingImeFocusLossKey() && !isButtonDown && !this._isFlyoutPointerDown) {
@@ -952,9 +952,6 @@ define([
                             queryText: this._inputElement.value,
                             linguisticDetails: linguisticDetails
                         });
-                        var queryTextCompositionStart = null;
-                        var queryTextCompositionLength = null;
-                        var queryTextAlternatives = null;
                         if (this._searchSuggestionManager) {
                             this._searchSuggestionManager.setQuery(
                                 this._inputElement.value,
@@ -1225,12 +1222,12 @@ define([
                     }
                 },
 
-                _msCandidateWindowShowHandler: function SearchBox_msCandidateWindowShowHandler(event) {
+                _msCandidateWindowShowHandler: function SearchBox_msCandidateWindowShowHandler() {
                     this._addFlyoutIMEPaddingIfRequired();
                     this._reflowImeOnPointerRelease = false;
                 },
 
-                _msCandidateWindowHideHandler: function SearchBox_msCandidateWindowHideHandler(event) {
+                _msCandidateWindowHideHandler: function SearchBox_msCandidateWindowHideHandler() {
                     if (!this._isFlyoutPointerDown) {
                         var animation = Animations.createRepositionAnimation(this._flyoutDivElement.children);
                         this._flyoutDivElement.style.paddingTop = "";
@@ -1267,7 +1264,7 @@ define([
                     }
                 },
 
-                _repeaterChangedHandler: function SearchBox_repeaterChangedHandler(ev) {
+                _repeaterChangedHandler: function SearchBox_repeaterChangedHandler() {
                     this._updateFlyoutTopAndTouchAction();
                     if (this._isFlyoutShown()) {
                         this._repeaterDivElement.style.display = "none";
@@ -1283,7 +1280,7 @@ define([
                     this._repeater.addEventListener("itemsreloaded", repeaterChangeHandler);
                 },
 
-                _inputPointerDownHandler: function SearchBox_inputPointerDownHandler(ev) {
+                _inputPointerDownHandler: function SearchBox_inputPointerDownHandler() {
                     if ((document.activeElement === this._inputElement) && (this._currentSelectedIndex !== -1)) {
                         this._currentFocusedIndex = -1;
                         this._selectSuggestionAtIndex(this._currentFocusedIndex);
@@ -1308,7 +1305,7 @@ define([
                     ev.preventDefault();
                 },
 
-                _flyoutPointerReleasedHandler: function SearchBox_flyoutPointerReleasedHandler(ev) {
+                _flyoutPointerReleasedHandler: function SearchBox_flyoutPointerReleasedHandler() {
                     this._isFlyoutPointerDown = false;
 
                     if (this._reflowImeOnPointerRelease) {
@@ -1421,7 +1418,7 @@ define([
                     return this.element.dispatchEvent(event);
                 },
 
-                _requestingFocusOnKeyboardInputHandler: function SearchBox_requestingFocusOnKeyboardInputHandler(event) {
+                _requestingFocusOnKeyboardInputHandler: function SearchBox_requestingFocusOnKeyboardInputHandler() {
                     this._fireEvent(SearchBox._EventName.receivingfocusonkeyboardinput, null);
                     if (document.activeElement !== this._inputElement) {
                         try {
@@ -1511,7 +1508,7 @@ define([
                     return returnValue;
                 },
 
-                _hitIntersectionReducer: function searchBox_hitIntersectionReducer(reducedHits, nextHit, currentIndex, originalList) {
+                _hitIntersectionReducer: function searchBox_hitIntersectionReducer(reducedHits, nextHit, currentIndex) {
                     if (currentIndex === 0) {
                         reducedHits.push(nextHit);
                     } else {

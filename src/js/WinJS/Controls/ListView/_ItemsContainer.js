@@ -23,7 +23,7 @@ define([
                     }
 
                     var that = this;
-                    var promise = new Promise(function (complete, error) {
+                    var promise = new Promise(function (complete) {
                         var itemData = that._itemData[itemIndex];
                         if (itemData && !itemData.detached && itemData.element) {
                             complete(itemData.element);

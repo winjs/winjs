@@ -488,7 +488,7 @@ define([
                     })();
 
                     // Determine minute format from the DateTimeFormatter
-                    var minutes = (function (index) {
+                    var minutes = (function () {
                         var minuteFormatter = newFormatter(timePatterns.minute, DEFAULT_MINUTE_PATTERN);
                         var now = TimePicker._sentinelDate();
                         return {
@@ -503,7 +503,7 @@ define([
 
 
                     // Determine hour format from the DateTimeFormatter
-                    var hours = (function (index) {
+                    var hours = (function () {
                         var hourFormatter = newFormatter(timePatterns.hour, DEFAULT_HOUR_PATTERN);
                         var now = TimePicker._sentinelDate();
                         return {

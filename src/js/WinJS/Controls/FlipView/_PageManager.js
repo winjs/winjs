@@ -106,10 +106,10 @@ define([
                 }, false);
                 new _ElementUtilities._MutationObserver(flipperPropertyChanged).observe(this._flipperDiv, { attributes: true, attributeFilter: ["dir", "style", "tabindex"] });
                 this._cachedStyleDir = this._flipperDiv.style.direction;
-                this._panningDiv.addEventListener("activate", function (event) {
+                this._panningDiv.addEventListener("activate", function () {
                     that._hasFocus = true;
                 }, true);
-                this._panningDiv.addEventListener("deactivate", function (event) {
+                this._panningDiv.addEventListener("deactivate", function () {
                     that._hasFocus = false;
                 }, true);
                 if (this._environmentSupportsTouch) {
@@ -124,7 +124,7 @@ define([
             }, {
                 // Public Methods
 
-                initialize: function (initialIndex, horizontal, environmentSupportsTouch) {
+                initialize: function (initialIndex, horizontal) {
                     var currPage = null;
                     // Every call to offsetWidth/offsetHeight causes an switch from Script to Layout which affects
                     // the performance of the control. The values will be cached and will be updated when a resize occurs.
@@ -352,8 +352,7 @@ define([
                         }
 
                         // If we have to keep our pages in memory, we need to iterate through every single item from our current position to the desired target
-                        var i,
-                            currIndex = this._getElementIndex(this._currentPage.element),
+                        var currIndex = this._getElementIndex(this._currentPage.element),
                             distance = Math.abs(index - currIndex);
 
                         if (distance === 0) {
@@ -643,7 +642,6 @@ define([
 
                 changed: function (newVal, element) {
                     this._writeProfilerMark("WinJS.UI.FlipView:changed,info");
-                    var curr = this._prevMarker;
                     var that = this;
                     this._forEachPage(function (curr) {
                         if (curr.elementUniqueID === uniqueID(element)) {
@@ -1603,7 +1601,7 @@ define([
                     return (this._horizontal ? flipPage.location + this._panningDivContainerOffsetWidth : flipPage.location + this._panningDivContainerOffsetHeight) + this._itemSpacing;
                 },
 
-                _itemSize: function (flipPage) {
+                _itemSize: function () {
                     return this._horizontal ? this._panningDivContainerOffsetWidth : this._panningDivContainerOffsetHeight;
                 },
 

@@ -373,7 +373,7 @@ define([
     }
 
     var activeElement = null;
-    _Global.addEventListener("blur", function (eventObject) {
+    _Global.addEventListener("blur", function () {
         // Fires focusout when focus move to another window or into an iframe.
         var previousActiveElement = activeElement;
         if (previousActiveElement) {
@@ -738,8 +738,7 @@ define([
 
     function getAdjustedScrollPosition(element) {
         var computedStyle = getComputedStyle(element),
-            scrollLeft = element.scrollLeft,
-            scrollTop = element.scrollTop;
+            scrollLeft = element.scrollLeft;
         if (computedStyle.direction === "rtl") {
             if (!determinedRTLEnvironment) {
                 determineRTLEnvironment();
@@ -983,11 +982,11 @@ define([
             event["init" + initType + "Event"].apply(event, Array.prototype.slice.call(arguments, 2));
         },
 
-        _initMouseEvent: function (event, type) {
+        _initMouseEvent: function (event) {
             this._initEventImpl.apply(this, ["Mouse", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
 
-        _initPointerEvent: function (event, type) {
+        _initPointerEvent: function (event) {
             this._initEventImpl.apply(this, ["Pointer", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
 

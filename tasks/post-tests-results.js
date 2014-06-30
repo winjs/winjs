@@ -46,7 +46,7 @@
                         travisCommit: process.env.TRAVIS_COMMIT,
                         travisBranch: process.env.TRAVIS_BRANCH,
                         auth: process.env.auth
-                    }, function(res) {
+                    }, function() {
                         done();
                     });
             });

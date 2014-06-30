@@ -112,13 +112,13 @@ define([
                         }
                     }
                 },
-                handleKeyDown: function _AppBarBaseLayout_handleKeyDown(event) {
+                handleKeyDown: function _AppBarBaseLayout_handleKeyDown() {
                     // NOP
                 },
                 commandsUpdated: function _AppBarBaseLayout_commandsUpdated() {
                     // NOP
                 },
-                beginAnimateCommands: function _AppBarBaseLayout_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
+                beginAnimateCommands: function _AppBarBaseLayout_beginAnimateCommands() {
                     // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
                     // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show. 
                     // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
@@ -132,7 +132,7 @@ define([
                 scale: function _AppBarBaseLayout_scale() {
                     // NOP
                 },
-                resize: function _AppBarBaseLayout_resize(event) {
+                resize: function _AppBarBaseLayout_resize() {
                     // NOP
                 },
             });
@@ -182,7 +182,7 @@ define([
                     }
                     return accumulatedWidth += (separatorsCount * _Constants.separatorWidth) + (buttonsCount * _Constants.buttonWidth);
                 },
-                _getFocusableCommandsInLogicalOrder: function _AppBarCommandsLayout_getCommandsInLogicalOrder(globalCommandHasFocus) {
+                _getFocusableCommandsInLogicalOrder: function _AppBarCommandsLayout_getCommandsInLogicalOrder() {
                     // Function returns an array of all the contained AppBarCommands which are reachable by left/right arrows.
 
                     var selectionCommands = this._secondaryCommands.children,
@@ -387,7 +387,7 @@ define([
                 _ElementUtilities.addClass(this.appBarEl, _Constants.reducedClass);
             }
         },
-        resize: function _commandLayoutsMixin_resize(event) {
+        resize: function _commandLayoutsMixin_resize() {
             if (!this._disposed) {
                 // Check for horizontal window resizes.
                 this._appBarTotalKnownWidth = null;
@@ -396,7 +396,7 @@ define([
                 }
             }
         },
-        _commandLayoutsInit: function _commandLayoutsMixin_commandLayoutsInit(appBarEl) {
+        _commandLayoutsInit: function _commandLayoutsMixin_commandLayoutsInit() {
             // Create layout infrastructure
             this._primaryCommands = document.createElement("DIV");
             this._secondaryCommands = document.createElement("DIV");

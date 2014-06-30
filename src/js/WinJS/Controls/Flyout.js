@@ -675,7 +675,7 @@ define([
                     }
                 },
 
-                _resize: function Flyout_resize(event) {
+                _resize: function Flyout_resize() {
                     // If hidden and not busy animating, then nothing to do
                     if (this.hidden && !this._animating) {
                         return;
@@ -732,7 +732,7 @@ define([
                     this._checkScrollPosition(true);
                 },
 
-                _hidingKeyboard: function Flyout_hidingKeyboard(event) {
+                _hidingKeyboard: function Flyout_hidingKeyboard() {
                     // If we aren't visible and not animating, or haven't been repositioned, then nothing to do
                     // We don't know if the keyboard moved the anchor, so _keyboardMovedUs doesn't help here
                     if (this.hidden && !this._animating) {

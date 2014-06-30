@@ -226,7 +226,7 @@ define([
 
                 // Normal list non-modifiying operations
                 //
-                concat: function (item) {
+                concat: function () {
                     /// <signature helpKeyword="WinJS.Binding.ListBase.concat">
                     /// <summary locid="WinJS.Binding.ListBase.concat">
                     /// Returns a new list consisting of a combination of two arrays.
@@ -1921,7 +1921,7 @@ define([
                     return data;
                 },
 
-                push: function (value) {
+                push: function () {
                     /// <signature helpKeyword="WinJS.Binding.List.push">
                     /// <summary locid="WinJS.Binding.List.push">
                     /// Appends new element(s) to a list, and returns the new length of the list.
@@ -1980,7 +1980,7 @@ define([
                     return data;
                 },
 
-                unshift: function (value) {
+                unshift: function () {
                     /// <signature helpKeyword="WinJS.Binding.List.unshift">
                     /// <summary locid="WinJS.Binding.List.unshift">
                     /// Appends new element(s) to a list, and returns the new length of the list.
@@ -2068,7 +2068,7 @@ define([
                     return result;
                 },
                 // returns [ data* ] of removed items
-                _spliceFromKey: function (key, howMany) {
+                _spliceFromKey: function (key) {
                     this._initializeKeys();
                     var args = copyargs(arguments);
                     args[0] = this._keys.indexOf(key);

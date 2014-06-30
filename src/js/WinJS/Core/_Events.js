@@ -32,7 +32,7 @@ define([
         };
     }
 
-    function createEventProperties(events) {
+    function createEventProperties() {
         /// <signature helpKeyword="WinJS.Utilities.createEventProperties">
         /// <summary locid="WinJS.Utilities.createEventProperties">
         /// Creates an object that has one property for each name passed to the function.

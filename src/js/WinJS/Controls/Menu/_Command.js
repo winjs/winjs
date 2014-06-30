@@ -65,7 +65,7 @@ define([
                 }
             }
 
-            function _handleMouseOver(event) {
+            function _handleMouseOver() {
                 /*jshint validthis: true */
                 if (this && this.focus) {
                     this.focus();
@@ -74,14 +74,14 @@ define([
                 }
             }
 
-            function _handleMouseMove(event) {
+            function _handleMouseMove() {
                 /*jshint validthis: true */
                 if (this && this.focus && this !== document.activeElement) {
                     this.focus();
                 }
             }
 
-            function _handleMouseOut(event) {
+            function _handleMouseOut() {
                 /*jshint validthis: true */
                 var that = this;
                 var parentFlyout = _getParentFlyout(that);

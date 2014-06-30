@@ -9,7 +9,6 @@ define([
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Binding/_BindingParser',
-    '../Binding/_Data',
     '../Binding/_Declarative',
     '../ControlProcessor',
     '../ControlProcessor/_OptionsParser',
@@ -19,7 +18,7 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_SafeHtml',
     '../Utilities/_ElementUtilities'
-    ], function templateCompilerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, _BindingParser, _Data, _Declarative, ControlProcessor, _OptionsParser, Fragments, Promise, _Signal, _Dispose, _SafeHtml, _ElementUtilities) {
+    ], function templateCompilerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, _BindingParser, _Declarative, ControlProcessor, _OptionsParser, Fragments, Promise, _Signal, _Dispose, _SafeHtml, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -45,9 +44,7 @@ define([
             var init_setAttribute = _Declarative.setAttribute;
             var init_setAttributeOneTime = _Declarative.setAttributeOneTime;
             var init_addClassOneTime = _Declarative.addClassOneTime;
-            var binding_as = _Data.as;
             var promise_as = Promise.as;
-            var supportedForProcessing = _BaseUtils.supportedForProcessing;
             var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
             var insertAdjacentHTMLUnsafe = _SafeHtml.insertAdjacentHTMLUnsafe;
             var utilities_data = _ElementUtilities.data;
@@ -375,7 +372,7 @@ define([
                                 node.reference = reference.bind(null, node, key);
                             }
                         },
-                        function post(node, key, childCount) {
+                        function post() {
                             aggregatedName.pop();
                         }
                     );
@@ -405,7 +402,7 @@ define([
                     // Gather the nodes in a depth first ordering, any node which has a name
                     //  needs to have a definition generated
                     //
-                    visit(this.tree, "", function pre(node, key) {
+                    visit(this.tree, "", function pre(node) {
                         if (node.name) {
                             nodes.push(node);
                         }
@@ -907,7 +904,6 @@ define([
                     }
                     var suffix = name ? name.replace(identifierCharacterRegEx, "_") : "";
                     var identifier = createIdentifier(StaticKindPrefixes[kind], this._staticVariablesCount, suffix);
-                    var that = this;
                     identifier.definition = function () { return assignment(identifier, definition()); };
                     identifier.kind = kind;
                     this._staticVariables[name || identifier] = identifier;
@@ -1195,7 +1191,7 @@ define([
 
                 },
 
-                generateElementCaptureAccess: function (l, r, root, filter) {
+                generateElementCaptureAccess: function (l, r, root) {
 
                     if (root) {
                         // Clean up the right hand side so we don't end up with "startIndex + 0"
@@ -1425,7 +1421,6 @@ define([
                                 // Wrap the definition in a ternary expression which yields either the attribute
                                 //  name or an empty string.
                                 //
-                                var definition = binding.definition;
                                 binding.definition = function () {
                                     var formatString;
                                     if (initialValue) {
@@ -1729,8 +1724,6 @@ define([
                         throw "Illegal: once we have moved past link we cannot revist it";
                     }
                     this._stage = Stage.optimze;
-
-                    var that = this;
 
                     // Identify all bindings which can be turned into tree bindings, in some cases this consists
                     //  of simply changing their type and providing a definition, in other cases it involves 

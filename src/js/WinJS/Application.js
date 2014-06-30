@@ -61,6 +61,7 @@ define([
     }
 
     function defaultTerminateAppHandler(data, e) {
+        /*jshint unused: false*/
         // This is the unhandled exception handler in WinJS. This handler is invoked whenever a promise
         // has an exception occur that is not handled (via an error handler passed to then() or a call to done()).
         //
@@ -321,7 +322,7 @@ define([
         var def = captureDeferral(e.suspendingOperation);
         queueEvent({ type: checkpointET, _deferral: def.deferral, _deferralID: def.id });
     }
-    function domContentLoadedHandler(e) {
+    function domContentLoadedHandler() {
         queueEvent({ type: loadedET });
         if (!useWinRT) {
             var activatedArgs = {
@@ -334,7 +335,7 @@ define([
             });
         }
     }
-    function beforeUnloadHandler(e) {
+    function beforeUnloadHandler() {
         cleanupAllPendingDeferrals();
         queueEvent({ type: unloadET });
     }

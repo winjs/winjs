@@ -279,7 +279,6 @@ define([
                 this._view = new _VirtualizeContentsView._VirtualizeContentsView(this);
                 this._selection = new _SelectionManager._SelectionManager(this);
                 this._createTemplates();
-                var that = this;
                 this._groupHeaderRenderer = _ItemsManager._trivialHtmlRenderer;
                 this._itemRenderer = _ItemsManager._trivialHtmlRenderer;
                 this._groupHeaderRelease = null;
@@ -360,7 +359,7 @@ define([
                     get: function () {
                         return (_VirtualizeContentsView._VirtualizeContentsView._pagesToPrefetch * 2) + 1;
                     },
-                    set: function (newValue) {
+                    set: function () {
                         _UIUtilities._deprecated(_ErrorMessages.pagesToLoadIsDeprecated);
                     }
                 },
@@ -378,7 +377,7 @@ define([
                     get: function () {
                         return 0;
                     },
-                    set: function (newValue) {
+                    set: function () {
                         _UIUtilities._deprecated(_ErrorMessages.pagesToLoadThresholdIsDeprecated);
                     }
                 },
@@ -450,7 +449,7 @@ define([
                     get: function () {
                         return false;
                     },
-                    set: function (newValue) {
+                    set: function () {
                         _UIUtilities._deprecated(_ErrorMessages.automaticallyLoadPagesIsDeprecated);
                     }
                 },
@@ -465,7 +464,7 @@ define([
                     get: function () {
                         return "randomAccess";
                     },
-                    set: function (newValue) {
+                    set: function () {
                         _UIUtilities._deprecated(_ErrorMessages.loadingBehaviorIsDeprecated);
                     }
                 },
@@ -1540,7 +1539,7 @@ define([
                             beginNotifications: function ListView_beginNotifications() {
                             },
 
-                            changed: function ListView_changed(newItem, oldItem, oldItemObject) {
+                            changed: function ListView_changed(newItem, oldItem) {
                                 if (that._ifZombieDispose()) { return; }
 
                                 that._createUpdater();
@@ -1957,7 +1956,6 @@ define([
                 _synchronize: function ListView_synchronize() {
                     var updater = this._updater;
                     this._updater = null;
-                    var groupsChanged = this._groupsChanged;
                     this._groupsChanged = false;
 
                     this._countDifference = this._countDifference || 0;
@@ -2729,7 +2727,7 @@ define([
                         if (record.attributeName === "tabIndex") {
                             var newTabIndex = that._element.tabIndex;
                             if (newTabIndex >= 0) {
-                                that._view.items.each(function (index, item, itemData) {
+                                that._view.items.each(function (index, item) {
                                     item.tabIndex = newTabIndex;
                                 });
                                 that._tabIndex = newTabIndex;
@@ -2916,7 +2914,6 @@ define([
                         }
                     }
 
-                    var that = this;
                     this._view.items.each(function (index, element, itemData) {
                         if (itemData.itemBox && !_ElementUtilities.hasClass(itemData.itemBox, _Constants._swipeClass)) {
                             var selected = selectAll || !!selectionMap[index];
@@ -2988,7 +2985,7 @@ define([
                     return this._horizontal() ? "horizontal" : "vertical";
                 },
 
-                _configureForZoom: function (isZoomedOut, isCurrentView, triggerZoom, pagesToPrefetch) {
+                _configureForZoom: function (isZoomedOut, isCurrentView, triggerZoom) {
                     if (_BaseUtils.validation) {
                         if (!this._view.realizePage || typeof this._view.begin !== "number") {
                             throw new _ErrorFromName("WinJS.UI.ListView.NotCompatibleWithSemanticZoom", strings.notCompatibleWithSemanticZoom);
@@ -3058,7 +3055,6 @@ define([
                 _animateItemsForPhoneZoom: function () {
                     var containersOnScreen = [],
                         itemRows = [],
-                        delays = [],
                         promises = [],
                         minRow = Number.MAX_VALUE,
                         that = this;
@@ -3143,7 +3139,6 @@ define([
                     function positionItemAtIndex(index) {
                         return that._getItemOffsetPosition(index).then(function positionItemAtIndex_then_ItemOffsetPosition(posCanvas) {
                             var horizontal = that._horizontal(),
-                                canvasMargins = that._getCanvasMargins(),
                                 canvasSize = that._viewport[horizontal ? "scrollWidth" : "scrollHeight"],
                                 viewportSize = (horizontal ? that._viewportWidth : that._viewportHeight),
                                 headerSizeProp = (horizontal ? "headerContainerWidth" : "headerContainerHeight"),
@@ -3244,8 +3239,7 @@ define([
 
                     // Crop the content again and re-enable the scrollbar
                     if (!_BaseUtils.isPhone) {
-                        var horizontal = this._horizontal(),
-                            scrollOffset = this._canvasStart;
+                        var scrollOffset = this._canvasStart;
 
                         _ElementUtilities.removeClass(this._viewport, _Constants._zoomingYClass);
                         _ElementUtilities.removeClass(this._viewport, _Constants._zoomingXClass);
@@ -3288,7 +3282,7 @@ define([
                     }
 
                     var that = this;
-                    this._updateFocusCacheItemRequest = this._view.items.requestItem(itemIndex).then(function (item) {
+                    this._updateFocusCacheItemRequest = this._view.items.requestItem(itemIndex).then(function () {
                         that._updateFocusCacheItemRequest = null;
                         var itemData = that._view.items.itemDataAt(itemIndex);
                         var groupIndex = that._groups.groupFromItem(itemIndex);
@@ -3629,15 +3623,14 @@ define([
                     if (listRole !== expectedListRole || this._itemRole !== expectedItemRole) {
                         this._element.setAttribute("role", expectedListRole);
                         this._itemRole = expectedItemRole;
-                        this._view.items.each(function (index, itemElement, itemData) {
+                        this._view.items.each(function (index, itemElement) {
                             itemElement.setAttribute("role", that._itemRole);
                         });
                     }
                 },
 
                 _updateGroupHeadersAriaRoles: function ListView_updateGroupHeadersAriaRoles() {
-                    var that = this,
-                        headerRole = (this.groupHeaderTapBehavior === _UI.GroupHeaderTapBehavior.none ? "separator" : "link");
+                    var headerRole = (this.groupHeaderTapBehavior === _UI.GroupHeaderTapBehavior.none ? "separator" : "link");
                     if (this._headerRole !== headerRole) {
                         this._headerRole = headerRole;
                         for (var i = 0, len = this._groups.length() ; i < len; i++) {
@@ -4068,8 +4061,7 @@ define([
                             var itemsContainer = groupNode.itemsContainer;
 
                             if (delta > 0) {
-                                var children = itemsContainer.element.children,
-                                    oldSize = children.length;
+                                var children = itemsContainer.element.children;
 
                                 _SafeHtml.insertAdjacentHTMLUnsafe(itemsContainer.element, "afterBegin", _Helpers._repeat("<div class='win-container win-backdrop'></div>", delta));
 
@@ -4197,8 +4189,7 @@ define([
                         firstItem += groupInfo.size;
                     }
 
-                    var removedBlocks = [],
-                        removedItemsContainers = [],
+                    var removedItemsContainers = [],
                         removedHeaders = [],
                         removedGroups = this._view.keyToGroupIndex ? Object.keys(this._view.keyToGroupIndex) : [];
 

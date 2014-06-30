@@ -2,9 +2,8 @@
 define([
     'exports',
     '../../Core/_Base',
-    '../../Animations',
-    '../../Utilities/_ElementUtilities'
-    ], function helpersInit(exports, _Base, Animations, _ElementUtilities) {
+    '../../Animations'
+    ], function helpersInit(exports, _Base, Animations) {
     "use strict";
 
     function nodeListToArray(nodeList) {

@@ -208,7 +208,6 @@ define([
 
                     this._swipeBehaviorState = MSManipulationEventStates.MS_MANIPULATION_STATE_STOPPED;
                     var swipeEnabled = site.swipeBehavior === _UI.SwipeBehavior.select,
-                        swipeBehavior = touchInput && swipeEnabled,
                         isInteractive = this._isInteractive(eventObject.target),
                         currentPressedIndex = site.indexForItemElement(eventObject.target),
                         currentPressedHeaderIndex = site.indexForHeaderElement(eventObject.target),
@@ -755,8 +754,7 @@ define([
                                 }
                             } else if (manipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_COMMITTED) {
                                 _WriteProfilerMark("WinJS.UI._ItemEventsHandler:crossSlidingCompleted,info");
-                                var that = this,
-                                    site = this._site,
+                                var site = this._site,
                                     selection = site.selection,
                                     swipeBehaviorSelectionChanged = this._swipeBehaviorSelectionChanged,
                                     swipeBehaviorSelected = this.swipeBehaviorSelected;

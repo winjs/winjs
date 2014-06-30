@@ -11,10 +11,10 @@
     "es3": false, // Prohibits the use of syntax beynd ECMAScript 3 specification.
     "forin": false, // Requires all for in loops to filter object's items.
     "freeze": true, // Prohibits overwriting prototypes of native objects such as Array, Date and so on.
-    "immed": false, // Prohibits the use of immediate function invocations without wrapping them in parentheses.
+    "immed": true, // Prohibits the use of immediate function invocations without wrapping them in parentheses.
     "indent": false, // Enforces specific tab width for your code. 
     "latedef": false, // Prohibits the use of a variable before it was defined
-    "newcap": false, // Requires you to capitalize names of constructor functionsz
+    "newcap": false, // Requires you to capitalize names of constructor functions
     "noarg": true, // Prohibits the use of arguments.caller and arguments.callee. 
     "noempty": false, // Warns when you have an empty block in your code.
     "nonbsp": true, // Warns about "non-breaking whitespace" characters.
@@ -22,7 +22,7 @@
     "plusplus": false, // Prohibits the use of unary increment and decrement operators.
     "quotmark": false, // Enforces the consistency of quotation marks used throughout your code. 
     "undef": true, // Prohibits the use of explicitly undeclared variables.
-    "unused": false, // Warns when you define and never use your variables.
+    "unused": "vars", // Warns when you define and never use your variables.
     "strict": true, // Requires all functions to run in ECMAScript 5's strict mode.
     "trailing": true, // Makes it an error to leave a trailing whitespace in your code.
     "maxparams": false, // Lets you set the max number of formal parameters allowed per function.

@@ -433,7 +433,7 @@ define([
 
     // Scheduled
     //
-    state_scheduled.enter = function (job) {
+    state_scheduled.enter = function () {
         startRunning();
     };
     state_scheduled.execute = setState(state_running);
@@ -718,7 +718,7 @@ define([
         job._work.cancel();
         job._work = null;
     };
-    state_blocked_canceled.blockedDone = function (job, result) {
+    state_blocked_canceled.blockedDone = function () {
         return state_canceled;
     };
     state_blocked_canceled.cancel = _;
@@ -1085,7 +1085,7 @@ define([
             scheduleWithHost(callback);
         },
 
-        execAtPriority: function (callback, priority) {
+        execAtPriority: function (callback) {
             return callback();
         },
 
@@ -1093,7 +1093,7 @@ define([
             return MSAppStubs.NORMAL;
         },
 
-        isTaskScheduledAtPriorityOrHigher: function (priority) {
+        isTaskScheduledAtPriorityOrHigher: function () {
             return false;
         },
 

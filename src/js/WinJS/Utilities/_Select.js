@@ -62,7 +62,7 @@ define([
                 }
 
                 var that = this;
-                this._domElement.addEventListener("change", function (e) {
+                this._domElement.addEventListener("change", function () {
                     //Should be set to _index to prevent events from firing twice
                     that._index = that._domElement.selectedIndex;
                 }, false);

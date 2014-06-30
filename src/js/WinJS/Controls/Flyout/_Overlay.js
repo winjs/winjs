@@ -328,7 +328,7 @@ define([
                         this._animationPromise = this._currentAnimateIn().
                         then(function () {
                             that._baseEndShow();
-                        }, function (err) {
+                        }, function () {
                             that._baseEndShow();
                         });
                         this._fakeHide = false;
@@ -405,7 +405,7 @@ define([
                             this._animationPromise = this._currentAnimateOut().
                             then(function () {
                                 that._baseEndHide();
-                            }, function (err) {
+                            }, function () {
                                 that._baseEndHide();
                             });
                         }
@@ -751,7 +751,7 @@ define([
                     return promise;
                 },
 
-                _beginAnimateCommands: function _Overlay_beginAnimateCommands(showCommands, hideCommands, siblings) {
+                _beginAnimateCommands: function _Overlay_beginAnimateCommands() {
                     // Nothing by default
                 },
 
@@ -887,23 +887,23 @@ define([
                     }
                 },
 
-                _resize: function _Overlay_resize(event) {
+                _resize: function _Overlay_resize() {
                     // Nothing by default
                 },
 
-                _commandsUpdated: function _Overlay_commandsUpdated(needToReMeasure) {
+                _commandsUpdated: function _Overlay_commandsUpdated() {
                     // Nothing by default
                 },
 
-                _checkScrollPosition: function _Overlay_checkScrollPosition(event) {
+                _checkScrollPosition: function _Overlay_checkScrollPosition() {
                     // Nothing by default
                 },
 
-                _showingKeyboard: function _Overlay_showingKeyboard(event) {
+                _showingKeyboard: function _Overlay_showingKeyboard() {
                     // Nothing by default
                 },
 
-                _hidingKeyboard: function _Overlay_hidingKeyboard(event) {
+                _hidingKeyboard: function _Overlay_hidingKeyboard() {
                     // Nothing by default
                 },
 
@@ -1247,7 +1247,7 @@ define([
                     return (_Overlay._clickEatingFlyoutDiv.style.display === "block");
                 },
 
-                _hideIfLostFocus: function (overlay, focusEvent) {
+                _hideIfLostFocus: function (overlay) {
                     // If we're still showing we haven't really lost focus
                     if (overlay.hidden || overlay.element.winAnimating === "showing" || overlay._sticky) {
                         return;
@@ -1284,7 +1284,7 @@ define([
                 // We get blur if we click off the window, including to an iframe within our window.
                 // Both blurs call this function, but fortunately document.hasFocus is true if either
                 // the document window or our iframe window has focus.
-                _checkBlur: function (focusEvent) {
+                _checkBlur: function () {
                     if (!document.hasFocus()) {
                         // The document doesn't have focus, so they clicked off the app, so light dismiss.
                         _Overlay._hideAllFlyouts();
@@ -1384,7 +1384,6 @@ define([
 
                 // Show or hide all bars
                 _hideAllBars: function _hideAllBars(bars, keyboardInvoked) {
-                    var len = bars.length;
                     var allBarsAnimationPromises = bars.map(function(bar) {
                         bar._keyboardInvoked = keyboardInvoked;
                         bar.hide();
@@ -1423,7 +1422,7 @@ define([
                             // Hook up a 'focusout' listener to this Flyout element to make sure that light dismiss AppBars close if focus moves anywhere other than back to an AppBar.
                             var appBarElement = _Overlay._isAppBarOrChild(flyoutControl._previousFocus);
                             if (appBarElement) {
-                                _ElementUtilities._addEventListener(flyoutControl.element, 'focusout', function focusOut(event) {
+                                _ElementUtilities._addEventListener(flyoutControl.element, 'focusout', function focusOut() {
                                     // Hides any open AppBars if the new activeElement is not in an AppBar.
                                     _Overlay._hideIfAllAppBarsLostFocus();
                                     _ElementUtilities._removeEventListener(flyoutControl.element, 'focusout', focusOut, false);

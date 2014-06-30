@@ -114,44 +114,44 @@ define([
                     }, Scheduler.Priority.normal, null, "WinJS.UI.ItemContainer_async_initialize");
                 }
                 this._itemEventsHandler = new _ItemEventsHandler._ItemEventsHandler(Object.create({
-                    containerFromElement: function (element) {
+                    containerFromElement: function () {
                         return that.element;
                     },
-                    indexForItemElement: function (element) {
+                    indexForItemElement: function () {
                         return 1;
                     },
                     indexForHeaderElement: function () {
                         return _Constants._INVALID_INDEX;
                     },
-                    itemBoxAtIndex: function (index) {
+                    itemBoxAtIndex: function () {
                         return that._itemBox;
                     },
-                    itemAtIndex: function (index) {
+                    itemAtIndex: function () {
                         return that.element;
                     },
-                    headerAtIndex: function (index) {
+                    headerAtIndex: function () {
                         return null;
                     },
-                    containerAtIndex: function (index) {
+                    containerAtIndex: function () {
                         return that.element;
                     },
                     isZombie: function () {
                         return this._disposed;
                     },
-                    getItemPosition: function (index) {
+                    getItemPosition: function () {
                         return that._getItemPosition();
                     },
                     rtl: function () {
                         return that._rtl();
                     },
-                    fireInvokeEvent: function (itemIndex, itemElement) {
+                    fireInvokeEvent: function () {
                         that._fireInvokeEvent();
                     },
-                    verifySelectionAllowed: function (index) {
+                    verifySelectionAllowed: function () {
                         return that._verifySelectionAllowed();
                     },
-                    changeFocus: function (newFocus, skipSelection, ctrlKeyDown, skipEnsureVisible, keyboardFocused) { },
-                    selectRange: function (firstIndex, lastIndex, additive) {
+                    changeFocus: function () { },
+                    selectRange: function (firstIndex, lastIndex) {
                         return that._selection.set({ firstIndex: firstIndex, lastIndex: lastIndex });
                     }
                 }, {
@@ -464,7 +464,7 @@ define([
                     this._itemEventsHandler.onMSHoldVisual(eventObject);
                 },
 
-                _onFocusIn: function ItemContainer_onFocusIn(eventObject) {
+                _onFocusIn: function ItemContainer_onFocusIn() {
                     if (this._itemBox.querySelector("." + _Constants._itemFocusOutlineClass) || !_KeyboardBehavior._keyboardSeenLast) {
                         return;
                     }
@@ -474,7 +474,7 @@ define([
                     this._itemBox.appendChild(outline);
                 },
 
-                _onFocusOut: function ItemContainer_onFocusOut(eventObject) {
+                _onFocusOut: function ItemContainer_onFocusOut() {
                     _ElementUtilities.removeClass(this._itemBox, _Constants._itemFocusClass);
                     var outline = this._itemBox.querySelector("." + _Constants._itemFocusOutlineClass);
                     if (outline) {
@@ -508,7 +508,7 @@ define([
                     }
                 },
 
-                _onDragEnd: function ItemContainer_onDragEnd(eventObject) {
+                _onDragEnd: function ItemContainer_onDragEnd() {
                     this._dragging = false;
                     _ElementUtilities.removeClass(this._itemBox, _Constants._dragSourceClass);
                     this._itemEventsHandler.resetPointerDownState();
@@ -744,7 +744,7 @@ define([
                     return false;
                 },
 
-                set: function SingleItemSelectionManager_set(items) {
+                set: function SingleItemSelectionManager_set() {
                     this.selected = true;
                 },
 
@@ -752,11 +752,11 @@ define([
                     this.selected = false;
                 },
 
-                add: function SingleItemSelectionManager_add(items) {
+                add: function SingleItemSelectionManager_add() {
                     this.selected = true;
                 },
 
-                remove: function SingleItemSelectionManager_remove(items) {
+                remove: function SingleItemSelectionManager_remove() {
                     this.selected = false;
                 },
 
@@ -776,11 +776,11 @@ define([
                     this._element.dispatchEvent(eventObject);
                 },
 
-                _isIncluded: function SingleItemSelectionManager_isIncluded(index) {
+                _isIncluded: function SingleItemSelectionManager_isIncluded() {
                     return this._selected;
                 },
 
-                _getFocused: function SingleItemSelectionManager_getFocused(index) {
+                _getFocused: function SingleItemSelectionManager_getFocused() {
                     return { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX };
                 }
             });

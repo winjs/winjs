@@ -230,14 +230,14 @@ define([
 
     function translateCallbackAnimate(offsetArray, suffix) {
         suffix = suffix || "";
-        return function (i, elem) {
+        return function (i) {
             var offset = offsetArray[i];
             return "translate(" + offset.left + "px, " + offset.top + "px) " + suffix;
         };
     }
 
     function keyframeCallbackAnimate(offsetArray, keyframe) {
-        return function (i, elem) {
+        return function (i) {
             var offset = offsetArray[i];
             return (offset.left === 0 && offset.top === 0) ? keyframe : null;
         };

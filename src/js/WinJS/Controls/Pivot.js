@@ -598,7 +598,7 @@ define([
                         }
                     },
 
-                    _resizeHandler: function (ev) {
+                    _resizeHandler: function () {
                         if (this._disposed) {
                             return;
                         }
@@ -706,7 +706,6 @@ define([
                         }
 
                         var that = this;
-                        var eventFired = false;
                         var selectionChangedDetail = {
                             index: index,
                             direction: goPrevious ? "backwards" : "forward",
@@ -1129,7 +1128,7 @@ define([
                         _ElementUtilities.removeClass(this._headersContainerElement, Pivot._ClassName.pivotShowNavButtons);
                     },
 
-                    _pointerDownHandler: function pivot_pointerDownHandler(ev) {
+                    _pointerDownHandler: function pivot_pointerDownHandler() {
                         _Log.log && _Log.log('_pointerDown', "winjs pivot", "log");
                         // Don't do recentering if a finger is down.
                         this._manipulationRecenterPromise && this._manipulationRecenterPromise.cancel();
@@ -1235,7 +1234,7 @@ define([
                         this._renderHeaders();
                     },
 
-                    _handleItemReload: function pivot_handleItemReload(ev) {
+                    _handleItemReload: function pivot_handleItemReload() {
                         // Reload is triggered by large operations on the binding list such as reverse(). This causes
                         // _pendingItems to be true which ignores future insert/remove/modified/moved events until the new
                         // items list is applied.

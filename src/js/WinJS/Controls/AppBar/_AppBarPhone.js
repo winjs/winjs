@@ -359,7 +359,7 @@ define([
                         // Always bottom for phone
                         return _Constants.appBarPlacementBottom;
                     },
-                    set: function (value) {
+                    set: function () {
                         //NOP on phone
                     }
                 },
@@ -387,7 +387,7 @@ define([
                     get: function () {
                         return false; // Always false on phone.
                     },
-                    set: function (value) {
+                    set: function () {
                         // NOP on phone
                     },
                 },
@@ -610,7 +610,7 @@ define([
                 _wireUpEvents: function AppBar_wireUpEvents() {
                     // Define commandBar event handlers.
 
-                    this._commandBarMenuOpened = function AppBar_commandBarMenuOpened(ev) {
+                    this._commandBarMenuOpened = function AppBar_commandBarMenuOpened() {
                         if (!this.disabled) {
                             this._writeProfilerMark("commandBarMenuOpened,StartTM");
                             _sendEvent.call(this, BEFORESHOW);
@@ -619,7 +619,7 @@ define([
                         }
                     }.bind(this);
 
-                    this._commandBarMenuClosed = function AppBar_commandBarMenuClosed(ev) {
+                    this._commandBarMenuClosed = function AppBar_commandBarMenuClosed() {
                         if (!this.disabled) {
                             this._writeProfilerMark("commandBarMenuClosed,StartTM");
                             _sendEvent.call(this, BEFOREHIDE);

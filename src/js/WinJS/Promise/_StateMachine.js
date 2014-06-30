@@ -1076,9 +1076,8 @@ define([
                 /// </returns>
                 /// </signature>
                 return new Promise(
-                    function (complete, error, progress) {
+                    function (complete, error) {
                         var keys = Object.keys(values);
-                        var errors = Array.isArray(values) ? [] : {};
                         if (keys.length === 0) {
                             complete();
                         }

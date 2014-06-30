@@ -222,7 +222,7 @@ define([
                         that._listView._writeProfilerMark("_realizeItems_appendedItemsToDom,StartTM");
                         if (that._listView._isZombie()) { return; }
 
-                        function updateSwipeable(itemData, element, itemBox) {
+                        function updateSwipeable(itemData, element) {
                             if (!itemData.updatedSwipeableAttribute && (that._listView.itemsDraggable || that._listView.itemsReorderable || that._listView._swipeable)) {
                                 itemData.itemsManagerRecord.renderComplete.done(function () {
                                     if (that._realizePass === currentPass) {
@@ -2375,7 +2375,7 @@ define([
 
                 _layoutItems: function VirtualizeContentsView_layoutItems() {
                     var that = this;
-                    return this._listView._itemsCount().then(function (count) {
+                    return this._listView._itemsCount().then(function () {
                         return Promise.as(that._listView._layout.numberOfItemsPerItemsBlock).then(function (blockSize) {
                             that._listView._writeProfilerMark("numberOfItemsPerItemsBlock(" + blockSize + "),info");
                             if (blockSize !== that._blockSize) {
@@ -2599,7 +2599,7 @@ define([
                             function () {
                                 that._creatingContainersWork = null;
                             },
-                            function (error) {
+                            function () {
                                 that._creatingContainersWork = null;
                             }
                         );
@@ -2616,7 +2616,7 @@ define([
                             function () {
                                 that._layoutCompleted = null;
                             },
-                            function (error) {
+                            function () {
                                 that._layoutCompleted = null;
                             }
                         );
@@ -2628,7 +2628,7 @@ define([
                             function () {
                                 that._realizedRangeLaidOut = null;
                             },
-                            function (error) {
+                            function () {
                                 that._realizedRangeLaidOut = null;
                             }
                         );
@@ -2702,7 +2702,7 @@ define([
                     this.view._setState(BuildingState);
                 },
                 layoutNewContainers: nop,
-                waitForEntityPosition: function CreatedState_waitForEntityPosition(entity) {
+                waitForEntityPosition: function CreatedState_waitForEntityPosition() {
                     this.view._setState(BuildingState);
                     return this.view._getLayoutCompleted();
                 },
@@ -2761,7 +2761,7 @@ define([
                 },
                 relayout: nop,
                 layoutNewContainers: nop,
-                waitForEntityPosition: function BuildingState_waitForEntityPosition(entity) {
+                waitForEntityPosition: function BuildingState_waitForEntityPosition() {
                     return this.view._getLayoutCompleted();
                 },
                 updateTree: nop
@@ -2861,7 +2861,7 @@ define([
                 layoutNewContainers: function LayingoutState_layoutNewContainers() {
                     this.relayout();
                 },
-                waitForEntityPosition: function LayingoutState_waitForEntityPosition(entity) {
+                waitForEntityPosition: function LayingoutState_waitForEntityPosition() {
                     return this.view._getLayoutCompleted();
                 },
                 updateTree: function LayingoutState_updateTree(count, delta, modifiedElements) {
@@ -2893,7 +2893,7 @@ define([
                 layoutNewContainers: function LayoutCanceledState_layoutNewContainers() {
                     this.relayout();
                 },
-                waitForEntityPosition: function LayoutCanceledState_waitForEntityPosition(entity) {
+                waitForEntityPosition: function LayoutCanceledState_waitForEntityPosition() {
                     return this.view._getLayoutCompleted();
                 },
                 updateTree: function LayoutCanceledState_updateTree(count, delta, modifiedElements) {
@@ -2966,7 +2966,7 @@ define([
                         this.view._relayoutInComplete = true;
                     }
                 },
-                waitForEntityPosition: function RealizingState_waitForEntityPosition(entity) {
+                waitForEntityPosition: function RealizingState_waitForEntityPosition() {
                     return this.view._getLayoutCompleted();
                 },
                 updateTree: function RealizingState_updateTree(count, delta, modifiedElements) {
@@ -3007,7 +3007,7 @@ define([
                 layoutNewContainers: function CanceledState_layoutNewContainers() {
                     this.relayout(CanceledState);
                 },
-                waitForEntityPosition: function CanceledState_waitForEntityPosition(entity) {
+                waitForEntityPosition: function CanceledState_waitForEntityPosition() {
                     return this.view._getLayoutCompleted();
                 },
                 updateTree: function CanceledState_updateTree(count, delta, modifiedElements) {
@@ -3027,7 +3027,7 @@ define([
                 this.relayoutNewContainers = true;
             }, {
                 name: 'ScrollingState',
-                setLoadingState: function ScrollingState_setLoadingState(state) {
+                setLoadingState: function ScrollingState_setLoadingState() {
                 }
             });
 
@@ -3091,7 +3091,7 @@ define([
                     this.view._createLayoutSignal();
                     this.view._relayoutInComplete = true;
                 },
-                waitForEntityPosition: function UnrealizingState_waitForEntityPosition(entity) {
+                waitForEntityPosition: function UnrealizingState_waitForEntityPosition() {
                     return this.view._getLayoutCompleted();
                 },
                 updateTree: function UnrealizingState_updateTree(count, delta, modifiedElements) {
@@ -3194,7 +3194,7 @@ define([
                     this.view._createLayoutSignal();
                     this.view._relayoutInComplete = true;
                 },
-                waitForEntityPosition: function RealizingAnimatingState_waitForEntityPosition(entity) {
+                waitForEntityPosition: function RealizingAnimatingState_waitForEntityPosition() {
                     return this.view._getLayoutCompleted();
                 },
                 updateTree: function RealizingAnimatingState_updateTree(count, delta, modifiedElements) {

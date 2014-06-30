@@ -515,7 +515,6 @@ define([
                     var end = { year: tempCal.year, era: tempCal.era };
 
                     tempCal.setDateTime(startDate);
-                    var minYear = tempCal.year;
                     var yearLen = 0;
 
                     yearLen = yearDiff(tempCal, end) + 1;
@@ -675,7 +674,7 @@ define([
                     };
 
                     var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                    var monthSource = function (yearIndex) {
+                    var monthSource = function () {
                         return {
                             getLength: function () { return months.length; },
                             getValue: function (index) { return months[index]; },

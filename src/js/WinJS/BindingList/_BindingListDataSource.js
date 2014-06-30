@@ -226,7 +226,6 @@ define([
                 },
 
                 _iteminserted: function (event) {
-                    var key = event.detail.key;
                     var index = event.detail.index;
                     this._updateAffectedRange(index, "inserted");
                     this._beginEdits(this._list.length - 1);
@@ -251,7 +250,6 @@ define([
                 },
 
                 _itemmoved: function (event) {
-                    var key = event.detail.key;
                     var oldIndex = event.detail.oldIndex;
                     var newIndex = event.detail.newIndex;
                     this._updateAffectedRange(oldIndex, "moved");

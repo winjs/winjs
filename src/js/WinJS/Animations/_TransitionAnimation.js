@@ -59,7 +59,6 @@ define([
 
     var activeActions = [];
 
-    var reason_ended = 0;
     var reason_interrupted = 1;
     var reason_canceled = 2;
 
@@ -217,7 +216,7 @@ define([
 
                 transitions.forEach(function (transition) {
                     var finish;
-                    promises.push(new Promise(function (c, e, p) {
+                    promises.push(new Promise(function (c) {
                         finish = function (reason) {
                             if (onTransitionEnd) {
                                 listener.removeEventListener(_BaseUtils._browserEventEquivalents["transitionEnd"], onTransitionEnd, false);
@@ -297,7 +296,7 @@ define([
                 animationPromises = [];
             anims.forEach(function (anim) {
                 var finish;
-                animationPromises.push(new Promise(function (c, e, p) {
+                animationPromises.push(new Promise(function (c) {
                     finish = function (reason) {
                         if (onAnimationEnd) {
                             listener.removeEventListener(_BaseUtils._browserEventEquivalents["animationEnd"], onAnimationEnd, false);
@@ -396,7 +395,7 @@ define([
             if (promises.length) {
                 return Promise.join(promises);
             } else {
-                return Scheduler.schedulePromiseNormal(null, "WinJS.UI._Animation._completeActionPromise").then(null, function (error) {
+                return Scheduler.schedulePromiseNormal(null, "WinJS.UI._Animation._completeActionPromise").then(null, function () {
                     // Convert a cancelation to the success path
                 });
             }

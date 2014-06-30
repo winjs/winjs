@@ -537,7 +537,7 @@ define([
                     this._ariaValueNowMutationObserver.observe(this._element, { attributes: true, attributeFilter: ["aria-valuenow"] });
                 },
 
-                _onWinJSNodeInserted: function (eventObject) {
+                _onWinJSNodeInserted: function () {
                     this._recalculateStarProperties();
                     this._updateControl();
                 },
@@ -598,7 +598,7 @@ define([
                     this._showTentativeRating(firePreviewChange, "keyboard");
                 },
 
-                _ariaValueNowChanged: function (eventObject) {
+                _ariaValueNowChanged: function () {
                     if (!this._disabled) {
                         var attrNode = this._element.getAttributeNode("aria-valuenow");
                         if (attrNode !== null) {
@@ -612,7 +612,7 @@ define([
                     }
                 },
 
-                _onPointerCancel: function (eventObject) {
+                _onPointerCancel: function () {
                     this._showCurrentRating();
                     if (!this._lastEventWasChange) {
                         this._raiseEvent(CANCEL, null);
@@ -1034,7 +1034,7 @@ define([
                     }
                 },
 
-                _closeTooltip: function (tooltipType) {
+                _closeTooltip: function () {
                     if (this._toolTips.length !== 0) {
                         if (this._tentativeRating > 0) {
                             this._toolTips[this._tentativeRating - 1].close();

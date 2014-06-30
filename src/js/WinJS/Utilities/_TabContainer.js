@@ -157,7 +157,7 @@ define([
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         TrackTabBehavior: TrackTabBehavior,
-        TabContainer: _Base.Class.define(function TabContainer_ctor(element, options) {
+        TabContainer: _Base.Class.define(function TabContainer_ctor(element) {
             /// <signature helpKeyword="WinJS.UI.TabContainer.TabContainer">
             /// <summary locid="WinJS.UI.TabContainer.constructor">
             /// Constructs the TabContainer.

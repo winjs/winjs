@@ -276,7 +276,6 @@ define([
                     }
                 }
 
-                var appBarControl = this.parentElement.winControl;
                 if (this.parentElement.winControl.placement === _Constants.appBarPlacementBottom) {
                     // Bottom appBar: Focus order: (1)next bottom appBars (2)top appBars (3)other appBars (4)bottom appBars
                     if (_setFocusToNextAppBarHelper(thisAppBarIndex + 1, _Constants.appBarPlacementBottom, appBars)) { return; }
@@ -457,7 +456,7 @@ define([
                 _ElementUtilities._addEventListener(this._element, "focusin", function (event) { _checkStorePreviousFocus(event); }, false);
 
                 // Need to hide ourselves if we lose focus
-                _ElementUtilities._addEventListener(this._element, "focusout", function (event) { _Overlay._Overlay._hideIfAllAppBarsLostFocus(); }, false);
+                _ElementUtilities._addEventListener(this._element, "focusout", function () { _Overlay._Overlay._hideIfAllAppBarsLostFocus(); }, false);
 
                 // Commands layout AppBar measures and caches its content synchronously in setOptions through the .commands property setter.
                 // Remove the commands layout AppBar from the layout tree at this point so we don't cause unnecessary layout costs whenever
@@ -1085,7 +1084,7 @@ define([
                     setTimeout(function (e) { that._checkKeyboardTimer(e); }, _Overlay._Overlay._keyboardInfo._animationShowLength + _Overlay._Overlay._scrollTimeout);
                 },
 
-                _hidingKeyboard: function AppBar_hidingKeyboard(event) {
+                _hidingKeyboard: function AppBar_hidingKeyboard() {
                     // We won't be obscured
                     this._keyboardObscured = false;
                     this._keyboardShowing = false;
@@ -1147,7 +1146,7 @@ define([
                     }
                 },
 
-                _mayEdgeBackIn: function AppBar_mayEdgeBackIn(event) {
+                _mayEdgeBackIn: function AppBar_mayEdgeBackIn() {
                     // May need to react to IHM being resized event
                     if (this._keyboardShowing) {
                         // If not top appbar or viewport isn't still at top, then need to show again
@@ -1179,7 +1178,7 @@ define([
                     // else we don't touch custom positions
                 },
 
-                _checkScrollPosition: function AppBar_checkScrollPosition(event) {
+                _checkScrollPosition: function AppBar_checkScrollPosition() {
                     // If keyboard's animating, then remember we may come in
                     if (this._keyboardShowing) {
                         // Tag that it's OK to edge back in.
