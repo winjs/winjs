@@ -511,7 +511,7 @@ define([
                     this._registerEventToListener(this._anchorElement, "MSHoldVisual");
                 },
 
-                _handleEvent: function (event) {                    
+                _handleEvent: function (event) {
                     var eventType = event._normalizedType || event.type;
                     if (!this._triggerByOpen) {
                         // If the anchor element has children, we should ignore events that are caused within the anchor element

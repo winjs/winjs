@@ -121,7 +121,7 @@ define([
                 this._forceLayout();
 
                 // Register for notification when we are added to DOM
-                WinJS.Utilities._addInsertedNotifier(this._element);
+                _ElementUtilities._addInsertedNotifier(this._element);
 
                 // Remember ourselves
                 element.winControl = this;

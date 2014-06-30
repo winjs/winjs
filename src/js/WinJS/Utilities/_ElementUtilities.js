@@ -1122,7 +1122,7 @@ define([
             hiddenElement.style["position"] = "absolute";
             element.appendChild(hiddenElement);
 
-            WinJS.Utilities._addEventListener(hiddenElement, "animationStart", function(e) {
+            exports._addEventListener(hiddenElement, "animationStart", function(e) {
                 if (e.animationName === "WinJS-node-inserted") {
                     var e = document.createEvent("Event");
                     e.initEvent("WinJSNodeInserted", false, true);
