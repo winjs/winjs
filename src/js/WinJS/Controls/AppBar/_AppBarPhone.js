@@ -72,6 +72,7 @@ define([
 
             // Send one of our events, duplicate of private _Overlay member function
             function _sendEvent(eventName, detail) {
+                /*jshint validthis: true */
                 if (this._disposed) {
                     return;
                 }
@@ -82,24 +83,28 @@ define([
 
             // Show commands, duplicate of private _Overlay member function
             function _showCommands(commands) {
+                /*jshint validthis: true */
                 var showHide = _resolveCommands.call(this, commands);
                 this._showAndHideCommands(showHide.commands, []);
             }
 
             // Hide commands, duplicate of private _Overlay member function
             function _hideCommands(commands) {
+                /*jshint validthis: true */
                 var showHide = _resolveCommands.call(this, commands);
                 this._showAndHideCommands([], showHide.commands);
             }
 
             // Hide commands, duplicate of private _Overlay member function
             function _showOnlyCommands(commands) {
+                /*jshint validthis: true */
                 var showHide = _resolveCommands.call(this, commands);
                 this._showAndHideCommands(showHide.commands, showHide.others);
             }
 
             // Resolves our commands, duplicate of private _Overlay member function
             function _resolveCommands(commands) {
+                /*jshint validthis: true */
                 // First make sure they're all DOM elements.
                 commands = _resolveElements(commands);
 

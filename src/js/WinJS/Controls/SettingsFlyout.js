@@ -301,7 +301,7 @@ define([
                     var animateFromLeft = _shouldAnimateFromLeft();
                     var offset = animateFromLeft ? "-100px" : "100px";
                     _ElementListUtilities.query("div.win-content", this._element).
-                        forEach(function (e) { Animations.enterPage(e, { left: offset }) });
+                        forEach(function (e) { Animations.enterPage(e, { left: offset }); });
 
                     var where,
                         width = this._element.offsetWidth;

@@ -52,11 +52,11 @@ define([
             if (v) {
                 if (typeof v === "object" && v.element) {
                     var elementPromise = Promise.as(v.element);
-                    return elementPromise.then(function (e) { return { element: e, renderComplete: Promise.as(v.renderComplete) } });
+                    return elementPromise.then(function (e) { return { element: e, renderComplete: Promise.as(v.renderComplete) }; });
                 }
                 else {
                     var elementPromise = Promise.as(v);
-                    return elementPromise.then(function (e) { return { element: e, renderComplete: Promise.as() } });
+                    return elementPromise.then(function (e) { return { element: e, renderComplete: Promise.as() }; });
                 }
             }
             else {

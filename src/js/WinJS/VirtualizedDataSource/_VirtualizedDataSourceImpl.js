@@ -63,6 +63,8 @@ define([
 
                 // Private members
 
+                /*jshint validthis: true */
+
                 var listDataNotificationHandler,
                     cacheSize,
                     status,
@@ -1333,7 +1335,6 @@ define([
                 }
 
                 // Status
-
                 var that = this;
                 function setStatus(statusNew) {
                     statusPending = statusNew;

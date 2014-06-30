@@ -25,8 +25,14 @@ define([
             function stripDirectionMarker(str) {
                 return str.replace(stringDirectionRegEx, "");
             }
-            function stockGetValue(index) { return this[index]; }
-            function stockGetLength() { return this.length; }
+            function stockGetValue(index) {
+                /*jshint validthis: true */
+                return this[index];
+            }
+            function stockGetLength() {
+                /*jshint validthis: true */
+                return this.length;
+            }
             function fixDataSource(dataSource) {
                 if (!dataSource.getValue) {
                     dataSource.getValue = stockGetValue;

@@ -708,8 +708,8 @@ define([
                     resizables[i].dispatchEvent(event);
                 }
             },
-                _resizeClass: { get: function () { return 'win-element-resize' } },
-                _resizeEvent: { get: function () { return 'WinJSElementResize' } }
+                _resizeClass: { get: function () { return 'win-element-resize'; } },
+                _resizeEvent: { get: function () { return 'WinJSElementResize'; } }
         }
     );
 

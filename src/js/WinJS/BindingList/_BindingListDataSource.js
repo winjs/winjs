@@ -527,11 +527,13 @@ define([
             });
 
             function insertAtStart(unused, data) {
+                /*jshint validthis: true */
                 // List ignores the key because its key management is internal
                 this._list.unshift(data);
                 return this.itemFromIndex(0);
             }
             function insertBefore(unused, data, nextKey) {
+                /*jshint validthis: true */
                 // List ignores the key because its key management is internal
                 var index = this._list.indexOfKey(nextKey);
                 if (index === -1) {
@@ -541,6 +543,7 @@ define([
                 return this.itemFromIndex(index);
             }
             function insertAfter(unused, data, previousKey) {
+                /*jshint validthis: true */
                 // List ignores the key because its key management is internal
                 var index = this._list.indexOfKey(previousKey);
                 if (index === -1) {
@@ -551,11 +554,13 @@ define([
                 return this.itemFromIndex(index);
             }
             function insertAtEnd(unused, data) {
+                /*jshint validthis: true */
                 // List ignores the key because its key management is internal
                 this._list.push(data);
                 return this.itemFromIndex(this._list.length - 1);
             }
             function change(key, newData) {
+                /*jshint validthis: true */
                 var index = this._list.indexOfKey(key);
                 if (index === -1) {
                     return errors.noLongerMeaningful;
@@ -564,6 +569,7 @@ define([
                 return this.itemFromIndex(index);
             }
             function moveToStart(key) {
+                /*jshint validthis: true */
                 var sourceIndex = this._list.indexOfKey(key);
                 if (sourceIndex === -1) {
                     return errors.noLongerMeaningful;
@@ -573,6 +579,7 @@ define([
                 return this.itemFromIndex(targetIndex);
             }
             function moveBefore(key, nextKey) {
+                /*jshint validthis: true */
                 var sourceIndex = this._list.indexOfKey(key);
                 var targetIndex = this._list.indexOfKey(nextKey);
                 if (sourceIndex === -1 || targetIndex === -1) {
@@ -583,6 +590,7 @@ define([
                 return this.itemFromIndex(targetIndex);
             }
             function moveAfter(key, previousKey) {
+                /*jshint validthis: true */
                 var sourceIndex = this._list.indexOfKey(key);
                 var targetIndex = this._list.indexOfKey(previousKey);
                 if (sourceIndex === -1 || targetIndex === -1) {
@@ -593,6 +601,7 @@ define([
                 return this.itemFromIndex(targetIndex);
             }
             function moveToEnd(key) {
+                /*jshint validthis: true */
                 var sourceIndex = this._list.indexOfKey(key);
                 if (sourceIndex === -1) {
                     return errors.noLongerMeaningful;
@@ -602,6 +611,7 @@ define([
                 return this.itemFromIndex(targetIndex);
             }
             function remove(key) {
+                /*jshint validthis: true */
                 var index = this._list.indexOfKey(key);
                 if (index === -1) {
                     return errors.noLongerMeaningful;

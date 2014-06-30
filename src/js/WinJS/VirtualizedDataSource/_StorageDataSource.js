@@ -46,7 +46,7 @@ define([
                 if (!library) {
                     this._query = query;
                 } else {
-                    var queryOptions = new Windows.Storage.Search.QueryOptions;
+                    var queryOptions = new Windows.Storage.Search.QueryOptions();
                     queryOptions.folderDepth = Windows.Storage.Search.FolderDepth.deep;
                     queryOptions.indexerOption = Windows.Storage.Search.IndexerOption.useIndexerWhenAvailable;
                     this._query = library.createFileQueryWithOptions(queryOptions);

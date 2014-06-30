@@ -507,7 +507,7 @@ define([
                         var hourFormatter = newFormatter(timePatterns.hour, DEFAULT_HOUR_PATTERN);
                         var now = TimePicker._sentinelDate();
                         return {
-                            getLength: function () { return numberOfHours },
+                            getLength: function () { return numberOfHours; },
                             getValue: function (index) {
                                 now.setHours(index);
                                 return hourFormatter.format(now);

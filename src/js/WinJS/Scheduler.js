@@ -346,6 +346,7 @@ define([
         return false;
     }
     function illegal(job) {
+        /*jshint validthis: true */
         throw "Illegal call by job(" + job.id + ") in state: " + this.name;
     }
 

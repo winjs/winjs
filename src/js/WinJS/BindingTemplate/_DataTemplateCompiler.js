@@ -1291,7 +1291,7 @@ define([
                     var identifier = this.defineStatic(
                         StaticKind.import,
                         name,
-                        function () { return that.formatCodeN("({0}{1})", IMPORTS_ARG_NAME, identifierAccessExpression([name])) }
+                        function () { return that.formatCodeN("({0}{1})", IMPORTS_ARG_NAME, identifierAccessExpression([name])); }
                     );
                     if (identifier.import && identifier.import !== i) {
                         throw "Duplicate import: '" + name + "'";

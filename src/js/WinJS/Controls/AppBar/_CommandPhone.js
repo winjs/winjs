@@ -33,6 +33,7 @@ define([
             var core = Windows.UI.WebUI.Core;
 
             function _handleClick(event) {
+                /*jshint validthis: true */
                 var command = this.winControl;
                 if (command) {
                     if (command._type === _Constants.typeToggle) {

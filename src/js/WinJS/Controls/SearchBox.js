@@ -741,7 +741,7 @@ define([
 
                 _resultSuggestionRenderer: function SearchBox_resultSuggestionRenderer(item) {
                     var root = document.createElement("div");
-                    var image = new Image;
+                    var image = new Image();
                     image.style.opacity = 0;
                     var loadImage = function (url) {
                         function onload() {
@@ -758,7 +758,7 @@ define([
                                 loadImage(URL.createObjectURL(streamWithContentType, { oneTimeOnly: true }));
                             }
                         });
-                    } else if (item.imageUrl != null) {
+                    } else if (item.imageUrl !== null) {
                         loadImage(item.imageUrl);
                     }
                     image.setAttribute("aria-hidden", "true");

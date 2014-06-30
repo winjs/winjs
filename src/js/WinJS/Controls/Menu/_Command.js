@@ -31,6 +31,7 @@ define([
         MenuCommand: _Base.Namespace._lazy(function () {
 
             function _handleMenuClick(event) {
+                /*jshint validthis: true */
                 var command = this.winControl;
                 if (command) {
                     var hideParent = true;
@@ -65,6 +66,7 @@ define([
             }
 
             function _handleMouseOver(event) {
+                /*jshint validthis: true */
                 if (this && this.focus) {
                     this.focus();
 
@@ -73,12 +75,14 @@ define([
             }
 
             function _handleMouseMove(event) {
+                /*jshint validthis: true */
                 if (this && this.focus && this !== document.activeElement) {
                     this.focus();
                 }
             }
 
             function _handleMouseOut(event) {
+                /*jshint validthis: true */
                 var that = this;
                 var parentFlyout = _getParentFlyout(that);
                 if (parentFlyout
