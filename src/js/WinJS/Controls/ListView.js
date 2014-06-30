@@ -3144,7 +3144,7 @@ define([
                         return that._getItemOffsetPosition(index).then(function positionItemAtIndex_then_ItemOffsetPosition(posCanvas) {
                             var horizontal = that._horizontal(),
                                 canvasMargins = that._getCanvasMargins(),
-                                canvasSize = that._canvas[horizontal ? "offsetWidth" : "offsetHeight"] + canvasMargins[(horizontal ? (that._rtl() ? "right" : "left") : "top")],
+                                canvasSize = that._viewport[horizontal ? "scrollWidth" : "scrollHeight"],
                                 viewportSize = (horizontal ? that._viewportWidth : that._viewportHeight),
                                 headerSizeProp = (horizontal ? "headerContainerWidth" : "headerContainerHeight"),
                                 layoutSizes = that.layout._sizes,

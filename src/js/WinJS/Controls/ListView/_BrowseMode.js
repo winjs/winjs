@@ -978,7 +978,7 @@ define([
                         cursorPositionInViewport = (horizontal ? x : y),
                         rtl = this.site._rtl(),
                         canvasMargins = this.site._getCanvasMargins(),
-                        canvasSize = this.site._canvas[horizontal ? "offsetWidth" : "offsetHeight"] + canvasMargins[(horizontal ? (rtl ? "right" : "left") : "top")],
+                        canvasSize = this.site._viewport[horizontal ? "scrollWidth" : "scrollHeight"],
                         scrollPosition = Math.floor(this.site.scrollPosition),
                         travelRate = 0;
 

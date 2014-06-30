@@ -2563,6 +2563,9 @@ define([
                         ";-ms-grid-columns: auto" +
                         ";-ms-grid-rows: auto";
                     surface.className = _Constants._scrollableClass + " " + (this._inListMode ? _Constants._listLayoutClass : _Constants._gridLayoutClass);
+                    if (!this._envInfo.supportsCSSGrid) {
+                        _ElementUtilities.addClass(surface, _Constants._noCSSGrid);
+                    }
                     if (this._groupsEnabled) {
                         if (this._groupHeaderPosition === HeaderPosition.top) {
                             _ElementUtilities.addClass(surface, _Constants._headerPositionTopClass);
@@ -2724,18 +2727,21 @@ define([
                                 itemsContainerColumn = 1,
                                 headerContainerRow = 2,
                                 headerContainerColumn = 2,
-                                firstElementOnSurface = itemsContainer;
+                                firstElementOnSurface = itemsContainer,
+                                addHeaderFirst = false;
                             if (that._inListMode && that._groupsEnabled) {
                                 if (that._horizontal && that._groupHeaderPosition === HeaderPosition.top) {
                                     itemsContainerRow = 2;
                                     headerContainerColumn = 1;
                                     headerContainerRow = 1;
                                     firstElementOnSurface = elements.headerContainer;
+                                    addHeaderFirst = true;
                                 } else if (!that._horizontal && that._groupHeaderPosition === HeaderPosition.left) {
                                     itemsContainerColumn = 2;
                                     headerContainerColumn = 1;
                                     headerContainerRow = 1;
                                     firstElementOnSurface = elements.headerContainer;
+                                    addHeaderFirst = true;
                                 }
                             }
                             // ListMode needs to use display block to proprerly measure items in vertical mode, and display flex to properly measure items in horizontal mode
@@ -2758,12 +2764,15 @@ define([
                                     _ElementUtilities.addClass(itemsContainer, _Constants._groupLeaderClass);
                                 }
                             }
+                            if (addHeaderFirst) {
+                                surface.appendChild(elements.headerContainer);
+                            }
 
                             itemsContainer.appendChild(elements.container);
                             itemsContainer.appendChild(emptyContainer);
 
                             surface.appendChild(itemsContainer);
-                            if (that._groupsEnabled) {
+                            if (!addHeaderFirst && that._groupsEnabled) {
                                 surface.appendChild(elements.headerContainer);
                             }
                             site.viewport.insertBefore(surface, site.viewport.firstChild);
@@ -4207,11 +4216,16 @@ define([
 
                 numberOfItemsPerItemsBlock: {
                     get: function ListLayout_getNumberOfItemsPerItemsBlock() {
+                        if (this._envInfo.nestedFlexTooLarge || this._envInfo.nestedFlexTooSmall) {
+                            this._usingStructuralNodes = false;
+                        } else {
+                            this._usingStructuralNodes = exports.ListLayout._numberOfItemsPerItemsBlock > 0;
+                        }
+                        var that = this;
                         // Measure when numberOfItemsPerItemsBlock is called so that we measure before ListView has created the full tree structure
                         // which reduces the trident layout required by measure.
-                        this._usingStructuralNodes = exports.ListLayout._numberOfItemsPerItemsBlock > 0;
                         return this._measureItem(0).then(function () {
-                            return exports.ListLayout._numberOfItemsPerItemsBlock;
+                            return (that._usingStructuralNodes ? exports.ListLayout._numberOfItemsPerItemsBlock : null);
                         });
                     }
                 },

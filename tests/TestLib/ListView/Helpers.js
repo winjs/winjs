@@ -668,10 +668,10 @@ if (typeof (WinJS) !== "undefined") {
         var rules = [rootClass + " {width: " + options.viewWidth + "px; height: " + options.viewHeight + "px;}",
                      rootClass + " .win-surface {margin: " + options.canvasMargins.top + "px " + options.canvasMargins.right + "px " + options.canvasMargins.bottom + "px " + options.canvasMargins.left + "px;}",
                      rootClass + " .win-container {margin: " + options.itemMargins.top + "px " + options.itemMargins.right + "px " + options.itemMargins.bottom + "px " + options.itemMargins.left + "px;}",
-                     rootClass + " .win-item {width: " + options.itemWidth + "px; height: " + options.itemHeight + "px;}"
+                     rootClass + " .win-container, .win-item {width: " + options.itemWidth + "px; height: " + options.itemHeight + "px;}"
         ];
         if (options.grouped) {
-            rules.push(rootClass + " .win-groupheader {width: " + options.headerSize + "px; height: " + options.headerSize + "px;padding: 0;}");
+            rules.push(rootClass + " .win-groupheadercontainer, .win-groupheader {width: " + options.headerSize + "px; height: " + options.headerSize + "px;padding: 0;}");
             rules.push(rootClass + " .win-horizontal .win-groupleader {" + (options.rtl ? "margin-right" : "margin-left") + ": " + options.groupLeaderOffset + "px;}");
             rules.push(rootClass + " .win-vertical .win-groupleader {margin-top: " + options.groupLeaderOffset + "px;}");
         }
@@ -739,21 +739,29 @@ if (typeof (WinJS) !== "undefined") {
         options.totalItemHeight = options.itemHeight + options.itemMargins.top + options.itemMargins.bottom;
         options.totalItemWidth = options.itemWidth + options.itemMargins.left + options.itemMargins.right;
 
-        if (options.forceOneItemPerBar) {
+        if (options.forceOneItemPerBar || usingListLayout) {
             if (options.horizontal) {
                 var totalAvailableHeight = options.viewHeight - options.canvasMargins.top;
                 if (options.grouped && options.headersAbove) {
                     totalAvailableHeight -= options.headerSize;
                 }
 
-                options.canvasMargins.bottom = totalAvailableHeight - options.totalItemHeight;
+                if (options.forceOneItemPerBar) {
+                    options.canvasMargins.bottom = totalAvailableHeight - options.totalItemHeight;
+                } else {
+                    options.itemHeight = totalAvailableHeight;
+                }
             } else {
                 var totalAvailableWidth = options.viewWidth - options.canvasMargins.left;
                 if (options.grouped && !options.headersAbove) {
                     totalAvailableWidth -= options.headerSize;
                 }
 
-                options.canvasMargins.right = totalAvailableWidth - options.totalItemWidth;
+                if (options.forceOneItemPerBar) {
+                    options.canvasMargins.right = totalAvailableWidth - options.totalItemWidth;
+                } else {
+                    options.itemWidth = totalAvailableWidth;
+                }
             }
         }
 
