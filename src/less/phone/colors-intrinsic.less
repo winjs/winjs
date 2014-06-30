@@ -79,7 +79,9 @@
                 color: @win_light_text_low;
             }
 
-            &:disabled:-ms-input-placeholder {
+            &:disabled:-ms-input-placeholder,
+            &:disabled::-webkit-input-placeholder,
+            &:disabled::-moz-input-placeholder {
                 color: @win_light_text_low;
             }
 
@@ -98,7 +100,9 @@
                 color: @win_dark_text_low;
             }
 
-            &:disabled:-ms-input-placeholder {
+            &:disabled:-ms-input-placeholder,
+            &:disabled::-webkit-input-placeholder,
+            &:disabled::-moz-input-placeholder {
                 color: @win_dark_text_low;
             }
 
@@ -106,7 +110,9 @@
         }
         .mixin(@theme);
 
-        &:-ms-input-placeholder {
+        &:disabled:-ms-input-placeholder,
+        &:disabled::-webkit-input-placeholder,
+        &:disabled::-moz-input-placeholder {
             color: rgba(0, 0, 0, 0.25)
         }
 

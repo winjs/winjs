@@ -71,18 +71,16 @@
                 border-color: rgba(255, 255, 255, 0.4);
                 color: rgba(255, 255, 255, 0.4);
 
-                &:-ms-input-placeholder {
-                    color: rgba(255, 255, 255, 0.22);
-                }
-                &::-webkit-input-placeholder {
+                &:-ms-input-placeholder,
+                &::-webkit-input-placeholder,
+                &::-moz-input-placeholder {
                     color: rgba(255, 255, 255, 0.22);
                 }
             }
 
-            &:-ms-input-placeholder {
-                color: rgba(0, 0, 0, 0.6);
-            }
-            &::-webkit-input-placeholder {
+            &:-ms-input-placeholder,
+            &::-webkit-input-placeholder,
+            &::-moz-input-placeholder {
                 color: rgba(0, 0, 0, 0.6);
             }
 
@@ -105,18 +103,16 @@
                 border-color: rgba(0, 0, 0, 0.15);
                 color: rgba(0, 0, 0, 0.4);
 
-                &:-ms-input-placeholder {
-                    color: rgba(0, 0, 0, 0.22);
-                }
-                &::-webkit-input-placeholder {
+                &:-ms-input-placeholder,
+                &::-webkit-input-placeholder,
+                &::-moz-input-placeholder {
                     color: rgba(0, 0, 0, 0.22);
                 }
             }
 
-            &:-ms-input-placeholder {
-                color: rgba(0, 0, 0, 0.6);
-            }
-            &::-webkit-input-placeholder {
+            &:-ms-input-placeholder,
+            &::-webkit-input-placeholder,
+            &::-moz-input-placeholder {
                 color: rgba(0, 0, 0, 0.6);
             }
 
@@ -892,7 +888,12 @@
         background-color: ButtonFace;
     }
     input:disabled::-ms-check, input:disabled:active::-ms-check,
-    input[type]:-ms-input-placeholder, textarea:-ms-input-placeholder,
+    input[type]:-ms-input-placeholder,
+    input[type]::-webkit-input-placeholder,
+    input[type]::-moz-input-placeholder,
+    textarea:-ms-input-placeholder,
+    textarea::-webkit-input-placeholder,
+    textarea::-moz-input-placeholder
     select:disabled::-ms-value {
         color: GrayText;
     }
