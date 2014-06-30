@@ -405,11 +405,8 @@ define([
 
                     this._viewIn = this._elementIn.winControl.zoomableView;
                     this._viewOut = this._elementOut.winControl.zoomableView;
-                    this._elementInIsListView = (WinJS.UI.ListView && this._elementIn.winControl instanceof WinJS.UI.ListView);
-                    this._elementOutIsListView = (WinJS.UI.ListView && this._elementOut.winControl instanceof WinJS.UI.ListView);
 
                     // Remove the children and place them beneath new divs that will serve as canvases and viewports
-
                     this._element.removeChild(this._elementOut);
                     this._element.removeChild(this._elementIn);
                     this._element.innerHTML = "";

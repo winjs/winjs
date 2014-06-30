@@ -90,7 +90,6 @@
         "MSApp": true,
         "NodeList": true,
         "HTMLCollection": true,
-		"WinJS": true,
 		"Windows": false
     }
 }

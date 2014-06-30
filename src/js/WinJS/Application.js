@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     './Core/_Global',
     './Core/_Base',
     './Core/_BaseUtils',
@@ -11,7 +12,7 @@ define([
     './Promise',
     './_Signal',
     './Scheduler'
-    ], function applicationInit(_Global, _Base, _BaseUtils, _Events, _Log, _WriteProfilerMark, _State, Navigation, Promise, _Signal, Scheduler) {
+    ], function applicationInit(exports, _Global, _Base, _BaseUtils, _Events, _Log, _WriteProfilerMark, _State, Navigation, Promise, _Signal, Scheduler) {
     "use strict";
 
     _Global.Debug && (_Global.Debug.setNonUserCodeExceptions = true);
@@ -37,6 +38,7 @@ define([
 
     var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
     var listeners = new ListenerType();
+    var createEvent = _Events._createEventProperty;
     var pendingDeferrals = {};
     var pendingDeferralID = 0;
 
@@ -58,7 +60,7 @@ define([
         return str;
     }
 
-    var terminateAppHandler = function (data, e) {
+    function defaultTerminateAppHandler(data, e) {
         // This is the unhandled exception handler in WinJS. This handler is invoked whenever a promise
         // has an exception occur that is not handled (via an error handler passed to then() or a call to done()).
         //
@@ -66,7 +68,9 @@ define([
         // For more information on debugging and exception handling go to http://go.microsoft.com/fwlink/p/?LinkId=253583.
         debugger; // jshint ignore:line
         MSApp.terminateApp(data);
-    };
+    }
+
+    var terminateAppHandler = defaultTerminateAppHandler;
 
     function captureDeferral(obj) {
         var id = "def" + (pendingDeferralID++);
@@ -266,8 +270,7 @@ define([
         ],
         checkpoint: [
             function Application_checkpointHandler(e) {
-                // comes from state.js
-                WinJS.Application._oncheckpoint(e);
+                _State._oncheckpoint(e, exports);
             }
         ],
         error: [
@@ -278,7 +281,7 @@ define([
 
                 _Log.log && _Log.log(safeSerialize(e), "winjs", "error");
 
-                if (useWinRT && WinJS.Application._terminateApp) {
+                if (useWinRT && exports._terminateApp) {
                     var data = e.detail;
                     var number = data && (data.number || (data.exception && (data.exception.number || data.exception.code)) || (data.error && data.error.number) || data.errorCode || 0);
                     var terminateData = {
@@ -288,7 +291,7 @@ define([
                         errorNumber: number,
                         number: number
                     };
-                    WinJS.Application._terminateApp(terminateData, e);
+                    exports._terminateApp(terminateData, e);
                 }
             }
         ],
@@ -310,13 +313,13 @@ define([
     //
     function activatedHandler(e) {
         var def = captureDeferral(e.activatedOperation);
-        WinJS.Application._loadState(e).then(function () {
+        _State._loadState(e).then(function () {
             queueEvent({ type: activatedET, detail: e, _deferral: def.deferral, _deferralID: def.id });
         });
     }
     function suspendingHandler(e) {
         var def = captureDeferral(e.suspendingOperation);
-        WinJS.Application.queueEvent({ type: checkpointET, _deferral: def.deferral, _deferralID: def.id });
+        queueEvent({ type: checkpointET, _deferral: def.deferral, _deferralID: def.id });
     }
     function domContentLoadedHandler(e) {
         queueEvent({ type: loadedET });
@@ -326,7 +329,7 @@ define([
                 kind: "Windows.Launch",
                 previousExecutionState: 0 //Windows.ApplicationModel.Activation.ApplicationExecutionState.NotRunning
             };
-            WinJS.Application._loadState(activatedArgs).then(function () {
+            _State._loadState(activatedArgs).then(function () {
                 queueEvent({ type: activatedET, detail: activatedArgs });
             });
         }
@@ -342,12 +345,12 @@ define([
         }
         var data;
         var handled = true;
-        var prev = WinJS.Application._terminateApp;
+        var prev = exports._terminateApp;
         try {
-            WinJS.Application._terminateApp = function (d, e) {
+            exports._terminateApp = function (d, e) {
                 handled = false;
                 data = d;
-                if (prev !== terminateAppHandler) {
+                if (prev !== defaultTerminateAppHandler) {
                     prev(d, e);
                 }
             };
@@ -362,7 +365,7 @@ define([
                 }
             });
         } finally {
-            WinJS.Application._terminateApp = prev;
+            exports._terminateApp = prev;
         }
         return handled;
     }
@@ -450,7 +453,7 @@ define([
                 }
             }
 
-            WinJS.Promise.addEventListener("error", promiseErrorHandler);
+            Promise.addEventListener("error", promiseErrorHandler);
         }
     }
     function unregister() {
@@ -480,7 +483,7 @@ define([
         }
     }
 
-    _Base.Namespace.define("WinJS.Application", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.Application", {
         stop: function () {
             /// <signature helpKeyword="WinJS.Application.stop">
             /// <summary locid="WinJS.Application.stop">
@@ -492,15 +495,16 @@ define([
             // Need to clear out the event properties explicitly to clear their backing
             //  state.
             //
-            this.onactivated = null;
-            this.oncheckpoint = null;
-            this.onerror = null;
-            this.onloaded = null;
-            this.onready = null;
-            this.onsettings = null;
-            this.onunload = null;
+            exports.onactivated = null;
+            exports.oncheckpoint = null;
+            exports.onerror = null;
+            exports.onloaded = null;
+            exports.onready = null;
+            exports.onsettings = null;
+            exports.onunload = null;
+            exports.onbackclick = null;
             listeners = new ListenerType();
-            WinJS.Application.sessionState = {};
+            _State.sessionState = {};
             running = false;
             copyAndClearQueue();
             eventQueueJob && eventQueueJob.cancel();
@@ -567,9 +571,51 @@ define([
 
         queueEvent: queueEvent,
 
-        _terminateApp: terminateAppHandler,
+        _terminateApp: {
+            get: function() {
+                return terminateAppHandler;
+            },
+            set: function(value) {
+                terminateAppHandler = value;
+            }
+        },
+
+        /// <field type="Function" locid="WinJS.Application.oncheckpoint" helpKeyword="WinJS.Application.oncheckpoint">
+        /// Occurs when receiving Process Lifetime Management (PLM) notification or when the checkpoint function is called.
+        /// </field>
+        oncheckpoint: createEvent(checkpointET),
+        /// <field type="Function" locid="WinJS.Application.onunload" helpKeyword="WinJS.Application.onunload">
+        /// Occurs when the application is about to be unloaded.
+        /// </field>
+        onunload: createEvent(unloadET),
+        /// <field type="Function" locid="WinJS.Application.onactivated" helpKeyword="WinJS.Application.onactivated">
+        /// Occurs when Windows Runtime activation has occurred. 
+        /// The name of this event is "activated" (and also "mainwindowactivated".) 
+        /// This event occurs after the loaded event and before the ready event.
+        /// </field>
+        onactivated: createEvent(activatedET),
+        /// <field type="Function" locid="WinJS.Application.onloaded" helpKeyword="WinJS.Application.onloaded">
+        /// Occurs after the DOMContentLoaded event, which fires after the page has been parsed but before all the resources are loaded. 
+        /// This event occurs before the activated event and the ready event.
+        /// </field>
+        onloaded: createEvent(loadedET),
+        /// <field type="Function" locid="WinJS.Application.onready" helpKeyword="WinJS.Application.onready">
+        /// Occurs when the application is ready. This event occurs after the onloaded event and the onactivated event.
+        /// </field>
+        onready: createEvent(readyET),
+        /// <field type="Function" locid="WinJS.Application.onsettings" helpKeyword="WinJS.Application.onsettings">
+        /// Occurs when the settings charm is invoked.
+        /// </field>
+        onsettings: createEvent(settingsET),
+        /// <field type="Function" locid="WinJS.Application.onerror" helpKeyword="WinJS.Application.onerror">
+        /// Occurs when an unhandled error has been raised.
+        /// </field>
+        onerror: createEvent(errorET),
+        /// <field type="Function" locid="WinJS.Application.onbackclick" helpKeyword="WinJS.Application.onbackclick">
+        /// Raised when the users clicks the backbutton on a Windows Phone.
+        /// </field>
+        onbackclick: createEvent(backClickET)
+
 
     });
-
-    Object.defineProperties(WinJS.Application, _Events.createEventProperties(checkpointET, unloadET, activatedET, loadedET, readyET, settingsET, errorET, backClickET));
 });

@@ -7,7 +7,7 @@ define([
     './Core/_Log',
     './Core/_WriteProfilerMark',
     './Binding/_Declarative',
-    './BindingTemplate/_DataTemplateCompiler.js',
+    './BindingTemplate/_DataTemplateCompiler',
     './ControlProcessor',
     './Fragments',
     './Promise',

@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Promise'
-    ], function stateInit(_Global, _Base, _BaseUtils, Promise) {
+    ], function stateInit(exports, _Global, _Base, _BaseUtils, Promise) {
     "use strict";
 
     function initWithWinRT() {
@@ -109,7 +110,7 @@ define([
             supportedForProcessing: false,
         });
 
-        _Base.Namespace.define("WinJS.Application", {
+        _Base.Namespace._moduleDefine(exports, "WinJS.Application", {
             /// <field type="Object" helpKeyword="WinJS.Application.local" locid="WinJS.Application.local">
             /// Allows access to create files in the application local storage, which is preserved across runs
             /// of an application and does not roam.
@@ -227,7 +228,7 @@ define([
             }
         );
 
-        _Base.Namespace.define("WinJS.Application", {
+        _Base.Namespace._moduleDefine(exports, "WinJS.Application", {
             /// <field type="Object" helpKeyword="WinJS.Application.local" locid="WinJS.Application.local">
             /// Allows access to create files in the application local storage, which is preserved across runs
             /// of an application and does not roam.
@@ -253,49 +254,55 @@ define([
         initWithStub();
     }
 
-    _Base.Namespace.define("WinJS.Application", {
-        sessionState: {},
-        _loadState: function (e) {
-            var app = WinJS.Application;
+    var sessionState;
 
+    _Base.Namespace._moduleDefine(exports, "WinJS.Application", {
+        sessionState: {
+            get: function() {
+                return sessionState;
+            },
+            set: function(value) {
+                sessionState = value;
+            }
+        },
+        _loadState: function (e) {
             // we only restore state if we are coming back from a clear termination from PLM
             //
             if (e.previousExecutionState === 3 /* ApplicationExecutionState.Terminated */) {
-                return app.local.readText("_sessionState.json", "{}").
+                return exports.local.readText("_sessionState.json", "{}").
                     then(function (str) {
                         var sessionState = JSON.parse(str);
                         if (sessionState && Object.keys(sessionState).length > 0) {
-                            app._sessionStateLoaded = true;
+                            exports._sessionStateLoaded = true;
                         }
-                        app.sessionState = sessionState;
+                        exports.sessionState = sessionState;
                     }).
                     then(null, function (err) {
-                        app.sessionState = {};
+                        exports.sessionState = {};
                     });
             }
             else {
                 return Promise.as();
             }
         },
-        _oncheckpoint: function (e) {
+        _oncheckpoint: function (e, Application) {
             if (_Global.MSApp && MSApp.getViewOpener && MSApp.getViewOpener()) {
                 // don't save state in child windows.
                 return;
             }
-            var app = WinJS.Application;
-            var sessionState = app.sessionState;
-            if ((sessionState && Object.keys(sessionState).length > 0) || app._sessionStateLoaded) {
+            var sessionState = exports.sessionState;
+            if ((sessionState && Object.keys(sessionState).length > 0) || exports._sessionStateLoaded) {
                 var stateString;
                 try {
                     stateString = JSON.stringify(sessionState);
                 } catch (e) {
                     stateString = "";
-                    WinJS.Application.queueEvent({ type: "error", detail: e });
+                    Application.queueEvent({ type: "error", detail: e });
                 }
                 e.setPromise(
-                    app.local.writeText("_sessionState.json", stateString).
+                    exports.local.writeText("_sessionState.json", stateString).
                         then(null, function (err) {
-                            app.queueEvent({ type: "error", detail: err });
+                            Application.queueEvent({ type: "error", detail: err });
                         })
                 );
             }
