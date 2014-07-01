@@ -237,7 +237,8 @@ WinJSTests.PropertyTests = function () {
         },
         layout: {
             getValidValues: function () {
-                return isPhone ? [
+                return (isPhone && WinJS.Utilities._browserStyleEquivalents["grid-column"]) ?
+                [
                     new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.horizontal }),
                     new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.vertical }),
                     new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.horizontal }),

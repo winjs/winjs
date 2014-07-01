@@ -367,6 +367,12 @@ WinJSTests.ListViewAnimation2Test = function () {
     };
 
     this.testGridMultiSizeAnimations = function (complete) {
+        if (!WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+            LiveUnit.LoggingCore.logComment("Cellspanning layout not supported on this platform.");
+            complete();
+            return;
+        }
+
         var bindingList = getBindingList(100);
         var listView = new WinJS.UI.ListView(listViewEl);
         listView.layout = new WinJS.UI.CellSpanningLayout();
@@ -706,6 +712,10 @@ WinJSTests.ListViewAnimation2Test = function () {
 
     // Call generateTestPositioningOfDeletedItem in LTR and RTL for a number of different layouts
     (function () {
+        if (!WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+            LiveUnit.LoggingCore.logComment("Cellspanning layout not supported on this platform.");
+            return;
+        }
         function groupInfo(group) {
             if (group.index % 2 === 0) {
                 return { enableCellSpanning: false };
