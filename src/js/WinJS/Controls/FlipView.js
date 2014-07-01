@@ -178,11 +178,9 @@ define([
                 // Set _flipviewDiv so the element getter works correctly, then call _setOption with eventsOnly flag on before calling _initializeFlipView
                 // so that event listeners are added before page loading
                 this._flipviewDiv = element;
-                _Control._setOptions(this, options, true);
-
-                this._initializeFlipView(element, horizontal, dataSource, itemRenderer, initialIndex, itemSpacing);
-
                 element.winControl = this;
+                _Control._setOptions(this, options, true);
+                this._initializeFlipView(element, horizontal, dataSource, itemRenderer, initialIndex, itemSpacing);
                 _ElementUtilities.addClass(element, "win-disposable");
                 this._avoidTrappingTime = 0;
                 this._windowWheelHandlerBound = this._windowWheelHandler.bind(this);
