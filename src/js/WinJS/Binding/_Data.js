@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -9,7 +10,7 @@ define([
     '../Promise',
     '../Scheduler',
     './_DomWeakRefTable'
-    ], function dataInit(exports, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, Promise, Scheduler, _DomWeakRefTable) {
+    ], function dataInit(exports, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, Promise, Scheduler, _DomWeakRefTable) {
     "use strict";
 
 
@@ -391,7 +392,7 @@ define([
         return "bindHandler" + (bindRefId++);
     };
     var createProxy = function (func, bindStateRef) {
-        if (!_BaseUtils.hasWinRT) {
+        if (!_WinRT.msGetWeakWinRTProperty) {
             return func;
         }
 

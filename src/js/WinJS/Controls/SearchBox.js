@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_Events',
@@ -12,7 +13,7 @@ define([
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function searchboxInit(_Base, _ErrorFromName, _Events, _Resources, Animations, BindingList, Repeater, _Control, _ElementListUtilities, _ElementUtilities) {
+    ], function searchboxInit(_WinRT, _Base, _ErrorFromName, _Events, _Resources, Animations, BindingList, Repeater, _Control, _ElementListUtilities, _ElementUtilities) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -165,8 +166,8 @@ define([
                 this._searchSuggestions = null;
 
                 // Get the search suggestion provider if it is available
-                if ((window.Windows) && (Windows.ApplicationModel) && (Windows.ApplicationModel.Search) && (Windows.ApplicationModel.Search.Core) && (Windows.ApplicationModel.Search.Core.SearchSuggestionManager)) {
-                    this._searchSuggestionManager = new Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
+                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
+                    this._searchSuggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
                     this._searchSuggestions = this._searchSuggestionManager.suggestions;
                 }
 
@@ -874,8 +875,8 @@ define([
                     }
 
                     // get the most up to date value of the input langauge from WinRT if available
-                    if ((window.Windows) && (Windows.Globalization) && (Windows.Globalization.Language)) {
-                        this._lastKeyPressLanguage = Windows.Globalization.Language.currentInputMethodLanguageTag;
+                    if (_WinRT.Windows.Globalization.Language) {
+                        this._lastKeyPressLanguage = _WinRT.Windows.Globalization.Language.currentInputMethodLanguageTag;
                     }
 
                     this._fireEvent(SearchBox._EventName.querysubmitted, {
@@ -935,13 +936,13 @@ define([
                         this._prevQueryText = this._inputElement.value;
 
                         // get the most up to date value of the input langauge from WinRT if available
-                        if ((window.Windows) && (Windows.Globalization) && (Windows.Globalization.Language)) {
-                            this._lastKeyPressLanguage = Windows.Globalization.Language.currentInputMethodLanguageTag;
+                        if (_WinRT.Windows.Globalization.Language) {
+                            this._lastKeyPressLanguage = _WinRT.Windows.Globalization.Language.currentInputMethodLanguageTag;
                         }
 
-                        if ((window.Windows) && (Windows.Data) && (Windows.Data.Text) && (Windows.Data.Text.SemanticTextQuery)) {
+                        if (_WinRT.Windows.Data.Text.SemanticTextQuery) {
                             if (this._inputElement.value !== "") {
-                                this._hitFinder = new Windows.Data.Text.SemanticTextQuery(this._inputElement.value, this._lastKeyPressLanguage);
+                                this._hitFinder = new _WinRT.Windows.Data.Text.SemanticTextQuery(this._inputElement.value, this._lastKeyPressLanguage);
                             } else {
                                 this._hitFinder = null;
                             }
@@ -975,10 +976,9 @@ define([
                         fullCompositionAlternatives[i] = queryTextPrefix + compositionAlternatives[i] + queryTextSuffix;
                     }
 
-                    if ((window.Windows) && (Windows.ApplicationModel) && (Windows.ApplicationModel.Search) && (Windows.ApplicationModel.Search.SearchQueryLinguisticDetails)) {
-                        linguisticDetails = new Windows.ApplicationModel.Search.SearchQueryLinguisticDetails(fullCompositionAlternatives, compositionStartOffset, compositionLength);
-                    }
-                    else {
+                    if (_WinRT.Windows.ApplicationModel.Search.SearchQueryLinguisticDetails) {
+                        linguisticDetails = new _WinRT.Windows.ApplicationModel.Search.SearchQueryLinguisticDetails(fullCompositionAlternatives, compositionStartOffset, compositionLength);
+                    } else {
                         // If we're in web compartment, create a script version of the WinRT SearchQueryLinguisticDetails object
                         linguisticDetails = {
                             queryTextAlternatives: fullCompositionAlternatives,
@@ -993,8 +993,7 @@ define([
                     var linguisticDetails = null;
                     if ((this._inputElement.value === this._prevQueryText) && useCache && this._prevLinguisticDetails && createFilled) {
                         linguisticDetails = this._prevLinguisticDetails;
-                    }
-                    else {
+                    } else {
                         var compositionAlternatives = [];
                         var compositionStartOffset = 0;
                         var compositionLength = 0;
@@ -1161,9 +1160,9 @@ define([
                     // Refresh hit highlighting if text has changed since focus was present
                     // This can happen if the user committed a suggestion previously.
                     if (this._inputElement.value !== this._prevQueryText) {
-                        if ((window.Windows) && (Windows.Data) && (Windows.Data.Text) && (Windows.Data.Text.SemanticTextQuery)) {
+                        if (_WinRT.Windows.Data.Text.SemanticTextQuery) {
                             if (this._inputElement.value !== "") {
-                                this._hitFinder = new Windows.Data.Text.SemanticTextQuery(this._inputElement.value, this._inputElement.lang);
+                                this._hitFinder = new _WinRT.Windows.Data.Text.SemanticTextQuery(this._inputElement.value, this._inputElement.lang);
                             } else {
                                 this._hitFinder = null;
                             }
@@ -1343,19 +1342,19 @@ define([
 
                 _suggestionsChangedHandler: function SearchBox_suggestionsChangedHandler(event) {
                     var collectionChange = event.collectionChange;
-                    if (collectionChange === Windows.Foundation.Collections.CollectionChange.reset) {
+                    if (collectionChange === _WinRT.Windows.Foundation.Collections.CollectionChange.reset) {
                         if (this._isFlyoutShown()) {
                             this._hideFlyout();
                         }
                         this._suggestionsData.splice(0, this._suggestionsData.length);
-                    } else if (collectionChange === Windows.Foundation.Collections.CollectionChange.itemInserted) {
+                    } else if (collectionChange === _WinRT.Windows.Foundation.Collections.CollectionChange.itemInserted) {
                         var index = event.index;
                         var suggestion = this._searchSuggestions[index];
                         this._suggestionsData.splice(index, 0, suggestion);
 
                         this._showFlyout();
 
-                    } else if (collectionChange === Windows.Foundation.Collections.CollectionChange.itemRemoved) {
+                    } else if (collectionChange === _WinRT.Windows.Foundation.Collections.CollectionChange.itemRemoved) {
                         if ((this._suggestionsData.length === 1)) {
                             _ElementUtilities._setActive(this._inputElement);
 
@@ -1363,7 +1362,7 @@ define([
                         }
                         var index = event.index;
                         this._suggestionsData.splice(index, 1);
-                    } else if (collectionChange === Windows.Foundation.Collections.CollectionChange.itemChanged) {
+                    } else if (collectionChange === _WinRT.Windows.Foundation.Collections.CollectionChange.itemChanged) {
                         var index = event.index;
                         var suggestion = this._searchSuggestions[index];
                         if (suggestion !== this._suggestionsData.getAt(index)) {
@@ -1394,8 +1393,8 @@ define([
 
                 _suggestionsRequestedHandler: function SearchBox_suggestionsRequestedHandler(event) {
                     // get the most up to date value of the input langauge from WinRT if available
-                    if ((window.Windows) && (Windows.Globalization) && (Windows.Globalization.Language)) {
-                        this._lastKeyPressLanguage = Windows.Globalization.Language.currentInputMethodLanguageTag;
+                    if (_WinRT.Windows.Globalization.Language) {
+                        this._lastKeyPressLanguage = _WinRT.Windows.Globalization.Language.currentInputMethodLanguageTag;
                     }
 
                     var suggestionsRequestedEventDetail = event;

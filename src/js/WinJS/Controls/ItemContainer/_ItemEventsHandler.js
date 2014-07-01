@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_WriteProfilerMark',
@@ -10,7 +11,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_UI',
     './_Constants'
-    ], function itemEventsHandlerInit(exports, _Base, _BaseUtils, _WriteProfilerMark, Animations, _TransitionAnimation, Promise, _ElementUtilities, _UI, _Constants) {
+    ], function itemEventsHandlerInit(exports, _WinRT, _Base, _BaseUtils, _WriteProfilerMark, Animations, _TransitionAnimation, Promise, _ElementUtilities, _UI, _Constants) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -186,7 +187,7 @@ define([
                         leftButton,
                         rightButton;
                     site.pressedElement = eventObject.target;
-                    if (_BaseUtils.hasWinRT) {
+                    if (_WinRT.Windows.UI.Input.PointerPoint) {
                         // xButton is true when you've x-clicked with a mouse or pen. Otherwise it is false.
                         var currentPoint = this._getCurrentPoint(eventObject);
                         var pointProps = currentPoint.properties;
@@ -543,7 +544,7 @@ define([
                 },
 
                 _getCurrentPoint: function ItemEventsHandler_getCurrentPoint(eventObject) {
-                    return Windows.UI.Input.PointerPoint.getCurrentPoint(eventObject.pointerId);
+                    return _WinRT.Windows.UI.Input.PointerPoint.getCurrentPoint(eventObject.pointerId);
                 },
 
                 _containedInElementWithClass: function ItemEventsHandler_containedInElementWithClass(element, className) {

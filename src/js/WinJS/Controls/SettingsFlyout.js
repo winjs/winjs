@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,registeredforsettings,SettingsFlyout,Statics,Syriac</dictionary>
 define([
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -17,7 +18,7 @@ define([
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function settingsFlyoutInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _UIUtilities, _Constants, _Overlay) {
+    ], function settingsFlyoutInit(_WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _UIUtilities, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -56,8 +57,8 @@ define([
 
             // Determine if the settings pane (system language) is RTL or not.
             function _shouldAnimateFromLeft() {
-                if (_BaseUtils.hasWinRT && Windows.UI.ApplicationSettings.SettingsEdgeLocation) {
-                    var appSettings = Windows.UI.ApplicationSettings;
+                if (_WinRT.Windows.UI.ApplicationSettings.SettingsEdgeLocation) {
+                    var appSettings = _WinRT.Windows.UI.ApplicationSettings;
                     return (appSettings.SettingsPane.edge === appSettings.SettingsEdgeLocation.left);
                 } else {
                     return false;
@@ -531,8 +532,8 @@ define([
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </signature>
                 /// Show the main settings pane
-                if (_BaseUtils.hasWinRT) {
-                    Windows.UI.ApplicationSettings.SettingsPane.show();
+                if (_WinRT.Windows.UI.ApplicationSettings.SettingsPane) {
+                    _WinRT.Windows.UI.ApplicationSettings.SettingsPane.show();
                 }
                 // And hide the WWA one
                 var elements = document.querySelectorAll('div[data-win-control="WinJS.UI.SettingsFlyout"]');
@@ -560,7 +561,7 @@ define([
                 _settingsEvent.event = e.detail;
 
                 if (_settingsEvent.event.applicationcommands) {
-                    var n = Windows.UI.ApplicationSettings;
+                    var n = _WinRT.Windows.UI.ApplicationSettings;
                     Object.keys(_settingsEvent.event.applicationcommands).forEach(function (name) {
                         var setting = _settingsEvent.event.applicationcommands[name];
                         if (!setting.title) { setting.title = name; }

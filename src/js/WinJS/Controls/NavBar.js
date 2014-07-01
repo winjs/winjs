@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_Events',
@@ -12,7 +13,7 @@ define([
     './NavBar/_Container',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function NavBarInit(_Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
+], function NavBarInit(_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
     "use strict";
 
     var customLayout = "custom";
@@ -77,7 +78,7 @@ define([
 
                 _ElementUtilities.addClass(this.element, NavBar._ClassName.navbar);
 
-                if (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled) {
+                if (_WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
                     this._processChildren();
                 } else {
                     Scheduler.schedule(this._processChildren.bind(this), Scheduler.Priority.idle, null, "WinJS.UI.NavBar.processChildren");

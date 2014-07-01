@@ -3,6 +3,7 @@
 /// <dictionary>appbar,appbars,Flyout,Flyouts,onclick,Statics</dictionary>
 define([
     'exports',
+    '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
@@ -13,7 +14,7 @@ define([
     '../Tooltip',
     './_Constants',
     './_Icon'
-    ], function appBarCommandInit(exports, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
+    ], function appBarCommandInit(exports, _WinRT, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -333,7 +334,7 @@ define([
                     },
                     set: function (value) {
                         // we allow settings section only one time 
-                        if (!this._section || (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled)) {
+                        if (!this._section || _WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
                             this._setSection(value);
                         }
                     }

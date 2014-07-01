@@ -2,25 +2,26 @@
 define([
     'exports',
     '../Core/_Global',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Scheduler'
-    ], function DOMWeakRefTableInit(exports, _Global, _Base, _BaseUtils, Scheduler) {
+    ], function DOMWeakRefTableInit(exports, _Global, _WinRT, _Base, _BaseUtils, Scheduler) {
     "use strict";
 
-    if (_BaseUtils.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty) {
+    if (_WinRT.Windows.Foundation.Uri && _WinRT.msSetWeakWinRTProperty && _WinRT.msGetWeakWinRTProperty) {
 
-        var host = new Windows.Foundation.Uri("about://blank");
+        var host = new _WinRT.Windows.Foundation.Uri("about://blank");
 
         _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
 
             _createWeakRef: function (element, id) {
-                _Global.msSetWeakWinRTProperty(host, id, element);
+                _WinRT.msSetWeakWinRTProperty(host, id, element);
                 return id;
             },
 
             _getWeakRefElement: function (id) {
-                return _Global.msGetWeakWinRTProperty(host, id);
+                return _WinRT.msGetWeakWinRTProperty(host, id);
             }
 
         });

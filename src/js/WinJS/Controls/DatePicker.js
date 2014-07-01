@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_Events',
@@ -9,7 +10,7 @@ define([
     '../Utilities/_Select',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function datePickerInit(_Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
+    ], function datePickerInit(_WinRT, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -41,7 +42,7 @@ define([
             var yearFormatCache = {};
 
             function newFormatter(pattern, calendar, defaultPattern) {
-                var dtf = Windows.Globalization.DateTimeFormatting;
+                var dtf = _WinRT.Windows.Globalization.DateTimeFormatting;
                 pattern = !pattern ? defaultPattern : pattern;
                 var c = new dtf.DateTimeFormatter(pattern);
                 if (calendar) {
@@ -95,7 +96,7 @@ define([
             }
 
             function newCal(calendar) {
-                var glob = Windows.Globalization;
+                var glob = _WinRT.Windows.Globalization;
                 var c = new glob.Calendar();
                 if (calendar) {
                     return new glob.Calendar(c.languages, calendar, c.getClock());
@@ -108,8 +109,7 @@ define([
 
                 if (start.era === end.era) {
                     yearCount = end.year - start.year;
-                }
-                else {
+                } else {
                     while (start.era !== end.era || start.year !== end.year) {
                         yearCount++;
                         start.addYears(1);
@@ -284,8 +284,7 @@ define([
                         if (typeof (value) === "string") {
                             newDate = new Date(Date.parse(value));
                             newDate.setHours(12, 0, 0, 0);
-                        }
-                        else {
+                        } else {
                             newDate = value;
                         }
 
@@ -715,11 +714,9 @@ define([
                             var year = date.getFullYear();
                             if (year < minYear) {
                                 yearIndex = 0;
-                            }
-                            else if (year > this.maxYear) {
+                            } else if (year > this.maxYear) {
                                 yearIndex = yearSource.getLength() - 1;
-                            }
-                            else {
+                            } else {
                                 yearIndex = date.getFullYear() - minYear;
                             }
 
@@ -739,10 +736,9 @@ define([
                     };
                 }
             });
-            if (_BaseUtils.hasWinRT) {
+            if (_WinRT.Windows.Globalization.Calendar && _WinRT.Windows.Globalization.DateTimeFormatting) {
                 DatePicker.getInformation = DatePicker._getInformationWinRT;
-            }
-            else {
+            } else {
                 DatePicker.getInformation = DatePicker._getInformationJS;
             }
             _Base.Class.mix(DatePicker, _Events.createEventProperties("change"));

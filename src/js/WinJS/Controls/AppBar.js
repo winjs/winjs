@@ -3,6 +3,7 @@
 /// <dictionary>appbar,appBars,Flyout,Flyouts,iframe,Statics,unfocus,WinJS</dictionary>
 define([
     'exports',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -21,7 +22,7 @@ define([
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function appBarInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, _Control, _Dispose, _ElementUtilities, _UIUtilities, _Constants, _Layouts, _Command, _Icon, _Overlay) {
+], function appBarInit(exports, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, _Control, _Dispose, _ElementUtilities, _UIUtilities, _Constants, _Layouts, _Command, _Icon, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -55,7 +56,7 @@ define([
             function _completedEdgy(e) {
                 // If we had a right click on a flyout, ignore it.
                 if (_Overlay._Overlay._rightMouseMightEdgy &&
-                    e.kind === Windows.UI.Input.EdgeGestureKind.mouse) {
+                    e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.mouse) {
                     return;
                 }
                 if (edgyHappening) {
@@ -63,7 +64,7 @@ define([
                     edgyHappening = null;
                 } else {
                     // Edgy wasn't happening, so toggle
-                    var keyboardInvoked = e.kind === Windows.UI.Input.EdgeGestureKind.keyboard;
+                    var keyboardInvoked = e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
                     AppBar._toggleAppBarEdgy(keyboardInvoked);
                 }
             }
@@ -437,8 +438,8 @@ define([
                     // We'll trigger on invoking.  Could also have invoked or canceled
                     // Eventually we may want click up on invoking and drop back on invoked.
                     // Check for namespace so it'll behave in the designer.
-                    if (_BaseUtils.hasWinRT) {
-                        var commandUI = Windows.UI.Input.EdgeGesture.getForCurrentView();
+                    if (_WinRT.Windows.UI.Input.EdgeGesture) {
+                        var commandUI = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
                         commandUI.addEventListener("starting", _startingEdgy);
                         commandUI.addEventListener("completed", _completedEdgy);
                         commandUI.addEventListener("canceled", _canceledEdgy);
@@ -480,7 +481,7 @@ define([
                     set: function (value) {
                         // In designer we may have to move it
                         var wasShown = false;
-                        if (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled && !this.hidden) {
+                        if (_WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
                             this._hide();
                             wasShown = true;
                         }
@@ -528,7 +529,7 @@ define([
 
                         // In designer we may have to redraw it
                         var wasShown = false;
-                        if (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled && !this.hidden) {
+                        if (_WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
                             this._hide();
                             wasShown = true;
                         }

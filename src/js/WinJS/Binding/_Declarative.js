@@ -2,6 +2,7 @@
 define([
     'exports',
     '../Core/_Global',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -13,14 +14,14 @@ define([
     './_BindingParser',
     './_Data',
     './_DomWeakRefTable'
-    ], function declarativeInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _BindingParser, _Data, _DomWeakRefTable) {
+    ], function declarativeInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _BindingParser, _Data, _DomWeakRefTable) {
     "use strict";
 
     var uid = (Math.random() * 1000) >> 0;
 
     // If we have proper weak references then we can move away from using the element's ID property
     //
-    var optimizeBindingReferences = _BaseUtils.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty;
+    var optimizeBindingReferences = _WinRT.msSetWeakWinRTProperty && _WinRT.msGetWeakWinRTProperty;
 
     var strings = {
         get attributeBindingSingleProperty() { return _Resources._getWinJSString("base/attributeBindingSingleProperty").value; },
