@@ -140,7 +140,7 @@ define([
 
     function loadImage(srcUrl, image, data) {
         var imageId = nextImageLoaderId++;
-        imageLoader = imageLoader || new _ParallelWorkQueue(6);
+        imageLoader = imageLoader || new _ParallelWorkQueue._ParallelWorkQueue(6);
         return imageLoader.queue(function () {
             return new Promise(function (c, e, p) {
                 Scheduler.schedule(function ImageLoader_async_loadImage(jobInfo) {
