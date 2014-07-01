@@ -2,6 +2,7 @@
 /// <dictionary>animatable,appbar,appbars,divs,Flyout,Flyouts,iframe,Statics,unfocus,unselectable</dictionary>
 define([
     'exports',
+    '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -16,7 +17,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_UIUtilities',
     '../AppBar/_Constants'
-    ], function overlayInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
+    ], function overlayInit(exports, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -1011,14 +1012,16 @@ define([
                         var that = this;
 
                         // Be careful so it behaves in designer as well.
-                        if (_BaseUtils.hasWinRT) {
+                        if (_WinRT.Windows.UI.Input.EdgeGesture) {
                             // Catch edgy events too
-                            var commandUI = Windows.UI.Input.EdgeGesture.getForCurrentView();
+                            var commandUI = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
                             commandUI.addEventListener("starting", _Overlay._hideAllFlyouts);
                             commandUI.addEventListener("completed", _edgyMayHideFlyouts);
+                        }
 
+                        if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                             // React to Soft Keyboard events
-                            var inputPane = Windows.UI.ViewManagement.InputPane.getForCurrentView();
+                            var inputPane = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView();
                             inputPane.addEventListener("showing", function (event) {
                                 that._writeProfilerMark("_showingKeyboard,StartTM");
                                 _allOverlaysCallback(event, "_showingKeyboard");
@@ -1036,6 +1039,7 @@ define([
                                 that._writeProfilerMark("_checkScrollPosition,StopTM");
                             });
                         }
+
                         // Window resize event
                         window.addEventListener("resize", function (event) {
                             that._writeProfilerMark("_baseResize,StartTM");
@@ -1443,7 +1447,10 @@ define([
                     // Determine if the keyboard is visible or not.
                     get _visible() {
                         try {
-                            return (_BaseUtils.hasWinRT && Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height > 0);
+                            return (
+                                _WinRT.Windows.UI.ViewManagement.InputPane && 
+                                _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height > 0
+                            );
                         } catch (e) {
                             return false;
                         }
@@ -1452,9 +1459,9 @@ define([
                     // See if we have to reserve extra space for the IHM
                     get _extraOccluded() {
                         var occluded;
-                        if (_BaseUtils.hasWinRT) {
+                        if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                             try {
-                                occluded = Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
+                                occluded = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
                             } catch (e) {
                             }
                         }
@@ -1527,19 +1534,19 @@ define([
 
                     // Get total length of the IHM showPanel animation
                     get _animationShowLength() {
-                        if (!_BaseUtils.hasWinRT) {
+                        if (_WinRT.Windows.UI.Core.AnimationMetrics) {
+                            var a = _WinRT.Windows.UI.Core.AnimationMetrics,
+                                animationDescription = new a.AnimationDescription(a.AnimationEffect.showPanel, a.AnimationEffectTarget.primary);
+                            var animations = animationDescription.animations;
+                            var max = 0;
+                            for (var i = 0; i < animations.size; i++) {
+                                var animation = animations[i];
+                                max = Math.max(max, animation.delay + animation.duration);
+                            }
+                            return max;
+                        } else {
                             return 0;
                         }
-
-                        var a = Windows.UI.Core.AnimationMetrics,
-                            animationDescription = new a.AnimationDescription(a.AnimationEffect.showPanel, a.AnimationEffectTarget.primary);
-                        var animations = animationDescription.animations;
-                        var max = 0;
-                        for (var i = 0; i < animations.size; i++) {
-                            var animation = animations[i];
-                            max = Math.max(max, animation.delay + animation.duration);
-                        }
-                        return max;
                     }
                 },
 

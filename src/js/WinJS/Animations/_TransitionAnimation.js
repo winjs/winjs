@@ -2,12 +2,13 @@
 define([
     'exports',
     '../Core/_Global',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Promise',
     '../Scheduler',
     '../Utilities/_ElementUtilities'
-    ], function transitionAnimationInit(exports, _Global, _Base, _BaseUtils, Promise, Scheduler, _ElementUtilities) {
+    ], function transitionAnimationInit(exports, _Global, _WinRT, _Base, _BaseUtils, Promise, Scheduler, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -352,10 +353,9 @@ define([
     var animationSettings;
     function initAnimations() {
         if (!animationSettings) {
-            if (_BaseUtils.hasWinRT) {
-                animationSettings = new Windows.UI.ViewManagement.UISettings();
-            }
-            else {
+            if (_WinRT.Windows.UI.ViewManagement.UISettings) {
+                animationSettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
+            } else {
                 animationSettings = { animationsEnabled: true };
             }
         }
