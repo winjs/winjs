@@ -12,7 +12,6 @@ var WinJSTests = WinJSTests || {};
 WinJSTests.NavBarCommandTests = function () {
     "use strict";
 
-    var realNavigate;
     var Key = WinJS.Utilities.Key;
     
     function assertHighContrastAdjust(element, expected) {
@@ -27,12 +26,10 @@ WinJSTests.NavBarCommandTests = function () {
         newNode.id = "host";
         document.body.appendChild(newNode);
         this._element = newNode;
-        realNavigate = WinJS.Navigation.navigate;
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
-        WinJS.Navigation.navigate = realNavigate;
         if (this._element) {
             WinJS.Utilities.disposeSubTree(this._element);
             document.body.removeChild(this._element);
@@ -255,46 +252,56 @@ WinJSTests.NavBarCommandTests = function () {
     };
 
     this.testInvoke = function () {
-        var navbarCommand = new WinJS.UI.NavBarCommand(document.getElementById("host"), { location: 'foo.html' });
 
-        var navigateCalled = 0;
-        WinJS.Navigation.navigate = function (location, state) {
-            navigateCalled++;
+        try {
+            var navbarCommand = new WinJS.UI.NavBarCommand(document.getElementById("host"), { location: 'foo.html' });
 
-            LiveUnit.Assert.areEqual(navbarCommand.location, location);
-            LiveUnit.Assert.areEqual(navbarCommand.state, state);
-        };
+            var navigateCalled = 0;
 
-        var invokeCalled = 0;
-        navbarCommand.addEventListener(WinJS.UI.NavBarCommand._EventName._invoked, function (ev) {
-            invokeCalled++;
-        });
+            WinJS.Utilities._require("WinJS/Navigation", function(Navigation) {
+                Navigation.navigate = function (location, state) {
+                    navigateCalled++;
 
-        LiveUnit.Assert.areEqual(0, navigateCalled);
-        LiveUnit.Assert.areEqual(0, invokeCalled);
+                    LiveUnit.Assert.areEqual(navbarCommand.location, location);
+                    LiveUnit.Assert.areEqual(navbarCommand.state, state);
+                };
+            });
 
-        navbarCommand._buttonEl.click();
-        LiveUnit.Assert.areEqual(1, navigateCalled);
-        LiveUnit.Assert.areEqual(1, invokeCalled);
+            var invokeCalled = 0;
+            navbarCommand.addEventListener(WinJS.UI.NavBarCommand._EventName._invoked, function (ev) {
+                invokeCalled++;
+            });
 
-        navbarCommand.location = null;
-        navbarCommand._buttonEl.click();
-        LiveUnit.Assert.areEqual(1, navigateCalled);
-        LiveUnit.Assert.areEqual(2, invokeCalled);
+            LiveUnit.Assert.areEqual(0, navigateCalled);
+            LiveUnit.Assert.areEqual(0, invokeCalled);
 
-        navbarCommand.location = "foo.html";
-        navbarCommand.state = "abc";
-        navbarCommand._buttonEl.click();
-        LiveUnit.Assert.areEqual(2, navigateCalled);
-        LiveUnit.Assert.areEqual(3, invokeCalled);
+            navbarCommand._buttonEl.click();
+            LiveUnit.Assert.areEqual(1, navigateCalled);
+            LiveUnit.Assert.areEqual(1, invokeCalled);
 
-        CommonUtilities.keydown(navbarCommand._buttonEl, Key.enter);
-        LiveUnit.Assert.areEqual(3, navigateCalled);
-        LiveUnit.Assert.areEqual(4, invokeCalled);
+            navbarCommand.location = null;
+            navbarCommand._buttonEl.click();
+            LiveUnit.Assert.areEqual(1, navigateCalled);
+            LiveUnit.Assert.areEqual(2, invokeCalled);
 
-        CommonUtilities.keydown(navbarCommand._buttonEl, Key.space);
-        LiveUnit.Assert.areEqual(4, navigateCalled);
-        LiveUnit.Assert.areEqual(5, invokeCalled);
+            navbarCommand.location = "foo.html";
+            navbarCommand.state = "abc";
+            navbarCommand._buttonEl.click();
+            LiveUnit.Assert.areEqual(2, navigateCalled);
+            LiveUnit.Assert.areEqual(3, invokeCalled);
+
+            CommonUtilities.keydown(navbarCommand._buttonEl, Key.enter);
+            LiveUnit.Assert.areEqual(3, navigateCalled);
+            LiveUnit.Assert.areEqual(4, invokeCalled);
+
+            CommonUtilities.keydown(navbarCommand._buttonEl, Key.space);
+            LiveUnit.Assert.areEqual(4, navigateCalled);
+            LiveUnit.Assert.areEqual(5, invokeCalled);
+        } finally {
+            WinJS.Utilities._require("WinJS/Navigation", function(Navigation) {
+                Navigation.navigate = WinJS.Navigation.navigate;
+            });
+        }
 
     };
 
