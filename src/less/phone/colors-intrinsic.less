@@ -79,8 +79,12 @@
                 color: @win_light_text_low;
             }
 
-            &:disabled:-ms-input-placeholder,
-            &:disabled::-webkit-input-placeholder,
+            &:disabled:-ms-input-placeholder {
+                color: @win_light_text_low;
+            }
+            &:disabled::-webkit-input-placeholder {
+                color: @win_light_text_low;
+            }
             &:disabled::-moz-input-placeholder {
                 color: @win_light_text_low;
             }
@@ -100,8 +104,12 @@
                 color: @win_dark_text_low;
             }
 
-            &:disabled:-ms-input-placeholder,
-            &:disabled::-webkit-input-placeholder,
+            &:disabled:-ms-input-placeholder {
+                color: @win_dark_text_low;
+            }
+            &:disabled::-webkit-input-placeholder {
+                color: @win_dark_text_low;
+            }
             &:disabled::-moz-input-placeholder {
                 color: @win_dark_text_low;
             }
@@ -110,8 +118,12 @@
         }
         .mixin(@theme);
 
-        &:disabled:-ms-input-placeholder,
-        &:disabled::-webkit-input-placeholder,
+        &:disabled:-ms-input-placeholder {
+            color: rgba(0, 0, 0, 0.25)
+        }
+        &:disabled::-webkit-input-placeholder {
+            color: rgba(0, 0, 0, 0.25)
+        }
         &:disabled::-moz-input-placeholder {
             color: rgba(0, 0, 0, 0.25)
         }

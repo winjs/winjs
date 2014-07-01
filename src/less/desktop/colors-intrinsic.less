@@ -71,15 +71,25 @@
                 border-color: rgba(255, 255, 255, 0.4);
                 color: rgba(255, 255, 255, 0.4);
 
-                &:-ms-input-placeholder,
-                &::-webkit-input-placeholder,
+                // Can't group these rules together as IE will throw out the whole
+                // group if unrecognized pseudos are present
+                &:-ms-input-placeholder {
+                    color: rgba(255, 255, 255, 0.22);
+                }
+                &::-webkit-input-placeholder {
+                    color: rgba(255, 255, 255, 0.22);
+                }
                 &::-moz-input-placeholder {
                     color: rgba(255, 255, 255, 0.22);
                 }
             }
 
-            &:-ms-input-placeholder,
-            &::-webkit-input-placeholder,
+            &:-ms-input-placeholder {
+                color: rgba(0, 0, 0, 0.6);
+            }
+            &::-webkit-input-placeholder {
+                color: rgba(0, 0, 0, 0.6);
+            }
             &::-moz-input-placeholder {
                 color: rgba(0, 0, 0, 0.6);
             }
@@ -103,15 +113,23 @@
                 border-color: rgba(0, 0, 0, 0.15);
                 color: rgba(0, 0, 0, 0.4);
 
-                &:-ms-input-placeholder,
-                &::-webkit-input-placeholder,
+                &:-ms-input-placeholder {
+                    color: rgba(0, 0, 0, 0.22);
+                }
+                &::-webkit-input-placeholder {
+                    color: rgba(0, 0, 0, 0.22);
+                }
                 &::-moz-input-placeholder {
                     color: rgba(0, 0, 0, 0.22);
                 }
             }
 
-            &:-ms-input-placeholder,
-            &::-webkit-input-placeholder,
+            &:-ms-input-placeholder {
+                color: rgba(0, 0, 0, 0.6);
+            }
+            &::-webkit-input-placeholder {
+                color: rgba(0, 0, 0, 0.6);
+            }
             &::-moz-input-placeholder {
                 color: rgba(0, 0, 0, 0.6);
             }
@@ -887,13 +905,20 @@
         color: ButtonText;
         background-color: ButtonFace;
     }
-    input:disabled::-ms-check, input:disabled:active::-ms-check,
     input[type]:-ms-input-placeholder,
+    textarea:-ms-input-placeholder {
+        color: GrayText;
+    }
     input[type]::-webkit-input-placeholder,
+    textarea::-webkit-input-placeholder {
+        color: GrayText;
+    }
     input[type]::-moz-input-placeholder,
-    textarea:-ms-input-placeholder,
-    textarea::-webkit-input-placeholder,
-    textarea::-moz-input-placeholder
+    textarea::-moz-input-placeholder {
+        color: GrayText;
+    }
+
+    input:disabled::-ms-check, input:disabled:active::-ms-check,
     select:disabled::-ms-value {
         color: GrayText;
     }
