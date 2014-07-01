@@ -60,5 +60,5 @@ define([
         };
         _Base.Namespace.defineWithParent(exports, parts.slice(0, -1).join("."), leaf);
     });
-    
+
 });

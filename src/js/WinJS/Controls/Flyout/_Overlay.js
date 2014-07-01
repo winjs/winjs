@@ -1448,7 +1448,7 @@ define([
                     get _visible() {
                         try {
                             return (
-                                _WinRT.Windows.UI.ViewManagement.InputPane && 
+                                _WinRT.Windows.UI.ViewManagement.InputPane &&
                                 _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height > 0
                             );
                         } catch (e) {
