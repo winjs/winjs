@@ -209,21 +209,21 @@ define([
                 /// <summary locid="WinJS.UI.StorageDataSource">
                 /// Creates a data source that enumerates an IStorageQueryResultBase.
                 /// </summary>
-                /// <param name="query" type="_WinRT.Windows.Storage.Search.IStorageQueryResultBase" locid="WinJS.UI.StorageDataSource_p:query">
+                /// <param name="query" type="Windows.Storage.Search.IStorageQueryResultBase" locid="WinJS.UI.StorageDataSource_p:query">
                 /// The object to enumerate. It must support IStorageQueryResultBase.
                 /// </param>
                 /// <param name="options" mayBeNull="true" optional="true" type="Object" locid="WinJS.UI.StorageDataSource_p:options">
                 /// An object that specifies options for the data source. This parameter is optional. It can contain these properties: 
                 ///
                 /// mode:
-                /// A _WinRT.Windows.Storage.FileProperties.ThumbnailMode - a value that specifies whether to request
+                /// A Windows.Storage.FileProperties.ThumbnailMode - a value that specifies whether to request
                 /// thumbnails and the type of thumbnails to request.
                 ///
                 /// requestedThumbnailSize:
                 /// A Number that specifies the size of the thumbnails.
                 ///
                 /// thumbnailOptions:
-                /// A _WinRT.Windows.Storage.FileProperties.ThumbnailOptions value that specifies additional options for the thumbnails.
+                /// A Windows.Storage.FileProperties.ThumbnailOptions value that specifies additional options for the thumbnails.
                 ///
                 /// waitForFileLoad:
                 /// If you set this to true, the data source returns items only after it loads their properties and thumbnails.
