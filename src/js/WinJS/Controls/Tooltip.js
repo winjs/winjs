@@ -764,7 +764,7 @@ define([
                     return order[i];
                 },
 
-                _showTooltip: function () {
+                _showTooltip: function (contactType) {
                     // Give a chance to dismiss the tooltip before it starts to show
                     if (this._shouldDismiss) {
                         return;
@@ -808,6 +808,7 @@ define([
 
                     document.body.addEventListener("DOMNodeRemoved", this._removeTooltip, false);
                     this._createTooltipDOM();
+                    this._position(contactType);
                     if (this._useAnimation) {
                         Animations.fadeIn(this._domElement)
                             .then(this._onShowAnimationEnd.bind(this));
