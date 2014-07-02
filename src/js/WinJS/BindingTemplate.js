@@ -23,7 +23,6 @@ define([
     }
 
     var cancelBlocker = Promise._cancelBlocker;
-    var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
 

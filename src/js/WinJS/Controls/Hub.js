@@ -619,7 +619,7 @@ define([
                     this._setState(Hub.LoadingState.loading);
                     this._loadSections();
                 },
-                _handleSectionReload: function hub_handleSectionReload(ev) {
+                _handleSectionReload: function hub_handleSectionReload() {
                     // Reload is triggered by large operations on the binding list such as reverse(). This causes
                     // _pendingSections to be true which ignores future insert/remove/modified/moved events until the new
                     // sections list is applied.
@@ -879,17 +879,17 @@ define([
                         }
                     }
                 },
-                _resizeHandler: function hub_resizeHandler(ev) {
+                _resizeHandler: function hub_resizeHandler() {
                     // Viewport needs to be measured
                     this._measured = false;
                     Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
                 },
-                _contentResizeHandler: function hub_contentResizeHandler(ev) {
+                _contentResizeHandler: function hub_contentResizeHandler() {
                     // Sections and scroll length need to be measured
                     this._measured = false;
                     Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
                 },
-                _scrollHandler: function hub_scrollHandler(ev) {
+                _scrollHandler: function hub_scrollHandler() {
                     // Scroll location needs to be retrieved
                     this._measured = false;
 
@@ -1138,7 +1138,6 @@ define([
                                 (this.orientation === _UI.Orientation.vertical && ev.keyCode === Key.downArrow)) {
                                 // Do not include hidden headers.
                                 for (var i = currentSection + 1; i < this.sections.length; i++) {
-                                    var section = this.sections.getAt(i);
                                     if (this._tryFocus(i)) {
                                         targetSectionIndex = i;
                                         break;
@@ -1149,7 +1148,6 @@ define([
                                 (this.orientation === _UI.Orientation.vertical && ev.keyCode === Key.upArrow)) {
                                 // Do not include hidden headers.
                                 for (var i = currentSection - 1; i >= 0; i--) {
-                                    var section = this.sections.getAt(i);
                                     if (this._tryFocus(i)) {
                                         targetSectionIndex = i;
                                         break;
@@ -1202,7 +1200,7 @@ define([
                 _getPanAxis: function hub_getPanAxis() {
                     return this.orientation === _UI.Orientation.horizontal ? "horizontal" : "vertical";
                 },
-                _configureForZoom: function hub_configureForZoom(isZoomedOut, isCurrentView, triggerZoom, prefetchedPages) {
+                _configureForZoom: function hub_configureForZoom() {
                     // Nothing to configure.
                 },
                 _setCurrentItem: function hub_setCurrentItem(x, y) {
@@ -1281,7 +1279,7 @@ define([
                         _ElementUtilities.setScrollPosition(this._viewportElement, newScrollPos);
                     }
                 },
-                _endZoom: function hub_endZoom(isCurrentView) {
+                _endZoom: function hub_endZoom() {
                     // Show scroll thumb.
                     this._viewportElement.style["-ms-overflow-style"] = "";
                 },

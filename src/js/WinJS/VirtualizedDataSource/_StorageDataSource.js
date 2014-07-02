@@ -251,7 +251,7 @@ define([
                         thumbnailPromise,
                         shouldRespondToThumbnailUpdate = false;
             
-                    return new Promise(function (complete, error, progress) {
+                    return new Promise(function (complete) {
                         // Load a thumbnail if it exists. The promise completes when a full quality thumbnail is visible.
                         var tagSupplied = (image ? true : false);
                         var processThumbnail = function (thumbnail) {

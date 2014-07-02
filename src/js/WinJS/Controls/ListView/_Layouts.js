@@ -60,7 +60,6 @@ define([
         var rules = layoutStyleElem.sheet.cssRules,
             classCount = staleClassNames.length,
             i,
-            ruleCount,
             j,
             ruleSuffix;
 
@@ -238,7 +237,7 @@ define([
     }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
-        Layout: _Base.Class.define(function Layout_ctor(options) {
+        Layout: _Base.Class.define(function Layout_ctor() {
             /// <signature helpKeyword="exports.Layout.Layout">
             /// <summary locid="exports.Layout.constructor">
             /// Creates a new Layout object.
@@ -315,7 +314,6 @@ define([
                 },
 
                 uninitialize: function _LayoutCommon_uninitialize() {
-                    var that = this;
                     var perfId = "Layout:uninitialize,info";
                     function cleanGroups(groups) {
                         var len = groups.length,
@@ -1134,7 +1132,6 @@ define([
 
                     var currentAnimationPromise = null;
                     var pendingTransitionPromises = [];
-                    var listenerElement = this._site.surface;
 
                     var hasMultisizeMove = false;
                     var hasReflow = false;
@@ -1774,7 +1771,6 @@ define([
                 },
 
                 _cacheRemovedElements: function _LayoutCommon_cacheRemovedElements(modifiedElements, cachedRecords, cachedInsertedRecords, removedElements, areHeaders) {
-                    var containerMargins = this._sizes.containerMargins;
                     var leftStr = "left";
                     if (this._site.rtl) {
                         leftStr = "right";
@@ -1886,7 +1882,7 @@ define([
                     var realizationRange = this._getRealizationRange();
                     var tree = this._site.tree;
                     for (var i = 0, itemIndex = 0, treeLength = tree.length; i < treeLength; i++) {
-                        forEachContainer(tree[i].itemsContainer, function (container, j) {
+                        forEachContainer(tree[i].itemsContainer, function (container) {
                             if (realizationRange.firstIndex <= itemIndex && realizationRange.lastIndex >= itemIndex) {
                                 existingContainers[uniqueID(container)] = true;
                             }
@@ -2013,7 +2009,7 @@ define([
                             var groupBundle = tree[i];
                             var groupHasItemToAnimate = false;
 
-                            forEachContainer(groupBundle.itemsContainer, function (container) {
+                            forEachContainer(groupBundle.itemsContainer, function () {
                                 if (realizationRange.firstIndex <= itemIndex && realizationRange.lastIndex >= itemIndex) {
                                     var cachedItemRecord = this._cachedItemRecords[itemIndex];
                                     if (cachedItemRecord) {
@@ -2424,7 +2420,7 @@ define([
                 _groupFromOffset: function _LayoutCommon_groupFromOffset(offset) {
                     return offset < this._groups[0].offset ?
                         0 :
-                        this._groupFrom(function (group, groupIndex) {
+                        this._groupFrom(function (group) {
                             return offset < group.offset;
                         });
                 },
@@ -2594,8 +2590,7 @@ define([
                         var secondTry = !!itemPromise,
                             elementPromises = {},
                             itemPromise,
-                            left = site.rtl ? "right" : "left",
-                            right = site.rtl ? "left" : "right";
+                            left = site.rtl ? "right" : "left";
 
                         return site.itemCount.then(function (count) {
                             if (!count || (that._groupsEnabled && !site.groupCount)) {
@@ -3574,7 +3569,7 @@ define([
                     return this._layout._ensureContainerSize(this);
                 },
 
-                layoutRealizedRange: function UniformGroup_layoutRealizedRange(changedRange, realizedRange) {
+                layoutRealizedRange: function UniformGroup_layoutRealizedRange() {
                     // Explicitly set the items container size. This is required so that the
                     // surface, which is a grid, will have its width sized to content.
                     var sizes = this._layout._sizes;
@@ -3583,7 +3578,7 @@ define([
                                                                                                  this._layout._itemsPerBar * sizes.containerCrossSize + "px");
                 },
 
-                layoutUnrealizedRange: function UniformGroup_layoutUnrealizedRange(changedRange, realizedRange, beforeRealizedRange) {
+                layoutUnrealizedRange: function UniformGroup_layoutUnrealizedRange() {
                     return Promise.wrap();
                 }
             });
@@ -3825,9 +3820,7 @@ define([
                     do {
                         var column = Math.floor(inMapIndex / this._slotsPerColumn),
                             row = inMapIndex - column * this._slotsPerColumn,
-                            lastColumn = Math.floor((this.occupancyMap.length - 1) / this._slotsPerColumn),
-                            entry,
-                            c;
+                            lastColumn = Math.floor((this.occupancyMap.length - 1) / this._slotsPerColumn);
 
                         switch (pressedKey) {
                             case Key.upArrow:
@@ -3926,7 +3919,6 @@ define([
                     // The returned rectangle refers to the win-container's border/padding/content box. Coordinates
                     // are relative to group's items container.
 
-                    var sizes = this._layout._sizes;
                     var leftStr = this._layout._site.rtl ? "right" : "left";
                     var containerMargins = this._layout._sizes.containerMargins;
                     var coordinates = this.getItemSize(itemIndex);
@@ -3944,9 +3936,7 @@ define([
                 },
 
                 _layoutItem: function CellSpanningGroup_layoutItem(index) {
-                    var groupInfo = this.groupInfo,
-                        margins = this._layout._sizes.containerMargins,
-                        entry = this.getItemSize(index);
+                    var entry = this.getItemSize(index);
                     this._items[index].style.cssText +=
                         ";-ms-grid-row:" + (entry.row + 1) +
                         ";-ms-grid-column:" + (entry.column + 1) +
@@ -4424,7 +4414,7 @@ define([
                     }
                     return normalizeLayoutPromises();
                 },
-                itemsFromRange: function LayoutWrapper_itemsFromRange(start, end) {
+                itemsFromRange: function LayoutWrapper_itemsFromRange() {
                     return { firstIndex: 0, lastIndex: Number.MAX_VALUE };
                 },
                 getAdjacent: function LayoutWrapper_getAdjacent(currentItem, pressedKey) {
@@ -4440,7 +4430,7 @@ define([
                             return { type: currentItem.type, index: currentItem.index + 1 };
                     }
                 },
-                dragOver: function LayoutWrapper_dragOver(x, y) {
+                dragOver: function LayoutWrapper_dragOver() {
                 },
                 dragLeave: function LayoutWrapper_dragLeaver() {
                 },
@@ -4450,7 +4440,7 @@ define([
                 },
                 _getItemPosition: function LayoutWrapper_getItemPosition() {
                 },
-                _layoutAnimations: function LayoutWrapper_layoutAnimations(modifiedItems, modifiedGroups) {
+                _layoutAnimations: function LayoutWrapper_layoutAnimations() {
                 },
             });
         }),

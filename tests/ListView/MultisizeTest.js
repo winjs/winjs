@@ -246,8 +246,11 @@ WinJSTests.MultisizeTests = function () {
     };
     this.generateLayout("GridLayout");
     this.generateLayout("GridLayout", true);
-    this.generateLayout("CellSpanningLayout");
-    this.generateLayout("CellSpanningLayout", true);
+
+    if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+        this.generateLayout("CellSpanningLayout");
+        this.generateLayout("CellSpanningLayout", true);
+    }
 
     this.generateLayoutOccupancyMap = function (layoutName) {
         this["testLayoutOccupancyMap" + layoutName] = function (complete) {
@@ -1112,5 +1115,7 @@ WinJSTests.MultisizeTests = function () {
     };
 };
 
-// register the object as a test class by passing in the name
-LiveUnit.registerTestClass("WinJSTests.MultisizeTests");
+if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+    // register the object as a test class by passing in the name
+    LiveUnit.registerTestClass("WinJSTests.MultisizeTests");
+}

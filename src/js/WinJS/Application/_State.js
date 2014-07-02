@@ -52,7 +52,6 @@ define([
                 /// Promise which is fulfilled when the file has been deleted
                 /// </returns>
                 /// </signature>
-                var that = this;
                 return this._tryGetItemAsync(fileName).then(function (fileItem) {
                     return fileItem ? fileItem.deleteAsync() : false;
                 }).then(null, function () { return false; });
@@ -272,7 +271,7 @@ define([
                         }
                         exports.sessionState = sessionState;
                     }).
-                    then(null, function (err) {
+                    then(null, function () {
                         exports.sessionState = {};
                     });
             }

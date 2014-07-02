@@ -11,8 +11,6 @@ define([
     "use strict";
 
     var readyComplete = false;
-    var resourceMap;
-    var resourceLoader;
 
     var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
 

@@ -63,7 +63,7 @@ define([
                 return Fragments.renderCopy(abs(uri));
             }
         },
-        init: function (element, options) {
+        init: function () {
             /// <signature helpKeyword="WinJS.UI.Pages._mixin.init">
             /// <summary locid="WinJS.UI.Pages._mixin.init">
             /// Initializes the control before the content of the control is set.
@@ -81,7 +81,7 @@ define([
             /// </returns>
             /// </signature>
         },
-        processed: function (element, options) {
+        processed: function () {
             /// <signature helpKeyword="WinJS.UI.Pages._mixin.processed">
             /// <summary locid="WinJS.UI.Pages._mixin.processed">
             /// Initializes the control after the content of the control is set.
@@ -120,7 +120,7 @@ define([
             }
             return element;
         },
-        ready: function (element, options) {
+        ready: function () {
             /// <signature helpKeyword="WinJS.UI.Pages._mixin.ready">
             /// <summary locid="WinJS.UI.Pages._mixin.ready">
             /// Called after all initialization and rendering is complete. At this
@@ -207,7 +207,7 @@ define([
                     this.renderComplete = renderCalled.
                         then(function Pages_processAll(f) {
                             return ControlProcessor.processAll(f).then(function () { return f; });
-                        }).then(function Pages_processed(f) {
+                        }).then(function Pages_processed() {
                             return that.processed(element, options);
                         }).then(function () {
                             return that;

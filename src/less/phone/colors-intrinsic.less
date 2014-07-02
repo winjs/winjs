@@ -82,6 +82,12 @@
             &:disabled:-ms-input-placeholder {
                 color: @win_light_text_low;
             }
+            &:disabled::-webkit-input-placeholder {
+                color: @win_light_text_low;
+            }
+            &:disabled::-moz-input-placeholder {
+                color: @win_light_text_low;
+            }
 
             background-color: rgba(255, 255, 255, 0.8);
         }
@@ -101,12 +107,24 @@
             &:disabled:-ms-input-placeholder {
                 color: @win_dark_text_low;
             }
+            &:disabled::-webkit-input-placeholder {
+                color: @win_dark_text_low;
+            }
+            &:disabled::-moz-input-placeholder {
+                color: @win_dark_text_low;
+            }
 
             background-color: rgba(0, 0, 0, 0.2);
         }
         .mixin(@theme);
 
-        &:-ms-input-placeholder {
+        &:disabled:-ms-input-placeholder {
+            color: rgba(0, 0, 0, 0.25)
+        }
+        &:disabled::-webkit-input-placeholder {
+            color: rgba(0, 0, 0, 0.25)
+        }
+        &:disabled::-moz-input-placeholder {
             color: rgba(0, 0, 0, 0.25)
         }
 

@@ -219,12 +219,12 @@ define([
                     this._element.setAttribute("type", "button");
                 },
 
-                _handleNavigatedEvent: function (event) {
+                _handleNavigatedEvent: function () {
                     // Handles WinJS.Navigation 'navigated' behavior
                     this.refresh();
                 },
 
-                _handleBackButtonClick: function (event) {
+                _handleBackButtonClick: function () {
                     // Handles BackButton 'click' behavior
                     Navigation.back();
                 }

@@ -399,11 +399,11 @@ define([
                     }
                 },
 
-                _MSPointerDownButtonHandler: function NavBarCommand_MSPointerDownButtonHandler(ev) {
+                _MSPointerDownButtonHandler: function NavBarCommand_MSPointerDownButtonHandler() {
                     this._splitButtonActive = false;
                 },
 
-                _MSPointerDownSplitButtonHandler: function NavBarCommand_MSPointerDownSplitButtonHandler(ev) {
+                _MSPointerDownSplitButtonHandler: function NavBarCommand_MSPointerDownSplitButtonHandler() {
                     this._splitButtonActive = true;
                 },
 
@@ -423,7 +423,7 @@ define([
                     }
                 },
 
-                _handleSplitButtonClick: function NavBarCommand_handleSplitButtonClick(ev) {
+                _handleSplitButtonClick: function NavBarCommand_handleSplitButtonClick() {
                     this._toggleSplit();
                 },
 

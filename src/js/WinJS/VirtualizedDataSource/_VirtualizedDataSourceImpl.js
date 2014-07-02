@@ -442,7 +442,6 @@ define([
                 function reinsertSlot(slot, slotNext, mergeWithPrev, mergeWithNext) {
                     insertAndMergeSlot(slot, slotNext, mergeWithPrev, mergeWithNext);
                     keyMap[slot.key] = slot;
-                    var index = slot.index;
                     if (slot.index !== undefined) {
                         indexMap[slot.index] = slot;
                     }
@@ -1124,7 +1123,7 @@ define([
                                 delete fetchListeners[listenerID];
 
                                 // See if there are any other listeners
-                                for (var listenerID2 in fetchListeners) {
+                                if(Object.keys(fetchListeners).length > 0) {
                                     return;
                                 }
                                 delete slot[listenersProperty];
@@ -1484,7 +1483,7 @@ define([
                         } else {
                             return Promise.wrapError(new _ErrorFromName(FetchError.doesNotExist));
                         }
-                    }).then(null, function (error) {
+                    }).then(null, function () {
                         if (resultsValid(slot, refreshID, fetchID)) {
                             processErrorResultForIndex(indexRequested, slot, refreshID, name);
                         }
@@ -3196,7 +3195,6 @@ define([
                         slotAfter,
                         slotRefresh,
                         slotExisting,
-                        slotsAvailable = [],
                         slotFirstInSequence,
                         sequenceCountOld,
                         sequencesOld = [],

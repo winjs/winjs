@@ -204,7 +204,7 @@ define([
         }
     }
 
-    function declarativeBindImpl(rootElement, dataContext, skipRoot, bindingCache, defaultInitializer, c, e, p) {
+    function declarativeBindImpl(rootElement, dataContext, skipRoot, bindingCache, defaultInitializer, c) {
         _WriteProfilerMark("WinJS.Binding:processAll,StartTM");
 
         var pend = {

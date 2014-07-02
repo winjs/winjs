@@ -34,7 +34,7 @@ define(['require'], function(req) {
     };
 
     // Used to get the full path to a resource by name
-    api.normalize = function(name, normalize) {
+    api.normalize = function(name) {
         var relativePath = name;
         if (!relativePath.match(/\.less$/)) {
             relativePath += ".less";

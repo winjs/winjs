@@ -72,19 +72,19 @@ define([
 
         _UnsupportedGroupFocusCache: _Base.Namespace._lazy(function () {
             return _Base.Class.define(null, {
-                updateCache: function (groupKey, itemKey, itemIndex) {
+                updateCache: function () {
                 },
 
-                deleteItem: function (itemKey) {
+                deleteItem: function () {
                 },
 
-                deleteGroup: function (groupKey) {
+                deleteGroup: function () {
                 },
 
-                updateItemIndex: function (itemKey, itemIndex) {
+                updateItemIndex: function () {
                 },
 
-                getIndexForGroup: function (groupIndex) {
+                getIndexForGroup: function () {
                     return 0;
                 },
 

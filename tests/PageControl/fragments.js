@@ -437,13 +437,11 @@ CorsicaTests.Fragments = function () {
 
         var old = WinJS.UI.Fragments._getFragmentContents;
 
-        function getFragmentContents(href) {
-            return WinJS.Promise.as(frag);
-        }
+        
 
-        WinJS.Namespace.defineWithParent(WinJS, "UI.Fragments", {
-            _getFragmentContents: getFragmentContents
-        });            
+        WinJS.UI.Fragments._getFragmentContents = function getFragmentContents(href) {
+            return WinJS.Promise.as(frag);
+        };      
         
         try {
             var rendered = false;
@@ -459,9 +457,7 @@ CorsicaTests.Fragments = function () {
             LiveUnit.Assert.isTrue(rendered, "should have rendered synchronously");
         }
         finally {
-            WinJS.Namespace.defineWithParent(WinJS, "UI.Fragments", {
-                _getFragmentContents: old
-            });      
+            WinJS.UI.Fragments._getFragmentContents = old;    
         }
     }
 

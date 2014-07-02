@@ -719,7 +719,9 @@ var WinJSTests = WinJSTests || {};
             runTests(listview, tests);
         };
         this.generate("testMaximumRowsOrColumnsHorizontal", "GridLayout", testMaximumRowsOrColumnsHorizontal);
-        this.generate("testMaximumRowsOrColumnsHorizontal", "CellSpanningLayout", testMaximumRowsOrColumnsHorizontal);
+        if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+            this.generate("testMaximumRowsOrColumnsHorizontal", "CellSpanningLayout", testMaximumRowsOrColumnsHorizontal);
+        }
 
         var testMaximumRowsOrColumnsVertical = function (element, listview, complete) {
             listview.layout.orientation = "vertical";

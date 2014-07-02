@@ -15,13 +15,13 @@ define([
 
     var _keyboardSeenLast = false;
 
-    _Global.addEventListener("pointerdown", function (ev) {
+    _Global.addEventListener("pointerdown", function () {
         if (_keyboardSeenLast) {
             _keyboardSeenLast = false;
         }
     }, true);
 
-    _Global.addEventListener("keydown", function (ev) {
+    _Global.addEventListener("keydown", function () {
         if (!_keyboardSeenLast) {
             _keyboardSeenLast = true;
         }
@@ -198,7 +198,6 @@ define([
 
                         var newIndex = this.currentIndex;
                         var maxIndex = this._element.children.length - 1;
-                        var minIndex = 0;
 
                         var rtl = getComputedStyle(this._element).direction === "rtl";
                         var leftStr = rtl ? Key.rightArrow : Key.leftArrow;

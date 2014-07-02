@@ -41,8 +41,7 @@ define([
                     }
 
                     if (req.readyState === 4) {
-                        if ((req.status >= 200 && req.status < 300) ||
-                            (req.status === 0 && options.url.toLowerCase().substr(0,7) === 'file://')) {
+                        if ((req.status >= 200 && req.status < 300) || req.status === 0) {
                             schedule(c, req, priority);
                         } else {
                             schedule(e, req, priority);

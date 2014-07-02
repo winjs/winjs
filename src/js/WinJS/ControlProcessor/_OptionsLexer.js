@@ -516,7 +516,6 @@ StringLiteral       7.8.4
                     while (offset < limit) {
                         var startOffset = offset;
                         var code = text.charCodeAt(offset++);
-                        var type;
                         var token;
                         switch (code) {
                             case isWhitespace(code) && code:

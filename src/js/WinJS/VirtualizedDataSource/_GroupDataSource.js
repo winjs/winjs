@@ -157,7 +157,7 @@ define([
                         },
 
                         // mayExist
-                        function (failed) {
+                        function () {
                             var lastGroup = that._lastGroup;
                             if (!lastGroup) {
                                 return true;
@@ -197,7 +197,7 @@ define([
                         },
 
                         // mayExist
-                        function (failed) {
+                        function () {
                             var lastGroup = that._lastGroup;
                             if (!lastGroup) {
                                 return true;
@@ -435,7 +435,7 @@ define([
                     });
                 },
 
-                _fetchBatch: function (itemPromise, countBefore, countAfter) {
+                _fetchBatch: function (itemPromise, countBefore) {
                     this._itemBatch = new Array(this._batchSize);
                     this._itemsToFetch = this._batchSize;
 
@@ -501,7 +501,7 @@ define([
                     }
                 },
 
-                _fetchComplete: function (group, countBefore, countAfter, firstRequest, complete, error) {
+                _fetchComplete: function (group, countBefore, countAfter, firstRequest, complete) {
                     if (groupReady(group)) {
                         // Check if the minimal requirements for the request are met
                         var groupPrev = this._previousGroup(group);

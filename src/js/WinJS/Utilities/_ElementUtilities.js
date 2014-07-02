@@ -5,7 +5,7 @@ define([
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Scheduler'
-    ], function elementUtilities(exports, _Global, _Base, _BaseUtils, Scheduler) {
+], function elementUtilities(exports, _Global, _Base, _BaseUtils, Scheduler) {
     "use strict";
 
     // not supported in WebWorker
@@ -63,9 +63,9 @@ define([
         /// The element.
         /// </returns>
         /// </signature>
-        if(e.classList) {
+        if (e.classList) {
             // Fastpath: adding a single class, no need to string split the argument
-            if(name.indexOf(" ") < 0) {
+            if (name.indexOf(" ") < 0) {
                 e.classList.add(name);
             } else {
                 var namesToAdd = name.split(" ");
@@ -134,10 +134,10 @@ define([
         /// The element.
         /// </returns>
         /// </signature>
-        if(e.classList) {
+        if (e.classList) {
 
             // Fastpath: Nothing to remove
-            if(e.classList.length === 0) {
+            if (e.classList.length === 0) {
                 return e;
             }
             var namesToRemove = name.split(" ");
@@ -199,7 +199,7 @@ define([
         /// The element.
         /// </returns>
         /// </signature>
-        if(e.classList) {
+        if (e.classList) {
             e.classList.toggle(name);
             return e;
         } else {
@@ -373,7 +373,7 @@ define([
     }
 
     var activeElement = null;
-    _Global.addEventListener("blur", function (eventObject) {
+    _Global.addEventListener("blur", function () {
         // Fires focusout when focus move to another window or into an iframe.
         var previousActiveElement = activeElement;
         if (previousActiveElement) {
@@ -423,10 +423,10 @@ define([
         // Event object properties are not writable and Firefox throws
         // exceptions when we try to set these properties. We can make them
         // writable using defineProperty
-        Object.defineProperty(eventObject, "screenX", {writable: true});
-        Object.defineProperty(eventObject, "screenY", {writable: true});
-        Object.defineProperty(eventObject, "clientX", {writable: true});
-        Object.defineProperty(eventObject, "clientY", {writable: true});
+        Object.defineProperty(eventObject, "screenX", { writable: true });
+        Object.defineProperty(eventObject, "screenY", { writable: true });
+        Object.defineProperty(eventObject, "clientX", { writable: true });
+        Object.defineProperty(eventObject, "clientY", { writable: true });
         for (var i = 0, len = changedTouches.length; i < len; i++) {
             var touchObject = changedTouches[i];
             eventObject.pointerType = _MSPointerEvent.MSPOINTER_TYPE_TOUCH;
@@ -507,7 +507,7 @@ define([
 
         // If we are in IE10, we should use MSPointer as it provides a better interface than touch events
         if (_Global.MSPointerEvent) {
-                mspointerWrapper = function (eventObject) {
+            mspointerWrapper = function (eventObject) {
                 eventObject._normalizedType = eventNameLowercase;
                 touchHandled = true;
                 return mspointerEventTranslator(callback, eventObject);
@@ -604,27 +604,27 @@ define([
         },
         {
             observe: function MutationObserverShim_observe(element, configuration) {
-                    if (this._targetElements.indexOf(element) === -1) {
+                if (this._targetElements.indexOf(element) === -1) {
                     this._targetElements.push(element);
                 }
                 this._observerCount++;
-                    if (configuration.attributes) {
+                if (configuration.attributes) {
                     this._addRemovableListener(element, "DOMAttrModified", this._handleCallback);
                 }
-                    if (configuration.attributeFilter) {
+                if (configuration.attributeFilter) {
                     this._attributeFilter = configuration.attributeFilter;
                 }
             },
             disconnect: function MutationObserverShim_disconnect() {
                 this._observerCount = 0;
                 this._targetElements = [];
-                    this._toDispose.forEach(function (disposeFunc) {
+                this._toDispose.forEach(function (disposeFunc) {
                     disposeFunc();
                 });
             },
             _addRemovableListener: function MutationObserverShim_addRemovableListener(target, event, listener) {
                 target.addEventListener(event, listener);
-                    this._toDispose.push(function () {
+                this._toDispose.push(function () {
                     target.removeEventListener(event, listener);
                 });
             },
@@ -633,19 +633,19 @@ define([
                 // prevent multiple events from firing when nesting observers
                 evt.stopPropagation();
 
-                    if (this._attributeFilter.length && this._attributeFilter.indexOf(evt.attrName) === -1) {
+                if (this._attributeFilter.length && this._attributeFilter.indexOf(evt.attrName) === -1) {
                     return;
                 }
 
                 // subtree:true is not currently supported
-                    if (this._targetElements.indexOf(evt.target) === -1) {
+                if (this._targetElements.indexOf(evt.target) === -1) {
                     return;
                 }
 
                 var attrName = evt.attrName;
 
                 // DOM mutation events use different naming for this attribute
-                    if (attrName === 'tabindex') {
+                if (attrName === 'tabindex') {
                     attrName = 'tabIndex';
                 }
 
@@ -655,9 +655,9 @@ define([
                     attributeName: attrName
                 });
 
-                    if (this._observerCount === 1) {
+                if (this._observerCount === 1) {
                     this._dispatchEvent();
-                    } else if (this._scheduled === false) {
+                } else if (this._scheduled === false) {
                     this._scheduled = true;
                     _BaseUtils._setImmediate(this._dispatchEvent.bind(this));
                 }
@@ -702,14 +702,14 @@ define([
             _handleResize: function ElementResizer_handleResize() {
                 var resizables = document.querySelectorAll('.' + this._resizeClass);
                 var length = resizables.length;
-                    for (var i = 0; i < length; i++) {
+                for (var i = 0; i < length; i++) {
                     var event = document.createEvent("Event");
                     event.initEvent(this._resizeEvent, false, true);
                     resizables[i].dispatchEvent(event);
                 }
             },
-                _resizeClass: { get: function () { return 'win-element-resize'; } },
-                _resizeEvent: { get: function () { return 'WinJSElementResize'; } }
+            _resizeClass: { get: function () { return 'win-element-resize'; } },
+            _resizeEvent: { get: function () { return 'WinJSElementResize'; } }
         }
     );
 
@@ -738,8 +738,7 @@ define([
 
     function getAdjustedScrollPosition(element) {
         var computedStyle = getComputedStyle(element),
-            scrollLeft = element.scrollLeft,
-            scrollTop = element.scrollTop;
+            scrollLeft = element.scrollLeft;
         if (computedStyle.direction === "rtl") {
             if (!determinedRTLEnvironment) {
                 determineRTLEnvironment();
@@ -870,23 +869,23 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         _dataKey: _dataKey,
 
-            _supportsSnapPoints: {
-                get: function () {
-                    return supportsSnapPoints;
-                }
-            },
+        _supportsSnapPoints: {
+            get: function () {
+                return supportsSnapPoints;
+            }
+        },
 
-            _supportsTouchDetection: {
-                get: function () {
-                    return supportsTouchDetection;
-                }
-            },
+        _supportsTouchDetection: {
+            get: function () {
+                return supportsTouchDetection;
+            }
+        },
 
-            _supportsZoomTo: {
-                get: function () {
-                    return supportsZoomTo;
-                }
-            },
+        _supportsZoomTo: {
+            get: function () {
+                return supportsZoomTo;
+            }
+        },
 
         _uniqueID: uniqueID,
 
@@ -896,7 +895,7 @@ define([
 
         _getCursorPos: _getCursorPos,
 
-        _getElementsByClasses : _getElementsByClasses,
+        _getElementsByClasses: _getElementsByClasses,
 
         _createGestureRecognizer: function () {
             if (_Global.MSGesture) {
@@ -946,7 +945,7 @@ define([
             var equivalentEvent = _BaseUtils._browserEventEquivalents[type];
             if (entry) {
                 entry.register(element, type, listener, useCapture);
-            } else if (equivalentEvent){
+            } else if (equivalentEvent) {
                 element.addEventListener(equivalentEvent, listener, useCapture);
             } else {
                 element.addEventListener(type, listener, useCapture);
@@ -983,11 +982,11 @@ define([
             event["init" + initType + "Event"].apply(event, Array.prototype.slice.call(arguments, 2));
         },
 
-        _initMouseEvent: function (event, type) {
+        _initMouseEvent: function (event) {
             this._initEventImpl.apply(this, ["Mouse", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
 
-        _initPointerEvent: function (event, type) {
+        _initPointerEvent: function (event) {
             this._initEventImpl.apply(this, ["Pointer", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
 
@@ -1122,7 +1121,7 @@ define([
             hiddenElement.style["position"] = "absolute";
             element.appendChild(hiddenElement);
 
-            exports._addEventListener(hiddenElement, "animationStart", function(e) {
+            exports._addEventListener(hiddenElement, "animationStart", function (e) {
                 if (e.animationName === "WinJS-node-inserted") {
                     var e = document.createEvent("Event");
                     e.initEvent("WinJSNodeInserted", false, true);
@@ -1701,7 +1700,7 @@ define([
             /// </returns>
             /// </signature>
 
-                if (e.classList) {
+            if (e.classList) {
                 return e.classList.contains(name);
             } else {
                 var className = getClassName(e);

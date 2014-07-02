@@ -41,7 +41,7 @@ define([
                     }
 
                     var that = this;
-                    return new Promise(function (complete, error) {
+                    return new Promise(function (complete) {
                         var group = that.groups[index];
                         if (group && group.header) {
                             complete(group.header);
@@ -101,7 +101,7 @@ define([
                 },
 
                 groupFromOffset: function GroupsContainerBase_groupFromOffset(offset) {
-                    return this.groupFrom(function (group, groupIndex) {
+                    return this.groupFrom(function (group) {
                         return offset < group.offset;
                     });
                 },
@@ -204,7 +204,7 @@ define([
                         }
                     },
 
-                    indexChanged: function GroupsContainer_indexChanged(item, newIndex, oldIndex) {
+                    indexChanged: function GroupsContainer_indexChanged() {
                         that._listView._versionManager.receivedNotification();
 
                         if (that._listView._ifZombieDispose()) { return; }
@@ -212,10 +212,10 @@ define([
                         this.scheduleUpdate();
                     },
 
-                    itemAvailable: function GroupsContainer_itemAvailable(item, placeholder) {
+                    itemAvailable: function GroupsContainer_itemAvailable() {
                     },
 
-                    countChanged: function GroupsContainer_countChanged(newCount, oldCount) {
+                    countChanged: function GroupsContainer_countChanged(newCount) {
                         that._listView._versionManager.receivedNotification();
 
                         that._listView._writeProfilerMark("groupCountChanged(" + newCount + "),info");
@@ -225,7 +225,7 @@ define([
                         this.scheduleUpdate();
                     },
 
-                    changed: function GroupsContainer_changed(newItem, oldItem) {
+                    changed: function GroupsContainer_changed(newItem) {
                         that._listView._versionManager.receivedNotification();
 
                         if (that._listView._ifZombieDispose()) { return; }
@@ -242,7 +242,7 @@ define([
                         this.scheduleUpdate();
                     },
 
-                    removed: function GroupsContainer_removed(itemHandle, mirage) {
+                    removed: function GroupsContainer_removed(itemHandle) {
                         that._listView._versionManager.receivedNotification();
                         that._listView._groupRemoved(itemHandle);
 
@@ -518,7 +518,7 @@ define([
                     return Promise.wrap();
                 },
 
-                addItem: function (itemIndex, itemPromise) {
+                addItem: function () {
                     return Promise.wrap(this.groups[0]);
                 },
 
@@ -537,7 +537,7 @@ define([
                     return Promise.wrap(this.groups[0]);
                 },
 
-                groupOf: function (item) {
+                groupOf: function () {
                     return Promise.wrap(this.groups[0]);
                 },
 

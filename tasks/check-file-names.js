@@ -3,8 +3,6 @@
     "use strict";
 
     module.exports = function (grunt) {
-        var config = require("../config.js");
-        var fs = require('fs');
 
         grunt.registerMultiTask("check-file-names", function () {
 

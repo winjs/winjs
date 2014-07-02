@@ -46,9 +46,6 @@ define([
 
             var createEvent = _Events._createEventProperty;
 
-            // Class Names
-            var repeaterClass = "win-repeater";
-
             function stringifyItem(dataItem) {
                 // Repeater uses this as its default renderer when no template is provided.
                 var itemElement = document.createElement("div");
@@ -474,7 +471,7 @@ define([
                     }.bind(this));
                 },
 
-                _dataReloadHandler: function Repeater_dataReloadHandler(eventInfo) {
+                _dataReloadHandler: function Repeater_dataReloadHandler() {
                     // Handles the 'reload' event fired by WinJS.Binding.List whenever it performs operations such as reverse() or sort() 
 
                     this._beginModification();

@@ -73,7 +73,6 @@ define([
         get listDataSourceIsInvalid() { return _Resources._getWinJSString("ui/listDataSourceIsInvalid").value; },
         get itemRendererIsInvalid() { return _Resources._getWinJSString("ui/itemRendererIsInvalid").value; },
         get itemIsInvalid() { return _Resources._getWinJSString("ui/itemIsInvalid").value; },
-        get invalidItemsManagerCallback() { return _Resources._getWinJSString("ui/invalidItemsManagerCallback").value; }
     };
 
     var imageLoader;
@@ -140,9 +139,9 @@ define([
 
     function loadImage(srcUrl, image, data) {
         var imageId = nextImageLoaderId++;
-        imageLoader = imageLoader || new _ParallelWorkQueue(6);
+        imageLoader = imageLoader || new _ParallelWorkQueue._ParallelWorkQueue(6);
         return imageLoader.queue(function () {
-            return new Promise(function (c, e, p) {
+            return new Promise(function (c, e) {
                 Scheduler.schedule(function ImageLoader_async_loadImage(jobInfo) {
                     if (!image) {
                         image = document.createElement("img");
@@ -205,15 +204,8 @@ define([
         return seenUrls[srcUrl];
     }
 
-    function defaultRenderer(item) {
+    function defaultRenderer() {
         return document.createElement("div");
-    }
-
-    // Type-checks a callback parameter, since a failure will be hard to diagnose when it occurs
-    function checkCallback(callback, name) {
-        if (typeof callback !== "function") {
-            throw new _ErrorFromName("WinJS.UI.ItemsManager.CallbackIsInvalid", _Resources._formatString(strings.invalidItemsManagerCallback, name));
-        }
     }
 
     // Public definitions
@@ -352,7 +344,7 @@ define([
                 },
                 _waitForElement: function (possiblePlaceholder) {
                     var that = this;
-                    return new Promise(function (c, e, p) {
+                    return new Promise(function (c) {
                         if (possiblePlaceholder) {
                             if (!that.isPlaceholder(possiblePlaceholder)) {
                                 c(possiblePlaceholder);
@@ -708,7 +700,7 @@ define([
                     delete this._elementMap[uniqueID(element)];
                 },
 
-                _recordFromElement: function (element, ignoreFailure) {
+                _recordFromElement: function (element) {
                     var record = this._elementMap[uniqueID(element)];
                     if (!record) {
                         this._writeProfilerMark("_recordFromElement:ItemIsInvalidError,info");
@@ -722,7 +714,7 @@ define([
                     this._handleMap[handle] = record;
                 },
 
-                _removeEntryFromHandleMap: function (handle, record) {
+                _removeEntryFromHandleMap: function (handle) {
                     delete this._handleMap[handle];
                 },
 
@@ -881,7 +873,7 @@ define([
                     // accessing _handlerToNotify will force the call to beginNotifications on the client
                     //
                     this._externalBegin = true;
-                    var x = this._handlerToNotify();
+                    this._handlerToNotify();
                 },
                 _endNotifications: function () {
                     if (this._notificationsSent) {

@@ -54,7 +54,6 @@ define([
             var sezoButtonMouseMoveThreshold = 8;
 
             var semanticZoomClass = "win-semanticzoom";
-            var semanticZoomActiveClass = "win-semanticzoomactive";
             var zoomedInElementClass = "win-semanticzoom-zoomedinview";
             var zoomedOutElementClass = "win-semanticzoom-zoomedoutview";
 
@@ -136,12 +135,6 @@ define([
             }
 
             var origin = { x: 0, y: 0 };
-
-            function translateElement(element, offset) {
-                if (_TransitionAnimation.isAnimationEnabled()) {
-                    element.style[transformNames.scriptName] = "translate(" + offset.x + "px, " + offset.y + "px)";
-                }
-            }
 
             function onSemanticZoomResize(ev) {
                 var control = ev.target && ev.target.winControl;
@@ -708,7 +701,7 @@ define([
                     }
                 },
 
-                _onSeZoButtonZoomOutClick: function (ev) {
+                _onSeZoButtonZoomOutClick: function () {
                     this._hideSemanticZoomButton();
                     this._zoom(true, { x: 0.5 * this._sezoClientWidth, y: 0.5 * this._sezoClientHeight }, false);
                 },
@@ -783,7 +776,6 @@ define([
                     // When we get more than one pointer, we need to explicitly set PointerCapture on every pointer we've got to the SemanticZoom.
                     // This will fire lostCapture events on any descendant elements that had called setCapture earlier (for example, ListView items),
                     // and let the hosted control know that the pointer is no longer under its control.
-                    var targetSurface = this._element;
                     var contactKeys = Object.keys(this._pointerRecords);
 
                     for (var i = 0, len = contactKeys.length; i < len; i++) {
@@ -1113,7 +1105,7 @@ define([
                     setZoomCenters(origin, origin);
 
                     if (!skipAlignment) {
-                        this._alignViewsPromise = this._alignViews(zoomOut, centerX, centerY, completedCurrentItem).then(function (adjustment) {
+                        this._alignViewsPromise = this._alignViews(zoomOut, centerX, centerY, completedCurrentItem).then(function () {
                             that._aligning = false;
                             that._gestureEnding = false;
                             that._alignViewsPromise = null;

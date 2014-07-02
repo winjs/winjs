@@ -155,7 +155,6 @@ define([
                     throw new _ErrorFromName("WinJS.UI.ParseError", message);
                 },
                 _currentOffset: function () {
-                    var l = this._tokens.length;
                     var p = this._pos;
                     var offset = 0;
                     for (var i = 0; i < p; i++) {

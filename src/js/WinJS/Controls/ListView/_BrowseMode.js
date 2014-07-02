@@ -315,7 +315,7 @@ define([
                              promise = listBinding.fromIndex(entity.index),
                              eventName = isHeader ? "groupheaderinvoked" : "iteminvoked";
 
-                        promise.done(function (item) {
+                        promise.done(function () {
                             listBinding.release();
                         });
 
@@ -493,7 +493,7 @@ define([
 
                 _selectAll: function SelectionMode_selectAll() {
                     var unselectableRealizedItems = [];
-                    this.site._view.items.each(function (index, item, itemData) {
+                    this.site._view.items.each(function (index, item) {
                         if (item && _ElementUtilities.hasClass(item, _Constants._nonSelectableClass)) {
                             unselectableRealizedItems.push(index);
                         }
@@ -841,7 +841,7 @@ define([
                     this._stopAutoScroll();
                 },
 
-                onDragEnd: function (eventObject) {
+                onDragEnd: function () {
                     var event = document.createEvent("CustomEvent");
                     event.initCustomEvent("itemdragend", true, false, {});
                     this.site.element.dispatchEvent(event);
@@ -976,8 +976,6 @@ define([
                     var viewportSize = this.site._getViewportLength(),
                         horizontal = this.site._horizontal(),
                         cursorPositionInViewport = (horizontal ? x : y),
-                        rtl = this.site._rtl(),
-                        canvasMargins = this.site._getCanvasMargins(),
                         canvasSize = this.site._viewport[horizontal ? "scrollWidth" : "scrollHeight"],
                         scrollPosition = Math.floor(this.site.scrollPosition),
                         travelRate = 0;
@@ -1043,7 +1041,6 @@ define([
                         view = site._view,
                         oldEntity = site._selection._getFocused(),
                         handled = true,
-                        handlerName,
                         ctrlKeyDown = eventObject.ctrlKey;
 
                     function setNewFocus(newEntity, skipSelection, clampToBounds) {

@@ -1195,8 +1195,7 @@ WinJSTests.ListView = function () {
     // Verifies that the app will not crash when the image loader is used, the image
     // load fails, and the app handles the error thru the loadImage promise.
     // Regression test for WinBlue#138768.
-    // Issue #342
-    this.xtestLoadImageError = function (complete) {
+    this.testLoadImageError = function (complete) {
         initUnhandledErrors();
 
         function imageLoadingRenderer(itemPromise) {

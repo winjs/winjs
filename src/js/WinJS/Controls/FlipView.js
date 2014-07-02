@@ -178,11 +178,9 @@ define([
                 // Set _flipviewDiv so the element getter works correctly, then call _setOption with eventsOnly flag on before calling _initializeFlipView
                 // so that event listeners are added before page loading
                 this._flipviewDiv = element;
-                _Control._setOptions(this, options, true);
-
-                this._initializeFlipView(element, horizontal, dataSource, itemRenderer, initialIndex, itemSpacing);
-
                 element.winControl = this;
+                _Control._setOptions(this, options, true);
+                this._initializeFlipView(element, horizontal, dataSource, itemRenderer, initialIndex, itemSpacing);
                 _ElementUtilities.addClass(element, "win-disposable");
                 this._avoidTrappingTime = 0;
                 this._windowWheelHandlerBound = this._windowWheelHandler.bind(this);
@@ -700,7 +698,7 @@ define([
                         that._scrollPosChanged();
                     }, false);
 
-                    this._panningDiv.addEventListener("deactivate", function (event) {
+                    this._panningDiv.addEventListener("deactivate", function () {
                         if (!that._touchInteraction) {
                             that._fadeOutButtons();
                         }
@@ -718,17 +716,6 @@ define([
                     }, false);
 
                     this._flipviewDiv.addEventListener("keydown", function (event) {
-                        function isInteractive(element) {
-                            if (element.parentNode) {
-                                var matches = element.parentNode.querySelectorAll(".win-interactive, .win-interactive *");
-                                for (var i = 0, len = matches.length; i < len; i++) {
-                                    if (matches[i] === element) {
-                                        return true;
-                                    }
-                                }
-                            }
-                            return false;
-                        }
                         var cancelBubbleIfHandled = true;
                         if (!that._isInteractive(event.target)) {
                             var Key = _ElementUtilities.Key,
@@ -875,7 +862,7 @@ define([
                 _getItemRenderer: function FlipView_getItemRenderer(itemTemplate) {
                     var itemRenderer = null;
                     if (typeof itemTemplate === "function") {
-                        var itemPromise = new Promise(function (c, e, p) { });
+                        var itemPromise = new Promise(function () { });
                         var itemTemplateResult = itemTemplate(itemPromise);
                         if (itemTemplateResult.element) {
                             if (typeof itemTemplateResult.element === "object" && typeof itemTemplateResult.element.then === "function") {
@@ -906,7 +893,7 @@ define([
                                 // item after the render completes.
                                 return {
                                     element: elementRoot,
-                                    renderComplete: itemPromise.then(function (item) {
+                                    renderComplete: itemPromise.then(function () {
                                         return Promise.as(itemTemplate(itemPromise)).then(function (element) {
                                             elementRoot.appendChild(element);
                                         });

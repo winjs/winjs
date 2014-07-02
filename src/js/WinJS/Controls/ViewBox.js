@@ -60,7 +60,7 @@ define([
                 }
             }
 
-            var ViewBox = _Base.Class.define(function ViewBox_ctor(element, options) {
+            var ViewBox = _Base.Class.define(function ViewBox_ctor(element) {
                 /// <signature helpKeyword="WinJS.UI.ViewBox.ViewBox">
                 /// <summary locid="WinJS.UI.ViewBox.constructor">Initializes a new instance of the ViewBox control</summary>
                 /// <param name="element" type="HTMLElement" domElement="true" mayBeNull="true" locid="WinJS.UI.ViewBox.constructor_p:element">

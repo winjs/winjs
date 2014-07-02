@@ -182,11 +182,13 @@ WinJSTests.GroupListEditorTest = function () {
         //normal grouped with Binding.List
         generateTest(this, "GridLayout", false, true);
 
-        //grouped multisize with test data source
-        generateTest(this, "GridLayout", true, false);
+        if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+            //grouped multisize with test data source
+            generateTest(this, "GridLayout", true, false);
 
-        //grouped multisize with Binding.List
-        generateTest(this, "GridLayout", true, true);
+            //grouped multisize with Binding.List
+            generateTest(this, "GridLayout", true, true);
+        }
     }
 
     function checkTile(listview, index, left, top, tileType, title) {
