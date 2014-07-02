@@ -571,7 +571,7 @@ define([
                     return { minutes: minutes, hours: hours, clock: clock || "12HourClock", periods: ["AM", "PM"], order: order };
                 }
             });
-            if (_WinRT.Windows.Globalization.DateTimeFormatting && _WinRT.Globalization.Calendar && _WinRT.Globalization.ApplicationLanguages) {
+            if (_WinRT.Windows.Globalization.DateTimeFormatting && _WinRT.Windows.Globalization.Calendar && _WinRT.Windows.Globalization.ApplicationLanguages) {
                 TimePicker.getInformation = TimePicker._getInformationWinRT;
             } else {
                 TimePicker.getInformation = TimePicker._getInformationJS;
