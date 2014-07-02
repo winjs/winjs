@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    './_Global',
     './_Base',
-    ], function logInit(exports, _Base) {
+    ], function logInit(exports, _Global, _Base) {
     "use strict";
 
     var spaceR = /\s+/g;
@@ -30,7 +31,9 @@ define([
     }
     function defAction(message, tag, type) {
         var m = exports.formatLog(message, tag, type);
-        console[(type && typeR.test(type)) ? type : "log"](m);
+        if(_Global.console) {
+            _Global.console[(type && typeR.test(type)) ? type : "log"](m);
+        }
     }
     function escape(s) {
         // \s (whitespace) is used as separator, so don't escape it

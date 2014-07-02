@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../Core/_Global',
     '../Core/_Base',
     './_ElementUtilities'
-    ], function utilitiesInit(exports, _Base, _ElementUtilities) {
+    ], function utilitiesInit(exports, _Global, _Base, _ElementUtilities) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
 
         _deprecated: function (message) {
-            console.warn(message);
+            _Global.console && _Global.console.warn(message);
         },
 
         // Take a renderer which may be a function (signature: (data) => element) or a WinJS.Binding.Template

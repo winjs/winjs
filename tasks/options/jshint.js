@@ -5,28 +5,29 @@
 (function () {
     "use strict";
     var config = require("../../config.js");
+    var fs = require("fs");
+
+    var jshintrc = fs.readFileSync(".jshintrc", "utf-8");
+    var options = (new Function("return (" + jshintrc + ")"))(); //jshint ignore:line
 
     /*
      Options specific to configuration of Grunt JSHint plugin. 
      https://www.npmjs.org/package/grunt-contrib-jshint
     */
-    var options = {
-        extensions: undefined, // A list of non-dot-js extensions to check.
-        force: undefined, // Set force to true to report JSHint errors, but not fail the task.          
-        ignores: undefined,// Array of files and dirs to ignore. This will override our .jshintignore file if set and does not merge.
-        jshintrc: "tasks/utilities/.jshintrc", // Path to the JSHint remote config file we use, it determines which JSHint rules are enforced.
-        reporter: "tasks/utilities/jshintreporter.js", // Path to the custom reporter we use, default is the built-in Grunt reporter. 
-        reporterOutput: undefined, // If reporterOutput is specified then all output will be written to the given filepath instead of printed to stdout.        
-    };
+    options.reporter = "tasks/utilities/jshintreporter.js"; // Path to the custom reporter we use, default is the built-in Grunt reporter.
 
     module.exports = {
+        options: options,
         buildFiles: {
             src: config.lint.buildFiles,
-            options: options,
+            options: {
+                node: true
+            },
         },
         srcFiles: {
             src: config.lint.srcFiles,
-            options: options,
+            options: {
+            },
         },
     };
 })();
