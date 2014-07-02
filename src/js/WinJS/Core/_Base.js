@@ -9,6 +9,7 @@ define([
 
     function initializeProperties(target, members, prefix) {
         var keys = Object.keys(members);
+        var isArray = Array.isArray(target);
         var properties;
         var i, len;
         for (i = 0, len = keys.length; i < len; i++) {
@@ -33,10 +34,22 @@ define([
                 properties[key] = { value: member, enumerable: enumerable, configurable: true, writable: true };
                 continue;
             }
-            target[key] = member;
+            if(isArray) {
+                target.forEach(function(target) {
+                    target[key] = member;
+                });
+            } else {
+                target[key] = member;
+            }
         }
         if (properties) {
-            Object.defineProperties(target, properties);
+            if(isArray) {
+                target.forEach(function(target) {
+                    Object.defineProperties(target, properties);
+                });
+            } else {
+                Object.defineProperties(target, properties);
+            }
         }
     }
 
@@ -51,6 +64,23 @@ define([
         var _rootNamespace = _Global[rootNamespace];
         if (!_rootNamespace.Namespace) {
             _rootNamespace.Namespace = Object.create(Object.prototype);
+        }
+
+        function createNamespace(parentNamespace, name) {
+            var currentNamespace = parentNamespace || {};
+            if(name) {
+                var namespaceFragments = name.split(".");
+                for (var i = 0, len = namespaceFragments.length; i < len; i++) {
+                    var namespaceName = namespaceFragments[i];
+                    if (!currentNamespace[namespaceName]) {
+                        Object.defineProperty(currentNamespace, namespaceName,
+                            { value: {}, writable: false, enumerable: true, configurable: true }
+                        );
+                    }
+                    currentNamespace = currentNamespace[namespaceName];
+                }
+            }
+            return currentNamespace;
         }
 
         function defineWithParent(parentNamespace, name, members) {
@@ -71,20 +101,7 @@ define([
             /// The newly-defined namespace.
             /// </returns>
             /// </signature>
-            var currentNamespace = parentNamespace || {};
-
-            if (name) {
-                var namespaceFragments = name.split(".");
-                for (var i = 0, len = namespaceFragments.length; i < len; i++) {
-                    var namespaceName = namespaceFragments[i];
-                    if (!currentNamespace[namespaceName]) {
-                        Object.defineProperty(currentNamespace, namespaceName,
-                            { value: {}, writable: false, enumerable: true, configurable: true }
-                        );
-                    }
-                    currentNamespace = currentNamespace[namespaceName];
-                }
-            }
+            var currentNamespace = createNamespace(parentNamespace, name);
 
             if (members) {
                 initializeProperties(currentNamespace, members, name || "<ANONYMOUS>");
@@ -168,10 +185,12 @@ define([
 
         // helper for defining AMD module members
         function moduleDefine(exports, name, members) {
+            var target = [exports];
             if(name) {
-                define(name, members);
+                target.push(createNamespace(_Global, name));
             }
-            return defineWithParent(exports, null, members);
+            initializeProperties(target, members, name || "<ANONYMOUS>");
+            return exports;
         }
 
         // Establish members of the "WinJS.Namespace" namespace
