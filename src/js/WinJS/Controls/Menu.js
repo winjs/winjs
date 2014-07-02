@@ -296,6 +296,7 @@ define([
                 },
 
                 _handleKeyDown: function Menu_handleKeyDown(event) {
+                    var that = this;
                     if (event.keyCode === Key.escape) {
                         // Show a focus rect on what we move focus to
                         this.winControl._keyboardInvoked = true;
@@ -305,13 +306,11 @@ define([
                         event.preventDefault();
                         this.winControl.hide();
                     } else if (event.keyCode === Key.upArrow) {
-                        var that = this;
                         Menu._focusOnPreviousElement(that);
 
                         // Prevent the page from scrolling
                         event.preventDefault();
                     } else if (event.keyCode === Key.downArrow) {
-                        that = this;
                         Menu._focusOnNextElement(that);
 
                         // Prevent the page from scrolling

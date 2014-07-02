@@ -42,7 +42,7 @@
     "esnext": false, // Tells JSHint that your code uses ECMAScript 6 specific syntax.
     "evil": false, // Suppresses warnings about the use of eval.
     "expr": true, // Suppresses warnings about the use of expressions where normally you would expect to see assignments or function calls.
-    "funcscope": true, // Suppresses warnings about declaring variables inside of control structures while accessing them later from the outside.
+    "funcscope": false, // Suppresses warnings about declaring variables inside of control structures while accessing them later from the outside.
     "gcl": false, // Makes JSHint compatible with Google Closure Compiler.
     "globalstrict": true, // Suppresses warnings about the use of global strict mode.
     "iterator": false, // Suppresses warnings about the __iterator__ property.

@@ -3723,10 +3723,11 @@ define([
                         var container = (entity.type === _UI.ObjectType.groupHeader ? that._view._getHeaderContainer(entity.index) : that._view.getContainer(entity.index));
                         if (container) {
                             that._writeProfilerMark("WinJS.UI.ListView:getItemPosition,info");
-
+                            var itemsBlockFrom;
+                            var itemsBlockTo;
                             if (that._view._expandedRange) {
-                                var itemsBlockFrom = that._view._expandedRange.first.index,
-                                    itemsBlockTo = that._view._expandedRange.last.index;
+                                itemsBlockFrom = that._view._expandedRange.first.index;
+                                itemsBlockTo = that._view._expandedRange.last.index;
                             } else {
                                 preserveItemsBlocks = false;
                             }

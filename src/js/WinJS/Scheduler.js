@@ -1183,6 +1183,9 @@ define([
         var didWork;
         var ranJobSuccessfully = true;
         var current;
+        var lastLoggedPriority;
+        var timesliceExhausted = false;
+        var yieldForPriorityBoundary = false;
 
         // Reset per-run state
         //
@@ -1191,8 +1194,6 @@ define([
         try {
             var start = now();
             var end = start + TIME_SLICE;
-            var lastLoggedPriority;
-            var yieldForPriorityBoundary = false;
 
             // Yielding policy
             //
@@ -1200,7 +1201,7 @@ define([
             //  break in user code we will generally yield immediately after that job due to the fact that any
             //  breakpoint will take longer than TIME_SLICE to process.
             //
-            var timesliceExhausted = false;
+            
             var shouldYield = function () {
                 timesliceExhausted = false;
                 if (immediateYield) { return true; }

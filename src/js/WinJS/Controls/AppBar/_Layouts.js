@@ -158,15 +158,15 @@ define([
                     if (this._needToMeasureNewCommands) {
                         this._measureContentCommands();
                     }
+                    var accumulatedWidth = 0;
+                    var separatorsCount = 0;
+                    var buttonsCount = 0;
 
                     if (!commands) {
                         // Return the cached width of the last known visible commands in the AppBar.
                         return this._widthOfLastKnownVisibleCommands;
                     } else {
                         // Return the width of the specified commands.
-                        var separatorsCount = 0;
-                        var buttonsCount = 0;
-                        var accumulatedWidth = 0;
                         var command;
                         for (var i = 0, len = commands.length; i < len; i++) {
                             command = commands[i].winControl || commands[i];

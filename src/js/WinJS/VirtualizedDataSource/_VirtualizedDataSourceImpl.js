@@ -2244,6 +2244,8 @@ define([
 
                         // Now process the sequences without indices
                         var firstSequence = true;
+                        var slotBeforeSequence;
+                        var slotAfterSequence;
                         for (i = 0; i < resultsCount; i++) {
                             slotExisting = offsetMap[i];
                             if (slotExisting && slotExisting !== slotListEnd) {
@@ -2311,8 +2313,8 @@ define([
                                         }
                                     }
 
-                                    var slotBeforeSequence = (slotFirstInSequence.firstInSequence ? null : slotFirstInSequence.prev),
-                                        slotAfterSequence = (slotLastInSequence.lastInSequence ? null : slotLastInSequence.next);
+                                    slotBeforeSequence = (slotFirstInSequence.firstInSequence ? null : slotFirstInSequence.prev);
+                                    slotAfterSequence = (slotLastInSequence.lastInSequence ? null : slotLastInSequence.next);
 
                                     if (slotBeforeSequence) {
                                         splitSequence(slotBeforeSequence);
@@ -4209,6 +4211,7 @@ define([
 
                     function onEditComplete(item) {
                         if (item) {
+                            var slot;
                             if (keyUpdate && keyUpdate.key !== item.key) {
                                 var keyNew = item.key;
                                 if (!edit.undo) {
@@ -4216,7 +4219,7 @@ define([
                                     // slots, so there's no need for a later update.
                                     keyUpdate.key = keyNew;
                                 } else {
-                                    var slot = keyUpdate.slot;
+                                    slot = keyUpdate.slot;
                                     if (slot) {
                                         var keyOld = slot.key;
                                         if (keyOld) {
