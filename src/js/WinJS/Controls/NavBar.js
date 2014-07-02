@@ -8,11 +8,11 @@ define([
     '../Scheduler',
     '../Utilities/_ElementUtilities',
     './AppBar',
-    './NavBar/_Command', // dependency to have NavBarCommand in the build
-    './NavBar/_Container', // dependency to have NavBarContainer in the build
+    './NavBar/_Command',
+    './NavBar/_Container',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function NavBarInit(_Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar) {
+], function NavBarInit(_Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
     "use strict";
 
     var customLayout = "custom";
