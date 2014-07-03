@@ -140,8 +140,9 @@ define([
                     this._element.appendChild(this._viewportElement);
                     this._viewportElement.setAttribute("role", "group");
                     this._viewportElement.setAttribute("aria-label", strings.pivotViewportAriaLabel);
-
-                    this.element.addEventListener("mselementresize", this._resizeHandler.bind(this));
+                    this._resizeHandlerBound = this._resizeHandler.bind(this);
+                    this.element.addEventListener("mselementresize", this._resizeHandlerBound);
+                    _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
                     this._viewportWidth = null;
                     this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
                     this._viewportElement.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
@@ -296,6 +297,7 @@ define([
                         this._disposed = true;
 
                         this._updateEvents(this._items);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._resizeHandlerBound);
 
                         _Dispose._disposeElement(this._headersContainerElement);
 

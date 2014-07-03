@@ -155,10 +155,10 @@ define([
                     }
 
                     if(this.element) {
-                        _ElementUtilities._resizeNotifier.unsubscribe(this.element);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this.element, onresizeBox);
                     }
                     if (this._sizer) {
-                        _ElementUtilities._resizeNotifier.unsubscribe(this._sizer);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this._sizer, onresizeSizer);
                     }
 
                     this._disposed = true;

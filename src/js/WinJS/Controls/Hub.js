@@ -176,7 +176,9 @@ define([
                 _ElementUtilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
                 this.element.addEventListener("keydown", this._keyDownHandler.bind(this));
                 this.element.addEventListener("click", this._clickHandler.bind(this));
-                this.element.addEventListener("mselementresize", this._resizeHandler.bind(this));
+                this._resizeHandlerBound = this._resizeHandler.bind(this);
+                this.element.addEventListener("mselementresize", this._resizeHandlerBound);
+                _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
                 this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
                 this._surfaceElement.addEventListener("mselementresize", this._contentResizeHandler.bind(this));
 
@@ -1301,6 +1303,7 @@ define([
                     this._disposed = true;
 
                     window.removeEventListener('keydown', this._windowKeyDownHandlerBound);
+                    _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._resizeHandlerBound);
 
                     this._updateEvents(this._sections);
 

@@ -203,6 +203,7 @@ define([
                     }
 
                     window.removeEventListener('wheel', this._windowWheelHandlerBound);
+                    _ElementUtilities._resizeNotifier.unsubscribe(this._flipviewDiv, flipviewResized);
 
 
                     this._disposed = true;
@@ -648,6 +649,7 @@ define([
                     this._cachedStyleDir = this._flipviewDiv.style.direction;
 
                     this._flipviewDiv.addEventListener("mselementresize", flipviewResized);
+                    _ElementUtilities._resizeNotifier.subscribe(this._flipviewDiv, flipviewResized);
 
                     this._contentDiv.addEventListener("mouseleave", function () {
                         that._mouseInViewport = false;

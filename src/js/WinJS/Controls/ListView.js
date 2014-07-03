@@ -1524,6 +1524,8 @@ define([
                     elementEvents.forEach(function (eventHandler) {
                         _ElementUtilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
+                    this._onMSElementResizeBound = this._onMSElementResize.bind(this);
+                    _ElementUtilities._resizeNotifier.subscribe(this._element, this._onMSElementResizeBound);
 
                     var viewportEvents = [
                         listViewHandler("MSManipulationStateChanged", true),
@@ -3418,6 +3420,8 @@ define([
                         var clear = function clear(e) {
                             e && (e.textContent = "");
                         };
+
+                        _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onMSElementResizeBound);
 
                         this._batchingViewUpdates && this._batchingViewUpdates.cancel();
 

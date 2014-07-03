@@ -599,7 +599,7 @@ define([
                     this._viewportEl.setAttribute("aria-label", strings.navBarContainerViewportAriaLabel);
 
                     this._boundResizeHandler = this._resizeHandler.bind(this);
-                    window.addEventListener("resize", this._boundResizeHandler);
+                    _ElementUtilities._resizeNotifier.subscribe(this._element, this._boundResizeHandler);
                     this._viewportEl.addEventListener("mselementresize", this._resizeHandler.bind(this));
                     this._viewportEl.addEventListener("scroll", this._scrollHandler.bind(this));
                     this._viewportEl.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
@@ -1383,7 +1383,7 @@ define([
                     this._rightArrowFadeOut && this._rightArrowFadeOut.cancel();
                     this._rightArrowFadeIn && this._rightArrowFadeIn.cancel();
 
-                    window.removeEventListener("resize", this._boundResizeHandler);
+                    _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._boundResizeHandler);
 
                     this._removeDataChangingEvents();
                     this._removeDataChangedEvents();

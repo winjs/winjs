@@ -222,6 +222,7 @@ define([
                 // Register event handlers
 
                 this._element.addEventListener("mselementresize", onSemanticZoomResize);
+                _ElementUtilities._resizeNotifier.subscribe(this._element, onSemanticZoomResize);
                 new _ElementUtilities._MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
 
                 if (!isPhone) {
@@ -359,6 +360,7 @@ define([
                     }
 
                     this._disposed = true;
+                    _ElementUtilities._resizeNotifier.unsubscribe(this._element, onSemanticZoomResize);
                     _Dispose._disposeElement(this._elementIn);
                     _Dispose._disposeElement(this._elementOut);
 
