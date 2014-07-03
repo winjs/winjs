@@ -103,6 +103,7 @@ WinJSTests.HorizontalListTest = function () {
     });
 
     this.generateTest("testSetScrollPosition", function (complete) {
+        var that = this;
         var lv = this.lv;
         var viewport = lv.element.querySelector(".win-viewport");
 
@@ -117,8 +118,7 @@ WinJSTests.HorizontalListTest = function () {
                     var targetScrollPosition = Math.min(WinJS.Utilities.getScrollPosition(viewport).scrollLeft + increment, scrollMax);
                     lv.scrollPosition = targetScrollPosition;
 
-                    //use requestAnimationFrame to match ListView's timing
-                    requestAnimationFrame(function () {
+                    that.lvUtils.waitForReady(lv)().done(function() {
                         LiveUnit.Assert.areEqual(targetScrollPosition, WinJS.Utilities.getScrollPosition(viewport).scrollLeft);
                         c();
                     });
@@ -166,7 +166,7 @@ WinJSTests.HorizontalListTest = function () {
                     var expectedIndexOfFirstVisible = Math.min(maxFirstVisibleIndex, Math.max(0, lv.indexOfFirstVisible) + rowsPerPage);
                     lv.indexOfFirstVisible = expectedIndexOfFirstVisible;
 
-                    that.lvUtils.waitForReady(lv)().done(function () {
+                    that.lvUtils.waitForReady(lv)().done(function() {
                         LiveUnit.Assert.areEqual(expectedIndexOfFirstVisible, lv.indexOfFirstVisible, "Read value is different after setting");
                         checkFirstLastVisible(lv);
                         c();
@@ -177,6 +177,7 @@ WinJSTests.HorizontalListTest = function () {
     });
 
     this.generateTest("testEnsureVisible", function (complete) {
+        var that = this;
         var lv = this.lv;
         var columnsPerPage = lv.testOptions.columnsPerPage;
         var rowsPerPage = lv.testOptions.rowsPerPage;
@@ -194,7 +195,7 @@ WinJSTests.HorizontalListTest = function () {
                 var ensureVisibleIndex = ensureVisibleTargets.pop();
                 lv.ensureVisible(ensureVisibleIndex);
 
-                WinJS.Utilities._setImmediate(function () {
+                that.lvUtils.waitForReady(lv)().done(function() {
                     LiveUnit.Assert.isTrue(ensureVisibleIndex >= lv.indexOfFirstVisible, "Index of first visible should be less than or eq to ensured visible item index");
                     LiveUnit.Assert.isTrue(ensureVisibleIndex <= lv.indexOfLastVisible, "Index of first visible should be greater than or eq to ensured visible item index");
                     c();

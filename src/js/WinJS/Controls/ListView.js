@@ -1132,7 +1132,7 @@ define([
                 /// </field>
                 scrollPosition: {
                     get: function () {
-                        return this._currentScrollPosition;
+                        return this._viewportScrollPosition;
                     },
                     set: function (newPosition) {
                         var that = this;
