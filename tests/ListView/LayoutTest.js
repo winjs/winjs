@@ -1264,7 +1264,7 @@ var WinJSTests = WinJSTests || {};
                     function () {
                         checkTile(listView, 1, 0, 100);
                         var tile = listView.elementFromIndex(1);
-                        tile.style.backgroundColor = "pink";
+                        tile.style.backgroundColor = "rgb(255, 192, 203)";
                         utilities.addClass(element, "cssChangeBigger");
                         listView.recalculateItemPosition();
                     },
@@ -1272,7 +1272,7 @@ var WinJSTests = WinJSTests || {};
                         checkTile(listView, 1, 200, 0);
                         var tile = listView.elementFromIndex(1);
                         // recalculateItemPosition should not re-create elements so pink color should be still there
-                        LiveUnit.Assert.areEqual("pink", tile.style.backgroundColor);
+                        LiveUnit.Assert.areEqual("rgb(255, 192, 203)", tile.style.backgroundColor);
                         document.body.removeChild(element);
                         complete();
                     }
