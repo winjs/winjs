@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Tests</title>
+
+    <style>
+      html, body, iframe {
+          height: 100%;
+          width: 100%;
+          margin: 0px;
+          border: 0px;
+          padding: 0px;
+          overflow: hidden;
+      }
+
+      body {
+          display: -ms-grid;
+          -ms-grid-rows: auto 1fr;
+          -ms-grid-columns: 1fr;
+      }
+
+          body > h1 {
+              -ms-grid-row: 1;
+              -ms-grid-column-align: center;
+          }
+
+          body > iframe {
+              -ms-grid-row: 2;
+          }
+    </style>
+    <script>
+        var tests = "/bin/tests/tests.html";
+
+        window.reset = function () {
+            document.querySelector("iframe").src = tests;
+        };
+
+        window.contentLoaded = function () {
+            var frame = document.querySelector("iframe");
+            if (frame.src.indexOf(tests) !== -1) {
+                Array.prototype.forEach.call(frame.contentDocument.querySelectorAll("a[target]"), function (a) {
+                    a.target = "";
+                });
+            }
+            if (frame.contentWindow.WinJS) {
+                // Ensure that the strings are loaded from the .strings.js files, normally in local context 
+                //  strings are expected to be loaded from the PRI
+                //
+                frame.contentWindow.WinJS.Resources.getString = frame.contentWindow.WinJS.Resources._getStringJS;
+            }
+        };
+
+        window.onerror = function () {
+            return true;
+        };
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var frame = document.querySelector("iframe");
+            frame.src = tests;
+        });
+    </script>
+
+</head>
+<body>
+    <h1>WinJS Unit Tests - WWA <button onclick="reset(event)">Back to test fixture list</button></h1>
+    <iframe onload="contentLoaded(event)" style="height: 100%; width: 100%;"></iframe>
+</body>
+</html>
