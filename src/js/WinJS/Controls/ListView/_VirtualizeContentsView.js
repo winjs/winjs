@@ -745,6 +745,7 @@ define([
                     var that = this;
                     return this._listView._groups.renderGroup(groupIndex).then(function (header) {
                         if (header) {
+                            header.element.tabIndex = 0;
                             var placeholder = that._getHeaderContainer(groupIndex);
                             if (header.element.parentNode !== placeholder) {
                                 placeholder.appendChild(header.element);
