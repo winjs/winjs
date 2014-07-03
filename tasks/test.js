@@ -134,6 +134,7 @@
         window.addEventListener("error", function () { return true; });                                                     \r\n\
         window.removeEventListener("load", QUnit.load);                                                                     \r\n\
         window.addEventListener("load", function () { MSApp.execUnsafeLocalFunction(function () { QUnit.load(); }); });     \r\n\
+        WinJS.Resources.getString = WinJS.Resources._getStringJS;                                                           \r\n\
     }                                                                                                                       \r\n\
     </script>                                                                                                               \r\n\
     <!-- Test references -->                                                                                                \r\n\
