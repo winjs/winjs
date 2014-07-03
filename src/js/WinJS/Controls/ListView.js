@@ -1179,7 +1179,17 @@ define([
                     if (oldElement) {
                         _Dispose._disposeElement(oldElement);
                     }
-                    return this._itemRenderer(itemPromise);
+                    var templateResult = this._itemRenderer(itemPromise);
+                    if (templateResult.then) {
+                        return templateResult.then(function (element) {
+                            element.tabIndex = 0;
+                            return element;
+                        });
+                    } else {
+                        var element = templateResult.element || templateResult;
+                        element.tabIndex = 0;
+                        return templateResult;
+                    }
                 },
 
                 _isInsertedItem: function ListView_isInsertedItem(itemPromise) {
