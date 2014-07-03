@@ -43,12 +43,6 @@
                     a.target = "";
                 });
             }
-            if (frame.contentWindow.WinJS) {
-                // Ensure that the strings are loaded from the .strings.js files, normally in local context 
-                //  strings are expected to be loaded from the PRI
-                //
-                frame.contentWindow.WinJS.Resources.getString = frame.contentWindow.WinJS.Resources._getStringJS;
-            }
         };
 
         window.onerror = function () {
