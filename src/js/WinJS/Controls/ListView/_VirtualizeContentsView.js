@@ -745,6 +745,7 @@ define([
                     var that = this;
                     return this._listView._groups.renderGroup(groupIndex).then(function (header) {
                         if (header) {
+                            header.element.tabIndex = 0;
                             var placeholder = that._getHeaderContainer(groupIndex);
                             if (header.element.parentNode !== placeholder) {
                                 placeholder.appendChild(header.element);
@@ -2269,8 +2270,9 @@ define([
 
                         var end = _BaseUtils._now() + _VirtualizeContentsView._maxTimePerCreateContainers,
                             chunkSize = Math.min(_VirtualizeContentsView._startupChunkSize, _VirtualizeContentsView._chunkSize);
+                        var stop;
                         do {
-                            var stop = blockSize ? that._createChunkWithBlocks(groups, count, blockSize, chunkSize) : that._createChunk(groups, count, chunkSize);
+                            stop = blockSize ? that._createChunkWithBlocks(groups, count, blockSize, chunkSize) : that._createChunk(groups, count, chunkSize);
                         } while (_BaseUtils._now() < end && that.containers.length < count && !stop);
 
                         that._listView._writeProfilerMark("createContainers created(" + that.containers.length + "),info");

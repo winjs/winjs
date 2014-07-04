@@ -295,11 +295,11 @@ define([
                             left.lastPromise = that._getListBinding().fromIndex(left.lastIndex).retain();
                         }
                     };
-
+                    var mergeWithPrev;
                     for (var i = 0, len = this._ranges.length; i < len; i++) {
                         range = this._ranges[i];
                         if (newRange.firstIndex < range.firstIndex) {
-                            var mergeWithPrev = prev && newRange.firstIndex < (prev.lastIndex + 1);
+                            mergeWithPrev = prev && newRange.firstIndex < (prev.lastIndex + 1);
                             if (mergeWithPrev) {
                                 inserted = i - 1;
                                 merge(prev, newRange);

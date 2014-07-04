@@ -129,6 +129,14 @@
     <script src="../../../node_modules/qunitjs/qunit/qunit.js"></script>                                                    \r\n\
     <script src="../TestLib/liveToQ/liveToQ.js"></script>                                                                   \r\n\
                                                                                                                             \r\n\
+    <script>                                                                                                                \r\n\
+    if (window.MSApp) {                                                                                                     \r\n\
+        window.addEventListener("error", function () { return true; });                                                     \r\n\
+        window.removeEventListener("load", QUnit.load);                                                                     \r\n\
+        window.addEventListener("load", function () { MSApp.execUnsafeLocalFunction(function () { QUnit.load(); }); });     \r\n\
+        WinJS.Resources.getString = WinJS.Resources._getStringJS;                                                           \r\n\
+    }                                                                                                                       \r\n\
+    </script>                                                                                                               \r\n\
     <!-- Test references -->                                                                                                \r\n\
 @@TESTREFERENCES                                                                                                            \r\n\
 </head>                                                                                                                     \r\n\

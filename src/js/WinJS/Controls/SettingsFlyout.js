@@ -414,8 +414,9 @@ define([
 
                     // If there are positive tabIndices, set focus to the element with the highest tabIndex.
                     // Otherwise set focus to the last focusable element in DOM order.
+                    var i;
                     if (_highestTabIndex) {
-                        for (var i = _elms.length - 2; i > 0; i--) {
+                        for (i = _elms.length - 2; i > 0; i--) {
                             if (_elms[i].tabIndex === _highestTabIndex) {
                                 _elms[i].focus();
                                 break;
@@ -452,8 +453,9 @@ define([
 
                     // If there are positive tabIndices, set focus to the element with the lowest tabIndex.
                     // Otherwise set focus to the first focusable element in DOM order.
+                    var i;
                     if (_lowestTabIndex) {
-                        for (var i = 1; i < _elms.length - 1; i++) {
+                        for (i = 1; i < _elms.length - 1; i++) {
                             if (_elms[i].tabIndex === _lowestTabIndex) {
                                 _elms[i].focus();
                                 break;

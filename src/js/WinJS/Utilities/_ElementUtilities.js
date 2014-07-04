@@ -414,33 +414,64 @@ define([
 
     // Custom pointer events
     //
+    
+    // Sets the properties in *overrideProperties* on the object. Delegates all other
+    // property accesses to *eventObject*.
+    //
+    // The purpose of PointerEventProxy is that it allows us to customize properties on
+    // an eventObject despite those properties being unwritable and unconfigurable.
+    var PointerEventProxy = function (eventObject, overrideProperties) {
+        overrideProperties = overrideProperties || {};
+        this.__eventObject = eventObject;
+        var that = this;
+        Object.keys(overrideProperties).forEach(function (propertyName) {
+            Object.defineProperty(that, propertyName, {
+                value: overrideProperties[propertyName]
+            });
+        });
+    };
+    
+    // Define PointerEventProxy properties which should be delegated to the original eventObject.
+    [
+        "altKey", "AT_TARGET", "bubbles", "BUBBLING_PHASE", "button", "buttons",
+        "cancelable", "cancelBubble", "CAPTURING_PHASE", "clientX", "clientY",
+        "ctrlKey", "currentTarget", "defaultPrevented", "detail", "eventPhase",
+        "fromElement", "getModifierState", "height", "hwTimestamp", "initEvent",
+        "initMouseEvent", "initPointerEvent", "initUIEvent", "isPrimary", "isTrusted",
+        "layerX", "layerY", "metaKey", "offsetX", "offsetY", "pageX", "pageY",
+        "pointerId", "pointerType", "pressure", "preventDefault", "relatedTarget",
+        "rotation", "screenX", "screenY", "shiftKey", "srcElement", "stopImmediatePropagation",
+        "stopPropagation", "target", "tiltX", "tiltY", "timeStamp", "toElement", "type",
+        "view", "which", "width", "x", "y", "_normalizedType"
+    ].forEach(function (propertyName) {
+        Object.defineProperty(PointerEventProxy.prototype, propertyName, {
+            get: function () {
+                return this.__eventObject[propertyName];
+            },
+            configurable: true
+        });
+    });
 
     function touchEventTranslator(callback, eventObject) {
-        eventObject._handledTouch = true;
         var changedTouches = eventObject.changedTouches,
             retVal = null;
-
-        // Event object properties are not writable and Firefox throws
-        // exceptions when we try to set these properties. We can make them
-        // writable using defineProperty
-        Object.defineProperty(eventObject, "screenX", { writable: true });
-        Object.defineProperty(eventObject, "screenY", { writable: true });
-        Object.defineProperty(eventObject, "clientX", { writable: true });
-        Object.defineProperty(eventObject, "clientY", { writable: true });
+        
         for (var i = 0, len = changedTouches.length; i < len; i++) {
             var touchObject = changedTouches[i];
-            eventObject.pointerType = _MSPointerEvent.MSPOINTER_TYPE_TOUCH;
-            eventObject.pointerId = touchObject.identifier;
-            eventObject.screenX = touchObject.screenX;
-            eventObject.screenY = touchObject.screenY;
-            eventObject.clientX = touchObject.clientX;
-            eventObject.clientY = touchObject.clientY;
-            eventObject.radiusX = touchObject.radiusX;
-            eventObject.radiusY = touchObject.radiusY;
-            eventObject.rotationAngle = touchObject.rotationAngle;
-            eventObject.force = touchObject.force;
-            eventObject._currentTouch = touchObject;
-            retVal = retVal || callback(eventObject);
+            var pointerEventObject = new PointerEventProxy(eventObject, {
+                pointerType: _MSPointerEvent.MSPOINTER_TYPE_TOUCH,
+                pointerId: touchObject.identifier,
+                screenX: touchObject.screenX,
+                screenY: touchObject.screenY,
+                clientX: touchObject.clientX,
+                clientY: touchObject.clientY,
+                radiusX: touchObject.radiusX,
+                radiusY: touchObject.radiusY,
+                rotationAngle: touchObject.rotationAngle,
+                force: touchObject.force,
+                _currentTouch: touchObject
+            });
+            retVal = retVal || callback(pointerEventObject);
         }
         return retVal;
     }
@@ -452,7 +483,6 @@ define([
     }
 
     function mspointerEventTranslator(callback, eventObject) {
-        eventObject._handledTouch = true;
         return callback(eventObject);
     }
 

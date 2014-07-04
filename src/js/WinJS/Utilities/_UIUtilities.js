@@ -148,8 +148,9 @@ define([
             // If there are positive tabIndices, set focus to the element with the lowest tabIndex.
             // Keep trying with the next lowest tabIndex until all tabIndices have been exhausted.
             // Otherwise set focus to the first focusable element in DOM order.
+            var i;
             while (_lowestTabIndex) {
-                for (var i = 0; i < _elms.length; i++) {
+                for (i = 0; i < _elms.length; i++) {
                     if (_elms[i].tabIndex === _lowestTabIndex) {
                         if (this._tryFocus(_elms[i], useSetActive, scroller)) {
                             return true;
@@ -190,8 +191,9 @@ define([
 
             // Try all tabIndex 0 first. After this conditional the _highestTabIndex
             // should be equal to the highest positive tabIndex.
+            var i;
             if (_highestTabIndex === 0) {
-                for (var i = _elms.length - 1; i >= 0; i--) {
+                for (i = _elms.length - 1; i >= 0; i--) {
                     if (_elms[i].tabIndex === _highestTabIndex) {
                         if (this._tryFocus(_elms[i], useSetActive, scroller)) {
                             return true;
