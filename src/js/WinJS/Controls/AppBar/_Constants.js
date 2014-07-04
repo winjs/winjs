@@ -2,54 +2,72 @@
 define([
      'exports',
      '../../Core/_Base',
-     ], function appBarConstantsInit(exports, _Base) {
+], function appBarConstantsInit(exports, _Base) {
     "use strict";
 
-     _Base.Namespace._moduleDefine(exports, null, {
-          appBarClass: "win-appbar",
-          firstDivClass: "win-firstdiv",
-          finalDivClass: "win-finaldiv",
-          reducedClass: "win-reduced",
-          settingsFlyoutClass: "win-settingsflyout",
-          settingsFlyoutSelector: ".win-settingsflyout",
-          topClass: "win-top",
-          bottomClass: "win-bottom",
-          // Constants for placement
-          appBarPlacementTop: "top",
-          appBarPlacementBottom: "bottom",
-          // Constants for layout
-          appBarLayoutCustom: "custom",
-          appBarLayoutCommands: "commands",
-          // Constants for Commands
-          typeSeparator: "separator",
-          typeContent: "content",
-          typeButton: "button",
-          typeToggle: "toggle",
-          typeFlyout: "flyout",
-          menuCommandClass: "win-command",
-          appBarCommandClass: "win-command",
-          appBarCommandGlobalClass: "win-global",
-          appBarCommandSelectionClass: "win-selection",
-          sectionSelection: "selection",
-          sectionGlobal: "global",
-          primaryCommandsClass: "win-primarygroup",
-          secondaryCommandsClass: "win-secondarygroup",
-          // Prevents the element from showing a focus rect
-          hideFocusClass: "win-hidefocus",
-          overlayClass: "win-overlay",
-          commandClass: "win-commandlayout",
-          flyoutClass: "win-flyout",
-          flyoutSelector: ".win-flyout",
-          flyoutLightClass: "win-ui-light",
-          menuClass: "win-menu",
-          menuToggleClass: "win-menu-toggle",
-          scrollsClass: "win-scrolls",
-          // Constants for AppBarCommands
-          separatorWidth: 60,
-          buttonWidth: 100,
-          narrowClass:"win-narrow",
-          wideClass: "win-wide",
-          _clickEatingAppBarClass: "win-appbarclickeater",
-          _clickEatingFlyoutClass: "win-flyoutmenuclickeater"
-     });
+    _Base.Namespace._moduleDefine(exports, null, {
+        // AppBar class names.
+        appBarClass: "win-appbar",
+        firstDivClass: "win-firstdiv",
+        finalDivClass: "win-finaldiv",
+        invokeButtonClass: "win-appbar-invokebutton",
+        ellipsisClass: "win-appbar-ellipsis",
+        primaryCommandsClass: "win-primarygroup",
+        secondaryCommandsClass: "win-secondarygroup",
+        reducedClass: "win-reduced",
+        commandLayoutClass: "win-commandlayout",
+        topClass: "win-top",
+        bottomClass: "win-bottom",
+        showingClass : "win-appbar-showing",
+        shownClass : "win-appbar-shown",
+        hidingClass : "win-appbar-hiding",
+        hiddenClass : "win-appbar-hidden",
+
+        // Constants for AppBar placement
+        appBarPlacementTop: "top",
+        appBarPlacementBottom: "bottom",
+
+        // Constants for AppBar layouts
+        appBarLayoutCustom: "custom",
+        appBarLayoutCommands: "commands",
+
+        // Constant for AppBar invokebutton width
+        appBarInvokeButtonWidth: 40,
+
+        // Constants for Commands
+        typeSeparator: "separator",
+        typeContent: "content",
+        typeButton: "button",
+        typeToggle: "toggle",
+        typeFlyout: "flyout",
+        menuCommandClass: "win-command",
+        appBarCommandClass: "win-command",
+        appBarCommandGlobalClass: "win-global",
+        appBarCommandSelectionClass: "win-selection",
+        sectionSelection: "selection",
+        sectionGlobal: "global",
+
+        // Prevents the element from showing a focus rect
+        hideFocusClass: "win-hidefocus",
+
+        // Other class names
+        overlayClass: "win-overlay",
+        flyoutClass: "win-flyout",
+        flyoutSelector: ".win-flyout",
+        flyoutLightClass: "win-ui-light",
+        menuClass: "win-menu",
+        menuToggleClass: "win-menu-toggle",
+        settingsFlyoutClass: "win-settingsflyout",
+        settingsFlyoutSelector: ".win-settingsflyout",
+        scrollsClass: "win-scrolls",
+
+        // Constants for AppBarCommand full-size widths.
+        separatorWidth: 60,
+        buttonWidth: 100,
+
+        narrowClass: "win-narrow",
+        wideClass: "win-wide",
+        _clickEatingAppBarClass: "win-appbarclickeater",
+        _clickEatingFlyoutClass: "win-flyoutmenuclickeater",
+    });
 });

@@ -712,9 +712,13 @@ WinJSTests.NavBarLayoutTests = function () {
             data: navUtils.getNavBarCommandsData(6, true, true, true, true, true, true)
         });
 
-        LiveUnit.Assert.areEqual(NavBarSize.height, navbarEl.offsetHeight,
+        // Hidden NavBar's children won't have dimensions. Show it first to get a full height measurement.
+        navbar.addEventListener('aftershow', function () {
+            LiveUnit.Assert.areEqual(NavBarSize.height, navbarEl.offsetHeight,
             "Incorrect NavBar height");
-        complete();
+            complete();
+        }, false);
+        navbar.show();
     };
 };
 

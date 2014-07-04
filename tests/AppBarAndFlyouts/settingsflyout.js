@@ -14,9 +14,12 @@ CorsicaTests.SettingsFlyoutTests = function () {
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
+        OverlayHelpers.disposeAndRemove(document.querySelector(".win-settingsflyout"));
         OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
         OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
-        OverlayHelpers.disposeAndRemove(document.querySelector(".win-settingsflyout"));
+        WinJS.UI._Overlay._clickEatingAppBarDiv = false;
+        WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
+        
     };
 
     // Test settings flyout Instantiation

@@ -16,7 +16,7 @@ define([
     // AppBar will use this when AppBar.layout property is set to "custom"
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _AppBarBaseLayout: _Base.Namespace._lazy(function () {
-            var baseType = "custom";
+            var baseType = _Constants.appBarLayoutCustom;
 
             var strings = {
                 get nullCommand() { return _Resources._getWinJSString("ui/nullCommand").value; }
@@ -34,17 +34,17 @@ define([
             }, {
                 // Members               
                 className: {
-                    get: function _AppBarBaseLayout_getClassName() {
+                    get: function _AppBarBaseLayout_get_className() {
                         return this._className;
                     },
                 },
                 type: {
-                    get: function _AppBarBaseLayout_getClassName() {
+                    get: function _AppBarBaseLayout_get_className() {
                         return this._type || baseType;
                     },
                 },
                 commandsInOrder: {
-                    get: function _AppBarBaseLayout_getCommandsInOrder() {
+                    get: function _AppBarBaseLayout_get_commandsInOrder() {
                         // Gets a DOM ordered Array of the AppBarCommand elements in the AppBar.                        
                         var commands = this.appBarEl.querySelectorAll("." + _Constants.appBarCommandClass);
 
@@ -143,16 +143,16 @@ define([
     // AppBar will use this when AppBar.layout property is set to "commands"
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _AppBarCommandsLayout: _Base.Namespace._lazy(function () {
-            var layoutClassName = "win-commandlayout";
-            var layoutType = "commands";
+            var layoutClassName = _Constants.commandLayoutClass;
+            var layoutType = _Constants.appBarLayoutCommands;
 
             var _AppBarCommandsLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarCommandsLayout_ctor(appBarEl) {
                 exports._AppBarBaseLayout.call(this, appBarEl, {_className: layoutClassName, _type: layoutType});
                 this._commandLayoutsInit(appBarEl);
             }, {
-                _getWidthOfCommands: function _AppBarCommandsLayout_getWidthOfCommands(commands) {
+                _getWidthOfFullSizeCommands: function _AppBarCommandsLayout_getWidthOfFullSizeCommands(commands) {
                     // Commands layout puts primary commands and secondary commands into the primary row.
-                    // Return the total width of all visible primary and secondary commands.
+                    // Return the total width of all visible primary and secondary commands as if they were full-size.
 
                     // Perform any pending measurements on "content" type AppBarCommands.
                     if (this._needToMeasureNewCommands) {
@@ -163,8 +163,8 @@ define([
                     var buttonsCount = 0;
 
                     if (!commands) {
-                        // Return the cached width of the last known visible commands in the AppBar.
-                        return this._widthOfLastKnownVisibleCommands;
+                        // Return the cached full size width of the last known visible commands in the AppBar.
+                        return this._fullSizeWidthOfLastKnownVisibleCommands;
                     } else {
                         // Return the width of the specified commands.
                         var command;
@@ -338,7 +338,7 @@ define([
             var visibleCommands = (newSetOfVisibleCommands) ? newSetOfVisibleCommands : this.commandsInOrder.filter(function (command) {
                 return !command.winControl.hidden;
             });
-            this._widthOfLastKnownVisibleCommands = this._getWidthOfCommands(visibleCommands);
+            this._fullSizeWidthOfLastKnownVisibleCommands = this._getWidthOfFullSizeCommands(visibleCommands);
         },
         beginAnimateCommands: function _commandLayoutsMixin_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
             // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
@@ -349,7 +349,7 @@ define([
             this._scaleAfterAnimations = false;
 
             // Determine if the overall width of visible commands in the primary row will be increasing OR decreasing.                        
-            var changeInWidth = this._getWidthOfCommands(showCommands) - this._getWidthOfCommands(hideCommands);
+            var changeInWidth = this._getWidthOfFullSizeCommands(showCommands) - this._getWidthOfFullSizeCommands(hideCommands);
             if (changeInWidth > 0) {
                 // Width of contents is going to increase, update our command counts now, to what they will be after we complete the animations.
                 var visibleCommandsAfterAnimations = otherVisibleCommands.concat(showCommands);
@@ -374,12 +374,12 @@ define([
             // AppBarCommands will reduce in size.
 
             // Measure the width all visible commands in  AppBar's primary row, the AppBar's offsetWidth and the AppBar horizontal padding:
-            var widthOfVisibleContent = this._getWidthOfCommands();
+            var fullSizeWidthOfVisibleContent = this._getWidthOfFullSizeCommands();
             if (this._appBarTotalKnownWidth !== +this._appBarTotalKnownWidth) {
                 this._appBarTotalKnownWidth = this._scaleHelper();
             }
 
-            if (widthOfVisibleContent <= this._appBarTotalKnownWidth) {
+            if (fullSizeWidthOfVisibleContent <= this._appBarTotalKnownWidth) {
                 // Full size commands
                 _ElementUtilities.removeClass(this.appBarEl, _Constants.reducedClass);
             } else {
@@ -406,7 +406,12 @@ define([
         _scaleHelper: function _commandLayoutsMixin_scaleHelper() {
             // This exists as a single line function so that unit tests can 
             // overwrite it since they can't resize the WWA window.
-            return document.documentElement.clientWidth;
+
+            // It is expected that AppBar is an immediate child of the <body> and will have 100% width.
+            // We measure the clientWidth of the documentElement so that we can scale the AppBar lazily
+            // even while its element is display: 'none'
+            var extraPadding = this.appBarEl.winControl.closedDisplayMode === "minimal" ? _Constants.appBarInvokeButtonWidth : 0;
+            return document.documentElement.clientWidth - extraPadding;
         },
         _measureContentCommands: function _commandLayoutsMixin_measureContentCommands() {
             // AppBar measures the width of content commands when they are first added
@@ -420,10 +425,13 @@ define([
                 var hadReducedClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.reducedClass);
                 _ElementUtilities.removeClass(this.appBarEl, _Constants.reducedClass);
 
+                var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
+                _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
+
                 // Make sure AppBar and children have width dimensions.
                 var prevAppBarDisplay = this.appBarEl.style.display;
-                var prevCommandDisplay;
                 this.appBarEl.style.display = "";
+                var prevCommandDisplay;
 
                 var contentElements = this.appBarEl.querySelectorAll("div." + _Constants.appBarCommandClass);
                 var element;
@@ -442,6 +450,9 @@ define([
                 this.appBarEl.style.display = prevAppBarDisplay;
                 if (hadReducedClass) {
                     _ElementUtilities.addClass(this.appBarEl, _Constants.reducedClass);
+                }
+                if (hadHiddenClass) {
+                    _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
                 }
 
                 this.commandsUpdated();

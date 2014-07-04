@@ -33,6 +33,8 @@ CorsicaTests.FlyoutTests = function () {
 
         OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
         OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
+        WinJS.UI._Overlay._clickEatingAppBarDiv = false;
+        WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
     };
     var that = this;
     // Test flyout Instantiation

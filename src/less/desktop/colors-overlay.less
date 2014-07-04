@@ -91,13 +91,41 @@
             color: rgba(255, 255, 255, 0.4);
         }
 
-
         /* Appbar control colors */
         &.win-appbar, .win-appbar {
             background-color: rgb(0, 0, 0);
             border-color: rgb(0, 0, 0);
-        }
 
+            .win-appbar-invokebutton {
+                .win-appbar-ellipsis {
+                     border-color: transparent;
+                     color: rgb(255, 255, 255);
+                }                
+                &:focus .win-appbar-ellipsis {
+                    border-color: rgb(255, 255, 255);
+                }
+            }
+
+            // When the AppBar is showing or shown, only the ellipsis has a hover background.*/
+            &.win-appbar-showing, &.win-appbar-shown {
+                .win-appbar-invokebutton {
+                    &:hover {
+                        .win-appbar-ellipsis {
+                            background-color: rgba(255, 255, 255, 0.13);
+                        }
+                    }
+                }
+            }
+
+            // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
+            &.win-appbar-hiding, &.win-appbar-hidden {
+                .win-appbar-invokebutton {
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.13);
+                    }
+                }
+            }
+        }
 
         /* Flyout control colors, flyout normally has a light theme */
         &.win-flyout, .win-flyout {
@@ -148,7 +176,10 @@
         otherwise .win-ui-dark button.win-command:focus is more
         qualified and stomps on the transparent that doesn't have .win-ui-dark
         */
-        &.win-command:enabled.win-hidefocus:focus, .win-command:enabled.win-hidefocus:focus {
+        &.win-command:enabled.win-hidefocus:focus, 
+        .win-command:enabled.win-hidefocus:focus,
+        &.win-appbar .win-appbar-invokebutton.win-hidefocus:focus .win-appbar-ellipsis, 
+        .win-appbar .win-appbar-invokebutton.win-hidefocus:focus .win-appbar-ellipsis  {
             border-color: transparent;
         }
     }
@@ -246,13 +277,42 @@
             color: rgba(0, 0, 0, 0.4);
         }
 
-
-        /* AppBar control colors */
+        /* Appbar control colors */
         &.win-appbar, .win-appbar {
             background-color: rgb(240, 240, 240);
             border-color: rgb(240, 240, 240);
-        }
 
+            .win-appbar-invokebutton {
+                .win-appbar-ellipsis {
+                    border-color: transparent;
+                    color: rgb(0, 0, 0);
+                }                
+                &:focus .win-appbar-ellipsis {
+                    border-color: rgb(0, 0, 0);
+                }
+            }
+
+            // When the AppBar is showing or shown, only the ellipsis has a hover background.*/
+            &.win-appbar-showing, &.win-appbar-shown {
+                .win-appbar-invokebutton {
+                    &:hover {
+                        .win-appbar-ellipsis {
+                            background-color: rgba(205, 205, 205, 0.82);
+                        }
+                    }
+                }
+            }
+
+            // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
+            &.win-appbar-hiding, &.win-appbar-hidden {
+                .win-appbar-invokebutton {
+                    &:hover {
+                        background-color: rgba(205, 205, 205, 0.82);
+                    }
+                    
+                }
+            }
+        }
 
         /* Flyout control colors, flyout normally has light theme */
         &.win-flyout, .win-flyout {
@@ -293,7 +353,10 @@
         otherwise .win-ui-dark button.win-command:focus is more
         qualified and stomps on the transparent that doesn't have .win-ui-dark
         */
-        &.win-command:enabled.win-hidefocus:focus, .win-command:enabled.win-hidefocus:focus {
+        &.win-command:enabled.win-hidefocus:focus,
+        .win-command:enabled.win-hidefocus:focus,
+        &.win-appbar .win-appbar-invokebutton.win-hidefocus:focus .win-appbar-ellipsis,
+        .win-appbar .win-appbar-invokebutton.win-hidefocus:focus .win-appbar-ellipsis {
             border-color: transparent;
         }
     }

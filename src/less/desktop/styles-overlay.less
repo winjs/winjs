@@ -19,8 +19,9 @@ AppBar/Flyout z-index values:
     position: fixed;
     touch-action: none;
     outline: 1px solid Purple; /*Necessary to block passthrough over webviews*/
-    -ms-high-contrast-adjust:none;
+    -ms-high-contrast-adjust: none;
 }
+
 .win-flyoutmenuclickeater {
     z-index: 1006;
     background-color: transparent;
@@ -32,7 +33,7 @@ AppBar/Flyout z-index values:
     position: fixed;
     touch-action: none;
     outline: 1px solid Lime; /*Necessary to block passthrough over webviews*/
-    -ms-high-contrast-adjust:none;
+    -ms-high-contrast-adjust: none;
 }
 
 /*
@@ -50,13 +51,14 @@ button.win-command {
     font-size: 9pt;
     line-height: 16px;
     font-weight: normal;
-
     /* Commands are lrtb */
     writing-mode: lr-tb;
 }
+
 button.win-command:-ms-lang(@{rtl}) {
     writing-mode: rl-tb;
 }
+
 button.win-command:focus {
     outline: none;
 }
@@ -71,7 +73,6 @@ Command button icons.
     min-width: 0;
     min-height: 0;
     padding: 0;
-
     /* Normal sizing */
     width: 40px;
     height: 40px;
@@ -79,11 +80,11 @@ Command button icons.
     -moz-box-sizing: border-box;
     cursor: default;
 }
+
 .win-commandimage {
     /* Default font for glyphs. */
     font-family: "Segoe UI Command", "Symbols";
     letter-spacing: 0;
-
     /* Applications provide their own content, like &#xE0D5;. */
     vertical-align: middle;
     font-size: 14pt;
@@ -104,6 +105,7 @@ Offsets for sprite versions.
 button:enabled:hover .win-commandimage, button:active .win-commandimage {
     background-position: -40px 0;
 }
+
 button:enabled:hover:active .win-commandimage {
     background-position: -80px 0;
 }
@@ -114,6 +116,7 @@ button:enabled:hover:active .win-commandimage {
 button:-ms-keyboard-active .win-commandimage {
     background-position: -80px 0;
 }
+
 button:disabled .win-commandimage,
 button:disabled:active .win-commandimage {
     background-position: -120px 0;
@@ -125,16 +128,20 @@ Offsets for sprite versions in selected state.
 button[aria-checked=true] .win-commandimage {
     background-position: 0 -40px;
 }
+
 button[aria-checked=true]:enabled:hover .win-commandimage,
 button[aria-checked=true]:active .win-commandimage {
     background-position: -40px -40px;
 }
+
 button[aria-checked=true]:enabled:hover:active .win-commandimage {
     background-position: -80px -40px;
 }
+
 button[aria-checked=true]:-ms-keyboard-active .win-commandimage {
     background-position: -80px -40px;
 }
+
 button[aria-checked=true]:disabled .win-commandimage,
 button[aria-checked=true]:disabled:active .win-commandimage {
     background-position: -120px -40px;
@@ -153,6 +160,7 @@ button.win-command:disabled:active .win-commandring {
     border-radius: 50%;
     background-clip: border-box;
 }
+
 button:enabled:hover:active .win-commandring,
 button[aria-checked=true] .win-commandring,
 button[aria-checked=true]:active .win-commandring,
@@ -171,7 +179,7 @@ button.win-command .win-label {
     max-width: 88px; /* 100px button, but allow for 2px margins and 4px padding on each side */
     margin-top: 5px;
     margin-bottom: -1px;
-    padding-left: 4px;  /* 12px between buttons, 6px per side, minus 2px margins */
+    padding-left: 4px; /* 12px between buttons, 6px per side, minus 2px margins */
     padding-right: 4px;
     overflow: hidden;
     word-wrap: break-word;
@@ -190,6 +198,7 @@ hr.win-command {
     border: 0;
     vertical-align: top;
 }
+
 hr.win-command:-ms-lang(@{rtl}) {
     margin-left: 29px;
     margin-right: 30px;
@@ -199,7 +208,6 @@ hr.win-command:-ms-lang(@{rtl}) {
 AppBarCommand content types.
 */
 div.win-command {
-
     display: inline-block;
     min-width: 0;
     min-height: 0;
@@ -210,14 +218,14 @@ div.win-command {
     line-height: 16px;
     font-weight: normal;
     vertical-align: top;
-
     /* Content Commands are lrtb */
     writing-mode: lr-tb;
+}
 
-}
 div.win-command:-ms-lang(@{rtl}) {
-   writing-mode:rl-tb;
+    writing-mode: rl-tb;
 }
+
 div.win-command:focus {
     outline: none;
 }
@@ -233,25 +241,73 @@ AppBar
     left: 0;
     position: fixed;
     position: -ms-device-fixed;
+    min-height: 25px; 
+
+    &.win-appbar-hiding > :not(.win-appbar-invokebutton) {
+        opacity: 0;
+    }    
+
+    &.win-appbar-hidden > :not(.win-appbar-invokebutton) {
+        display: none !important;
+    }
+
+    &.win-appbar-hiding .win-appbar-invokebutton, 
+    &.win-appbar-hidden .win-appbar-invokebutton {
+        width: 100%;
 }
 
+    .win-appbar-invokebutton {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        right: 0px;
+        margin: 0px;
+        padding: 0px;
+        border: none;
+        min-width: 0px;
+
+        .win-appbar-ellipsis {
+            width: 36px;
+            height: 21px; /* 21px + 4px of border ===  the height of the closed minimal AppBar.*/
+            right: 0px;
+            position: absolute;
+            border: solid 2px;
+            font-size: 11pt;
+            text-align: center;
+
+            &::before {
+                content: "\E10C";
+            }
+        }
+
+        &:focus .win-appbar-ellipsis {
+            border: solid 2px;
+        }  
+    }
+
+    &.win-bottom .win-appbar-invokebutton, 
+    &.win-bottom .win-appbar-invokebutton .win-appbar-ellipsis {
+        top: 0px;
+    }
+
+    &.win-top .win-appbar-invokebutton, 
+    &.win-top .win-appbar-invokebutton .win-appbar-ellipsis {
+        bottom: 0px;
+    }
+}
 
 /*
 AppBar commands layout
 */
 .win-commandlayout {
-
-    /* Hide whitespace between buttons. */
-    font-size: 0;
     min-height: 88px;
-
     #flex > .display-flex();
     #flex > .flex-direction(row);
     #flex > .flex-wrap(nowrap);
     #flex > .justify-content(center);
     #flex > .align-items(flex-start);
-}
-.win-commandlayout .win-primarygroup {
+
+    .win-primarygroup {
     #flex > .order(2);
     #flex > .display-inline-flex();
     #flex > .flex(1; 1; auto);
@@ -260,7 +316,8 @@ AppBar commands layout
     #flex > .justify-content(flex-end);
     #flex > .align-items(flex-start);
 }
-.win-commandlayout .win-secondarygroup {
+
+    .win-secondarygroup {
     #flex > .order(1);
     #flex > .display-inline-flex();
     #flex > .flex(1; 1; auto);
@@ -269,25 +326,30 @@ AppBar commands layout
     #flex > .justify-content(flex-start);
     #flex > .align-items(flex-start);
 }
-.win-commandlayout .win-command {
+
+    .win-command {
     #flex > .flex(0; 0; auto);
+}
 }
 
 /* CommandsLayout RTL */
 .win-commandlayout:-ms-lang(@{rtl}) {
     #flex > .flex-direction(row-reverse);
-}
-.win-commandlayout:-ms-lang(@{rtl}) .win-primarygroup {
+
+    .win-primarygroup {
     #flex > .flex-direction(row-reverse);
 }
-.win-commandlayout:-ms-lang(@{rtl}) .win-secondarygroup {
+
+    .win-secondarygroup {
     #flex > .flex-direction(row-reverse);
+}
 }
 
 /* Narrow buttons and no labels */
 .win-reduced button.win-command .win-label {
     display: none;
 }
+
 .win-reduced button.win-command .win-commandicon {
     margin: 0 8px; /* 2px margin for focus */
 }
@@ -297,10 +359,12 @@ AppBar commands layout
     margin-bottom: 14px;
     margin-top: 14px;
 }
+
 .win-reduced hr.win-command {
     margin-left: 10px;
     margin-right: 9px;
 }
+
     .win-reduced hr.win-command:-ms-lang(@{rtl}) {
     margin-left: 9px;
     margin-right: 10px;
@@ -331,30 +395,37 @@ High contrast AppBar needs a border
     .win-appbar {
         border: solid 2px;
     }
+
     .win-appbar.win-top {
         border-top: none;
         border-left: none;
         border-right: none;
     }
+
     .win-appbar.win-bottom {
         border-bottom: none;
         border-left: none;
         border-right: none;
     }
+
     .win-appbar.win-top button.win-command,
     .win-appbar.win-top div.win-command {
         padding-bottom: 10px;
     }
+
     .win-appbar.win-bottom button.win-command,
     .win-appbar.win-bottom div.win-command {
         padding-top: 10px;
     }
+
     .win-appbar.win-top hr.win-command {
         margin-bottom: 32px;
     }
+
     .win-appbar.win-bottom hr.win-command {
         margin-top: 12px;
     }
+
     .win-commandlayout {
         min-height: 86px;
     }
@@ -363,9 +434,11 @@ High contrast AppBar needs a border
     .win-commandlayout.win-reduced {
         min-height: 66px;
     }
+
     .win-appbar.win-reduced.win-top hr.win-command {
         margin-bottom: 12px;
     }
+
     .win-appbar.win-reduced.win-bottom hr.win-command {
         margin-top: 12px;
     }
@@ -392,12 +465,15 @@ Flyout control.
     overflow: auto;
     .win-type-medium-internal();
 }
+
 .win-flyout.win-leftalign {
     margin-left: 0;
 }
+
 .win-flyout.win-rightalign {
     margin-right: 0;
 }
+
 .win-flyout.win-scrolls {
     overflow: auto;
 }
@@ -413,6 +489,7 @@ Menu control.
     max-height: ~"calc(100% - 26px)"; /* 768px - margin - padding - border = 742px */
     max-width: none;
 }
+
 .win-menu:-ms-lang(@{rtl}) {
     text-align: right; /* Set explicitly in case our parent has different alignment, like appbar overflow. */
 }
@@ -431,18 +508,20 @@ Menu commands.
     width: 100%;
     .win-type-large-internal(@lineHeight: 18px); /* 40px - 10px top padding - 12px bottom padding */
 }
+
 .win-menu button.win-command:-ms-lang(@{rtl}) {
     text-align: right;
 }
+
 .win-menu button.win-command:focus {
     outline: none;
 }
+
 .win-menu hr.win-command {
     display: block;
     height: 1px;
     width: auto;
     border: 0;
-
     padding: 0;
     margin: 9px 20px 10px 20px;
 }
@@ -457,10 +536,12 @@ Menu toggle buttons.
     padding-left: 0px;
     padding-right: 10px;
 }
+
 .win-menu-toggle button[aria-checked=true].win-command::before {
     /* Display a checkbox if aria-checked is set */
     visibility: visible;
 }
+
 .win-menu-toggle button.win-command:-ms-lang(@{rtl})::before {
     padding-right: 0;
     padding-left: 10px;
@@ -488,7 +569,7 @@ the style "-ms-touch-select: none;"
 .win-overlay input:not([type="hidden"]),
 .win-overlay input:not([type="submit"]),
 .win-overlay textarea,
-.win-overlay [contenteditable=true]{
+.win-overlay [contenteditable=true] {
     -ms-touch-select: grippers;
 }
 
@@ -496,17 +577,17 @@ the style "-ms-touch-select: none;"
     Floating point is necesary in high DPI resolutions. */
 .win-visualviewport-space {
     position: fixed;
-    position:-ms-device-fixed;
-    height: 100vh;
-    width: 100vw;
-    visibility:hidden;
+    position: -ms-device-fixed;
+    height: 100%;
+    width: 100%;
+    visibility: hidden;
 }
 
 /*
 Settings Pane
 */
 .win-settingsflyout {
-    z-index: 1004;  /* above appbar and below flyouts */
+    z-index: 1004; /* above appbar and below flyouts */
     border-left: 1px solid;
     position: fixed;
     top: 0;
@@ -514,13 +595,16 @@ Settings Pane
     height: 100%;
     width: 345px; /* 346px - border (1px) */
 }
+
 .win-settingsflyout:-ms-lang(@{rtl}) {
     border-left: none;
     border-right: 1px solid;
 }
-.win-settingsflyout.win-wide {/* .win-wide is deprecated in Windows 8.1 */
+
+.win-settingsflyout.win-wide { /* .win-wide is deprecated in Windows 8.1 */
     width: 645px; /* 646px - border (1px) */
 }
+
 .win-settingsflyout .win-header {
     padding-left: 40px;
     padding-right: 40px;
@@ -536,12 +620,14 @@ Settings Pane
     line-height: 26px;
     margin-top: 3px;
 }
+
 .win-settingsflyout .win-header .win-label {
     display: inline-block;
     padding-left: 40px;
     font-size: 20pt;
     line-height: 33px;
 }
+
 .win-settingsflyout .win-content {
     overflow: auto;
     padding-left: 40px;
@@ -553,12 +639,14 @@ Settings Pane
 .win-settingsflyout .win-label {
     .win-type-x-large-internal(normal);
 }
+
 .win-settingsflyout:-ms-lang(@{rtl}) {
     right: auto;
     left: 0;
     border-left: none;
     border-right: 1px solid;
 }
+
 .win-settingsflyout .win-header .win-label:-ms-lang(@{rtl}) {
     padding-right: 40px;
     padding-left: 0;
@@ -579,7 +667,7 @@ Settings Pane
     margin: 0;
     padding-top: 0;
     padding-bottom: 25px;
-    display:inline-block;
+    display: inline-block;
 }
 
 .win-settingsflyout .win-content .win-settings-section {
@@ -589,7 +677,7 @@ Settings Pane
 }
 
 .win-settingsflyout .win-content .win-settings-section label {
-    display:block;
+    display: block;
     padding-bottom: 7px;
 }
 
@@ -599,7 +687,7 @@ Settings Pane
 .win-settingsflyout .win-content .win-settings-section input[type=text] {
     margin-bottom: 25px;
     margin-left: 0;
-    margin-right:  20px;
+    margin-right: 20px;
 }
 
 .win-settingsflyout .win-content .win-settings-section input[type=radio] {
@@ -611,24 +699,25 @@ Settings Pane
 .win-settingsflyout .win-content .win-settings-section button:-ms-lang(@{rtl}) {
     margin-bottom: 25px;
     margin-left: 20px;
-    margin-right:  0;
+    margin-right: 0;
 }
+
 .win-settingsflyout .win-content .win-settings-section select:-ms-lang(@{rtl}) {
     margin-bottom: 25px;
     margin-left: 20px;
-    margin-right:  0;
+    margin-right: 0;
 }
 
 .win-settingsflyout .win-content .win-settings-section input[type=text]:-ms-lang(@{rtl}) {
     margin-bottom: 25px;
     margin-left: 20px;
-    margin-right:  0;
+    margin-right: 0;
 }
 
 .win-settingsflyout .win-content .win-settings-section input[type=button]:-ms-lang(@{rtl}) {
     margin-bottom: 25px;
     margin-left: 20px;
-    margin-right:  0;
+    margin-right: 0;
 }
 
 /*Flyout control animations*/

@@ -16,7 +16,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_UIUtilities',
     '../AppBar/_Constants'
-    ], function overlayInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
+], function overlayInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -258,8 +258,7 @@ define([
                     get: function () {
                         return (this._element.style.visibility === "hidden" ||
                                 this._element.winAnimating === "hiding" ||
-                                this._doNext === "hide" ||
-                                this._fakeHide);
+                                this._doNext === "hide");
                     }
                 },
 
@@ -289,7 +288,7 @@ define([
 
                 _baseShow: function _Overlay_baseShow() {
                     // If we are already animating, just remember this for later
-                    if (this._animating || this._keyboardShowing || this._keyboardHiding) {
+                    if (this._animating || this._needToHandleShowingKeyboard || this._needToHandleHidingKeyboard) {
                         this._doNext = "show";
                         return false;
                     }
@@ -298,15 +297,13 @@ define([
                     this._currentDocumentWidth = this._currentDocumentWidth || document.documentElement.offsetWidth;
 
                     // "hiding" would need to cancel.
-                    if (this._element.style.visibility !== "visible" || this._fakeHide) {
+                    if (this._element.style.visibility !== "visible") {
                         // Let us know we're showing.
                         this._element.winAnimating = "showing";
 
                         // Hiding, but not none
                         this._element.style.display = "";
-                        if (!this._fakeHide) {
-                            this._element.style.visibility = "hidden";
-                        }
+                        this._element.style.visibility = "hidden";
 
                         // In case their event is going to manipulate commands, see if there are
                         // any queued command animations we can handle while we're still hidden.
@@ -331,7 +328,6 @@ define([
                         }, function () {
                             that._baseEndShow();
                         });
-                        this._fakeHide = false;
                         return true;
                     }
                     return false;
@@ -374,13 +370,13 @@ define([
 
                 _baseHide: function _Overlay_baseHide() {
                     // If we are already animating, just remember this for later
-                    if (this._animating || this._keyboardShowing) {
+                    if (this._animating || this._needToHandleShowingKeyboard) {
                         this._doNext = "hide";
                         return false;
                     }
 
                     // In the unlikely event we're between the hiding keyboard and the resize events, just snap it away:
-                    if (this._keyboardHiding) {
+                    if (this._needToHandleHidingKeyboard) {
                         // use the "uninitialized" flag
                         this._element.style.visibility = "";
                     }
@@ -411,7 +407,6 @@ define([
                         }
                         return true;
                     }
-                    this._fakeHide = false;
 
                     return false;
                 },
@@ -452,7 +447,7 @@ define([
 
                 _checkDoNext: function _Overlay_checkDoNext() {
                     // Do nothing if we're still animating
-                    if (this._animating || this._keyboardShowing || this._keyboardHiding || this._disposed) {
+                    if (this._animating || this._needToHandleShowingKeyboard || this._needToHandleHidingKeyboard || this._disposed) {
                         return;
                     }
 
@@ -860,7 +855,7 @@ define([
                 _baseResize: function _Overlay_baseResize(event) {
                     // Avoid the cost of a resize if the Overlay is hidden.
                     if (this._currentDocumentWidth !== undefined) {
-                        if (this._element.style.visibility === "hidden") {
+                        if (this.hidden) {
                             this._currentDocumentWidth = undefined;
                         } else {
                             // Overlays can light dismiss on horizontal resize.
@@ -1218,25 +1213,33 @@ define([
 
                 _showClickEatingDivAppBar: function () {
                     Scheduler.schedule(function Overlay_async_showClickEatingDivAppBar() {
-                        _Overlay._clickEatingAppBarDiv.style.display = "block";
+                        if (_Overlay._clickEatingAppBarDiv) {
+                            _Overlay._clickEatingAppBarDiv.style.display = "block";
+                        }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._showClickEatingDivAppBar");
                 },
 
                 _hideClickEatingDivAppBar: function () {
                     Scheduler.schedule(function Overlay_async_hideClickEatingDivAppBar() {
-                        _Overlay._clickEatingAppBarDiv.style.display = "none";
+                        if (_Overlay._clickEatingAppBarDiv) {
+                            _Overlay._clickEatingAppBarDiv.style.display = "none";
+                        }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._hideClickEatingDivAppBar");
                 },
 
                 _showClickEatingDivFlyout: function () {
                     Scheduler.schedule(function Overlay_async_showClickEatingDivFlyout() {
-                        _Overlay._clickEatingFlyoutDiv.style.display = "block";
+                        if (_Overlay._clickEatingFlyoutDiv) {
+                            _Overlay._clickEatingFlyoutDiv.style.display = "block";
+                        }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._showClickEatingDivFlyout");
                 },
 
                 _hideClickEatingDivFlyout: function () {
                     Scheduler.schedule(function Overlay_async_hideClickEatingDivFlyout() {
-                        _Overlay._clickEatingFlyoutDiv.style.display = "none";
+                        if (_Overlay._clickEatingFlyoutDiv) {
+                            _Overlay._clickEatingFlyoutDiv.style.display = "none";
+                        }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._hideClickEatingDivFlyout");
                 },
 
@@ -1272,8 +1275,8 @@ define([
                     }
                     // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
                     if (active &&
-                        (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
-                         _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
+                            (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
+                             _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
                         return;
                     }
 
@@ -1368,7 +1371,7 @@ define([
                     }
                 },
 
-                _hideLightDismissAppBars:  function(event, keyboardInvoked) {
+                _hideLightDismissAppBars: function (event, keyboardInvoked) {
                     var elements = document.querySelectorAll("." + _Constants.appBarClass);
                     var len = elements.length;
                     var AppBars = [];
@@ -1384,7 +1387,7 @@ define([
 
                 // Show or hide all bars
                 _hideAllBars: function _hideAllBars(bars, keyboardInvoked) {
-                    var allBarsAnimationPromises = bars.map(function(bar) {
+                    var allBarsAnimationPromises = bars.map(function (bar) {
                         bar._keyboardInvoked = keyboardInvoked;
                         bar.hide();
                         return bar._animationPromise;
@@ -1397,7 +1400,7 @@ define([
                 //   2) OR in the subtree of an AppBar,
                 //   3) OR an AppBar click eating div.
                 // Returns null otherwise.
-                _isAppBarOrChild: function(element) {
+                _isAppBarOrChild: function (element) {
                     // If it's null, we can't do this
                     if (!element) {
                         return null;
@@ -1407,7 +1410,8 @@ define([
                     if (_ElementUtilities.hasClass(element, _Constants._clickEatingAppBarClass) ||
                         _ElementUtilities.hasClass(element, _Constants._clickEatingFlyoutClass) ||
                         _ElementUtilities.hasClass(element, _Constants.firstDivClass) ||
-                        _ElementUtilities.hasClass(element, _Constants.finalDivClass)) {
+                        _ElementUtilities.hasClass(element, _Constants.finalDivClass) ||
+                        _ElementUtilities.hasClass(element, _Constants.ellipsisClass)) {
                         return element;
                     }
 
@@ -1418,12 +1422,12 @@ define([
                         if (_ElementUtilities.hasClass(element, "win-flyout")
                          && element !== element.winControl._previousFocus) {
                             var flyoutControl = element.winControl;
-                            // If _previousFocus was in a light dismissable AppBar, then this Flyout is considered of an extension of it and that AppBar will not close.
-                            // Hook up a 'focusout' listener to this Flyout element to make sure that light dismiss AppBars close if focus moves anywhere other than back to an AppBar.
+                            // If _previousFocus was in a light dismissable AppBar, then this Flyout is considered of an extension of it and that AppBar should not hide.
+                            // Hook up a 'focusout' listener to this Flyout element to make sure that light dismiss AppBars hide if focus moves anywhere other than back to an AppBar.
                             var appBarElement = _Overlay._isAppBarOrChild(flyoutControl._previousFocus);
                             if (appBarElement) {
                                 _ElementUtilities._addEventListener(flyoutControl.element, 'focusout', function focusOut() {
-                                    // Hides any open AppBars if the new activeElement is not in an AppBar.
+                                    // Hides any shown AppBars if the new activeElement is not in an AppBar.
                                     _Overlay._hideIfAllAppBarsLostFocus();
                                     _ElementUtilities._removeEventListener(flyoutControl.element, 'focusout', focusOut, false);
                                 }, false);
@@ -1479,7 +1483,8 @@ define([
                         return (widthRatio / heightRatio < 0.99);
                     },
 
-                    // Get the top of our visible area in terms of document.documentElement.
+                    // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement. 
+                    // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
                     get _visibleDocTop() {
                         return window.pageYOffset - document.documentElement.scrollTop;
                     },

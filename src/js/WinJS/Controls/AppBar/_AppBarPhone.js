@@ -261,7 +261,7 @@ define([
                 _ElementUtilities.addClass(this._element, "win-disposable");
                 _ElementUtilities.addClass(this._element, _Constants.appBarClass);
                 _ElementUtilities.addClass(this._element, _Constants.bottomClass);
-                _ElementUtilities.addClass(this._element, _Constants.commandClass);
+                _ElementUtilities.addClass(this._element, _Constants.commandLayoutClass);
 
                 this._wireUpEvents();
 
