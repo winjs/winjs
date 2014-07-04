@@ -3,7 +3,7 @@
     "use strict";
 
     var config = require("../../config.js");
-    var testUrls = require("test-urls.json");
+    var testUrls = require("./test-urls.json");
     var reportingStatus = false;
     var browsers = [{
         browserName: "internet explorer",
