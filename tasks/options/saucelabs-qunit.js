@@ -122,9 +122,7 @@
     module.exports = {
         all: {
             options: {
-                urls: [
-                    testUrls.all
-                ],
+                urls: testUrls.all,
                 build: process.env.TRAVIS_JOB_ID,
                 testInterval: 1000,
                 throttled: 20,
@@ -137,9 +135,7 @@
         },
         ie11only: {
             options: {
-                urls: [
-                      testUrls.ie11only
-                ],
+                urls: testUrls.ie11only,
                 build: process.env.TRAVIS_JOB_ID,
                 testInterval: 1000,
                 "max-duration": 500,
