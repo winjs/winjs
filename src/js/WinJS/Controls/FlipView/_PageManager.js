@@ -1760,15 +1760,14 @@ define([
                 },
 
                 _forEachPage: function (callback) {
-                    var go = true;
                     var curr = this._prevMarker;
-                    while (go) {
+                    do {
+                        console.log("enter while loop");
                         if (callback(curr)) {
                             break;
                         }
                         curr = curr.next;
-                        go = (curr !== this._prevMarker);
-                    }
+                    } while((curr !== this._prevMarker));
                 },
 
                 _changeFlipPage: function (page, oldElement, newElement) {
