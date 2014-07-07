@@ -1762,7 +1762,6 @@ define([
                 _forEachPage: function (callback) {
                     var curr = this._prevMarker;
                     do {
-                        console.log("enter while loop");
                         if (callback(curr)) {
                             break;
                         }
