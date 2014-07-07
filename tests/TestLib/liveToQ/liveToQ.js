@@ -90,7 +90,11 @@
     }
 
     function completeTest() {
-        QUnit.assert.ok(!testFailed, testError);
+        // Since we want one assert per test, if this test times out, then we do not
+        // call asserts because the timeout itself is a failed assert.
+        if (Date.now() - QUnit.config.current.started < testTimeout) {
+            QUnit.assert.ok(!testFailed, testError);
+        }
         QUnit.start();
     }
 
