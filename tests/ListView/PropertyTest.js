@@ -223,11 +223,9 @@ WinJSTests.PropertyTests = function () {
                         if (isPhone) {
                             LiveUnit.Assert.areEqual("transparent", getComputedStyle(groupHeaderElement).outlineColor);
                             LiveUnit.Assert.areEqual("none", getComputedStyle(groupHeaderElement).outlineStyle);
-                            LiveUnit.Assert.areEqual("0px", getComputedStyle(groupHeaderElement).outlineWidth);
                         } else {
                             LiveUnit.Assert.areNotEqual("transparent", getComputedStyle(groupHeaderElement).outlineColor);
                             LiveUnit.Assert.areEqual("dotted", getComputedStyle(groupHeaderElement).outlineStyle);
-                            LiveUnit.Assert.areEqual("0.01px", getComputedStyle(groupHeaderElement).outlineWidth);
                         }
                     } else {
                         LiveUnit.Assert.isFalse(WinJS.Utilities._matchesSelector(groupHeaderElement, "." + WinJS.UI._itemFocusClass));
