@@ -40,13 +40,15 @@
         grunt.loadTasks("tasks/");
 
         // Task aliases
-        grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "requirejs", "copy", "replace"]);
+        grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "build", "copy", "replace"]);
         grunt.registerTask("release", ["jshint", "default", "uglify"]);
         grunt.registerTask("css", ["less"]);
         grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
         grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
         grunt.registerTask("lint", ["jshint"]);
         grunt.registerTask("minify", ["uglify"]);
+        grunt.registerTask("build", ["requirejs:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "requirejs:singleFile"]);
+        grunt.registerTask("modules", ["clean:modules", "requirejs:publicModules", "replace:base"]);
         grunt.registerTask("saucelabs", ["connect:saucelabs", "saucelabs-qunit", "post-tests-results"]);
     };
 })();

@@ -3,6 +3,7 @@
     "use strict";
 
     var path = require('path');
+    var madge = require('madge');
     var config = require("../../config.js");
     var grunt = config.grunt;
 
@@ -11,6 +12,130 @@
     var desktopUI = config.desktopOutput + "js/ui.js";
     var phoneUI = config.phoneOutput + "js/ui.js";
     var desktopSingleFile = config.desktopOutput + "js/WinJS.js";
+
+    var bundles = {};
+
+    function generatePublicModules() {
+        var moduleConfig = [];
+        var dependencies = madge('./src/js/', {format: 'amd'}).tree;
+        
+        Object.keys(dependencies).forEach(function(module) {
+            // filter for only public modules
+            if (startsWith(module, "WinJS/") && module.indexOf('_') === -1) {
+
+                var privateModules = [];
+                var processed = dependencies[module].slice(0);
+
+                var excludes = dependencies[module].slice(0).filter(function(dep) {
+                    if (startsWith(dep, module)) {
+                        privateModules.push(dep);
+                        return false;
+                    }
+                    return true;
+                });
+
+                var processQueue = processed.slice(0);
+
+                while (processQueue.length) {
+                    var next = processQueue.pop();
+                    dependencies[next].forEach(function(dep) {
+                        if (processed.indexOf(dep) === -1) {
+                            processQueue.push(dep);
+                        }
+                        if (startsWith(dep, module)) {
+                            if (privateModules.indexOf(dep) === -1) {
+                                privateModules.push(dep);
+                            }
+                        } else if (excludes.indexOf(dep) === -1) {
+                            excludes.push(dep);
+                        }
+                    });
+                }
+
+                if(privateModules.length) {
+                    bundles[module] = privateModules;
+                }
+
+                var includes = [];
+
+                if(startsWith(module, "WinJS/Controls")) {
+                    includes = [
+                        'require-style!less/animation-library',
+                        'require-style!less/typography',
+                        'require-style!less/desktop/styles-intrinsic',
+                        'require-style!less/desktop/colors-intrinsic'
+                    ];
+                }
+
+                moduleConfig.push({
+                    name: module,
+                    exclude: ['require-style'],
+                    excludeShallow: excludes,
+                    include: includes
+                });
+
+            }
+        });
+
+        return moduleConfig;
+    }
+
+    function moduleDone(done, output) {
+        var fs = require("fs-extra");
+
+        // require-style seems to build in WinJS rather then in the root
+        fs.copySync(path.join(config.modulesOutput, "WinJS/css"), path.join(config.modulesOutput, "css"));
+        // rename the main file
+        fs.copySync(path.join(config.modulesOutput, "WinJS.js"), path.join(config.modulesOutput, "WinJS-custom.js"));
+        // replace require-style with a stub
+        fs.writeFileSync(path.join(config.modulesOutput, "require-style.js"), config.copyright + "define({ load: function (name, req, onload, config) { onload(); }});");
+
+        // require.js copies some undesirable source files over
+        var toRemove = [
+            "less",
+            "build/Copyright.js",
+            "build/endBase.js",
+            "build/endUI.js",
+            "build/endUI-phone.js",
+            "build/endWinJS.js",
+            "build/startBase.js",
+            "build/startUI.js",
+            "WinJS.js",
+            "WinJS/css",
+            "WinJS/Core",
+            "WinJS/Controls/AppBar"
+        ];
+        toRemove.forEach(function(item) {
+            fs.removeSync(path.join(config.modulesOutput, item));
+        });
+
+        
+        var pkgRoot = "node_modules/winjs-modules/";
+        var requireConfig = {
+            baseUrl: ".",
+            name: "amd",
+            optimize: "none",
+            useStrict: true,
+            include: "WinJS-custom",
+            out: "bin/WinJS.js",
+            wrap: {
+                startFile: pkgRoot + "build/startWinJS.js",
+                endFile: pkgRoot + "build/endWinJS-custom.js"
+            },
+            paths: {
+                "amd": pkgRoot + "amd",
+                "require-style": pkgRoot + "require-style",
+                "WinJS": pkgRoot + "WinJS",
+                "less-phone" : "empty:",
+                "less-desktop": "empty:"
+            },
+            bundles: bundles
+        };
+        var output = "(" + JSON.stringify(requireConfig, null, 4) + ")";
+        fs.writeFileSync(path.join(config.modulesOutput, "example.build.js"), output);
+
+        done();
+    }
 
     var desktopBaseFiles = [];
     var phoneBaseFiles = [];
@@ -32,6 +157,10 @@
                 grunt.fail.warn("File duplicated in build output:\n " + file + ". Duplicate location:\n " + bundle2Name);
             }
         });
+    }
+
+    function startsWith(str, target) {
+        return str.indexOf(target) === 0;
     }
 
     function endsWith(str, target) {
@@ -168,6 +297,38 @@
                 },
                 done: done
             }
+        },
+        publicModules: {
+            options: {
+                baseUrl: './src/js/',
+                paths: {
+                    "less": "../less",
+                    "less/phone": "empty:",
+                    "require-style": "../../tasks/utilities/require-style"
+                },
+                platform: "desktop",
+                optimize: 'none', // uglify2
+                useStrict: true,
+                skipDirOptimize: true,
+                removeCombined: true,
+                fileExclusionRegExp: /^(en-US|library|base.js|ui.js|ui-phone.js|\w+\.(md|htm|txt))$/i,
+                dir: config.modulesOutput,
+                modules: publicModules,
+                done: moduleDone
+            }
         }
     };
+
+    var publicModules = null;
+
+    Object.defineProperty(module.exports.publicModules.options, "modules", {
+        get: function() {
+            if(!publicModules) {
+                publicModules = generatePublicModules();
+            }
+            return publicModules;
+        },
+        enumerable: true,
+        configurable: true
+    });
 })();

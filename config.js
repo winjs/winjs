@@ -11,6 +11,7 @@
     config.buildDateString = config.buildDate.getFullYear() + "." + config.month + "." + config.buildDate.getDate();
     config.localeFolder = "en-US";
     config.outputFolder = "bin/";
+    config.copyright = '/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */';
 
     config.testsOutput = "";
 
@@ -28,6 +29,7 @@
     config.phoneFramework = "Microsoft.Phone." + config.targetName;
     config.desktopOutput = config.outputFolder + config.desktopFramework + "/";
     config.phoneOutput = config.outputFolder + config.phoneFramework + "/";
+    config.modulesOutput = config.outputFolder + "modules/";
 
     config.baseStringsFiles = [
         "src/js/build/Copyright.js",
@@ -51,22 +53,7 @@
 
     config.lint = {
         srcFiles: ["src/**/*.js"],
-        buildFiles: ["gruntfile.js", "config.js", "tasks/**/*.js"],
-        ignoreFiles: [
-            "src/js/en-US/base.prefix.js",
-            "src/js/en-US/ui.prefix.js",
-            "src/js/library/stringsBlockFooter.js",
-            "src/js/library/stringsBlockHeader.js",
-            "src/js/library/stringsFooter.js",
-            "src/js/library/stringsHeader.js",
-            "src/js/build/startBase.js",
-            "src/js/build/endBase.js",
-            "src/js/build/startUI.js",
-            "src/js/build/endUI.js",
-            "src/js/build/endUI-phone.js",
-            "src/js/build/startWinJS.js",
-            "src/js/build/endWinJS.js",
-        ],
+        buildFiles: ["gruntfile.js", "config.js", "tasks/**/*.js"]
     };
 
     // Object that aggregates the saucelabs test results that we report through our automation

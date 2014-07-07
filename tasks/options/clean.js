@@ -11,6 +11,7 @@
         all: [
             config.desktopOutput,
             config.phoneOutput,
+            config.modulesOutput
         ],
         base: [
             config.desktopOutput + "js/base.js",
@@ -29,6 +30,9 @@
         ],
         qunit: [
             config.testsOutput + "TestLib/liveToQ/*.*"
+        ],
+        modules: [
+            config.modulesOutput
         ]
     };
 })();

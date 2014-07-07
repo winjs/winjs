@@ -4,12 +4,15 @@ define([
     './Utilities/_Dispose',
     './Utilities/_ElementListUtilities',
     './Utilities/_ElementUtilities',
+    './Utilities/_ItemsManager',
     './Utilities/_KeyboardBehavior',
+    './Utilities/_ParallelWorkQueue',
     './Utilities/_SafeHtml',
     './Utilities/_Select',
     './Utilities/_TabContainer',
     './Utilities/_UI',
     './Utilities/_UIUtilities',
+    './Utilities/_VersionManager',
     './Utilities/_Xhr' ], function() {
 
     //wrapper module

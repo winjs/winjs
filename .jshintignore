@@ -15,3 +15,4 @@ src/js/build/endUI.js
 src/js/build/endUI-phone.js
 src/js/build/startWinJS.js
 src/js/build/endWinJS.js
+src/js/build/endWinJS-custom.js
