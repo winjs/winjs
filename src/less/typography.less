@@ -246,142 +246,24 @@
     src: local("Segoe UI Bold Italic");
 }
 
-//
-// Explicitly define font-families for Microsoft Yahei UI and Microsoft JhengHei UI so that we can fallback requests for,
-// Microsoft Yahei UI Semilight and Microsoft JhengHei UI Semilight, to Regular instead of Light fonts.
-//
-@font-face {
-    font-family: "Microsoft Yahei UI";
-    font-weight: 200;
-    src: local("Microsoft Yahei UI Light");
-}
-@font-face {
-    font-family: "Microsoft Yahei UI";
-    font-weight: 300;
-    src: local("Microsoft Yahei UI");
-}
-@font-face {
-    font-family: "Microsoft Yahei UI";
-    font-weight: 500;
-    src: local("Microsoft Yahei UI");
-}
-@font-face {
-    font-family: "Microsoft Yahei UI";
-    font-weight: 600;
-    src: local("Microsoft Yahei UI Bold");
-}
+@rtl: "";
 
-@font-face {
-    font-family: "Microsoft JhengHei UI";
-    font-weight: 200;
-    src: local("Microsoft JhengHei UI Light");
+// Define basic font fallback list for intrinsic elements
+// Some elements must have font-family defined explicitly as
+// otherwise the browser user-agent stylesheet will win
+body,
+.win-type-xx-large,
+.win-type-x-large,
+.win-type-large,
+.win-type-medium,
+.win-type-small,
+.win-type-x-small,
+.win-type-xx-small,
+input,
+textarea,
+.win-textarea,
+button,
+select,
+option {
+    font-family: "Segoe", "Segoe UI Symbol", "Symbols";
 }
-@font-face {
-    font-family: "Microsoft JhengHei UI";
-    font-weight: 300;
-    src: local("Microsoft JhengHei UI");
-}
-@font-face {
-    font-family: "Microsoft JhengHei UI";
-    font-weight: 500;
-    src: local("Microsoft JhengHei UI");
-}
-@font-face {
-    font-family: "Microsoft JhengHei UI";
-    font-weight: 600;
-    src: local("Microsoft JhengHei UI Bold");
-}
-
-//
-// Mixin defines for the -ms-lang string per each supported language
-// The mixin with the matching string parameter will be used
-//
-.getLanguageString("Ebrima") {
-    @langString: am, ti;
-}
-.getLanguageString("Nirmala UI") {
-    @langString: as, bn, gu, hi, kn, kok, ml, mr, ne, or, pa, sat-Olck, si, srb-Sora, ta, te;
-}
-.getLanguageString("Gadugi") {
-    @langString: chr-CHER-US;
-}
-.getLanguageString("Meiryo UI") {
-    @langString: ja;
-}
-.getLanguageString("Leelawadee UI") {
-    @langString: km, lo, th, bug-Bugi;
-}
-.getLanguageString("Malgun Gothic") {
-    @langString: ko;
-}
-.getLanguageString("Microsoft YaHei UI") {
-    @langString: zh-CN, zh-Hans, zh-SG;
-}
-.getLanguageString("Microsoft JhengHei UI") {
-    @langString: zh-HK, zh-TW, zh-Hant, zh-MO;
-}
-.getLanguageString("Javanese Text") {
-    @langString: jv-Java;
-}
-.getLanguageString("Segoe UI Symbol") {
-    @langString: cop-Copt;
-}
-.getLanguageString("Segoe") {
-    @langString: "";
-}
-.getLanguageString("Symbols") {
-    @langString: "";
-}
-
-// RTL language strings
-@rtl: ar, dv, fa, he, ku-Arab, pa-Arab, prs, ps, sd-Arab, syr, ug, ur, qps-plocm;
-
-// List of language fonts to iterate over
-// Each of these fonts will be the first font in the font-family list for the relevant language
-@fonts: "Segoe", "Ebrima", "Nirmala UI", "Gadugi", "Meiryo UI", "Leelawadee UI", "Malgun Gothic", "Javanese Text", "Segoe UI Symbol", "Symbols", "Microsoft YaHei UI", "Microsoft JhengHei UI";
-
-// Static list of fallback fonts to be placed after the primary language font
-@fontFallbacks: "Segoe", "Ebrima", "Nirmala UI", "Gadugi", "Segoe UI Emoji", "Segoe UI Symbol", "Symbols", "Meiryo UI", "Leelawadee UI", "Microsoft YaHei UI", "Microsoft JhengHei UI", "Malgun Gothic", "Estrangelo Edessa", "Microsoft Himalaya", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Tai Le", "Microsoft Yi Baiti", "Mongolian Baiti", "MV Boli", "Myanmar Text", "Javanese Text", "Cambria Math";
-
-// This mixin is a special case for Segoe where no -ms-lang pseudo class is needed
-.fontFallBack(@index) when (@index = 1) {
-    font-family: extract(@fonts, @index), @fontFallbacks;
-}
-
-// This mixin is used for every other language font, and appends the appropriate -ms-lang pseudo class
-// to each selector
-.fontFallBack(@index) when (@index > 1) {
-    .getLanguageString(extract(@fonts, @index));
-    &:-ms-lang(@{langString}) {
-        font-family: extract(@fonts, @index), @fontFallbacks;
-    }
-}
-
-// Recursive loop over each font in the @fonts list
-.buildFontFallbacks(@index) when (@index <= length(@fonts)) {
-
-    // Apply the font fallback mixin to each of these elements,
-    // for this index
-    body,
-    .win-type-xx-large,
-    .win-type-x-large,
-    .win-type-large,
-    .win-type-medium,
-    .win-type-small,
-    .win-type-x-small,
-    .win-type-xx-small,
-    input,
-    textarea,
-    .win-textarea,
-    button,
-    select,
-    option {
-        .fontFallBack(@index);
-    }
-
-    // Run the next iteration
-    .buildFontFallbacks(@index + 1);
-}
-
-// Begin the loop at index 1, the first index in LESS
-.buildFontFallbacks(1);
