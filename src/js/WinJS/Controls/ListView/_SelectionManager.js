@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Promise',
     '../../_Signal',
     '../../Utilities/_UI',
     '../ItemContainer/_Constants'
-    ], function selectionManagerInit(exports, _Base, Promise, _Signal, _UI, _Constants) {
+    ], function selectionManagerInit(exports, _Global, _Base, Promise, _Signal, _UI, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -781,7 +782,7 @@ define([
                 },
 
                 _fireSelectionChanging: function (newSelection) {
-                    var eventObject = document.createEvent("CustomEvent"),
+                    var eventObject = _Global.document.createEvent("CustomEvent"),
                         newSelectionUpdated = Promise.wrap();
 
                     eventObject.initCustomEvent("selectionchanging", true, true, {
@@ -810,7 +811,7 @@ define([
                 },
 
                 _fireSelectionChanged: function () {
-                    var eventObject = document.createEvent("CustomEvent");
+                    var eventObject = _Global.document.createEvent("CustomEvent");
                     eventObject.initCustomEvent("selectionchanged", true, false, null);
                     this._listView._element.dispatchEvent(eventObject);
                 },

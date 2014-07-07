@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -23,7 +24,7 @@ define([
     './Pivot/_Item',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function pivotInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _UIUtilities, _Constants, _Item) {
+    ], function pivotInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _UIUtilities, _Constants, _Item) {
         "use strict";
 
         _Base.Namespace.define("WinJS.UI", {
@@ -53,7 +54,7 @@ define([
                 var Keys = _ElementUtilities.Key;
 
                 function pivotDefaultHeaderTemplate(item) {
-                    var element = document.createTextNode(typeof item.header === "object" ? JSON.stringify(item.header) : ('' + item.header));
+                    var element = _Global.document.createTextNode(typeof item.header === "object" ? JSON.stringify(item.header) : ('' + item.header));
                     return element;
                 }
 
@@ -85,7 +86,7 @@ define([
                     /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                     /// </signature>
 
-                    element = element || document.createElement("DIV");
+                    element = element || _Global.document.createElement("DIV");
                     options = options || {};
 
                     if (element.winControl) {
@@ -118,12 +119,12 @@ define([
                     _ElementUtilities._addEventListener(this.element, "pointerout", this._updatePointerType.bind(this));
                     this._pointerType = PT_MOUSE;
 
-                    this._titleElement = document.createElement("DIV");
+                    this._titleElement = _Global.document.createElement("DIV");
                     this._titleElement.style.display = "none";
                     _ElementUtilities.addClass(this._titleElement, Pivot._ClassName.pivotTitle);
                     this._element.appendChild(this._titleElement);
 
-                    this._headersContainerElement = document.createElement("DIV");
+                    this._headersContainerElement = _Global.document.createElement("DIV");
                     _ElementUtilities.addClass(this._headersContainerElement, Pivot._ClassName.pivotHeaders);
                     this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
                     this._element.appendChild(this._headersContainerElement);
@@ -135,7 +136,7 @@ define([
 
                     this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
 
-                    this._viewportElement = document.createElement("DIV");
+                    this._viewportElement = _Global.document.createElement("DIV");
                     this._viewportElement.className = Pivot._ClassName.pivotViewport;
                     this._element.appendChild(this._viewportElement);
                     this._viewportElement.setAttribute("role", "group");
@@ -148,7 +149,7 @@ define([
                     this._viewportElement.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
                     _ElementUtilities._addEventListener(this._viewportElement, "pointerdown", this._pointerDownHandler.bind(this));
 
-                    this._surfaceElement = document.createElement("DIV");
+                    this._surfaceElement = _Global.document.createElement("DIV");
                     this._surfaceElement.className = Pivot._ClassName.pivotSurface;
                     this._viewportElement.appendChild(this._surfaceElement);
 
@@ -367,7 +368,7 @@ define([
                     _viewportWidth: {
                         get: function () {
                             if (!this._viewportElWidth) {
-                                this._viewportElWidth = parseFloat(getComputedStyle(this._viewportElement).width);
+                                this._viewportElWidth = parseFloat(_Global.getComputedStyle(this._viewportElement).width);
                                 if (_ElementUtilities._supportsSnapPoints) {
                                     this._viewportElement.style[_BaseUtils._browserStyleEquivalents["scroll-snap-points-x"].scriptName] = "snapInterval(0%, " + Math.ceil(this._viewportElWidth) + "px)";
                                 }
@@ -463,12 +464,12 @@ define([
                             return;
                         }
 
-                        var restoreFocus = this._headersContainerElement.contains(document.activeElement);
+                        var restoreFocus = this._headersContainerElement.contains(_Global.document.activeElement);
                         var template = _UIUtilities._syncRenderer(pivotDefaultHeaderTemplate);
 
                         _Dispose._disposeElement(this._headersContainerElement);
                         _ElementUtilities.empty(this._headersContainerElement);
-                        var cs = getComputedStyle(this._headersContainerElement);
+                        var cs = _Global.getComputedStyle(this._headersContainerElement);
                         var marginLeft = parseFloat(cs.marginLeft);
                         marginLeft = marginLeft > 0 ? 0 : marginLeft;
                         var marginRight = parseFloat(cs.marginRight);
@@ -479,7 +480,7 @@ define([
                         function renderHeader(index) {
                             var item = that._items.getAt(index);
 
-                            var headerContainerEl = document.createElement("BUTTON");
+                            var headerContainerEl = _Global.document.createElement("BUTTON");
                             headerContainerEl.style.maxWidth = (0.8 * maxHeaderLength) + "px";
                             if (index === that.selectedIndex) {
                                 _ElementUtilities.addClass(headerContainerEl, Pivot._ClassName.pivotHeaderSelected);
@@ -550,7 +551,7 @@ define([
                                 lastHeader.style.opacity = start;
                                 var lastHeaderFadeInDuration = 0.167;
                                 lastHeader.style[_BaseUtils._browserStyleEquivalents["transition"].scriptName] = "opacity " + _TransitionAnimation._animationTimeAdjustment(lastHeaderFadeInDuration) + "s";
-                                getComputedStyle(lastHeader).opacity;
+                                _Global.getComputedStyle(lastHeader).opacity;
                                 lastHeader.style.opacity = end;
                             }
 
@@ -560,7 +561,7 @@ define([
                             var leadingMargin = this._rtl ? "marginRight" : "marginLeft";
                             var trailingPadding = this._rtl ? "paddingLeft" : "paddingRight";
                             var firstHeader = this._headersContainerElement.children[0];
-                            var leadingSpace = firstHeader.offsetWidth + parseFloat(getComputedStyle(firstHeader)[leadingMargin]) - parseFloat(getComputedStyle(firstHeader)[trailingPadding]);
+                            var leadingSpace = firstHeader.offsetWidth + parseFloat(_Global.getComputedStyle(firstHeader)[leadingMargin]) - parseFloat(_Global.getComputedStyle(firstHeader)[trailingPadding]);
                             if (firstHeader !== this._headersContainerElement.children[0]) {
                                 // Calling offsetWidth caused a layout which can trigger a synchronous resize which in turn
                                 // calls renderHeaders. We can ignore this one since its the old headers which are not in the DOM.
@@ -569,7 +570,7 @@ define([
                             this._headersContainerElement.style[leadingMargin] = (-1 * leadingSpace) + "px";
 
                             // Create header track nav button elements
-                            this._prevButton = document.createElement("button");
+                            this._prevButton = _Global.document.createElement("button");
                             _ElementUtilities.addClass(this._prevButton, Pivot._ClassName.pivotNavButton);
                             _ElementUtilities.addClass(this._prevButton, Pivot._ClassName.pivotNavButtonPrev);
                             this._prevButton.addEventListener("click", function () {
@@ -581,7 +582,7 @@ define([
                             this._headersContainerElement.appendChild(this._prevButton);
                             this._prevButton.style.left = this._rtl ? "0px" : leadingSpace + "px";
 
-                            this._nextButton = document.createElement("button");
+                            this._nextButton = _Global.document.createElement("button");
                             _ElementUtilities.addClass(this._nextButton, Pivot._ClassName.pivotNavButton);
                             _ElementUtilities.addClass(this._nextButton, Pivot._ClassName.pivotNavButtonNext);
                             this._nextButton.addEventListener("click", function () {
@@ -663,7 +664,7 @@ define([
 
                     _loadItem: function pivot_loadItem(index) {
                         var goPrevious = this._animateToPrevious;
-                        this._cachedRTL = getComputedStyle(this._element, null).direction === "rtl";
+                        this._cachedRTL = _Global.getComputedStyle(this._element, null).direction === "rtl";
                         this._loadId++;
                         var loadId = this._loadId;
 
@@ -849,7 +850,7 @@ define([
                                 _Log.log && _Log.log('_scrollHandler ScrollPosition: ' + _ElementUtilities.getScrollPosition(this._viewportElement).scrollLeft, "winjs pivot", "log");
                                 // Check if narrator user panned/scrolled the Pivot and we are now at an unsupported location.
                                 var diff = _ElementUtilities.getScrollPosition(this._viewportElement).scrollLeft - this._currentScrollTargetLocation;
-                                this._cachedRTL = getComputedStyle(this._element, null).direction === "rtl";
+                                this._cachedRTL = _Global.getComputedStyle(this._element, null).direction === "rtl";
                                 if (diff > 0) {
                                     _Log.log && _Log.log('_scrollHandler diff > 1: ' + diff, "winjs pivot", "log");
                                     this._goNext();
@@ -1267,7 +1268,7 @@ define([
                     // Misc helpers
                     _fireEvent: function pivot_fireEvent(type, canBubble, cancelable, detail) {
                         // Returns true if ev.preventDefault() was not called
-                        var event = document.createEvent("CustomEvent");
+                        var event = _Global.document.createEvent("CustomEvent");
                         event.initCustomEvent(type, !!canBubble, !!cancelable, detail);
                         return this.element.dispatchEvent(event);
                     },

@@ -72,7 +72,7 @@ define([
                 options = options || {};
 
                 // Make sure there's an input element            
-                this._element = element || document.createElement("div");
+                this._element = element || _Global.document.createElement("div");
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -231,7 +231,7 @@ define([
                 _hide: function Flyout_hide() {
                     if (this._baseHide()) {
                         // Return focus if this or the flyout CED has focus
-                        var active = document.activeElement;
+                        var active = _Global.document.activeElement;
                         if (this._previousFocus
                            && active
                            && (this._element.contains(active)
@@ -256,7 +256,7 @@ define([
                                 } else {
                                     _Overlay._Overlay._trySetActive(this._previousFocus);
                                 }
-                                active = document.activeElement;
+                                active = _Global.document.activeElement;
 
                                 if (fHideRole) {
                                     // Restore the role so that css is applied correctly
@@ -302,7 +302,7 @@ define([
 
                     // Dereference the anchor if necessary
                     if (typeof anchor === "string") {
-                        anchor = document.getElementById(anchor);
+                        anchor = _Global.document.getElementById(anchor);
                     } else if (anchor && anchor.element) {
                         anchor = anchor.element;
                     }
@@ -371,7 +371,7 @@ define([
 
                         // Store what had focus before showing the Flyout.
                         // This must happen after we hide all other flyouts so that we store the correct element.
-                        this._previousFocus = document.activeElement;
+                        this._previousFocus = _Global.document.activeElement;
                     }
                 },
 
@@ -386,7 +386,7 @@ define([
                         this._focusOnFirstFocusableElementOrThis();
 
                         // Prevent what is gaining focus from showing that it has focus
-                        _Overlay._Overlay._addHideFocusClass(document.activeElement);
+                        _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
                     } else {
                         // Make sure the menu has focus, but don't show a focus rect
                         _Overlay._Overlay._trySetActive(this._element);
@@ -622,7 +622,7 @@ define([
                     }
                     if (this._nextLeft < 0) {
                         this._nextLeft = 0;
-                    } else if (this._nextLeft + flyout.width >= document.documentElement.clientWidth) {
+                    } else if (this._nextLeft + flyout.width >= _Global.document.documentElement.clientWidth) {
                         // flag to put on right
                         this._nextLeft = -1;
                     }
@@ -671,7 +671,7 @@ define([
                         // Pop out immediately, then move to new spot
                         this._element.style.opacity = 0;
                         var that = this;
-                        setTimeout(function () { that._adjustForKeyboard(); that._baseAnimateIn(); }, _Overlay._Overlay._keyboardInfo._animationShowLength);
+                        _Global.setTimeout(function () { that._adjustForKeyboard(); that._baseAnimateIn(); }, _Overlay._Overlay._keyboardInfo._animationShowLength);
                     }
                 },
 
@@ -790,7 +790,7 @@ define([
 
                 // Hide all other flyouts besides this one
                 _hideAllOtherFlyouts: function Flyout_hideAllOtherFlyouts(thisFlyout) {
-                    var flyouts = document.querySelectorAll(_Constants.flyoutSelector);
+                    var flyouts = _Global.document.querySelectorAll(_Constants.flyoutSelector);
                     for (var i = 0; i < flyouts.length; i++) {
                         var flyoutControl = flyouts[i].winControl;
                         if (flyoutControl && !flyoutControl.hidden && (flyoutControl !== thisFlyout)) {
@@ -801,7 +801,7 @@ define([
 
                 // Returns true if there is a flyout in the DOM that is not hidden
                 _isThereVisibleFlyout: function Flyout_isThereVisibleFlyout() {
-                    var flyouts = document.querySelectorAll(_Constants.flyoutSelector);
+                    var flyouts = _Global.document.querySelectorAll(_Constants.flyoutSelector);
                     for (var i = 0; i < flyouts.length; i++) {
                         var flyoutControl = flyouts[i].winControl;
                         if (flyoutControl && !flyoutControl.hidden) {
@@ -823,12 +823,12 @@ define([
                         this.winControl._keyboardInvoked = true;
                         this.winControl._hide();
                     } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
-                         && (this === document.activeElement)) {
+                         && (this === _Global.document.activeElement)) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.winControl.hide();
                     } else if (event.shiftKey && event.keyCode === Key.tab
-                          && this === document.activeElement
+                          && this === _Global.document.activeElement
                           && !event.altKey && !event.ctrlKey && !event.metaKey) {
                         event.preventDefault();
                         event.stopPropagation();
@@ -838,7 +838,7 @@ define([
 
                 // Create and add a new first div as the first child
                 _addFirstDiv: function Flyout_addFirstDiv() {
-                    var firstDiv = document.createElement("div");
+                    var firstDiv = _Global.document.createElement("div");
                     firstDiv.className = _Constants.firstDivClass;
                     firstDiv.style.display = "inline";
                     firstDiv.setAttribute("role", "menuitem");
@@ -859,7 +859,7 @@ define([
 
                 // Create and add a new final div as the last child
                 _addFinalDiv: function Flyout_addFinalDiv() {
-                    var finalDiv = document.createElement("div");
+                    var finalDiv = _Global.document.createElement("div");
                     finalDiv.className = _Constants.finalDivClass;
                     finalDiv.style.display = "inline";
                     finalDiv.setAttribute("role", "menuitem");

@@ -55,19 +55,19 @@ define([
     }
 
     function scheduleCleanupIfNeeded() {
-        if ((_Global.Debug && Debug.debuggerEnabled && noTimeoutUnderDebugger) || cleanupToken) {
+        if ((_Global.Debug && _Global.Debug.debuggerEnabled && noTimeoutUnderDebugger) || cleanupToken) {
             return;
         }
         if (SWEEP_PERIOD === 0) {
             Scheduler.schedule(cleanup, Scheduler.Priority.idle, null, "WinJS.Utilities._DOMWeakRefTable.cleanup");
             cleanupToken = 1;
         } else {
-            cleanupToken = setInterval(cleanup, SWEEP_PERIOD);
+            cleanupToken = _Global.setInterval(cleanup, SWEEP_PERIOD);
         }
     }
 
     function unscheduleCleanupIfNeeded() {
-        if (_Global.Debug && Debug.debuggerEnabled && noTimeoutUnderDebugger) {
+        if (_Global.Debug && _Global.Debug.debuggerEnabled && noTimeoutUnderDebugger) {
             return;
         }
         if (SWEEP_PERIOD === 0) {                           // if we're using post
@@ -83,7 +83,7 @@ define([
             }
         } else if (cleanupToken) {
             if (Object.keys(table).length === 0) {
-                clearInterval(cleanupToken);
+                _Global.clearInterval(cleanupToken);
                 cleanupToken = 0;
             }
         }
@@ -102,11 +102,11 @@ define([
                 return entry.element;
             }
             else {
-                return document.getElementById(id);
+                return _Global.document.getElementById(id);
             }
         }
         else {
-            var element = document.getElementById(id);
+            var element = _Global.document.getElementById(id);
             if (element) {
                 delete table[id];
                 unscheduleCleanupIfNeeded();

@@ -553,7 +553,7 @@ define([
             var onComplete = listener.c;
             var target = listener.promise;
 
-            _Trace._traceAsyncOperationCompleted(listener.asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
+            _Trace._traceAsyncOperationCompleted(listener.asyncOpID, _Global.Debug && _Global.Debug.MS_ASYNC_OP_STATUS_SUCCESS);
 
             if (target) {
                 _Trace._traceAsyncCallbackStarting(listener.asyncOpID);
@@ -585,7 +585,7 @@ define([
             var onError = listener.e;
             var target = listener.promise;
 
-            var errorID = _Global.Debug && (value && value.name === canceledName ? Debug.MS_ASYNC_OP_STATUS_CANCELED : Debug.MS_ASYNC_OP_STATUS_ERROR);
+            var errorID = _Global.Debug && (value && value.name === canceledName ? _Global.Debug.MS_ASYNC_OP_STATUS_CANCELED : _Global.Debug.MS_ASYNC_OP_STATUS_ERROR);
             _Trace._traceAsyncOperationCompleted(listener.asyncOpID, errorID);
 
             if (target) {
@@ -974,14 +974,14 @@ define([
         return new Promise(
             function (c) {
                 if (timeoutMS) {
-                    id = setTimeout(c, timeoutMS);
+                    id = _Global.setTimeout(c, timeoutMS);
                 } else {
                     _BaseCoreUtils._setImmediate(c);
                 }
             },
             function () {
                 if (id) {
-                    clearTimeout(id);
+                    _Global.clearTimeout(id);
                 }
             }
         );
@@ -1373,7 +1373,7 @@ define([
             },
             _veryExpensiveTagWithStack_tag: tag,
             _getStack: function () {
-                if (_Global.Debug && Debug.debuggerEnabled) {
+                if (_Global.Debug && _Global.Debug.debuggerEnabled) {
                     try { throw new Error(); } catch (e) { return e.stack; }
                 }
             },

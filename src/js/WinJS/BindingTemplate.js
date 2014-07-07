@@ -46,7 +46,7 @@ define([
                 }
 
                 var workPromise = Promise.wrap();
-                var d = container || document.createElement(template.element.tagName);
+                var d = container || _Global.document.createElement(template.element.tagName);
 
                 _ElementUtilities.addClass(d, "win-template");
                 _ElementUtilities.addClass(d, "win-loading");
@@ -69,7 +69,7 @@ define([
                     workPromise.cancel();
                 };
                 if (template.extractChild) {
-                    element = Fragments.renderCopy(that.href || that.element, document.createElement(that.element.tagName)).then(function (frag) {
+                    element = Fragments.renderCopy(that.href || that.element, _Global.document.createElement(that.element.tagName)).then(function (frag) {
                         var child = frag.firstElementChild;
                         extractedChild = child;
                         _Dispose.markDisposable(child, dispose);
@@ -170,7 +170,7 @@ define([
                 /// </param>
                 /// </signature>
 
-                this._element = element || document.createElement("div");
+                this._element = element || _Global.document.createElement("div");
                 this._element.winControl = this;
 
                 this._profilerMarkIdentifier = _BaseUtils._getProfilerMarkIdentifier(this._element);
@@ -211,7 +211,7 @@ define([
 
                         if (shouldCompile) {
                             shouldCompile = shouldCompile && this.processTimeout === 0;
-                            shouldCompile = shouldCompile && (!this.href || this.href instanceof HTMLElement);
+                            shouldCompile = shouldCompile && (!this.href || this.href instanceof _Global.HTMLElement);
 
                             if (!shouldCompile) {
                                 _Log.log && _Log.log("Cannot compile templates which use processTimeout or href properties", "winjs binding", "warn");

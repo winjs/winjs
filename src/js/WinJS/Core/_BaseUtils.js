@@ -80,7 +80,7 @@ define([
         }
 
         var equivalents = {},
-            docStyle = document.documentElement.style,
+            docStyle = _Global.document.documentElement.style,
             stylePrefixesToTest = ["", "webkit", "ms", "Moz"],
             styles = ["animation",
                 "transition",
@@ -247,13 +247,13 @@ define([
                 var readyState = ready._testReadyState;
                 if (!readyState) {
                     if (_Global.document) {
-                        readyState = document.readyState;
+                        readyState = _Global.document.readyState;
                     }
                     else {
                         readyState = "complete";
                     }
                 }
-                if (readyState === "complete" || (_Global.document && document.body !== null)) {
+                if (readyState === "complete" || (_Global.document && _Global.document.body !== null)) {
                     if (async) {
                         Scheduler.schedule(function WinJS_Utilities_ready() {
                             complete();
@@ -303,7 +303,7 @@ define([
 
                 supportedForProcessing = supportedForProcessing && value !== _Global;
                 supportedForProcessing = supportedForProcessing && value !== _Global.location;
-                supportedForProcessing = supportedForProcessing && !(value instanceof HTMLIFrameElement);
+                supportedForProcessing = supportedForProcessing && !(value instanceof _Global.HTMLIFrameElement);
                 supportedForProcessing = supportedForProcessing && !(typeof value === "function" && !value.supportedForProcessing);
 
                 switch (_Global.frames.length) {
@@ -337,12 +337,12 @@ define([
         // Allows the browser to finish dispatching its current set of events before running
         // the callback.
         _yieldForEvents: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
-            setTimeout(handler, 0);
+            _Global.setTimeout(handler, 0);
         },
         
         // Allows the browser to notice a DOM modification before running the callback.
         _yieldForDomModification: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
-            setTimeout(handler, 0);
+            _Global.setTimeout(handler, 0);
         },
 
         _shallowCopy: function _shallowCopy(a) {

@@ -65,7 +65,7 @@ define([
         // To see the original exception stack, look at data.stack.
         // For more information on debugging and exception handling go to http://go.microsoft.com/fwlink/p/?LinkId=253583.
         debugger; // jshint ignore:line
-        MSApp.terminateApp(data);
+        _Global.MSApp.terminateApp(data);
     }
 
     var terminateAppHandler = defaultTerminateAppHandler;
@@ -410,7 +410,7 @@ define([
     // capture this early
     //
     if (_Global.document) {
-        document.addEventListener("DOMContentLoaded", domContentLoadedHandler, false);
+        _Global.document.addEventListener("DOMContentLoaded", domContentLoadedHandler, false);
     }
 
     function commandsRequested(e) {

@@ -19,7 +19,7 @@ define([
     var browserStyleEquivalents = _BaseUtils._browserStyleEquivalents;
 
     function makeArray(elements) {
-        if (Array.isArray(elements) || elements instanceof NodeList || elements instanceof HTMLCollection) {
+        if (Array.isArray(elements) || elements instanceof _Global.NodeList || elements instanceof _Global.HTMLCollection) {
             return elements;
         } else if (elements) {
             return [elements];
@@ -198,7 +198,7 @@ define([
             var style = elem.style;
             var id = _ElementUtilities._uniqueID(elem);
             if (!uniformizeStyle) {
-                uniformizeStyle = document.createElement("DIV").style;
+                uniformizeStyle = _Global.document.createElement("DIV").style;
             }
             transitions = transitions.map(copyWithEvaluation(index, elem));
             transitions.forEach(function (transition) {
@@ -213,7 +213,7 @@ define([
 
             if (animate) {
                 var styleCache = setTemporaryStyles(elem, id, style, transitions, elementTransitionProperties);
-                var listener = elem.disabled ? document : elem;
+                var listener = elem.disabled ? _Global.document : elem;
 
                 transitions.forEach(function (transition) {
                     var finish;
@@ -223,7 +223,7 @@ define([
                                 listener.removeEventListener(_BaseUtils._browserEventEquivalents["transitionEnd"], onTransitionEnd, false);
                                 unregisterAction(id, transition.property);
                                 styleCache.removeName(style, transition.propertyScriptName, reason ? elem : null, transition.skipStylesReset);
-                                clearTimeout(timeoutId);
+                                _Global.clearTimeout(timeoutId);
                                 onTransitionEnd = null;
                             }
                             completePromise(c, reason === reason_canceled);
@@ -243,8 +243,8 @@ define([
                             style[transition.propertyScriptName] = transition.to;
                             padding = 50;
                         }
-                        var timeoutId = setTimeout(function () {
-                            timeoutId = setTimeout(finish, transition.delay + transition.duration);
+                        var timeoutId = _Global.setTimeout(function () {
+                            timeoutId = _Global.setTimeout(finish, transition.delay + transition.duration);
                         }, padding);
                     }, function () { finish(reason_canceled); }));
                 });
@@ -278,12 +278,12 @@ define([
             var id = _ElementUtilities._uniqueID(elem);
             anims = anims.map(copyWithEvaluation(index, elem));
             var styleElem;
-            var listener = elem.disabled ? document : elem;
+            var listener = elem.disabled ? _Global.document : elem;
             anims.forEach(function (anim) {
                 if (!anim.keyframe) {
                     if (!styleElem) {
-                        styleElem = document.createElement("STYLE");
-                        document.documentElement.appendChild(styleElem);
+                        styleElem = _Global.document.createElement("STYLE");
+                        _Global.document.documentElement.appendChild(styleElem);
                     }
                     anim.keyframe = getUniqueKeyframeName();
                     var kf = "@" + browserStyleEquivalents["keyframes"] + " " + anim.keyframe + " { from {" + anim.property + ":" + anim.from + ";} to {" + anim.property + ":" + anim.to + ";}}";
@@ -301,7 +301,7 @@ define([
                     finish = function (reason) {
                         if (onAnimationEnd) {
                             listener.removeEventListener(_BaseUtils._browserEventEquivalents["animationEnd"], onAnimationEnd, false);
-                            clearTimeout(timeoutId);
+                            _Global.clearTimeout(timeoutId);
                             onAnimationEnd = null;
                         }
                         completePromise(c, reason === reason_canceled);
@@ -322,14 +322,14 @@ define([
                         style: style,
                         keyframe: anim.keyframe
                     });
-                    var timeoutId = setTimeout(function () {
-                        timeoutId = setTimeout(finish, anim.delay + anim.duration);
+                    var timeoutId = _Global.setTimeout(function () {
+                        timeoutId = _Global.setTimeout(finish, anim.delay + anim.duration);
                     }, 50);
                     listener.addEventListener(_BaseUtils._browserEventEquivalents["animationEnd"], onAnimationEnd, false);
                 }, function () { finish(reason_canceled); }));
             });
             if (styleElem) {
-                setTimeout(function () {
+                _Global.setTimeout(function () {
                     var parentElement = styleElem.parentElement;
                     if (parentElement) {
                         parentElement.removeChild(styleElem);

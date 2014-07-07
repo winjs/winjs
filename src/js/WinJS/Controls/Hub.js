@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -21,7 +22,7 @@ define([
     './Hub/_Section',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function hubInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _UI, _UIUtilities, _Section) {
+    ], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _UI, _UIUtilities, _Section) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -50,7 +51,7 @@ define([
             var Key = _ElementUtilities.Key;
 
             function hubDefaultHeaderTemplate(section) {
-                var element = document.createTextNode(typeof section.header === "object" ? JSON.stringify(section.header) : ('' + section.header));
+                var element = _Global.document.createTextNode(typeof section.header === "object" ? JSON.stringify(section.header) : ('' + section.header));
                 return element;
             }
 
@@ -123,7 +124,7 @@ define([
                 /// </returns>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
-                element = element || document.createElement("DIV");
+                element = element || _Global.document.createElement("DIV");
                 options = options || {};
 
                 if (element.winControl) {
@@ -134,7 +135,7 @@ define([
                 this._writeProfilerMark("constructor,StartTM");
 
                 this._windowKeyDownHandlerBound = this._windowKeyDownHandler.bind(this);
-                window.addEventListener('keydown', this._windowKeyDownHandlerBound);
+                _Global.addEventListener('keydown', this._windowKeyDownHandlerBound);
 
                 // Attaching JS control to DOM element
                 element.winControl = this;
@@ -142,13 +143,13 @@ define([
                 _ElementUtilities.addClass(this.element, Hub._ClassName.hub);
                 _ElementUtilities.addClass(this.element, "win-disposable");
 
-                this._viewportElement = document.createElement("DIV");
+                this._viewportElement = _Global.document.createElement("DIV");
                 this._viewportElement.className = Hub._ClassName.hubViewport;
                 this._element.appendChild(this._viewportElement);
                 this._viewportElement.setAttribute("role", "group");
                 this._viewportElement.setAttribute("aria-label", strings.hubViewportAriaLabel);
 
-                this._surfaceElement = document.createElement("DIV");
+                this._surfaceElement = _Global.document.createElement("DIV");
                 this._surfaceElement.className = Hub._ClassName.hubSurface;
                 this._viewportElement.appendChild(this._surfaceElement);
 
@@ -707,7 +708,7 @@ define([
                             }
 
                             if (!this._progressBar) {
-                                this._progressBar = document.createElement("progress");
+                                this._progressBar = _Global.document.createElement("progress");
                                 _ElementUtilities.addClass(this._progressBar, Hub._ClassName.hubProgress);
                                 this._progressBar.max = 100;
                             }
@@ -776,7 +777,7 @@ define([
                                                     }.bind(this));
                                                 }
                                             }
-                                            if (this._element === document.activeElement) {
+                                            if (this._element === _Global.document.activeElement) {
                                                 this._moveFocusIn(this.sectionOnScreen);
                                             }
                                         }
@@ -818,7 +819,7 @@ define([
                     if (state !== this._loadingState) {
                         this._writeProfilerMark("loadingStateChanged:" + state + ",info");
                         this._loadingState = state;
-                        var eventObject = document.createEvent("CustomEvent");
+                        var eventObject = _Global.document.createEvent("CustomEvent");
                         eventObject.initCustomEvent(Hub._EventName.loadingStateChanged, true, false, { loadingState: state });
                         this._element.dispatchEvent(eventObject);
                     }
@@ -845,7 +846,7 @@ define([
                 },
                 _fireEvent: function hub_fireEvent(type, detail) {
                     // Returns true if ev.preventDefault() was not called
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent(type, true, true, detail);
                     return this.element.dispatchEvent(event);
                 },
@@ -904,7 +905,7 @@ define([
                     this._pendingSectionOnScreen = null;
 
                     if (!this._pendingScrollHandler) {
-                        this._pendingScrollHandler = requestAnimationFrame(function () {
+                        this._pendingScrollHandler = _Global.requestAnimationFrame(function () {
                             this._pendingScrollHandler = null;
 
                             if (this._pendingSections) {
@@ -925,7 +926,7 @@ define([
                         this._writeProfilerMark("measure,StartTM");
                         this._measured = true;
 
-                        this._rtl = getComputedStyle(this._element, null).direction === "rtl";
+                        this._rtl = _Global.getComputedStyle(this._element, null).direction === "rtl";
 
                         if (this.orientation === _UI.Orientation.vertical) {
                             this._names = verticalNames;
@@ -942,14 +943,14 @@ define([
                         this._scrollPosition = _ElementUtilities.getScrollPosition(this._viewportElement)[this._names.scrollPos];
                         this._scrollLength = this._viewportElement[this._names.scrollSize];
 
-                        var surfaceElementComputedStyle = getComputedStyle(this._surfaceElement);
+                        var surfaceElementComputedStyle = _Global.getComputedStyle(this._surfaceElement);
                         this._startSpacer = parseFloat(surfaceElementComputedStyle[this._names.marginStart]) + parseFloat(surfaceElementComputedStyle[this._names.borderStart]) + parseFloat(surfaceElementComputedStyle[this._names.paddingStart]);
                         this._endSpacer = parseFloat(surfaceElementComputedStyle[this._names.marginEnd]) + parseFloat(surfaceElementComputedStyle[this._names.borderEnd]) + parseFloat(surfaceElementComputedStyle[this._names.paddingEnd]);
 
                         this._sectionSizes = [];
                         for (var i = 0; i < this.sections.length; i++) {
                             var section = this.sections.getAt(i);
-                            var computedSectionStyle = getComputedStyle(section.element);
+                            var computedSectionStyle = _Global.getComputedStyle(section.element);
                             this._sectionSizes[i] = {
                                 offset: section.element[this._names.offsetPos],
                                 // Reminder: offsetWidth doesn't include margins and also rounds.
@@ -1183,7 +1184,7 @@ define([
 
                     _ElementUtilities._setActive(targetSection._headerTabStopElement, this._viewportElement);
 
-                    return document.activeElement === targetSection._headerTabStopElement;
+                    return _Global.document.activeElement === targetSection._headerTabStopElement;
                 },
                 /// <field type="Object" locid="WinJS.UI.Hub.zoomableView" helpKeyword="WinJS.UI.Hub.zoomableView" isAdvanced="true">
                 /// Gets a ZoomableView. This API supports the SemanticZoom infrastructure
@@ -1302,7 +1303,7 @@ define([
                     }
                     this._disposed = true;
 
-                    window.removeEventListener('keydown', this._windowKeyDownHandlerBound);
+                    _Global.removeEventListener('keydown', this._windowKeyDownHandlerBound);
                     _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._resizeHandlerBound);
 
                     this._updateEvents(this._sections);

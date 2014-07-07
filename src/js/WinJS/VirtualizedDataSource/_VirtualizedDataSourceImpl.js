@@ -2,6 +2,7 @@
 // Virtualized Data Source
 define([
     'exports',
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -13,7 +14,7 @@ define([
     '../Scheduler',
     '../_Signal',
     '../Utilities/_UI'
-    ], function listDataSourceInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Promise, Scheduler, _Signal, _UI) {
+    ], function listDataSourceInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Promise, Scheduler, _Signal, _UI) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -1352,7 +1353,7 @@ define([
                             statusChangePosted = true;
 
                             // Delay the event to filter out rapid changes
-                            setTimeout(dispatch, 40);
+                            _Global.setTimeout(dispatch, 40);
                         }
                     }
                 }
@@ -1485,7 +1486,7 @@ define([
                         }
                     }).then(null, function () {
                         if (resultsValid(slot, refreshID, fetchID)) {
-                            processErrorResultForIndex(indexRequested, slot, refreshID, name);
+                            processErrorResultForIndex(indexRequested, slot, refreshID);
                         }
                     });
                 }

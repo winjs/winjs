@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_Events',
@@ -8,7 +9,7 @@ define([
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function toggleInit(_Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities) {
+    ], function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -82,7 +83,7 @@ define([
                 /// </returns>
                 /// </signature>
 
-                element = element || document.createElement("div");
+                element = element || _Global.document.createElement("div");
 
                 var toggle = _ElementUtilities.data(element).toggle;
                 if (toggle) {
@@ -243,12 +244,12 @@ define([
                     _ElementUtilities.addClass(this._domElement, msToggle);
                     _ElementUtilities.addClass(this._domElement, msToggleOff);
 
-                    this._titleElement = document.createElement("div");
+                    this._titleElement = _Global.document.createElement("div");
                     this._titleElement.setAttribute("id", _ElementUtilities._uniqueID(this._titleElement));
                     this._titleElement.setAttribute("role", "note");
                     _ElementUtilities.addClass(this._titleElement, msToggleTitle);
 
-                    this._switchElement = document.createElement("input");
+                    this._switchElement = _Global.document.createElement("input");
                     this._switchElement.type = "range";
                     this._switchElement.max = 1;
                     this._switchElement.step = 1;
@@ -256,17 +257,17 @@ define([
                     this._switchElement.setAttribute("aria-labelledby", this._titleElement.id);
                     _ElementUtilities.addClass(this._switchElement, msToggleSwitch);
 
-                    this._labelGridElement = document.createElement("div");
+                    this._labelGridElement = _Global.document.createElement("div");
                     this._labelGridElement.style.display = "-ms-grid";
 
                     if (_BaseUtils.isPhone) {
                         this._labelGridElement.style.msGridColumns = "1fr auto";
                     }
 
-                    this._labelOnElement = document.createElement("div");
+                    this._labelOnElement = _Global.document.createElement("div");
                     _ElementUtilities.addClass(this._labelOnElement, msToggleLabel);
 
-                    this._labelOffElement = document.createElement("div");
+                    this._labelOffElement = _Global.document.createElement("div");
                     _ElementUtilities.addClass(this._labelOffElement, msToggleLabel);
 
                     this._addControlsInOrder();
@@ -352,7 +353,7 @@ define([
 
                         that._tapping = true;
                         that._pointerDown = true;
-                        setTimeout(function() {
+                        _Global.setTimeout(function() {
                             that._tapping = false;
                         }, 200);
                         if (that._switchElement.setPointerCapture) {

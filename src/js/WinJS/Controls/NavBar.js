@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -13,7 +14,7 @@ define([
     './NavBar/_Container',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function NavBarInit(_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
+], function NavBarInit(_Global,_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
     "use strict";
 
     var customLayout = "custom";
@@ -168,7 +169,7 @@ define([
                 },
 
                 _fireEvent: function NavBar_fireEvent(type, detail) {
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent(type, true, false, detail || {});
                     this.element.dispatchEvent(event);
                 },

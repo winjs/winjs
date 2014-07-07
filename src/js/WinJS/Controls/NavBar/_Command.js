@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
@@ -9,7 +10,7 @@ define([
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
     '../AppBar/_Icon'
-    ], function NavBarCommandInit(exports, _Base, _ErrorFromName, _Resources, ControlProcessor, Navigation, _Control, _ElementUtilities, _Icon) {
+    ], function NavBarCommandInit(exports, _Global, _Base, _ErrorFromName, _Resources, ControlProcessor, Navigation, _Control, _ElementUtilities, _Icon) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -38,8 +39,8 @@ define([
                         if (!_ElementUtilities._matchesSelector(ev.target, ".win-interactive, .win-interactive *")) {
                             this._pointerId = ev.pointerId;
 
-                            _ElementUtilities._addEventListener(window, "pointerup", this._pointerUpBound, true);
-                            _ElementUtilities._addEventListener(window, "pointercancel", this._pointerCancelBound), true;
+                            _ElementUtilities._addEventListener(_Global, "pointerup", this._pointerUpBound, true);
+                            _ElementUtilities._addEventListener(_Global, "pointercancel", this._pointerCancelBound), true;
                             _ElementUtilities._addEventListener(this._element, "pointerover", this._pointerOverBound, true);
                             _ElementUtilities._addEventListener(this._element, "pointerout", this._pointerOutBound, true);
 
@@ -75,8 +76,8 @@ define([
                 _resetPointer: function _WinPressed_resetPointer() {
                     this._pointerId = null;
 
-                    window.removeEventListener("pointerup", this._pointerUpBound, true);
-                    window.removeEventListener("pointercancel", this._pointerCancelBound, true);
+                    _Global.removeEventListener("pointerup", this._pointerUpBound, true);
+                    _Global.removeEventListener("pointercancel", this._pointerCancelBound, true);
                     this._element.removeEventListener("pointerover", this._pointerOverBound, true);
                     this._element.removeEventListener("pointerout", this._pointerOutBound, true);
 
@@ -139,7 +140,7 @@ define([
                 /// </returns>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
-                element = element || document.createElement("DIV");
+                element = element || _Global.document.createElement("DIV");
                 options = options || {};
 
                 if (element.winControl) {
@@ -307,7 +308,7 @@ define([
 
                 _rtl: {
                     get: function () {
-                        return window.getComputedStyle(this.element).direction === "rtl";
+                        return _Global.getComputedStyle(this.element).direction === "rtl";
                     }
                 },
 
@@ -442,7 +443,7 @@ define([
                 },
 
                 _fireEvent: function NavBarCommand_fireEvent(type, detail) {
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent(type, true, false, detail);
                     this.element.dispatchEvent(event);
                 },

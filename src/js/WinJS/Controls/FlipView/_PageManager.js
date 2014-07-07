@@ -2,6 +2,7 @@
 
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -16,7 +17,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_TabContainer',
     './_Constants'
-    ], function flipperPageManagerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Animations, Promise, _Signal, Scheduler, _Dispose, _ElementUtilities, _TabContainer, _Constants) {
+    ], function flipperPageManagerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Animations, Promise, _Signal, Scheduler, _Dispose, _ElementUtilities, _TabContainer, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -59,7 +60,7 @@ define([
                         }
                         if (dirChanged) {
                             that._cachedStyleDir = element.style.direction;
-                            that._pageManager._rtl = window.getComputedStyle(that._pageManager._flipperDiv, null).direction === "rtl";
+                            that._pageManager._rtl = _Global.getComputedStyle(that._pageManager._flipperDiv, null).direction === "rtl";
                             that._pageManager.resized();
                         }
                     }
@@ -74,7 +75,7 @@ define([
                 this._panningDivContainer = panningDivContainer;
                 this._buttonVisibilityHandler = buttonVisibilityHandler;
                 this._currentPage = null;
-                this._rtl = window.getComputedStyle(this._flipperDiv, null).direction === "rtl";
+                this._rtl = _Global.getComputedStyle(this._flipperDiv, null).direction === "rtl";
                 this._itemsManager = itemsManager;
                 this._itemSpacing = itemSpacing;
                 this._tabIndex = _ElementUtilities.getTabIndex(flipperDiv);
@@ -132,7 +133,7 @@ define([
                     this._panningDivContainerOffsetHeight = this._panningDivContainer.offsetHeight;
                     this._horizontal = horizontal;
                     if (!this._currentPage) {
-                        this._bufferAriaStartMarker = document.createElement("div");
+                        this._bufferAriaStartMarker = _Global.document.createElement("div");
                         this._bufferAriaStartMarker.id = uniqueID(this._bufferAriaStartMarker);
                         this._panningDiv.appendChild(this._bufferAriaStartMarker);
 
@@ -148,7 +149,7 @@ define([
                             this._panningDiv.appendChild(currPage.pageRoot);
                         }
 
-                        this._bufferAriaEndMarker = document.createElement("div");
+                        this._bufferAriaEndMarker = _Global.document.createElement("div");
                         this._bufferAriaEndMarker.id = uniqueID(this._bufferAriaEndMarker);
                         this._panningDiv.appendChild(this._bufferAriaEndMarker);
                     }
@@ -194,7 +195,7 @@ define([
                         containerStyle.overflowY = "hidden";
 
                         var that = this;
-                        requestAnimationFrame(function () {
+                        _Global.requestAnimationFrame(function () {
                             that._isOrientationChanging = false;
                             containerStyle.overflowX = ((that._horizontal && that._environmentSupportsTouch) ? "scroll" : "hidden");
                             containerStyle.overflowY = ((that._horizontal || !that._environmentSupportsTouch) ? "hidden" : "scroll");
@@ -1376,7 +1377,7 @@ define([
                     if (element && !element.visible) {
                         element.visible = true;
 
-                        var event = document.createEvent("CustomEvent");
+                        var event = _Global.document.createEvent("CustomEvent");
                         this._writeProfilerMark("WinJS.UI.FlipView:pageVisibilityChangedEvent(visible:true),info");
                         event.initCustomEvent(_Constants.pageVisibilityChangedEvent, true, false, { source: this._flipperDiv, visible: true });
 
@@ -1396,7 +1397,7 @@ define([
                             this._panningDivContainer.appendChild(element);
                         }
 
-                        var event = document.createEvent("CustomEvent");
+                        var event = _Global.document.createEvent("CustomEvent");
                         this._writeProfilerMark("WinJS.UI.FlipView:pageVisibilityChangedEvent(visible:false),info");
                         event.initCustomEvent(_Constants.pageVisibilityChangedEvent, true, false, { source: this._flipperDiv, visible: false });
 
@@ -1433,9 +1434,9 @@ define([
                 _createPageContainer: function () {
                     var width = this._panningDivContainerOffsetWidth,
                         height = this._panningDivContainerOffsetHeight,
-                        parentDiv = document.createElement("div"),
+                        parentDiv = _Global.document.createElement("div"),
                         pageStyle = parentDiv.style,
-                        flexBox = document.createElement("div");
+                        flexBox = _Global.document.createElement("div");
                     flexBox.className = "win-item";
                     pageStyle.position = "absolute";
                     pageStyle.overflow = "hidden";
@@ -1726,7 +1727,7 @@ define([
                                     // - in case a FlipView navigation is triggered inside the pageselected listener (avoid reentering _itemSettledOn)
                                     Scheduler.schedule(function FlipView_dispatchPageSelectedEvent() {
                                         if (that._currentPage.element) {
-                                            var event = document.createEvent("CustomEvent");
+                                            var event = _Global.document.createEvent("CustomEvent");
                                             event.initCustomEvent(_Constants.pageSelectedEvent, true, false, { source: that._flipperDiv });
                                             that._writeProfilerMark("WinJS.UI.FlipView:pageSelectedEvent,info");
                                             that._currentPage.element.dispatchEvent(event);
@@ -1743,7 +1744,7 @@ define([
                                                             that._currentPage.element.setAttribute("aria-setsize", that._cachedSize);
                                                             that._currentPage.element.setAttribute("aria-posinset", that.currentIndex() + 1);
                                                             that._bufferAriaStartMarker.setAttribute("aria-flowto", that._currentPage.element.id);
-                                                            event = document.createEvent("CustomEvent");
+                                                            event = _Global.document.createEvent("CustomEvent");
                                                             event.initCustomEvent(_Constants.pageCompletedEvent, true, false, { source: that._flipperDiv });
                                                             that._writeProfilerMark("WinJS.UI.FlipView:pageCompletedEvent,info");
                                                             that._currentPage.element.dispatchEvent(event);

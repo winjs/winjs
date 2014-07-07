@@ -3,6 +3,7 @@
 
 define([
     'exports',
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -14,7 +15,7 @@ define([
     '../Utilities/_ElementUtilities',
     './_ParallelWorkQueue',
     './_VersionManager'
-    ], function itemsManagerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _Signal, Scheduler, _ElementUtilities, _ParallelWorkQueue, _VersionManager) {
+    ], function itemsManagerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _Signal, Scheduler, _ElementUtilities, _ParallelWorkQueue, _VersionManager) {
     "use strict";
 
     var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;
@@ -42,7 +43,7 @@ define([
             data = JSON.stringify(data);
         }
 
-        var element = document.createElement("span");
+        var element = _Global.document.createElement("span");
         element.textContent = data.toString();
         return element;
     });
@@ -144,14 +145,14 @@ define([
             return new Promise(function (c, e) {
                 Scheduler.schedule(function ImageLoader_async_loadImage(jobInfo) {
                     if (!image) {
-                        image = document.createElement("img");
+                        image = _Global.document.createElement("img");
                     }
 
                     var seen = seenUrls[srcUrl];
 
                     if (!seen) {
                         jobInfo.setPromise(new Promise(function (imageLoadComplete) {
-                            var tempImage = document.createElement("img");
+                            var tempImage = _Global.document.createElement("img");
 
                             var cleanup = function () {
                                 tempImage.removeEventListener("load", loadComplete, false);
@@ -205,7 +206,7 @@ define([
     }
 
     function defaultRenderer() {
-        return document.createElement("div");
+        return _Global.document.createElement("div");
     }
 
     // Public definitions

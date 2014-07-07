@@ -400,7 +400,7 @@ define([
             /// The QueryCollection that contains the results of the query.
             /// </returns>
             /// </signature>
-            return new exports.QueryCollection((element || document).querySelectorAll(query));
+            return new exports.QueryCollection((element || _Global.document).querySelectorAll(query));
         },
 
         id: function (id) {
@@ -415,7 +415,7 @@ define([
             /// A QueryCollection that contains the element, if it is found.
             /// </returns>
             /// </signature>
-            var e = document.getElementById(id);
+            var e = _Global.document.getElementById(id);
             return new exports.QueryCollection(e ? [e] : []);
         },
 

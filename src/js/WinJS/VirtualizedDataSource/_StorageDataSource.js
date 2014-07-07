@@ -4,6 +4,7 @@
 define([
     'exports',
     '../Core/_WinRT',
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_WriteProfilerMark',
@@ -11,7 +12,7 @@ define([
     '../Promise',
     '../Utilities/_UI',
     './_VirtualizedDataSourceImpl'
-    ], function storageDataSourceInit(exports, _WinRT, _Base, _ErrorFromName, _WriteProfilerMark, Animations, Promise, _UI, VirtualizedDataSource) {
+    ], function storageDataSourceInit(exports, _WinRT, _Global, _Base, _ErrorFromName, _WriteProfilerMark, Animations, Promise, _UI, VirtualizedDataSource) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -256,7 +257,7 @@ define([
                         var tagSupplied = (image ? true : false);
                         var processThumbnail = function (thumbnail) {
                             if (thumbnail) {
-                                var url = URL.createObjectURL(thumbnail, {oneTimeOnly: true});
+                                var url = _Global.URL.createObjectURL(thumbnail, {oneTimeOnly: true});
 
                                 // If this is the first version of the thumbnail we're loading, fade it in.
                                 if (!thumbnailPromise) {

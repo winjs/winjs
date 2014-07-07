@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
@@ -10,7 +11,7 @@ define([
     '../../Utilities/_ElementUtilities',
     './_Command',
     './_Constants'
-    ], function appBarLayoutsInit(exports, _Base, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
+    ], function appBarLayoutsInit(exports, _Global, _Base, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
 
     // AppBar will use this when AppBar.layout property is set to "custom"
@@ -194,7 +195,7 @@ define([
                         for (var i = 0, len = commandsInReach.length; i < len; i++) {
                             var element = commandsInReach[i];
                             if (_ElementUtilities.hasClass(element, _Constants.appBarCommandClass) && element.winControl) {
-                                var containsFocus = element.contains(document.activeElement);
+                                var containsFocus = element.contains(_Global.document.activeElement);
                                 // With the inclusion of content type commands, it may be possible to tab to elements in AppBarCommands that are not reachable by arrow keys.
                                 // Regardless, when an AppBarCommand contains the element with focus, we just include the whole command so that we can determine which
                                 // commands are adjacent to it when looking for the next focus destination.
@@ -288,13 +289,13 @@ define([
             if (_ElementUtilities._matchesSelector(event.target, ".win-interactive, .win-interactive *")) {
                 return; // Ignore left, right, home & end keys if focused element has win-interactive class.
             }
-            var rtl = getComputedStyle(this.appBarEl).direction === "rtl";
+            var rtl = _Global.getComputedStyle(this.appBarEl).direction === "rtl";
             var leftKey = rtl ? Key.rightArrow : Key.leftArrow;
             var rightKey = rtl ? Key.leftArrow : Key.rightArrow;
 
             if (event.keyCode === leftKey || event.keyCode === rightKey || event.keyCode === Key.home || event.keyCode === Key.end) {
 
-                var globalCommandHasFocus = this._primaryCommands.contains(document.activeElement);
+                var globalCommandHasFocus = this._primaryCommands.contains(_Global.document.activeElement);
                 var focusableCommands = this._getFocusableCommandsInLogicalOrder(globalCommandHasFocus);
                 var targetCommand;
 
@@ -398,8 +399,8 @@ define([
         },
         _commandLayoutsInit: function _commandLayoutsMixin_commandLayoutsInit() {
             // Create layout infrastructure
-            this._primaryCommands = document.createElement("DIV");
-            this._secondaryCommands = document.createElement("DIV");
+            this._primaryCommands = _Global.document.createElement("DIV");
+            this._secondaryCommands = _Global.document.createElement("DIV");
             _ElementUtilities.addClass(this._primaryCommands, _Constants.primaryCommandsClass);
             _ElementUtilities.addClass(this._secondaryCommands, _Constants.secondaryCommandsClass);
         },
@@ -411,14 +412,14 @@ define([
             // We measure the clientWidth of the documentElement so that we can scale the AppBar lazily
             // even while its element is display: 'none'
             var extraPadding = this.appBarEl.winControl.closedDisplayMode === "minimal" ? _Constants.appBarInvokeButtonWidth : 0;
-            return document.documentElement.clientWidth - extraPadding;
+            return _Global.document.documentElement.clientWidth - extraPadding;
         },
         _measureContentCommands: function _commandLayoutsMixin_measureContentCommands() {
             // AppBar measures the width of content commands when they are first added
             // and then caches that value to avoid additional layouts in the future.     
 
             // Can't measure unless We're in the document body     
-            if (document.body.contains(this.appBarEl)) {
+            if (_Global.document.body.contains(this.appBarEl)) {
                 this._needToMeasureNewCommands = false;
 
                 // Remove the reducedClass from AppBar to ensure fullsize measurements

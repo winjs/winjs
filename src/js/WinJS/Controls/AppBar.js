@@ -3,6 +3,7 @@
 /// <dictionary>appbar,appBars,Flyout,Flyouts,iframe,Statics,unfocus,WinJS</dictionary>
 define([
     'exports',
+    '../Core/_Global',
     '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -24,7 +25,7 @@ define([
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function appBarInit(exports, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities, _Constants, _Layouts, _Command, _Icon, _Overlay) {
+], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities, _Constants, _Layouts, _Command, _Icon, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -118,7 +119,7 @@ define([
             }
 
             function _allManipulationChanged(event) {
-                var elements = document.querySelectorAll("." + _Constants.appBarClass);
+                var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                 if (elements) {
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
@@ -135,7 +136,7 @@ define([
             // Returns array of AppBar objects.
             // The array also has _hidden and/or _shown set if ANY are hidden or shown.
             function _getDynamicBarsForEdgy() {
-                var elements = document.querySelectorAll("." + _Constants.appBarClass);
+                var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                 var len = elements.length;
                 var AppBars = [];
                 AppBars._shown = false;
@@ -194,7 +195,7 @@ define([
             // DOM order is respected, because an AppBar should not have a defined tabIndex
             function _setFocusToPreviousAppBar() {
                 /*jshint validthis: true */
-                var appBars = document.querySelectorAll("." + _Constants.appBarClass);
+                var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                 if (!appBars.length) {
                     return;
                 }
@@ -245,7 +246,7 @@ define([
             // DOM order is respected, because an AppBar should not have a defined tabIndex
             function _setFocusToNextAppBar() {
                 /*jshint validthis: true */
-                var appBars = document.querySelectorAll("." + _Constants.appBarClass);
+                var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
 
                 var thisAppBarIndex = 0;
                 for (var i = 0; i < appBars.length; i++) {
@@ -270,7 +271,7 @@ define([
 
             // Updates the firstDiv & finalDiv of all shown AppBars
             function _updateAllAppBarsFirstAndFinalDiv() {
-                var appBars = document.querySelectorAll("." + _Constants.appBarClass);
+                var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                 var appBar;
                 for (var i = 0; i < appBars.length; i++) {
                     appBar = appBars[i].winControl;
@@ -284,7 +285,7 @@ define([
 
             // Returns true if a visible non-sticky (light dismiss) AppBar is found in the document
             function _isThereVisibleNonStickyBar() {
-                var appBars = document.querySelectorAll("." + _Constants.appBarClass);
+                var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                 for (var i = 0; i < appBars.length; i++) {
                     var appBarControl = appBars[i].winControl;
                     if (appBarControl && !appBarControl.sticky &&
@@ -350,7 +351,7 @@ define([
                 options = options || {};
 
                 // Make sure there's an element            
-                this._element = element || document.createElement("div");
+                this._element = element || _Global.document.createElement("div");
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -389,7 +390,7 @@ define([
                 }
 
                 // Add Invoke button.
-                this._invokeButton = document.createElement("DIV");
+                this._invokeButton = _Global.document.createElement("DIV");
                 this._invokeButton.tabIndex = 0;
                 this._invokeButton.innerHTML = "<span class='" + _Constants.ellipsisClass + "'></span>";
                 _ElementUtilities.addClass(this._invokeButton, _Constants.invokeButtonClass);
@@ -436,7 +437,7 @@ define([
                     }
 
                     // Need to know if the IHM is done scrolling
-                    document.addEventListener("MSManipulationStateChanged", _allManipulationChanged, false);
+                    _Global.document.addEventListener("MSManipulationStateChanged", _allManipulationChanged, false);
 
                     appBarCommandEvent = true;
                 }
@@ -591,7 +592,7 @@ define([
                                 _Overlay._Overlay._showClickEatingDivAppBar();
 
                                 if (this._shouldStealFocus()) {
-                                    _storePreviousFocus(document.activeElement);
+                                    _storePreviousFocus(_Global.document.activeElement);
                                     this._setFocusToAppBar();
                                 }
                             }
@@ -821,7 +822,7 @@ define([
                     if (!this._doNotFocus && this._shouldStealFocus()) {
                         // Store what had focus if nothing currently is stored
                         if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
-                            _storePreviousFocus(document.activeElement);
+                            _storePreviousFocus(_Global.document.activeElement);
                         }
 
                         this._setFocusToAppBar();
@@ -856,7 +857,7 @@ define([
                         // Set the focus to the next shown AppBar.
                     // If there are none, set the focus to the control stored in the cache, which
                     //   is what had focus before the AppBars were given focus.
-                    var appBars = document.querySelectorAll("." + _Constants.appBarClass);
+                    var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                     var areOtherAppBars = false;
                     var areOtherNonStickyAppBars = false;
                     var i;
@@ -872,7 +873,7 @@ define([
                         }
                     }
 
-                    var settingsFlyouts = document.querySelectorAll("." + _Constants.settingsFlyoutClass);
+                    var settingsFlyouts = _Global.document.querySelectorAll("." + _Constants.settingsFlyoutClass);
                     var areVisibleSettingsFlyouts = false;
                     for (i = 0; i < settingsFlyouts.length; i++) {
                         var settingsFlyoutControl = settingsFlyouts[i].winControl;
@@ -891,12 +892,12 @@ define([
                     if (!areOtherAppBars) {
                         // Set focus to what had focus before showing the AppBar
                         if (_Overlay._Overlay._ElementWithFocusPreviousToAppBar &&
-                            (!document.activeElement || _Overlay._Overlay._isAppBarOrChild(document.activeElement))) {
+                            (!_Global.document.activeElement || _Overlay._Overlay._isAppBarOrChild(_Global.document.activeElement))) {
                             _restorePreviousFocus();
                         }
                         // Always clear the previous focus (to prevent temporary leaking of element)
                         _Overlay._Overlay._ElementWithFocusPreviousToAppBar = null;
-                    } else if (AppBar._isWithinAppBarOrChild(document.activeElement, that.element)) {
+                    } else if (AppBar._isWithinAppBarOrChild(_Global.document.activeElement, that.element)) {
                         // Set focus to next visible AppBar in DOM
 
                         var foundCurrentAppBar = false;
@@ -1106,7 +1107,7 @@ define([
 
                 _beforeShow: function AppBar_beforeShow() {
                     // Each overlay tracks the window width for triggering light-dismiss in the resize handler.
-                    this._currentDocumentWidth = this._currentDocumentWidth || document.documentElement.offsetWidth;
+                    this._currentDocumentWidth = this._currentDocumentWidth || _Global.document.documentElement.offsetWidth;
 
                     // In case their event 'beforeshow' event listener is going to manipulate commands, 
                     // first see if there are any queued command animations we can handle while we're still hidden.
@@ -1209,7 +1210,7 @@ define([
                 },
 
                 _isABottomAppBarInTheProcessOfShowing: function AppBar_isABottomAppBarInTheProcessOfShowing() {
-                    var appbars = document.querySelectorAll("." + _Constants.appBarClass + "." + _Constants.bottomClass);
+                    var appbars = _Global.document.querySelectorAll("." + _Constants.appBarClass + "." + _Constants.bottomClass);
                     for (var i = 0; i < appbars.length; i++) {
                         if (appbars[i].winAnimating === displayModeVisiblePositions.shown) {
                             return true;
@@ -1226,7 +1227,7 @@ define([
                 //      AND a bottom appbar is not in the process of showing.
                 // Otherwise Returns false
                 _shouldStealFocus: function AppBar_shouldStealFocus() {
-                    var activeElementAppBar = _Overlay._Overlay._isAppBarOrChild(document.activeElement);
+                    var activeElementAppBar = _Overlay._Overlay._isAppBarOrChild(_Global.document.activeElement);
                     if (this._element === activeElementAppBar) {
                         // This appbar already has focus and we don't want to move focus
                         // from where it currently is in this appbar.
@@ -1265,7 +1266,7 @@ define([
                         // Prevent what is gaining focus from showing that it has focus,
                         // but only in the non-keyboard scenario.
                         if (!this._keyboardInvoked) {
-                            _Overlay._Overlay._addHideFocusClass(document.activeElement);
+                            _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
                         }
                     } else {
                         // No first element, set it to appbar itself
@@ -1326,7 +1327,7 @@ define([
 
                     this._needToHandleShowingKeyboard = true;
                     // If focus is in the appbar, don't cause scrolling.
-                    if (!this.hidden && this._element.contains(document.activeElement)) {
+                    if (!this.hidden && this._element.contains(_Global.document.activeElement)) {
                         event.ensuredFocusedElementInView = true;
                     }
 
@@ -1341,7 +1342,7 @@ define([
 
                     // Also set timeout regardless, so we can clean up our _keyboardShowing flag.
                     var that = this;
-                    setTimeout(function (e) { that._checkKeyboardTimer(e); }, _Overlay._Overlay._keyboardInfo._animationShowLength + _Overlay._Overlay._scrollTimeout);
+                    _Global.setTimeout(function (e) { that._checkKeyboardTimer(e); }, _Overlay._Overlay._keyboardInfo._animationShowLength + _Overlay._Overlay._scrollTimeout);
                 },
 
                 _hidingKeyboard: function AppBar_hidingKeyboard() {
@@ -1511,7 +1512,7 @@ define([
                         // Add a firstDiv that will be the first child of the appBar.
                         // On focus set focus to the previous appBar.
                         // The div should only be focusable if there are shown non-sticky AppBars.
-                        appBarFirstDiv = document.createElement("div");
+                        appBarFirstDiv = _Global.document.createElement("div");
                         // display: inline is needed so that the div doesn't take up space and cause the page to scroll on focus
                         appBarFirstDiv.style.display = "inline";
                         appBarFirstDiv.className = _Constants.firstDivClass;
@@ -1529,7 +1530,7 @@ define([
                         // Add a finalDiv that will be the last child of the appBar.
                         // On focus set focus to the next appBar.
                         // The div should only be focusable if there are shown non-sticky AppBars.
-                        appBarFinalDiv = document.createElement("div");
+                        appBarFinalDiv = _Global.document.createElement("div");
                         // display: inline is needed so that the div doesn't take up space and cause the page to scroll on focus
                         appBarFinalDiv.style.display = "inline";
                         appBarFinalDiv.className = _Constants.finalDivClass;

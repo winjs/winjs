@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../Core/_Global',
     '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -12,7 +13,7 @@ define([
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function tooltipInit(exports, _WinRT, _Base, _BaseUtils, _Events, Animations, _TransitionAnimation, _Control, _Dispose, _ElementUtilities) {
+    ], function tooltipInit(exports, _Global, _WinRT, _Base, _BaseUtils, _Events, Animations, _TransitionAnimation, _Control, _Dispose, _ElementUtilities) {
     "use strict";
 
     // Tooltip control implementation
@@ -115,7 +116,7 @@ define([
                 /// </returns>
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </signature>
-                anchorElement = anchorElement || document.createElement("div");
+                anchorElement = anchorElement || _Global.document.createElement("div");
 
                 var tooltip = _ElementUtilities.data(anchorElement).tooltip;
                 if (tooltip) {
@@ -403,10 +404,10 @@ define([
                 _cleanUpDOM: function () {
                     if (this._domElement) {
                         _Dispose.disposeSubTree(this._domElement);
-                        document.body.removeChild(this._domElement);
+                        _Global.document.body.removeChild(this._domElement);
                         this._domElement = null;
 
-                        document.body.removeChild(this._phantomDiv);
+                        _Global.document.body.removeChild(this._phantomDiv);
                         this._phantomDiv = null;
                     }
                 },
@@ -414,13 +415,13 @@ define([
                 _createTooltipDOM: function () {
                     this._cleanUpDOM();
 
-                    this._domElement = document.createElement("div");
+                    this._domElement = _Global.document.createElement("div");
 
                     var id = _ElementUtilities._uniqueID(this._domElement);
                     this._domElement.setAttribute("id", id);
 
                     // Set the direction of tooltip according to anchor element's
-                    var computedStyle = document.defaultView.getComputedStyle(this._anchorElement, null);
+                    var computedStyle = _Global.document.defaultView.getComputedStyle(this._anchorElement, null);
                     var elemStyle = this._domElement.style;
                     elemStyle.direction = computedStyle.direction;
                     elemStyle.writingMode = computedStyle["writing-mode"]; // must use CSS name, not JS name
@@ -439,7 +440,7 @@ define([
                         this._domElement.innerHTML = this._innerHTML;
                     }
 
-                    document.body.appendChild(this._domElement);
+                    _Global.document.body.appendChild(this._domElement);
                     _ElementUtilities.addClass(this._domElement, msTooltip);
 
                     // In the event of user-assigned classes, add those too
@@ -448,17 +449,17 @@ define([
                     }
 
                     // Create a phantom div on top of the tooltip div to block all interactions
-                    this._phantomDiv = document.createElement("div");
+                    this._phantomDiv = _Global.document.createElement("div");
                     this._phantomDiv.setAttribute("tabindex", -1);
-                    document.body.appendChild(this._phantomDiv);
+                    _Global.document.body.appendChild(this._phantomDiv);
                     _ElementUtilities.addClass(this._phantomDiv, msTooltipPhantom);
-                    var zIndex = document.defaultView.getComputedStyle(this._domElement, null).zIndex + 1;
+                    var zIndex = _Global.document.defaultView.getComputedStyle(this._domElement, null).zIndex + 1;
                     this._phantomDiv.style.zIndex = zIndex;
                 },
 
                 _raiseEvent: function (type, eventProperties) {
                     if (this._anchorElement) {
-                        var customEvent = document.createEvent("CustomEvent");
+                        var customEvent = _Global.document.createEvent("CustomEvent");
                         customEvent.initCustomEvent(type, false, false, eventProperties);
                         this._anchorElement.dispatchEvent(customEvent);
                     }
@@ -579,7 +580,7 @@ define([
                         if (this._hideDelay !== "never") {
                             var that = this;
                             var delay = this._infotip ? Math.min(3 * messageDuration, HIDE_DELAY_MAX) : messageDuration;
-                            this._hideDelayTimer = setTimeout(function () {
+                            this._hideDelayTimer = _Global.setTimeout(function () {
                                 that._onDismiss();
                             }, delay);
                         }
@@ -587,7 +588,7 @@ define([
                 },
 
                 _onHideAnimationEnd: function () {
-                    document.body.removeEventListener("DOMNodeRemoved", this._removeTooltip, false);
+                    _Global.document.body.removeEventListener("DOMNodeRemoved", this._removeTooltip, false);
                     this._cleanUpDOM();
                     // Once we remove the tooltip from the DOM, we should remove the aria tag from the anchor
                     if (this._anchorElement) {
@@ -718,11 +719,11 @@ define([
                     var anchor = { x: 0, y: 0, width: 0, height: 0 };
                     var tip = { width: 0, height: 0 };
 
-                    viewport.width = document.documentElement.clientWidth;
-                    viewport.height = document.documentElement.clientHeight;
-                    if (document.defaultView.getComputedStyle(document.body, null)["writing-mode"] === "tb-rl") {
-                        viewport.width = document.documentElement.clientHeight;
-                        viewport.height = document.documentElement.clientWidth;
+                    viewport.width = _Global.document.documentElement.clientWidth;
+                    viewport.height = _Global.document.documentElement.clientHeight;
+                    if (_Global.document.defaultView.getComputedStyle(_Global.document.body, null)["writing-mode"] === "tb-rl") {
+                        viewport.width = _Global.document.documentElement.clientHeight;
+                        viewport.height = _Global.document.documentElement.clientWidth;
                     }
 
                     if (this._contactPoint && (contactType === "touch" || contactType === "mouse")) {
@@ -774,7 +775,7 @@ define([
                     this._raiseEvent("beforeopen");
 
                     // If the anchor is not in the DOM tree, we don't create the tooltip
-                    if (!document.body.contains(this._anchorElement)) {
+                    if (!_Global.document.body.contains(this._anchorElement)) {
                         return;
                     }
                     if (this._shouldDismiss) {
@@ -799,7 +800,7 @@ define([
                         var current = that._anchorElement;
                         while (current) {
                             if (event.target === current) {
-                                document.body.removeEventListener("DOMNodeRemoved", that._removeTooltip, false);
+                                _Global.document.body.removeEventListener("DOMNodeRemoved", that._removeTooltip, false);
                                 that._cleanUpDOM();
                                 break;
                             }
@@ -807,7 +808,7 @@ define([
                         }
                     };
 
-                    document.body.addEventListener("DOMNodeRemoved", this._removeTooltip, false);
+                    _Global.document.body.addEventListener("DOMNodeRemoved", this._removeTooltip, false);
                     this._createTooltipDOM();
                     this._position(contactType);
                     if (this._useAnimation) {
@@ -857,14 +858,14 @@ define([
                         }
                     }
 
-                    clearTimeout(this._delayTimer);
-                    clearTimeout(this._hideDelayTimer);
+                    _Global.clearTimeout(this._delayTimer);
+                    _Global.clearTimeout(this._hideDelayTimer);
 
                     // Set the delay time
                     var delay = this._decideOnDelay(type);
                     if (delay > 0) {
                         var that = this;
-                        this._delayTimer = setTimeout(function () {
+                        this._delayTimer = _Global.setTimeout(function () {
                             that._showTooltip(type);
                         }, delay);
                     } else {

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -17,7 +18,7 @@ define([
     '../Utilities/_UI',
     './ItemContainer/_Constants',
     './ItemContainer/_ItemEventsHandler'
-    ], function itemContainerInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
+    ], function itemContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
     "use strict";
 
     var createEvent = _Events._createEventProperty;
@@ -71,7 +72,7 @@ define([
                 /// The new ItemContainer control.
                 /// </returns>
                 /// </signature>
-                element = element || document.createElement("DIV");
+                element = element || _Global.document.createElement("DIV");
                 this._id = element.id || _ElementUtilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -469,7 +470,7 @@ define([
                         return;
                     }
                     _ElementUtilities.addClass(this._itemBox, _Constants._itemFocusClass);
-                    var outline = document.createElement("div");
+                    var outline = _Global.document.createElement("div");
                     outline.className = _Constants._itemFocusOutlineClass;
                     this._itemBox.appendChild(outline);
                 },
@@ -559,7 +560,7 @@ define([
 
                 _rtl: function ItemContainer_rtl() {
                     if (typeof this._cachedRTL !== "boolean") {
-                        this._cachedRTL = window.getComputedStyle(this.element, null).direction === "rtl";
+                        this._cachedRTL = _Global.getComputedStyle(this.element, null).direction === "rtl";
                     }
                     return this._cachedRTL;
                 },
@@ -569,7 +570,7 @@ define([
                 },
 
                 _forceLayout: function ItemContainer_forceLayout() {
-                    this._cachedRTL = window.getComputedStyle(this.element, null).direction === "rtl";
+                    this._cachedRTL = _Global.getComputedStyle(this.element, null).direction === "rtl";
                     this._setDirectionClass();
                 },
 
@@ -648,10 +649,10 @@ define([
                 },
 
                 _setupInternalTree: function ItemContainer_setupInternalTree() {
-                    var item = document.createElement("div");
+                    var item = _Global.document.createElement("div");
                     item.className = _Constants._itemClass;
-                    this._captureProxy = document.createElement("div");
-                    this._itemBox = document.createElement("div");
+                    this._captureProxy = _Global.document.createElement("div");
+                    this._itemBox = _Global.document.createElement("div");
                     this._itemBox.className = _Constants._itemBoxClass;
                     var child = this.element.firstChild;
                     while (child) {
@@ -666,7 +667,7 @@ define([
 
                 _fireInvokeEvent: function ItemContainer_fireInvokeEvent() {
                     if (this.tapBehavior !== _UI.TapBehavior.none) {
-                        var eventObject = document.createEvent("CustomEvent");
+                        var eventObject = _Global.document.createEvent("CustomEvent");
                         eventObject.initCustomEvent(eventNames.invoked, true, false, {});
                         this.element.dispatchEvent(eventObject);
                     }
@@ -765,13 +766,13 @@ define([
                 },
 
                 fireSelectionChanging: function SingleItemSelectionManager_fireSelectionChanging() {
-                    var eventObject = document.createEvent("CustomEvent");
+                    var eventObject = _Global.document.createEvent("CustomEvent");
                     eventObject.initCustomEvent(eventNames.selectionchanging, true, true, {});
                     return this._element.dispatchEvent(eventObject);
                 },
 
                 fireSelectionChanged: function ItemContainer_fireSelectionChanged() {
-                    var eventObject = document.createEvent("CustomEvent");
+                    var eventObject = _Global.document.createEvent("CustomEvent");
                     eventObject.initCustomEvent(eventNames.selectionchanged, true, false, {});
                     this._element.dispatchEvent(eventObject);
                 },

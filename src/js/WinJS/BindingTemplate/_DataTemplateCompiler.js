@@ -84,7 +84,7 @@ define([
 
             function targetSecurityCheck(value) {
                 value = requireSupportedForProcessing(value);
-                return value instanceof Node ? null : value;
+                return value instanceof _Global.Node ? null : value;
             }
 
             // Compiler formatting functions
@@ -479,7 +479,7 @@ define([
                 this._defaultInitializer = requireSupportedForProcessing(options.defaultInitializer || init_defaultBind);
                 this._optimizeTextBindings = !options.disableTextBindingOptimization;
                 this._templateElement = templateElement;
-                this._templateContent = document.createElement(templateElement.tagName);
+                this._templateContent = _Global.document.createElement(templateElement.tagName);
                 this._extractChild = options.extractChild || false;
                 this._controls = null;
                 this._bindings = null;
@@ -1950,7 +1950,7 @@ define([
 
                 compile: function TemplateCompiler_compile(template, templateElement, options) {
 
-                    if (!(templateElement instanceof HTMLElement)) {
+                    if (!(templateElement instanceof _Global.HTMLElement)) {
                         throw "Illegal";
                     }
 
@@ -1963,7 +1963,7 @@ define([
                     var importAliases = compiler.importAllSafe({
                         Signal: _Signal,
                         global: _Global,
-                        document: document,
+                        document: _Global.document,
                         cancelBlocker: cancelBlocker,
                         promise_as: promise_as,
                         disposeInstance: disposeInstance,

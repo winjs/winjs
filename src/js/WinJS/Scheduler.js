@@ -467,7 +467,7 @@ define([
     //
     state_canceled.enter = function (job) {
         jobProfilerMark(job, "job-canceled", "info");
-        _Trace._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_CANCELED);
+        _Trace._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && _Global.Debug.MS_ASYNC_OP_STATUS_CANCELED);
         job._removeJob();
         job._work = null;
         job._context = null;
@@ -730,7 +730,7 @@ define([
     //
     state_complete.completed = true;
     state_complete.enter = function (job) {
-        _Trace._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && Debug.MS_ASYNC_OP_STATUS_SUCCESS);
+        _Trace._traceAsyncOperationCompleted(job._asyncOpID, _Global.Debug && _Global.Debug.MS_ASYNC_OP_STATUS_SUCCESS);
         job._work = null;
         job._context = null;
         job.owner = null;
@@ -1067,7 +1067,7 @@ define([
     // which should give the host a decent amount of time to do work.
     //
     var scheduleWithHost = _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (callback) {
-        setTimeout(callback, 16);
+        _Global.setTimeout(callback, 16);
     };
 
     // Stubs for the parts of the WWA scheduler APIs that we use. These stubs are
@@ -1078,7 +1078,7 @@ define([
             // If it's a high priority callback then we additionally schedule using setTimeout(0)
             //
             if (priority === MSApp.HIGH) {
-                setTimeout(callback, 0);
+                _Global.setTimeout(callback, 0);
             }
             // We always schedule using setImmediate
             //

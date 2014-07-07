@@ -217,7 +217,7 @@ define([
                 }
             }
         };
-        var baseElement = (rootElement || document.body);
+        var baseElement = (rootElement || _Global.document.body);
         var selector = "[data-win-bind],[data-win-control]";
         var elements = baseElement.querySelectorAll(selector);
         var neg;
@@ -437,7 +437,7 @@ define([
                 _Log.log && _Log.log(_Resources._formatString(strings.propertyDoesNotExist, destProperties[i], destProperties.join(".")), "winjs binding", "error");
                 return;
             }
-            else if (dest instanceof Node) {
+            else if (dest instanceof _Global.Node) {
                 _Log.log && _Log.log(_Resources._formatString(strings.nestedDOMElementBindingNotSupported, destProperties[i], destProperties.join(".")), "winjs binding", "error");
                 return;
             }

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -20,7 +21,7 @@ define([
     './FlipView/_PageManager',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function flipperInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _ItemsManager, _UI, _Constants, _PageManager) {
+    ], function flipperInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _ItemsManager, _UI, _Constants, _PageManager) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -80,7 +81,7 @@ define([
                     }
                     })) {
                         that._cachedStyleDir = that._flipviewDiv.style.direction;
-                        that._rtl = window.getComputedStyle(that._flipviewDiv, null).direction === "rtl";
+                        that._rtl = _Global.getComputedStyle(that._flipviewDiv, null).direction === "rtl";
                         that._setupOrientation();
                     }
                 }
@@ -126,7 +127,7 @@ define([
 
                 this._disposed = false;
 
-                element = element || document.createElement("div");
+                element = element || _Global.document.createElement("div");
 
                 var horizontal = true,
                     dataSource = null,
@@ -184,7 +185,7 @@ define([
                 _ElementUtilities.addClass(element, "win-disposable");
                 this._avoidTrappingTime = 0;
                 this._windowWheelHandlerBound = this._windowWheelHandler.bind(this);
-                window.addEventListener('wheel', this._windowWheelHandlerBound);
+                _Global.addEventListener('wheel', this._windowWheelHandlerBound);
 
                 _WriteProfilerMark("WinJS.UI.FlipView:constructor,StopTM");
             }, {
@@ -202,7 +203,7 @@ define([
                         return;
                     }
 
-                    window.removeEventListener('wheel', this._windowWheelHandlerBound);
+                    _Global.removeEventListener('wheel', this._windowWheelHandlerBound);
                     _ElementUtilities._resizeNotifier.unsubscribe(this._flipviewDiv, flipviewResized);
 
 
@@ -458,12 +459,12 @@ define([
                 _initializeFlipView: function FlipView_initializeFlipView(element, horizontal, dataSource, itemRenderer, initialIndex, itemSpacing) {
                     this._flipviewDiv = element;
                     _ElementUtilities.addClass(this._flipviewDiv, flipViewClass);
-                    this._contentDiv = document.createElement("div");
-                    this._panningDivContainer = document.createElement("div");
+                    this._contentDiv = _Global.document.createElement("div");
+                    this._panningDivContainer = _Global.document.createElement("div");
                     this._panningDivContainer.className = "win-surface";
-                    this._panningDiv = document.createElement("div");
-                    this._prevButton = document.createElement("button");
-                    this._nextButton = document.createElement("button");
+                    this._panningDiv = _Global.document.createElement("div");
+                    this._prevButton = _Global.document.createElement("button");
+                    this._nextButton = _Global.document.createElement("button");
                     this._horizontal = horizontal;
                     this._dataSource = dataSource;
                     this._itemRenderer = itemRenderer;
@@ -870,7 +871,7 @@ define([
                             if (typeof itemTemplateResult.element === "object" && typeof itemTemplateResult.element.then === "function") {
                                 // This renderer returns a promise to an element
                                 itemRenderer = function (itemPromise) {
-                                    var elementRoot = document.createElement("div");
+                                    var elementRoot = _Global.document.createElement("div");
                                     elementRoot.className = "win-template";
                                     _Dispose.markDisposable(elementRoot);
                                     return {
@@ -887,7 +888,7 @@ define([
                         } else {
                             // Return a renderer that has return a placeholder
                             itemRenderer = function (itemPromise) {
-                                var elementRoot = document.createElement("div");
+                                var elementRoot = _Global.document.createElement("div");
                                 elementRoot.className = "win-template";
                                 _Dispose.markDisposable(elementRoot);
                                 // The pagecompleted event relies on this elementRoot
@@ -1080,7 +1081,7 @@ define([
                 _fireDatasourceCountChangedEvent: function FlipView_fireDatasourceCountChangedEvent() {
                     var that = this;
                     Scheduler.schedule(function FlipView_dispatchDataSourceCountChangedEvent() {
-                        var event = document.createEvent("Event");
+                        var event = _Global.document.createEvent("Event");
                         event.initEvent(FlipView.datasourceCountChangedEvent, true, true);
                         _WriteProfilerMark("WinJS.UI.FlipView:dataSourceCountChangedEvent,info");
                         that._flipviewDiv.dispatchEvent(event);
@@ -1099,7 +1100,7 @@ define([
                     if (this._horizontal) {
                         this._panningDivContainer.style["overflowX"] = (this._environmentSupportsTouch ? "scroll" : "hidden");
                         this._panningDivContainer.style["overflowY"] = "hidden";
-                        var rtl = window.getComputedStyle(this._flipviewDiv, null).direction === "rtl";
+                        var rtl = _Global.getComputedStyle(this._flipviewDiv, null).direction === "rtl";
                         this._rtl = rtl;
                         if (rtl) {
                             this._prevButton.className = navButtonClass + " " + navButtonRightClass;

@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    './Core/_Global',
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_ErrorFromName',
     './Core/_Resources',
     './ControlProcessor/_OptionsParser',
     './Promise'
-    ], function resInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _OptionsParser, Promise) {
+    ], function resInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _OptionsParser, Promise) {
     "use strict";
 
     var readyComplete = false;
@@ -15,7 +16,7 @@ define([
     var requireSupportedForProcessing = _BaseUtils.requireSupportedForProcessing;
 
     function processAllImpl(rootElement, count) {
-        rootElement = rootElement || document.body;
+        rootElement = rootElement || _Global.document.body;
 
         var count = count || 0;
 

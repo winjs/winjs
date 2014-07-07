@@ -9,9 +9,9 @@ define([
     }
 
     return {
-        _traceAsyncOperationStarting: (_Global.Debug && Debug.msTraceAsyncOperationStarting && Debug.msTraceAsyncOperationStarting.bind(_Global.Debug)) || nop,
-        _traceAsyncOperationCompleted: (_Global.Debug && Debug.msTraceAsyncOperationCompleted && Debug.msTraceAsyncOperationCompleted.bind(_Global.Debug)) || nop,
-        _traceAsyncCallbackStarting: (_Global.Debug && Debug.msTraceAsyncCallbackStarting && Debug.msTraceAsyncCallbackStarting.bind(_Global.Debug)) || nop,
-        _traceAsyncCallbackCompleted: (_Global.Debug && Debug.msTraceAsyncCallbackCompleted && Debug.msTraceAsyncCallbackCompleted.bind(_Global.Debug)) || nop
+        _traceAsyncOperationStarting: (_Global.Debug && _Global.Debug.msTraceAsyncOperationStarting && _Global.Debug.msTraceAsyncOperationStarting.bind(_Global.Debug)) || nop,
+        _traceAsyncOperationCompleted: (_Global.Debug && _Global.Debug.msTraceAsyncOperationCompleted && _Global.Debug.msTraceAsyncOperationCompleted.bind(_Global.Debug)) || nop,
+        _traceAsyncCallbackStarting: (_Global.Debug && _Global.Debug.msTraceAsyncCallbackStarting && _Global.Debug.msTraceAsyncCallbackStarting.bind(_Global.Debug)) || nop,
+        _traceAsyncCallbackCompleted: (_Global.Debug && _Global.Debug.msTraceAsyncCallbackCompleted && _Global.Debug.msTraceAsyncCallbackCompleted.bind(_Global.Debug)) || nop
     };
 });

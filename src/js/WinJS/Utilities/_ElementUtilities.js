@@ -386,7 +386,7 @@ define([
         activeElement = null;
     });
 
-    document.documentElement.addEventListener("focus", function (eventObject) {
+    _Global.document.documentElement.addEventListener("focus", function (eventObject) {
         var previousActiveElement = activeElement;
         activeElement = eventObject.target;
         if (previousActiveElement) {
@@ -731,10 +731,10 @@ define([
                 element.removeEventListener(this._resizeEvent, handler);
             },
             _handleResize: function ElementResizer_handleResize() {
-                var resizables = document.querySelectorAll('.' + this._resizeClass);
+                var resizables = _Global.document.querySelectorAll('.' + this._resizeClass);
                 var length = resizables.length;
                 for (var i = 0; i < length; i++) {
-                    var event = document.createEvent("Event");
+                    var event = _Global.document.createEvent("Event");
                     event.initEvent(this._resizeEvent, false, true);
                     resizables[i].dispatchEvent(event);
                 }
@@ -748,13 +748,13 @@ define([
         usingWebkitScrollCoordinates = false,
         usingFirefoxScrollCoordinates = false;
     function determineRTLEnvironment() {
-        var element = document.createElement("div");
+        var element = _Global.document.createElement("div");
         element.style.direction = "rtl";
         element.innerHTML = "" +
             "<div style='width: 100px; height: 100px; overflow: scroll; visibility:hidden'>" +
                 "<div style='width: 10000px; height: 100px;'></div>" +
             "</div>";
-        document.body.appendChild(element);
+        _Global.document.body.appendChild(element);
         var elementScroller = element.firstChild;
         if (elementScroller.scrollLeft > 0) {
             usingWebkitScrollCoordinates = true;
@@ -763,12 +763,12 @@ define([
         if (elementScroller.scrollLeft === 0) {
             usingFirefoxScrollCoordinates = true;
         }
-        document.body.removeChild(element);
+        _Global.document.body.removeChild(element);
         determinedRTLEnvironment = true;
     }
 
     function getAdjustedScrollPosition(element) {
-        var computedStyle = getComputedStyle(element),
+        var computedStyle = _Global.getComputedStyle(element),
             scrollLeft = element.scrollLeft;
         if (computedStyle.direction === "rtl") {
             if (!determinedRTLEnvironment) {
@@ -788,7 +788,7 @@ define([
 
     function setAdjustedScrollPosition(element, scrollLeft, scrollTop) {
         if (scrollLeft !== undefined) {
-            var computedStyle = getComputedStyle(element);
+            var computedStyle = _Global.getComputedStyle(element);
             if (computedStyle.direction === "rtl") {
                 if (!determinedRTLEnvironment) {
                     determineRTLEnvironment();
@@ -838,8 +838,8 @@ define([
         setAdjustedScrollPosition(element, position.scrollLeft, position.scrollTop);
     }
 
-    var supportsZoomTo = !!HTMLElement.prototype.msZoomTo;
-    var supportsTouchDetection = !!(window.MSPointerEvent || window.TouchEvent);
+    var supportsZoomTo = !!_Global.HTMLElement.prototype.msZoomTo;
+    var supportsTouchDetection = !!(_Global.MSPointerEvent || _Global.TouchEvent);
 
     // Snap point feature detection is special - On most platforms it is enough to check if 'scroll-snap-type'
     // is a valid style, however, IE10 and WP IE claim that they are valid styles but don't support them.
@@ -874,11 +874,11 @@ define([
     }
 
     function _getCursorPos(eventObject) {
-        var docElement = document.documentElement;
+        var docElement = _Global.document.documentElement;
         var docScrollPos = getScrollPosition(docElement);
 
         return {
-            left: eventObject.clientX + (document.body.dir === "rtl" ? -docScrollPos.scrollLeft : docScrollPos.scrollLeft),
+            left: eventObject.clientX + (_Global.document.body.dir === "rtl" ? -docScrollPos.scrollLeft : docScrollPos.scrollLeft),
             top: eventObject.clientY + docElement.scrollTop
         };
     }
@@ -947,10 +947,10 @@ define([
         _MSManipulationEvent: _MSManipulationEvent,
 
         _elementsFromPoint: function (x, y) {
-            if (document.msElementsFromPoint) {
-                return document.msElementsFromPoint(x, y);
+            if (_Global.document.msElementsFromPoint) {
+                return _Global.document.msElementsFromPoint(x, y);
             } else {
-                var element = document.elementFromPoint(x, y);
+                var element = _Global.document.elementFromPoint(x, y);
                 return element ? [element] : null;
             }
         },
@@ -1050,7 +1050,7 @@ define([
                     var initialPos = getAdjustedScrollPosition(element);
                     var effectiveScrollLeft = (typeof element._zoomToDestX === "number" ? element._zoomToDestX : initialPos.scrollLeft);
                     var effectiveScrollTop = (typeof element._zoomToDestY === "number" ? element._zoomToDestY : initialPos.scrollTop);
-                    var cs = getComputedStyle(element);
+                    var cs = _Global.getComputedStyle(element);
                     var scrollLimitX = element.scrollWidth - parseInt(cs.width, 10) - parseInt(cs.paddingLeft, 10) - parseInt(cs.paddingRight, 10);
                     var scrollLimitY = element.scrollHeight - parseInt(cs.height, 10) - parseInt(cs.paddingTop, 10) - parseInt(cs.paddingBottom, 10);
 
@@ -1088,11 +1088,11 @@ define([
                             element._zoomToDestY = null;
                         } else {
                             setAdjustedScrollPosition(element, initialPos.scrollLeft + t * xFactor, initialPos.scrollTop + t * yFactor);
-                            requestAnimationFrame(update);
+                            _Global.requestAnimationFrame(update);
                         }
                     };
 
-                    requestAnimationFrame(update);
+                    _Global.requestAnimationFrame(update);
                 }, Scheduler.Priority.high, null, "WinJS.Utilities._zoomTo");
             }
         },
@@ -1100,7 +1100,7 @@ define([
         _setActive: function _setActive(element, scroller) {
             var success = true;
             try {
-                if (_Global.HTMLElement && HTMLElement.prototype.setActive) {
+                if (_Global.HTMLElement && _Global.HTMLElement.prototype.setActive) {
                     element.setActive();
                 } else {
                     // We are aware the unlike setActive(), focus() will scroll to the element that gets focus. However, this is
@@ -1146,7 +1146,7 @@ define([
         // to the DOM. When the hidden element is added to the DOM, it will dispatch a
         // "WinJSNodeInserted" event on the provided element.
         _addInsertedNotifier: function (element) {
-            var hiddenElement = document.createElement("div");
+            var hiddenElement = _Global.document.createElement("div");
             hiddenElement.style["animation-name"] = "WinJS-node-inserted";
             hiddenElement.style["animation-duration"] = "0.01s";
             hiddenElement.style["-webkit-animation-name"] = "WinJS-node-inserted";
@@ -1156,7 +1156,7 @@ define([
 
             exports._addEventListener(hiddenElement, "animationStart", function (e) {
                 if (e.animationName === "WinJS-node-inserted") {
-                    var e = document.createEvent("Event");
+                    var e = _Global.document.createEvent("Event");
                     e.initEvent("WinJSNodeInserted", false, true);
                     element.dispatchEvent(e);
                 }
@@ -1936,10 +1936,10 @@ define([
                 left = element.offsetLeft;
 
             while ((element = element.parentNode) &&
-                    element !== document.body &&
-                    element !== document.documentElement) {
+                    element !== _Global.document.body &&
+                    element !== _Global.document.documentElement) {
                 top -= element.scrollTop;
-                var dir = document.defaultView.getComputedStyle(element, null).direction;
+                var dir = _Global.document.defaultView.getComputedStyle(element, null).direction;
                 left -= dir !== "rtl" ? element.scrollLeft : -getAdjustedScrollPosition(element).scrollLeft;
 
                 if (element === offsetParent) {

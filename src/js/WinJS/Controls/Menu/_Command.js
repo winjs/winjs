@@ -3,6 +3,7 @@
 /// <dictionary>appbar,appbars,Flyout,Flyouts,onclick,Statics</dictionary>
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
@@ -10,7 +11,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../AppBar/_Constants',
     '../Flyout/_Overlay'
-    ], function menuCommandInit(exports, _Base, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Constants, _Overlay) {
+    ], function menuCommandInit(exports, _Global, _Base, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -41,7 +42,7 @@ define([
                         var flyout = command._flyout;
                         // Flyout may not have processAll'd, so this may be a DOM object
                         if (typeof flyout === "string") {
-                            flyout = document.getElementById(flyout);
+                            flyout = _Global.document.getElementById(flyout);
                         }
                         if (!flyout.show) {
                             flyout = flyout.winControl;
@@ -76,7 +77,7 @@ define([
 
             function _handleMouseMove() {
                 /*jshint validthis: true */
-                if (this && this.focus && this !== document.activeElement) {
+                if (this && this.focus && this !== _Global.document.activeElement) {
                     this.focus();
                 }
             }
@@ -86,13 +87,13 @@ define([
                 var that = this;
                 var parentFlyout = _getParentFlyout(that);
                 if (parentFlyout
-                 && this === document.activeElement
+                 && this === _Global.document.activeElement
                  && _ElementUtilities.hasClass(parentFlyout, _Constants.menuClass)
                  && parentFlyout.focus) {
                     // Menu gives focus to the menu itself
                     parentFlyout.focus();
                 } else if (parentFlyout
-                        && this === document.activeElement
+                        && this === _Global.document.activeElement
                         && parentFlyout.children
                         && parentFlyout.children.length > 0
                         && parentFlyout.children[0]
@@ -285,7 +286,7 @@ define([
                         // Resolve it to the flyout
                         var flyout = this._flyout;
                         if (typeof flyout === "string") {
-                            flyout = document.getElementById(flyout);
+                            flyout = _Global.document.getElementById(flyout);
                         }
                         // If it doesn't have a .element, then we need to getControl on it
                         if (flyout && !flyout.element) {
@@ -455,7 +456,7 @@ define([
                 _createSeparator: function MenuCommand_createSeparator() {
                     // Make sure there's an input element
                     if (!this._element) {
-                        this._element = document.createElement("hr");
+                        this._element = _Global.document.createElement("hr");
                     } else {
                         // Verify the input was an hr
                         if (this._element.tagName !== "HR") {
@@ -467,7 +468,7 @@ define([
                 _createButton: function MenuCommand_createButton() {
                     // Make sure there's an input element
                     if (!this._element) {
-                        this._element = document.createElement("button");
+                        this._element = _Global.document.createElement("button");
                     } else {
                         // Verify the input was a button
                         if (this._element.tagName !== "BUTTON") {

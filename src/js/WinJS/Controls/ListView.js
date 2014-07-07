@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -34,7 +35,7 @@ define([
     './ListView/_VirtualizeContentsView',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function listViewImplInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _ItemsManager, _SafeHtml, _TabContainer, _UI, _UIUtilities, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
+    ], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _ItemsManager, _SafeHtml, _TabContainer, _UI, _UIUtilities, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -233,7 +234,7 @@ define([
                 /// The new ListView.
                 /// </returns>
                 /// </signature>
-                element = element || document.createElement("div");
+                element = element || _Global.document.createElement("div");
                 this._id = element.id || "";
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -1330,7 +1331,7 @@ define([
                     // Layouts do not currently support saving the scroll position when forceLayout() is called.
                     // Layouts need to recreate the canvas because the tabManager is there and you don't want to
                     // construct 2 instances of WinJS.UI.TabContainer for the same element.
-                    var newCanvas = document.createElement('div');
+                    var newCanvas = _Global.document.createElement('div');
                     newCanvas.className = this._canvas.className;
                     this._viewport.replaceChild(newCanvas, this._canvas);
                     this._canvas = newCanvas;
@@ -1372,7 +1373,7 @@ define([
                     this._tabManager = new _TabContainer.TabContainer(this._viewport);
                     this._tabManager.tabIndex = this._tabIndex;
 
-                    this._progressBar = document.createElement("progress");
+                    this._progressBar = _Global.document.createElement("progress");
                     _ElementUtilities.addClass(this._progressBar, _Constants._progressClass);
                     this._progressBar.style.position = "absolute";
                     this._progressBar.max = 100;
@@ -1395,7 +1396,7 @@ define([
                         this._keyboardEventsHelper._shouldHaveFocus = false;
                         // If the viewport has focus, leave it there. This will prevent focus from jumping
                         // from the viewport to the keyboardEventsHelper when scrolling with Narrator Touch.
-                        if (document.activeElement !== this._viewport && this._hasKeyboardFocus) {
+                        if (_Global.document.activeElement !== this._viewport && this._hasKeyboardFocus) {
                             this._keyboardEventsHelper._shouldHaveFocus = true;
                             _ElementUtilities._setActive(this._keyboardEventsHelper);
                         }
@@ -2291,11 +2292,11 @@ define([
 
                                     _ElementUtilities.addClass(element, _Constants._itemClass);
 
-                                    var itemBox = document.createElement("div");
+                                    var itemBox = _Global.document.createElement("div");
                                     _ElementUtilities.addClass(itemBox, _Constants._itemBoxClass);
                                     itemBox.appendChild(element);
 
-                                    var container = document.createElement("div");
+                                    var container = _Global.document.createElement("div");
                                     _ElementUtilities.addClass(container, _Constants._containerClass);
                                     container.appendChild(itemBox);
 
@@ -2309,7 +2310,7 @@ define([
                             var rendered = _ItemsManager._normalizeRendererReturn(that.groupHeaderTemplate(Promise.wrap(group)));
                             return rendered.then(function (headerRecord) {
                                 _ElementUtilities.addClass(headerRecord.element, _Constants._headerClass);
-                                var container = document.createElement("div");
+                                var container = _Global.document.createElement("div");
                                 _ElementUtilities.addClass(container, _Constants._headerContainerClass);
                                 container.appendChild(headerRecord.element);
                                 return container;
@@ -2689,7 +2690,7 @@ define([
 
                     var currentScrollPosition = this._viewportScrollPosition;
                     if (currentScrollPosition !== this._lastScrollPosition) {
-                        this._pendingScroll = requestAnimationFrame(this._checkScroller.bind(this));
+                        this._pendingScroll = _Global.requestAnimationFrame(this._checkScroller.bind(this));
 
                         var direction = (currentScrollPosition < this._lastScrollPosition) ? "left" : "right";
                         currentScrollPosition = Math.max(0, currentScrollPosition);
@@ -2893,7 +2894,7 @@ define([
 
                         this._writeProfilerMark("loadingStateChanged:" + state + ",info");
                         this._loadingState = state;
-                        var eventObject = document.createEvent("CustomEvent");
+                        var eventObject = _Global.document.createEvent("CustomEvent");
                         eventObject.initCustomEvent("loadingstatechanged", true, false, detail);
                         this._element.dispatchEvent(eventObject);
                     }
@@ -2902,7 +2903,7 @@ define([
                 _createTemplates: function ListView_createTemplates() {
 
                     function createNodeWithClass(className, skipAriaHidden) {
-                        var element = document.createElement("div");
+                        var element = _Global.document.createElement("div");
                         element.className = className;
                         if (!skipAriaHidden) {
                             element.setAttribute("aria-hidden", true);
@@ -2947,7 +2948,7 @@ define([
 
                 _rtl: function ListView_rtl() {
                     if (typeof this._cachedRTL !== "boolean") {
-                        this._cachedRTL = window.getComputedStyle(this._element, null).direction === "rtl";
+                        this._cachedRTL = _Global.getComputedStyle(this._element, null).direction === "rtl";
                     }
                     return this._cachedRTL;
                 },
@@ -3363,7 +3364,7 @@ define([
                             return;
                         }
                         _ElementUtilities.addClass(itemBox, _Constants._itemFocusClass);
-                        var outline = document.createElement("div");
+                        var outline = _Global.document.createElement("div");
                         outline.className = _Constants._itemFocusOutlineClass;
                         itemBox.appendChild(outline);
                     }
@@ -3462,7 +3463,7 @@ define([
                 _isZombie: function () {
                     // determines if this ListView is no longer in the DOM or has been cleared
                     //
-                    return this._disposed || !(this.element.firstElementChild && document.body.contains(this.element));
+                    return this._disposed || !(this.element.firstElementChild && _Global.document.body.contains(this.element));
                 },
 
                 _ifZombieDispose: function () {
@@ -3578,7 +3579,7 @@ define([
                 },
 
                 _fireAnimationEvent: function (type) {
-                    var animationEvent = document.createEvent("CustomEvent"),
+                    var animationEvent = _Global.document.createEvent("CustomEvent"),
                         animationPromise = Promise.wrap();
 
                     animationEvent.initCustomEvent("contentanimating", true, true, {
@@ -3606,12 +3607,12 @@ define([
                     }
 
                     if (!this._ariaStartMarker) {
-                        this._ariaStartMarker = document.createElement("div");
+                        this._ariaStartMarker = _Global.document.createElement("div");
                         this._ariaStartMarker.id = uniqueID(this._ariaStartMarker);
                         this._viewport.insertBefore(this._ariaStartMarker, this._viewport.firstElementChild);
                     }
                     if (!this._ariaEndMarker) {
-                        this._ariaEndMarker = document.createElement("div");
+                        this._ariaEndMarker = _Global.document.createElement("div");
                         this._ariaEndMarker.id = uniqueID(this._ariaEndMarker);
                         this._viewport.appendChild(this._ariaEndMarker);
                     }
@@ -3802,7 +3803,7 @@ define([
                                 cleanup;
 
                         if (!item) {
-                            item = document.createElement("div"),
+                            item = _Global.document.createElement("div"),
                             _ElementUtilities.addClass(item, className);
                             that._viewport.appendChild(item);
 
@@ -3838,7 +3839,7 @@ define([
                         firstHeaderIndex: (+firstHeaderIndex) || -1,
                         lastHeaderIndex: (+lastHeaderIndex) || -1
                     };
-                    var eventObject = document.createEvent("CustomEvent");
+                    var eventObject = _Global.document.createEvent("CustomEvent");
                     eventObject.initCustomEvent("accessibilityannotationcomplete", true, false, detail);
                     this._element.dispatchEvent(eventObject);
                 },
@@ -3878,7 +3879,7 @@ define([
                     var removedContainers = [];
 
                     function createContainer() {
-                        var element = document.createElement("div");
+                        var element = _Global.document.createElement("div");
                         element.className = _Constants._containerClass;
                         return element;
                     }
@@ -3921,7 +3922,7 @@ define([
                                 blocksCount++;
                             }
 
-                            var blocksTemp = document.createElement("div");
+                            var blocksTemp = _Global.document.createElement("div");
                             _SafeHtml.setInnerHTMLUnsafe(blocksTemp, markup);
 
                             var children = blocksTemp.children;
@@ -3938,8 +3939,8 @@ define([
 
                                 var container = lastBlock.items.pop();
 
-                                if (!that._view._requireFocusRestore && container.contains(document.activeElement)) {
-                                    that._view._requireFocusRestore = document.activeElement;
+                                if (!that._view._requireFocusRestore && container.contains(_Global.document.activeElement)) {
+                                    that._view._requireFocusRestore = _Global.document.activeElement;
                                     that._unsetFocusOnItem();
                                 }
 

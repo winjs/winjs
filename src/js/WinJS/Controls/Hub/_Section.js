@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -12,7 +13,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_KeyboardBehavior',
     '../../Utilities/_UIUtilities'
-    ], function hubSectionInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities) {
+    ], function hubSectionInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -56,7 +57,7 @@ define([
                 /// </returns>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
-                element = element || document.createElement("DIV");
+                element = element || _Global.document.createElement("DIV");
                 options = options || {};
 
                 if (element.winControl) {
@@ -70,7 +71,7 @@ define([
                 _ElementUtilities.addClass(this.element, "win-disposable");
 
                 // Not using innerHTML here because there could have been some children already.
-                this._headerElement = document.createElement("DIV");
+                this._headerElement = _Global.document.createElement("DIV");
                 this._headerElement.className = HubSection._ClassName.hubSectionHeader;
                 this._headerElement.innerHTML =
                     '<button type="button" role="link" class="' + HubSection._ClassName.hubSectionInteractive + ' ' + HubSection._ClassName.hubSectionHeaderTabStop + '">' +
@@ -91,7 +92,7 @@ define([
 
                 this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headerElement);
 
-                this._contentElement = document.createElement("DIV");
+                this._contentElement = _Global.document.createElement("DIV");
                 this._contentElement.className = HubSection._ClassName.hubSectionContent;
                 this._contentElement.style.visibility = "hidden";
                 element.appendChild(this._contentElement);

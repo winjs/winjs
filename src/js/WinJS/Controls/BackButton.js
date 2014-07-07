@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Back Button
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_Resources',
@@ -9,7 +10,7 @@ define([
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function backButtonInit(_Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities) {
+    ], function backButtonInit(_Global, _Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities) {
     "use strict";
 
     var Key = _ElementUtilities.Key;
@@ -29,14 +30,14 @@ define([
 
         function hookUpBackButtonGlobalEventHandlers() {
             // Subscribes to global events on the window object
-            window.addEventListener('keyup', backButtonGlobalKeyUpHandler, false);
-            window.addEventListener('pointerup', backButtonGlobalMSPointerUpHandler, false);
+            _Global.addEventListener('keyup', backButtonGlobalKeyUpHandler, false);
+            _Global.addEventListener('pointerup', backButtonGlobalMSPointerUpHandler, false);
         }
 
         function unHookBackButtonGlobalEventHandlers() {
             // Unsubscribes from global events on the window object
-            window.removeEventListener('keyup', backButtonGlobalKeyUpHandler, false);
-            window.removeEventListener('pointerup', backButtonGlobalMSPointerUpHandler, false);
+            _Global.removeEventListener('keyup', backButtonGlobalKeyUpHandler, false);
+            _Global.removeEventListener('pointerup', backButtonGlobalMSPointerUpHandler, false);
         }
 
         function backButtonGlobalKeyUpHandler(event) {
@@ -124,7 +125,7 @@ define([
                     throw new _ErrorFromName("WinJS.UI.BackButton.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
-                this._element = element || document.createElement("button");
+                this._element = element || _Global.document.createElement("button");
                 options = options || {};
 
                 this._initializeButton(); // This will also set the aria-label and tooltip

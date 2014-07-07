@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // ViewBox control
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -11,7 +12,7 @@ define([
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function viewboxInit(_Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities) {
+    ], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -73,7 +74,7 @@ define([
                 /// </signature>
                 this._disposed = false;
 
-                this._element = element || document.createElement("div");
+                this._element = element || _Global.document.createElement("div");
                 var box = this.element;
                 box.winControl = this;
                 _ElementUtilities.addClass(box, "win-disposable");
@@ -92,7 +93,7 @@ define([
 
                 _rtl: {
                     get: function () {
-                        return window.getComputedStyle(this.element).direction === "rtl";
+                        return _Global.getComputedStyle(this.element).direction === "rtl";
                     }
                 },
 

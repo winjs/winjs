@@ -52,7 +52,7 @@ define([
                 current = current.parentNode;
             }
 
-            return selected || document.querySelector(selector);
+            return selected || _Global.document.querySelector(selector);
         };
         return markSupportedForProcessing(result);
     }
@@ -99,7 +99,7 @@ define([
     function processAllImpl(rootElement, skipRootElement) {
         return new Promise(function processAllImpl2(complete, error) {
             _WriteProfilerMark("WinJS.UI:processAll,StartTM");
-            rootElement = rootElement || document.body;
+            rootElement = rootElement || _Global.document.body;
             var pending = 0;
             var selector = "[data-win-control]";
             var allElements = rootElement.querySelectorAll(selector);

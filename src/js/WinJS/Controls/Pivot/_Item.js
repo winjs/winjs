@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -12,7 +13,7 @@ define([
     '../../Utilities/_Dispose',
     '../../Utilities/_ElementUtilities',
     './_Constants'
-    ], function pivotItemInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Constants) {
+    ], function pivotItemInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -52,7 +53,7 @@ define([
                 /// </returns>
                 /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1"/>
                 /// </signature>
-                element = element || document.createElement("DIV");
+                element = element || _Global.document.createElement("DIV");
                 options = options || {};
 
                 if (element.winControl) {
@@ -66,7 +67,7 @@ define([
                 _ElementUtilities.addClass(this.element, "win-disposable");
                 this._element.setAttribute('role', 'tabpanel');
 
-                this._contentElement = document.createElement("DIV");
+                this._contentElement = _Global.document.createElement("DIV");
                 this._contentElement.className = PivotItem._ClassName.pivotItemContent;
                 element.appendChild(this._contentElement);
 

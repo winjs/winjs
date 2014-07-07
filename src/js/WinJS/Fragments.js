@@ -29,7 +29,7 @@ define([
             action(arrayLikeValue[i], i);
         }
     };
-    var head = document.head || document.getElementsByTagName("head")[0];
+    var head = _Global.document.head || _Global.document.getElementsByTagName("head")[0];
     var scripts = {};
     var styles = {};
     var links = {};
@@ -54,7 +54,7 @@ define([
             var promise = null;
 
             scripts[src] = true;
-            var n = document.createElement("script");
+            var n = _Global.document.createElement("script");
             if (scriptTag.language) {
                 n.setAttribute("language", "javascript");
             }
@@ -117,7 +117,7 @@ define([
                 docfrag: _ElementUtilities.data(href).docFragment
             };
             if (!state.docfrag) {
-                var fragment = document.createDocumentFragment();
+                var fragment = _Global.document.createDocumentFragment();
                 while (href.childNodes.length > 0) {
                     fragment.appendChild(href.childNodes[0]);
                 }
@@ -239,8 +239,8 @@ define([
         return Promise.join(sp).then(function () {
             // Create the docfrag which is just the body children
             //
-            var fragment = document.createDocumentFragment();
-            var imported = document.importNode(cd.body, true);
+            var fragment = _Global.document.createDocumentFragment();
+            var imported = _Global.document.importNode(cd.body, true);
             while (imported.childNodes.length > 0) {
                 fragment.appendChild(imported.childNodes[0]);
             }
@@ -287,7 +287,7 @@ define([
     }
 
     function renderImpl(href, target, copy) {
-        var profilerMarkIdentifier = (href instanceof HTMLElement ? _BaseUtils._getProfilerMarkIdentifier(href) : " href='" + href + "'") + "[" + (++uniqueId) + "]";
+        var profilerMarkIdentifier = (href instanceof _Global.HTMLElement ? _BaseUtils._getProfilerMarkIdentifier(href) : " href='" + href + "'") + "[" + (++uniqueId) + "]";
         _WriteProfilerMark("WinJS.UI.Fragments:render" + profilerMarkIdentifier + ",StartTM");
     
         initialize();
@@ -380,7 +380,7 @@ define([
         if (_BaseUtils.hasWinRT) {
             // we force the URI to be cannonicalized and made absolute by IE
             //
-            var a = document.createElement("a");
+            var a = _Global.document.createElement("a");
             a.href = uri;
             
             var absolute = a.href;
@@ -411,12 +411,12 @@ define([
         //
         href = forceLocal(href);
     
-        var htmlDoc = document.implementation.createHTMLDocument("frag");
+        var htmlDoc = _Global.document.implementation.createHTMLDocument("frag");
         var base = htmlDoc.createElement("base");
         htmlDoc.head.appendChild(base);
         var anchor = htmlDoc.createElement("a");
         htmlDoc.body.appendChild(anchor);
-        base.href = document.location.href; // Initialize base URL to primary document URL
+        base.href = _Global.document.location.href; // Initialize base URL to primary document URL
         anchor.setAttribute("href", href); // Resolve the relative path to an absolute path
         base.href = anchor.href; // Update the base URL to be the resolved absolute path
         // 'anchor' is no longer needed at this point and will be removed by the innerHTML call

@@ -27,7 +27,7 @@ define([
         hasWinRT: hasWinRT,
         markSupportedForProcessing: markSupportedForProcessing,
         _setImmediate: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
-            setTimeout(handler, 0);
+            _Global.setTimeout(handler, 0);
         }
     };
 });

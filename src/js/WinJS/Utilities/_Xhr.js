@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Promise',
     '../Scheduler'
-    ], function xhrInit(_Base, Promise, Scheduler) {
+    ], function xhrInit(_Global, _Base, Promise, Scheduler) {
     "use strict";
 
     function schedule(f, arg, priority) {
@@ -33,7 +34,7 @@ define([
             function (c, e, p) {
                 /// <returns value="c(new XMLHttpRequest())" locid="WinJS.xhr.constructor._returnValue" />
                 var priority = Scheduler.currentPriority;
-                req = new XMLHttpRequest();
+                req = new _Global.XMLHttpRequest();
                 req.onreadystatechange = function () {
                     if (req._canceled) {
                         req.onreadystatechange = noop;

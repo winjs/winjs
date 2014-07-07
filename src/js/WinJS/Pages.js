@@ -20,14 +20,14 @@ define([
     }
 
     function abs(uri) {
-        var a = document.createElement("a");
+        var a = _Global.document.createElement("a");
         a.href = uri;
         return a.href;
     }
     var viewMap = {};
 
     function selfhost(uri) {
-        return document.location.href.toLowerCase() === uri.toLowerCase();
+        return _Global.document.location.href.toLowerCase() === uri.toLowerCase();
     }
 
     var _mixin = {
@@ -178,7 +178,7 @@ define([
                 function PageControl_ctor(element, options, complete, parentedPromise) {
                     var that = this;
                     this._disposed = false;
-                    this.element = element = element || document.createElement("div");
+                    this.element = element = element || _Global.document.createElement("div");
                     _ElementUtilities.addClass(element, "win-disposable");
                     element.msSourceLocation = uri;
                     this.uri = uri;
@@ -248,7 +248,7 @@ define([
 
         if (selfhost(uri)) {
             _BaseUtils.ready(function () {
-                render(uri, document.body);
+                render(uri, _Global.document.body);
             });
         }
 

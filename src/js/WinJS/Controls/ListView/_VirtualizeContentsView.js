@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Promise',
@@ -14,7 +15,7 @@ define([
     '../ItemContainer/_ItemEventsHandler',
     './_Helpers',
     './_ItemsContainer'
-    ], function virtualizeContentsViewInit(exports, _Base, _BaseUtils, Promise, _Signal, Scheduler, _Dispose, _ElementUtilities, _SafeHtml, _UI, _Constants, _ItemEventsHandler, _Helpers, _ItemsContainer) {
+    ], function virtualizeContentsViewInit(exports, _Global, _Base, _BaseUtils, Promise, _Signal, Scheduler, _Dispose, _ElementUtilities, _SafeHtml, _UI, _Constants, _ItemEventsHandler, _Helpers, _ItemsContainer) {
     "use strict";
 
     function setFlow(from, to) {
@@ -1310,7 +1311,7 @@ define([
 
                 _createItemsContainer: function VirtualizeContentsView_createItemsContainer(insertAfter) {
                     var itemsContainer = this._createSurfaceChild(_Constants._itemsContainerClass, insertAfter);
-                    var padder = document.createElement("div");
+                    var padder = _Global.document.createElement("div");
                     padder.className = _Constants._padderClass;
                     itemsContainer.appendChild(padder);
                     return itemsContainer;
@@ -2113,7 +2114,7 @@ define([
                             blocks++;
                         }
 
-                        var blocksTemp = document.createElement("div");
+                        var blocksTemp = _Global.document.createElement("div");
                         _SafeHtml.setInnerHTMLUnsafe(blocksTemp, markup);
                         var children = blocksTemp.children;
 
@@ -2299,7 +2300,7 @@ define([
                     var usingStructuralNodes = !!blockSize;
 
                     function createNewBlock() {
-                        var element = document.createElement("div");
+                        var element = _Global.document.createElement("div");
                         element.className = _Constants._itemsBlockClass;
                         return element;
                     }
@@ -2477,7 +2478,7 @@ define([
                     }
 
                     // We only need to restore focus if the current focus is within surface
-                    var activeElement = document.activeElement;
+                    var activeElement = _Global.document.activeElement;
                     if (this._listView._canvas.contains(activeElement)) {
                         this._requireFocusRestore = activeElement;
                     }
@@ -2530,12 +2531,12 @@ define([
                     if (itemBox.parentNode !== container) {
                         var activeElement;
                         if (this._requireFocusRestore) {
-                            activeElement = document.activeElement;
+                            activeElement = _Global.document.activeElement;
                         }
 
                         if (this._requireFocusRestore && this._requireFocusRestore === activeElement && (container.contains(activeElement) || itemBox.contains(activeElement))) {
                             this._listView._unsetFocusOnItem();
-                            activeElement = document.activeElement;
+                            activeElement = _Global.document.activeElement;
                         }
 
                         _ElementUtilities.empty(container);
@@ -2642,7 +2643,7 @@ define([
                 },
 
                 _createSurfaceChild: function VirtualizeContentsView_createSurfaceChild(className, insertAfter) {
-                    var element = document.createElement("div");
+                    var element = _Global.document.createElement("div");
                     element.className = className;
                     this._listView._canvas.insertBefore(element, insertAfter ? insertAfter.nextElementSibling : null);
                     return element;

@@ -3,6 +3,7 @@
 /// <dictionary>appbar,appbars,Flyout,Flyouts,onclick,Statics</dictionary>
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
@@ -14,7 +15,7 @@ define([
     '../Tooltip',
     './_Constants',
     './_Icon'
-    ], function appBarCommandInit(exports, _WinRT, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
+    ], function appBarCommandInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -52,7 +53,7 @@ define([
                         var flyout = command._flyout;
                         // Flyout may not have processAll'd, so this may be a DOM object
                         if (typeof flyout === "string") {
-                            flyout = document.getElementById(flyout);
+                            flyout = _Global.document.getElementById(flyout);
                         }
                         if (!flyout.show) {
                             flyout = flyout.winControl;
@@ -288,7 +289,7 @@ define([
                         // Resolve it to the flyout
                         var flyout = this._flyout;
                         if (typeof flyout === "string") {
-                            flyout = document.getElementById(flyout);
+                            flyout = _Global.document.getElementById(flyout);
                         }
                         // If it doesn't have a .element, then we need to getControl on it
                         if (flyout && !flyout.element) {
@@ -528,7 +529,7 @@ define([
                 _createContent: function AppBarCommand_createContent() {
                     // Make sure there's an element
                     if (!this._element) {
-                        this._element = document.createElement("div");
+                        this._element = _Global.document.createElement("div");
                     } else {
                         // Verify the element was a div
                         if (this._element.tagName !== "DIV") {
@@ -545,7 +546,7 @@ define([
                 _createSeparator: function AppBarCommand_createSeparator() {
                     // Make sure there's an element
                     if (!this._element) {
-                        this._element = document.createElement("hr");
+                        this._element = _Global.document.createElement("hr");
                     } else {
                         // Verify the element was an hr
                         if (this._element.tagName !== "HR") {
@@ -557,7 +558,7 @@ define([
                 _createButton: function AppBarCommand_createButton() {
                     // Make sure there's an element
                     if (!this._element) {
-                        this._element = document.createElement("button");
+                        this._element = _Global.document.createElement("button");
                     } else {
                         // Verify the element was a button
                         if (this._element.tagName !== "BUTTON") {
@@ -578,17 +579,17 @@ define([
                     ////      <span class="win-commandicon win-commandring"><span class="win-commandimage" style="background-image:url('customimage.png')"></span></span><span class="win-label">Command 1</span>
                     //// </button>
                     this._element.type = "button";
-                    this._iconSpan = document.createElement("span");
+                    this._iconSpan = _Global.document.createElement("span");
                     this._iconSpan.setAttribute("aria-hidden", "true");
                     this._iconSpan.className = "win-commandicon win-commandring";
                     this._iconSpan.tabIndex = -1;
                     this._element.appendChild(this._iconSpan);
-                    this._imageSpan = document.createElement("span");
+                    this._imageSpan = _Global.document.createElement("span");
                     this._imageSpan.setAttribute("aria-hidden", "true");
                     this._imageSpan.className = "win-commandimage";
                     this._imageSpan.tabIndex = -1;
                     this._iconSpan.appendChild(this._imageSpan);
-                    this._labelSpan = document.createElement("span");
+                    this._labelSpan = _Global.document.createElement("span");
                     this._labelSpan.setAttribute("aria-hidden", "true");
                     this._labelSpan.className = "win-label";
                     this._labelSpan.tabIndex = -1;

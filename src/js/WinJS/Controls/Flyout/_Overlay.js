@@ -2,6 +2,7 @@
 /// <dictionary>animatable,appbar,appbars,divs,Flyout,Flyouts,iframe,Statics,unfocus,unselectable</dictionary>
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
@@ -17,7 +18,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_UIUtilities',
     '../AppBar/_Constants'
-    ], function overlayInit(exports, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
+    ], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -48,7 +49,7 @@ define([
                 for (i = 0; i < elements.length; i++) {
                     if (elements[i]) {
                         if (typeof elements[i] === "string") {
-                            var element = document.getElementById(elements[i]);
+                            var element = _Global.document.getElementById(elements[i]);
                             if (element) {
                                 realElements.push(element);
                             }
@@ -65,7 +66,7 @@ define([
 
             // Helpers for keyboard showing related events
             function _allOverlaysCallback(event, command) {
-                var elements = document.querySelectorAll("." + _Constants.overlayClass);
+                var elements = _Global.document.querySelectorAll("." + _Constants.overlayClass);
                 if (elements) {
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
@@ -113,7 +114,7 @@ define([
 
                     // Make sure there's an input element
                     if (!element) {
-                        element = document.createElement("div");
+                        element = _Global.document.createElement("div");
                     }
 
                     // Check to make sure we weren't duplicated
@@ -295,7 +296,7 @@ define([
                     }
 
                     // Each overlay tracks the window width for detecting resizes in the resize handler.
-                    this._currentDocumentWidth = this._currentDocumentWidth || document.documentElement.offsetWidth;
+                    this._currentDocumentWidth = this._currentDocumentWidth || _Global.document.documentElement.offsetWidth;
 
                     // "hiding" would need to cancel.
                     if (this._element.style.visibility !== "visible") {
@@ -471,14 +472,14 @@ define([
                     this._element.style.opacity = 0;
                     this._element.style.visibility = "visible";
                     // touch opacity so that IE fades from the 0 we just set to 1
-                    window.getComputedStyle(this._element, null).opacity;
+                    _Global.getComputedStyle(this._element, null).opacity;
                     return Animations.fadeIn(this._element);
                 },
 
                 _baseAnimateOut: function _Overlay_baseAnimateOut() {
                     this._element.style.opacity = 1;
                     // touch opacity so that IE fades from the 1 we just set to 0
-                    window.getComputedStyle(this._element, null).opacity;
+                    _Global.getComputedStyle(this._element, null).opacity;
                     return Animations.fadeOut(this._element);
                 },
 
@@ -494,7 +495,7 @@ define([
                     if (this._disposed) {
                         return;
                     }
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initEvent(eventName, true, true, (detail || {}));
                     this._element.dispatchEvent(event);
                 },
@@ -634,7 +635,7 @@ define([
                             // If this one's not real or not attached, skip it
                             if (!showCommands[count] ||
                                 !showCommands[count].style ||
-                                !document.body.contains(showCommands[count])) {
+                                !_Global.document.body.contains(showCommands[count])) {
                                 // Not real, skip it
                                 showCommands.splice(count, 1);
                                 count--;
@@ -649,7 +650,7 @@ define([
                             // If this one's not real or not attached, skip it
                             if (!hideCommands[count] ||
                                 !hideCommands[count].style ||
-                                !document.body.contains(hideCommands[count]) ||
+                                !_Global.document.body.contains(hideCommands[count]) ||
                                 hideCommands[count].style.visibility === "hidden" ||
                                 hideCommands[count].style.opacity === "0") {
                                 // Don't need to animate hiding this one, not real, or it's hidden,
@@ -707,7 +708,7 @@ define([
                     for (var count = 0, len = hideCommands.length; count < len; count++) {
                         // Need to fix our position
                         var rectangle = hideCommands[count].getBoundingClientRect(),
-                            style = window.getComputedStyle(hideCommands[count]);
+                            style = _Global.getComputedStyle(hideCommands[count]);
 
                         // Use the bounding box, adjusting for margins
                         hideCommands[count].style.top = (rectangle.top - parseFloat(style.marginTop)) + "px";
@@ -860,7 +861,7 @@ define([
                             this._currentDocumentWidth = undefined;
                         } else {
                             // Overlays can light dismiss on horizontal resize.
-                            var newWidth = document.documentElement.offsetWidth;
+                            var newWidth = _Global.document.documentElement.offsetWidth;
                             if (this._currentDocumentWidth !== newWidth) {
                                 this._currentDocumentWidth = newWidth;
                                 if (!this._sticky) {
@@ -946,7 +947,7 @@ define([
                         var tabResult = _UIUtilities._focusLastFocusableElement(this._element);
 
                         if (tabResult) {
-                            _Overlay._trySelect(document.activeElement);
+                            _Overlay._trySelect(_Global.document.activeElement);
                         }
 
                         this._element.firstElementChild.tabIndex = oldFirstTabIndex;
@@ -983,7 +984,7 @@ define([
                         var tabResult = _UIUtilities._focusFirstFocusableElement(this._element);
 
                         if (tabResult) {
-                            _Overlay._trySelect(document.activeElement);
+                            _Overlay._trySelect(_Global.document.activeElement);
                         }
 
                         this._element.firstElementChild.tabIndex = oldFirstTabIndex;
@@ -1002,7 +1003,7 @@ define([
                         // Focus handlers generally use WinJS.Utilities._addEventListener with focusout/focusin. This
                         // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
                         // on window.
-                        window.addEventListener("blur", _Overlay._checkBlur, false);
+                        _Global.addEventListener("blur", _Overlay._checkBlur, false);
 
                         var that = this;
 
@@ -1028,7 +1029,7 @@ define([
                                 that._writeProfilerMark("_hidingKeyboard,StopTM");
                             });
                             // Document scroll event
-                            document.addEventListener("scroll", function (event) {
+                            _Global.document.addEventListener("scroll", function (event) {
                                 that._writeProfilerMark("_checkScrollPosition,StartTM");
                                 _allOverlaysCallback(event, "_checkScrollPosition");
                                 that._writeProfilerMark("_checkScrollPosition,StopTM");
@@ -1036,7 +1037,7 @@ define([
                         }
 
                         // Window resize event
-                        window.addEventListener("resize", function (event) {
+                        _Global.addEventListener("resize", function (event) {
                             that._writeProfilerMark("_baseResize,StartTM");
                             _allOverlaysCallback(event, "_baseResize");
                             that._writeProfilerMark("_baseResize,StopTM");
@@ -1100,12 +1101,12 @@ define([
                 },
 
                 _hideAllFlyouts: function () {
-                    _Overlay._hideFlyouts(document, true);
-                    _Overlay._hideSettingsFlyouts(document, true);
+                    _Overlay._hideFlyouts(_Global.document, true);
+                    _Overlay._hideSettingsFlyouts(_Global.document, true);
                 },
 
                 _createClickEatingDivTemplate: function (divClass, hideClickEatingDivFunction) {
-                    var clickEatingDiv = document.createElement("section");
+                    var clickEatingDiv = _Global.document.createElement("section");
                     _ElementUtilities.addClass(clickEatingDiv, divClass);
                     _ElementUtilities._addEventListener(clickEatingDiv, "pointerdown", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
                     _ElementUtilities._addEventListener(clickEatingDiv, "pointerup", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
@@ -1115,7 +1116,7 @@ define([
                     clickEatingDiv.setAttribute("aria-label", strings.closeOverlay);
                     // Prevent CED from removing any current selection
                     clickEatingDiv.setAttribute("unselectable", "on");
-                    document.body.appendChild(clickEatingDiv);
+                    _Global.document.body.appendChild(clickEatingDiv);
                     return clickEatingDiv;
                 },
 
@@ -1200,7 +1201,7 @@ define([
                     // Don't light dismiss AppBars because edgy will do that as needed,
                     // so flyouts only.
                     _Overlay._hideClickEatingDivFlyout();
-                    _Overlay._hideFlyouts(document, true);
+                    _Overlay._hideFlyouts(_Global.document, true);
                 },
 
                 _checkRightClickDown: function (event) {
@@ -1260,7 +1261,7 @@ define([
                         return;
                     }
                     // If the active thing is within our element, we haven't lost focus
-                    var active = document.activeElement;
+                    var active = _Global.document.activeElement;
                     if (overlay._element && overlay._element.contains(active)) {
                         return;
                     }
@@ -1292,7 +1293,7 @@ define([
                 // Both blurs call this function, but fortunately document.hasFocus is true if either
                 // the document window or our iframe window has focus.
                 _checkBlur: function () {
-                    if (!document.hasFocus()) {
+                    if (!_Global.document.hasFocus()) {
                         // The document doesn't have focus, so they clicked off the app, so light dismiss.
                         _Overlay._hideAllFlyouts();
                         _Overlay._hideLightDismissAppBars(null, false);
@@ -1305,7 +1306,7 @@ define([
                             // so make sure the iframe that took the focus will check for blur next time.
                             // We don't have to do this if the click eating div is hidden because then
                             // there would be no flyout or appbar needing light dismiss.
-                            var active = document.activeElement;
+                            var active = _Global.document.activeElement;
                             if (active && active.tagName === "IFRAME" && !active.msLightDismissBlur) {
                                 // - This will go away when the IFRAME goes away, and we only create one.
                                 // - This only works in IE because other browsers don't fire focus events on iframe elements.
@@ -1320,13 +1321,13 @@ define([
 
                 // Try to set us as active
                 _trySetActive: function (element) {
-                    if (!element || !document.body || !document.body.contains(element)) {
+                    if (!element || !_Global.document.body || !_Global.document.body.contains(element)) {
                         return false;
                     }
                     if (!_ElementUtilities._setActive(element)) {
                         return false;
                     }
-                    return (element === document.activeElement);
+                    return (element === _Global.document.activeElement);
                 },
 
                 // Try to select the text so keyboard can be used.
@@ -1350,14 +1351,14 @@ define([
                 _removeHideFocusClass: function (event) {
                     // Make sure we really lost focus and was not just an App switch
                     var target = event.target;
-                    if (target && target !== document.activeElement) {
+                    if (target && target !== _Global.document.activeElement) {
                         _ElementUtilities.removeClass(target, _Constants.hideFocusClass);
                         _ElementUtilities._removeEventListener(event.target, "focusout", _Overlay._removeHideFocusClass, false);
                     }
                 },
 
                 _getParentControlUsingClassName: function (element, className) {
-                    while (element && element !== document.body) {
+                    while (element && element !== _Global.document.body) {
                         if (_ElementUtilities.hasClass(element, className)) {
                             return element.winControl;
                         }
@@ -1368,7 +1369,7 @@ define([
 
                 // Hide all light dismiss AppBars if what has focus is not part of a AppBar or flyout.
                 _hideIfAllAppBarsLostFocus: function _hideIfAllAppBarsLostFocus() {
-                    if (!_Overlay._isAppBarOrChild(document.activeElement)) {
+                    if (!_Overlay._isAppBarOrChild(_Global.document.activeElement)) {
                         _Overlay._hideLightDismissAppBars(null, false);
                         // Ensure that sticky appbars clear cached focus after light dismiss are dismissed, which moved focus.
                         _Overlay._ElementWithFocusPreviousToAppBar = null;
@@ -1376,7 +1377,7 @@ define([
                 },
 
                 _hideLightDismissAppBars: function (event, keyboardInvoked) {
-                    var elements = document.querySelectorAll("." + _Constants.appBarClass);
+                    var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                     var len = elements.length;
                     var AppBars = [];
                     for (var i = 0; i < len; i++) {
@@ -1419,7 +1420,7 @@ define([
                         return element;
                     }
 
-                    while (element && element !== document) {
+                    while (element && element !== _Global.document) {
                         if (_ElementUtilities.hasClass(element, _Constants.appBarClass)) {
                             return element;
                         }
@@ -1482,8 +1483,8 @@ define([
                     // See if the view has been resized to fit a keyboard
                     get _isResized() {
                         // Compare ratios.  Very different includes IHM space.
-                        var heightRatio = document.documentElement.clientHeight / window.innerHeight,
-                            widthRatio = document.documentElement.clientWidth / window.innerWidth;
+                        var heightRatio = _Global.document.documentElement.clientHeight / _Global.innerHeight,
+                            widthRatio = _Global.document.documentElement.clientWidth / _Global.innerWidth;
 
                         // If they're nearly identical, then the view hasn't been resized for the IHM
                         // Only check one bound because we know the IHM will make it shorter, not skinnier.
@@ -1493,7 +1494,7 @@ define([
                     // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement. 
                     // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
                     get _visibleDocTop() {
-                        return window.pageYOffset - document.documentElement.scrollTop;
+                        return _Global.pageYOffset - _Global.document.documentElement.scrollTop;
                     },
 
                     // Get the bottom of our visible area.
@@ -1520,11 +1521,11 @@ define([
 
                     get _visualViewportSpace() {
                         var className = "win-visualviewport-space";
-                        var visualViewportSpace = document.body.querySelector("." + className);
+                        var visualViewportSpace = _Global.document.body.querySelector("." + className);
                         if (!visualViewportSpace) {
-                            visualViewportSpace = document.createElement("DIV");
+                            visualViewportSpace = _Global.document.createElement("DIV");
                             visualViewportSpace.className = className;
-                            document.body.appendChild(visualViewportSpace);
+                            _Global.document.body.appendChild(visualViewportSpace);
                         }
 
                         return visualViewportSpace.getBoundingClientRect();

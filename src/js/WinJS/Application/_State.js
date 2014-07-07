@@ -279,8 +279,8 @@ define([
                 return Promise.as();
             }
         },
-        _oncheckpoint: function (e, Application) {
-            if (_Global.MSApp && MSApp.getViewOpener && MSApp.getViewOpener()) {
+        _oncheckpoint: function (event, Application) {
+            if (_Global.MSApp && _Global.MSApp.getViewOpener && _Global.MSApp.getViewOpener()) {
                 // don't save state in child windows.
                 return;
             }
@@ -293,7 +293,7 @@ define([
                     stateString = "";
                     Application.queueEvent({ type: "error", detail: e });
                 }
-                e.setPromise(
+                event.setPromise(
                     exports.local.writeText("_sessionState.json", stateString).
                         then(null, function (err) {
                             Application.queueEvent({ type: "error", detail: err });

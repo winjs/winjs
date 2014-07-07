@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -10,7 +11,7 @@ define([
     '../Utilities/_Select',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function datePickerInit(_WinRT, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
+    ], function datePickerInit(_Global, _WinRT, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -144,7 +145,7 @@ define([
                     year: null
                 };
 
-                element = element || document.createElement("div");
+                element = element || _Global.document.createElement("div");
                 _ElementUtilities.addClass(element, "win-disposable");
                 element.winControl = this;
 
@@ -208,11 +209,11 @@ define([
                 },
 
                 _createControlElements: function () {
-                    this._monthElement = document.createElement("select");
+                    this._monthElement = _Global.document.createElement("select");
                     this._monthElement.className = "win-datepicker-month";
-                    this._dateElement = document.createElement("select");
+                    this._dateElement = _Global.document.createElement("select");
                     this._dateElement.className = "win-datepicker-date";
-                    this._yearElement = document.createElement("select");
+                    this._yearElement = _Global.document.createElement("select");
                     this._yearElement.className = "win-datepicker-year";
                 },
 

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -17,7 +18,7 @@ define([
     '../../Utilities/_UIUtilities',
     '../ItemContainer/_Constants',
     './_ErrorMessages'
-    ], function layouts2Init(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _TransitionAnimation, Promise, Scheduler, _Signal, _Dispose, _ElementUtilities, _SafeHtml, _UI, _UIUtilities, _Constants, _ErrorMessages) {
+    ], function layouts2Init(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _TransitionAnimation, Promise, Scheduler, _Signal, _Dispose, _ElementUtilities, _SafeHtml, _UI, _UIUtilities, _Constants, _ErrorMessages) {
     "use strict";
 
     var Key = _ElementUtilities.Key,
@@ -37,8 +38,8 @@ define([
     //
 
     // Dynamic CSS rules will be added to this style element
-    var layoutStyleElem = document.createElement("style");
-    document.head.appendChild(layoutStyleElem);
+    var layoutStyleElem = _Global.document.createElement("style");
+    _Global.document.head.appendChild(layoutStyleElem);
 
     var nextCssClassId = 0,
         staleClassNames = [];
@@ -107,7 +108,7 @@ define([
     }
 
     function getDimension(element, property) {
-        return _ElementUtilities.convertToPixels(element, window.getComputedStyle(element, null)[property]);
+        return _ElementUtilities.convertToPixels(element, _Global.getComputedStyle(element, null)[property]);
     }
 
     // Returns the sum of the margin, border, and padding for the side of the
@@ -189,12 +190,12 @@ define([
     // and also to see if some environments have layout bugs the ListView needs to work around).
     function getEnvironmentSupportInformation(site) {
         if (!environmentDetails) {
-            var surface = document.createElement("div");
+            var surface = _Global.document.createElement("div");
             surface.style.width = "500px";
             surface.style.visibility = "hidden";
                                                   
             // Set up the DOM
-            var flexRoot = document.createElement("div");
+            var flexRoot = _Global.document.createElement("div");
             flexRoot.style.cssText += "width: 500px; height: 200px; display: -webkit-flex; display: flex";
             _SafeHtml.setInnerHTMLUnsafe(flexRoot,
                 "<div style='height: 100%; display: -webkit-flex; display: flex; flex-flow: column wrap; align-content: flex-start; -webkit-flex-flow: column wrap; -webkit-align-content: flex-start'>" +
@@ -1202,7 +1203,7 @@ define([
                     }
 
                     if (exports.Layout._debugAnimations) {
-                        requestAnimationFrame(function () {
+                        _Global.requestAnimationFrame(function () {
                             startAnimations();
                         });
                     } else {
@@ -1218,7 +1219,7 @@ define([
                             // canceled so we shouldn't continue.
                             if (animationSignal) {
                                 if (exports.Layout._debugAnimations) {
-                                    requestAnimationFrame(function () {
+                                    _Global.requestAnimationFrame(function () {
                                         nextPhaseCallback();
                                     });
                                 } else {
@@ -1467,7 +1468,7 @@ define([
                         site._writeProfilerMark("Animation:prepareReflowedItems,StopTM");
 
                         if (exports.Layout._debugAnimations) {
-                            requestAnimationFrame(function () {
+                            _Global.requestAnimationFrame(function () {
                                 directMovePhase(true);
                             });
                         } else {
@@ -2490,7 +2491,7 @@ define([
                                 that._site._writeProfilerMark("_measureElements,StartTM");
 
                                 var surface = that._createMeasuringSurface(),
-                                    itemsContainer = document.createElement("div"),
+                                    itemsContainer = _Global.document.createElement("div"),
                                     site = that._site,
                                     measuringElements = that._measuringElements,
                                     elementsToMeasure = that._elementsToMeasure,
@@ -2552,7 +2553,7 @@ define([
                 },
 
                 _createMeasuringSurface: function _LayoutCommon_createMeasuringSurface() {
-                    var surface = document.createElement("div");
+                    var surface = _Global.document.createElement("div");
 
                     surface.style.cssText =
                         "visibility: hidden" +
@@ -2705,8 +2706,8 @@ define([
                             }
 
                             var surface = that._createMeasuringSurface(),
-                                itemsContainer = document.createElement("div"),
-                                emptyContainer = document.createElement("div"),
+                                itemsContainer = _Global.document.createElement("div"),
+                                emptyContainer = _Global.document.createElement("div"),
                                 itemBox = elements.container.querySelector("." + _Constants._itemBoxClass),
                                 groupIndex = site.groupIndexFromItemIndex(index);
 

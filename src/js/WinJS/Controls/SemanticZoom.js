@@ -18,7 +18,7 @@ define([
     '../Utilities/_ElementListUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function semanticZoomInit(global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _ElementListUtilities) {
+    ], function semanticZoomInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _ElementListUtilities) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -212,7 +212,7 @@ define([
                 this._gesturing = false;
                 this._gestureEnding = false;
                 this._buttonShown = false;
-                this._shouldFakeTouchCancel = ("TouchEvent" in global);
+                this._shouldFakeTouchCancel = ("TouchEvent" in _Global);
 
                 // Initialize the control
 
@@ -405,19 +405,19 @@ define([
                     this._element.removeChild(this._elementOut);
                     this._element.removeChild(this._elementIn);
                     this._element.innerHTML = "";
-                    this._cropViewport = document.createElement("div");
+                    this._cropViewport = _Global.document.createElement("div");
                     this._element.appendChild(this._cropViewport);
-                    this._viewportIn = document.createElement("div");
-                    this._opticalViewportIn = document.createElement("div");
-                    this._viewportOut = document.createElement("div");
-                    this._opticalViewportOut = document.createElement("div");
+                    this._viewportIn = _Global.document.createElement("div");
+                    this._opticalViewportIn = _Global.document.createElement("div");
+                    this._viewportOut = _Global.document.createElement("div");
+                    this._opticalViewportOut = _Global.document.createElement("div");
                     this._opticalViewportIn.appendChild(this._viewportIn);
                     this._opticalViewportOut.appendChild(this._viewportOut);
                     this._cropViewport.appendChild(this._opticalViewportIn);
                     this._cropViewport.appendChild(this._opticalViewportOut);
 
-                    this._canvasIn = document.createElement("div");
-                    this._canvasOut = document.createElement("div");
+                    this._canvasIn = _Global.document.createElement("div");
+                    this._canvasOut = _Global.document.createElement("div");
                     this._viewportIn.appendChild(this._canvasIn);
                     this._viewportOut.appendChild(this._canvasOut);
                     this._canvasIn.appendChild(this._elementIn);
@@ -427,7 +427,7 @@ define([
                         this._createSemanticZoomButton();
                     }
 
-                    this._hiddenElement = document.createElement("div");
+                    this._hiddenElement = _Global.document.createElement("div");
                     this._hiddenElement.tabIndex = -1;
                     this._hiddenElement.visibility = "hidden";
                     this._hiddenElement.setAttribute("aria-hidden", "true");
@@ -466,7 +466,7 @@ define([
                 },
 
                 _createSemanticZoomButton: function () {
-                    this._sezoButton = document.createElement("button");
+                    this._sezoButton = _Global.document.createElement("button");
                     this._sezoButton.className = sezoButtonClass + " " + sezoButtonLocationClass;
                     this._sezoButton.tabIndex = -1;
                     this._sezoButton.style.visibility = "hidden";
@@ -569,7 +569,7 @@ define([
                             style.height = height + "px";
                         };
 
-                        var sezoComputedStyle = window.getComputedStyle(this._element, null),
+                        var sezoComputedStyle = _Global.getComputedStyle(this._element, null),
                             computedWidth = parseFloat(sezoComputedStyle.width),
                             computedHeight = parseFloat(sezoComputedStyle.height),
                             sezoPaddingLeft = getDimension(this._element, sezoComputedStyle["paddingLeft"]),
@@ -643,11 +643,11 @@ define([
                 },
 
                 _displayButton: function () {
-                    clearTimeout(this._dismissButtonTimer);
+                    _Global.clearTimeout(this._dismissButtonTimer);
                     this._showSemanticZoomButton();
 
                     var that = this;
-                    this._dismissButtonTimer = setTimeout(function () {
+                    this._dismissButtonTimer = _Global.setTimeout(function () {
                         that._hideSemanticZoomButton();
                     }, _TransitionAnimation._animationTimeAdjustment(sezoButtonShowDuration));
                 },
@@ -763,8 +763,8 @@ define([
                 },
 
                 _fakeCancelOnPointer: function (ev) {
-                    var touchEvent = document.createEvent("UIEvent");
-                    touchEvent.initUIEvent("touchcancel", true, true, window, 0);
+                    var touchEvent = _Global.document.createEvent("UIEvent");
+                    touchEvent.initUIEvent("touchcancel", true, true, _Global, 0);
                     touchEvent.touches = ev.touches;
                     touchEvent.targetTouches = ev.targetTouches;
                     touchEvent.changedTouches = [ev._currentTouch];
@@ -1120,8 +1120,8 @@ define([
                     }
                     this._zoomingOut = zoomOut;
                     // Force style resolution
-                    getComputedStyle(this._canvasIn).opacity;
-                    getComputedStyle(this._canvasOut).opacity;
+                    _Global.getComputedStyle(this._canvasIn).opacity;
+                    _Global.getComputedStyle(this._canvasOut).opacity;
                     _WriteProfilerMark("WinJS.UI.SemanticZoom:prepareForZoom,StopTM");
                     this._startAnimations(zoomOut, customViewAnimationPromise);
                 },
@@ -1240,7 +1240,7 @@ define([
 
                 _clearTimeout: function (timer) {
                     if (timer) {
-                        clearTimeout(timer);
+                        _Global.clearTimeout(timer);
                     }
                 },
 
@@ -1285,11 +1285,11 @@ define([
 
                 setTimeoutAfterTTFF: function (callback, delay) {
                     var that = this;
-                    that._TTFFTimer = setTimeout(function () {
+                    that._TTFFTimer = _Global.setTimeout(function () {
                         if (this._disposed) {
                             return;
                         }
-                        that._TTFFTimer = setTimeout(callback, delay);
+                        that._TTFFTimer = _Global.setTimeout(callback, delay);
                     }, zoomAnimationTTFFBuffer);
                 },
 
@@ -1300,7 +1300,7 @@ define([
 
                     var that = this;
                     if (this._zoomInProgress || this._isBouncing) {
-                        that._completeZoomTimer = setTimeout(function () {
+                        that._completeZoomTimer = _Global.setTimeout(function () {
                             that._completeZoom();
                         }, _TransitionAnimation._animationTimeAdjustment(zoomAnimationTimeout));
                     }
@@ -1353,7 +1353,7 @@ define([
 
                     if (zoomChanged) {
                         // Dispatch the zoomChanged event
-                        var ev = document.createEvent("CustomEvent");
+                        var ev = _Global.document.createEvent("CustomEvent");
                         ev.initCustomEvent(zoomChangedEvent, true, true, this._zoomedOut);
                         this._element.dispatchEvent(ev);
 
@@ -1368,7 +1368,7 @@ define([
                 },
 
                 _isActive: function () {
-                    var active = document.activeElement;
+                    var active = _Global.document.activeElement;
                     return this._element === active || this._element.contains(active);
                 },
 
@@ -1449,7 +1449,7 @@ define([
                     }
                     catch (err) { }  // an exception can be thrown if SeZoDiv is no longer available
 
-                    var sezoComputedStyle = window.getComputedStyle(this._element, null),
+                    var sezoComputedStyle = _Global.getComputedStyle(this._element, null),
                         sezoPaddingLeft = getDimension(this._element, sezoComputedStyle["paddingLeft"]),
                         sezoPaddingTop = getDimension(this._element, sezoComputedStyle["paddingTop"]),
                         sezoBorderLeft = getDimension(this._element, sezoComputedStyle["borderLeftWidth"]);
@@ -1499,7 +1499,7 @@ define([
                 },
 
                 _rtl: function () {
-                    return window.getComputedStyle(this._element, null).direction === "rtl";
+                    return _Global.getComputedStyle(this._element, null).direction === "rtl";
                 },
 
                 _pinching: {

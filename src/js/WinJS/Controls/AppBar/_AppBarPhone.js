@@ -2,6 +2,7 @@
 // AppBar
 /// <dictionary>appbar,appBars,Flyout,Flyouts,iframe,Statics,unfocus,WinJS</dictionary>
 define([
+    '../../Core/_Global',
     '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
@@ -17,7 +18,7 @@ define([
     './_CommandPhone',
     './_Constants',
     './_Icon'
-    ], function appBarInit(_WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, ControlProcessor, Scheduler, _Control, _Dispose, _ElementUtilities, _CommandPhone, _Constants, _Icon) {
+    ], function appBarInit(_Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, ControlProcessor, Scheduler, _Control, _Dispose, _ElementUtilities, _CommandPhone, _Constants, _Icon) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -77,7 +78,7 @@ define([
                 if (this._disposed) {
                     return;
                 }
-                var event = document.createEvent("CustomEvent");
+                var event = _Global.document.createEvent("CustomEvent");
                 event.initEvent(eventName, true, true, (detail || {}));
                 this._element.dispatchEvent(event);
             }
@@ -150,7 +151,7 @@ define([
                 for (i = 0; i < elements.length; i++) {
                     if (elements[i]) {
                         if (typeof elements[i] === "string") {
-                            var element = document.getElementById(elements[i]);
+                            var element = _Global.document.getElementById(elements[i]);
                             if (element) {
                                 realElements.push(element);
                             }
@@ -220,7 +221,7 @@ define([
                 options = options || {};
 
                 // Make sure there's an input element            
-                this._element = element || document.createElement("div");
+                this._element = element || _Global.document.createElement("div");
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -271,7 +272,7 @@ define([
                 this._initializing = false;
 
                 // Compute WebUICommandBar colors
-                if (document.body.contains(this.element)) {
+                if (_Global.document.body.contains(this.element)) {
                     this._updateCommandBarColors();
                 } else {
                     Scheduler.schedule(this._updateCommandBarColors, Scheduler.Priority.high, this, "WinJS.UI.AppBar._updateCommandBarColorsAsync");
@@ -715,11 +716,11 @@ define([
                     if (!this.disabled) {
 
                         // Use AppBar element backgroundColor (RGBA) to set the new WebUICommandBar.backgroundColor and WebUICommandBar.opacity values
-                        var bgColorString = getComputedStyle(this.element).backgroundColor;
+                        var bgColorString = _Global.getComputedStyle(this.element).backgroundColor;
                         if (bgColorString === 'transparent') { // bgColorString is in the form of "rgb(r,g,b)", "rgba(r,g,b,a)" , or "transparent"
                             // getComputedStyle() will give say 'transparent' when an element has no color styles applied to it, or when it has been explicitly set to 'transparent'.
                             // However getComputedStyle does NOT say 'transparent' when a color style of "rgba()" with an alpha value of 0 has been applied.
-                            if (document.body.contains(this.element) || this.element.style.backgroundColor === 'transparent') {
+                            if (_Global.document.body.contains(this.element) || this.element.style.backgroundColor === 'transparent') {
                                 // If the element is in the DOM, then the WinJS Default CSS rules have been applied, so we can trust that 'transparent' is an explicit color override.
                                 commandBar.opacity = 0;
                             }
@@ -736,7 +737,7 @@ define([
                         // the computedStyle of the label element's color can/will inherit form the AppBar element. Phone doesn't support 
                         // transparency in the foreground.
                         var colorSrc = this.element.querySelector(".win-label") || this.element;
-                        var fgColorString = getComputedStyle(colorSrc).color;
+                        var fgColorString = _Global.getComputedStyle(colorSrc).color;
                         if (fgColorString.substring(0, 3) === 'rgb') { // fgColorString is in the form of "rgb(r,g,b)", "rgba(r,g,b,a)" , or "transparent"
                             var fgColor = extractColorValue(fgColorString);
                             commandBar.foregroundColor = { a: 255, r: fgColor.r, g: fgColor.g, b: fgColor.b };

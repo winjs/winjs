@@ -91,7 +91,7 @@ define([
                     /// true if preventDefault was called on the event, otherwise false.
                     /// </returns>
                     /// </signature>
-                    var eventValue = document.createEvent("Event");
+                    var eventValue = _Global.document.createEvent("Event");
                     eventValue.initEvent(type, false, false);
                     eventValue.detail = eventProperties;
                     if (typeof eventProperties === "object") {

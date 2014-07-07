@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
@@ -11,7 +12,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_UI',
     './_Constants'
-    ], function itemEventsHandlerInit(exports, _WinRT, _Base, _BaseUtils, _WriteProfilerMark, Animations, _TransitionAnimation, Promise, _ElementUtilities, _UI, _Constants) {
+    ], function itemEventsHandlerInit(exports, _Global, _WinRT, _Base, _BaseUtils, _WriteProfilerMark, Animations, _TransitionAnimation, Promise, _ElementUtilities, _UI, _Constants) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -105,7 +106,7 @@ define([
             }
 
             function createNodeWithClass(className, skipAriaHidden) {
-                var element = document.createElement("div");
+                var element = _Global.document.createElement("div");
                 element.className = className;
                 if (!skipAriaHidden) {
                     element.setAttribute("aria-hidden", true);
@@ -124,7 +125,7 @@ define([
                 // The gesture recognizer is used for SRG, which is not supported on Phone
                 if (!_BaseUtils.isPhone && this._selectionAllowed()) {
                     var that = this;
-                    setTimeout(function () {
+                    _Global.setTimeout(function () {
                         if (!that._gestureRecognizer && !site.isZombie()) {
                             that._gestureRecognizer = that._createGestureRecognizer();
                         }
@@ -137,8 +138,8 @@ define([
                     }
                     this._disposed = true;
                     this._gestureRecognizer = null;
-                    window.removeEventListener("pointerup", this._resetPointerDownStateBound);
-                    window.removeEventListener("pointercancel", this._resetPointerDownStateBound);
+                    _Global.removeEventListener("pointerup", this._resetPointerDownStateBound);
+                    _Global.removeEventListener("pointercancel", this._resetPointerDownStateBound);
                 },
 
                 onMSManipulationStateChanged: function ItemEventsHandler_onMSManipulationStateChanged(eventObject) {
@@ -261,8 +262,8 @@ define([
                             }
 
                             if (!touchInput) {
-                                _ElementUtilities._addEventListener(window, "pointerup", this._resetPointerDownStateBound, false);
-                                _ElementUtilities._addEventListener(window, "pointercancel", this._resetPointerDownStateBound, false);
+                                _ElementUtilities._addEventListener(_Global, "pointerup", this._resetPointerDownStateBound, false);
+                                _ElementUtilities._addEventListener(_Global, "pointercancel", this._resetPointerDownStateBound, false);
                             }
 
                             // The gesture recognizer is used for SRG, which is not supported on Phone
@@ -804,8 +805,8 @@ define([
                         this._endSwipeBehavior();
                     }
                     this._site.pressedElement = null;
-                    window.removeEventListener("pointerup", this._resetPointerDownStateBound);
-                    window.removeEventListener("pointercancel", this._resetPointerDownStateBound);
+                    _Global.removeEventListener("pointerup", this._resetPointerDownStateBound);
+                    _Global.removeEventListener("pointercancel", this._resetPointerDownStateBound);
 
                     this._resetPressedContainer();
 
@@ -1052,7 +1053,7 @@ define([
                         site = this._site;
 
                     if (site.customFootprintParent) {
-                        selectionHint = this._selectionHint = document.createElement("div");
+                        selectionHint = this._selectionHint = _Global.document.createElement("div");
                         selectionHint.className = _Constants._containerClass;
 
                         var that = this;
@@ -1076,7 +1077,7 @@ define([
                         _ElementUtilities.addClass(selectionHint, _Constants._footprintClass);
 
                         if (!site.selection._isIncluded(this._site.pressedEntity.index)) {
-                            var element = document.createElement("div");
+                            var element = _Global.document.createElement("div");
                             element.className = _Constants._selectionHintClass;
                             element.textContent = _Constants._SELECTION_CHECKMARK;
                             element.style.display = 'none';
@@ -1109,7 +1110,7 @@ define([
                 },
 
                 _releasedElement: function ItemEventsHandler_releasedElement(eventObject) {
-                    return document.elementFromPoint(eventObject.clientX, eventObject.clientY);
+                    return _Global.document.elementFromPoint(eventObject.clientX, eventObject.clientY);
                 },
 
                 _applyUIInBatches: function ItemEventsHandler_applyUIInBatches(work) {
@@ -1123,7 +1124,7 @@ define([
                     function applyUI() {
                         if (that._work.length > 0) {
                             that._flushUIBatches();
-                            that._paintedThisFrame = requestAnimationFrame(applyUI.bind(that));
+                            that._paintedThisFrame = _Global.requestAnimationFrame(applyUI.bind(that));
                         } else {
                             that._paintedThisFrame = null;
                         }

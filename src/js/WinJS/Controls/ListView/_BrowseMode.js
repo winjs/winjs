@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Animations',
@@ -10,7 +11,7 @@ define([
     '../ItemContainer/_Constants',
     '../ItemContainer/_ItemEventsHandler',
     './_SelectionManager'
-    ], function browseModeInit(exports, _Base, _BaseUtils, Animations, Promise, _ElementUtilities, _UI, _Constants, _ItemEventsHandler, _SelectionManager) {
+    ], function browseModeInit(exports, _Global, _Base, _BaseUtils, Animations, Promise, _ElementUtilities, _UI, _Constants, _ItemEventsHandler, _SelectionManager) {
     "use strict";
 
     var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
@@ -25,7 +26,7 @@ define([
             }
 
             function dispatchKeyboardNavigating(element, oldEntity, newEntity) {
-                var navigationEvent = document.createEvent("CustomEvent");
+                var navigationEvent = _Global.document.createEvent("CustomEvent");
                 navigationEvent.initCustomEvent("keyboardnavigating", true, true, {
                     oldFocus: oldEntity.index,
                     oldFocusType: oldEntity.type,
@@ -319,7 +320,7 @@ define([
                             listBinding.release();
                         });
 
-                        var eventObject = document.createEvent("CustomEvent");
+                        var eventObject = _Global.document.createEvent("CustomEvent");
                         eventObject.initCustomEvent(eventName, true, true, isHeader ? {
                             groupHeaderPromise: promise,
                             groupHeaderIndex: entity.index
@@ -377,7 +378,7 @@ define([
                             }
                         }
 
-                        var eventObject = document.createEvent("CustomEvent"),
+                        var eventObject = _Global.document.createEvent("CustomEvent"),
                             newSelectionUpdated = Promise.wrap(),
                             completed = false,
                             preventTap = false,
@@ -558,7 +559,7 @@ define([
                         }
 
                         var dropTarget = this.site.itemsReorderable;
-                        var event = document.createEvent("CustomEvent");
+                        var event = _Global.document.createEvent("CustomEvent");
                         event.initCustomEvent("itemdragstart", true, false, {
                             dataTransfer: eventObject.dataTransfer,
                             dragInfo: this._dragInfo
@@ -622,7 +623,7 @@ define([
                     var eventHandled = this._dragUnderstood;
                     this._lastEnteredElement = eventObject.target;
                     if (this._exitEventTimer) {
-                        clearTimeout(this._exitEventTimer);
+                        _Global.clearTimeout(this._exitEventTimer);
                         this._exitEventTimer = 0;
                     }
 
@@ -651,7 +652,7 @@ define([
                 },
 
                 fireDragUpdateEvent: function () {
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent("itemdragchanged", true, false, {
                         dataTransfer: this._dragDataTransfer,
                         dragInfo: this._dragInfo
@@ -660,7 +661,7 @@ define([
                 },
 
                 _fireDragEnterEvent: function (dataTransfer) {
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent("itemdragenter", true, true, {
                         dataTransfer: dataTransfer
                     });
@@ -671,7 +672,7 @@ define([
                 },
 
                 _fireDragBetweenEvent: function (index, insertAfterIndex, dataTransfer) {
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent("itemdragbetween", true, true, {
                         index: index,
                         insertAfterIndex: insertAfterIndex,
@@ -681,7 +682,7 @@ define([
                 },
 
                 _fireDropEvent: function (index, insertAfterIndex, dataTransfer) {
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent("itemdragdrop", true, true, {
                         index: index,
                         insertAfterIndex: insertAfterIndex,
@@ -692,11 +693,11 @@ define([
 
                 _handleExitEvent: function () {
                     if (this._exitEventTimer) {
-                        clearTimeout(this._exitEventTimer);
+                        _Global.clearTimeout(this._exitEventTimer);
                         this._exitEventTimer = 0;
                     }
                     var that = this;
-                    this._exitEventTimer = setTimeout(function () {
+                    this._exitEventTimer = _Global.setTimeout(function () {
                         if (that._pointerLeftRegion) {
                             that.site._layout.dragLeave && that.site._layout.dragLeave();
                             that._pointerLeftRegion = false;
@@ -705,7 +706,7 @@ define([
                             that._lastInsertPoint = null;
                             that._dragBetweenDisabled = false;
                             if (that._firedDragEnter) {
-                                var event = document.createEvent("CustomEvent");
+                                var event = _Global.document.createEvent("CustomEvent");
                                 event.initCustomEvent("itemdragleave", true, false, {
                                 });
                                 that.site.element.dispatchEvent(event);
@@ -728,7 +729,7 @@ define([
                     }
                     catch (err) { }
 
-                    var computedStyle = window.getComputedStyle(element, null),
+                    var computedStyle = _Global.getComputedStyle(element, null),
                         paddingLeft = parseInt(computedStyle["paddingLeft"]),
                         paddingTop = parseInt(computedStyle["paddingTop"]),
                         borderLeft = parseInt(computedStyle["borderLeftWidth"]),
@@ -842,7 +843,7 @@ define([
                 },
 
                 onDragEnd: function () {
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent("itemdragend", true, false, {});
                     this.site.element.dispatchEvent(event);
                     this._clearDragProperties();
@@ -993,13 +994,13 @@ define([
                     }
                     if (travelRate === 0) {
                         if (this._autoScrollDelay) {
-                            clearTimeout(this._autoScrollDelay);
+                            _Global.clearTimeout(this._autoScrollDelay);
                             this._autoScrollDelay = 0;
                         }
                     } else {
                         if (!this._autoScrollDelay && !this._autoScrollFrame) {
                             var that = this;
-                            this._autoScrollDelay = setTimeout(function () {
+                            this._autoScrollDelay = _Global.setTimeout(function () {
                                 if (that._autoScrollRate) {
                                     that._lastDragTimeout = _BaseUtils._now();
                                     var nextFrame = function () {
@@ -1014,10 +1015,10 @@ define([
                                             newScrollPos[that.site._scrollProperty] = that.site._viewportScrollPosition + delta;
                                             _ElementUtilities.setScrollPosition(that.site._viewport, newScrollPos);
                                             that._lastDragTimeout = currentTime;
-                                            that._autoScrollFrame = requestAnimationFrame(nextFrame);
+                                            that._autoScrollFrame = _Global.requestAnimationFrame(nextFrame);
                                         }
                                     };
-                                    that._autoScrollFrame = requestAnimationFrame(nextFrame);
+                                    that._autoScrollFrame = _Global.requestAnimationFrame(nextFrame);
                                 }
                             }, _Constants._AUTOSCROLL_DELAY);
                         }
@@ -1027,7 +1028,7 @@ define([
 
                 _stopAutoScroll: function () {
                     if (this._autoScrollDelay) {
-                        clearTimeout(this._autoScrollDelay);
+                        _Global.clearTimeout(this._autoScrollDelay);
                         this._autoScrollDelay = 0;
                     }
                     this._autoScrollRate = 0;

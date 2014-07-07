@@ -3,6 +3,7 @@
 /// <dictionary>appbar,appbars,Flyout,Flyouts,onclick,Statics</dictionary>
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
@@ -14,7 +15,7 @@ define([
     '../Tooltip',
     './_Constants',
     './_Icon'
-    ], function appBarCommandInit(exports, _WinRT, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
+    ], function appBarCommandInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -48,7 +49,7 @@ define([
 
             // Duplicate code from Overlay static member function.
             function _getParentControlUsingClassName(element, className) {
-                while (element && element !== document.body) {
+                while (element && element !== _Global.document.body) {
                     if (_ElementUtilities.hasClass(element, className)) {
                         return element.winControl;
                     }
@@ -211,7 +212,7 @@ define([
 
                                 // Parse the image url into a WebUICommandBarButtonBitmapIcon.
                                 // Use computed style to get a normalized "url(\"<pathname>\")" string from the DOM. 
-                                var imageUrl = getComputedStyle(this._imageSpan).backgroundImage;
+                                var imageUrl = _Global.getComputedStyle(this._imageSpan).backgroundImage;
                                 // Make sure returned value is a url.
                                 if (imageUrl.substring(0, 3) === 'url') {
                                     // Remove "url(" from the string.
@@ -385,7 +386,7 @@ define([
                 _createButton: function AppBarCommand_createButton() {
                     // Make sure there's an element
                     if (!this._element) {
-                        this._element = document.createElement("button");
+                        this._element = _Global.document.createElement("button");
                     } else {
                         // Verify the element was a button
                         if (this._element.tagName !== "BUTTON") {
@@ -406,13 +407,13 @@ define([
                     ////      <span class="win-commandicon win-commandring"><span class="win-commandimage" style="background-image:url('customimage.png')"></span></span><span class="win-label">Command 1</span>
                     //// </button>
                     this._element.type = "button";
-                    this._iconSpan = document.createElement("span");
+                    this._iconSpan = _Global.document.createElement("span");
                     this._iconSpan.className = "win-commandicon win-commandring";
                     this._element.appendChild(this._iconSpan);
-                    this._imageSpan = document.createElement("span");
+                    this._imageSpan = _Global.document.createElement("span");
                     this._imageSpan.className = "win-commandimage";
                     this._iconSpan.appendChild(this._imageSpan);
-                    this._labelSpan = document.createElement("span");
+                    this._labelSpan = _Global.document.createElement("span");
                     this._labelSpan.className = "win-label";
                     this._element.appendChild(this._labelSpan);
                     // 'win-global' or 'win-selection' are added later by caller.

@@ -14,7 +14,7 @@ define([
     }
 
     function fireEvent(element, name, forward, cancelable) {
-        var event = document.createEvent('UIEvent');
+        var event = _Global.document.createEvent('UIEvent');
         event.initUIEvent(name, false, !!cancelable, _Global, forward ? 1 : 0);
         return !element.dispatchEvent(event);
     }
@@ -25,26 +25,26 @@ define([
     // When it runs into a tab contained area, it rejects anything except the childFocus element so that any potentially tabbable things that the TabContainer
     // doesn't want tabbed to get ignored. 
     function tabbableElementsNodeFilter(node) {
-        var nodeStyle = getComputedStyle(node);
+        var nodeStyle = _Global.getComputedStyle(node);
         if (nodeStyle.display === "none" || nodeStyle.visibility === "hidden") {
-            return NodeFilter.FILTER_REJECT;
+            return _Global.NodeFilter.FILTER_REJECT;
         }
         if (node._tabContainer) {
-            return NodeFilter.FILTER_ACCEPT;
+            return _Global.NodeFilter.FILTER_ACCEPT;
         }
         if (node.parentNode && node.parentNode._tabContainer) {
             var managedTarget = node.parentNode._tabContainer.childFocus;
             // Ignore subtrees that are under a tab manager but not the child focus. If a node is contained in the child focus, either accept it (if it's tabbable itself), or skip it and find tabbable content inside of it.
             if (managedTarget && node.contains(managedTarget)) {
-                return (getTabIndex(node) >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP);
+                return (getTabIndex(node) >= 0 ? _Global.NodeFilter.FILTER_ACCEPT : _Global.NodeFilter.FILTER_SKIP);
             }
-            return NodeFilter.FILTER_REJECT;
+            return _Global.NodeFilter.FILTER_REJECT;
         }
         var tabIndex = getTabIndex(node);
         if (tabIndex >= 0) {
-            return NodeFilter.FILTER_ACCEPT;
+            return _Global.NodeFilter.FILTER_ACCEPT;
         }
-        return NodeFilter.FILTER_SKIP;
+        return _Global.NodeFilter.FILTER_SKIP;
     }
 
     // We've got to manually scrape the results the walker generated, since the walker will have generated a fairly good representation of the tabbable tree, but
@@ -89,7 +89,7 @@ define([
 
     function TabHelperObject(element, tabIndex) {
         function createCatcher() {
-            var fragment = document.createElement("DIV");
+            var fragment = _Global.document.createElement("DIV");
             fragment.tabIndex = (tabIndex ? tabIndex : 0);
             fragment.setAttribute("aria-hidden", true);
             return fragment;
@@ -297,7 +297,7 @@ define([
                 if (!this.childFocus) {
                     return false;
                 }
-                var walker = document.createTreeWalker(this._element, NodeFilter.SHOW_ELEMENT, tabbableElementsNodeFilter, false);
+                var walker = _Global.document.createTreeWalker(this._element, _Global.NodeFilter.SHOW_ELEMENT, tabbableElementsNodeFilter, false);
                 var tabStops = scrapeTabManagedSubtree(walker);
                 for (var i = 0; i < tabStops.length; i++) {
                     if (tabStops[i] === currentFocus) {

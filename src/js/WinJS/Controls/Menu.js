@@ -2,6 +2,7 @@
 // Menu
 /// <dictionary>Menu,Menus,Flyout,Flyouts,Statics</dictionary>
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -14,7 +15,7 @@ define([
     './Menu/_Command',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function menuInit(_Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _ElementUtilities, _Constants, Flyout, _Overlay, _Command) {
+    ], function menuInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _ElementUtilities, _Constants, Flyout, _Overlay, _Command) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -64,7 +65,7 @@ define([
                 options = options || {};
 
                 // Make sure there's an input element
-                this._element = element || document.createElement("div");
+                this._element = element || _Global.document.createElement("div");
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -302,7 +303,7 @@ define([
                         this.winControl._keyboardInvoked = true;
                         this.winControl._hide();
                     } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
-                           && (this === document.activeElement)) {
+                           && (this === _Global.document.activeElement)) {
                         event.preventDefault();
                         this.winControl.hide();
                     } else if (event.keyCode === Key.upArrow) {
@@ -332,7 +333,7 @@ define([
             //         what had focus before, then we break.  Otherwise we try the first child next.
             // Focus remains on the menu if nothing is focusable.
             Menu._focusOnNextElement = function (menu) {
-                var _currentElement = document.activeElement;
+                var _currentElement = _Global.document.activeElement;
 
                 do {
                     if (_currentElement === menu) {
@@ -347,7 +348,7 @@ define([
                         _currentElement = menu;
                     }
 
-                } while (_currentElement !== document.activeElement);
+                } while (_currentElement !== _Global.document.activeElement);
             };
 
             // Set focus to previous focusable element in the menu (loop if necessary).
@@ -355,7 +356,7 @@ define([
             //         what had focus before, then we break.  Otherwise we try the last child next.
             // Focus remains on the menu if nothing is focusable.
             Menu._focusOnPreviousElement = function (menu) {
-                var _currentElement = document.activeElement;
+                var _currentElement = _Global.document.activeElement;
 
                 do {
                     if (_currentElement === menu) {
@@ -370,7 +371,7 @@ define([
                         _currentElement = menu;
                     }
 
-                } while (_currentElement !== document.activeElement);
+                } while (_currentElement !== _Global.document.activeElement);
             };
 
             return Menu;

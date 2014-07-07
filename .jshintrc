@@ -67,15 +67,14 @@
         http://www.jshint.com/docs/
     */
     "-W053": true, // Ignore (W053)  Do not use String as a constructor.
-    "-W018": true, // Ignore (W018)  Confusing use of '!'.       
-    "-W002": true, // Ignore (W002)  Value of 'e' may be overwritten in IE 8 and earlier.
-    "-W120": true, // Ignore (W120)  You might be leaking a variable (a) here.
+    "-W018": true, // Ignore (W018)  Confusing use of '!'. This rule doesn't like !! for coercion.    
+
 
     /* 
         ENVIORNMENT Options: These options let JSHint know about some pre-defined global variables.
         http://www.jshint.com/docs/options/#environments 
     */
-    "browser": true, // Defines globals exposed by modern browsers. Does not include development variables like alert or console.    
+    "browser": false, // Defines globals exposed by modern browsers. Does not include development variables like alert or console.    
     "node": false, // Defines globals available when your code is running inside of the Node runtime environment.    
 
     /* 
@@ -84,12 +83,6 @@
     */
     "globals": {
         "define": true,
-        "require": true,
-        "Debug": true,
-        "requestAnimationFrame": true,
-        "MSApp": true,
-        "NodeList": true,
-        "HTMLCollection": true,
-		"Windows": false
+        "require": true
     }
 }

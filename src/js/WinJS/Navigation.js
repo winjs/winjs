@@ -171,14 +171,14 @@ define([
                 return history;
             },
             set: function (value) {
-                var s = history = value;
+                history = value;
 
                 // ensure the require fields are present
                 //
-                s.backStack = s.backStack || [];
-                s.forwardStack = s.forwardStack || [];
-                s.current = s.current || { location: "", initialPlaceholder: true };
-                s.current.location = s.current.location || "";
+                history.backStack = history.backStack || [];
+                history.forwardStack = history.forwardStack || [];
+                history.current = history.current || { location: "", initialPlaceholder: true };
+                history.current.location = history.current.location || "";
             }
         },
         forward: function (distance) {

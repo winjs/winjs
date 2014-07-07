@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_Events',
@@ -13,7 +14,7 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_UIUtilities'
-    ], function repeaterInit(exports, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities, _UIUtilities) {
+    ], function repeaterInit(exports, _Global, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities, _UIUtilities) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -48,7 +49,7 @@ define([
 
             function stringifyItem(dataItem) {
                 // Repeater uses this as its default renderer when no template is provided.
-                var itemElement = document.createElement("div");
+                var itemElement = _Global.document.createElement("div");
                 itemElement.textContent = JSON.stringify(dataItem);
                 return itemElement;
             }
@@ -83,7 +84,7 @@ define([
                     throw new _ErrorFromName("WinJS.UI.Repeater.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
-                this._element = element || document.createElement("div");
+                this._element = element || _Global.document.createElement("div");
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
                 options = options || {};
@@ -266,7 +267,7 @@ define([
                 _extractInlineTemplate: function Repeater_extractInlineTemplate() {
                     // Creates and returns a WinJS.BindingTemplate from the Repeater innerHTML.
                     if (this._element.firstElementChild) {
-                        var templateElement = document.createElement(this._element.tagName);
+                        var templateElement = _Global.document.createElement(this._element.tagName);
                         while (this._element.firstElementChild) {
                             // Move each child element from the Repeater to the Template Element
                             templateElement.appendChild(this._element.firstElementChild);
@@ -276,7 +277,7 @@ define([
                 },
 
                 _renderAllItems: function Repeater_renderAllItems() {
-                    var fragment = document.createDocumentFragment();
+                    var fragment = _Global.document.createDocumentFragment();
                     for (var i = 0, len = this._data.length; i < len; i++) {
                         var renderedItem = this._render(this._data.getAt(i));
                         if (!renderedItem) {

@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    './Core/_Global',
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_WriteProfilerMark',
     './Animations/_Constants',
     './Animations/_TransitionAnimation',
     './Promise'
-    ], function animationsInit(exports, _Base, _BaseUtils, _WriteProfilerMark, _Constants, _TransitionAnimation, Promise) {
+    ], function animationsInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, _Constants, _TransitionAnimation, Promise) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -71,12 +72,12 @@ define([
     function keyframeCallback(keyframe) {
         var keyframeRtl = keyframe + "-rtl";
         return function (i, elem) {
-            return window.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
+            return _Global.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
         };
         }
 
     function makeArray(elements) {
-        if (Array.isArray(elements) || elements instanceof NodeList || elements instanceof HTMLCollection) {
+        if (Array.isArray(elements) || elements instanceof _Global.NodeList || elements instanceof _Global.HTMLCollection) {
             return elements;
         } else if (elements) {
             return [elements];
@@ -92,7 +93,7 @@ define([
                 top: elemArray[i].offsetTop,
                 left: elemArray[i].offsetLeft
             };
-            var matrix = window.getComputedStyle(elemArray[i], null)[transformNames.scriptName].split(",");
+            var matrix = _Global.getComputedStyle(elemArray[i], null)[transformNames.scriptName].split(",");
             if (matrix.length === 6) {
                 offset.left += parseFloat(matrix[4]);
                 offset.top += parseFloat(matrix[5]);
@@ -194,7 +195,7 @@ define([
         elemArray = makeArray(elemArray);
         origins = makeArray(origins);
         for (var i = 0, len = elemArray.length; i < len; i++) {
-            var rtl = window.getComputedStyle(elemArray[i]).direction === "rtl";
+            var rtl = _Global.getComputedStyle(elemArray[i]).direction === "rtl";
             elemArray[i].style[_BaseUtils._browserStyleEquivalents["transform-origin"].scriptName] = origins[Math.min(origins.length - 1, i)][rtl ? "rtl" : "ltr"];
         }
         function onComplete() {
@@ -216,7 +217,7 @@ define([
         return function (i, elem) {
             var offset = offsetArray.getOffset(i);
             var left = offset.left;
-            if (offset.rtlflip && window.getComputedStyle(elem).direction === "rtl") {
+            if (offset.rtlflip && _Global.getComputedStyle(elem).direction === "rtl") {
                 left = left.toString();
                 if (left.charAt(0) === "-") {
                     left = left.substring(1);
@@ -255,8 +256,8 @@ define([
         for (var i = 0, len = elements.length; i < len; i++) {
             var itemBoundingBox = elements[i].getBoundingClientRect();
             var offsetLeftLTR = -(40 + itemBoundingBox.left);
-            var offsetLeftRTL = 40 + (window.innerWidth - itemBoundingBox.right);
-            var totalOffsetY = ((window.innerHeight / 2) - itemBoundingBox.top);
+            var offsetLeftRTL = 40 + (_Global.innerWidth - itemBoundingBox.right);
+            var totalOffsetY = ((_Global.innerHeight / 2) - itemBoundingBox.top);
             origins.push(
                 {
                     ltr: offsetLeftLTR + "px " + totalOffsetY + "px",
@@ -2080,7 +2081,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("slideRightIn,StartTM");
 
-            return animStaggeredSlide("cubic-bezier(0.17,0.79,0.215,1.0025)", -window.innerWidth, 0, true, page, firstIncomingElements, secondIncomingElements, thirdIncomingElements)
+            return animStaggeredSlide("cubic-bezier(0.17,0.79,0.215,1.0025)", -_Global.innerWidth, 0, true, page, firstIncomingElements, secondIncomingElements, thirdIncomingElements)
                 .then(function () { writeAnimationProfilerMark("slideRightIn,StopTM"); });
         },
 
@@ -2107,7 +2108,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("slideRightOut,StartTM");
 
-            return animStaggeredSlide("cubic-bezier(0.3825,0.0025,0.8775,-0.1075)", 0, window.innerWidth, false, page, firstOutgoingElements, secondOutgoingElements, thirdOutgoingElements)
+            return animStaggeredSlide("cubic-bezier(0.3825,0.0025,0.8775,-0.1075)", 0, _Global.innerWidth, false, page, firstOutgoingElements, secondOutgoingElements, thirdOutgoingElements)
                 .then(function () { writeAnimationProfilerMark("slideRightOut,StopTM"); });
         },
 
@@ -2134,7 +2135,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("slideLeftIn,StartTM");
 
-            return animStaggeredSlide("cubic-bezier(0.17,0.79,0.215,1.0025)", window.innerWidth, 0, true, page, firstIncomingElements, secondIncomingElements, thirdIncomingElements)
+            return animStaggeredSlide("cubic-bezier(0.17,0.79,0.215,1.0025)", _Global.innerWidth, 0, true, page, firstIncomingElements, secondIncomingElements, thirdIncomingElements)
                 .then(function () { writeAnimationProfilerMark("slideLeftIn,StopTM"); });
         },
 
@@ -2161,7 +2162,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("slideLeftOut,StartTM");
 
-            return animStaggeredSlide("cubic-bezier(0.3825,0.0025,0.8775,-0.1075)", 0, -window.innerWidth, false, page, firstOutgoingElements, secondOutgoingElements, thirdOutgoingElements)
+            return animStaggeredSlide("cubic-bezier(0.3825,0.0025,0.8775,-0.1075)", 0, -_Global.innerWidth, false, page, firstOutgoingElements, secondOutgoingElements, thirdOutgoingElements)
                 .then(function () { writeAnimationProfilerMark("slideLeftOut,StopTM"); });
         },
 

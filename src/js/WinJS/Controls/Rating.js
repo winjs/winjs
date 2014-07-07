@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_Events',
@@ -10,7 +11,7 @@ define([
     './Tooltip',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function ratingInit(_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, _SafeHtml, Tooltip) {
+    ], function ratingInit(_Global,_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, _SafeHtml, Tooltip) {
     "use strict";
 
     // Rating control implementation
@@ -99,7 +100,7 @@ define([
                 /// </signature>
                 this._disposed = false;
 
-                element = element || document.createElement("div");
+                element = element || _Global.document.createElement("div");
                 options = options || {};
                 this._element = element;
                 _ElementUtilities.addClass(this._element, "win-disposable");
@@ -398,7 +399,7 @@ define([
                 _getText: function (number) {
                     var string = this._tooltipStrings[number];
                     if (string) {
-                        var tempDiv = document.createElement("div");
+                        var tempDiv = _Global.document.createElement("div");
                         tempDiv.innerHTML = string;
                         return tempDiv.textContent;
                     } else if (number === this._maxRating) {
@@ -552,9 +553,9 @@ define([
                     if (this._averageRating === 1) {
                         j = 1;
                     }
-                    var style = getComputedStyle(this._elements[j]);
+                    var style = _Global.getComputedStyle(this._elements[j]);
                     this._elementWidth = style.width;
-                    if (getComputedStyle(this._element).direction === "rtl") {
+                    if (_Global.getComputedStyle(this._element).direction === "rtl") {
                         this._elementPadding = style.paddingRight;
                         this._elementBorder = style.borderRight;
                     } else {
@@ -672,7 +673,7 @@ define([
                     }
                     else {
                         var left = 0, right = this.maxRating;
-                        if (getComputedStyle(this._element).direction === "rtl") {
+                        if (_Global.getComputedStyle(this._element).direction === "rtl") {
                             left = right;
                             right = 0;
                         }
@@ -761,7 +762,7 @@ define([
                 _onKeyDown: function (eventObject) {
                     var Key = _ElementUtilities.Key;
                     var keyCode = eventObject.keyCode;
-                    var rtlString = getComputedStyle(this._element).direction;
+                    var rtlString = _Global.getComputedStyle(this._element).direction;
                     var handled = true;
                     switch (keyCode) {
                         case Key.enter: // Enter
@@ -859,8 +860,8 @@ define([
                     if (!this._disabled) {
                         this._lastEventWasChange = (eventName === CHANGE);
                         this._lastEventWasCancel = (eventName === CANCEL);
-                        if (document.createEvent) {
-                            var event = document.createEvent("CustomEvent");
+                        if (_Global.document.createEvent) {
+                            var event = _Global.document.createEvent("CustomEvent");
                             event.initCustomEvent(eventName, false, false, { tentativeRating: tentativeRating });
                             this._element.dispatchEvent(event);
                         }
@@ -871,7 +872,7 @@ define([
                     if (this._averageRatingElement.nextSibling !== null) {
                         _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1, shrink: 1});
                         var style = this._averageRatingElement.nextSibling.style;
-                        var direction = getComputedStyle(this._element).direction;
+                        var direction = _Global.getComputedStyle(this._element).direction;
                         if (prevState) {
                             if (direction === "rtl") {
                                 direction = "ltr";
@@ -956,7 +957,7 @@ define([
                 _updateAverageStar: function () {
                     var style = this._averageRatingElement.style;
                     var nextStyle = this._averageRatingElement.nextSibling.style;
-                    if (getComputedStyle(this._element).direction === "rtl") {
+                    if (_Global.getComputedStyle(this._element).direction === "rtl") {
                         style.backgroundPosition = "right";
                         style.paddingRight = this._elementPadding;
                         style.borderRight = this._elementBorder;
@@ -975,7 +976,7 @@ define([
                     _ElementUtilities._setFlexStyle(this._averageRatingElement, {grow: this._floatingValue, shrink: this._floatingValue});
                     style.width = this._resizeStringValue(this._elementWidth, this._floatingValue, style.width);
                     style.backgroundSize = (100 / this._floatingValue) + "% 100%";
-                    style.display = getComputedStyle(this._averageRatingElement.nextSibling).display;
+                    style.display = _Global.getComputedStyle(this._averageRatingElement.nextSibling).display;
                     this._averageRatingHidden = false;
                     _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1 - this._floatingValue, shrink: 1 - this._floatingValue});
                     nextStyle.width = this._resizeStringValue(this._elementWidth, 1 - this._floatingValue, nextStyle.width);
@@ -1021,9 +1022,9 @@ define([
                         this._toolTips[this._tentativeRating - 1].innerHTML = this._tooltipStrings[this._tentativeRating - 1];
                         this._toolTips[this._tentativeRating - 1].open(tooltipType);
                     } else if (this._tentativeRating === 0) {
-                        this._clearElement = document.createElement("div");
+                        this._clearElement = _Global.document.createElement("div");
                         var distance = this._elements[0].offsetWidth + parseInt(this._elementPadding, 10);
-                        if (getComputedStyle(this._element).direction === "ltr") {
+                        if (_Global.getComputedStyle(this._element).direction === "ltr") {
                             distance *= -1;
                         }
                         this._clearElement.style.cssText = "visiblity:hidden; position:absolute; width:0px; height:100%; left:" + distance + "px; top:0px;";
@@ -1095,10 +1096,10 @@ define([
                                     this._element.insertBefore(this._averageRatingElement, this._elements[i]);
 
                                     this._floatingValue = this._averageRating - i;
-                                    var elementStyle = getComputedStyle(this._elements[i]);
+                                    var elementStyle = _Global.getComputedStyle(this._elements[i]);
                                     this._elementWidth = elementStyle.width;
 
-                                    if (getComputedStyle(this._element).direction === "rtl") {
+                                    if (_Global.getComputedStyle(this._element).direction === "rtl") {
                                         this._elementPadding = elementStyle.paddingRight;
                                         this._elementBorder = elementStyle.borderRight;
                                     } else {

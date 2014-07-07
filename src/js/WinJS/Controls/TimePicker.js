@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 define([
+    '../Core/_Global',
     '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -11,7 +12,7 @@ define([
     '../Utilities/_Select',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function timePickerInit(_WinRT, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
+    ], function timePickerInit(_Global, _WinRT, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -63,7 +64,7 @@ define([
                 // Default to current time
                 this._currentTime = TimePicker._sentinelDate();
 
-                element = element || document.createElement("div");
+                element = element || _Global.document.createElement("div");
                 _ElementUtilities.addClass(element, "win-disposable");
                 element.winControl = this;
 
@@ -330,15 +331,15 @@ define([
                     _ElementUtilities.empty(this._domElement);
                     _ElementUtilities.addClass(this._domElement, "win-timepicker");
 
-                    this._hourElement = document.createElement("select");
+                    this._hourElement = _Global.document.createElement("select");
                     _ElementUtilities.addClass(this._hourElement, "win-timepicker-hour");
 
-                    this._minuteElement = document.createElement("select");
+                    this._minuteElement = _Global.document.createElement("select");
                     _ElementUtilities.addClass(this._minuteElement, "win-timepicker-minute");
 
                     this._ampmElement = null;
                     if (info.clock === "12HourClock") {
-                        this._ampmElement = document.createElement("select");
+                        this._ampmElement = _Global.document.createElement("select");
                         _ElementUtilities.addClass(this._ampmElement, "win-timepicker-period");
                     }
 

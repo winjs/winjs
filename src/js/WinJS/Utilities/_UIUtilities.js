@@ -46,7 +46,7 @@ define([
             }
 
             return function (data, container) {
-                var host = container || document.createElement(tagName);
+                var host = container || _Global.document.createElement(tagName);
                 template.render(data, host);
                 if (container) {
                     return container;
@@ -112,7 +112,7 @@ define([
         },
 
         _tryFocus: function Utilities_tryFocus(elem, useSetActive, scroller) {
-            var previousActiveElement = document.activeElement;
+            var previousActiveElement = _Global.document.activeElement;
 
             if (elem === previousActiveElement) {
                 return true;
@@ -129,7 +129,7 @@ define([
                 elem.focus();
             }
 
-            if (previousActiveElement !== document.activeElement) {
+            if (previousActiveElement !== _Global.document.activeElement) {
                 return true;
             }
             return false;

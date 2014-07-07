@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    '../Core/_Global',
     '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_ErrorFromName',
@@ -13,7 +14,7 @@ define([
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function searchboxInit(_WinRT, _Base, _ErrorFromName, _Events, _Resources, Animations, BindingList, Repeater, _Control, _ElementListUtilities, _ElementUtilities) {
+    ], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, Animations, BindingList, Repeater, _Control, _ElementListUtilities, _ElementUtilities) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -118,7 +119,7 @@ define([
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
 
-                element = element || document.createElement("div");
+                element = element || _Global.document.createElement("div");
 
                 if (element.winControl) {
                     throw new _ErrorFromName("WinJS.UI.SearchBox.DuplicateConstruction", strings.duplicateConstruction);
@@ -320,7 +321,7 @@ define([
                             this._buttonElement.disabled = false;
                             this._domElement.disabled = false;
                             _ElementUtilities.removeClass(this.element, ClassName.searchboxDisabled);
-                            if (document.activeElement === this.element) {
+                            if (_Global.document.activeElement === this.element) {
                                 _ElementUtilities._setActive(this._inputElement);
                             }
                         } else {
@@ -481,8 +482,8 @@ define([
                     var popupHeight = flyoutRect.bottom - flyoutRect.top;
                     var popupWidth = flyoutRect.right - flyoutRect.left;
                     var searchBoxWidth = searchBoxRect.right - searchBoxRect.left;
-                    var documentClientHeight = document.documentElement.clientHeight;
-                    var documentClientWidth = document.documentElement.clientWidth;
+                    var documentClientHeight = _Global.document.documentElement.clientHeight;
+                    var documentClientWidth = _Global.document.documentElement.clientWidth;
                     var searchBoxClientHeight = this.element.clientHeight;
                     var searchBoxClientLeft = this.element.clientLeft;
 
@@ -501,7 +502,7 @@ define([
 
                     // Align left vs right edge
                     var alignRight;
-                    if (window.getComputedStyle(this._flyoutDivElement).direction === "rtl") {
+                    if (_Global.getComputedStyle(this._flyoutDivElement).direction === "rtl") {
                         // RTL: Align to the right edge if there is enough space to the left of the search box's
                         // right edge, or if there is not enough space to fit the flyout aligned to either edge.
                         alignRight = ((searchBoxRect.right - popupWidth) >= 0) || ((searchBoxRect.left + popupWidth) > documentClientWidth);
@@ -545,7 +546,7 @@ define([
 
                 _addNewSpan: function SearchBox_addNewSpan(element, textContent, insertBefore) {
                     // Adds new span element with specified inner text as child to element, placed before insertBefore
-                    var spanElement = document.createElement("span");
+                    var spanElement = _Global.document.createElement("span");
                     spanElement.textContent = textContent;
                     spanElement.setAttribute("aria-hidden", "true");
                     _ElementUtilities.addClass(spanElement, ClassName.searchboxHitHighlightSpan);
@@ -659,10 +660,10 @@ define([
                 },
 
                 _updateSearchButtonClass: function SearchBox_updateSearchButtonClass() {
-                    if ((this._currentSelectedIndex !== -1) || (document.activeElement !== this._inputElement)) {
+                    if ((this._currentSelectedIndex !== -1) || (_Global.document.activeElement !== this._inputElement)) {
                         // Focus is not in input. remove class
                         _ElementUtilities.removeClass(this._buttonElement, ClassName.searchBoxButtonInputFocus);
-                    } else if (document.activeElement === this._inputElement) {
+                    } else if (_Global.document.activeElement === this._inputElement) {
                         _ElementUtilities.addClass(this._buttonElement, ClassName.searchBoxButtonInputFocus);
                     }
                 },
@@ -704,7 +705,7 @@ define([
                 },
 
                 _querySuggestionRenderer: function SearchBox_querySuggestionRenderer(item) {
-                    var root = document.createElement("div");
+                    var root = _Global.document.createElement("div");
 
                     this._addHitHighlightedText(root, item, item.text);
                     root.title = item.text;
@@ -724,9 +725,9 @@ define([
                 },
 
                 _separatorSuggestionRenderer: function SearchBox_separatorSuggestionRenderer(item) {
-                    var root = document.createElement("div");
+                    var root = _Global.document.createElement("div");
                     if (item.text.length > 0) {
-                        var textElement = document.createElement("div");
+                        var textElement = _Global.document.createElement("div");
                         textElement.textContent = item.text;
                         textElement.title = item.text;
                         textElement.setAttribute("aria-hidden", "true");
@@ -741,8 +742,8 @@ define([
                 },
 
                 _resultSuggestionRenderer: function SearchBox_resultSuggestionRenderer(item) {
-                    var root = document.createElement("div");
-                    var image = new Image();
+                    var root = _Global.document.createElement("div");
+                    var image = new _Global.Image();
                     image.style.opacity = 0;
                     var loadImage = function (url) {
                         function onload() {
@@ -756,7 +757,7 @@ define([
                     if (item.image !== null) {
                         item.image.openReadAsync().then(function (streamWithContentType) {
                             if (streamWithContentType !== null) {
-                                loadImage(URL.createObjectURL(streamWithContentType, { oneTimeOnly: true }));
+                                loadImage(_Global.URL.createObjectURL(streamWithContentType, { oneTimeOnly: true }));
                             }
                         });
                     } else if (item.imageUrl !== null) {
@@ -765,17 +766,17 @@ define([
                     image.setAttribute("aria-hidden", "true");
                     root.appendChild(image);
 
-                    var divElement = document.createElement("div");
+                    var divElement = _Global.document.createElement("div");
                     _ElementUtilities.addClass(divElement, ClassName.searchBoxSuggestionResultText);
                     this._addHitHighlightedText(divElement, item, item.text);
                     divElement.title = item.text;
                     divElement.setAttribute("aria-hidden", "true");
                     root.appendChild(divElement);
 
-                    var brElement = document.createElement("br");
+                    var brElement = _Global.document.createElement("br");
                     divElement.appendChild(brElement);
 
-                    var divDetailElement = document.createElement("span");
+                    var divDetailElement = _Global.document.createElement("span");
                     _ElementUtilities.addClass(divDetailElement, ClassName.searchBoxSuggestionResultDetailedText);
                     this._addHitHighlightedText(divDetailElement, item, item.detailText);
                     divDetailElement.title = item.detailText;
@@ -818,18 +819,18 @@ define([
                     this._domElement = element;
                     _ElementUtilities.addClass(this._domElement, ClassName.searchBox);
 
-                    this._inputElement = document.createElement("input");
+                    this._inputElement = _Global.document.createElement("input");
                     this._inputElement.type = "search";
                     _ElementUtilities.addClass(this._inputElement, ClassName.searchBoxInput);
 
-                    this._buttonElement = document.createElement("div");
+                    this._buttonElement = _Global.document.createElement("div");
                     this._buttonElement.tabIndex = -1;
                     _ElementUtilities.addClass(this._buttonElement, ClassName.searchBoxButton);
 
-                    this._flyoutDivElement = document.createElement('div');
+                    this._flyoutDivElement = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._flyoutDivElement, ClassName.searchBoxFlyout);
 
-                    this._repeaterDivElement = document.createElement('div');
+                    this._repeaterDivElement = _Global.document.createElement('div');
                     this._suggestionsData = new BindingList.List();
                     this._repeater = new Repeater.Repeater(this._repeaterDivElement, { data: this._suggestionsData, template: this._suggestionRendererBind });
 
@@ -1280,7 +1281,7 @@ define([
                 },
 
                 _inputPointerDownHandler: function SearchBox_inputPointerDownHandler() {
-                    if ((document.activeElement === this._inputElement) && (this._currentSelectedIndex !== -1)) {
+                    if ((_Global.document.activeElement === this._inputElement) && (this._currentSelectedIndex !== -1)) {
                         this._currentFocusedIndex = -1;
                         this._selectSuggestionAtIndex(this._currentFocusedIndex);
                     }
@@ -1383,7 +1384,7 @@ define([
                         }
                     }
 
-                    if (document.activeElement === this._inputElement) {
+                    if (_Global.document.activeElement === this._inputElement) {
                         this._updateFakeFocus();
                     }
                 },
@@ -1412,14 +1413,14 @@ define([
 
                 _fireEvent: function SearchBox_fireEvent(type, detail) {
                     // Returns true if ev.preventDefault() was not called
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent(type, true, true, detail);
                     return this.element.dispatchEvent(event);
                 },
 
                 _requestingFocusOnKeyboardInputHandler: function SearchBox_requestingFocusOnKeyboardInputHandler() {
                     this._fireEvent(SearchBox._EventName.receivingfocusonkeyboardinput, null);
-                    if (document.activeElement !== this._inputElement) {
+                    if (_Global.document.activeElement !== this._inputElement) {
                         try {
                             this._inputElement.focus();
                         } catch (e) {

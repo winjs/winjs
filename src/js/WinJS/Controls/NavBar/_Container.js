@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Events',
@@ -21,11 +22,11 @@ define([
     '../AppBar/_Constants',
     '../Repeater',
     './_Command'
-    ], function NavBarContainerInit(exports, _Base, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
+    ], function NavBarContainerInit(exports, _Global, _Base, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
     "use strict";
 
     function nobodyHasFocus() {
-        return document.activeElement === null || document.activeElement === document.body;
+        return _Global.document.activeElement === null || _Global.document.activeElement === _Global.document.body;
     }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -94,7 +95,7 @@ define([
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
                 
-                element = element || document.createElement("DIV");
+                element = element || _Global.document.createElement("DIV");
                 this._id = element.id || _ElementUtilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -183,7 +184,7 @@ define([
                     set: function (value) {
                         this._template = value;
                         if (this._repeater) {
-                            var hadFocus = this.element.contains(document.activeElement);
+                            var hadFocus = this.element.contains(_Global.document.activeElement);
 
                             if (!this._duringConstructor) {
                                 this._closeSplitIfOpen();
@@ -205,7 +206,7 @@ define([
                 },
 
                 _render: function NavBarContainer_render(item) {
-                    var navbarCommandEl = document.createElement('div');
+                    var navbarCommandEl = _Global.document.createElement('div');
 
                     var template = this._template;
                     if (template) {
@@ -243,7 +244,7 @@ define([
                         this._removeDataChangingEvents();
                         this._removeDataChangedEvents();
 
-                        var hadFocus = this.element.contains(document.activeElement);
+                        var hadFocus = this.element.contains(_Global.document.activeElement);
 
                         if (!this._repeater) {
                             this._surfaceEl.innerHTML = "";
@@ -330,7 +331,7 @@ define([
                     },
                     set: function (value) {
                         if (value === +value) {
-                            var hadFocus = this.element.contains(document.activeElement);
+                            var hadFocus = this.element.contains(_Global.document.activeElement);
 
                             this._keyboardBehavior.currentIndex = value;
                             if (this._surfaceEl.children.length > 0) {
@@ -430,7 +431,7 @@ define([
                 _dataChanging: function NavBarContainer_dataChanging(ev) {
                     // Store the element that was active so that we can detect
                     // if the focus went away because of the data change.
-                    this._elementHadFocus = document.activeElement;
+                    this._elementHadFocus = _Global.document.activeElement;
 
                     if (this._currentSplitNavItem && this._currentSplitNavItem.splitOpened) {
                         if (ev.type === "itemremoved") {
@@ -493,7 +494,7 @@ define([
                 },
                 
                 _focusCurrentItemPassively: function NavBarContainer_focusCurrentItemPassively() {
-                    if (this.element.contains(document.activeElement)) {
+                    if (this.element.contains(_Global.document.activeElement)) {
                         this._keyboardBehavior._focus();
                     }
                 },
@@ -504,7 +505,7 @@ define([
                         this._surfaceEl.children[this._keyboardBehavior.currentIndex].winControl._splitButtonActive = false;
                     }
 
-                    if (this.element.contains(document.activeElement)) {
+                    if (this.element.contains(_Global.document.activeElement)) {
                         this._keyboardBehavior._focus(0);
                     }
 
@@ -585,14 +586,14 @@ define([
                     _ElementUtilities._addEventListener(this._element, 'pointermove', this._MSPointerMove.bind(this));
                     _ElementUtilities._addEventListener(this._element, "focusin", this._focusHandler.bind(this), false);
 
-                    this._pageindicatorsEl = document.createElement('div');
+                    this._pageindicatorsEl = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._pageindicatorsEl, NavBarContainer._ClassName.pageindicators);
                     this._element.appendChild(this._pageindicatorsEl);
 
-                    this._ariaStartMarker = document.createElement("div");
+                    this._ariaStartMarker = _Global.document.createElement("div");
                     this._element.appendChild(this._ariaStartMarker);
 
-                    this._viewportEl = document.createElement('div');
+                    this._viewportEl = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._viewportEl, NavBarContainer._ClassName.viewport);
                     this._element.appendChild(this._viewportEl);
                     this._viewportEl.setAttribute("role", "group");
@@ -604,10 +605,10 @@ define([
                     this._viewportEl.addEventListener("scroll", this._scrollHandler.bind(this));
                     this._viewportEl.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
 
-                    this._ariaEndMarker = document.createElement("div");
+                    this._ariaEndMarker = _Global.document.createElement("div");
                     this._element.appendChild(this._ariaEndMarker);
 
-                    this._surfaceEl = document.createElement('div');
+                    this._surfaceEl = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._surfaceEl, NavBarContainer._ClassName.surface);
                     this._viewportEl.appendChild(this._surfaceEl);
 
@@ -624,7 +625,7 @@ define([
                         tempEl = this.element.firstElementChild;
                     }
 
-                    this._leftArrowEl = document.createElement('div');
+                    this._leftArrowEl = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._leftArrowEl, NavBarContainer._ClassName.navleftarrow);
                     _ElementUtilities.addClass(this._leftArrowEl, NavBarContainer._ClassName.navarrow);
                     this._element.appendChild(this._leftArrowEl);
@@ -633,7 +634,7 @@ define([
                     this._leftArrowEl.style.visibility = 'hidden';
                     this._leftArrowFadeOut = Promise.wrap();
 
-                    this._rightArrowEl = document.createElement('div');
+                    this._rightArrowEl = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._rightArrowEl, NavBarContainer._ClassName.navrightarrow);
                     _ElementUtilities.addClass(this._rightArrowEl, NavBarContainer._ClassName.navarrow);
                     this._element.appendChild(this._rightArrowEl);
@@ -696,8 +697,8 @@ define([
                     if (this._disposed) { return; }
                     if (!this._measured) { return; }
                     var viewportResized = this.layout === _UI.Orientation.horizontal
-                            ? this._sizes.viewportOffsetWidth !== parseFloat(getComputedStyle(this._viewportEl).width)
-                            : this._sizes.viewportOffsetHeight !== parseFloat(getComputedStyle(this._viewportEl).height);
+                            ? this._sizes.viewportOffsetWidth !== parseFloat(_Global.getComputedStyle(this._viewportEl).width)
+                            : this._sizes.viewportOffsetHeight !== parseFloat(_Global.getComputedStyle(this._viewportEl).height);
                     if (!viewportResized) { return; }
                     
                     this._measured = false;
@@ -731,7 +732,7 @@ define([
                         if (this._surfaceEl.children.length > 0) {
                             this._surfaceEl.children[0].winControl._splitButtonActive = false;
                         }
-                        if (this.element.contains(document.activeElement)) {
+                        if (this.element.contains(_Global.document.activeElement)) {
                             this._keyboardBehavior._focus(this._keyboardBehavior.currentIndex);
                         }
                         this._closeSplitIfOpen();
@@ -758,7 +759,7 @@ define([
                         if (keyCode === Key.pageUp) {
                             if (this.layout === _UI.Orientation.horizontal) {
                                 var indexOfFirstItemOnPage = page * sizes.columnsPerPage * sizes.rowsPerPage;
-                                if (index === indexOfFirstItemOnPage && this._surfaceEl.children[index].winControl._buttonEl === document.activeElement) {
+                                if (index === indexOfFirstItemOnPage && this._surfaceEl.children[index].winControl._buttonEl === _Global.document.activeElement) {
                                     // First item on page so go back 1 page.
                                     index = index - sizes.columnsPerPage * sizes.rowsPerPage;
                                 } else {
@@ -973,11 +974,11 @@ define([
                         this._zooming = false;
                     }
 
-                    clearTimeout(this._manipulationStateTimeoutId);
+                    _Global.clearTimeout(this._manipulationStateTimeoutId);
                     // The extra stop event is firing when an zoomTo is called during another zoomTo and
                     // also the first zoomTo after a resize.
                     if (e.currentState === e.MS_MANIPULATION_STATE_STOPPED) {
-                        this._manipulationStateTimeoutId = setTimeout(function () {
+                        this._manipulationStateTimeoutId = _Global.setTimeout(function () {
                             this._viewportEl.style.msScrollSnapType = "";
                             this._zooming = false;
                             this._updateCurrentIndexIfPageChanged();
@@ -991,7 +992,7 @@ define([
                     this._measured = false;
                     if (!this._checkingScroll) {
                         var that = this;
-                        this._checkingScroll = requestAnimationFrame(function () {
+                        this._checkingScroll = _Global.requestAnimationFrame(function () {
                             if (that._disposed) { return; }
                             that._checkingScroll = null;
 
@@ -1025,7 +1026,7 @@ define([
                                 this._surfaceEl.children[this._keyboardBehavior.currentIndex].winControl._splitButtonActive = false;
                             }
 
-                            if (this.element.contains(document.activeElement)) {
+                            if (this.element.contains(_Global.document.activeElement)) {
                                 this._keyboardBehavior._focus(this._keyboardBehavior.currentIndex);
                             }
                         }
@@ -1039,7 +1040,7 @@ define([
 
                         var sizes = this._sizes;
 
-                        sizes.rtl = getComputedStyle(this._element).direction === "rtl";
+                        sizes.rtl = _Global.getComputedStyle(this._element).direction === "rtl";
 
                         var itemCount = this._surfaceEl.children.length;
                         if (itemCount > 0) {
@@ -1050,15 +1051,15 @@ define([
                                 // Clear inline margins set by NavBarContainer before measuring.
                                 elementToMeasure.style.margin = "";
                                 elementToMeasure.style.width = "";
-                                var elementComputedStyle = getComputedStyle(elementToMeasure);
-                                sizes.itemOffsetWidth = parseFloat(getComputedStyle(elementToMeasure).width);
+                                var elementComputedStyle = _Global.getComputedStyle(elementToMeasure);
+                                sizes.itemOffsetWidth = parseFloat(_Global.getComputedStyle(elementToMeasure).width);
                                 if (elementToMeasure.offsetWidth === 0) {
                                     sizes.itemOffsetWidth = 0;
                                 }
                                 sizes.itemMarginLeft = parseFloat(elementComputedStyle.marginLeft);
                                 sizes.itemMarginRight = parseFloat(elementComputedStyle.marginRight);
                                 sizes.itemWidth = sizes.itemOffsetWidth + sizes.itemMarginLeft + sizes.itemMarginRight;
-                                sizes.itemOffsetHeight = parseFloat(getComputedStyle(elementToMeasure).height);
+                                sizes.itemOffsetHeight = parseFloat(_Global.getComputedStyle(elementToMeasure).height);
                                 if (elementToMeasure.offsetHeight === 0) {
                                     sizes.itemOffsetHeight = 0;
                                 }
@@ -1071,11 +1072,11 @@ define([
                                 this._writeProfilerMark("measureItem,StopTM");
                             }
 
-                            sizes.viewportOffsetWidth = parseFloat(getComputedStyle(this._viewportEl).width);
+                            sizes.viewportOffsetWidth = parseFloat(_Global.getComputedStyle(this._viewportEl).width);
                             if (this._viewportEl.offsetWidth === 0) {
                                 sizes.viewportOffsetWidth = 0;
                             }
-                            sizes.viewportOffsetHeight = parseFloat(getComputedStyle(this._viewportEl).height);
+                            sizes.viewportOffsetHeight = parseFloat(_Global.getComputedStyle(this._viewportEl).height);
                             if (this._viewportEl.offsetHeight === 0) {
                                 sizes.viewportOffsetHeight = 0;
                             }
@@ -1089,7 +1090,7 @@ define([
                             if (this.layout === _UI.Orientation.horizontal) {
                                 this._scrollPosition = _ElementUtilities.getScrollPosition(this._viewportEl).scrollLeft;
 
-                                sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(getComputedStyle(this._leftArrowEl).marginRight);
+                                sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(_Global.getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(_Global.getComputedStyle(this._leftArrowEl).marginRight);
                                 var usableSpace = sizes.viewportOffsetWidth - sizes.leadingEdge * 2;
                                 sizes.maxColumns = sizes.itemWidth ? Math.max(1, Math.floor(usableSpace / sizes.itemWidth)) : 1;
                                 sizes.rowsPerPage = Math.min(this.maxRows, Math.ceil(itemCount / sizes.maxColumns));
@@ -1346,7 +1347,7 @@ define([
                 },
 
                 _fireEvent: function NavBarContainer_fireEvent(type, detail) {
-                    var event = document.createEvent("CustomEvent");
+                    var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent(type, true, false, detail);
                     this.element.dispatchEvent(event);
                 },

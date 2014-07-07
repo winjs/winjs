@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,registeredforsettings,SettingsFlyout,Statics,Syriac</dictionary>
 define([
+    '../Core/_Global',
     '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -18,7 +19,7 @@ define([
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function settingsFlyoutInit(_WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _UIUtilities, _Constants, _Overlay) {
+    ], function settingsFlyoutInit(_Global,_WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _UIUtilities, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -101,7 +102,7 @@ define([
                 /// </signature>
 
                 // Make sure there's an input element
-                this._element = element || document.createElement("div");
+                this._element = element || _Global.document.createElement("div");
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
@@ -359,7 +360,7 @@ define([
 
                     Promise.as().then(function () {
                         if (settingsControl._fragmentDiv) {
-                            document.body.removeChild(settingsControl._fragmentDiv);
+                            _Global.document.body.removeChild(settingsControl._fragmentDiv);
                             settingsControl._fragmentDiv = null;
                         }
                     });
@@ -376,12 +377,12 @@ define([
                         event.stopPropagation();
                         this.winControl._dismiss();
                     } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
-                           && (this.children[0] === document.activeElement)) {
+                           && (this.children[0] === _Global.document.activeElement)) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.winControl._dismiss();
                     } else if (event.shiftKey && event.keyCode === Key.tab
-                    && this.children[0] === document.activeElement) {
+                    && this.children[0] === _Global.document.activeElement) {
                         event.preventDefault();
                         event.stopPropagation();
                         var _elms = this.getElementsByTagName("*");
@@ -389,7 +390,7 @@ define([
                         for (var i = _elms.length - 2; i >= 0; i--) {
                             _elms[i].focus();
 
-                            if (_elms[i] === document.activeElement) {
+                            if (_elms[i] === _Global.document.activeElement) {
                                 break;
                             }
                         }
@@ -397,7 +398,7 @@ define([
                 },
 
                 _focusOnLastFocusableElementFromParent: function SettingsFlyout_focusOnLastFocusableElementFromParent() {
-                    var active = document.activeElement;
+                    var active = _Global.document.activeElement;
                     if (!settingsPageIsFocusedOnce || !active || !_ElementUtilities.hasClass(active, _Constants.firstDivClass)) {
                         return;
                     }
@@ -428,7 +429,7 @@ define([
                             if ((_elms[i].tagName !== "DIV") || (_elms[i].getAttribute("tabIndex") !== null)) {
                                 _elms[i].focus();
 
-                                if (_elms[i] === document.activeElement) {
+                                if (_elms[i] === _Global.document.activeElement) {
                                     break;
                                 }
                             }
@@ -437,7 +438,7 @@ define([
                 },
 
                 _focusOnFirstFocusableElementFromParent: function SettingsFlyout_focusOnFirstFocusableElementFromParent() {
-                    var active = document.activeElement;
+                    var active = _Global.document.activeElement;
                     if (!active || !_ElementUtilities.hasClass(active, _Constants.finalDivClass)) {
                         return;
                     }
@@ -467,7 +468,7 @@ define([
                             if ((_elms[i].tagName !== "DIV") || (_elms[i].getAttribute("tabIndex") !== null)) {
                                 _elms[i].focus();
 
-                                if (_elms[i] === document.activeElement) {
+                                if (_elms[i] === _Global.document.activeElement) {
                                     break;
                                 }
                             }
@@ -484,7 +485,7 @@ define([
                             _minTab = _elms[i].tabIndex;
                         }
                     }
-                    var firstDiv = document.createElement("div");
+                    var firstDiv = _Global.document.createElement("div");
                     firstDiv.className = _Constants.firstDivClass;
                     firstDiv.style.display = "inline";
                     firstDiv.setAttribute("role", "menuitem");
@@ -509,7 +510,7 @@ define([
                             _maxTab = _elms[i].tabIndex;
                         }
                     }
-                    var finalDiv = document.createElement("div");
+                    var finalDiv = _Global.document.createElement("div");
                     finalDiv.className = _Constants.finalDivClass;
                     finalDiv.style.display = "inline";
                     finalDiv.setAttribute("role", "menuitem");
@@ -538,7 +539,7 @@ define([
                     _WinRT.Windows.UI.ApplicationSettings.SettingsPane.show();
                 }
                 // And hide the WWA one
-                var elements = document.querySelectorAll('div[data-win-control="WinJS.UI.SettingsFlyout"]');
+                var elements = _Global.document.querySelectorAll('div[data-win-control="WinJS.UI.SettingsFlyout"]');
                 var len = elements.length;
                 for (var i = 0; i < len; i++) {
                     var settingsFlyout = elements[i].winControl;
@@ -593,19 +594,19 @@ define([
                 /// </param>
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </signature>
-                var control = _getChildSettingsControl(document, id);
+                var control = _getChildSettingsControl(_Global.document, id);
                 if (control) {
                     control.show();
                 } else if (path) {
-                    var divElement = document.createElement("div");
-                    divElement = document.body.appendChild(divElement);
+                    var divElement = _Global.document.createElement("div");
+                    divElement = _Global.document.body.appendChild(divElement);
                     Pages.render(path, divElement).then(function () {
                         control = _getChildSettingsControl(divElement, id);
                         if (control) {
                             control._fragmentDiv = divElement;
                             control.show();
                         } else {
-                            document.body.removeChild(divElement);
+                            _Global.document.body.removeChild(divElement);
                         }
                     });
                 } else {
