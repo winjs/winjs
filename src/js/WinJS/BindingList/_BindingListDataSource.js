@@ -3,15 +3,14 @@
 //
 define([
     'exports',
-    '../Core/_Global',
+    '../Core/_WinRT',
     '../Core/_Base',
-    '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
     '../Binding/_DomWeakRefTable',
     '../Promise',
     '../Scheduler',
     '../Utilities/_UI'
-    ], function bindingListDataSourceInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _DomWeakRefTable, Promise, Scheduler, _UI) {
+    ], function bindingListDataSourceInit(exports, _WinRT, _Base, _ErrorFromName, _DomWeakRefTable, Promise, Scheduler, _UI) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
@@ -147,7 +146,7 @@ define([
                 // When in WebContext, weakref utility functions don't work as desired so we capture this
                 // ListBinding object in the handler's closure. This causes the same leak as in 1.0.
                 var fallbackReference = null;
-                if (!_BaseUtils.hasWinRT || !_Global.msSetWeakWinRTProperty || !_Global.msGetWeakWinRTProperty) {
+                if (!_WinRT.msSetWeakWinRTProperty || !_WinRT.msGetWeakWinRTProperty) {
                     fallbackReference = this;
                 }
                 if (notificationHandler) {
@@ -620,7 +619,7 @@ define([
 
             var bindingId = 0;
             var DataSource = _Base.Class.define(function DataSource_ctor(list) {
-                this._usingWeakRef = _BaseUtils.hasWinRT && _Global.msSetWeakWinRTProperty && _Global.msGetWeakWinRTProperty;
+                this._usingWeakRef = _WinRT.msSetWeakWinRTProperty && _WinRT.msGetWeakWinRTProperty;
                 this._bindings = {};
                 this._list = list;
 

@@ -2,6 +2,7 @@
 define([
     'exports',
     './Core/_Global',
+    './Core/_WinRT',
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_Log',
@@ -13,7 +14,7 @@ define([
     './Promise',
     './Utilities/_Dispose',
     './Utilities/_ElementUtilities'
-    ], function dataTemplateInit(exports, _Global, _Base, _BaseUtils, _Log, _WriteProfilerMark, _Declarative, _DataTemplateCompiler, ControlProcessor, Fragments, Promise, _Dispose, _ElementUtilities) {
+    ], function dataTemplateInit(exports, _Global, _WinRT, _Base, _BaseUtils, _Log, _WriteProfilerMark, _Declarative, _DataTemplateCompiler, ControlProcessor, Fragments, Promise, _Dispose, _ElementUtilities) {
     "use strict";
 
     // not supported in WebWorker
@@ -421,7 +422,7 @@ define([
                         profilerMarkIdentifier: this._profilerMarkIdentifier
                     });
 
-                    var resetOnFragmentChange = options.resetOnFragmentChange || (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled);
+                    var resetOnFragmentChange = options.resetOnFragmentChange || _WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled;
                     if (resetOnFragmentChange) {
                         // For platforms that don't support MutationObserver the shim
                         // currently will never fire. This is OK because only MutationObserver

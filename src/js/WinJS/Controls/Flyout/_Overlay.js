@@ -2,6 +2,7 @@
 /// <dictionary>animatable,appbar,appbars,divs,Flyout,Flyouts,iframe,Statics,unfocus,unselectable</dictionary>
 define([
     'exports',
+    '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -16,7 +17,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_UIUtilities',
     '../AppBar/_Constants'
-], function overlayInit(exports, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
+    ], function overlayInit(exports, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -303,7 +304,7 @@ define([
 
                         // Hiding, but not none
                         this._element.style.display = "";
-                        this._element.style.visibility = "hidden";
+                            this._element.style.visibility = "hidden";
 
                         // In case their event is going to manipulate commands, see if there are
                         // any queued command animations we can handle while we're still hidden.
@@ -1006,14 +1007,16 @@ define([
                         var that = this;
 
                         // Be careful so it behaves in designer as well.
-                        if (_BaseUtils.hasWinRT) {
+                        if (_WinRT.Windows.UI.Input.EdgeGesture) {
                             // Catch edgy events too
-                            var commandUI = Windows.UI.Input.EdgeGesture.getForCurrentView();
+                            var commandUI = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
                             commandUI.addEventListener("starting", _Overlay._hideAllFlyouts);
                             commandUI.addEventListener("completed", _edgyMayHideFlyouts);
+                        }
 
+                        if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                             // React to Soft Keyboard events
-                            var inputPane = Windows.UI.ViewManagement.InputPane.getForCurrentView();
+                            var inputPane = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView();
                             inputPane.addEventListener("showing", function (event) {
                                 that._writeProfilerMark("_showingKeyboard,StartTM");
                                 _allOverlaysCallback(event, "_showingKeyboard");
@@ -1031,6 +1034,7 @@ define([
                                 that._writeProfilerMark("_checkScrollPosition,StopTM");
                             });
                         }
+
                         // Window resize event
                         window.addEventListener("resize", function (event) {
                             that._writeProfilerMark("_baseResize,StartTM");
@@ -1214,7 +1218,7 @@ define([
                 _showClickEatingDivAppBar: function () {
                     Scheduler.schedule(function Overlay_async_showClickEatingDivAppBar() {
                         if (_Overlay._clickEatingAppBarDiv) {
-                            _Overlay._clickEatingAppBarDiv.style.display = "block";
+                        _Overlay._clickEatingAppBarDiv.style.display = "block";
                         }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._showClickEatingDivAppBar");
                 },
@@ -1222,7 +1226,7 @@ define([
                 _hideClickEatingDivAppBar: function () {
                     Scheduler.schedule(function Overlay_async_hideClickEatingDivAppBar() {
                         if (_Overlay._clickEatingAppBarDiv) {
-                            _Overlay._clickEatingAppBarDiv.style.display = "none";
+                        _Overlay._clickEatingAppBarDiv.style.display = "none";
                         }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._hideClickEatingDivAppBar");
                 },
@@ -1230,7 +1234,7 @@ define([
                 _showClickEatingDivFlyout: function () {
                     Scheduler.schedule(function Overlay_async_showClickEatingDivFlyout() {
                         if (_Overlay._clickEatingFlyoutDiv) {
-                            _Overlay._clickEatingFlyoutDiv.style.display = "block";
+                        _Overlay._clickEatingFlyoutDiv.style.display = "block";
                         }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._showClickEatingDivFlyout");
                 },
@@ -1238,7 +1242,7 @@ define([
                 _hideClickEatingDivFlyout: function () {
                     Scheduler.schedule(function Overlay_async_hideClickEatingDivFlyout() {
                         if (_Overlay._clickEatingFlyoutDiv) {
-                            _Overlay._clickEatingFlyoutDiv.style.display = "none";
+                        _Overlay._clickEatingFlyoutDiv.style.display = "none";
                         }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._hideClickEatingDivFlyout");
                 },
@@ -1275,8 +1279,8 @@ define([
                     }
                     // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
                     if (active &&
-                            (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
-                             _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
+                        (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
+                         _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
                         return;
                     }
 
@@ -1446,7 +1450,10 @@ define([
                     // Determine if the keyboard is visible or not.
                     get _visible() {
                         try {
-                            return (_BaseUtils.hasWinRT && Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height > 0);
+                            return (
+                                _WinRT.Windows.UI.ViewManagement.InputPane &&
+                                _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height > 0
+                            );
                         } catch (e) {
                             return false;
                         }
@@ -1455,9 +1462,9 @@ define([
                     // See if we have to reserve extra space for the IHM
                     get _extraOccluded() {
                         var occluded;
-                        if (_BaseUtils.hasWinRT) {
+                        if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                             try {
-                                occluded = Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
+                                occluded = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
                             } catch (e) {
                             }
                         }
@@ -1531,11 +1538,8 @@ define([
 
                     // Get total length of the IHM showPanel animation
                     get _animationShowLength() {
-                        if (!_BaseUtils.hasWinRT) {
-                            return 0;
-                        }
-
-                        var a = Windows.UI.Core.AnimationMetrics,
+                        if (_WinRT.Windows.UI.Core.AnimationMetrics) {
+                            var a = _WinRT.Windows.UI.Core.AnimationMetrics,
                             animationDescription = new a.AnimationDescription(a.AnimationEffect.showPanel, a.AnimationEffectTarget.primary);
                         var animations = animationDescription.animations;
                         var max = 0;
@@ -1544,6 +1548,9 @@ define([
                             max = Math.max(max, animation.delay + animation.duration);
                         }
                         return max;
+                        } else {
+                            return 0;
+                        }
                     }
                 },
 

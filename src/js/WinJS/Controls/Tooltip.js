@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_Events',
@@ -11,7 +12,7 @@ define([
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function tooltipInit(exports, _Base, _BaseUtils, _Events, Animations, _TransitionAnimation, _Control, _Dispose, _ElementUtilities) {
+    ], function tooltipInit(exports, _WinRT, _Base, _BaseUtils, _Events, Animations, _TransitionAnimation, _Control, _Dispose, _ElementUtilities) {
     "use strict";
 
     // Tooltip control implementation
@@ -122,14 +123,14 @@ define([
                 }
 
                 // Set system attributes if it is in WWA, otherwise, use the default values
-                if (!hasInitWinRTSettings && _BaseUtils.hasWinRT) { // in WWA
-                    var uiSettings = new Windows.UI.ViewManagement.UISettings();
+                if (!hasInitWinRTSettings && _WinRT.Windows.UI.ViewManagement.UISettings) { // in WWA
+                    var uiSettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
                     mouseHoverTime = uiSettings.mouseHoverTime;
                     nonInfoTooltipNonTouchShowDelay = 2 * mouseHoverTime;
                     infoTooltipNonTouchShowDelay = 2.5 * mouseHoverTime;
                     messageDuration = uiSettings.messageDuration * 1000;  // uiSettings.messageDuration is in seconds.
                     var handedness = uiSettings.handPreference;
-                    isLeftHanded = (handedness === Windows.UI.ViewManagement.HandPreference.leftHanded);
+                    isLeftHanded = (handedness === _WinRT.Windows.UI.ViewManagement.HandPreference.leftHanded);
                 }
                 hasInitWinRTSettings = true;
 

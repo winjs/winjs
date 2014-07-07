@@ -2,10 +2,10 @@
 define([
     'exports',
     './_Global',
-    './_BaseCoreUtils',
+    './_WinRT',
     './_Base',
     './_Events'
-    ], function resourcesInit(exports, _Global, _BaseCoreUtils, _Base, _Events) {
+    ], function resourcesInit(exports, _Global, _WinRT, _Base, _Events) {
     "use strict";
 
     var appxVersion = "$(TARGET_DESTINATION)";
@@ -62,7 +62,7 @@ define([
             /// Set to true to register the event handler for the capturing phase; set to false to register for the bubbling phase.
             /// </param>
             /// </signature>
-            if (_BaseCoreUtils.hasWinRT && !mrtEventHook) {
+            if (_WinRT.Windows.ApplicationModel.Resources.Core.ResourceManager && !mrtEventHook) {
                 if (type === contextChangedET) {
                     try {
                         var resContext = exports._getResourceContext();
@@ -73,7 +73,7 @@ define([
 
                         } else {
                             // The API can be called in the Background thread (web worker).
-                            Windows.ApplicationModel.Resources.Core.ResourceManager.current.defaultContext.qualifierValues.addEventListener("mapchanged", function (e) {
+                            _WinRT.Windows.ApplicationModel.Resources.Core.ResourceManager.current.defaultContext.qualifierValues.addEventListener("mapchanged", function (e) {
                                 exports.dispatchEvent(contextChangedET, { qualifier: e.key, changed: e.target[e.key] });
                             }, false);
                         }
@@ -91,7 +91,7 @@ define([
 
         _getStringWinRT: function (resourceId) {
             if (!resourceMap) {
-                var mainResourceMap = Windows.ApplicationModel.Resources.Core.ResourceManager.current.mainResourceMap;
+                var mainResourceMap = _WinRT.Windows.ApplicationModel.Resources.Core.ResourceManager.current.mainResourceMap;
                 try {
                     resourceMap = mainResourceMap.getSubtree('Resources');
                 }
@@ -147,7 +147,7 @@ define([
         _getResourceContext: function () {
             if (_Global.document) {
                 if (!resourceContext) {
-                    resourceContext = Windows.ApplicationModel.Resources.Core.ResourceContext.getForCurrentView();
+                    resourceContext = _WinRT.Windows.ApplicationModel.Resources.Core.ResourceContext.getForCurrentView();
                 }
             }
             return resourceContext;
@@ -157,7 +157,7 @@ define([
         
     });
 
-    var getStringImpl = _BaseCoreUtils.hasWinRT ? exports._getStringWinRT : exports._getStringJS;
+    var getStringImpl = _WinRT.Windows.ApplicationModel.Resources.Core.ResourceManager ? exports._getStringWinRT : exports._getStringJS;
 
     var getString = function (resourceId) {
         /// <signature helpKeyword="WinJS.Resources.getString">

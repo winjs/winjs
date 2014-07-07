@@ -2,6 +2,7 @@
 define([
     'exports',
     './Core/_Global',
+    './Core/_WinRT',
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_ErrorFromName',
@@ -11,7 +12,7 @@ define([
     './Utilities/_ElementUtilities',
     './Utilities/_SafeHtml',
     './Utilities/_Xhr'
-    ], function fragmentLoaderInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _SafeHtml, _Xhr) {
+    ], function fragmentLoaderInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _SafeHtml, _Xhr) {
     "use strict";
 
     var strings = {
@@ -387,7 +388,7 @@ define([
             // WinRT Uri class doesn't provide URI construction, but can crack the URI
             // appart to let us reliably discover the scheme.
             //
-            var wuri = new Windows.Foundation.Uri(absolute);
+            var wuri = new _WinRT.Windows.Foundation.Uri(absolute);
             
             // Only "ms-appx" (local package content) are allowed when running in the local 
             // context. Both strings are known to be safe to compare in any culture (including Turkish).

@@ -2,6 +2,7 @@
 // AppBar
 /// <dictionary>appbar,appBars,Flyout,Flyouts,iframe,Statics,unfocus,WinJS</dictionary>
 define([
+    '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
@@ -16,7 +17,7 @@ define([
     './_CommandPhone',
     './_Constants',
     './_Icon'
-    ], function appBarInit(_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, ControlProcessor, Scheduler, _Control, _Dispose, _ElementUtilities, _CommandPhone, _Constants, _Icon) {
+    ], function appBarInit(_WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, ControlProcessor, Scheduler, _Control, _Dispose, _ElementUtilities, _CommandPhone, _Constants, _Icon) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -45,7 +46,7 @@ define([
             var currentAppBar = null;
 
             var commandBar; // One static commandBar to be shared by all WinJS AppBar instances.
-            var core = Windows.UI.WebUI.Core;
+            var core = _WinRT.Windows.UI.WebUI.Core;
 
             var createEvent = _Events._createEventProperty;
 

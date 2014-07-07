@@ -2,8 +2,8 @@
 define([
     'exports',
     './Core/_Global',
+    './Core/_WinRT',
     './Core/_Base',
-    './Core/_BaseUtils',
     './Core/_Events',
     './Core/_Log',
     './Core/_WriteProfilerMark',
@@ -12,7 +12,7 @@ define([
     './Promise',
     './_Signal',
     './Scheduler'
-    ], function applicationInit(exports, _Global, _Base, _BaseUtils, _Events, _Log, _WriteProfilerMark, _State, Navigation, Promise, _Signal, Scheduler) {
+    ], function applicationInit(exports, _Global, _WinRT, _Base, _Events, _Log, _WriteProfilerMark, _State, Navigation, Promise, _Signal, Scheduler) {
     "use strict";
 
     _Global.Debug && (_Global.Debug.setNonUserCodeExceptions = true);
@@ -32,9 +32,6 @@ define([
     var eventQueuedSignal = null;
     var running = false;
     var registered = false;
-    // check for WinRT & document, which means we will disabled application WinRT stuff in web worker context
-    //
-    var useWinRT = _BaseUtils.hasWinRT && _Global.document;
 
     var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
     var listeners = new ListenerType();
@@ -282,7 +279,7 @@ define([
 
                 _Log.log && _Log.log(safeSerialize(e), "winjs", "error");
 
-                if (useWinRT && exports._terminateApp) {
+                if (_Global.document && _WinRT.UI.WebUI.WebUIApplication && exports._terminateApp) {
                     var data = e.detail;
                     var number = data && (data.number || (data.exception && (data.exception.number || data.exception.code)) || (data.error && data.error.number) || data.errorCode || 0);
                     var terminateData = {
@@ -324,11 +321,11 @@ define([
     }
     function domContentLoadedHandler() {
         queueEvent({ type: loadedET });
-        if (!useWinRT) {
+        if (!(_Global.document && _WinRT.Windows.UI.WebUI.WebUIApplication)) {
             var activatedArgs = {
                 arguments: "",
                 kind: "Windows.Launch",
-                previousExecutionState: 0 //Windows.ApplicationModel.Activation.ApplicationExecutionState.NotRunning
+                previousExecutionState: 0 //_WinRT.Windows.ApplicationModel.Activation.ApplicationExecutionState.NotRunning
             };
             _State._loadState(activatedArgs).then(function () {
                 queueEvent({ type: activatedET, detail: activatedArgs });
@@ -436,21 +433,24 @@ define([
             registered = true;
             _Global.addEventListener("beforeunload", beforeUnloadHandler, false);
 
-            if (useWinRT) {
-                _Global.addEventListener("error", errorHandler, false);
+            // None of these are enabled in web worker
+            if (_Global.document) {
+                if (_WinRT.Windows.UI.WebUI.WebUIApplication) {
+                    _Global.addEventListener("error", errorHandler, false);
 
-                var wui = Windows.UI.WebUI.WebUIApplication;
-                wui.addEventListener("activated", activatedHandler, false);
-                wui.addEventListener("suspending", suspendingHandler, false);
+                    var wui = _WinRT.Windows.UI.WebUI.WebUIApplication;
+                    wui.addEventListener("activated", activatedHandler, false);
+                    wui.addEventListener("suspending", suspendingHandler, false);
+                }
 
-                if (window.Windows && Windows.UI && Windows.UI.ApplicationSettings && Windows.UI.ApplicationSettings.SettingsPane && Windows.UI.ApplicationSettings.SettingsPane.getForCurrentView) {
-                    var settingsPane = Windows.UI.ApplicationSettings.SettingsPane.getForCurrentView();
+                if (_WinRT.Windows.UI.ApplicationSettings.SettingsPane) {
+                    var settingsPane = _WinRT.Windows.UI.ApplicationSettings.SettingsPane.getForCurrentView();
                     settingsPane.addEventListener("commandsrequested", commandsRequested);
                 }
 
                 // Code in WinJS.Application for phone. This integrates WinJS.Application into the hardware back button.
-                if (window.Windows && Windows.Phone && Windows.Phone.UI.Input.HardwareButtons) {
-                    Windows.Phone.UI.Input.HardwareButtons.addEventListener("backpressed", hardwareButtonBackPressed);
+                if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
+                    _WinRT.Windows.Phone.UI.Input.HardwareButtons.addEventListener("backpressed", hardwareButtonBackPressed);
                 }
             }
 
@@ -462,21 +462,24 @@ define([
             registered = false;
             _Global.removeEventListener("beforeunload", beforeUnloadHandler, false);
 
-            if (useWinRT) {
-                _Global.removeEventListener("error", errorHandler, false);
+            // None of these are enabled in web worker
+            if (_Global.document) {
+                if (_WinRT.Windows.UI.WebUI.WebUIApplication) {
+                    _Global.removeEventListener("error", errorHandler, false);
 
-                var wui = Windows.UI.WebUI.WebUIApplication;
-                wui.removeEventListener("activated", activatedHandler, false);
-                wui.removeEventListener("suspending", suspendingHandler, false);
+                    var wui = _WinRT.Windows.UI.WebUI.WebUIApplication;
+                    wui.removeEventListener("activated", activatedHandler, false);
+                    wui.removeEventListener("suspending", suspendingHandler, false);
+                }
 
-                if (window.Windows && Windows.UI && Windows.UI.ApplicationSettings && Windows.UI.ApplicationSettings.SettingsPane && Windows.UI.ApplicationSettings.SettingsPane.getForCurrentView) {
-                    var settingsPane = Windows.UI.ApplicationSettings.SettingsPane.getForCurrentView();
+                if (_WinRT.Windows.UI.ApplicationSettings.SettingsPane) {
+                    var settingsPane = _WinRT.Windows.UI.ApplicationSettings.SettingsPane.getForCurrentView();
                     settingsPane.removeEventListener("commandsrequested", commandsRequested);
                 }
 
                 // Code in WinJS.Application for phone. This integrates WinJS.Application into the hardware back button.
-                if (window.Windows && Windows.Phone && Windows.Phone.UI.Input.HardwareButtons) {
-                    Windows.Phone.UI.Input.HardwareButtons.removeEventListener("backpressed", hardwareButtonBackPressed);
+                if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
+                    _WinRT.Windows.Phone.UI.Input.HardwareButtons.removeEventListener("backpressed", hardwareButtonBackPressed);
                 }
             }
 

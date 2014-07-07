@@ -2,10 +2,11 @@
 define([
     'exports',
     '../Core/_Global',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Promise'
-    ], function stateInit(exports, _Global, _Base, _BaseUtils, Promise) {
+    ], function stateInit(exports, _Global, _WinRT, _Base, _BaseUtils, Promise) {
     "use strict";
 
     function initWithWinRT() {
@@ -70,16 +71,11 @@ define([
                 /// Promise with the count of characters written
                 /// </returns>
                 /// </signature>
-                var sto = Windows.Storage;
+                var sto = _WinRT.Windows.Storage;
                 var that = this;
                 return that.folder.createFileAsync(fileName, sto.CreationCollisionOption.openIfExists).
                     then(function (fileItem) {
-                        if (sto.FileIO) {
-                            return sto.FileIO.writeTextAsync(fileItem, str);
-                        }
-                        else {
-                            return sto.StorageHelpers.writeAllTextUsingFileAsync(fileItem, str);
-                        }
+                        return sto.FileIO.writeTextAsync(fileItem, str);
                     });
             },
 
@@ -99,7 +95,7 @@ define([
                 /// Promise containing the contents of the file, or def.
                 /// </returns>
                 /// </signature>
-                var sto = Windows.Storage;
+                var sto = _WinRT.Windows.Storage;
                 return this._tryGetItemAsync(fileName).then(function (fileItem) {
                     return fileItem ? sto.FileIO.readTextAsync(fileItem) : def;
                 }).then(null, function () { return def; });
@@ -117,7 +113,7 @@ define([
             local: {
                 get: function () {
                     if (!local) {
-                        local = new IOHelper(Windows.Storage.ApplicationData.current.localFolder);
+                        local = new IOHelper(_WinRT.Windows.Storage.ApplicationData.current.localFolder);
                     }
                     return local;
                 }
@@ -129,7 +125,7 @@ define([
             temp: {
                 get: function () {
                     if (!temp) {
-                        temp = new IOHelper(Windows.Storage.ApplicationData.current.temporaryFolder);
+                        temp = new IOHelper(_WinRT.Windows.Storage.ApplicationData.current.temporaryFolder);
                     }
                     return temp;
                 }
@@ -141,7 +137,7 @@ define([
             roaming: {
                 get: function () {
                     if (!roaming) {
-                        roaming = new IOHelper(Windows.Storage.ApplicationData.current.roamingFolder);
+                        roaming = new IOHelper(_WinRT.Windows.Storage.ApplicationData.current.roamingFolder);
                     }
                     return roaming;
                 }
@@ -246,10 +242,9 @@ define([
         });
     }
 
-    if (_BaseUtils.hasWinRT) {
+    if (_WinRT.Windows.Storage.FileIO && _WinRT.Windows.Storage.ApplicationData && _WinRT.Windows.Storage.CreationCollisionOption) {
         initWithWinRT();
-    }
-    else {
+    } else {
         initWithStub();
     }
 

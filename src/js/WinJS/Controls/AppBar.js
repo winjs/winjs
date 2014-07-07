@@ -3,6 +3,7 @@
 /// <dictionary>appbar,appBars,Flyout,Flyouts,iframe,Statics,unfocus,WinJS</dictionary>
 define([
     'exports',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
@@ -23,13 +24,13 @@ define([
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function appBarInit(exports, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities, _Constants, _Layouts, _Command, _Icon, _Overlay) {
+], function appBarInit(exports, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities, _Constants, _Layouts, _Command, _Icon, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBar">
-        /// Represents an application toolbar for display commands. 
+        /// Represents an application toolbar for display commands.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.appbar.12x12.png" width="12" height="12" />
@@ -84,7 +85,7 @@ define([
             function _completedEdgy(e) {
                 // If we had a right click on a flyout, ignore it.
                 if (_Overlay._Overlay._rightMouseMightEdgy &&
-                        e.kind === Windows.UI.Input.EdgeGestureKind.mouse) {
+                    e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.mouse) {
                     return;
                 }
                 if (edgyHappening) {
@@ -92,7 +93,7 @@ define([
                     edgyHappening = null;
                 } else {
                     // Edgy wasn't happening, so toggle
-                    var keyboardInvoked = e.kind === Windows.UI.Input.EdgeGestureKind.keyboard;
+                    var keyboardInvoked = e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
                     AppBar._toggleAppBarEdgy(keyboardInvoked);
                 }
             }
@@ -149,12 +150,12 @@ define([
                     if (AppBar) {
                         AppBars.push(AppBar);
                         if (_ElementUtilities.hasClass(AppBar._element, _Constants.hiddenClass) || _ElementUtilities.hasClass(AppBar._element, _Constants.hidingClass)) {
-                            AppBars._hidden = true;
-                        } else {
+                                AppBars._hidden = true;
+                            } else {
                             AppBars._shown = true;
+                            }
+                            }
                         }
-                    }
-                }
 
                 return AppBars;
             }
@@ -299,7 +300,7 @@ define([
             function _checkStorePreviousFocus(focusEvent) {
                 if (focusEvent.relatedTarget
                  && focusEvent.relatedTarget.focus
-             && !_Overlay._Overlay._isAppBarOrChild(focusEvent.relatedTarget)) {
+                 && !_Overlay._Overlay._isAppBarOrChild(focusEvent.relatedTarget)) {
                     _storePreviousFocus(focusEvent.relatedTarget);
                 }
             }
@@ -330,7 +331,7 @@ define([
             var AppBar = _Base.Class.derive(_Overlay._Overlay, function AppBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBar.AppBar">
                 /// <summary locid="WinJS.UI.AppBar.constructor">
-                /// Creates a new AppBar control. 
+                /// Creates a new AppBar control.
                 /// </summary>
                 /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.AppBar.constructor_p:element">
                 /// The DOM element that will host the control.
@@ -427,8 +428,8 @@ define([
                     // We'll trigger on invoking.  Could also have invoked or canceled
                     // Eventually we may want click up on invoking and drop back on invoked.
                     // Check for namespace so it'll behave in the designer.
-                    if (_BaseUtils.hasWinRT) {
-                        var commandUI = Windows.UI.Input.EdgeGesture.getForCurrentView();
+                    if (_WinRT.Windows.UI.Input.EdgeGesture) {
+                        var commandUI = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
                         commandUI.addEventListener("starting", _startingEdgy);
                         commandUI.addEventListener("completed", _completedEdgy);
                         commandUI.addEventListener("canceled", _canceledEdgy);
@@ -470,7 +471,7 @@ define([
                     set: function AppBar_set_placement(value) {
                         // In designer we may have to move it
                         var wasShown = false;
-                        if (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled && !this.hidden) {
+                        if (_WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
                             this._hide();
                             wasShown = true;
                         }
@@ -512,7 +513,7 @@ define([
 
                         // In designer we may have to redraw it
                         var wasShown = false;
-                        if (window.Windows && Windows.ApplicationModel && Windows.ApplicationModel.DesignMode && Windows.ApplicationModel.DesignMode.designModeEnabled && !this.hidden) {
+                        if (_WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
                             this._hide();
                             wasShown = true;
                         }
@@ -524,7 +525,7 @@ define([
                         var commands;
                         if (!this._initializing) {
                             // Gather commands in preparation for hand off to new layout.
-                            // We expect prev layout to return commands in the order they were set in, 
+                            // We expect prev layout to return commands in the order they were set in,
                             // not necessarily the current DOM order the layout is using.
                             commands = this._layout.commandsInOrder;
                             this._layout.disconnect();
@@ -804,27 +805,27 @@ define([
 
                     if (showing) {
                         // Configure shown state for lightdismiss & sticky appbars.
-                        if (!this.sticky) {
-                            // Need click-eating div to be visible ASAP.
-                            _Overlay._Overlay._showClickEatingDivAppBar();
+                    if (!this.sticky) {
+                        // Need click-eating div to be visible ASAP.
+                        _Overlay._Overlay._showClickEatingDivAppBar();
+                    }
+
+                    // Clean up tabbing behavior by making sure first and final divs are correct after showing.
+                    if (!this.sticky && _isThereVisibleNonStickyBar()) {
+                        _updateAllAppBarsFirstAndFinalDiv();
+                    } else {
+                        this._updateFirstAndFinalDiv();
+                    }
+
+                    // Check if we should steal focus
+                    if (!this._doNotFocus && this._shouldStealFocus()) {
+                        // Store what had focus if nothing currently is stored
+                        if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
+                            _storePreviousFocus(document.activeElement);
                         }
 
-                        // Clean up tabbing behavior by making sure first and final divs are correct after showing.
-                        if (!this.sticky && _isThereVisibleNonStickyBar()) {
-                            _updateAllAppBarsFirstAndFinalDiv();
-                        } else {
-                            this._updateFirstAndFinalDiv();
-                        }
-
-                        // Check if we should steal focus
-                        if (!this._doNotFocus && this._shouldStealFocus()) {
-                            // Store what had focus if nothing currently is stored
-                            if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
-                                _storePreviousFocus(document.activeElement);
-                            }
-
-                            this._setFocusToAppBar();
-                        }
+                        this._setFocusToAppBar();
+                    }
                     }
                 },
 
@@ -853,77 +854,77 @@ define([
                     if (hiding) {
                         // Determine if there are any AppBars that are shown.
                         // Set the focus to the next shown AppBar.
-                        // If there are none, set the focus to the control stored in the cache, which
-                        //   is what had focus before the AppBars were given focus.
-                        var appBars = document.querySelectorAll("." + _Constants.appBarClass);
-                        var areOtherAppBars = false;
-                        var areOtherNonStickyAppBars = false;
-                        var i;
-                        for (i = 0; i < appBars.length; i++) {
-                            var appBarControl = appBars[i].winControl;
-                            if (appBarControl && !appBarControl.hidden && (appBarControl !== this)) {
-                                areOtherAppBars = true;
+                    // If there are none, set the focus to the control stored in the cache, which
+                    //   is what had focus before the AppBars were given focus.
+                    var appBars = document.querySelectorAll("." + _Constants.appBarClass);
+                    var areOtherAppBars = false;
+                    var areOtherNonStickyAppBars = false;
+                    var i;
+                    for (i = 0; i < appBars.length; i++) {
+                        var appBarControl = appBars[i].winControl;
+                        if (appBarControl && !appBarControl.hidden && (appBarControl !== this)) {
+                            areOtherAppBars = true;
 
-                                if (!appBarControl.sticky) {
-                                    areOtherNonStickyAppBars = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        var settingsFlyouts = document.querySelectorAll("." + _Constants.settingsFlyoutClass);
-                        var areVisibleSettingsFlyouts = false;
-                        for (i = 0; i < settingsFlyouts.length; i++) {
-                            var settingsFlyoutControl = settingsFlyouts[i].winControl;
-                            if (settingsFlyoutControl && !settingsFlyoutControl.hidden) {
-                                areVisibleSettingsFlyouts = true;
+                            if (!appBarControl.sticky) {
+                                areOtherNonStickyAppBars = true;
                                 break;
                             }
                         }
+                    }
 
-                        if (!areOtherNonStickyAppBars && !areVisibleSettingsFlyouts) {
-                            // Hide the click eating div because there are no other AppBars showing
-                            _Overlay._Overlay._hideClickEatingDivAppBar();
+                    var settingsFlyouts = document.querySelectorAll("." + _Constants.settingsFlyoutClass);
+                    var areVisibleSettingsFlyouts = false;
+                    for (i = 0; i < settingsFlyouts.length; i++) {
+                        var settingsFlyoutControl = settingsFlyouts[i].winControl;
+                        if (settingsFlyoutControl && !settingsFlyoutControl.hidden) {
+                            areVisibleSettingsFlyouts = true;
+                            break;
                         }
+                    }
 
-                        var that = this;
-                        if (!areOtherAppBars) {
-                            // Set focus to what had focus before showing the AppBar
-                            if (_Overlay._Overlay._ElementWithFocusPreviousToAppBar &&
-                                (!document.activeElement || _Overlay._Overlay._isAppBarOrChild(document.activeElement))) {
-                                _restorePreviousFocus();
+                    if (!areOtherNonStickyAppBars && !areVisibleSettingsFlyouts) {
+                        // Hide the click eating div because there are no other AppBars showing
+                        _Overlay._Overlay._hideClickEatingDivAppBar();
+                    }
+
+                    var that = this;
+                    if (!areOtherAppBars) {
+                        // Set focus to what had focus before showing the AppBar
+                        if (_Overlay._Overlay._ElementWithFocusPreviousToAppBar &&
+                            (!document.activeElement || _Overlay._Overlay._isAppBarOrChild(document.activeElement))) {
+                            _restorePreviousFocus();
+                        }
+                        // Always clear the previous focus (to prevent temporary leaking of element)
+                        _Overlay._Overlay._ElementWithFocusPreviousToAppBar = null;
+                    } else if (AppBar._isWithinAppBarOrChild(document.activeElement, that.element)) {
+                        // Set focus to next visible AppBar in DOM
+
+                        var foundCurrentAppBar = false;
+                        for (i = 0; i <= appBars.length; i++) {
+                            if (i === appBars.length) {
+                                i = 0;
                             }
-                            // Always clear the previous focus (to prevent temporary leaking of element)
-                            _Overlay._Overlay._ElementWithFocusPreviousToAppBar = null;
-                        } else if (AppBar._isWithinAppBarOrChild(document.activeElement, that.element)) {
-                            // Set focus to next visible AppBar in DOM
 
-                            var foundCurrentAppBar = false;
-                            for (i = 0; i <= appBars.length; i++) {
-                                if (i === appBars.length) {
-                                    i = 0;
-                                }
-
-                                var appBar = appBars[i];
-                                if (appBar === this.element) {
-                                    foundCurrentAppBar = true;
-                                } else if (foundCurrentAppBar && !appBar.winControl.hidden) {
-                                    appBar.winControl._keyboardInvoked = !!this._keyboardInvoked;
-                                    appBar.winControl._setFocusToAppBar();
-                                    break;
-                                }
+                            var appBar = appBars[i];
+                            if (appBar === this.element) {
+                                foundCurrentAppBar = true;
+                            } else if (foundCurrentAppBar && !appBar.winControl.hidden) {
+                                appBar.winControl._keyboardInvoked = !!this._keyboardInvoked;
+                                appBar.winControl._setFocusToAppBar();
+                                break;
                             }
                         }
+                    }
 
-                        // If we are hiding the last lightDismiss AppBar, 
-                        //   then we need to update the tabStops of the other AppBars
-                        if (!this.sticky && !_isThereVisibleNonStickyBar()) {
-                            _updateAllAppBarsFirstAndFinalDiv();
-                        }
+                    // If we are hiding the last lightDismiss AppBar,
+                    //   then we need to update the tabStops of the other AppBars
+                    if (!this.sticky && !_isThereVisibleNonStickyBar()) {
+                        _updateAllAppBarsFirstAndFinalDiv();
+                    }
 
-                        // Reset these values
-                        this._keyboardInvoked = false;
-                        this._doNotFocus = false;
+                    // Reset these values
+                    this._keyboardInvoked = false;
+                    this._doNotFocus = false;
                     }
                 },
 
@@ -1227,7 +1228,7 @@ define([
                 _shouldStealFocus: function AppBar_shouldStealFocus() {
                     var activeElementAppBar = _Overlay._Overlay._isAppBarOrChild(document.activeElement);
                     if (this._element === activeElementAppBar) {
-                        // This appbar already has focus and we don't want to move focus 
+                        // This appbar already has focus and we don't want to move focus
                         // from where it currently is in this appbar.
                         return false;
                     }
@@ -1275,16 +1276,16 @@ define([
                 _commandsUpdated: function AppBar_commandsUpdated() {
                     // If we are still initializing then we don't have a layout yet so it doesn't need updating. 
                     if (!this._initializing) {
-                        this._layout.commandsUpdated();
-                        this._layout.scale();
+                    this._layout.commandsUpdated();
+                    this._layout.scale();
                     }
                 },
 
                 _beginAnimateCommands: function AppBar_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
                     // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
-                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show. 
+                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
                     // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
-                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide. 
+                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.
                     this._layout.beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands);
                 },
 
@@ -1450,7 +1451,7 @@ define([
                             positionOffSet.top = "";
                         }
                     } else {
-                        if (this._placement === _Constants.appBarPlacementBottom) {
+                    if (this._placement === _Constants.appBarPlacementBottom) {
                             // If the IHM is shown, the bottom of the visual viewport may or may not be obscured 
                             // Use _getAdjustedBottom to account for the IHM if it is covering the bottom edge.
                             positionOffSet.bottom = this._getAdjustedBottom() + "px";
@@ -1587,7 +1588,7 @@ define([
                     return (flyout && appBar.contains(flyout._previousFocus));
                 },
 
-                // Callback for AppBar Edgy Event Command   
+                // Callback for AppBar Edgy Event Command
                 _toggleAppBarEdgy: function (keyboardInvoked) {
                     var bars = _getDynamicBarsForEdgy();
 

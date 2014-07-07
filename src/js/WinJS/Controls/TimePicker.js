@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 define([
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_Events',
@@ -10,7 +11,7 @@ define([
     '../Utilities/_Select',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function timePickerInit(_Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
+    ], function timePickerInit(_WinRT, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Select) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -171,8 +172,7 @@ define([
                             time.setSeconds(0);
                             time.setMilliseconds(0);
                             return time;
-                        }
-                        else {
+                        } else {
                             return cur;
                         }
                     },
@@ -181,8 +181,7 @@ define([
                         if (typeof (value) === "string") {
                             newTime = TimePicker._sentinelDate();
                             newTime.setTime(Date.parse(newTime.toDateString() + " " + value));
-                        }
-                        else {
+                        } else {
                             newTime = TimePicker._sentinelDate();
                             newTime.setHours(value.getHours());
                             newTime.setMinutes(value.getMinutes());
@@ -251,8 +250,7 @@ define([
                     if (this._ampmElement) {
                         if (hours24 === 0) {
                             return { hours: 12, ampm: 0 };
-                        }
-                        else if (hours24 < 12) {
+                        } else if (hours24 < 12) {
                             return { hours: hours24, ampm: 0 };
                         }
                         return { hours: hours24 - 12, ampm: 1 };
@@ -446,7 +444,7 @@ define([
                 },
                 _getInformationWinRT: function (clock, minuteIncrement, timePatterns) {
                     var newFormatter = function (pattern, defaultPattern) {
-                        var dtf = Windows.Globalization.DateTimeFormatting;
+                        var dtf = _WinRT.Windows.Globalization.DateTimeFormatting;
                         pattern = !pattern ? defaultPattern : pattern;
                         var formatter = new dtf.DateTimeFormatter(pattern);
                         if (clock) {
@@ -455,7 +453,7 @@ define([
                         return formatter;
                     };
 
-                    var glob = Windows.Globalization;
+                    var glob = _WinRT.Windows.Globalization;
                     var calendar = new glob.Calendar();
                     if (clock) {
                         calendar = new glob.Calendar(calendar.languages, calendar.getCalendarSystem(), clock);
@@ -532,8 +530,8 @@ define([
                     }
 
 
-                    var DateTimeFormatter = Windows.Globalization.DateTimeFormatting.DateTimeFormatter;
-                    var dtf = new DateTimeFormatter("month.full", Windows.Globalization.ApplicationLanguages.languages, "ZZ", "GregorianCalendar", "24HourClock");
+                    var DateTimeFormatter = _WinRT.Windows.Globalization.DateTimeFormatting.DateTimeFormatter;
+                    var dtf = new DateTimeFormatter("month.full", _WinRT.Windows.Globalization.ApplicationLanguages.languages, "ZZ", "GregorianCalendar", "24HourClock");
                     var pat = dtf.patterns[0];
                     var isRTL = pat.charCodeAt(0) === 8207;
 
@@ -560,8 +558,7 @@ define([
                         var display = index * minuteIncrement;
                         if (display < 10) {
                             return "0" + display.toString();
-                        }
-                        else {
+                        } else {
                             return display.toString();
                         }
                     };
@@ -574,10 +571,9 @@ define([
                     return { minutes: minutes, hours: hours, clock: clock || "12HourClock", periods: ["AM", "PM"], order: order };
                 }
             });
-            if (_BaseUtils.hasWinRT) {
+            if (_WinRT.Windows.Globalization.DateTimeFormatting && _WinRT.Windows.Globalization.Calendar && _WinRT.Windows.Globalization.ApplicationLanguages) {
                 TimePicker.getInformation = TimePicker._getInformationWinRT;
-            }
-            else {
+            } else {
                 TimePicker.getInformation = TimePicker._getInformationJS;
             }
             _Base.Class.mix(TimePicker, _Events.createEventProperties("change"));

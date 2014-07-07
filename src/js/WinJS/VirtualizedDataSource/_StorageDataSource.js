@@ -3,6 +3,7 @@
 
 define([
     'exports',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_ErrorFromName',
     '../Core/_WriteProfilerMark',
@@ -10,7 +11,7 @@ define([
     '../Promise',
     '../Utilities/_UI',
     './_VirtualizedDataSourceImpl'
-    ], function storageDataSourceInit(exports, _Base, _ErrorFromName, _WriteProfilerMark, Animations, Promise, _UI, VirtualizedDataSource) {
+    ], function storageDataSourceInit(exports, _WinRT, _Base, _ErrorFromName, _WriteProfilerMark, Animations, Promise, _UI, VirtualizedDataSource) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -19,36 +20,36 @@ define([
                 // Constructor
                 _WriteProfilerMark("WinJS.UI.StorageDataSource:constructor,StartTM");
 
-                var mode = Windows.Storage.FileProperties.ThumbnailMode.singleItem,
+                var mode = _WinRT.Windows.Storage.FileProperties.ThumbnailMode.singleItem,
                     size = 256,
-                    flags = Windows.Storage.FileProperties.ThumbnailOptions.useCurrentScale,
+                    flags = _WinRT.Windows.Storage.FileProperties.ThumbnailOptions.useCurrentScale,
                     delayLoad = true,
                     library;
 
                 if (query === "Pictures") {
-                    mode = Windows.Storage.FileProperties.ThumbnailMode.picturesView;
-                    library = Windows.Storage.KnownFolders.picturesLibrary;
+                    mode = _WinRT.Windows.Storage.FileProperties.ThumbnailMode.picturesView;
+                    library = _WinRT.Windows.Storage.KnownFolders.picturesLibrary;
                     size = 190;
                 } else if (query === "Music") {
-                    mode = Windows.Storage.FileProperties.ThumbnailMode.musicView;
-                    library = Windows.Storage.KnownFolders.musicLibrary;
+                    mode = _WinRT.Windows.Storage.FileProperties.ThumbnailMode.musicView;
+                    library = _WinRT.Windows.Storage.KnownFolders.musicLibrary;
                     size = 256;
                 } else if (query === "Documents") {
-                    mode = Windows.Storage.FileProperties.ThumbnailMode.documentsView;
-                    library = Windows.Storage.KnownFolders.documentsLibrary;
+                    mode = _WinRT.Windows.Storage.FileProperties.ThumbnailMode.documentsView;
+                    library = _WinRT.Windows.Storage.KnownFolders.documentsLibrary;
                     size = 40;
                 } else if (query === "Videos") {
-                    mode = Windows.Storage.FileProperties.ThumbnailMode.videosView;
-                    library = Windows.Storage.KnownFolders.videosLibrary;
+                    mode = _WinRT.Windows.Storage.FileProperties.ThumbnailMode.videosView;
+                    library = _WinRT.Windows.Storage.KnownFolders.videosLibrary;
                     size = 190;
                 }
 
                 if (!library) {
                     this._query = query;
                 } else {
-                    var queryOptions = new Windows.Storage.Search.QueryOptions();
-                    queryOptions.folderDepth = Windows.Storage.Search.FolderDepth.deep;
-                    queryOptions.indexerOption = Windows.Storage.Search.IndexerOption.useIndexerWhenAvailable;
+                    var queryOptions = new _WinRT.Windows.Storage.Search.QueryOptions();
+                    queryOptions.folderDepth = _WinRT.Windows.Storage.Search.FolderDepth.deep;
+                    queryOptions.indexerOption = _WinRT.Windows.Storage.Search.IndexerOption.useIndexerWhenAvailable;
                     this._query = library.createFileQueryWithOptions(queryOptions);
                 }
 
@@ -60,16 +61,16 @@ define([
                         size = Math.max(1, Math.min(options.requestedThumbnailSize, 1024));
                     } else {
                         switch (mode) {
-                            case Windows.Storage.FileProperties.ThumbnailMode.picturesView:
-                            case Windows.Storage.FileProperties.ThumbnailMode.videosView:
+                            case _WinRT.Windows.Storage.FileProperties.ThumbnailMode.picturesView:
+                            case _WinRT.Windows.Storage.FileProperties.ThumbnailMode.videosView:
                                 size = 190;
                                 break;
-                            case Windows.Storage.FileProperties.ThumbnailMode.documentsView:
-                            case Windows.Storage.FileProperties.ThumbnailMode.listView:
+                            case _WinRT.Windows.Storage.FileProperties.ThumbnailMode.documentsView:
+                            case _WinRT.Windows.Storage.FileProperties.ThumbnailMode.listView:
                                 size = 40;
                                 break;
-                            case Windows.Storage.FileProperties.ThumbnailMode.musicView:
-                            case Windows.Storage.FileProperties.ThumbnailMode.singleItem:
+                            case _WinRT.Windows.Storage.FileProperties.ThumbnailMode.musicView:
+                            case _WinRT.Windows.Storage.FileProperties.ThumbnailMode.singleItem:
                                 size = 256;
                                 break;
                         }
@@ -82,7 +83,7 @@ define([
                     }
                 }
 
-                this._loader = new Windows.Storage.BulkAccess.FileInformationFactory(this._query, mode, size, flags, delayLoad);
+                this._loader = new _WinRT.Windows.Storage.BulkAccess.FileInformationFactory(this._query, mode, size, flags, delayLoad);
                 this.compareByIdentity = false;
                 this.firstDataRequest = true;
                 _WriteProfilerMark("WinJS.UI.StorageDataSource:constructor,StopTM");
@@ -287,7 +288,7 @@ define([
 
                                 // If we have the full resolution thumbnail, we can cancel further updates and complete the promise
                                 // when current work is complete.
-                                if ((thumbnail.type !== Windows.Storage.FileProperties.ThumbnailType.icon) && !thumbnail.returnedSmallerCachedSize) {
+                                if ((thumbnail.type !== _WinRT.Windows.Storage.FileProperties.ThumbnailType.icon) && !thumbnail.returnedSmallerCachedSize) {
                                     _WriteProfilerMark("WinJS.UI.StorageDataSource:loadThumbnail complete,info");
                                     item.data.removeEventListener("thumbnailupdated", thumbnailUpdateHandler);
                                     shouldRespondToThumbnailUpdate = false;
