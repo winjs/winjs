@@ -206,6 +206,7 @@ WinJSTests.VerticalGridTests = function () {
     });
 
     this.generateTest("testEnsureVisible", function (complete) {
+        var that = this;
         var lv = this.lv;
         var columnsPerPage = lv.testOptions.columnsPerPage;
         var rowsPerPage = lv.testOptions.rowsPerPage;
@@ -223,7 +224,7 @@ WinJSTests.VerticalGridTests = function () {
                 var ensureVisibleIndex = ensureVisibleTargets.pop();
                 lv.ensureVisible(ensureVisibleIndex);
 
-                WinJS.Utilities._setImmediate(function () {
+                that.lvUtils.waitForReady(lv)().then(function() {
                     LiveUnit.Assert.isTrue(ensureVisibleIndex >= lv.indexOfFirstVisible, "Index of first visible should be less than or eq to ensured visible item index");
                     LiveUnit.Assert.isTrue(ensureVisibleIndex <= lv.indexOfLastVisible, "Index of first visible should be greater than or eq to ensured visible item index");
                     c();
