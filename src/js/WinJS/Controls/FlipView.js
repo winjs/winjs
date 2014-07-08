@@ -693,11 +693,6 @@ define([
                             that._touchInteraction = false;
                         }
                     }, false);
-                    this._contentDiv.addEventListener("pointerup", function (e) {
-                        if (e.pointerType !== PT_TOUCH) {
-                            that._touchInteraction = false;
-                        }
-                    }, false);
 
                     this._panningDivContainer.addEventListener("scroll", function () {
                         that._scrollPosChanged();
