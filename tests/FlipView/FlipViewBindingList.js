@@ -209,8 +209,7 @@ var Tests = Tests || {};
             var x = e;
         }     
 
-        // GitHub issue #149
-        this.xtestFlipWithViewBox = function (complete) {
+        this.testFlipWithViewBox = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Javascript Toolkit_" + i }; });
             var list = new WinJS.Binding.List(sampleDataSource);
 
