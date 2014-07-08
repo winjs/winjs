@@ -744,6 +744,92 @@ CorsicaTests.Utilities = function () {
         this["testNoScroll" + name + "_ltr"] = generateTestNoScroll(false, setActiveTests[name]);
         this["testNoScroll" + name + "_rtl"] = generateTestNoScroll(true, setActiveTests[name]);
     }.bind(this));
+    
+    // Options:
+    // - eventProperties: An object representing the event's properties that should be passed to initEvent.
+    // - overridenProperties: An object representing the properties that should be overriden by the
+    //                        PointerEventProxy object.
+    // - eventHandler: An event handler which receives a PointerEventProxy instance as its argument.
+    //                 Use this callback as an opportunity to make assertions on the PointerEventProxy object.
+    // Returns false if any handler called preventDefault. Returns true otherwise. (the return value of dispatchEvent).
+    function testPointerEventProxy(options) {
+        var eventProperties = options.eventProperties || {};
+        var overridenProperties = options.overridenProperties || {};
+        var eventHandler = options.eventHandler || function () { };
+        
+        var targetElement = document.createElement("div");
+        
+        try {
+            targetElement.id = "target-element";
+            document.body.appendChild(targetElement);
+            
+            var eventObject = document.createEvent("MouseEvent");
+            Helper.initMouseEvent(eventObject, "touchstart", eventProperties);
+            
+            var handlerRan = false;
+            targetElement.addEventListener("touchstart", function (e) {
+                eventHandler(new WinJS.Utilities._PointerEventProxy(e, overridenProperties));
+                handlerRan = true;
+            });
+            var doDefaultAction = targetElement.dispatchEvent(eventObject);
+            LiveUnit.Assert.isTrue(handlerRan, "touchstart event handler should have run");
+            
+            return doDefaultAction;
+        } finally {
+            var parent = targetElement.parentNode;
+            parent && parent.removeChild(targetElement);
+        }
+    }
+    
+    this.testPointerEventProxyBasic = function () {
+        testPointerEventProxy({
+            eventProperties: {
+                cancelable: true,
+                clientX: 19,
+                clientY: 46
+            },
+            eventHandler: function (e) {
+                LiveUnit.Assert.areEqual("touchstart", e.type, "event.type incorrectly initialized");
+                LiveUnit.Assert.areEqual(19, e.clientX, "event.clientX incorrectly initialized");
+                LiveUnit.Assert.areEqual(46, e.clientY, "event.clientY incorrectly initialized");
+            }
+        });
+    };
+    
+    this.testPointerEventProxyOverrides = function () {
+        testPointerEventProxy({
+            eventProperties: {
+                cancelable: true,
+                clientX: 19,
+                clientY: 46
+            },
+            overridenProperties: {
+                clientX: 84
+            },
+            eventHandler: function (e) {
+                LiveUnit.Assert.areEqual("touchstart", e.type, "event.type incorrectly initialized");
+                LiveUnit.Assert.areEqual(84, e.clientX, "event.clientX should have been overriden");
+                LiveUnit.Assert.areEqual(46, e.clientY, "event.clientY incorrectly initialized");
+            }
+        });
+    };
+    
+    this.testPointerEventProxyFunctions = function () {
+        var doDefaultAction;
+        
+        doDefaultAction = testPointerEventProxy({
+            eventProperties: { cancelable: true }
+        });
+        LiveUnit.Assert.isTrue(doDefaultAction, "default should not have been prevented");
+        
+        doDefaultAction = testPointerEventProxy({
+            eventProperties: { cancelable: true },
+            eventHandler: function (e) {
+                e.preventDefault();
+            }
+        });
+        LiveUnit.Assert.isFalse(doDefaultAction, "default should have been prevented");
+    };
 }
 
 

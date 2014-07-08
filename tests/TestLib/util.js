@@ -532,6 +532,31 @@ var Helper;
             includeDescendants: true
         });
     };
+    
+    // A wrapper around the browser's MouseEvent.initMouseEvent that turns the large argument list
+    // into an options object to make function calls easier to understand.
+    Helper.initMouseEvent = function initMouseEvent(eventObject, type, options) {
+        options = options || {};
+        var canBubble = !!options.canBubble;
+        var cancelable = !!options.cancelable;
+        var view = options.view || window;
+        var detail = options.detail || {};
+        var clientX = options.clientX || 0;
+        var clientY = options.clientY || 0;
+        var screenX = typeof options.screenX === "number" ? options.screenX : window.screenLeft + clientX;
+        var screenY = typeof options.screenY === "number" ? options.screenY : window.screenTop + clientY;
+        var ctrlKey = !!options.ctrlKey;
+        var altKey = !!options.altKey;
+        var shiftKey = !!options.shiftKey;
+        var metaKey = !!options.metaKey;
+        var button = options.button || 0;
+        var relatedTarget = options.relatedTarget || null;
+
+        eventObject.initMouseEvent(type, canBubble, cancelable, view,
+            detail, screenX, screenY, clientX, clientY,
+            ctrlKey, altKey, shiftKey, metaKey,
+            button, relatedTarget);
+    };
 
     // Useful for disabling tests which were generated programmatically. Disables testName which
     // is part of the testObj tests. It's safest to call this function at the bottom of the

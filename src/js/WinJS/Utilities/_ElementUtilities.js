@@ -446,7 +446,8 @@ define([
     ].forEach(function (propertyName) {
         Object.defineProperty(PointerEventProxy.prototype, propertyName, {
             get: function () {
-                return this.__eventObject[propertyName];
+                var value = this.__eventObject[propertyName];
+                return typeof value === "function" ? value.bind(this.__eventObject) : value;
             },
             configurable: true
         });
@@ -1019,6 +1020,8 @@ define([
         _initPointerEvent: function (event) {
             this._initEventImpl.apply(this, ["Pointer", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
+        
+        _PointerEventProxy: PointerEventProxy,
 
         _bubbleEvent: bubbleEvent,
 
