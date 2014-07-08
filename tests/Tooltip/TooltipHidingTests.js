@@ -115,7 +115,7 @@ TooltipHidingTests = function () {
                     // Set up a timer to catch if the tooltip didn't immediately hide itself in response to our hideMethod.
                     window.tooltipEventListener = tooltipEventListener;
                     window.timerForListener = setTimeout("window.tooltipEventListener({type:'tooltipDidntHideItself'});",
-                        tooltipUtils.DEFAULT_MESSAGE_DURATION / 5);
+                        tooltipUtils.DEFAULT_MESSAGE_DURATION / 2);
                     break;
                 case "tooltipDidntHideItself":
                     // Tooltip isn't closing, so force it to close.
