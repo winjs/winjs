@@ -180,13 +180,15 @@
         if (document.querySelector("#loopTests").checked) {
             document.querySelector("#startButton").click();
         } else {
-            var tests = log.map(function (details) {
+            var tests = log.map(function (details, index) {
                 return {
                     name: details.name,
                     result: details.result,
                     expected: details.expected,
                     actual: details.actual,
-                    source: details.source
+                    // Omit all but the first few callstacks to keep our results data small.
+                    // If it's larger than 64 KB, Saucelabs will ignore it. 
+                    source: index < 3 ? details.source : null
                 }
             });
             test_results.tests = tests;
