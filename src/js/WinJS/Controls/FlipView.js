@@ -669,9 +669,9 @@ define([
                         }
                     }
 
-                    this._contentDiv.addEventListener("pointermove", handleShowButtons, false);
-
-                    this._contentDiv.addEventListener("pointerdown", function (e) {
+                    _ElementUtilities._addEventListener(this._contentDiv,"pointermove", handleShowButtons, false);
+                   
+                    _ElementUtilities._addEventListener(this._contentDiv, "pointerdown", function(e){
                         if (e.pointerType === PT_TOUCH) {
                             that._mouseInViewport = false;
                             that._touchInteraction = true;
@@ -687,7 +687,12 @@ define([
                             }
                         }
                     }, false);
-
+                    
+                    _ElementUtilities._addEventListener(this._contentDiv, "pointerup", function (e) {
+                        if (e.pointerType !== PT_TOUCH) {
+                            that._touchInteraction = false;
+                        }
+                    }, false);
                     this._contentDiv.addEventListener("pointerup", function (e) {
                         if (e.pointerType !== PT_TOUCH) {
                             that._touchInteraction = false;
