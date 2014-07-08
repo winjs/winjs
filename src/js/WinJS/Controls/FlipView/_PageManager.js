@@ -1766,7 +1766,7 @@ define([
                             break;
                         }
                         curr = curr.next;
-                    } while((curr !== this._prevMarker));
+                    } while(curr !== this._prevMarker);
                 },
 
                 _changeFlipPage: function (page, oldElement, newElement) {
