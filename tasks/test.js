@@ -84,6 +84,7 @@
 <html>                                                                                                                      \r\n\
 <head>                                                                                                                      \r\n\
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />                                                                 \r\n\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                  \r\n\
     <title>WinJS Tests</title>                                                                                              \r\n\
     <style>                                                                                                                 \r\n\
         body {                                                                                                              \r\n\
@@ -117,6 +118,7 @@
 <head>                                                                                                                      \r\n\
     <title>@@TITLE</title>                                                                                                  \r\n\
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />                                                                 \r\n\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                  \r\n\
     <!-- WinJS references -->                                                                                               \r\n\
     <link type="text/css" rel="stylesheet" href="../../$(TargetFramework)/css/ui-dark.css" />                               \r\n\
     <script src="../../$(TargetFramework)/js/base.js"></script>                                                             \r\n\
