@@ -2,6 +2,7 @@
 (function () {
     "use strict";
 
+
     module.exports = function (grunt) {
         var config = require("../config.js");
 
@@ -16,12 +17,37 @@
         // Generate QUnit test pages
         grunt.registerTask("build-qunit", function () {
             var fs = require("fs");
+            var path = require("path");
+
+            function copyAllFiles(source, dest) {
+                if (!fs.existsSync(dest)) {
+                    fs.mkdirSync(dest);
+                }
+                var files = fs.readdirSync(source);
+                files.forEach(function(file) {
+
+                    var filePath = path.join(source, file);
+                    var destPath = path.join(dest, file);
+                    
+                    if(fs.lstatSync(filePath).isDirectory()) {
+
+                        copyAllFiles(filePath, destPath);
+                    } else {
+                        fs.writeFileSync(destPath, fs.readFileSync(filePath));
+                    }
+                });
+
+            }
 
             function extractDependencies(path) {
                 // This function extracts the <reference path="..." /> tags in test files and returns their real paths.
                 var fileContents = fs.readFileSync(path, "utf-8");
                 var dir = path.substring(0, path.lastIndexOf("/"));
                 var deps = [];
+
+                if(fileContents.indexOf("<deploy")) {
+                    deps.push("<<deploy>>");
+                }
 
                 var lines = fileContents.split("\n");
                 var processedOne = false;
@@ -167,6 +193,7 @@
 
                 var testReferences = "";
 
+                var copyTestData = false;
                 var srcs = [];
                 var csss = [];
                 var files = fs.readdirSync("./tests/" + dir);
@@ -189,6 +216,11 @@
                         deps.forEach(function (dep) {
                             if (dep === srcs[i]) {
                                 // Some files reference themselves, this check breaks the infinite loop
+                                return;
+                            }
+                            // some tests require TestData be copied over
+                            if(dep === "<<deploy>>") {
+                                copyTestData = true;
                                 return;
                             }
                             if (dep.indexOf(".css") >= 0) {
@@ -231,6 +263,9 @@
                     fs.mkdirSync(testFolder);
                 }
                 fs.writeFileSync(testFolder + "/test.html", html);
+                if(copyTestData) {
+                    copyAllFiles("./tests/TestData", testFolder);
+                }
                 tests += '      <li><a href="' + dir + '/test.html?fastanimations=true" target="_blank">' + dir + " tests</a></li>\r\n";
             });
             tests = tests.substr(0, tests.length - 2);
