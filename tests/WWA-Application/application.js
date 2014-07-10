@@ -1373,7 +1373,7 @@ CorsicaTests.ApplicationTests = function () {
 
             var count = 0;
             app.addEventListener("test", function (e) {
-                e.setPromise(WinJS.Promise.timeout().then(function () {
+                e.setPromise(S.schedulePromiseNormal().then(function () {
                     count++;
                     LiveUnit.Assert.areEqual(4, count, "This should be executed fourth");
                     WinJS.Application.stop();
@@ -1385,13 +1385,13 @@ CorsicaTests.ApplicationTests = function () {
             app.addEventListener("test", function (e) {
                 count++;
                 LiveUnit.Assert.areEqual(2, count, "This should be executed second");
+                S.schedule(function () {
+                    count++;
+                    LiveUnit.Assert.areEqual(3, count, "runs third");
+                }, S.Priority.high);
             });
             app.queueEvent({ type: "test" });
             app.start();
-            S.schedule(function () {
-                count++;
-                LiveUnit.Assert.areEqual(3, count, "runs third");
-            }, S.Priority.high);
         }
 
         this.testApplication_highPriJobInOrderWithSchedulingADeferredEvent = function (complete) {
@@ -2499,7 +2499,7 @@ CorsicaTests.ApplicationTests = function () {
                     count++;
                     LiveUnit.Assert.isNull(data.stack);
                     LiveUnit.Assert.isNotNull(data.number);
-                    LiveUnit.Assert.areEqual("{}", data.description);
+                    LiveUnit.Assert.areEqual('{"setPromise":"[function]"}', data.description);
                     LiveUnit.Assert.areEqual(0, data.errorNumber);
                     LiveUnit.Assert.areEqual(0, data.number);
                 }
@@ -2779,14 +2779,16 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    enableWebunitErrorHandler(true);
-                    window.onerror = prevWindowOnError;
-                    WinJS.Application.stop();
-                    WinJS.Application._terminateApp = old;
+                    yieldForEventQueue().then(function() {
+                        enableWebunitErrorHandler(true);
+                        window.onerror = prevWindowOnError;
+                        WinJS.Application.stop();
+                        WinJS.Application._terminateApp = old;
 
-                    LiveUnit.Assert.areEqual(1, count);
-                    LiveUnit.Assert.areEqual("[object]", error);
-                    complete();
+                        LiveUnit.Assert.areEqual(1, count);
+                        LiveUnit.Assert.areEqual("[circular]", error.y);
+                        complete();
+                    });
                 });
             }
         }
@@ -2830,12 +2832,14 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    LiveUnit.Assert.areEqual(1, count);
-                    enableWebunitErrorHandler(true);
-                    window.onerror = prevWindowOnError;
-                    WinJS.Application.stop();
-                    WinJS.Application._terminateApp = old;
-                    complete();
+                    yieldForEventQueue().done(function() {
+                        LiveUnit.Assert.areEqual(1, count);
+                        enableWebunitErrorHandler(true);
+                        window.onerror = prevWindowOnError;
+                        WinJS.Application.stop();
+                        WinJS.Application._terminateApp = old;
+                        complete();
+                    });
                 });
             }
         }
@@ -2879,12 +2883,14 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    LiveUnit.Assert.areEqual(1, count);
-                    enableWebunitErrorHandler(true);
-                    window.onerror = prevWindowOnError;
-                    WinJS.Application.stop();
-                    WinJS.Application._terminateApp = old;
-                    complete();
+                    yieldForEventQueue().done(function() {
+                        LiveUnit.Assert.areEqual(1, count);
+                        enableWebunitErrorHandler(true);
+                        window.onerror = prevWindowOnError;
+                        WinJS.Application.stop();
+                        WinJS.Application._terminateApp = old;
+                        complete();
+                    });
                 });
             }
         }
@@ -2929,12 +2935,14 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    LiveUnit.Assert.areEqual(1, count);
-                    enableWebunitErrorHandler(true);
-                    window.onerror = prevWindowOnError;
-                    WinJS.Application.stop();
-                    WinJS.Application._terminateApp = old;
-                    complete();
+                    yieldForEventQueue().done(function() {
+                        LiveUnit.Assert.areEqual(1, count);
+                        enableWebunitErrorHandler(true);
+                        window.onerror = prevWindowOnError;
+                        WinJS.Application.stop();
+                        WinJS.Application._terminateApp = old;
+                        complete();
+                    });
                 });
             }
         }
@@ -2974,12 +2982,14 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    LiveUnit.Assert.areEqual(1, count);
-                    enableWebunitErrorHandler(true);
-                    window.onerror = prevWindowOnError;
-                    WinJS.Application.stop();
-                    WinJS.Application._terminateApp = old;
-                    complete();
+                    yieldForEventQueue().done(function() {
+                        LiveUnit.Assert.areEqual(1, count);
+                        enableWebunitErrorHandler(true);
+                        window.onerror = prevWindowOnError;
+                        WinJS.Application.stop();
+                        WinJS.Application._terminateApp = old;
+                        complete();
+                    });
                 });
             }
         }
@@ -3075,7 +3085,8 @@ CorsicaTests.ApplicationTests = function () {
 
                     // first count when exception is actually thrown, second count from done()
                     LiveUnit.Assert.areEqual(2, count);
-                    LiveUnit.Assert.areEqual("error from then()", error.errorMessage);
+                    // other browsers prefix uncaught error message strings
+                    LiveUnit.Assert.areNotEqual(-1, error.errorMessage.indexOf("error from then()"));
                     LiveUnit.Assert.areEqual(undefined, error.promise);
                     LiveUnit.Assert.isTrue(error.errorUrl.indexOf("base.js") > 0);
                     complete();
@@ -3129,7 +3140,7 @@ CorsicaTests.ApplicationTests = function () {
 
                     // count from done()
                     LiveUnit.Assert.areEqual(1, count);
-                    LiveUnit.Assert.areEqual("exception thrown from done()", error.errorMessage);
+                    LiveUnit.Assert.areNotEqual(-1, error.errorMessage.indexOf("exception thrown from done()"));
                     LiveUnit.Assert.areEqual(undefined, error.promise);
                     complete();
                 });
@@ -3201,7 +3212,7 @@ CorsicaTests.ApplicationTests = function () {
             var errorText = "'x' of undefined or null reference";
             try { null.x(); }
             catch (e) {
-                errorText = e.description;
+                errorText = e.message;
             }
 
             try {
@@ -3336,7 +3347,7 @@ CorsicaTests.ApplicationTests = function () {
                     // count from initial throw
                     LiveUnit.Assert.areEqual(1, count);
 
-                    LiveUnit.Assert.areEqual("exception thrown from level 1 promise", error.exception);
+                    LiveUnit.Assert.areNotEqual(-1, error.exception.indexOf("exception thrown from level 1 promise"));
                     LiveUnit.Assert.isTrue(error.promise._isException, "expected promise._isException to be true, but it was false");
 
                     complete();
@@ -3397,10 +3408,10 @@ CorsicaTests.ApplicationTests = function () {
                     // count from initial throw, #2 from done()
                     LiveUnit.Assert.areEqual(2, count);
 
-                    LiveUnit.Assert.areEqual("exception thrown from level 1 promise", errorFromPromise.exception);
+                    LiveUnit.Assert.areNotEqual(-1, errorFromPromise.exception.indexOf("exception thrown from level 1 promise"));
                     LiveUnit.Assert.isTrue(errorFromPromise.promise._isException, "expected promise._isException to be true, but it was false");
 
-                    LiveUnit.Assert.areEqual("exception thrown from level 1 promise", errorFromDone.errorMessage);
+                    LiveUnit.Assert.areNotEqual(-1, errorFromDone.errorMessage.indexOf("exception thrown from level 1 promise"));
                     LiveUnit.Assert.areEqual(undefined, errorFromDone.promise);
 
                     complete();
@@ -3467,8 +3478,6 @@ CorsicaTests.ApplicationTests = function () {
                     count++;
                     LiveUnit.Assert.isNotNull(data.stack);
                     LiveUnit.Assert.isNotNull(data.description);
-                    LiveUnit.Assert.areEqual(-2146823279, data.errorNumber);
-                    LiveUnit.Assert.areEqual(-2146823279, data.number);
                     error = JSON.parse(data.description);
                 }
 
@@ -3497,7 +3506,7 @@ CorsicaTests.ApplicationTests = function () {
                     // count from promise
                     LiveUnit.Assert.areEqual(1, count);
 
-                    LiveUnit.Assert.isTrue(error.exception.description.indexOf('thisFunctionNotDefined') > 0, "description=" + error.exception.description);
+                    LiveUnit.Assert.isTrue(error.exception.message.indexOf('thisFunctionNotDefined') >= 0, "message=" + error.exception.message);
                     LiveUnit.Assert.isTrue(error.promise._isException, "expected promise._isException to be true, but was false");
                     LiveUnit.Assert.isNotNull(error.exception.stack, "expected error.exception.stack != null, but it was null");
 
@@ -3506,50 +3515,52 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorWinRTInteropHandled = function (complete) {
-            WinJS.Application.stop();
+        if (isWinRTEnabled()) {
+            this.testOnErrorWinRTInteropHandled = function (complete) {
+                WinJS.Application.stop();
 
-            var count = 0;
-            var old = WinJS.Application._terminateApp;
-            var error;
+                var count = 0;
+                var old = WinJS.Application._terminateApp;
+                var error;
 
-            WinJS.Application._terminateApp = function (data) {
-                count++;
-                LiveUnit.Assert.isNull(data.stack);
-                LiveUnit.Assert.isNotNull(data.description);
-                LiveUnit.Assert.areEqual(0, data.errorNumber);
-                LiveUnit.Assert.areEqual(0, data.number);
-                var e = JSON.parse(data.description);
-                error = e.exception;
+                WinJS.Application._terminateApp = function (data) {
+                    count++;
+                    LiveUnit.Assert.isNull(data.stack);
+                    LiveUnit.Assert.isNotNull(data.description);
+                    LiveUnit.Assert.areEqual(0, data.errorNumber);
+                    LiveUnit.Assert.areEqual(0, data.number);
+                    var e = JSON.parse(data.description);
+                    error = e.exception;
+                }
+
+                WinJS.Application.start();
+
+                Windows.Storage.PathIO.readTextAsync("Some file that definitely doesn't exist, right?")
+                    .then(
+                        function () {
+                            LiveUnit.Assert.fail();
+                        },
+                        function (e) {
+                            // catch the error
+                            return;
+                        }
+                    )
+                    .then(function () {
+                        return new WinJS.Promise(function (c, e) {
+                            e("this is an error");
+                        });
+                    })
+                    .then(null, function () {
+                        return WinJS.Promise.timeout().then(function () {
+                            WinJS.Application.stop();
+                            WinJS.Application._terminateApp = old;
+
+                            LiveUnit.Assert.areEqual(0, count);
+                        });
+                    })
+                    .then(null, errorHandler)
+                    .then(complete);
             }
-
-            WinJS.Application.start();
-
-            Windows.Storage.PathIO.readTextAsync("Some file that definitely doesn't exist, right?")
-                .then(
-                    function () {
-                        LiveUnit.Assert.fail();
-                    },
-                    function (e) {
-                        // catch the error
-                        return;
-                    }
-                )
-                .then(function () {
-                    return new WinJS.Promise(function (c, e) {
-                        e("this is an error");
-                    });
-                })
-                .then(null, function () {
-                    return WinJS.Promise.timeout().then(function () {
-                        WinJS.Application.stop();
-                        WinJS.Application._terminateApp = old;
-
-                        LiveUnit.Assert.areEqual(0, count);
-                    });
-                })
-                .then(null, errorHandler)
-                .then(complete);
         }
 
         // generate an error that will propagate through window.onerror, verify details show up in Application error event
@@ -3563,6 +3574,7 @@ CorsicaTests.ApplicationTests = function () {
             var onerrorMessage;
             var onerrorUrl;
             var onerrorLinenumber;
+            var signal = new WinJS._Signal();
 
             try {
                 WinJS.Application._terminateApp = function (data) {
@@ -3571,6 +3583,7 @@ CorsicaTests.ApplicationTests = function () {
                     LiveUnit.Assert.isNotNull(data.description);
                     LiveUnit.Assert.isNotNull(data.errorNumber);
                     LiveUnit.Assert.isNotNull(data.number);
+                    signal.complete();
                 }
 
                 WinJS.Application.addEventListener("error", function (e) {
@@ -3583,7 +3596,6 @@ CorsicaTests.ApplicationTests = function () {
                 enableWebunitErrorHandler(false);
 
                 window.onerror = function (message, url, linenumber) {
-                    LiveUnit.Assert.areEqual(1, count);
                     count++;
 
                     onerrorMessage = message;
@@ -3602,23 +3614,27 @@ CorsicaTests.ApplicationTests = function () {
                 // generate error that result in calls to window.onerror to validate
                 // errors get passed through to the Application error event by 
                 // intentionally using undefined variable
-                var x = thisVariableNotDefined + 1;
+                WinJS.Utilities._setImmediate(function() {
+                    var x = thisVariableNotDefined + 1;
+                });
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    window.onerror = oldOnError;
-                    enableWebunitErrorHandler(true);
-                    WinJS.Application.stop();
-                    WinJS.Application._terminateApp = old;
+                    signal._promise.then(function() {
+                        window.onerror = oldOnError;
+                        enableWebunitErrorHandler(true);
+                        WinJS.Application.stop();
+                        WinJS.Application._terminateApp = old;
 
-                    // verify 
-                    LiveUnit.Assert.areEqual("error", error.type);
-                    LiveUnit.Assert.areEqual(onerrorMessage, error.detail.errorMessage);
-                    LiveUnit.Assert.areEqual(onerrorUrl, error.detail.errorUrl);
-                    LiveUnit.Assert.areEqual(onerrorLinenumber, error.detail.errorLine);
-                    LiveUnit.Assert.areEqual(undefined, error.detail.parent);
+                        // verify 
+                        LiveUnit.Assert.areEqual("error", error.type);
+                        LiveUnit.Assert.areEqual(onerrorMessage, error.detail.errorMessage);
+                        LiveUnit.Assert.areEqual(onerrorUrl, error.detail.errorUrl);
+                        LiveUnit.Assert.areEqual(onerrorLinenumber, error.detail.errorLine);
+                        LiveUnit.Assert.areEqual(undefined, error.detail.parent);
 
-                    LiveUnit.Assert.areEqual(4, count);
-                    complete();
+                        LiveUnit.Assert.areEqual(4, count);
+                        complete();
+                    });
                 });
             }
         }
@@ -3680,12 +3696,12 @@ CorsicaTests.ApplicationTests = function () {
 
                     // verify error details from promise (initial throw)
                     LiveUnit.Assert.areEqual("error", errorFromPromise.type);
-                    LiveUnit.Assert.areEqual("exception from promise", errorFromPromise.detail.exception);
+                    LiveUnit.Assert.areNotEqual(-1, errorFromPromise.detail.exception.indexOf("exception from promise"));
                     LiveUnit.Assert.areEqual(undefined, errorFromPromise.detail.handler);  // this error did not have a handler and was originated from the promise so no parent
                     LiveUnit.Assert.areEqual(undefined, errorFromPromise.detail.parent);
 
                     // this is the error that came from done()
-                    LiveUnit.Assert.areEqual("exception from promise", errorFromDone.detail.errorMessage);
+                    LiveUnit.Assert.areNotEqual(-1, errorFromDone.detail.errorMessage.indexOf("exception from promise"));
                     LiveUnit.Assert.isTrue(errorFromDone.detail.errorUrl.indexOf("base.js") > 0);
 
 
@@ -3852,7 +3868,9 @@ CorsicaTests.ApplicationTests = function () {
                 WinJS.Application.start();
 
                 // generate error that result in calls to window.onerror by intentionally using undefined variable
-                var x = thisVariableNotDefined + 1;
+                WinJS.Utilities._setImmediate(function() {
+                    var x = thisVariableNotDefined + 1;
+                });
             } finally {
                 WinJS.Utilities._setImmediate(function () {
                     window.onerror = oldOnError;

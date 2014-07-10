@@ -42,7 +42,28 @@ define([
     function safeSerialize(obj) {
         var str;
         try {
-            str = JSON.stringify(obj);
+            var seenObjects = [];
+            str = JSON.stringify(obj, function(key, value) {
+                if (value === _Global) {
+                    return "[window]";
+                } else if (value instanceof _Global.HTMLElement) {
+                    return "[HTMLElement]";
+                } else if (typeof value === "function") {
+                    return "[function]";
+                } else if (typeof value === "object") {
+                    if(value === null) {
+                        return value;
+                    } else if (seenObjects.indexOf(value) === -1) {
+                        seenObjects.push(value);
+                        return value;
+                    } else {
+                        return "[circular]";
+        }
+                } else {
+                    return value;
+                }
+
+            });
         }
         catch (err) {
             // primitives, undefined, null, etc, all get serialized fine. In the
@@ -64,8 +85,11 @@ define([
         //
         // To see the original exception stack, look at data.stack.
         // For more information on debugging and exception handling go to http://go.microsoft.com/fwlink/p/?LinkId=253583.
+
         debugger; // jshint ignore:line
-        _Global.MSApp.terminateApp(data);
+        if(_Global.MSApp) {
+            _Global.MSApp.terminateApp(data);
+        }
     }
 
     var terminateAppHandler = defaultTerminateAppHandler;
@@ -279,7 +303,7 @@ define([
 
                 _Log.log && _Log.log(safeSerialize(e), "winjs", "error");
 
-                if (_Global.document && _WinRT.UI.WebUI.WebUIApplication && exports._terminateApp) {
+                if (_Global.document && exports._terminateApp) {
                     var data = e.detail;
                     var number = data && (data.number || (data.exception && (data.exception.number || data.exception.code)) || (data.error && data.error.number) || data.errorCode || 0);
                     var terminateData = {
@@ -338,8 +362,8 @@ define([
     }
     function errorHandler(e) {
         var flattenedError = {};
-        for (var k in e) {
-            flattenedError[k] = e[k];
+        for(var key in e) {
+            flattenedError[key] = e[key];
         }
         var data;
         var handled = true;
@@ -383,6 +407,15 @@ define([
                 delete outstandingPromiseErrors[id];
             }
             return;
+        }
+
+        // Work around browsers that don't serialize exceptions
+        if(details.exception instanceof Error) {
+            var error = {
+                stack: details.exception.stack,
+                message: details.exception.message
+            };
+            details.exception = error;
         }
 
         // If this is the first promise error to occur in this period we need to schedule
@@ -435,8 +468,8 @@ define([
 
             // None of these are enabled in web worker
             if (_Global.document) {
+                _Global.addEventListener("error", errorHandler, false);
                 if (_WinRT.Windows.UI.WebUI.WebUIApplication) {
-                    _Global.addEventListener("error", errorHandler, false);
 
                     var wui = _WinRT.Windows.UI.WebUI.WebUIApplication;
                     wui.addEventListener("activated", activatedHandler, false);
@@ -487,7 +520,7 @@ define([
         }
     }
 
-    _Base.Namespace._moduleDefine(exports, "WinJS.Application", {
+    var publicNS = _Base.Namespace._moduleDefine(exports, "WinJS.Application", {
         stop: function () {
             /// <signature helpKeyword="WinJS.Application.stop">
             /// <summary locid="WinJS.Application.stop">
@@ -499,14 +532,14 @@ define([
             // Need to clear out the event properties explicitly to clear their backing
             //  state.
             //
-            exports.onactivated = null;
-            exports.oncheckpoint = null;
-            exports.onerror = null;
-            exports.onloaded = null;
-            exports.onready = null;
-            exports.onsettings = null;
-            exports.onunload = null;
-            exports.onbackclick = null;
+            publicNS.onactivated = null;
+            publicNS.oncheckpoint = null;
+            publicNS.onerror = null;
+            publicNS.onloaded = null;
+            publicNS.onready = null;
+            publicNS.onsettings = null;
+            publicNS.onunload = null;
+            publicNS.onbackclick = null;
             listeners = new ListenerType();
             _State.sessionState = {};
             running = false;
