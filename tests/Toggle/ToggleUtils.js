@@ -58,21 +58,14 @@ ToggleUtils.prototype = (function () {
         defaultDisabled: false,
 
         //-----------------------------------------------------------------------------------
-        setUp: function (complete) {
+        setUp: function () {
             /// <summary>
             ///  Test setup to run prior to every test case.
             /// </summary>
             LiveUnit.LoggingCore.logComment("In setup");
             commonUtils.addTag("div", "toggle");
-            var cssLoadedPromise;
             
-            if (typeof (WebUnit) === 'undefined') {
-                cssLoadedPromise = commonUtils.addCss("ui-dark.css").then(complete);
-            } else {
-                cssLoadedPromise = WinJS.Promise.wrap();
-            }
-            
-            return cssLoadedPromise;
+            return WinJS.Promise.wrap();
         },
 
         //-----------------------------------------------------------------------------------
@@ -82,9 +75,6 @@ ToggleUtils.prototype = (function () {
             /// </summary>
             LiveUnit.LoggingCore.logComment("In cleanUp");
             commonUtils.removeElementById("toggle");
-            if (typeof (WebUnit) === 'undefined') {
-                commonUtils.removeCss("ui-dark.css");
-            }
         },
 
         //-----------------------------------------------------------------------------------

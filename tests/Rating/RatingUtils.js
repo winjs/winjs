@@ -110,20 +110,6 @@ RatingUtils.prototype = (function () {
             /// </summary>
             LiveUnit.LoggingCore.logComment("In setup");
             commonUtils.addTag("div", "rating");
-            var cssLoadedPromise;
-
-            // Randomly included one of the WWA stylesheets.
-            if (typeof (WebUnit) === 'undefined') {
-                if (Math.floor(Math.random() * 2)) {
-                    cssLoadedPromise = commonUtils.addCss("ui-light.css");
-                    this.currentTheme = "light";
-                } else {
-                    cssLoadedPromise = commonUtils.addCss("ui-dark.css");
-                    this.currentTheme = "dark";
-                }
-            } else {
-                cssLoadedPromise = WinJS.Promise.wrap();
-            }
 
             //WinBlue:280045
             var element = document.getElementById("rating");
@@ -136,7 +122,7 @@ RatingUtils.prototype = (function () {
                 }
             };
             
-            return cssLoadedPromise;
+            return WinJS.Promise.wrap();
         },
 
         //-----------------------------------------------------------------------------------
@@ -146,17 +132,6 @@ RatingUtils.prototype = (function () {
             /// </summary>
             LiveUnit.LoggingCore.logComment("In cleanUp");
             commonUtils.removeElementById("rating");
-            if (typeof (WebUnit) === 'undefined') {
-                switch (this.currentTheme) {
-                    case "dark":
-                    default:
-                        commonUtils.removeCss("ui-dark.css");
-                        break;
-                    case "light":
-                        commonUtils.removeCss("ui-light.css");
-                        break;
-                }
-            }
 
             delete window.oldReleasePointerCapture;
         },

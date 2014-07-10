@@ -53,7 +53,7 @@ TooltipUtils.prototype = (function () {
         get RESHOW_THRESHOLD() { return WinJS.UI.Tooltip._RESHOW_THRESHOLD; },
 
         //-----------------------------------------------------------------------------------
-        setUp: function (complete) {
+        setUp: function () {
             /// <summary>
             ///  Test setup to run prior to every test case.
             /// </summary>
@@ -61,17 +61,7 @@ TooltipUtils.prototype = (function () {
             ///  String specifying id of element to create.
             /// </param>
             LiveUnit.LoggingCore.logComment("In setup");
-            var cssLoadedPromise;
-
-            if (typeof (WebUnit) === 'undefined') {
-                // We could use the "light style" too
-                // commonUtils.addCss("ui-light.css");
-                var dark = commonUtils.addCss("ui-dark.css");
-                var tooltip = commonUtils.addCss("Tooltip.css", true);
-                cssLoadedPromise = WinJS.Promise.join([dark, tooltip]).then(complete);
-            } else {
-                cssLoadedPromise = WinJS.Promise.wrap();
-            }
+            
             // Create a default "anchor/trigger" element the tooltip will be attached to
             // and give it a border and default text so it's easier to see when visually
             // watching the tests.
@@ -87,7 +77,7 @@ TooltipUtils.prototype = (function () {
             var element = document.getElementById("temp");
             element.tabIndex = "1";
             
-            return cssLoadedPromise;
+            return WinJS.Promise.wrap();
         },
 
         //-----------------------------------------------------------------------------------
@@ -107,10 +97,6 @@ TooltipUtils.prototype = (function () {
             window.timerForTimeout = null;
 
             commonUtils.removeElementById(id ? id : this.defaultElementID);
-            if (typeof (WebUnit) === 'undefined') {
-                commonUtils.removeCss("ui-dark.css");
-                commonUtils.removeCss("Tooltip.css");
-            }
             // Due to bug 266432, sometimes the tooltip doesn't get removed from the screen, so get rid of any leftover tooltips
             var allTooltips = document.body.getElementsByClassName("win-tooltip");
             var numberTooltips = allTooltips.length;
