@@ -15,7 +15,7 @@ var WinJSTests = WinJSTests || {};
 WinJSTests.FlipViewMouseEventTest = function () {
     "use strict"
 
-    var COUNT = 6;
+    var COUNT = 2;
     var commonUtils = new CommonUtils();
 
     this.setUp = function () {
