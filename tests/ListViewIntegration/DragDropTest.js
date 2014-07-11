@@ -168,7 +168,7 @@ WinJSTests.ListViewDragDropTest = function () {
         }
     }
 
-    this.generate = function (name, testFunction, itemsCount) {
+    this.generate = function (name, testFunction, itemsCount, layoutIndependent) {
         function generateTest(that, layout, dataSource, rtl) {
             var fullName = name + layout + dataSource + (rtl ? "_rtl" : "_ltr");
 
@@ -210,13 +210,11 @@ WinJSTests.ListViewDragDropTest = function () {
 
         var that = this;
         generateTest(that, "ListLayout", "BindingList");
-        generateTest(that, "GridLayout", "BindingList");
-        generateTest(that, "ListLayout", "BindingList", true);
-        generateTest(that, "GridLayout", "BindingList", true);
-        generateTest(that, "ListLayout", "VDS");
-        generateTest(that, "GridLayout", "VDS");
-        generateTest(that, "ListLayout", "VDS", true);
-        generateTest(that, "GridLayout", "VDS", true);
+        if (!layoutIndependent) {
+            generateTest(that, "GridLayout", "BindingList");
+            generateTest(that, "ListLayout", "VDS", true);
+            generateTest(that, "GridLayout", "VDS", true);
+        }
     }
 
     function getEventHandlerCallbacks(listview) {
@@ -285,7 +283,7 @@ WinJSTests.ListViewDragDropTest = function () {
         ];
         listView.itemDataSource = getDataSource(ITEMS_COUNT);
         runTests(listView, tests);
-    });
+    }, null, true);
 
     function failTestIfCalled(e, eventName) {
         LiveUnit.Assert.fail(eventName + " was called unexpectedly");
@@ -321,7 +319,7 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(2), rtl);
         generateEventInElement(listView, "onDragLeave", listView.elementFromIndex(2), rtl);
         complete();
-    });
+    }, null, true);
 
     this.generate("testDragEnterInReorderableSource", function (listView, rtl, complete) {
         // When a ListView's items are reorderable and draggable, dragEnter/leave/between should be fired even if we don't handle itemDragEnter
@@ -364,7 +362,7 @@ WinJSTests.ListViewDragDropTest = function () {
                 generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(1), rtl);
             });
         };
-    });
+    }, null, true);
 
     this.generate("testDragEnterFromExternalSource", function (listView, rtl, complete) {
         // Drag from an external source that isn't handled shouldn't raise anything other than enter/leave events
@@ -392,7 +390,7 @@ WinJSTests.ListViewDragDropTest = function () {
                 generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(1), rtl);
             });
         };
-    });
+    }, null, true);
 
     this.generate("testDragLeave", function (listView, rtl, complete) {
         // Drag from an external source that isn't handled shouldn't raise anything other than enter/leave events
@@ -438,7 +436,7 @@ WinJSTests.ListViewDragDropTest = function () {
             });
         };
         generateEventInElement(listView, "onDragLeave", listView.elementFromIndex(4), rtl);
-    });
+    }, null, true);
 
     this.generate("testDragUnselected", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
@@ -474,7 +472,7 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragStart", listView.elementFromIndex(3), rtl);
         generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(3), rtl);
         generateEventInElement(listView, "onDragEnd", listView.elementFromIndex(3), rtl);
-    });
+    }, null, true);
 
     this.generate("testDragSelected", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
@@ -510,7 +508,7 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragStart", listView.elementFromIndex(3), rtl);
         generateEventInElement(listView, "onDragEnter", listView.elementFromIndex(3), rtl);
         generateEventInElement(listView, "onDragEnd", listView.elementFromIndex(3), rtl);
-    });
+    }, null, true);
 
     this.generate("testDragEnd", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
@@ -536,7 +534,7 @@ WinJSTests.ListViewDragDropTest = function () {
         WinJS.Utilities._setImmediate(function () {
             generateEventInElement(listView, "onDragEnd", listView.elementFromIndex(2), rtl);
         });
-    });
+    }, null, true);
 
     this.generate("testDragBetween", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
@@ -809,7 +807,7 @@ WinJSTests.ListViewDragDropTest = function () {
             });
         };
         generateEventInElement(listView, "onDragOver", element2, rtl, cursorOffset);
-    });
+    }, null, true);
 
     this.generate("testReorderOutOfBounds", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
@@ -1603,7 +1601,7 @@ WinJSTests.ListViewDragDropTest = function () {
         ];
 
         runTests(listView, tests);
-    });
+    }, null, true);
     this.generate("testCanceledKeyboardReorder", function (listView, rtl, complete) {
         var adjustedKeys = getAdjustedKeys(rtl);
         var handlers = getEventHandlerCallbacks(listView);
@@ -1654,7 +1652,7 @@ WinJSTests.ListViewDragDropTest = function () {
         ];
 
         runTests(listView, tests);
-    });
+    }, null, true);
 };
 
 if (!utilities.isPhone) {
