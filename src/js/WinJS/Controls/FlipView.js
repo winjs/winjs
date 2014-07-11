@@ -672,30 +672,32 @@ define([
                         }
                     }
 
-                    this._contentDiv.addEventListener("pointermove", handleShowButtons, false);
-
-                    this._contentDiv.addEventListener("pointerdown", function (e) {
-                        if (e.pointerType === PT_TOUCH) {
-                            that._mouseInViewport = false;
-                            that._touchInteraction = true;
-                            that._fadeOutButtons(true);
-                        } else {
-                            that._touchInteraction = false;
-                            if (!that._isInteractive(e.target)) {
-                                // Disable the default behavior of the mouse wheel button to avoid auto-scroll
-                                if ((e.buttons & 4) !== 0) {
-                                    e.stopPropagation();
-                                    e.preventDefault();
+                    if (this._environmentSupportsTouch) {
+                        _ElementUtilities._addEventListener(this._contentDiv, "pointerdown", function (e) {
+                            if (e.pointerType === PT_TOUCH) {
+                                that._mouseInViewport = false;
+                                that._touchInteraction = true;
+                                that._fadeOutButtons(true);
+                            } else {
+                                that._touchInteraction = false;
+                                if (!that._isInteractive(e.target)) {
+                                    // Disable the default behavior of the mouse wheel button to avoid auto-scroll
+                                    if ((e.buttons & 4) !== 0) {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                    }
                                 }
                             }
-                        }
-                    }, false);
+                        }, false);
 
-                    this._contentDiv.addEventListener("pointerup", function (e) {
-                        if (e.pointerType !== PT_TOUCH) {
-                            that._touchInteraction = false;
-                        }
-                    }, false);
+                        _ElementUtilities._addEventListener(this._contentDiv, "pointermove", handleShowButtons, false);
+                        
+                        _ElementUtilities._addEventListener(this._contentDiv, "pointerup", function (e) {
+                            if (e.pointerType !== PT_TOUCH) {
+                                that._touchInteraction = false;
+                            }
+                        }, false);
+                    }
 
                     this._panningDivContainer.addEventListener("scroll", function () {
                         that._scrollPosChanged();
