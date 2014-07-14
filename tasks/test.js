@@ -44,7 +44,7 @@
             }
             
             // Fails the build if the path doesn't exist or its casing is incorrect.
-            function validatePath(path) {
+            function validatePath(path, line) {
                 if (endsWith(path, ".less.css")) {
                     // Unit test's LESS files have the extension ".less" in the src directory
                     // and ".less.css" in the bin directory. Path validation is against the
@@ -104,7 +104,7 @@
                     var startIndex = line.indexOf('path="') + 6;
                     var endIndex = line.indexOf('"', startIndex);
                     var path = dir + "/" + line.substring(startIndex, endIndex);
-                    validatePath(path);
+                    validatePath(path, line);
                     deps.push(path);
                     processedOne = true;
                 }
