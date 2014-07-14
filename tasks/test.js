@@ -38,6 +38,41 @@
                 });
 
             }
+            
+            function endsWith(s, suffix) {
+                return s.substring(s.length - suffix.length) === suffix;
+            }
+            
+            // Fails the build if the path doesn't exist or its casing is incorrect.
+            function validatePath(path) {
+                if (endsWith(path, ".less.css")) {
+                    // Unit test's LESS files have the extension ".less" in the src directory
+                    // and ".less.css" in the bin directory. Path validation is against the
+                    // src directory so do the validation against the extension ".less" instead
+                    // of ".less.css".
+                    path = path.substring(0, path.length - ".css".length);
+                }
+                
+                // realpathSync will abort the build if the file can't be resolved.
+                var fullPath = fs.realpathSync(path);
+                fullPath = fullPath.replace(/\\/g, "/");
+
+                // This part checks if the filepath is correctly cased by walking the path starting
+                // from the repository root and comparing each step with the directory listing.
+                var rootFolder = "winjs/tests/";
+                var split = fullPath.split(rootFolder);
+                var steps = split[1].split("/");
+                var csPath = split[0] + rootFolder;
+                while (steps.length) {
+                    var step = steps[0];
+                    var files = fs.readdirSync(csPath);
+                    if (files.indexOf(step) < 0) {
+                        grunt.fail.warn("Incorrect casing for:\n" + line + "in file:\n" + fullPath + "\nstep: " + step);
+                    }
+                    csPath += "/" + step;
+                    steps = steps.slice(1);
+                }
+            }
 
             function extractDependencies(path) {
                 // This function extracts the <reference path="..." /> tags in test files and returns their real paths.
@@ -45,7 +80,7 @@
                 var dir = path.substring(0, path.lastIndexOf("/"));
                 var deps = [];
 
-                if(fileContents.indexOf("<deploy")) {
+                if (fileContents.indexOf("<deploy") !== -1) {
                     deps.push("<<deploy>>");
                 }
 
@@ -69,26 +104,7 @@
                     var startIndex = line.indexOf('path="') + 6;
                     var endIndex = line.indexOf('"', startIndex);
                     var path = dir + "/" + line.substring(startIndex, endIndex);
-
-                    // realpathSync will abort the build if the file can't be resolved.
-                    var fullPath = fs.realpathSync(path);
-                    fullPath = fullPath.replace(/\\/g, "/");
-
-                    // This part checks if the filepath is correctly cased by walking the path starting
-                    // from the repository root and comparing each step with the directory listing.
-                    var rootFolder = "winjs/tests/";
-                    var split = fullPath.split(rootFolder);
-                    var steps = split[1].split("/");
-                    var csPath = split[0] + rootFolder;
-                    while (steps.length) {
-                        var step = steps[0];
-                        var files = fs.readdirSync(csPath);
-                        if (files.indexOf(step) < 0) {
-                            grunt.fail.warn("Incorrect casing for:\n" + line + "in file:\n" + fullPath + "\nstep: " + step);
-                        }
-                        csPath += "/" + step;
-                        steps = steps.slice(1);
-                    }
+                    validatePath(path);
                     deps.push(path);
                     processedOne = true;
                 }

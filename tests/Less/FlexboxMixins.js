@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="FlexboxMixins.less.css" />
 
 var WinJSTests = WinJSTests || {};
 WinJSTests.Less = WinJSTests.Less || {};
@@ -121,17 +119,15 @@ WinJSTests.Less = WinJSTests.Less || {};
     }
     
     WinJSTests.Less.FlexboxMixinTests = function () {
-        this.setUp = function (complete) {
+        this.setUp = function () {
             var newNode = document.createElement("div");
             newNode.id = "flexbox-mixin-tests";
             document.body.appendChild(newNode);
-            appendCSSFileToHead("$(TESTDATA)/FlexboxMixins.less.css").then(complete, complete);
         };
 
         this.tearDown = function () {
             var element = document.getElementById("flexbox-mixin-tests");
             document.body.removeChild(element);
-            removeCSSFileFromHead("$(TESTDATA)/FlexboxMixins.less.css");
         };
         
         this.testDisplay = function () {
