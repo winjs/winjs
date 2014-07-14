@@ -4801,9 +4801,8 @@ WinJSTests.VirtualizedViewTests = function () {
         };
     };
     this.testAriaWorkerCancellation.timeout = 30000;
-
-    // issue #342
-    this.xtestDeleteDoesNotLoseFocusRectangle = function (complete) {
+    
+    this.testDeleteDoesNotLoseFocusRectangle = function (complete) {
         initUnhandledErrors();
 
         var data = [];
@@ -4829,11 +4828,15 @@ WinJSTests.VirtualizedViewTests = function () {
             lv.currentItem = { index: 0, hasFocus: true, showFocus: true };
             return waitForReady(lv, -1)();
         }).then(function () {
-            LiveUnit.Assert.isTrue(document.querySelector("." + WinJS.UI._itemFocusOutlineClass));
+            LiveUnit.Assert.isTrue(document.querySelector("." + WinJS.UI._itemFocusOutlineClass),
+                "itemFocusOutline not drawn. document.hasFocus(): " + document.hasFocus() +
+                ". document requires focus to pass");
             list.shift();
             return waitForReady(lv, -1)();
         }).done(function () {
-            LiveUnit.Assert.isTrue(document.querySelector("." + WinJS.UI._itemFocusOutlineClass));
+            LiveUnit.Assert.isTrue(document.querySelector("." + WinJS.UI._itemFocusOutlineClass),
+                "itemFocusOutline not drawn. document.hasFocus(): " + document.hasFocus() +
+                ". document requires focus to pass");
             complete();
         });
     };
