@@ -512,6 +512,10 @@
             &:indeterminate {
                 background-color: transparent;
                 color: rgb(138, 87, 255);
+
+                &::-webkit-progress-bar {
+                    background-color: rgba(255, 255, 255, 0.35);
+                }
             }
 
             &:-ms-fill {
@@ -522,8 +526,17 @@
                 background-color: currentColor;
             }
 
+            &::-moz-progress-bar {
+                background-color: currentColor;
+            }
+
+            // This is a weird webkit issue where the background color
+            // of the progress seems to overlay with this background color,
+            // but neither one on its own seems to work correctly. Really we just
+            // want the regular progress bg color, but it doesn't seem to take it
+            // unless we specify some color here.
             &::-webkit-progress-bar {
-                background-color: rgba(255, 255, 255, 0.35);
+                background-color: rgba(255, 255, 255, 0.0);
             }
 
             background-color: rgba(255, 255, 255, 0.35);
@@ -533,6 +546,10 @@
             &:indeterminate {
                 background-color: transparent;
                 color: rgb(70, 23, 180);
+
+                &::-webkit-progress-bar {
+                    background-color: rgba(0, 0, 0, 0.35);
+                }
             }
 
             &:-ms-fill {
@@ -543,8 +560,12 @@
                 background-color: currentColor;
             }
 
+            &::-moz-progress-bar {
+                background-color: currentColor;
+            }
+
             &::-webkit-progress-bar {
-                background-color: rgba(255, 255, 255, 0.35);
+                background-color: rgba(0, 0, 0, 0.0);
             }
 
             background-color: rgba(0, 0, 0, 0.2);
@@ -572,11 +593,19 @@
                 background: rgba(255, 255, 255, 0.16);
             }
 
+            &::-moz-range-track {
+                background: rgba(255, 255, 255, 0.16);
+            }
+
             &::-ms-thumb {
                 background-color: rgb(255, 255, 255);
             }
 
             &::-webkit-slider-thumb {
+                background: rgb(255, 255, 255);
+            }
+
+            &::-moz-range-thumb {
                 background: rgb(255, 255, 255);
             }
 
@@ -596,6 +625,10 @@
                 background-color: rgba(255, 255, 255, 0.18);
             }
 
+            &:enabled:hover::-moz-range-track {
+                background-color: rgba(255, 255, 255, 0.18);
+            }
+
             &:disabled::-ms-fill-lower {
                 background-color: rgba(255, 255, 255, 0.23);
             }
@@ -609,6 +642,10 @@
             }
 
             &:disabled::-webkit-slider-thumb {
+                background-color: rgb(126, 126, 126);
+            }
+
+            &:disabled::-moz-range-thumb {
                 background-color: rgb(126, 126, 126);
             }
 
@@ -626,12 +663,20 @@
                 background-color: rgba(0, 0, 0, 0.1);
             }
 
+            &::-moz-range-track {
+                background: rgba(0, 0, 0, 0.1);
+            }
+
             &::-ms-thumb {
                 background-color: rgb(0, 0, 0);
             }
 
             &::-webkit-slider-thumb {
                 background-color: rgb(0, 0, 0);
+            }
+
+            &::-moz-range-thumb {
+                background: rgb(0, 0, 0);
             }
 
             &::-ms-ticks-before, &::-ms-ticks-after {
@@ -650,6 +695,10 @@
                 background-color: rgba(0, 0, 0, 0.15);
             }
 
+            &:enabled:hover::-moz-range-track {
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+
             &:disabled::-ms-fill-lower {
                 background-color: rgba(0, 0, 0, 0.2);
             }
@@ -659,6 +708,10 @@
             }
 
             &:disabled::-ms-thumb {
+                background-color: rgb(146, 146, 146);
+            }
+
+            &:disabled::-moz-range-thumb {
                 background-color: rgb(146, 146, 146);
             }
 

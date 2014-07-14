@@ -312,6 +312,11 @@ input[type=range] {
         height: 11px;
     }
 
+    &::-moz-range-track {
+        height: 11px;
+        border: none;
+    }
+
     &::-ms-thumb {
         width: 11px;
         height: 11px;
@@ -322,6 +327,13 @@ input[type=range] {
         -webkit-appearance: none;
         height: 11px;
         width: 11px;
+    }
+
+    &::-moz-range-thumb {
+        width: 11px;
+        height: 11px;
+        border-radius: 0;
+        border: none;
     }
 
     &::-ms-ticks-before, &::-ms-ticks-after {
