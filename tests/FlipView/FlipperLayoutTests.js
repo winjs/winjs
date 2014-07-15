@@ -34,7 +34,6 @@ var LayoutTests = null;
             flipperUtils.removeFlipperDom();
         }
 
-
         //
         // Test: testFlipperSmallContentCentered
         // Ensure that the small content is centered in the flipper region.
@@ -65,7 +64,7 @@ var LayoutTests = null;
                 return renderer;
             }
 
-            options = {itemTemplate: smallRenderer, orientation: orientation};
+            var options = {itemTemplate: smallRenderer, orientation: orientation};
             var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), options);
             var element = flipper.element;
             var templateRoot = element.querySelector(".rootElement");
@@ -78,7 +77,7 @@ var LayoutTests = null;
             var itemLeft = templateRoot.offsetLeft;
 
             var shorter = itemHeight < flipViewHeight;
-            var thinner =  itemWidth < flipViewWidth;
+            var thinner = itemWidth < flipViewWidth;
 
             LiveUnit.Assert.isTrue(shorter && thinner, "content should be smaller than the FlipView");
 
@@ -165,7 +164,6 @@ var LayoutTests = null;
             };
         }
         */
-        
     }
 
     // Register the object as a test class by passing in the name
