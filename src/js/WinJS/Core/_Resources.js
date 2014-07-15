@@ -123,7 +123,7 @@ define([
             catch (e) { }
 
             if (!stringValue) {
-                return { value: resourceId, empty: true };
+                return exports._getStringJS(resourceId);
             }
 
             try {
