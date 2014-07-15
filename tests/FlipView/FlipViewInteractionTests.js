@@ -90,8 +90,7 @@ WinJSTests.FlipViewInteractionTests = function () {
                         LiveUnit.Assert.isFalse(isButtonVisible(flipView._prevButton), "Prev button appeared on first item after buttonFadePromise");
                         LiveUnit.Assert.isFalse(isButtonVisible(flipView._nextButton), "Next button not hidden after buttonFadePromise");
                         complete();
-                    },
-                    function (e){
+                    }, function (e){
                         complete();
                     });
             }
