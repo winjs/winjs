@@ -36,26 +36,23 @@ WinJSTests.FlipViewInteractionTests = function () {
         }
     };
 
-    this.generate = function (name, testFunction) {
-        function generateTest(that, orientation) {
-            that[name + "_" + orientation] = function (complete) {
-                var element = document.getElementById("BasicFlipView"),
-                    testData = createArraySource(COUNT, ["400px"], ["400px"]),
-                    options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation };
+    this.testFlipViewMouseEvents_horizontal = function(complete){
+        var element = document.getElementById("BasicFlipView"),
+            testData = createArraySource(COUNT, ["400px"], ["400px"]),
+            options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: "horizontal" };
 
-                var flipView = new WinJS.UI.FlipView(element, options);
-                testFunction(element, flipView, complete);
-            };
-        }
+        var flipView = new WinJS.UI.FlipView(element, options);
+        mouseTest(element, flipView, complete);
+    }
 
-        var that = this;
-        
-        generateTest(that, "horizontal");
-        generateTest(that, "vertical");
-      
-    };
+     this.testFlipViewMouseEvents_vertical = function(complete){
+        var element = document.getElementById("BasicFlipView"),
+            testData = createArraySource(COUNT, ["400px"], ["400px"]),
+            options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: "vertical" };
 
-    this.generate("testFlipViewMouseEvents",  mouseTest);
+        var flipView = new WinJS.UI.FlipView(element, options);
+        mouseTest(element, flipView, complete);
+    }
 
     function mouseTest(element, flipView, complete) {
         function isButtonVisible(button) {
@@ -64,7 +61,6 @@ WinJSTests.FlipViewInteractionTests = function () {
 
         var tests = [
             function () {
-
                 if (!flipView._environmentSupportsTouch) {
                     complete();
                     return;
@@ -77,38 +73,20 @@ WinJSTests.FlipViewInteractionTests = function () {
                 commonUtils.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + 10, window.screenTop + 10, 10, 10, false, false, false, false, 0, null, 10, 10, 0, 0, 0, 0, 0, 0, 0, (event.MSPOINTER_TYPE_MOUSE || "mouse"), 0, true);
                 flipView._contentDiv.dispatchEvent(event);
 
-                if (!flipView._nextButtonAnimation) {
-                    LiveUnit.Assert.fail("nextButtonAnimation is null/undefined on fade in");
-                    complete();
-                    return;
-                }
+                LiveUnit.Assert.isNotNull(flipView._nextButtonAnimation, "nextButtonAnimation is null/undefined on fade in");
 
                 flipView._nextButtonAnimation
                     .then(function () {
                         LiveUnit.Assert.isFalse(isButtonVisible(flipView._prevButton), "Prev button appeared after pointermove on first item");
                         LiveUnit.Assert.isTrue(isButtonVisible(flipView._nextButton), "Next button did not appear on pointermove");
-
-                        if (!flipView._buttonFadePromise) {
-                            LiveUnit.Assert.fail("button fade promise is null/undefined");
-                            complete();
-                            return;
-                        }
+                        LiveUnit.Assert.isNotNull(flipView._buttonFadePromise,"button fade promise is null/undefined");
                         return flipView._buttonFadePromise;
-
                     })
                     .then(function () {
-                        if (!flipView._nextButtonAnimation) {
-                            LiveUnit.Assert.fail("nextButtonAnimation is null on fade out");
-                            complete();
-                            return;
-                        }
+                        LiveUnit.Assert.isNotNull(flipView._nextButtonAnimation, "nextButtonAnimation is null/undefined on fade out");
                         return flipView._nextButtonAnimation;
-
-                    },
-                    function (e){
-                        complete();
                     })
-                    .then(function () {
+                    .done(function () {
                         LiveUnit.Assert.isFalse(isButtonVisible(flipView._prevButton), "Prev button appeared on first item after buttonFadePromise");
                         LiveUnit.Assert.isFalse(isButtonVisible(flipView._nextButton), "Next button not hidden after buttonFadePromise");
                         complete();
@@ -116,7 +94,6 @@ WinJSTests.FlipViewInteractionTests = function () {
                     function (e){
                         complete();
                     });
-                
             }
         ];
         runFlipViewTests(flipView, tests);
