@@ -377,10 +377,6 @@ CorsicaTests.XHR = function () {
     }
 
     this.testXHR100 = function (complete) {
-        if (!isWinRTEnabled()) {
-            complete();
-            return;
-        }
 
         var fragmentFiles = ["FragmentBasic.html",
                              "FragmentFindmeInternal.html",

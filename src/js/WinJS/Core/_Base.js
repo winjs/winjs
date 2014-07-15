@@ -186,11 +186,13 @@ define([
         // helper for defining AMD module members
         function moduleDefine(exports, name, members) {
             var target = [exports];
+            var publicNS = null;
             if(name) {
-                target.push(createNamespace(_Global, name));
+                publicNS = createNamespace(_Global, name);
+                target.push(publicNS);
             }
             initializeProperties(target, members, name || "<ANONYMOUS>");
-            return exports;
+            return publicNS;
         }
 
         // Establish members of the "WinJS.Namespace" namespace

@@ -2,6 +2,7 @@
 (function () {
     "use strict";
 
+
     module.exports = function (grunt) {
         var config = require("../config.js");
 
@@ -16,12 +17,72 @@
         // Generate QUnit test pages
         grunt.registerTask("build-qunit", function () {
             var fs = require("fs");
+            var path = require("path");
+
+            function copyAllFiles(source, dest) {
+                if (!fs.existsSync(dest)) {
+                    fs.mkdirSync(dest);
+                }
+                var files = fs.readdirSync(source);
+                files.forEach(function(file) {
+
+                    var filePath = path.join(source, file);
+                    var destPath = path.join(dest, file);
+                    
+                    if(fs.lstatSync(filePath).isDirectory()) {
+
+                        copyAllFiles(filePath, destPath);
+                    } else {
+                        fs.writeFileSync(destPath, fs.readFileSync(filePath));
+                    }
+                });
+
+            }
+            
+            function endsWith(s, suffix) {
+                return s.substring(s.length - suffix.length) === suffix;
+            }
+            
+            // Fails the build if the path doesn't exist or its casing is incorrect.
+            function validatePath(path, line) {
+                if (endsWith(path, ".less.css")) {
+                    // Unit test's LESS files have the extension ".less" in the src directory
+                    // and ".less.css" in the bin directory. Path validation is against the
+                    // src directory so do the validation against the extension ".less" instead
+                    // of ".less.css".
+                    path = path.substring(0, path.length - ".css".length);
+                }
+                
+                // realpathSync will abort the build if the file can't be resolved.
+                var fullPath = fs.realpathSync(path);
+                fullPath = fullPath.replace(/\\/g, "/");
+
+                // This part checks if the filepath is correctly cased by walking the path starting
+                // from the repository root and comparing each step with the directory listing.
+                var rootFolder = "winjs/tests/";
+                var split = fullPath.split(rootFolder);
+                var steps = split[1].split("/");
+                var csPath = split[0] + rootFolder;
+                while (steps.length) {
+                    var step = steps[0];
+                    var files = fs.readdirSync(csPath);
+                    if (files.indexOf(step) < 0) {
+                        grunt.fail.warn("Incorrect casing for:\n" + line + "in file:\n" + fullPath + "\nstep: " + step);
+                    }
+                    csPath += "/" + step;
+                    steps = steps.slice(1);
+                }
+            }
 
             function extractDependencies(path) {
                 // This function extracts the <reference path="..." /> tags in test files and returns their real paths.
                 var fileContents = fs.readFileSync(path, "utf-8");
                 var dir = path.substring(0, path.lastIndexOf("/"));
                 var deps = [];
+
+                if (fileContents.indexOf("<deploy") !== -1) {
+                    deps.push("<<deploy>>");
+                }
 
                 var lines = fileContents.split("\n");
                 var processedOne = false;
@@ -43,26 +104,7 @@
                     var startIndex = line.indexOf('path="') + 6;
                     var endIndex = line.indexOf('"', startIndex);
                     var path = dir + "/" + line.substring(startIndex, endIndex);
-
-                    // realpathSync will abort the build if the file can't be resolved.
-                    var fullPath = fs.realpathSync(path);
-                    fullPath = fullPath.replace(/\\/g, "/");
-
-                    // This part checks if the filepath is correctly cased by walking the path starting
-                    // from the repository root and comparing each step with the directory listing.
-                    var rootFolder = "winjs/tests/";
-                    var split = fullPath.split(rootFolder);
-                    var steps = split[1].split("/");
-                    var csPath = split[0] + rootFolder;
-                    while (steps.length) {
-                        var step = steps[0];
-                        var files = fs.readdirSync(csPath);
-                        if (files.indexOf(step) < 0) {
-                            grunt.fail.warn("Incorrect casing for:\n" + line + "in file:\n" + fullPath + "\nstep: " + step);
-                        }
-                        csPath += "/" + step;
-                        steps = steps.slice(1);
-                    }
+                    validatePath(path, line);
                     deps.push(path);
                     processedOne = true;
                 }
@@ -167,6 +209,7 @@
 
                 var testReferences = "";
 
+                var copyTestData = false;
                 var srcs = [];
                 var csss = [];
                 var files = fs.readdirSync("./tests/" + dir);
@@ -189,6 +232,11 @@
                         deps.forEach(function (dep) {
                             if (dep === srcs[i]) {
                                 // Some files reference themselves, this check breaks the infinite loop
+                                return;
+                            }
+                            // some tests require TestData be copied over
+                            if(dep === "<<deploy>>") {
+                                copyTestData = true;
                                 return;
                             }
                             if (dep.indexOf(".css") >= 0) {
@@ -231,6 +279,9 @@
                     fs.mkdirSync(testFolder);
                 }
                 fs.writeFileSync(testFolder + "/test.html", html);
+                if(copyTestData) {
+                    copyAllFiles("./tests/TestData", testFolder);
+                }
                 tests += '      <li><a href="' + dir + '/test.html?fastanimations=true" target="_blank">' + dir + " tests</a></li>\r\n";
             });
             tests = tests.substr(0, tests.length - 2);

@@ -244,15 +244,17 @@ CorsicaTests.DeclarativeControls = function () {
     this.testOptions4 = function () {
         var holder = document.createElement("div");
 
-        // used in this test
-        WinJS.Utilities.markSupportedForProcessing(window.alert);
+        window.testOptions4Function = function() {};
 
-        holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test1:+55, test2:null, test3: alert}'></div>";
+        // used in this test
+        WinJS.Utilities.markSupportedForProcessing(window.testOptions4Function);
+
+        holder.innerHTML = "<div data-win-control='DeclTest' data-win-options='{test1:+55, test2:null, test3: testOptions4Function}'></div>";
         WinJS.UI.processAll(holder);
         var control = holder.firstChild.winControl;
         LiveUnit.Assert.areEqual(55, control.test1);
         LiveUnit.Assert.areEqual(null, control.test2);
-        LiveUnit.Assert.areEqual(window.alert, control.test3);
+        LiveUnit.Assert.areEqual(window.testOptions4Function, control.test3);
     };
 
     this.testOptions5 = function () {
@@ -582,7 +584,7 @@ CorsicaTests.DeclarativeControls = function () {
     this.testOptionQueryExpressionBasicFindElementByClass_LocalTemplate_LookupFromWithinTemplate = function (complete) {
 
         var holder = document.createElement("div");
-        holder.innerHTML = "<div id='test'><div data-win-control='DeclTest' data-win-options='{a: select(\"#test\") }', data-win-bind=\"textContent: text\"></div></div>";
+        holder.innerHTML = "<div id='test'><div data-win-control='DeclTest' data-win-options='{a: select(\"#test\") }' data-win-bind=\"textContent: text\"></div></div>";
         var data = { text: "sometext" };
 
         WinJS.Binding.Template.render(holder, data)
