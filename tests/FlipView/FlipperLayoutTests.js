@@ -34,6 +34,61 @@ var LayoutTests = null;
             flipperUtils.removeFlipperDom();
         }
 
+
+        //
+        // Test: testFlipperSmallContentCentered
+        // Ensure that the small content is centered in the flipper region.
+        //
+
+        function pixelToInt(val){
+            if(typeof val === "string"){
+                return val.replace("px", "");
+            }else{
+                return val;
+            }
+        }
+
+        this.testFlipperSmallContentCentered_horizontal = function() {
+           smallContentCentered("horizontal");
+        }
+
+        this.testFlipperSmallContentCentered_vertical = function() {
+           smallContentCentered("vertical");
+        }
+
+        function smallContentCentered(orientation){
+            var smallRenderer = function(itemPromise) {
+                var renderer = basicInstantRenderer(itemPromise);
+                renderer.element.style.width = "50%";
+                renderer.element.style.height = "50%";
+                renderer.element.classList.add("rootElement");
+                return renderer;
+            }
+
+            options = {itemTemplate: smallRenderer, orientation: orientation};
+            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), options);
+            var element = flipper.element;
+            var templateRoot = element.querySelector(".rootElement");
+
+            var flipViewHeight = pixelToInt(getComputedStyle(element).height);
+            var flipViewWidth = pixelToInt(getComputedStyle(element).width);
+            var itemHeight = pixelToInt(getComputedStyle(templateRoot).height);
+            var itemWidth = pixelToInt(getComputedStyle(templateRoot).width);
+            var itemTop = templateRoot.offsetTop;
+            var itemLeft = templateRoot.offsetLeft;
+
+            var shorter = itemHeight < flipViewHeight;
+            var thinner =  itemWidth < flipViewWidth;
+
+            LiveUnit.Assert.isTrue(shorter && thinner, "content should be smaller than the FlipView");
+
+            var centerTop = Math.ceil((flipViewHeight - itemHeight) / 2);
+            var centerLeft = Math.ceil((flipViewWidth - itemWidth) / 2);
+
+            LiveUnit.Assert.isTrue(centerTop === itemTop, "content is not vertically centered");
+            LiveUnit.Assert.isTrue(centerLeft === itemLeft, "content is not horizontally centered");
+        }
+
         //
         // Test: testFlipperLargeContent
         // Ensure the large content is cropped, not centered.
@@ -110,59 +165,7 @@ var LayoutTests = null;
             };
         }
         */
-        //
-        // Test: testFlipperSmallContentCentered
-        // Ensure that the small content is centered in the flipper region.
-        //
-
-        function pixelToInt(val){
-            if(typeof val === "string"){
-                return val.replace("px", "");
-            }else{
-                return val;
-            }
-        }
-
-        this.testFlipperSmallContentCentered_horizontal = function() {
-           smallContentCentered("horizontal");
-        }
-
-        this.testFlipperSmallContentCentered_vertical = function() {
-           smallContentCentered("vertical");
-        }
-
-        function smallContentCentered(orientation){
-            var smallRenderer = function(itemPromise) {
-                var template = basicInstantRenderer(itemPromise);
-                template.element.style.width = "50%";
-                template.element.style.height = "50%";
-                template.element.classList.add("rootElement");
-                return template;
-            }
-
-            options = {itemTemplate: smallRenderer, orientation: orientation};
-            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), options);
-            var element = flipper.element;
-            var templateRoot = element.querySelector(".rootElement");
-
-            flipViewHeight = pixelToInt(getComputedStyle(element).height);
-            flipViewWidth = pixelToInt(getComputedStyle(element).width);
-            itemHeight = pixelToInt(getComputedStyle(templateRoot).height);
-            itemWidth = pixelToInt(getComputedStyle(templateRoot).width);
-            itemTop = templateRoot.offsetTop;
-            itemLeft = templateRoot.offsetLeft;
-
-            var shorter = itemHeight < flipViewHeight;
-            var thinner =  itemWidth < flipViewWidth;
-
-            LiveUnit.Assert.isTrue(shorter && thinner, "content should be smaller than the FlipView");
-
-            var centerTop = Math.ceil((flipViewHeight - itemHeight) / 2);
-            var centerLeft = Math.ceil((flipViewWidth - itemWidth) / 2);
-
-            LiveUnit.Assert.isTrue(centerTop === itemTop, "content is not vertically centered");
-            LiveUnit.Assert.isTrue(centerLeft === itemLeft, "content is not horizontally centered");
-        }
+        
     }
 
     // Register the object as a test class by passing in the name
