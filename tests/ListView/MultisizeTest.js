@@ -6,18 +6,23 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.MultisizeTests = function () {
     "use strict";
     var Key = WinJS.Utilities.Key;
+    var testRootEl;
 
     // This is the setup function that will be called at the beginning of each test function.
-    this.setUp = function (complete) {
+    this.setUp = function () {
 
         LiveUnit.LoggingCore.logComment("In setup");
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "MultisizeTests";
         newNode.innerHTML =
@@ -31,11 +36,11 @@ WinJSTests.MultisizeTests = function () {
             "</div>";
 
 
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
         removeListviewAnimations();
 
         this._defaultMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -43,10 +48,9 @@ WinJSTests.MultisizeTests = function () {
 
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = this._defaultMaxTimePerCreateContainers;
 
-        var element = document.getElementById("MultisizeTests");
-        document.body.removeChild(element);
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
         restoreListviewAnimations();
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     }
 
     function getDataObject(groupId, pattern, counter) {
@@ -1088,7 +1092,7 @@ WinJSTests.MultisizeTests = function () {
         var placeholder = document.createElement("div");
         placeholder.id = "multisizeSmallMarginTestPlaceholder";
         placeholder.style.height = "550px";
-        document.body.appendChild(placeholder);
+        testRootEl.appendChild(placeholder);
 
         var listView = new WinJS.UI.ListView(placeholder, {
             itemDataSource: new WinJS.Binding.List(data).dataSource,
@@ -1108,7 +1112,7 @@ WinJSTests.MultisizeTests = function () {
             check250Tile(listView, 1, 10, 283); // slot is 21px (1px from group info + 20px of margins). An item is 270px (250px of content + 20px of margins) so an item takes 13 slots. Because of rounding an item occupies 273px
             check250Tile(listView, 3, 283, 283);
 
-            document.body.removeChild(placeholder);
+            testRootEl.removeChild(placeholder);
 
             complete();
         });

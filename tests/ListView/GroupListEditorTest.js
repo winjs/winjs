@@ -4,18 +4,23 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.GroupListEditorTest = function () {
     "use strict";
 
+    var testRootEl;
     var ITEMS_COUNT = 10;
 
     // This is the setup function that will be called at the beginning of each test function.
-    this.setUp = function (complete) {
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "groupListEditorTest";
         newNode.style.height = "200px";
@@ -28,12 +33,12 @@ WinJSTests.GroupListEditorTest = function () {
             "<div id='simpleTemplate' class='{{className}}' style='display: none;'>" +
             "   <div>{{title}}</div>" +
             "</div>";
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
 
         //WinBlue: 298587
         this._oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -41,12 +46,8 @@ WinJSTests.GroupListEditorTest = function () {
 
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = this._oldMaxTimePerCreateContainers;
 
-        var element = document.getElementById("groupListEditorTest");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
     }
 
     function getDataObject(pattern, counter, title) {

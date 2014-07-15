@@ -7,19 +7,24 @@
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
 /// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.ListEditorTest = function () {
     "use strict";
 
-    var ITEMS_COUNT = 10,
+    var testRootEl,
+        ITEMS_COUNT = 10,
         bigDataSet = [];
 
     // This is the setup function that will be called at the beginning of each test function.
-    this.setUp = function (complete) {
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "ListEditorTest";
         newNode.innerHTML =
@@ -27,23 +32,19 @@ WinJSTests.ListEditorTest = function () {
             "<div id='simpleTemplate' class='listEditorTestClass' style='display: none; width:100px; height:100px'>" +
             "   <div>{{title}}</div>" +
             "</div>";
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
 
         for (var i = 0; i < 100; ++i) {
             bigDataSet[i] = { title: "Tile" + i };
         }
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
 
-        var element = document.getElementById("ListEditorTest");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
     }
 
     function setupListView(element, layoutName, items, useBindingList, async) {
@@ -1181,7 +1182,7 @@ WinJSTests.ListEditorTest = function () {
             itemDataSource: groupedList.dataSource,
             groupDataSource: groupedList.groups.dataSource
         });
-        document.body.appendChild(testElement);
+        testRootEl.appendChild(testElement);
         var ds = groupedList.dataSource;
         waitForReady(listView)().
             then(function () {
@@ -1206,7 +1207,7 @@ WinJSTests.ListEditorTest = function () {
             }).then(validateUnhandledErrorsOnIdle).
             done(function () {
                 WinJS.Utilities.disposeSubTree(testElement);
-                document.body.removeChild(testElement);
+                testRootEl.removeChild(testElement);
                 complete();
             });
     }

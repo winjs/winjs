@@ -6,7 +6,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -16,27 +16,27 @@ var WinJSTests = WinJSTests || {};
         "use strict";
 
         // This is the setup function that will be called at the beginning of each test function.
+        var testRootEl;
         var defaultNumberOfItemsPerItemsBlock;
-        this.setUp = function (complete) {
-
+        this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
+            
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+            
             var newNode = document.createElement("div");
             newNode.id = "BackdropTests";
             newNode.style.width = "250px";
             newNode.style.height = "250px";
-            document.body.appendChild(newNode);
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
             defaultNumberOfItemsPerItemsBlock = WinJS.UI.ListLayout._numberOfItemsPerItemsBlock;
-            appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
         };
 
         this.tearDown = function () {
             LiveUnit.LoggingCore.logComment("In tearDown");
-            var element = document.getElementById("BackdropTests");
-            if (element) {
-                WinJS.Utilities.disposeSubTree(element);
-                document.body.removeChild(element);
-            }
-            removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
             WinJS.UI.ListLayout._numberOfItemsPerItemsBlock = defaultNumberOfItemsPerItemsBlock;
         };
 

@@ -7,14 +7,15 @@
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
 /// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.GroupsTests = function () {
     "use strict";
 
-    var smallGroups = [],
+    var testRootEl, 
+        smallGroups = [],
         bigGroups = [],
         LAST_LETTER = 26,
         SMALL_GROUPS_COUNT = LAST_LETTER * 5,
@@ -81,7 +82,7 @@ WinJSTests.GroupsTests = function () {
     }
 
     // This is the setup function that will be called at the beginning of each test function.
-    this.setUp = function (complete) {
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
         smallGroups = [];
         bigGroups = [];
@@ -96,6 +97,9 @@ WinJSTests.GroupsTests = function () {
                 text: firstLetter(i, BIG_GROUPS_COUNT) + " tile " + i
             });
         }
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
 
         var newNode = document.createElement("div");
         newNode.id = "GroupsTests";
@@ -111,22 +115,21 @@ WinJSTests.GroupsTests = function () {
             "<div id='smallGroupHeaderTemplate' style='display: none; width:100px; height:100px'>" +
             "   <div>{{title}}</div>" +
             "</div>";
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
         this._oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
         removeListviewAnimations();
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
 
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = this._oldMaxTimePerCreateContainers;
-        var element = document.getElementById("GroupsTests");
-        document.body.removeChild(element);
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
         restoreListviewAnimations();
         WinJS.Utilities.stopLog();
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
         cleanupUnhandledErrors();
 
     }
@@ -1497,9 +1500,9 @@ WinJSTests.GroupsTests = function () {
         var lv = new WinJS.UI.ListView();
         lv.itemDataSource = glist.dataSource;
         lv.groupDataSource = glist.groups.dataSource;
-        document.body.appendChild(lv.element);
+        testRootEl.appendChild(lv.element);
         lv._groups.requestHeader(0).then(function () {
-            document.body.removeChild(lv.element);
+            testRootEl.removeChild(lv.element);
             complete();
         });
     };

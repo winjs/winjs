@@ -6,30 +6,33 @@
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 /// <reference path="../TestLib/util.js" />
-/// <deploy src="../TestData/ListView.css" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.SemanticZoomTests = function () {
     "use strict";
-    this.setUp = function (complete) {
+    
+    var testRootEl;
+    
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "SemanticZoomTests";
         newNode.innerHTML =
             "<div id='sezoDiv' style='width:500px; height:500px'><div id='child1'></div><div id='child2'></div></div>";
-        document.body.appendChild(newNode);
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
-        var element = document.getElementById("SemanticZoomTests");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
     };
 
     var that = this;
@@ -716,7 +719,7 @@ WinJSTests.SemanticZoomTests = function () {
         var sezoDiv = document.createElement("div");
         sezoDiv.style.width = width;
         sezoDiv.style.height = height;
-        document.body.appendChild(sezoDiv);
+        testRootEl.appendChild(sezoDiv);
         sezoDiv.appendChild(lv1.element);
         sezoDiv.appendChild(lv2.element);
 

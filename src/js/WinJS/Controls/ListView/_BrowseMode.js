@@ -698,6 +698,8 @@ define([
                     }
                     var that = this;
                     this._exitEventTimer = _Global.setTimeout(function () {
+                        if (that.site._disposed) { return; }
+                        
                         if (that._pointerLeftRegion) {
                             that.site._layout.dragLeave && that.site._layout.dragLeave();
                             that._pointerLeftRegion = false;

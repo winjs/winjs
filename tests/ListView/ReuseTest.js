@@ -5,13 +5,14 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.ReuseTests = function () {
     "use strict";
-    var newItems,
+    var testRootEl,
+        newItems,
         disposedItemsCount,
         disposedItems,
         actionHistory = {};      // Stores dispose/render history for each item
@@ -27,8 +28,12 @@ WinJSTests.ReuseTests = function () {
         elementsEqual(["dispose", "render"], actionHistory[index]);
     }
 
-    this.setUp = function (complete) {
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "ReuseTests";
         newNode.innerHTML =
@@ -39,22 +44,21 @@ WinJSTests.ReuseTests = function () {
             "<div id='reuseGroupTestTemplate' class='reuseGroupTemplateClass'>" +
             "   <div></div>" +
             "</div>"
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
 
         newItems = 0;
         disposedItemsCount = 0;
         disposedItems = [];
         removeListviewAnimations();
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
 
-        var element = document.getElementById("ReuseTests");
-        document.body.removeChild(element);
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
         restoreListviewAnimations();
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     }
 
     function setupListView(element, layoutName) {
@@ -239,7 +243,7 @@ WinJSTests.ReuseTests = function () {
             var newNode = document.createElement("div");
             newNode.style.width = "600px";
             newNode.style.height = "600px";
-            document.body.appendChild(newNode);
+            testRootEl.appendChild(newNode);
             var listView = new WinJS.UI.ListView(newNode, {
                 itemDataSource: list.dataSource,
                 itemTemplate: renderer,
@@ -266,7 +270,7 @@ WinJSTests.ReuseTests = function () {
                 function () {
                     checkTile(listView, 0, "Changed", true);
                     checkTile(listView, 1, "Tile1", false);
-                    document.body.removeChild(newNode);
+                    testRootEl.removeChild(newNode);
                     complete();
                 },
             ];
@@ -298,7 +302,7 @@ WinJSTests.ReuseTests = function () {
             var newNode = document.createElement("div");
             newNode.style.width = "300px";
             newNode.style.height = "300px";
-            document.body.appendChild(newNode);
+            testRootEl.appendChild(newNode);
             var listView = new WinJS.UI.ListView(newNode, {
                 itemDataSource: list.dataSource,
                 itemTemplate: renderer
@@ -315,7 +319,7 @@ WinJSTests.ReuseTests = function () {
                 return waitForDeferredAction(listView)();
             }).then(function () {
                 LiveUnit.Assert.areEqual(4, newNode.querySelectorAll("[aria-selected='true']").length);
-                document.body.removeChild(newNode);
+                testRootEl.removeChild(newNode);
                 complete();
             })
         };
@@ -343,7 +347,7 @@ WinJSTests.ReuseTests = function () {
         var newNode = document.createElement("div");
         newNode.style.width = "300px";
         newNode.style.height = "300px";
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
         var listView = setupListView(newNode, layoutName);
 
         var tests = [
@@ -366,7 +370,7 @@ WinJSTests.ReuseTests = function () {
                         listView._canvas.querySelectorAll(".win-groupheader").length,
                         "Incorrect number of group headers in the DOM");
 
-                    document.body.removeChild(newNode);
+                    testRootEl.removeChild(newNode);
                     complete();
                 }, 1000);
             },

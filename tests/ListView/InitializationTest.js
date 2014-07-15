@@ -6,7 +6,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -14,43 +14,45 @@ WinJSTests.InitializationTests = function () {
     "use strict";
 
     var that = this,
-         groupKey = function (item) {
-             var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
-             return groupIndex.toString();
-         },
-         groupData = function (item) {
-             var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
-             var groupData = {
-                 title: "group" + groupIndex,
-                 index: groupIndex,
-                 itemWidth: "150px",
-                 itemHeight: "150px"
-             };
-             return groupData;
-         };
+        testRootEl,
+        groupKey = function (item) {
+            var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
+            return groupIndex.toString();
+        },
+        groupData = function (item) {
+            var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
+            var groupData = {
+                title: "group" + groupIndex,
+                index: groupIndex,
+                itemWidth: "150px",
+                itemHeight: "150px"
+            };
+            return groupData;
+        };
 
     // This setup function will be called at the beginning of each test function.
-    this.setUp = function (complete) {
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "InitializationTests";
         newNode.innerHTML =
             "<div id='test1' style='width:600px;height:400px;'></div>" +
             "<div id='test2' style='width:600px;height:400px;'></div>";
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
         removeListviewAnimations();
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
 
-        var element = document.getElementById("InitializationTests");
-        if (element) {
-            document.body.removeChild(element);
-        }
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
         restoreListviewAnimations();
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     }
 
     // Test methods
@@ -240,7 +242,7 @@ WinJSTests.InitializationTests = function () {
 
             listView.element.style.width = "300px";
             listView.element.style.height = "300px";
-            document.body.appendChild(listView.element);
+            testRootEl.appendChild(listView.element);
 
             runTests(listView, [
                 function () {
@@ -249,7 +251,7 @@ WinJSTests.InitializationTests = function () {
                     checkTile(listView, 2, 0, 200);
                     checkTile(listView, 3, 100, 0);
 
-                    document.body.removeChild(listView.element);
+                    testRootEl.removeChild(listView.element);
                     complete();
                 }
             ]);
@@ -367,7 +369,7 @@ WinJSTests.InitializationTests = function () {
             var newNode = document.createElement("div");
             newNode.style.width = "1000px";
             newNode.style.height = "600px";
-            document.body.appendChild(newNode);
+            testRootEl.appendChild(newNode);
             var listView = new WinJS.UI.ListView(newNode, {
                 layout: new WinJS.UI[layoutName](),
                 itemDataSource: (new WinJS.Binding.List(myData)).dataSource
@@ -385,7 +387,7 @@ WinJSTests.InitializationTests = function () {
                 function () {
                     listView.selection.set([0]);
                     LiveUnit.Assert.areEqual(2, handlerCount);
-                    document.body.removeChild(newNode);
+                    testRootEl.removeChild(newNode);
                     complete();
                 }
             ]);
@@ -396,7 +398,7 @@ WinJSTests.InitializationTests = function () {
     this.generateRendererValidations = function (layoutName) {
         this["testRendererValidation" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
             var element = document.createElement("div");
-            document.body.appendChild(element);
+            testRootEl.appendChild(element);
 
             // The order of controls is invalid. Template is instantiated after ListView.
             element.innerHTML = '<div class="rendererValidationListView" data-win-control="WinJS.UI.ListView" data-win-options="{ itemTemplate: select(' + "'" + '.rendererValidationTemplate' + "'" + '), layout: {type: WinJS.UI.' + layoutName + '}}" ></div>' +
@@ -433,7 +435,7 @@ WinJSTests.InitializationTests = function () {
             var element = document.createElement("div");
             element.style.width = "300px";
             element.style.height = "300px";
-            document.body.appendChild(element);
+            testRootEl.appendChild(element);
 
             function createDataSource() {
                 var count = 1000;
@@ -549,7 +551,7 @@ WinJSTests.InitializationTests = function () {
             var element = document.createElement("div");
             element.style.width = "300px";
             element.style.height = "300px";
-            document.body.appendChild(element);
+            testRootEl.appendChild(element);
 
             var listView = new WinJS.UI.ListView(element, { layout: new WinJS.UI[layoutName](), itemDataSource: createDataSource() });
             WinJS.Promise.timeout(50).

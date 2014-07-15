@@ -5,12 +5,14 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.ListViewAnimation2Test = function () {
     "use strict";
+    
+    var testRootEl;
     var listViewEl;
     var itemId;
     var transitionEnd;
@@ -55,8 +57,8 @@ WinJSTests.ListViewAnimation2Test = function () {
             LiveUnit.Assert.areEqual(expectedRect[k], actualRect[k], message);
         });
     }
-
-    this.setUp = function (complete) {
+    
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setUp");
         itemId = 0;
         transitionEnd = [];
@@ -66,15 +68,17 @@ WinJSTests.ListViewAnimation2Test = function () {
         });
         
         WinJS.UI.enableAnimations();
-
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         listViewEl = document.createElement('div');
         listViewEl.id = "Animations2TestListView";
         listViewEl.style.width = "500px";
         listViewEl.style.height = "500px";
         listViewEl.style.backgroundColor = "#777";
-        document.body.appendChild(listViewEl);
-
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+        testRootEl.appendChild(listViewEl);
+        document.body.appendChild(testRootEl);
     };
 
     this.tearDown = function () {
@@ -85,9 +89,8 @@ WinJSTests.ListViewAnimation2Test = function () {
 
         LiveUnit.LoggingCore.logComment("In tearDown");
         WinJS.UI.disableAnimations();
-        WinJS.Utilities.disposeSubTree(listViewEl);
-        document.body.removeChild(listViewEl);
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
     };
 
     function getRandomColor() {
@@ -843,7 +846,7 @@ WinJSTests.ListViewAnimation2Test = function () {
         var element = document.createElement("div");
         element.style.height = "400px";
         element.style.width = "400px";
-        document.body.appendChild(element);
+        testRootEl.appendChild(element);
 
         var listView = new WinJS.UI.ListView(element, {
             itemDataSource: myGroupedList.dataSource,
@@ -855,7 +858,7 @@ WinJSTests.ListViewAnimation2Test = function () {
         waitForReady(listView)().
             done(function () {
                 WinJS.Utilities.disposeSubTree(element);
-                document.body.removeChild(element);
+                testRootEl.removeChild(element);
                 complete();
             });
     };

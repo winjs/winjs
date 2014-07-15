@@ -8,7 +8,7 @@
 /// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/util.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -291,21 +291,26 @@ var WinJSTests = WinJSTests || {};
     }
 
     WinJSTests.ListLayoutTests = function () {
-        this.setUp = function (complete) {
+        var testRootEl;
+        
+        this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
+            
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+            
             var newNode = document.createElement("div");
             newNode.id = "ListLayoutListView";
             newNode.style.width = "100px";
             newNode.style.height = "37px";
-            document.body.appendChild(newNode);
-            appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
         };
 
         this.tearDown = function () {
             LiveUnit.LoggingCore.logComment("In tearDown");
-            var element = document.getElementById("ListLayoutListView");
-            document.body.removeChild(element);
-            removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
         };
 
         // Verify that ListLayout's initialize function:
@@ -624,19 +629,24 @@ var WinJSTests = WinJSTests || {};
     };
 
     WinJSTests.UniformGridLayoutTests = function (complete) {
-        this.setUp = function (complete) {
+        var testRootEl;
+        
+        this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
+            
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+            
             var newNode = document.createElement("div");
             newNode.id = "UniformGridLayoutListView";
-            document.body.appendChild(newNode);
-            appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
         };
 
         this.tearDown = function () {
             LiveUnit.LoggingCore.logComment("In tearDown");
-            var element = document.getElementById("UniformGridLayoutListView");
-            document.body.removeChild(element);
-            removeCSSFileFromHead("$(TESTDATA)/TestData/ListView.css");
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
         };
 
         // Verify that uniform GridLayout's initialize function:
@@ -996,19 +1006,24 @@ var WinJSTests = WinJSTests || {};
 
     if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
         WinJSTests.CellSpanningGridLayoutTests = function (complete) {
-            this.setUp = function (complete) {
+            var testRootEl;
+            
+            this.setUp = function () {
                 LiveUnit.LoggingCore.logComment("In setup");
+                
+                testRootEl = document.createElement("div");
+                testRootEl.className = "file-listview-css";
+                
                 var newNode = document.createElement("div");
                 newNode.id = "CellSpanningGridLayoutListView";
-                document.body.appendChild(newNode);
-                appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+                testRootEl.appendChild(newNode);
+                document.body.appendChild(testRootEl);
             };
 
             this.tearDown = function () {
                 LiveUnit.LoggingCore.logComment("In tearDown");
-                var element = document.getElementById("CellSpanningGridLayoutListView");
-                document.body.removeChild(element);
-                removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+                WinJS.Utilities.disposeSubTree(testRootEl);
+                document.body.removeChild(testRootEl);
             };
 
             var itemSizesSimple = {
@@ -1099,12 +1114,12 @@ var WinJSTests = WinJSTests || {};
                 var lv = new WinJS.UI.ListView();
                 lv.layout = layout;
                 lv.itemDataSource = list.dataSource;
-                document.body.appendChild(lv.element);
+                testRootEl.appendChild(lv.element);
 
                 waitForReady(lv, -1)().done(function () {
                     var entity = lv.layout.getAdjacent({ type: WinJS.UI.ObjectType.item, index: 0 }, Key.downArrow);
                     LiveUnit.Assert.areEqual(0, entity.index);
-                    document.body.removeChild(lv.element);
+                    testRootEl.removeChild(lv.element);
                     complete();
                 });
             };
@@ -1706,19 +1721,24 @@ var WinJSTests = WinJSTests || {};
         LiveUnit.registerTestClass("WinJSTests.CellSpanningGridLayoutTests");
 
         WinJSTests.GroupedGridLayoutTests = function (complete) {
-            this.setUp = function (complete) {
+            var testRootEl;
+            
+            this.setUp = function () {
                 LiveUnit.LoggingCore.logComment("In setup");
+                
+                testRootEl = document.createElement("div");
+                testRootEl.className = "file-listview-css";
+                
                 var newNode = document.createElement("div");
                 newNode.id = "GroupedGridLayoutListView";
-                document.body.appendChild(newNode);
-                appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+                testRootEl.appendChild(newNode);
+                document.body.appendChild(testRootEl);
             };
 
             this.tearDown = function () {
                 LiveUnit.LoggingCore.logComment("In tearDown");
-                var element = document.getElementById("GroupedGridLayoutListView");
-                document.body.removeChild(element);
-                removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+                WinJS.Utilities.disposeSubTree(testRootEl);
+                document.body.removeChild(testRootEl);
             };
 
             var itemSizesSimple = {
@@ -2451,19 +2471,24 @@ var WinJSTests = WinJSTests || {};
     }
 
     WinJSTests.LayoutTests = function (complete) {
-        this.setUp = function (complete) {
+        var testRootEl;
+        
+        this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
+            
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+            
             var newNode = document.createElement("div");
             newNode.id = "LayoutTest";
-            document.body.appendChild(newNode);
-            appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
         };
 
         this.tearDown = function () {
             LiveUnit.LoggingCore.logComment("In tearDown");
-            var element = document.getElementById("LayoutTest");
-            document.body.removeChild(element);
-            removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
         };
 
         // Returns an array of itemCount items. itemsPerGroup is optional.
@@ -2498,9 +2523,9 @@ var WinJSTests = WinJSTests || {};
         }
 
         this.testAssureMarginRuleSpecificityDoesNotTrumpWin8 = function (complete) {
-            // Need to remove ListView.css or one of the rules will overrule what we are
-            // trying to verify in this test.
-            removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+            // Test can't run with ListView.css in effect otherwise one of the rules will
+            // overrule what we are trying to verify in this test.
+            WinJS.Utilities.removeClass(testRootEl, "file-listview-css");
 
             var data = [];
             for (var i = 0; i < 20; i++) {
@@ -2514,8 +2539,8 @@ var WinJSTests = WinJSTests || {};
             var style = document.createElement("style");
             WinJS.Utilities.setInnerHTMLUnsafe(style, ".win-listview > .win-horizontal .win-container { margin: 15px }");
 
-            document.body.appendChild(style);
-            document.body.appendChild(lv.element);
+            testRootEl.appendChild(style);
+            testRootEl.appendChild(lv.element);
 
             waitForReady(lv, -1)().then(function () {
                 var cs = getComputedStyle(lv.element.querySelector(".win-container"));
@@ -2523,8 +2548,8 @@ var WinJSTests = WinJSTests || {};
                 LiveUnit.Assert.areEqual("15px", cs.marginRight);
                 LiveUnit.Assert.areEqual("15px", cs.marginTop);
                 LiveUnit.Assert.areEqual("15px", cs.marginBottom);
-                document.body.removeChild(style);
-                document.body.removeChild(lv.element);
+                testRootEl.removeChild(style);
+                testRootEl.removeChild(lv.element);
                 lv.dispose();
                 complete();
             });

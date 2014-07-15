@@ -5,16 +5,18 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.ListViewRegression = function () {
     "use strict";
 
+    var testRootEl;
+
     function parent(element) {
-        document.body.appendChild(element);
-        return function() { document.body.removeChild(element); };
+        testRootEl.appendChild(element);
+        return function() { testRootEl.removeChild(element); };
     }
     
     function errorHandler(msg) {
@@ -23,14 +25,17 @@ WinJSTests.ListViewRegression = function () {
         } catch (ex) { }
     }
     
-    this.setUp = function (complete) {
+    this.setUp = function () {
         removeListviewAnimations();
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        document.body.appendChild(testRootEl);
     };
 
     this.tearDown = function () {
         restoreListviewAnimations();
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
     };
 
     this.testWin8_342083 = function (complete) {
@@ -535,7 +540,7 @@ WinJSTests.ListViewRegression = function () {
             listView.scrollPosition = 850;
             return WinJS.Promise.join(rendererCalled.slice(45, 54));
         }).then(function () {
-            // items 51-53 aren’t yet rendered. ListView is waiting for data. Forcing scrolling at this point. 
+            // items 51-53 aren't yet rendered. ListView is waiting for data. Forcing scrolling at this point. 
             // This cancel the previous realizePass which is waiting for data for items 51-53 and starts a new realizePass. 
             // In middle of this new realize pass data for items 51-53 is delivered and items pool reuses wrappers corrupting items in in the pool
             LiveUnit.Assert.areEqual("itemsLoading", listView.loadingState);
@@ -661,7 +666,7 @@ WinJSTests.ListViewRegression = function () {
 
         var lv = document.createElement("div");
         lv.setAttribute("dir", "rtl")
-        document.body.appendChild(lv);
+        testRootEl.appendChild(lv);
 
         function renderer(itemPromise) {
             var e = document.createElement("div");
@@ -693,7 +698,7 @@ WinJSTests.ListViewRegression = function () {
 
             waitForDeferredAction(listView)().then(function () {
                 validateUnhandledErrors();
-                document.body.removeChild(lv);
+                testRootEl.removeChild(lv);
                 complete();
             });
         });

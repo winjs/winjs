@@ -5,7 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -15,10 +15,16 @@ var WinJSTests = WinJSTests || {};
     // WinBlue: 157025 - Merge the unit tests in this file with the ones in Layout2Test.js after the rename change is checked in.
     WinJSTests.LayoutTestsExtra = function () {
 
+        var testRootEl;
+        
         // This is the setup function that will be called at the beginning of each test function.
-        this.setUp = function (complete) {
+        this.setUp = function () {
 
             LiveUnit.LoggingCore.logComment("In setup");
+            
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+            
             var newNode = document.createElement("div");
             newNode.id = "LayoutTests";
             newNode.innerHTML =
@@ -41,18 +47,17 @@ var WinJSTests = WinJSTests || {};
                 "   <div>{{title}}</div>" +
                 "</div>";
 
-            document.body.appendChild(newNode);
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
             removeListviewAnimations();
-            appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
         };
 
         this.tearDown = function () {
             LiveUnit.LoggingCore.logComment("In tearDown");
 
-            var element = document.getElementById("LayoutTests");
-            document.body.removeChild(element);
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
             restoreListviewAnimations();
-            removeCSSFileFromHead("$(TESTDATA)/ListView.css");
         }
 
         function setupListView(element, layoutName, itemTemplate) {
@@ -102,7 +107,7 @@ var WinJSTests = WinJSTests || {};
                 var listView = document.createElement("div");
                 listView.style.width = "384px";
                 listView.style.height = "auto";
-                document.body.appendChild(listView);
+                testRootEl.appendChild(listView);
                 var list = new WinJS.UI.ListView(listView, {
                     itemTemplate: function (itemPromise) {
                         return itemPromise.then(function (data) {
@@ -124,7 +129,7 @@ var WinJSTests = WinJSTests || {};
 
                 waitForDeferredAction(listView)().done(function () {
                     LiveUnit.Assert.areEqual(expectedHeight, window.getComputedStyle(listView).height);
-                    document.body.removeChild(listView);
+                    testRootEl.removeChild(listView);
                     complete();
                 });
             }
@@ -799,7 +804,7 @@ var WinJSTests = WinJSTests || {};
                 var element = document.createElement("div");
                 element.style.width = "200px";
                 element.style.height = "200px";
-                document.body.appendChild(element);
+                testRootEl.appendChild(element);
 
                 var data = [];
                 for (var i = 0; i < 100; i++) {
@@ -844,7 +849,7 @@ var WinJSTests = WinJSTests || {};
                             LiveUnit.Assert.areEqual(listView.scrollPosition, offsetFromSurface(listView, containerFrom(listView.elementFromIndex(24))));
 
                             listView.removeEventListener("loadingstatechanged", checkAndExecute, false);
-                            document.body.removeChild(element);
+                            testRootEl.removeChild(element);
                             complete();
                         }
                     }
@@ -868,7 +873,7 @@ var WinJSTests = WinJSTests || {};
             var element = document.createElement("div");
             element.style.width = "300px";
             element.style.height = "300px";
-            document.body.appendChild(element);
+            testRootEl.appendChild(element);
 
             var stateChangeCounter = {
                 itemsLoading: 0,
@@ -927,7 +932,7 @@ var WinJSTests = WinJSTests || {};
                 var element = document.createElement("div");
                 element.style.width = "300px";
                 element.style.height = "300px";
-                document.body.appendChild(element);
+                testRootEl.appendChild(element);
 
                 var data = [];
                 for (var i = 0; i < 100; i++) {
@@ -1039,7 +1044,7 @@ var WinJSTests = WinJSTests || {};
                 var element = document.createElement("div");
                 element.style.width = "300px";
                 element.style.height = "350px";
-                document.body.appendChild(element);
+                testRootEl.appendChild(element);
 
                 var items = [];
                 for (var i = 0; i < count; i++) {
@@ -1071,7 +1076,7 @@ var WinJSTests = WinJSTests || {};
                             LiveUnit.Assert.areEqual(lastVisible, listView.indexOfLastVisible);
 
                             listView.removeEventListener("loadingstatechanged", checkAndExecute, false);
-                            document.body.removeChild(element);
+                            testRootEl.removeChild(element);
                             complete();
                         }
                     }
@@ -1112,7 +1117,7 @@ var WinJSTests = WinJSTests || {};
                 var element = document.createElement("div");
                 element.style.width = "300px";
                 element.style.height = "350px";
-                document.body.appendChild(element);
+                testRootEl.appendChild(element);
 
                 var items = [];
                 for (var i = 0; i < 10; i++) {
@@ -1144,7 +1149,7 @@ var WinJSTests = WinJSTests || {};
                         },
                         function () {
                             checkTile(listView, index, afterLeft, afterTop);
-                            document.body.removeChild(element);
+                            testRootEl.removeChild(element);
                             complete();
                         }
                     ]);
@@ -1163,7 +1168,7 @@ var WinJSTests = WinJSTests || {};
                 var element = document.createElement("div");
                 element.style.width = "300px";
                 element.style.height = "350px";
-                document.body.appendChild(element);
+                testRootEl.appendChild(element);
 
                 var items = [];
                 for (var i = 0; i < 100; i++) {
@@ -1211,7 +1216,7 @@ var WinJSTests = WinJSTests || {};
                                             LiveUnit.Assert.areEqual(300, WinJS.Utilities.getScrollPosition(listView._viewport)[scrollProperty]);
 
                                             listView.removeEventListener("loadingstatechanged", checkAndExecute, false);
-                                            document.body.removeChild(element);
+                                            testRootEl.removeChild(element);
                                             WinJS.UI.ListView.triggerDispose();
                                             complete();
                                         }
@@ -1237,7 +1242,7 @@ var WinJSTests = WinJSTests || {};
                 var element = document.createElement("div");
                 element.style.width = "300px";
                 element.style.height = "350px";
-                document.body.appendChild(element);
+                testRootEl.appendChild(element);
 
                 var items = [];
                 for (var i = 0; i < 10; i++) {
@@ -1273,7 +1278,7 @@ var WinJSTests = WinJSTests || {};
                         var tile = listView.elementFromIndex(1);
                         // recalculateItemPosition should not re-create elements so pink color should be still there
                         LiveUnit.Assert.areEqual("rgb(255, 192, 203)", tile.style.backgroundColor);
-                        document.body.removeChild(element);
+                        testRootEl.removeChild(element);
                         complete();
                     }
                 ]);

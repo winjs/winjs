@@ -7,7 +7,7 @@
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
 /// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -75,23 +75,27 @@ WinJSTests.VirtualizedViewTests = function () {
         };
     }
 
+    var testRootEl;
     var defaultChunkSize, defaultMaxTime, defaultPagesToPrefetch;
-    this.setUp = function (complete) {
+    this.setUp = function () {
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var testHost = document.createElement("div");
         testHost.id = "VirtualizeContentsViewTestHost";
         window.VirtualizeContentsViewTestHost = testHost;
-        document.body.appendChild(testHost);
+        testRootEl.appendChild(testHost);
+        document.body.appendChild(testRootEl);
         defaultChunkSize = WinJS.UI._VirtualizeContentsView._chunkSize;
         defaultMaxTime = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         defaultPagesToPrefetch = WinJS.UI._VirtualizeContentsView._pagesToPrefetch;
         //WinBlue: 298587
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
-        document.body.removeChild(VirtualizeContentsViewTestHost);
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
         WinJS.UI._VirtualizeContentsView._chunkSize = defaultChunkSize;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = defaultMaxTime;
         WinJS.UI._VirtualizeContentsView._pagesToPrefetch = defaultPagesToPrefetch;

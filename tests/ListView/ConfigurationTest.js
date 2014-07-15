@@ -5,17 +5,22 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.ConfigurationTests = function () {
     "use strict";
 
-    // This is the setup function that will be called at the beginning of each test function.
-    this.setUp = function (complete) {
+    var testRootEl;
 
+    // This is the setup function that will be called at the beginning of each test function.
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "ConfigurationTests";
         newNode.innerHTML =
@@ -38,21 +43,17 @@ WinJSTests.ConfigurationTests = function () {
             "<div id='newTemplate' style='display: none; width:50px; height:50px'>" +
             "   <div>New{{title}}</div>" +
             "</div>";
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
         removeListviewAnimations();
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
 
-        var element = document.getElementById("ConfigurationTests");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
         restoreListviewAnimations();
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     }
 
     function checkTile(listview, index, left, top, caption) {
@@ -291,7 +292,7 @@ WinJSTests.ConfigurationTests = function () {
 
         function test(modification) {
             var placeholder = document.createElement("div");
-            document.body.appendChild(placeholder);
+            testRootEl.appendChild(placeholder);
 
             var listView = new WinJS.UI.ListView(placeholder, {
                 itemTemplate: function (itemPromise) {
@@ -350,7 +351,7 @@ WinJSTests.ConfigurationTests = function () {
 
         var placeholder = document.createElement("div");
         placeholder.style.width = "320px";
-        document.body.appendChild(placeholder);
+        testRootEl.appendChild(placeholder);
 
         function renderer(itemPromise) {
             var elem = document.createElement("div");
@@ -551,7 +552,7 @@ WinJSTests.ConfigurationTests = function () {
             var newNode = document.createElement("div");
             newNode.style.width = "1000px";
             newNode.style.height = "600px";
-            document.body.appendChild(newNode);
+            testRootEl.appendChild(newNode);
             var listView = new WinJS.UI.ListView(newNode, {
                 itemDataSource: (new WinJS.Binding.List(myData)).dataSource,
                 layout: new WinJS.UI[layout](),
@@ -573,7 +574,7 @@ WinJSTests.ConfigurationTests = function () {
                 checkTileSelection(listView, 3, true);
 
                 WinJS.Utilities.disposeSubTree(newNode);
-                document.body.removeChild(newNode);
+                testRootEl.removeChild(newNode);
                 complete();
             });
         };

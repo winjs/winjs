@@ -7,7 +7,7 @@
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
 /// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -18,15 +18,19 @@ WinJSTests.AriaTests = function () {
         ITEMS_PER_GROUP = 10;
 
     
+    var testRootEl;
     var origMaxTimePerCreateContainers;
     var origChunkSize;
     // This is the setup function that will be called at the beginning of each test function.
-    this.setUp = function (complete) {
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
-
+        
         origMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         origChunkSize = WinJS.UI._VirtualizeContentsView._chunkSize;
-
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "AriaTests";
         newNode.innerHTML =
@@ -38,9 +42,9 @@ WinJSTests.AriaTests = function () {
             "<div id='smallGroupHeaderTemplate' style='display: none; width:100px; height:100px'>" +
             "   <div>{{title}}</div>" +
             "</div>";
-        document.body.appendChild(newNode);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
         removeListviewAnimations();
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
     };
 
     this.tearDown = function () {
@@ -49,13 +53,9 @@ WinJSTests.AriaTests = function () {
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = origMaxTimePerCreateContainers;
         WinJS.UI._VirtualizeContentsView._chunkSize = origChunkSize;
 
-        var element = document.getElementById("AriaTests");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
         restoreListviewAnimations();
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
     }
 
     function setupListview(element, layoutName, useGroups) {

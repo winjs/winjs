@@ -7,13 +7,14 @@
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.ListViewDragDropTest = function () {
     "use strict";
     var Key = WinJS.Utilities.Key;
+    var testRootEl;
     var ITEMS_COUNT = 10;
     var ddEventsList = ["itemdragstart",
                     "itemdragenter",
@@ -23,25 +24,25 @@ WinJSTests.ListViewDragDropTest = function () {
                     "itemdragchanged",
                     "itemdragdrop"];
 
-    this.setUp = function (complete) {
+    this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
+        
+        testRootEl = document.createElement("div");
+        testRootEl.className = "file-listview-css";
+        
         var newNode = document.createElement("div");
         newNode.id = "DragDropTest";
         newNode.style.width = "200px";
         newNode.style.height = "300px";
-        document.body.appendChild(newNode);
-        appendCSSFileToHead("$(TESTDATA)/ListView.css").then(complete);
+        testRootEl.appendChild(newNode);
+        document.body.appendChild(testRootEl);
     };
 
     this.tearDown = function () {
         LiveUnit.LoggingCore.logComment("In tearDown");
 
-        var element = document.getElementById("DragDropTest");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-        removeCSSFileFromHead("$(TESTDATA)/ListView.css");
+        WinJS.Utilities.disposeSubTree(testRootEl);
+        document.body.removeChild(testRootEl);
     }
 
     function getRawData(count) {
@@ -925,7 +926,7 @@ WinJSTests.ListViewDragDropTest = function () {
     this.testGridLayoutHitTest = function (complete) {
         var largeListView = document.createElement("div");
         largeListView.id = "GridLayoutHitTest";
-        document.body.appendChild(largeListView);
+        testRootEl.appendChild(largeListView);
         var listView = new WinJS.UI.ListView(largeListView, { itemDataSource: getDataSource(10), itemTemplate: basicRenderer, layout: new WinJS.UI.GridLayout() });
         listView.addEventListener("loadingstatechanged", function onloadingstatechanged(e) {
             // This grid uses 50px X 50px items, with large (400px) margins to the left, top, and bottom of the surface.
@@ -992,7 +993,7 @@ WinJSTests.ListViewDragDropTest = function () {
 
                 listView.removeEventListener("loadingstatechanged", onloadingstatechanged);
                 WinJS.Utilities.disposeSubTree(largeListView);
-                document.body.removeChild(largeListView);
+                testRootEl.removeChild(largeListView);
                 complete();
             }
         });
