@@ -109,14 +109,58 @@ var LayoutTests = null;
                 }
             };
         }
-
+        */
         //
         // Test: testFlipperSmallContent
         // Ensure that the small content is centered in the flipper region.
         //
-        // Disabling the test till I upgrade to a new build
-        // 806940
-        this.testFlipperSmallContent = function (signalTestCaseCompleted) {
+
+        this.testFlipperSmallContent = function() {
+            var smallRenderer = function(itemPromise) {
+                var template = basicInstantRenderer(itemPromise);
+                template.element.style.width = "50%";
+                template.element.style.height = "50%";
+                template.element.classList.add("rootElement");
+                return template;
+            }
+
+            function pixelToInt(val){
+                if(typeof val === "string"){
+                    return val.replace("px", "");
+                }else{
+                    return val;
+                }
+            }
+
+            options = {itemTemplate: smallRenderer};
+
+            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), options);
+
+            var element = flipper.element;
+            var templateRoot = element.querySelector(".rootElement");
+
+            flipViewHeight = pixelToInt(getComputedStyle(element).height);
+            flipViewWidth = pixelToInt(getComputedStyle(element).width);
+            itemHeight = pixelToInt(getComputedStyle(templateRoot).height);
+            itemWidth = pixelToInt(getComputedStyle(templateRoot).width);
+            itemTop = templateRoot.offsetTop;
+            itemLeft = templateRoot.offsetLeft;
+
+            var shorter = itemHeight < flipViewHeight;
+            var thinner =  itemWidth < flipViewWidth;
+
+            LiveUnit.Assert.isTrue(shorter && thinner, "content should be smaller than the FlipView");
+
+            var centerTop = Math.ceil((flipViewHeight - itemHeight) / 2);
+            var centerLeft = Math.ceil((flipViewWidth - itemWidth) / 2);
+            console.log("centerTop: " + centerTop);
+            console.log("centerLeft: " + centerLeft);
+
+            LiveUnit.Assert.isTrue(centerTop === itemTop, "content is not vertically centered");
+            LiveUnit.Assert.isTrue(centerLeft === itemLeft, "content is not horizontally centered");
+        }
+        /*
+        this.testFlipperSmallContent = function () {
             var flipperDiv = document.getElementById(flipperUtils.basicFlipperID()),
                 flipperHeight = flipperDiv.offsetHeight,
                 flipperWidth = flipperDiv.offsetWidth,
@@ -197,6 +241,7 @@ var LayoutTests = null;
             };
         }
         */
+        
     }
 
     // Register the object as a test class by passing in the name
