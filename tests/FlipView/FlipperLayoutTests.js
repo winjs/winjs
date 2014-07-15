@@ -111,11 +111,27 @@ var LayoutTests = null;
         }
         */
         //
-        // Test: testFlipperSmallContent
+        // Test: testFlipperSmallContentCentered
         // Ensure that the small content is centered in the flipper region.
         //
 
-        this.testFlipperSmallContent = function() {
+        function pixelToInt(val){
+            if(typeof val === "string"){
+                return val.replace("px", "");
+            }else{
+                return val;
+            }
+        }
+
+        this.testFlipperSmallContentCentered_horizontal = function() {
+           smallContentCentered("horizontal");
+        }
+
+        this.testFlipperSmallContentCentered_vertical = function() {
+           smallContentCentered("vertical");
+        }
+
+        function smallContentCentered(orientation){
             var smallRenderer = function(itemPromise) {
                 var template = basicInstantRenderer(itemPromise);
                 template.element.style.width = "50%";
@@ -124,18 +140,8 @@ var LayoutTests = null;
                 return template;
             }
 
-            function pixelToInt(val){
-                if(typeof val === "string"){
-                    return val.replace("px", "");
-                }else{
-                    return val;
-                }
-            }
-
-            options = {itemTemplate: smallRenderer};
-
+            options = {itemTemplate: smallRenderer, orientation: orientation};
             var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), options);
-
             var element = flipper.element;
             var templateRoot = element.querySelector(".rootElement");
 
@@ -153,95 +159,10 @@ var LayoutTests = null;
 
             var centerTop = Math.ceil((flipViewHeight - itemHeight) / 2);
             var centerLeft = Math.ceil((flipViewWidth - itemWidth) / 2);
-            console.log("centerTop: " + centerTop);
-            console.log("centerLeft: " + centerLeft);
 
             LiveUnit.Assert.isTrue(centerTop === itemTop, "content is not vertically centered");
             LiveUnit.Assert.isTrue(centerLeft === itemLeft, "content is not horizontally centered");
         }
-        /*
-        this.testFlipperSmallContent = function () {
-            var flipperDiv = document.getElementById(flipperUtils.basicFlipperID()),
-                flipperHeight = flipperDiv.offsetHeight,
-                flipperWidth = flipperDiv.offsetWidth,
-                foundSmall = false,
-                basicIds = flipperUtils.basicFlipperHtmlIDs(),
-                currentIndex = 0,
-                flipper;
-
-            LiveUnit.LoggingCore.logComment("Flipper Height: " + flipperHeight);
-            LiveUnit.LoggingCore.logComment("Flipper Width: " + flipperWidth);
-
-            var verify = LiveUnit.GetWrappedCallback(function () {
-                flipper.removeEventListener(pageSelectedEvent, verify);
-                callback();
-            });
-            flipperDiv.addEventListener(pageSelectedEvent, verify);
-
-            flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
-
-            var callback = LiveUnit.GetWrappedCallback(function () {
-                verifyLayout(currentIndex);
-                currentIndex++;
-                if (currentIndex < basicIds.length) {
-                    flipperUtils.ensureCurrentPage(flipper, currentIndex, callback);
-                }
-            });
-
-            var verifyLayout = function (index) {
-                var pageID = basicIds[index];
-                var pageDiv = document.getElementById(pageID);
-                LiveUnit.Assert.isNotNull(pageDiv, "Unable to find basic html element ID: " + pageID);
-
-                // find a page that is smaller than the flipper (either height or width)
-                if (pageDiv.offsetHeight < flipperHeight || pageDiv.offsetWidth < flipperWidth) {
-                    foundSmall = true;
-                    LiveUnit.LoggingCore.logComment("Found small page: " + pageID);
-                    var smallHeight = pageDiv.offsetHeight;
-                    var smallWidth = pageDiv.offsetWidth;
-                    LiveUnit.LoggingCore.logComment("Small Height: " + smallHeight);
-                    LiveUnit.LoggingCore.logComment("Small Width: " + smallWidth);
-
-                    // Ensure that the the div is centered
-                    var smallLeft = pageDiv.offsetLeft;
-                    var smallTop = pageDiv.offsetTop;
-                    LiveUnit.LoggingCore.logComment("Small Left: " + smallLeft);
-                    LiveUnit.LoggingCore.logComment("Small Top: " + smallTop);
-                    if (pageDiv.offsetHeight < flipperHeight) {
-                        // It appears for Top calculations the number is rounded up.
-                        var centerTop = Math.ceil((flipperHeight - smallHeight) / 2);
-                        LiveUnit.LoggingCore.logComment("Calculated center Top: " + centerTop);
-                        LiveUnit.Assert.isTrue(smallTop === centerTop, "Small Top doesn't match calculated Top.");
-                    }
-                    if (pageDiv.offsetWidth < flipperWidth) {
-                        // It appears for Width calculations the number is rounded up.
-                        var centerLeft = Math.ceil((flipperWidth - smallWidth) / 2);
-                        LiveUnit.LoggingCore.logComment("Calculated center Left: " + centerLeft);
-                        LiveUnit.Assert.isTrue(smallLeft === centerLeft, "Small Left doesn't match calculated Left.");
-                    }
-
-                    // Need to compare the element's dimension with panningDivContainer's dimensions
-                    var parentNode = flipper._panningDivContainer;
-                    var parentHeight = parentNode.offsetHeight;
-                    var parentWidth = parentNode.offsetWidth;
-                    LiveUnit.LoggingCore.logComment("Parent Height: " + parentHeight);
-                    LiveUnit.LoggingCore.logComment("Parent Width: " + parentWidth);
-                    LiveUnit.Assert.isTrue(parentHeight === flipperHeight, "Parent height of small item should " +
-                        " be the same as flipper height but is not.");
-                    LiveUnit.Assert.isTrue(parentWidth === flipperWidth, "Parent width of small item should be " +
-                        " the same as flipper width but is not.");
-                }
-
-                if ((index + 1) === basicIds.length) {
-                    // We are at the last page of flipper
-                    // Ensure that a small item was found otherwise throw an assert.
-                    LiveUnit.Assert.isTrue(foundSmall, "Unable to find an item larger than the flipper.  Check HTML.");
-                    signalTestCaseCompleted();
-                }
-            };
-        }
-        */
-        
     }
 
     // Register the object as a test class by passing in the name
