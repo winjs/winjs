@@ -23,7 +23,7 @@ var LayoutTests = null;
             LiveUnit.LoggingCore.logComment("In setup");
             commonUtils.getIEInfo();
             // We want to recreate the flipper element between each test so we start fresh.
-            flipperUtils.addFlipperDom();
+            flipperUtils.addFlipperDom(200);
         }
 
         //
@@ -58,8 +58,8 @@ var LayoutTests = null;
         function smallContentCentered(orientation){
             var smallRenderer = function(itemPromise) {
                 var renderer = basicInstantRenderer(itemPromise);
-                renderer.element.style.width = "50%";
-                renderer.element.style.height = "50%";
+                renderer.element.style.width = "100px";
+                renderer.element.style.height = "100px";
                 renderer.element.classList.add("rootElement");
                 return renderer;
             }

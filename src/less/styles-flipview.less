@@ -6,7 +6,6 @@
     .win-surface {
         -ms-scroll-chaining: none;
     }
-
     .win-navleft {
         left: 0%;
         top: 50%;
@@ -41,16 +40,10 @@
         min-width: 0;
     }
     .win-item, .win-item > .win-template {
-        display: -webkit-flex;
-        display: flex;
-        display: -ms-flexbox;
         height: 100%;
         width: 100%;
-        align-items: center;
-        -webkit-align-items: center;
-        -ms-flex-align: center;
-        justify-content: center;
-        -webkit-justify-content: center;
-        -ms-flex-pack: center;
+        #flex > .display-flex();
+        #flex > .align-items(center);
+        #flex > .justify-content(center);
     }
 }

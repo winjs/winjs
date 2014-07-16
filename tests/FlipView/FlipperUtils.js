@@ -161,7 +161,7 @@ FlipperUtils.prototype = (function () {
             return parentFlipper;
         },
 
-        addFlipperDom: function FlipperUtils_addFlipperDom() {
+        addFlipperDom: function FlipperUtils_addFlipperDom(size) {
             /// <summary>
             ///     Add a main flipper DOM from HTML
             /// </summary>
@@ -170,7 +170,11 @@ FlipperUtils.prototype = (function () {
             var flipperNode = document.createElement("div");
             flipperNode.setAttribute("id", mainFlipperDivId);
 
-            var htmlString = '<div id="flipper" style="width: 200px; height: 200px; overflow:hidden">';
+            if(!size){
+                size = "200";
+            }
+
+            var htmlString = '<div id="flipper" style="width: ' + size + 'px; height: ' + size +'px; overflow:hidden">';
             flipperNode.innerHTML = htmlString;
             document.body.appendChild(flipperNode);
         },
