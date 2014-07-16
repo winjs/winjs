@@ -81,7 +81,7 @@
 // Static list of fallback fonts to be placed after the primary language font
 @fontFallbacks: "Ebrima", "Nirmala UI", "Gadugi", "Segoe UI Emoji", "Segoe UI Symbol", "Symbols", "Meiryo UI", "Leelawadee UI", "Microsoft YaHei UI", "Microsoft JhengHei UI", "Malgun Gothic", "Estrangelo Edessa", "Microsoft Himalaya", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Tai Le", "Microsoft Yi Baiti", "Mongolian Baiti", "MV Boli", "Myanmar Text", "Javanese Text", "Cambria Math";
 
-// This mixin is used for every other language font, and appends the appropriate -ms-lang pseudo class
+// This mixin is used for every language font, and appends the appropriate -ms-lang pseudo class
 // to each selector
 .fontFallBack(@index) {
     .getLanguageString(extract(@fonts, @index));
