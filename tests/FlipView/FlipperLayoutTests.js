@@ -81,8 +81,8 @@ var LayoutTests = null;
 
             LiveUnit.Assert.isTrue(shorter && thinner, "content should be smaller than the FlipView");
 
-            var centerTop = Math.ceil((flipViewHeight - itemHeight) / 2);
-            var centerLeft = Math.ceil((flipViewWidth - itemWidth) / 2);
+            var centerTop = (flipViewHeight - itemHeight) / 2;
+            var centerLeft = (flipViewWidth - itemWidth) / 2;
 
             LiveUnit.Assert.isTrue(centerTop === itemTop, "content is not vertically centered");
             LiveUnit.Assert.isTrue(centerLeft === itemLeft, "content is not horizontally centered");
