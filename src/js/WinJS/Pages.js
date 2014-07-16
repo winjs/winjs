@@ -3,15 +3,11 @@ define([
     'exports',
     './Core/_Global',
     './Core/_Base',
-    './Core/_BaseUtils',
-    './Core/_WriteProfilerMark',
     './ControlProcessor',
     './Fragments',
+    './Pages/_BasePage',
     './Promise',
-    './Utilities/_Control',
-    './Utilities/_Dispose',
-    './Utilities/_ElementUtilities'
-    ], function pagesInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, ControlProcessor, Fragments, Promise, _Control, _Dispose, _ElementUtilities) {
+    ], function pagesInit(exports, _Global, _Base, ControlProcessor, Fragments, _BasePage, Promise) {
     "use strict";
 
     // not supported in WebWorker
@@ -19,32 +15,7 @@ define([
         return;
     }
 
-    function abs(uri) {
-        var a = _Global.document.createElement("a");
-        a.href = uri;
-        return a.href;
-    }
-    var viewMap = {};
-
-    function selfhost(uri) {
-        return _Global.document.location.href.toLowerCase() === uri.toLowerCase();
-    }
-
     var _mixin = {
-        dispose: function () {
-            /// <signature helpKeyword="WinJS.UI.Pages.dispose">
-            /// <summary locid="WinJS.UI.Pages.dispose">
-            /// Disposes this Page.
-            /// </summary>
-            /// </signature>
-            if (this._disposed) {
-                return;
-            }
-
-            this._disposed = true;
-            _Dispose.disposeSubTree(this.element);
-            this.element = null;
-        },
         load: function (uri) {
             /// <signature helpKeyword="WinJS.UI.Pages._mixin.load">
             /// <summary locid="WinJS.UI.Pages._mixin.load">
@@ -60,42 +31,25 @@ define([
             /// </returns>
             /// </signature>
             if (!this.selfhost) {
-                return Fragments.renderCopy(abs(uri));
+                return Fragments.renderCopy(_BasePage.abs(uri));
             }
         },
-        init: function () {
-            /// <signature helpKeyword="WinJS.UI.Pages._mixin.init">
-            /// <summary locid="WinJS.UI.Pages._mixin.init">
-            /// Initializes the control before the content of the control is set.
-            /// Use the processed method for any initialization that should be done after the content
-            /// of the control has been set.
+        process: function(element, options) {
+            /// <signature helpKeyword="WinJS.UI.Pages._mixin.process">
+            /// <summary locid="WinJS.UI.Pages._mixin.process">
+            /// Processes the unparented DOM elements returned by load.
             /// </summary>
-            /// <param name="element" locid="WinJS.UI.Pages._mixin.init_p:element">
+            /// <param name="element" locid="WinJS.UI.Pages._mixin.process_p:element">
             /// The DOM element that will contain all the content for the page.
             /// </param>
-            /// <param name="options" locid="WinJS.UI.Pages._mixin.init_p:options">
-            /// The options passed to the constructor of the page.
-            /// </param>
-            /// <returns type="WinJS.Promise" locid="WinJS.UI.Pages._mixin.init_returnValue">
-            /// A promise that is fulfilled when initialization is complete, if asynchronous processing is necessary. If not, returns nothing.
-            /// </returns>
-            /// </signature>
-        },
-        processed: function () {
-            /// <signature helpKeyword="WinJS.UI.Pages._mixin.processed">
-            /// <summary locid="WinJS.UI.Pages._mixin.processed">
-            /// Initializes the control after the content of the control is set.
-            /// </summary>
-            /// <param name="element" locid="WinJS.UI.Pages._mixin.processed_p:element">
-            /// The DOM element that will contain all the content for the page.
-            /// </param>
-            /// <param name="options" locid="WinJS.UI.Pages._mixin.processed_p:options">
+            /// <param name="options" locid="WinJS.UI.Pages._mixin.process_p:options">
             /// The options that are to be passed to the constructor of the page.
             /// </param>
-            /// <returns type="WinJS.Promise" locid="WinJS.UI.Pages._mixin.processed_returnValue">
-            /// A promise that is fulfilled when initialization is complete, if asynchronous processing is necessary. If not, returns nothing.
+            /// <returns type="WinJS.Promise" locid="WinJS.UI.Pages._mixin.process_returnValue">
+            /// A promise that is fulfilled when processing is complete.
             /// </returns>
             /// </signature>
+            return ControlProcessor.processAll(element);
         },
         render: function (element, options, loadResult) {
             /// <signature helpKeyword="WinJS.UI.Pages._mixin.render">
@@ -119,34 +73,6 @@ define([
                 element.appendChild(loadResult);
             }
             return element;
-        },
-        ready: function () {
-            /// <signature helpKeyword="WinJS.UI.Pages._mixin.ready">
-            /// <summary locid="WinJS.UI.Pages._mixin.ready">
-            /// Called after all initialization and rendering is complete. At this
-            /// time the element is ready for use.
-            /// </summary>
-            /// <param name="element" locid="WinJS.UI.Pages._mixin.ready_p:element">
-            /// The DOM element that contains all the content for the page.
-            /// </param>
-            /// <param name="options" locid="WinJS.UI.Pages._mixin.ready_p:options">
-            /// The options passed into the constructor of the page
-            /// </param>
-            /// </signature>
-        },
-        error: function (err) {
-            /// <signature helpKeyword="WinJS.UI.Pages._mixin.error">
-            /// <summary locid="WinJS.UI.Pages._mixin.error">
-            /// Called if any error occurs during the processing of the page.
-            /// </summary>
-            /// <param name="err" locid="WinJS.UI.Pages._mixin.error_p:err">
-            /// The error that occurred.
-            /// </param>
-            /// <returns type="WinJS.Promise" locid="WinJS.UI.Pages._mixin.error_returnValue">
-            /// Nothing if the error was handled, or an error promise if the error was not handled.
-            /// </returns>
-            /// </signature>
-            return Promise.wrapError(err);
         }
     };
 
@@ -167,92 +93,13 @@ define([
         /// A constructor function that creates the page.
         /// </returns>
         /// </signature>
-        uri = abs(uri);
+        var Page = _BasePage.define(uri, _mixin);
 
-        var base = viewMap[uri.toLowerCase()];
-        if (!base) {
-            base = _Base.Class.define(
-                // This needs to follow the WinJS.UI.processAll "async constructor"
-                // pattern to interop nicely in the "Views.Control" use case.
-                //
-                function PageControl_ctor(element, options, complete, parentedPromise) {
-                    var that = this;
-                    this._disposed = false;
-                    this.element = element = element || _Global.document.createElement("div");
-                    _ElementUtilities.addClass(element, "win-disposable");
-                    element.msSourceLocation = uri;
-                    this.uri = uri;
-                    this.selfhost = selfhost(uri);
-                    element.winControl = this;
-                    _ElementUtilities.addClass(element, "pagecontrol");
-                    
-                    var profilerMarkIdentifier = " uri='" + uri + "'" + _BaseUtils._getProfilerMarkIdentifier(this.element);
-                    
-                    _WriteProfilerMark("WinJS.UI.Pages:createPage" + profilerMarkIdentifier + ",StartTM");
-
-                    var load = Promise.wrap().
-                        then(function Pages_load() { return that.load(uri); });
-
-                    var renderCalled = load.then(function Pages_init(loadResult) {
-                        return Promise.join({
-                            loadResult: loadResult,
-                            initResult: that.init(element, options)
-                        });
-                    }).then(function Pages_render(result) {
-                        return that.render(element, options, result.loadResult);
-                    });
-
-                    this.elementReady = renderCalled.then(function () { return element; });
-
-                    this.renderComplete = renderCalled.
-                        then(function Pages_processAll(f) {
-                            return ControlProcessor.processAll(f).then(function () { return f; });
-                        }).then(function Pages_processed() {
-                            return that.processed(element, options);
-                        }).then(function () {
-                            return that;
-                        });
-
-                    var callComplete = function () {
-                        complete && complete(that);
-                        _WriteProfilerMark("WinJS.UI.Pages:createPage" + profilerMarkIdentifier + ",StopTM");
-                    };
-
-                    // promises guarantee order, so this will be called prior to ready path below
-                    //
-                    this.renderComplete.then(callComplete, callComplete);
-
-                    this.renderComplete.then(function () {
-                        return parentedPromise;
-                    }).then(function Pages_ready() {
-                        that.ready(element, options);
-                    }).then(
-                        null,
-                        function Pages_error(err) {
-                            return that.error(err);
-                        }
-                    );
-                },
-                _mixin
-            );
-            base = _Base.Class.mix(base, _Control.DOMEventMixin);
-            viewMap[uri.toLowerCase()] = base;
-        }
-
-        // Lazily mix in the members, allowing for multiple definitions of "define" to augment
-        // the shared definition of the member.
-        //
         if (members) {
-            base = _Base.Class.mix(base, members);
+            Page = _Base.Class.mix(Page, members);
         }
 
-        if (selfhost(uri)) {
-            _BaseUtils.ready(function () {
-                render(uri, _Global.document.body);
-            });
-        }
-
-        return base;
+        return Page;
     }
 
     function get(uri) {
@@ -267,8 +114,8 @@ define([
         /// A constructor function that creates the page.
         /// </returns>
         /// </signature>
-        uri = abs(uri);
-        var ctor = viewMap[uri.toLowerCase()];
+
+        var ctor = _BasePage.get(uri);
         if (!ctor) {
             ctor = Pages_define(uri);
         }
@@ -276,9 +123,8 @@ define([
     }
 
     function _remove(uri) {
-        uri = abs(uri);
-        Fragments.clearCache(uri);
-        delete viewMap[uri.toLowerCase()];
+        Fragments.clearCache(_BasePage.abs(uri));
+        _BasePage.remove(uri);
     }
 
     function render(uri, element, options, parentedPromise) {
