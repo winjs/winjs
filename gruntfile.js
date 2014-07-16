@@ -6,9 +6,9 @@
         var config = require("./config.js");
         config.grunt = grunt;
 
-        // Make sure that Grunt doesn't remove BOM from our utf8 files
-        // on read
-        grunt.file.preserveBOM = true;
+        // Strip source files of their BOMs. BOMs will be added at the end of the build
+        // by the "bom" task.
+        grunt.file.preserveBOM = false;
 
         // Helper function to load the config file
         function loadConfig(path) {
@@ -38,17 +38,18 @@
 
         // Register external tasks
         grunt.loadTasks("tasks/");
-
-        // Task aliases
-        grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "build", "copy", "replace"]);
-        grunt.registerTask("release", ["jshint", "default", "uglify"]);
-        grunt.registerTask("css", ["less"]);
-        grunt.registerTask("base", ["clean:base", "concat:baseDesktop", "concat:basePhone", "concat:baseStringsDesktop", "concat:baseStringsPhone", "replace"]);
-        grunt.registerTask("ui", ["clean:ui", "concat:uiDesktop", "concat:uiPhone", "concat:uiStringsDesktop", "concat:uiStringsPhone", "replace", "less"]);
-        grunt.registerTask("lint", ["jshint"]);
-        grunt.registerTask("minify", ["uglify"]);
-        grunt.registerTask("build", ["requirejs:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "requirejs:singleFile"]);
+        
+        // Tasks that drop things in bin/ (should have "bom" as the last task)
+        grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "_build", "copy", "replace", "bom"]);
+        grunt.registerTask("release", ["jshint", "default", "uglify", "bom"]);
+        grunt.registerTask("minify", ["uglify", "bom"]);
+        
+        // Private tasks (not designed to be used from the command line)
+        grunt.registerTask("_build", ["requirejs:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "requirejs:singleFile"]);
+        
+        // Other tasks
         grunt.registerTask("modules", ["clean:modules", "requirejs:publicModules", "replace:base"]);
+        grunt.registerTask("lint", ["jshint"]);
         grunt.registerTask("saucelabs", ["connect:saucelabs", "saucelabs-qunit", "post-tests-results"]);
     };
 })();
