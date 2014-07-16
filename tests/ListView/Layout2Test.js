@@ -2523,7 +2523,7 @@ var WinJSTests = WinJSTests || {};
         }
 
         this.testAssureMarginRuleSpecificityDoesNotTrumpWin8 = function (complete) {
-            // Test can't run with ListView.css in effect otherwise one of the rules will
+            // Test can't run with ListView.less.css in effect otherwise one of the rules will
             // overrule what we are trying to verify in this test.
             WinJS.Utilities.removeClass(testRootEl, "file-listview-css");
 
