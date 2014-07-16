@@ -19,6 +19,7 @@ define([
     'WinJS/Controls/HtmlControl',
     'require-style!less/animation-library',
     'require-style!less/typography',
+    'require-style!less/globalization',
     'require-style!less/desktop/styles-intrinsic',
     'require-style!less/desktop/colors-intrinsic',
     'WinJS/VirtualizedDataSource',
