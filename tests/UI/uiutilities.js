@@ -552,7 +552,7 @@ CorsicaTests.Utilities = function () {
         }
         
         var newNode = document.createElement("div");
-        newNode.id = "MetricsTests";
+        newNode.id = "file-metrics-css";
         newNode.innerHTML =
             "<div id='defaults'></div>" +
             "<div id='one'></div>" +
