@@ -558,6 +558,15 @@ var Helper;
             button, relatedTarget);
     };
 
+    Helper.require = function (modulePath) {
+        var module = null;
+        WinJS.Utilities._require(modulePath, function (mod) {
+            // WinJS.Utilities._require is guaranteed to be synchronous
+            module = mod;
+        });
+        return module;
+    };
+
     // Useful for disabling tests which were generated programmatically. Disables testName which
     // is part of the testObj tests. It's safest to call this function at the bottom of the
     // appropriate test file to ensure that the test has already been defined.
