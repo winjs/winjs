@@ -12,9 +12,10 @@ define([
     '../Utilities/_Control',
     '../Utilities/_ElementListUtilities',
     '../Utilities/_ElementUtilities',
+    './SearchBox/_SearchSuggestionManagerShim',
     'require-style!less/desktop/controls',
-    'require-style!less/phone/controls'
-    ], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, Animations, BindingList, Repeater, _Control, _ElementListUtilities, _ElementUtilities) {
+    'require-style!less/phone/controls',
+], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, Animations, BindingList, Repeater, _Control, _ElementListUtilities, _ElementUtilities, _SearchSuggestionManagerShim) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -78,12 +79,6 @@ define([
                 resultsuggestionchosen: "resultsuggestionchosen",
                 suggestionsrequested: "suggestionsrequested",
                 receivingfocusonkeyboardinput: "receivingfocusonkeyboardinput"
-            };
-
-            var SearchSuggestionKind = {
-                Query: 0,
-                Result: 1,
-                Separator: 2
             };
 
             var strings = {
@@ -169,8 +164,10 @@ define([
                 // Get the search suggestion provider if it is available
                 if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
                     this._searchSuggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
-                    this._searchSuggestions = this._searchSuggestionManager.suggestions;
+                } else {
+                    this._searchSuggestionManager = new _SearchSuggestionManagerShim._SearchSuggestionManagerShim();
                 }
+                this._searchSuggestions = this._searchSuggestionManager.suggestions;
 
                 this._hitFinder = null;
                 this._setElement(element);
@@ -565,7 +562,7 @@ define([
                         var firstChild = element.firstChild;
 
                         var hitsProvided = item.hits;
-                        if ((!hitsProvided) && (this._hitFinder !== null) && (item.kind !== SearchSuggestionKind.Separator)) {
+                        if ((!hitsProvided) && (this._hitFinder !== null) && (item.kind !== _SearchSuggestionManagerShim._SearchSuggestionKind.Separator)) {
                             hitsProvided = this._hitFinder.find(text);
                         }
 
@@ -604,8 +601,8 @@ define([
                 },
 
                 _isSuggestionSelectable: function SearchBox_isSuggestionSelectable(suggestion) {
-                    return ((suggestion.kind === SearchSuggestionKind.Query) ||
-                            (suggestion.kind === SearchSuggestionKind.Result));
+                    return ((suggestion.kind === _SearchSuggestionManagerShim._SearchSuggestionKind.Query) ||
+                            (suggestion.kind === _SearchSuggestionManagerShim._SearchSuggestionKind.Result));
                 },
 
                 _findNextSuggestionElementIndex: function SearchBox_findNextSuggestionElementIndex(curIndex) {
@@ -802,11 +799,11 @@ define([
                     if (!item) {
                         return root;
                     }
-                    if (item.kind === SearchSuggestionKind.Query) {
+                    if (item.kind === _SearchSuggestionManagerShim._SearchSuggestionKind.Query) {
                         root = this._querySuggestionRenderer(item);
-                    } else if (item.kind === SearchSuggestionKind.Separator) {
+                    } else if (item.kind === _SearchSuggestionManagerShim._SearchSuggestionKind.Separator) {
                         root = this._separatorSuggestionRenderer(item);
-                    } else if (item.kind === SearchSuggestionKind.Result) {
+                    } else if (item.kind === _SearchSuggestionManagerShim._SearchSuggestionKind.Result) {
                         root = this._resultSuggestionRenderer(item);
                     } else {
                         throw new _ErrorFromName("WinJS.UI.SearchBox.invalidSearchBoxSuggestionKind", strings.invalidSearchBoxSuggestionKind);
@@ -897,9 +894,9 @@ define([
 
                 _processSuggestionChosen: function Searchbox_processSuggestionChosen(item, event) {
                     this.queryText = item.text;
-                    if (item.kind === SearchSuggestionKind.Query) {
+                    if (item.kind === _SearchSuggestionManagerShim._SearchSuggestionKind.Query) {
                         this._submitQuery(item.text, false /*fillLinguisticDetails*/, event); // force empty linguistic details since explicitly chosen suggestion from list
-                    } else if (item.kind === SearchSuggestionKind.Result) {
+                    } else if (item.kind === _SearchSuggestionManagerShim._SearchSuggestionKind.Result) {
                         this._fireEvent(SearchBox._EventName.resultsuggestionchosen, {
                             tag: item.tag,
                             keyModifiers: SearchBox._getKeyModifiers(event),
@@ -1339,35 +1336,34 @@ define([
                 },
 
                 _suggestionsChangedHandler: function SearchBox_suggestionsChangedHandler(event) {
-                    var collectionChange = event.collectionChange;
-                    if (collectionChange === _WinRT.Windows.Foundation.Collections.CollectionChange.reset) {
+                    var collectionChange = event.collectionChange || event.detail.collectionChange;
+                    var changeIndex = event.index || event.detail.index;
+                    var ChangeEnum = _SearchSuggestionManagerShim._CollectionChange;
+                    if (collectionChange === ChangeEnum.reset) {
                         if (this._isFlyoutShown()) {
                             this._hideFlyout();
                         }
                         this._suggestionsData.splice(0, this._suggestionsData.length);
-                    } else if (collectionChange === _WinRT.Windows.Foundation.Collections.CollectionChange.itemInserted) {
-                        var index = event.index;
-                        var suggestion = this._searchSuggestions[index];
-                        this._suggestionsData.splice(index, 0, suggestion);
+                    } else if (collectionChange === ChangeEnum.itemInserted) {
+                        var suggestion = this._searchSuggestions[changeIndex];
+                        this._suggestionsData.splice(changeIndex, 0, suggestion);
 
                         this._showFlyout();
 
-                    } else if (collectionChange === _WinRT.Windows.Foundation.Collections.CollectionChange.itemRemoved) {
+                    } else if (collectionChange === ChangeEnum.itemRemoved) {
                         if ((this._suggestionsData.length === 1)) {
                             _ElementUtilities._setActive(this._inputElement);
 
                             this._hideFlyout();
                         }
-                        var index = event.index;
-                        this._suggestionsData.splice(index, 1);
-                    } else if (collectionChange === _WinRT.Windows.Foundation.Collections.CollectionChange.itemChanged) {
-                        var index = event.index;
-                        var suggestion = this._searchSuggestions[index];
-                        if (suggestion !== this._suggestionsData.getAt(index)) {
-                            this._suggestionsData.setAt(index, suggestion);
+                        this._suggestionsData.splice(changeIndex, 1);
+                    } else if (collectionChange === ChangeEnum.itemChanged) {
+                        var suggestion = this._searchSuggestions[changeIndex];
+                        if (suggestion !== this._suggestionsData.getAt(changeIndex)) {
+                            this._suggestionsData.setAt(changeIndex, suggestion);
                         } else {
                             // If the suggestions manager gives us an identical item, it means that only the hit highlighted text has changed.
-                            var existingElement = this._repeater.elementFromIndex(index);
+                            var existingElement = this._repeater.elementFromIndex(changeIndex);
                             if (_ElementUtilities.hasClass(existingElement, ClassName.searchBoxSuggestionQuery)) {
                                 this._addHitHighlightedText(existingElement, suggestion, suggestion.text);
                             }
@@ -1395,16 +1391,16 @@ define([
                         this._lastKeyPressLanguage = _WinRT.Windows.Globalization.Language.currentInputMethodLanguageTag;
                     }
 
-                    var suggestionsRequestedEventDetail = event;
+                    var request = event.request || event.detail.request;
                     var deferral;
                     this._fireEvent(SearchBox._EventName.suggestionsrequested, {
                         setPromise: function (promise) {
-                            deferral = suggestionsRequestedEventDetail.request.getDeferral();
+                            deferral = request.getDeferral();
                             promise.then(function () {
                                 deferral.complete();
                             });
                         },
-                        searchSuggestionCollection: suggestionsRequestedEventDetail.request.searchSuggestionCollection,
+                        searchSuggestionCollection: request.searchSuggestionCollection,
                         language: this._lastKeyPressLanguage,
                         linguisticDetails: this._getLinguisticDetails(true /*useCache*/, true /*createFilled*/),
                         queryText: this._inputElement.value
@@ -1460,6 +1456,22 @@ define([
 
                 _Constants: {
                     MIN_POPUP_HEIGHT: 152,
+                },
+
+                createResultSuggestionImage: function SearchBox_createResultSuggestionImage(url) {
+                    /// <signature helpKeyword="WinJS.UI.SearchBox.createResultSuggestionImage">
+                    /// <summary locid="WinJS.UI.SearchBox.createResultSuggestionImage">
+                    /// Creates the image argument for SearchSuggestionCollection.appendResultSuggestion.
+                    /// </summary>
+                    /// <param name="url" type="string" locid="WinJS.UI.SearchBox.SearchBox_createResultSuggestionImage_p:url">
+                    /// The url of the image.
+                    /// </param>
+                    /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                    /// </signature>
+                    if (window.Windows) {
+                        return Windows.Storage.Streams.RandomAccessStreamReference.createFromUri(new Windows.Foundation.Uri(url));
+                    }
+                    return url;
                 },
 
                 _getKeyModifiers: function SearchBox_getKeyModifiers(ev) {
