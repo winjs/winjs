@@ -287,6 +287,9 @@ SearchBoxTests.BasicTests = function () {
                 getCompositionAlternatives: function () {
                     return [];
                 },
+                getCandidateWindowClientRect: function () {
+                    return { bottom: 0, height: 0, left: 0, right: 0, top: 0, width: 0 };
+                },
                 compositionEndOffset: endOffset,
                 compositionStartOffset: 0
             }
@@ -668,6 +671,9 @@ SearchBoxTests.BasicTests = function () {
             return {
                 getCompositionAlternatives: function () {
                     return alternatives;
+                },
+                getCandidateWindowClientRect: function () {
+                    return { bottom: 0, height: 0, left: 0, right: 0, top: 0, width: 0 };
                 },
                 compositionEndOffset: compositionEndOffset,
                 compositionStartOffset: compositionStartOffset

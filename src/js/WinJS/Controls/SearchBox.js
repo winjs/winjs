@@ -1337,7 +1337,7 @@ define([
 
                 _suggestionsChangedHandler: function SearchBox_suggestionsChangedHandler(event) {
                     var collectionChange = event.collectionChange || event.detail.collectionChange;
-                    var changeIndex = event.index || event.detail.index;
+                    var changeIndex = (+event.index === event.index) ? event.index : event.detail.index;
                     var ChangeEnum = _SearchSuggestionManagerShim._CollectionChange;
                     if (collectionChange === ChangeEnum.reset) {
                         if (this._isFlyoutShown()) {

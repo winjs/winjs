@@ -8,7 +8,8 @@
 
 var SearchBoxTests = SearchBoxTests || {};
 
-if (!window.Windows) {
+// Github #413
+if (false) {
 
     SearchBoxTests.WebOnlyTests = function () {
         "use strict";
