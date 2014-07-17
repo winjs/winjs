@@ -58,15 +58,6 @@
 
                 var includes = [];
 
-                if(startsWith(module, "WinJS/Controls")) {
-                    includes = [
-                        'require-style!less/animation-library',
-                        'require-style!less/typography',
-                        'require-style!less/desktop/styles-intrinsic',
-                        'require-style!less/desktop/colors-intrinsic'
-                    ];
-                }
-
                 moduleConfig.push({
                     name: module,
                     exclude: ['require-style'],

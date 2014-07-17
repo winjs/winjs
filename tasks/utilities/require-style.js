@@ -54,58 +54,64 @@ define(['require'], function(req) {
         write.asModule(pluginName + '!' + name, 'define(function(){})');
     };
 
+    function writeCssFile(theme, inverseTheme, outputFilePath) {
+
+        var fs = require.nodeRequire('fs-extra');
+        var less = require.nodeRequire('less');
+        var path = require.nodeRequire('path');
+
+        // Build a custom LESS file that imports every resource
+        // with platform and theme defines at the top
+        var defines = [
+            '@platform: ' + configData.platform + ';',
+            '@theme: ' + theme + ';',
+            '@inverseTheme: ' + inverseTheme + ';'
+        ].join('\n');
+        var colors = [
+            '.Colors(@theme);',
+            '.win-ui-@{inverseTheme} {',
+            '   .Colors(@inverseTheme);',
+            '}'
+        ].join('\n');
+        var copyright = '/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */';
+        var lessFile = copyright + '\n' + defines + '\n' + lessImports.join('\n') + '\n' + colors;
+
+        // Build the less file
+        var lessConfig = configData.less || {};
+        lessConfig.async = false;
+        lessConfig.syncImport = true;
+        var parser = new less.Parser(lessConfig);
+        parser.parse(lessFile, function(error, tree) {
+            if (error) {
+                console.error(error + ' in ' + error.filename + '\n' + 'line number: ' + error.line);
+                return;
+            }
+
+            // Write css to file
+            var cssText = tree.toCSS(lessConfig);
+            fs.writeFileSync(path.join(outputFilePath, 'ui-' + theme + '.css'), cssText, 'utf8');
+        });
+    }
+
     // Called after the modules for the layer have been written to the layer.
     api.onLayerEnd = function(write, data) {
         if (!configData) {
             return;
         }
 
-        var less = require.nodeRequire('less');
-        var fs = require.nodeRequire('fs');
-        var mkpath = require.nodeRequire('mkpath');
+        
+        var fs = require.nodeRequire('fs-extra');
+        var path = require.nodeRequire('path');
 
         // Go up one directory, out of the js module output path
         // and then add the css/ path
-        var outputFilePath = data.path.substr(0, data.path.lastIndexOf('/'));
-        outputFilePath = outputFilePath.substr(0, outputFilePath.lastIndexOf('/'));
-        outputFilePath += '/css/';
-        mkpath.sync(outputFilePath);
+        var outputFilePath = path.resolve(data.path, '../../css');
+        fs.ensureDirSync(outputFilePath);
 
         // Build a less file for each theme
-        var themes = ['dark', 'light'];
-        for (var i = 0; i < themes.length; ++i) {
-            // Build a custom LESS file that imports every resource
-            // with platform and theme defines at the top
-            var defines = [
-                '@platform: ' + configData.platform + ';',
-                '@theme: ' + themes[i] + ';',
-                '@inverseTheme: ' + themes[(i + 1) % 2] + ';'
-            ].join('\n');
-            var colors = [
-                '.Colors(@theme);',
-                '.win-ui-@{inverseTheme} {',
-                '   .Colors(@inverseTheme);',
-                '}'
-            ].join('\n');
-            var copyright = '/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */';
-            var lessFile = copyright + '\n' + defines + '\n' + lessImports.join('\n') + '\n' + colors;
-
-            // Build the less file
-            var lessConfig = configData.less || {};
-            lessConfig.async = false;
-            lessConfig.syncImport = true;
-            var parser = new less.Parser(lessConfig);
-            parser.parse(lessFile, function(error, tree) {
-                if (error) {
-                    console.error(error + ' in ' + error.filename + '\n' + 'line number: ' + error.line);
-                    return;
-                }
-
-                // Write css to file
-                var cssText = tree.toCSS(lessConfig);
-                fs.writeFileSync(outputFilePath + 'ui-' + themes[i] + '.css', cssText, 'utf8');
-            });
-        }
+        writeCssFile('dark', 'light', outputFilePath);
+        writeCssFile('light', 'dark', outputFilePath);
+        
     };
 
     return api;
