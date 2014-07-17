@@ -30,6 +30,9 @@
         platform: "OS X 10.9",
         version: "7.1"
     }];
+    var browsersExcludingIe11 = browsers.filter(function (b) {
+        return !(b.browserName.toLowerCase() === "internet explorer" && b.version === "11");
+    });
 
     function getBrowserIndex(browser) {
         var index = 0;
@@ -146,6 +149,19 @@
                     version: "11"
                 }],
                 testname: "winjs qunit tests - ie11only",
+                tags: ["winjs"],
+                onTestComplete: onTestComplete
+            }
+        },
+        notie11: {
+            options: {
+                urls: testUrls.notie11,
+                build: process.env.TRAVIS_JOB_ID,
+                testInterval: 1000,
+                "max-duration": 500,
+                throttled: 20,
+                browsers: browsersExcludingIe11,
+                testname: "winjs qunit tests - not ie11",
                 tags: ["winjs"],
                 onTestComplete: onTestComplete
             }

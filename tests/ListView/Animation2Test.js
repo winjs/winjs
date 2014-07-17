@@ -756,8 +756,7 @@ WinJSTests.ListViewAnimation2Test = function () {
                 }));
             }.bind(this));
             
-            if (!WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
-                LiveUnit.LoggingCore.logComment("Cellspanning layout not supported on this platform.");
+            if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
                 this.generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
                     groupInfo: groupInfo,
                     itemInfo: itemInfo,
@@ -768,6 +767,8 @@ WinJSTests.ListViewAnimation2Test = function () {
                     itemInfo: itemInfo,
                     groupHeaderPosition: WinJS.UI.HeaderPosition.left
                 }));
+            } else {
+                LiveUnit.LoggingCore.logComment("Cellspanning layout not supported on this platform.");
             }
         }.bind(this));
     }.bind(this))();
