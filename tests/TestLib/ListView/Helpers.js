@@ -62,24 +62,6 @@ if (typeof (WinJS) !== "undefined") {
         this._baseDataSourceConstructor(listDataAdapter);
     });
 
-    function appendCSSFileToHead(cssFile) {
-        var s = document.createElement("link");
-        s.setAttribute("rel", "stylesheet");
-        s.setAttribute("href", cssFile);
-        document.head.appendChild(s);
-        return CommonUtilities.waitForCSSFile("/" + cssFile.replace("../", ""));
-    }
-
-    function removeCSSFileFromHead(link) {
-        var links = document.head.querySelectorAll("link");
-        for (var i = 0; i < links.length; i++) {
-            var linkEl = links[i];
-            if (linkEl.getAttribute("href") === link) {
-                document.head.removeChild(linkEl);
-            }
-        }
-    }
-
     function checkAttribute(element, attribute, expectedValue) {
         var values = element.getAttribute(attribute).match(expectedValue),
             value = values ? values[0] : null;

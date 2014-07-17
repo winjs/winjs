@@ -3,7 +3,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="../TestLib/util.js" />
-/// <deploy src="../TestData/" />
+/// <reference path="../TestData/Metrics.less.css" />
 
 var CorsicaTests = CorsicaTests || {};
 
@@ -538,7 +538,7 @@ CorsicaTests.Utilities = function () {
         LiveUnit.Assert.areEqual(10, offset);
     }
 
-    this.testMetrics = function (complete) {
+    this.testMetrics = function () {
 
         function verify(selector, dimensions) {
             var utils = WinJS.Utilities;
@@ -550,38 +550,28 @@ CorsicaTests.Utilities = function () {
             LiveUnit.Assert.areEqual(dimensions[4], element.offsetHeight);
             LiveUnit.Assert.areEqual(dimensions[5], utils.getTotalHeight(element));
         }
-
-        var s = document.createElement("link");
-        s.setAttribute("rel", "stylesheet");
-        s.setAttribute("href", "$(TESTDATA)/Metrics.css");
-        document.head.appendChild(s);
-
-        CommonUtilities.waitForCSSFile("Metrics.css").then(function () {
-            var newNode = document.createElement("div");
-            newNode.id = "MetricsTests";
-            newNode.innerHTML =
-                "<div id='defaults'></div>" +
-                "<div id='one'></div>" +
-                "<div id='two'></div>" +
-                "<div id='three'></div>" +
-                "<div id='four'></div>" +
-                "<div id='five'></div>";
-            document.body.appendChild(newNode);
-
+        
+        var newNode = document.createElement("div");
+        newNode.id = "MetricsTests";
+        newNode.innerHTML =
+            "<div id='defaults'></div>" +
+            "<div id='one'></div>" +
+            "<div id='two'></div>" +
+            "<div id='three'></div>" +
+            "<div id='four'></div>" +
+            "<div id='five'></div>";
+        document.body.appendChild(newNode);
+        
+        try {
             verify("defaults", [10, 10, 10, 20, 20, 20]);
             verify("one", [10, 10, 10, 20, 20, 20]);
             verify("two", [10, 16, 16, 20, 24, 24]);
             verify("three", [10, 22, 22, 20, 28, 28]);
             verify("four", [10, 22, 52, 20, 28, 48]);
             verify("five", [10, 298, 394, 20, 308, 404]);
-
+        } finally {
             document.body.removeChild(newNode);
-
-            if (s) {
-                document.head.removeChild(s);
-            }
-            complete();
-        });
+        }
     };
 
     this.testPositon = function () {
