@@ -126,10 +126,10 @@ define([
                 // Set system attributes if it is in WWA, otherwise, use the default values
                 if (!hasInitWinRTSettings && _WinRT.Windows.UI.ViewManagement.UISettings) { // in WWA
                     var uiSettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
-                    mouseHoverTime = uiSettings.mouseHoverTime;
+                    mouseHoverTime = _TransitionAnimation._animationTimeAdjustment(uiSettings.mouseHoverTime);
                     nonInfoTooltipNonTouchShowDelay = 2 * mouseHoverTime;
                     infoTooltipNonTouchShowDelay = 2.5 * mouseHoverTime;
-                    messageDuration = uiSettings.messageDuration * 1000;  // uiSettings.messageDuration is in seconds.
+                    messageDuration = _TransitionAnimation._animationTimeAdjustment(uiSettings.messageDuration * 1000);  // uiSettings.messageDuration is in seconds.
                     var handedness = uiSettings.handPreference;
                     isLeftHanded = (handedness === _WinRT.Windows.UI.ViewManagement.HandPreference.leftHanded);
                 }
