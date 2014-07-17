@@ -1,11 +1,14 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../_Signal',
     '../../Core/_Base',
     '../../Core/_BaseUtils',
     '../../Core/_Events',
     '../../BindingList',
-], function SearchSuggestionManagerShimInit(exports, _Base, _BaseUtils, _Events, BindingList) {
+], function SearchSuggestionManagerShimInit(exports, _Signal, _Base, _BaseUtils, _Events, BindingList) {
+    "use strict";
+
     var CollectionChange = {
         reset: 0,
         itemInserted: 1,
@@ -88,7 +91,7 @@ define([
             }
         },
         getDeferral: function () {
-            return this._deferralSignal || (this._deferralSignal = new WinJS._Signal());
+            return this._deferralSignal || (this._deferralSignal = new _Signal());
         },
 
         _deferralSignal: null,
@@ -133,9 +136,10 @@ define([
         },
 
         setQuery: function (queryText) {
+            var that = this;
             function update(arr) {
-                this._dataSource = arr;
-                this._updateVector();
+                that._dataSource = arr;
+                that._updateVector();
             }
 
             this._query = queryText;
@@ -144,7 +148,7 @@ define([
             if (arg._deferralSignal) {
                 arg._deferralSignal.promise.then(update.bind(this, arg.searchSuggestionCollection._data));
             } else {
-                update.call(this, arg.searchSuggestionCollection._data);
+                update(arg.searchSuggestionCollection._data);
             }
         },
 

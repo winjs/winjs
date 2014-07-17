@@ -32,6 +32,7 @@ define([
         "Windows.Storage.KnownFolders",
         "Windows.Storage.Search.FolderDepth",
         "Windows.Storage.Search.IndexerOption",
+        "Windows.Storage.Streams.RandomAccessStreamReference",
         "Windows.UI.ApplicationSettings.SettingsEdgeLocation",
         "Windows.UI.ApplicationSettings.SettingsCommand",
         "Windows.UI.ApplicationSettings.SettingsPane",

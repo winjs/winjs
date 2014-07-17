@@ -1468,8 +1468,8 @@ define([
                     /// </param>
                     /// <compatibleWith platform="Windows" minVersion="8.1"/>
                     /// </signature>
-                    if (window.Windows) {
-                        return Windows.Storage.Streams.RandomAccessStreamReference.createFromUri(new Windows.Foundation.Uri(url));
+                    if (_WinRT.Windows.Foundation.Uri && _WinRT.Windows.Storage.Streams.RandomAccessStreamReference) {
+                        return _WinRT.Windows.Storage.Streams.RandomAccessStreamReference.createFromUri(new _WinRT.Windows.Foundation.Uri(url));
                     }
                     return url;
                 },
