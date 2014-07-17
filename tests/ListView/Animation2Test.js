@@ -715,10 +715,6 @@ WinJSTests.ListViewAnimation2Test = function () {
 
     // Call generateTestPositioningOfDeletedItem in LTR and RTL for a number of different layouts
     (function () {
-        if (!WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
-            LiveUnit.LoggingCore.logComment("Cellspanning layout not supported on this platform.");
-            return;
-        }
         function groupInfo(group) {
             if (group.index % 2 === 0) {
                 return { enableCellSpanning: false };
@@ -759,16 +755,20 @@ WinJSTests.ListViewAnimation2Test = function () {
                     groupHeaderPosition: WinJS.UI.HeaderPosition.left
                 }));
             }.bind(this));
-            this.generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
-                groupInfo: groupInfo,
-                itemInfo: itemInfo,
-                groupHeaderPosition: WinJS.UI.HeaderPosition.top
-            }));
-            this.generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
-                groupInfo: groupInfo,
-                itemInfo: itemInfo,
-                groupHeaderPosition: WinJS.UI.HeaderPosition.left
-            }));
+            
+            if (!WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+                LiveUnit.LoggingCore.logComment("Cellspanning layout not supported on this platform.");
+                this.generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
+                    groupInfo: groupInfo,
+                    itemInfo: itemInfo,
+                    groupHeaderPosition: WinJS.UI.HeaderPosition.top
+                }));
+                this.generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
+                    groupInfo: groupInfo,
+                    itemInfo: itemInfo,
+                    groupHeaderPosition: WinJS.UI.HeaderPosition.left
+                }));
+            }
         }.bind(this));
     }.bind(this))();
 
