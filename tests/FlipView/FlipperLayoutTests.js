@@ -40,11 +40,7 @@ var LayoutTests = null;
         //
 
         function pixelToInt(val){
-            if(typeof val === "string"){
-                return val.replace("px", "");
-            }else{
-                return val;
-            }
+            return parseInt(val, 10);
         }
 
         this.testFlipperSmallContentCentered_horizontal = function() {
@@ -84,8 +80,8 @@ var LayoutTests = null;
             var centerTop = (flipViewHeight - itemHeight) / 2;
             var centerLeft = (flipViewWidth - itemWidth) / 2;
 
-            LiveUnit.Assert.isTrue(centerTop === itemTop, "content is not vertically centered");
-            LiveUnit.Assert.isTrue(centerLeft === itemLeft, "content is not horizontally centered");
+            LiveUnit.Assert.areEqual(centerTop, itemTop, "content is not vertically centered");
+            LiveUnit.Assert.areEqual(centerLeft, itemLeft, "content is not horizontally centered");
         }
 
         //
