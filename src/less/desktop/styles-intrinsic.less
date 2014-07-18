@@ -38,6 +38,26 @@ select, option {
     letter-spacing: 0.02em;
 }
 
+// Define basic font fallback list for intrinsic elements
+// Some elements must have font-family defined explicitly as
+// otherwise the browser user-agent stylesheet will win
+body,
+.win-type-xx-large,
+.win-type-x-large,
+.win-type-large,
+.win-type-medium,
+.win-type-small,
+.win-type-x-small,
+.win-type-xx-small,
+input,
+textarea,
+.win-textarea,
+button,
+select,
+option {
+    font-family: "Segoe", "Helvetica", "Arial", "sans-serif", "Segoe UI Symbol", "Symbols";
+}
+
 //
 // Reset browser specific oddities
 //
