@@ -1,0 +1,250 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+.fontSizes(desktop) {
+    @win_font_size_xx_large: 42pt;
+    @win_font_size_x_large: 20pt;
+    @win_font_size_large: 11pt;
+    @win_font_size_medium: 11pt;
+    @win_font_size_small: 11pt;
+    @win_font_size_x_small: 11pt;
+    @win_font_size_xx_small: 9pt;
+
+    @win_font_weight_xx_large: 200;
+    @win_font_weight_x_large: 200;
+    @win_font_weight_large: 600;
+    @win_font_weight_medium: 400;
+    @win_font_weight_small: 300;
+    @win_font_weight_x_small: 300;
+    @win_font_weight_xx_small: 400;
+
+    @win_font_face_xx_large: "Segoe UI Light";
+    @win_font_face_large: "Segoe UI Semibold";
+    @win_font_face_medium: "Segoe UI";
+    @win_font_face_small: "Segoe UI Semilight";
+    @win_font_face_bold: "Segoe UI Bold";
+
+}
+.fontSizes(phone) {
+    @win_font_weight_xx_large: 300;
+    @win_font_weight_x_large: 300;
+    @win_font_weight_large: 400;
+    @win_font_weight_medium: 500;
+    @win_font_weight_small: 600;
+    @win_font_weight_x_small: 600;
+    @win_font_weight_xx_small: 600;
+
+    @win_font_size_xx_large: 28pt;
+    @win_font_size_x_large: 24pt;
+    @win_font_size_large: 17pt;
+    @win_font_size_medium: 15pt;
+    @win_font_size_small: 10pt;
+    @win_font_size_x_small: 10pt;
+    @win_font_size_xx_small: 10pt;
+
+    @win_font_face_xx_large: "Segoe WP Light";
+    @win_font_face_large: "Segoe WP";
+    @win_font_face_medium: "Segoe WP";
+    @win_font_face_small: "Segoe WP Semilight";
+    @win_font_face_bold: "Segoe WP Bold";
+}
+.fontSizes(@platform);
+
+@win_dark_text_high: rgba(0, 0, 0, 0.87);
+@win_dark_text_medium: rgba(0, 0, 0, 0.6);
+@win_dark_text_low: rgba(0, 0, 0, 0.3);
+@win_light_text_high: ~"rgba(255, 255, 255, 1.0)";
+@win_light_text_medium: rgba(255, 255, 255, 0.6);
+@win_light_text_low: rgba(255, 255, 255, 0.3);
+
+// Symbol font face
+@font-face {
+    font-family: "Segoe UI Command";
+    src: local("Segoe UI Symbol");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Symbols";
+    src: url(../fonts/Symbols.ttf);
+}
+
+//
+// Font size classes
+// Two versions of each size are defined, one is a regular mixin that will be
+// output to the final css, and the other is a parametric mixin to allow using
+// it in LESS with a custom lineheight value. This is necessary because the parametric
+// version will not be output to the css.
+//
+.win-type-xx-large {
+    font-size: @win_font_size_xx_large;
+    font-weight: @win_font_weight_xx_large;
+    line-height: 1.1429;
+    letter-spacing: 0px;
+}
+.win-type-xx-large(@lineHeight: 1.1429) {
+    font-size: @win_font_size_xx_large;
+    font-weight: @win_font_weight_xx_large;
+    line-height: @lineHeight;
+    letter-spacing: 0px;
+}
+
+.win-type-x-large {
+    font-size: @win_font_size_x_large;
+    font-weight: @win_font_weight_x_large;
+    line-height: 1.2;
+}
+.win-type-x-large(@lineHeight: 1.2) {
+    font-size: @win_font_size_x_large;
+    font-weight: @win_font_weight_x_large;
+    line-height: @lineHeight;
+}
+
+.win-type-large {
+    font-size: @win_font_size_large;
+    font-weight: @win_font_weight_large;
+    line-height: 1.3636;
+}
+.win-type-large(@lineHeight: 1.3636) {
+    font-size: @win_font_size_large;
+    font-weight: @win_font_weight_large;
+    line-height: @lineHeight;
+}
+
+.win-type-medium {
+    font-size: @win_font_size_medium;
+    font-weight: @win_font_weight_medium;
+    line-height: 1.3636;
+}
+.win-type-medium(@lineHeight: 1.3636) {
+    font-size: @win_font_size_medium;
+    font-weight: @win_font_weight_medium;
+    line-height: @lineHeight;
+}
+
+.win-type-small {
+    font-size: @win_font_size_small;
+    font-weight: @win_font_weight_small;
+    line-height: 1.3636;
+}
+.win-type-small(@lineHeight: 1.3636) {
+    font-size: @win_font_size_small;
+    font-weight: @win_font_weight_small;
+    line-height: @lineHeight;
+}
+
+.win-type-x-small {
+    font-size: @win_font_size_x_small;
+    font-weight: @win_font_weight_x_small;
+    line-height: 1.3636;
+}
+.win-type-x-small(@lineHeight: 1.3636) {
+    font-size: @win_font_size_x_small;
+    font-weight: @win_font_weight_x_small;
+    line-height: @lineHeight;
+}
+
+.win-type-xx-small {
+    font-size: @win_font_size_xx_small;
+    font-weight: @win_font_weight_xx_small;
+    line-height: 1.6667;
+}
+.win-type-xx-small(@lineHeight: 1.6667) {
+    font-size: @win_font_size_xx_small;
+    font-weight: @win_font_weight_xx_small;
+    line-height: @lineHeight;
+}
+
+// These internal win-type mixins are necessary to avoid a problem in the output css
+// due to the font fallback solution at the bottom of this file.
+// Basically since font fallbacks are defined for the reguar win-type mixins, and those
+// mixins were used to add size information to body, input, and other controls, there was
+// duplicate output in the css for the -ms-lang pseudo class. By using these internal mixins,
+// which are not output into the css, the selectors in styles-intrinsic.less can use them without
+// incurring duplicate style information, since no font-fallback data is defined for them.
+.win-type-xx-large-internal(@lineHeight: 1.1429) {
+    font-size: @win_font_size_xx_large;
+    font-weight: @win_font_weight_xx_large;
+    line-height: @lineHeight;
+    letter-spacing: 0px;
+}
+
+.win-type-x-large-internal(@lineHeight: 1.2) {
+    font-size: @win_font_size_x_large;
+    font-weight: @win_font_weight_x_large;
+    line-height: @lineHeight;
+}
+
+.win-type-large-internal(@lineHeight: 1.3636) {
+    font-size: @win_font_size_large;
+    font-weight: @win_font_weight_large;
+    line-height: @lineHeight;
+}
+
+.win-type-medium-internal(@lineHeight: 1.3636) {
+    font-size: @win_font_size_medium;
+    font-weight: @win_font_weight_medium;
+    line-height: @lineHeight;
+}
+
+.win-type-small-internal(@lineHeight: 1.3636) {
+    font-size: @win_font_size_small;
+    font-weight: @win_font_weight_small;
+    line-height: @lineHeight;
+}
+
+.win-type-x-small-internal(@lineHeight: 1.3636) {
+    font-size: @win_font_size_x_small;
+    font-weight: @win_font_weight_x_small;
+    line-height: @lineHeight;
+}
+
+.win-type-xx-small-internal(@lineHeight: 1.6667) {
+    font-size: @win_font_size_xx_small;
+    font-weight: @win_font_weight_xx_small;
+    line-height: @lineHeight;
+}
+
+//
+// Explicitly define a Segoe UI font-family so that we can assign Segoe UI
+// Semilight to an appropriate font-weight.
+//
+@font-face {
+    font-family: "Segoe";
+    font-weight: @win_font_weight_xx_large;
+    src: local(@win_font_face_xx_large);
+}
+@font-face {
+    font-family: "Segoe";
+    font-weight: @win_font_weight_small;
+    src: local(@win_font_face_small);
+}
+@font-face {
+    font-family: "Segoe";
+    font-weight: @win_font_weight_medium;
+    src: local(@win_font_face_medium);
+}
+@font-face {
+    font-family: "Segoe";
+    font-weight: @win_font_weight_large;
+    src: local(@win_font_face_large);
+}
+@font-face {
+    font-family: "Segoe";
+    font-weight: 700;
+    src: local(@win_font_face_bold);
+}
+@font-face {
+    font-family: "Segoe";
+    font-style: italic;
+    font-weight: @win_font_weight_medium;
+    src: local("Segoe UI Italic");
+}
+@font-face {
+    font-family: "Segoe";
+    font-style: italic;
+    font-weight: 700;
+    src: local("Segoe UI Bold Italic");
+}
+
+// RTL language strings
+@rtl: ar, dv, fa, he, ku-Arab, pa-Arab, prs, ps, sd-Arab, syr, ug, ur, qps-plocm;
