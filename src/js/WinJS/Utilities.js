@@ -11,7 +11,6 @@ define([
     './Utilities/_Select',
     './Utilities/_TabContainer',
     './Utilities/_UI',
-    './Utilities/_UIUtilities',
     './Utilities/_VersionManager',
     './Utilities/_Xhr' ], function() {
 

@@ -11,12 +11,11 @@ define([
     '../Animations',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
-    '../Utilities/_UIUtilities',
     './AppBar/_Constants',
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _UIUtilities, _Constants, _Overlay) {
+    ], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -80,9 +79,9 @@ define([
 
                 var _elms = this._element.getElementsByTagName("*");
                 var firstDiv = this._addFirstDiv();
-                firstDiv.tabIndex = _UIUtilities._getLowestTabIndexInList(_elms);
+                firstDiv.tabIndex = _ElementUtilities._getLowestTabIndexInList(_elms);
                 var finalDiv = this._addFinalDiv();
-                finalDiv.tabIndex = _UIUtilities._getHighestTabIndexInList(_elms);
+                finalDiv.tabIndex = _ElementUtilities._getHighestTabIndexInList(_elms);
 
                 // Handle "esc" & "tab" key presses
                 this._element.addEventListener("keydown", this._handleKeyDown, true);
@@ -351,7 +350,7 @@ define([
 
                                 firstDiv = this._addFirstDiv();
                             }
-                            firstDiv.tabIndex = _UIUtilities._getLowestTabIndexInList(_elms);
+                            firstDiv.tabIndex = _ElementUtilities._getLowestTabIndexInList(_elms);
 
                             // Verify that the finalDiv is in the correct location.
                             // Move it to the correct location or add it if not.
@@ -363,7 +362,7 @@ define([
 
                                 finalDiv = this._addFinalDiv();
                             }
-                            finalDiv.tabIndex = _UIUtilities._getHighestTabIndexInList(_elms);
+                            finalDiv.tabIndex = _ElementUtilities._getHighestTabIndexInList(_elms);
                         }
 
                         // Hide all other flyouts
