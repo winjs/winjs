@@ -3,11 +3,12 @@ define([
     'exports',
     './Core/_Global',
     './Core/_Base',
+    './Core/_BaseUtils',
     './ControlProcessor',
     './Fragments',
     './Pages/_BasePage',
     './Promise',
-    ], function pagesInit(exports, _Global, _Base, ControlProcessor, Fragments, _BasePage, Promise) {
+    ], function pagesInit(exports, _Global, _Base, _BaseUtils, ControlProcessor, Fragments, _BasePage, Promise) {
     "use strict";
 
     // not supported in WebWorker
@@ -93,10 +94,21 @@ define([
         /// A constructor function that creates the page.
         /// </returns>
         /// </signature>
-        var Page = _BasePage.define(uri, _mixin);
+
+        var Page = _BasePage.get(uri);
+
+        if(!Page) {
+            Page = _BasePage.define(uri, _mixin);
+        }
 
         if (members) {
             Page = _Base.Class.mix(Page, members);
+        }
+
+        if(Page.selfhost) {
+            _BaseUtils.ready(function () {
+                render(_BasePage.abs(uri), _Global.document.body);
+            }, true);
         }
 
         return Page;
