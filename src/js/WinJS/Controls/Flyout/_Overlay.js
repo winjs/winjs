@@ -16,9 +16,8 @@ define([
     '../../Scheduler',
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
-    '../../Utilities/_UIUtilities',
     '../AppBar/_Constants'
-    ], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _UIUtilities, _Constants) {
+    ], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -944,7 +943,7 @@ define([
                         this._element.firstElementChild.tabIndex = -1;
                         this._element.lastElementChild.tabIndex = -1;
 
-                        var tabResult = _UIUtilities._focusLastFocusableElement(this._element);
+                        var tabResult = _ElementUtilities._focusLastFocusableElement(this._element);
 
                         if (tabResult) {
                             _Overlay._trySelect(_Global.document.activeElement);
@@ -981,7 +980,7 @@ define([
                         this._element.firstElementChild.tabIndex = -1;
                         this._element.lastElementChild.tabIndex = -1;
 
-                        var tabResult = _UIUtilities._focusFirstFocusableElement(this._element);
+                        var tabResult = _ElementUtilities._focusFirstFocusableElement(this._element);
 
                         if (tabResult) {
                             _Overlay._trySelect(_Global.document.activeElement);

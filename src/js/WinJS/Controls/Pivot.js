@@ -19,12 +19,11 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_TabContainer',
-    '../Utilities/_UIUtilities',
     './Pivot/_Constants',
     './Pivot/_Item',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function pivotInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _UIUtilities, _Constants, _Item) {
+    ], function pivotInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _Constants, _Item) {
         "use strict";
 
         _Base.Namespace.define("WinJS.UI", {
@@ -465,7 +464,7 @@ define([
                         }
 
                         var restoreFocus = this._headersContainerElement.contains(_Global.document.activeElement);
-                        var template = _UIUtilities._syncRenderer(pivotDefaultHeaderTemplate);
+                        var template = _ElementUtilities._syncRenderer(pivotDefaultHeaderTemplate);
 
                         _Dispose._disposeElement(this._headersContainerElement);
                         _ElementUtilities.empty(this._headersContainerElement);
@@ -640,7 +639,7 @@ define([
                             this.selectedIndex = index;
                         } else {
                             // Move focus into content for Narrator.
-                            _UIUtilities._setActiveFirstFocusableElement(this.selectedItem.element);
+                            _ElementUtilities._setActiveFirstFocusableElement(this.selectedItem.element);
                         }
                     },
 

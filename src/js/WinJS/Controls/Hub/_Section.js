@@ -11,9 +11,8 @@ define([
     '../../Utilities/_Control',
     '../../Utilities/_Dispose',
     '../../Utilities/_ElementUtilities',
-    '../../Utilities/_KeyboardBehavior',
-    '../../Utilities/_UIUtilities'
-    ], function hubSectionInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities) {
+    '../../Utilities/_KeyboardBehavior'
+    ], function hubSectionInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -161,7 +160,7 @@ define([
                     }
                 },
                 _setHeaderTemplate: function HubSection_setHeaderTemplate(template) {
-                    this._template = _UIUtilities._syncRenderer(template);
+                    this._template = _ElementUtilities._syncRenderer(template);
                     this._renderHeader();
                 },
                 _renderHeader: function HubSection_renderHeader() {

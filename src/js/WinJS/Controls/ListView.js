@@ -20,7 +20,6 @@ define([
     '../Utilities/_SafeHtml',
     '../Utilities/_TabContainer',
     '../Utilities/_UI',
-    '../Utilities/_UIUtilities',
     '../Utilities/_VersionManager',
     './ItemContainer/_Constants',
     './ItemContainer/_ItemEventsHandler',
@@ -35,7 +34,7 @@ define([
     './ListView/_VirtualizeContentsView',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _ItemsManager, _SafeHtml, _TabContainer, _UI, _UIUtilities, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
+    ], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -361,7 +360,7 @@ define([
                         return (_VirtualizeContentsView._VirtualizeContentsView._pagesToPrefetch * 2) + 1;
                     },
                     set: function () {
-                        _UIUtilities._deprecated(_ErrorMessages.pagesToLoadIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.pagesToLoadIsDeprecated);
                     }
                 },
 
@@ -379,7 +378,7 @@ define([
                         return 0;
                     },
                     set: function () {
-                        _UIUtilities._deprecated(_ErrorMessages.pagesToLoadThresholdIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.pagesToLoadThresholdIsDeprecated);
                     }
                 },
 
@@ -451,7 +450,7 @@ define([
                         return false;
                     },
                     set: function () {
-                        _UIUtilities._deprecated(_ErrorMessages.automaticallyLoadPagesIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.automaticallyLoadPagesIsDeprecated);
                     }
                 },
 
@@ -466,7 +465,7 @@ define([
                         return "randomAccess";
                     },
                     set: function () {
-                        _UIUtilities._deprecated(_ErrorMessages.loadingBehaviorIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.loadingBehaviorIsDeprecated);
                     }
                 },
 
@@ -598,7 +597,7 @@ define([
                         return this._itemRelease;
                     },
                     set: function (release) {
-                        _UIUtilities._deprecated(_ErrorMessages.resetItemIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.resetItemIsDeprecated);
                         this._itemRelease = release;
                     }
                 },
@@ -635,7 +634,7 @@ define([
                         return this._groupHeaderRelease;
                     },
                     set: function (release) {
-                        _UIUtilities._deprecated(_ErrorMessages.resetGroupHeaderIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.resetGroupHeaderIsDeprecated);
                         this._groupHeaderRelease = release;
                     }
                 },
@@ -1023,7 +1022,7 @@ define([
                     /// </deprecated>
                     /// </summary>
                     /// </signature>
-                    _UIUtilities._deprecated(_ErrorMessages.loadMorePagesIsDeprecated);
+                    _ElementUtilities._deprecated(_ErrorMessages.loadMorePagesIsDeprecated);
                 },
 
                 recalculateItemPosition: function ListView_recalculateItemPosition() {

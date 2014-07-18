@@ -12,9 +12,8 @@ define([
     '../Promise',
     '../Utilities/_Control',
     '../Utilities/_Dispose',
-    '../Utilities/_ElementUtilities',
-    '../Utilities/_UIUtilities'
-    ], function repeaterInit(exports, _Global, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities, _UIUtilities) {
+    '../Utilities/_ElementUtilities'
+    ], function repeaterInit(exports, _Global, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -158,7 +157,7 @@ define([
                     set: function (template) {
                         this._writeProfilerMark("template.set,StartTM");
                         this._template = (template || stringifyItem);
-                        this._render = _UIUtilities._syncRenderer(this._template, this.element.tagName);
+                        this._render = _ElementUtilities._syncRenderer(this._template, this.element.tagName);
                         if (!this._initializing) {
                             this._reloadRepeater(true);
                             this.dispatchEvent(ITEMSLOADED, {});

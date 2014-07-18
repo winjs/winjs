@@ -18,11 +18,10 @@ define([
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
     '../Utilities/_UI',
-    '../Utilities/_UIUtilities',
     './Hub/_Section',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _UI, _UIUtilities, _Section) {
+    ], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _UI, _Section) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -1098,13 +1097,13 @@ define([
                         for (var i = indexToFocus; i < this.sections.length; i++) {
                             var section = this.sections.getAt(i);
 
-                            var focusAttempt = _UIUtilities._trySetActive(section._headerTabStopElement, this._viewportElement);
+                            var focusAttempt = _ElementUtilities._trySetActive(section._headerTabStopElement, this._viewportElement);
 
                             if (focusAttempt) {
                                 return;
                             }
 
-                            if (_UIUtilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
+                            if (_ElementUtilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
                                 return;
                             }
                         }
@@ -1112,11 +1111,11 @@ define([
                         for (var i = indexToFocus - 1; i >= 0; i--) {
                             var section = this.sections.getAt(i);
 
-                            if (_UIUtilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
+                            if (_ElementUtilities._setActiveFirstFocusableElement(section.contentElement, this._viewportElement)) {
                                 return;
                             }
 
-                            var focusAttempt = _UIUtilities._trySetActive(section._headerTabStopElement, this._viewportElement);
+                            var focusAttempt = _ElementUtilities._trySetActive(section._headerTabStopElement, this._viewportElement);
 
                             if (focusAttempt) {
                                 return;

@@ -17,7 +17,6 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_KeyboardBehavior',
-    '../Utilities/_UIUtilities',
     './AppBar/_Constants',
     './AppBar/_Layouts',
     './AppBar/_Command',
@@ -25,7 +24,7 @@ define([
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _UIUtilities, _Constants, _Layouts, _Command, _Icon, _Overlay) {
+], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -1545,14 +1544,14 @@ define([
                         this._element.insertBefore(this._invokeButton, appBarFinalDiv);
                     }
                     var elms = this._element.getElementsByTagName("*");
-                    var highestTabIndex = _UIUtilities._getHighestTabIndexInList(elms);
+                    var highestTabIndex = _ElementUtilities._getHighestTabIndexInList(elms);
                     this._invokeButton.tabIndex = highestTabIndex;
 
                     // Update the tabIndex of the firstDiv & finalDiv
                     if (_isThereVisibleNonStickyBar()) {
 
                         if (appBarFirstDiv) {
-                            appBarFirstDiv.tabIndex = _UIUtilities._getLowestTabIndexInList(elms);
+                            appBarFirstDiv.tabIndex = _ElementUtilities._getLowestTabIndexInList(elms);
                         }
                         if (appBarFinalDiv) {
                             appBarFinalDiv.tabIndex = highestTabIndex;

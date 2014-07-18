@@ -15,10 +15,9 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_SafeHtml',
     '../../Utilities/_UI',
-    '../../Utilities/_UIUtilities',
     '../ItemContainer/_Constants',
     './_ErrorMessages'
-    ], function layouts2Init(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _TransitionAnimation, Promise, Scheduler, _Signal, _Dispose, _ElementUtilities, _SafeHtml, _UI, _UIUtilities, _Constants, _ErrorMessages) {
+    ], function layouts2Init(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _TransitionAnimation, Promise, Scheduler, _Signal, _Dispose, _ElementUtilities, _SafeHtml, _UI, _Constants, _ErrorMessages) {
     "use strict";
 
     var Key = _ElementUtilities.Key,
@@ -3219,7 +3218,7 @@ define([
                         return this._backdropDisabled || false;
                     },
                     set: function _LegacyLayout_disableBackdrop_set(value) {
-                        _UIUtilities._deprecated(_ErrorMessages.disableBackdropIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.disableBackdropIsDeprecated);
                         value = !!value;
                         if (this._backdropDisabled !== value) {
                             this._backdropDisabled = value;
@@ -3251,7 +3250,7 @@ define([
                         return this._backdropColor || "rgba(155,155,155,0.23)";
                     },
                     set: function _LegacyLayout_backdropColor_set(value) {
-                        _UIUtilities._deprecated(_ErrorMessages.backdropColorIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.backdropColorIsDeprecated);
                         if (value && this._backdropColor !== value) {
                             this._backdropColor = value;
                             if (this._backdropColorClassName) {
@@ -3328,7 +3327,7 @@ define([
                         return this.maximumRowsOrColumns;
                     },
                     set: function (maxRows) {
-                        _UIUtilities._deprecated(_ErrorMessages.maxRowsIsDeprecated);
+                        _ElementUtilities._deprecated(_ErrorMessages.maxRowsIsDeprecated);
                         this.maximumRowsOrColumns = maxRows;
                     }
                 },
@@ -3346,7 +3345,7 @@ define([
                         return this._itemInfo;
                     },
                     set: function (itemInfo) {
-                        itemInfo && _UIUtilities._deprecated(_ErrorMessages.itemInfoIsDeprecated);
+                        itemInfo && _ElementUtilities._deprecated(_ErrorMessages.itemInfoIsDeprecated);
                         this._itemInfo = itemInfo;
                         this._invalidateLayout();
                     }
@@ -3364,7 +3363,7 @@ define([
                         return this._groupInfo;
                     },
                     set: function (groupInfo) {
-                        groupInfo && _UIUtilities._deprecated(_ErrorMessages.groupInfoIsDeprecated);
+                        groupInfo && _ElementUtilities._deprecated(_ErrorMessages.groupInfoIsDeprecated);
                         this._groupInfo = groupInfo;
                         this._invalidateLayout();
                     }
