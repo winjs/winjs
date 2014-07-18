@@ -590,6 +590,26 @@ WinJSTests.FragmentControl = function () {
             });
         });
     };
+
+    this.testOverridePagePolicy = function () {
+        var pageUri = "<notReal>";
+        WinJS.UI.Pages._remove(pageUri);
+
+        var customLoad = function() {};
+
+        var Page = WinJS.UI.Pages.define(pageUri, {
+            load: customLoad
+        });
+
+        LiveUnit.Assert.areEqual(customLoad, Page.prototype.load);
+
+        Page = WinJS.UI.Pages.define(pageUri, {
+            process: function() {}
+        });
+
+        LiveUnit.Assert.areEqual(customLoad, Page.prototype.load);
+
+    };
 };
 
 LiveUnit.registerTestClass("WinJSTests.FragmentControl");

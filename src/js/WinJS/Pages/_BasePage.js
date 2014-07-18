@@ -174,9 +174,10 @@ define([
         /// A constructor function that creates the page.
         /// </returns>
         /// </signature>
+        
+        var base = get(uri);
         uri = abs(uri);
 
-        var base = viewMap[uri.toLowerCase()];
         if (!base) {
             base = _Base.Class.define(
                 // This needs to follow the WinJS.UI.processAll "async constructor"
@@ -253,11 +254,7 @@ define([
             base = _Base.Class.mix(base, members);
         }
 
-        if (selfhost(uri)) {
-            _BaseUtils.ready(function () {
-                render(uri, _Global.document.body);
-            }, true);
-        }
+        base.selfhost = selfhost(uri);
 
         return base;
     }
@@ -270,12 +267,6 @@ define([
     function remove(uri) {
         uri = abs(uri);
         delete viewMap[uri.toLowerCase()];
-    }
-
-    function render(uri, element, options, parentedPromise) {
-        var Ctor = get(uri);
-        var control = new Ctor(element, options, null, parentedPromise);
-        return control.renderComplete;
     }
 
     _Base.Namespace._moduleDefine(exports, null, {
