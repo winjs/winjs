@@ -45,6 +45,7 @@
                         travisBuildNumber: process.env.TRAVIS_BUILD_NUMBER,
                         travisCommit: process.env.TRAVIS_COMMIT,
                         travisBranch: process.env.TRAVIS_BRANCH,
+                        travisPullRequest: process.env.TRAVIS_PULL_REQUEST,
                         auth: process.env.auth
                     }, function() {
                         done();
