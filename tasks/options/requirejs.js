@@ -239,6 +239,7 @@
                 useStrict: true,
                 name: 'ui',
                 exclude: ['base'],
+                stubModules: ['require-style'],
                 out: desktopUI,
                 wrap: {
                     startFile: 'src/js/build/startUI.js',
@@ -260,6 +261,7 @@
                 useStrict: true,
                 name: 'ui-phone',
                 exclude: ['base'],
+                stubModules: ['require-style'],
                 out: phoneUI,
                 wrap: {
                     startFile: 'src/js/build/startUI.js',
@@ -281,6 +283,7 @@
                 useStrict: true,
                 name: 'amd',
                 include: ['WinJS'],
+                stubModules: ['require-style'],
                 out: desktopSingleFile,
                 wrap: {
                     startFile: 'src/js/build/startWinJS.js',
