@@ -981,11 +981,13 @@ CommonUtils.prototype = (function () {
                 var rect = this.getClientRect(element);
 
                 // This will throw an MSGestureTap, too
-                event = document.createEvent("MSGestureEvent");
-                event.initGestureEvent("MSGestureTap", true, true, window, 0,
-                    window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
-                    rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null);
-                element.dispatchEvent(event);
+                if ("MSGestureEvent" in window) {
+                    event = document.createEvent("MSGestureEvent");
+                    event.initGestureEvent("MSGestureTap", true, true, window, 0,
+                        window.screenLeft + rect.center.x, window.screenTop + rect.center.y, rect.center.x, rect.center.y,
+                        rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null);
+                    element.dispatchEvent(event);
+                }
 
                 // Even when everything else is MSPointer, elements still throw "click" events
                 event = document.createEvent("MouseEvents");

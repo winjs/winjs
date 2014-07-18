@@ -11,6 +11,7 @@ define([
 
     var APIs = [
         "Windows.ApplicationModel.DesignMode.designModeEnabled",
+        "Windows.ApplicationModel.Resources.Core.ResourceContext",
         "Windows.ApplicationModel.Resources.Core.ResourceManager",
         "Windows.ApplicationModel.Search.Core.SearchSuggestionManager",
         "Windows.ApplicationModel.Search.SearchQueryLinguisticDetails",

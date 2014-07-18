@@ -95,14 +95,14 @@ define([
                 } else {
                     // Edgy wasn't happening, so toggle
                     var keyboardInvoked = e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
-                    AppBar._toggleAppBarEdgy(keyboardInvoked);
+                    AppBar._toggleAllAppBarsState(keyboardInvoked);
                 }
             }
 
             function _startingEdgy() {
                 if (!edgyHappening) {
                     // Edgy wasn't happening, so toggle & start it
-                    edgyHappening = AppBar._toggleAppBarEdgy(false);
+                    edgyHappening = AppBar._toggleAllAppBarsState(false);
                 }
             }
 
@@ -327,8 +327,6 @@ define([
                 get cannotChangeLayoutWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeLayoutWhenVisible").value; }
             };
 
-            var appBarSynchronizationPromise = Promise.as();
-
             var AppBar = _Base.Class.derive(_Overlay._Overlay, function AppBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBar.AppBar">
                 /// <summary locid="WinJS.UI.AppBar.constructor">
@@ -395,15 +393,14 @@ define([
                 this._invokeButton.innerHTML = "<span class='" + _Constants.ellipsisClass + "'></span>";
                 _ElementUtilities.addClass(this._invokeButton, _Constants.invokeButtonClass);
                 this._element.appendChild(this._invokeButton);
-                this._invokeButtonPointerDown = function AppBar_invokeButtonPointerDown() {
-                    _Overlay._Overlay._addHideFocusClass(this._invokeButton);
-                };
-                this._invokeButtonClick = function AppBar_invokeButtonClick() {
-                    AppBar._toggleAppBarEdgy(_KeyboardBehavior._keyboardSeenLast);
-                };
-                this._invokeButton.addEventListener("pointerdown", this._invokeButtonPointerDown.bind(this), false);
-                this._invokeButton.addEventListener("click", this._invokeButtonClick.bind(this), false);
-
+                var that = this;
+                this._invokeButton.addEventListener("pointerdown", function () { _Overlay._Overlay._addHideFocusClass(that._invokeButton); }, false);
+                this._invokeButton.addEventListener("click", function () { AppBar._toggleAllAppBarsState(_KeyboardBehavior._keyboardSeenLast, that); }, false);
+                this._invokeButton.addEventListener("keyup", function (event) {
+                    if (event.keyCode === Key.enter || event.keyCode === Key.space) {
+                       AppBar._toggleAllAppBarsState(_KeyboardBehavior._keyboardSeenLast, that);
+                    }
+                }, true);
 
                 // Run layout setter immediately. We need to know our layout in order to correctly 
                 // position any commands that may be getting set through the constructor. 
@@ -1295,7 +1292,7 @@ define([
                     this._endAnimateCommandsCallBack();
                 },
 
-                _endAnimateCommandsCallBack: function AppBar__endAnimateCommandsCallBack(){
+                _endAnimateCommandsCallBack: function AppBar_endAnimateCommandsCallBack(){
                     // Leave this blank for unit tests to overwrite.
                 },
 
@@ -1390,7 +1387,9 @@ define([
                     }
 
                     // Make sure everything still fits.
-                    this._layout.resize(event);
+                    if (!this._initializing) {
+                        this._layout.resize(event);
+                    }
                 },
 
                 _checkKeyboardTimer: function AppBar_checkKeyboardTimer() {
@@ -1573,6 +1572,7 @@ define([
                 }
             }, {
                 // Statics
+                _appBarsSynchronizationPromise: Promise.as(),
 
                 // Returns true if the element or what had focus before the element (if a Flyout) is either:
                 //   1) the appBar or subtree
@@ -1589,23 +1589,32 @@ define([
                     return (flyout && appBar.contains(flyout._previousFocus));
                 },
 
-                // Callback for AppBar Edgy Event Command
-                _toggleAppBarEdgy: function (keyboardInvoked) {
+                // Callback for AppBar invokeButton and Edgy Event Command
+                _toggleAllAppBarsState: function (keyboardInvoked, sourceAppBar) {
                     var bars = _getDynamicBarsForEdgy();
 
-                    // If they're all shown, hide them. Otherwise show them all
-                    if (bars._shown && !bars._hidden) {
-                        appBarSynchronizationPromise = appBarSynchronizationPromise.then(function () {
+                    var hiding;
+                    if (sourceAppBar) {
+                        // If the sourceAppBar is shown, hide all AppBars, else show all AppBars.
+                        hiding = _ElementUtilities.hasClass(sourceAppBar._element, _Constants.showingClass) || _ElementUtilities.hasClass(sourceAppBar._element, _Constants.shownClass);
+                    } else {
+                        // EDGY event behavior. No sourceAppBar specified.
+                        // If every AppBar is shown, hide them. Otherwise show them all.
+                        hiding = bars._shown && !bars._hidden;
+                    }
+
+                    if (hiding) {
+                        AppBar._appBarsSynchronizationPromise = AppBar._appBarsSynchronizationPromise.then(function () {
                             return _Overlay._Overlay._hideAllBars(bars, keyboardInvoked);
                         });
                         return "hiding";
                     } else {
-                        appBarSynchronizationPromise = appBarSynchronizationPromise.then(function () {
+                        AppBar._appBarsSynchronizationPromise = AppBar._appBarsSynchronizationPromise.then(function () {
                             return _showAllBars(bars, keyboardInvoked);
                         });
                         return "showing";
                     }
-                }
+                },
             });
 
             return AppBar;

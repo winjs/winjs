@@ -1411,12 +1411,12 @@ define([
                         return null;
                     }
 
-                    // click eating divs and sentinals should not have children
+                    // Intrinsic components of the AppBar count as the AppBar
                     if (_ElementUtilities.hasClass(element, _Constants._clickEatingAppBarClass) ||
                         _ElementUtilities.hasClass(element, _Constants._clickEatingFlyoutClass) ||
                         _ElementUtilities.hasClass(element, _Constants.firstDivClass) ||
                         _ElementUtilities.hasClass(element, _Constants.finalDivClass) ||
-                        _ElementUtilities.hasClass(element, _Constants.ellipsisClass)) {
+                        _ElementUtilities.hasClass(element, _Constants.invokeButtonClass)) {
                         return element;
                     }
 
