@@ -168,8 +168,14 @@
     margin-left: 0;
     margin-right: -70px;
 }
+.win-listview .win-surface {
+    // WebKit: Prevent margin collapsing between first group header and surface
+    -webkit-margin-collapse: separate;
+}
 .win-surface ._win-proxy {
-    // Position relative + overflow hidden are applied to this element to stop margin collapsing of a margin-top on a header + the margin-top on the surface in list layout
+    // IE/Firefox: Position relative + overflow hidden are applied to this element
+    // to stop margin collapsing of a margin-top on a header + the margin-top on the
+    // surface in list layout
     position: relative;
     overflow: hidden;
     width: 0;

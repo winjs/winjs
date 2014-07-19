@@ -3126,6 +3126,8 @@ define([
                     if (this._groupsEnabled) {
                         if (this._horizontal) {
                             if (this._groupHeaderPosition === HeaderPosition.top) {
+                                // Horizontal with headers above
+                                //
                                 var headerContainerMinContentWidth = sizes.headerContainerMinWidth - sizes.headerContainerOuterWidth,
                                     itemsContainerContentWidth = group.getItemsContainerSize() - sizes.headerContainerOuterWidth;
                                 headerContainer.style.maxWidth = Math.max(headerContainerMinContentWidth, itemsContainerContentWidth) + "px";
@@ -3142,16 +3144,21 @@ define([
                                 // itemsContainers only get the _groupLeaderClass when header position is top.
                                 _ElementUtilities.addClass(itemsContainer, _Constants._groupLeaderClass);
                             } else {
+                                // Horizontal with headers on the left
+                                //
                                 if (this._envInfo.supportsCSSGrid) {
                                     headerContainer.style.msGridColumn = index * 2 + 1;
                                     itemsContainer.style.msGridColumn = index * 2 + 2;
                                 } else {
+                                    headerContainer.style.width = sizes.headerContainerWidth - sizes.headerContainerOuterWidth + "px";
                                     headerContainer.style.height = (groupCrossSize - sizes.headerContainerOuterHeight) + "px";
                                     itemsContainer.style.height = (groupCrossSize - sizes.itemsContainerOuterHeight) + "px";
                                 }
                             }
                         } else {
                             if (this._groupHeaderPosition === HeaderPosition.left) {
+                                // Vertical with headers on the left
+                                //
                                 var headerContainerMinContentHeight = sizes.headerContainerMinHeight - sizes.headerContainerOuterHeight,
                                     itemsContainerContentHeight = group.getItemsContainerSize() - sizes.headerContainerOuterHeight;
                                 headerContainer.style.maxHeight = Math.max(headerContainerMinContentHeight, itemsContainerContentHeight) + "px";
@@ -3169,6 +3176,8 @@ define([
                                 // itemsContainers only get the _groupLeaderClass when header position is left.
                                 _ElementUtilities.addClass(itemsContainer, _Constants._groupLeaderClass);
                             } else {
+                                // Vertical with headers above
+                                //
                                 headerContainer.style.msGridRow = index * 2 + 1;
                                 // It's important to explicitly set the container height in vertical list mode with headers above, since we use flow layout.
                                 // When the header's content is taken from the DOM, the headerContainer will shrink unless it has a height set.
@@ -3178,6 +3187,7 @@ define([
                                     if (this._envInfo.supportsCSSGrid) {
                                         itemsContainer.style.msGridRow = index * 2 + 2;
                                     } else {
+                                        headerContainer.style.height = sizes.headerContainerHeight - sizes.headerContainerOuterHeight + "px";
                                         headerContainer.style.width = (groupCrossSize - sizes.headerContainerOuterWidth) + "px";
                                         itemsContainer.style.width = (groupCrossSize - sizes.itemsContainerOuterWidth) + "px";
                                     }
