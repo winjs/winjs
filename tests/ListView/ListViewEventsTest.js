@@ -105,7 +105,6 @@ WinJSTests.ListViewEventsTest = function () {
                         listView.removeEventListener(eventName, handler);
                     }
                     clearTimeout(testTimeout);
-                    eventName.fired = true;
                     complete();
                 }
                 if (eventName === 'loadingstatechanged') {
@@ -128,9 +127,7 @@ WinJSTests.ListViewEventsTest = function () {
 
             var timeoutmsec = 2000,
                 testTimeout = setTimeout(function () {
-                    if (!eventName.fired) {
-                        throw Error(eventType + ' event: ' + eventName + ' did not fire in ' + timeoutmsec + ' ms!');
-                    }
+                    throw Error(eventType + ' event: ' + eventName + ' did not fire in ' + timeoutmsec + ' ms!');
                 }, timeoutmsec);
 
             if (eventType === 'Level0') {
