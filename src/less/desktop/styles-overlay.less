@@ -8,6 +8,8 @@ AppBar/Flyout z-index values:
     1008 - Flyout
 */
 
+@import "../mixins.less";
+
 .win-appbarclickeater {
     z-index: 1000;
     background-color: transparent;
@@ -241,17 +243,17 @@ AppBar
     left: 0;
     position: fixed;
     position: -ms-device-fixed;
-    min-height: 25px; 
+    min-height: 25px;
 
     &.win-appbar-hiding > :not(.win-appbar-invokebutton) {
         opacity: 0;
-    }    
+    }
 
     &.win-appbar-hidden > :not(.win-appbar-invokebutton) {
         display: none !important;
     }
 
-    &.win-appbar-hiding .win-appbar-invokebutton, 
+    &.win-appbar-hiding .win-appbar-invokebutton,
     &.win-appbar-hidden .win-appbar-invokebutton {
         width: 100%;
 }
@@ -282,15 +284,15 @@ AppBar
 
         &:focus .win-appbar-ellipsis {
             border: solid 2px;
-        }  
+        }
     }
 
-    &.win-bottom .win-appbar-invokebutton, 
+    &.win-bottom .win-appbar-invokebutton,
     &.win-bottom .win-appbar-invokebutton .win-appbar-ellipsis {
         top: 0px;
     }
 
-    &.win-top .win-appbar-invokebutton, 
+    &.win-top .win-appbar-invokebutton,
     &.win-top .win-appbar-invokebutton .win-appbar-ellipsis {
         bottom: 0px;
     }
