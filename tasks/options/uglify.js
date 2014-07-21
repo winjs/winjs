@@ -4,6 +4,9 @@
     "use strict";
     var config = require("../../config.js");
     module.exports = {
+        options: {
+            sourceMap: true
+        },
         baseDesktop: {
             src: [config.desktopOutput + "js/base.js"],
             dest: config.desktopOutput + "js/base.min.js"
@@ -19,6 +22,10 @@
         uiPhone: {
             src: [config.phoneOutput + "js/ui.js"],
             dest: config.phoneOutput + "js/ui.min.js"
+        },
+        singleFile: {
+            src: [config.desktopOutput + "js/WinJS.js"],
+            dest: config.desktopOutput + "js/WinJS.min.js"
         }
     };
 })();
