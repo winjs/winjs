@@ -54,69 +54,6 @@ function enableWebunitErrorHandler(enable) {
     }
 };
 
-if (isWinRTEnabled()) {
-    // Start - GC related code
-    var MemWatcher_host = new Windows.Foundation.Uri("about://blank");
-
-    // MemWatcher is a helper that enables checking if a given JS object
-    // has been garbage collected.
-    var MemWatcher = {
-        // Takes in a JS object that you want to track
-        // Returns a reference id
-        watch: function (obj) {
-            var guid = WinJS.Utilities._uniqueID(document.createElement("div"));
-            msSetWeakWinRTProperty(MemWatcher_host, guid, obj);
-            return guid;
-        },
-        // Takes in the reference returned by the watch()
-        // Returns the object if not GC'ed, else returns null
-        find: function (id) {
-            document.body.click();
-            window.focus();
-
-            for (var i = 0; i < 6; i++) {
-                CollectGarbage(i);
-                CollectGarbage(i);
-                CollectGarbage(i);
-            }
-
-            // Note: when IE is in script debug mode, msGetWeakWinRTProperty always returns null.
-            return msGetWeakWinRTProperty(MemWatcher_host, id);
-        },
-        // This function continuously polls to check if the object referenced by id
-        // has been garbage collected
-        // Takes in the reference id of the object, total polling duration and poll interval
-        // Returns a promise that succeeds if the object is GC'ed within the total poll duration
-        waitAsync: function (id, totalPollTime, pollInterval) {
-            var RETRY_TIME = pollInterval ? pollInterval : 500,//ms
-                attempts = 0,
-                totalTime = totalPollTime ? totalPollTime : 5000,//ms
-                startTime = Date.now();
-
-            LiveUnit.LoggingCore.logComment("Poll interval: " + RETRY_TIME);
-            LiveUnit.LoggingCore.logComment("Total poll duration: " + totalTime);
-
-            var promise = asyncWhile(function () {
-                var elapsedTime = Date.now() - startTime;
-                if (elapsedTime >= totalTime) {
-                    // on timeout, cancel the promise chain.
-                    return WinJS.Promise.wrapError("timeout");
-                } else {
-                    attempts++;
-                    LiveUnit.LoggingCore.logComment("Attempt number: " + attempts);
-                    LiveUnit.LoggingCore.logComment("elapsedTime: " + elapsedTime);
-                    return (MemWatcher.find(id) !== null);
-                }
-            }, function () {
-                return WinJS.Promise.timeout(RETRY_TIME);
-            });
-
-            return promise;
-        }
-    }
-}
-// End - GC related code
-
 // A utility function that returns a function that returns a timeout promise of the given value
 function weShouldWait(delay) {
     return function (value) {
@@ -578,4 +515,5 @@ var Helper;
         testObj[disabledName] = testObj[testName];
         delete testObj[testName];
     };
+
 })(Helper || (Helper = {}));

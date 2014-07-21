@@ -64,13 +64,12 @@ TooltipAlignmentTests = function () {
                 case "beforeclose":
                     // Verify the changed text is centered too (see Win8 bug: 275298)
                     LiveUnit.Assert.areEqual(tooltipUtils.getTooltipAlignmentFromElement(tooltip), "horizontal center");
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
                     completed = true;
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -115,13 +114,12 @@ TooltipAlignmentTests = function () {
                 case "beforeclose":
                     // Verify the changed placement is centered too (see Win8 bug: 292981)
                     LiveUnit.Assert.areEqual(tooltipUtils.getTooltipAlignmentFromElement(tooltip), "vertical center");
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     completed = true;
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -166,13 +164,12 @@ TooltipAlignmentTests = function () {
                     tooltipUtils.getTooltipDistanceFromElement(tooltip);
                     tooltipUtils.getTooltipDistanceFromWindow(tooltip);
 
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     completed = true;
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     }
 
     // Element in the center

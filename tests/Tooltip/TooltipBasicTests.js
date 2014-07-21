@@ -61,48 +61,6 @@ TooltipBasicTests = function () {
         LiveUnit.Assert.areEqual(tooltip.extraClass, "dummyClass");
     };
     
-    
-    
-    
-
-    // Verify passing incorrect values for the DOM element causes failure
-    this.testTooltip_Instantiation_element = function () {
-        function testBadCreation(element, expectingDOMException) {
-            LiveUnit.LoggingCore.logComment("Testing element of: " + element);
-            var exception = null;
-            var tooltip;
-            try {
-                tooltip = new WinJS.UI.Tooltip(element);
-            } catch (e) {
-                exception = e;
-                LiveUnit.LoggingCore.logComment(exception.message);
-                LiveUnit.LoggingCore.logComment(exception.name);
-            }
-
-            // Due to changes in beta, we decided to not standardize any error messages,
-            // so just verify we either get an exception, or valid tooltip object.
-            if (expectingDOMException) {
-                LiveUnit.Assert.isNotNull(exception);
-            }
-            else {
-                // Even though we're creating an invalid tooltip, verify the tooltip object has been created.
-                LiveUnit.Assert.areNotEqual(typeof (tooltip), 'undefined');
-            }
-        }
-        testBadCreation(null, false);
-        testBadCreation(false, false);
-        testBadCreation(true, true);
-        testBadCreation("0", true);
-        testBadCreation("1", true);
-        testBadCreation("string", true);
-        testBadCreation("", false);
-        testBadCreation(undefined, false);
-        testBadCreation(NaN, false);
-    };
-    
-    
-    
-    
 
     // Verify passing incorrect values for the element property causes failure.
     // This property is set AFTER the tooltip is created.

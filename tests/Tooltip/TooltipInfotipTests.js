@@ -124,12 +124,11 @@ TooltipInfotipTests = function () {
                         LiveUnit.Assert.isTrue(displayTime < (expectedDisplayTime + toleranceDisplayTime));
                     }
 
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     }
 
     this.testTooltip_InfotipTrue = function (signalTestCaseCompleted) {

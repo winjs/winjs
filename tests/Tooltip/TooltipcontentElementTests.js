@@ -62,13 +62,12 @@ TooltipContentElementTests = function () {
 
                     // mouse out of the tooltip which should dismiss it.
                     commonUtils.mouseOverUsingMiP(element, null);
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     completed = true;
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     

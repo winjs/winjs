@@ -54,7 +54,12 @@ TooltipHidingTests = function () {
         // set up the tooltip
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "tooltip" });
 
-        var TOOLTIP_SHOULD_HAVE_STARTED_CLOSING_BY_NOW_TIME = WinJS.UI._animationTimeAdjustment(1000);
+        tooltip._setTimeout = function(callback, delay) {
+            callback();
+        }
+
+        
+
         var openedTime;
         var beforecloseTime;
         var tooltipHidItself = true;
@@ -111,22 +116,13 @@ TooltipHidingTests = function () {
                             LiveUnit.Assert.fail("Unknown hideMethod: " + hideMethod);
                             break;
                     }
-                    // Tooltips normally fade out after around 5 seconds for keyboard and mouse.
-                    // Set up a timer to catch if the tooltip didn't immediately hide itself in response to our hideMethod.
-                    window.tooltipEventListener = tooltipEventListener;
-                    window.timerForListener = setTimeout("window.tooltipEventListener({type:'tooltipDidntHideItself'});",
-                        tooltipUtils.DEFAULT_MESSAGE_DURATION / 2);
-                    break;
-                case "tooltipDidntHideItself":
-                    // Tooltip isn't closing, so force it to close.
-                    // If this doesn't close it, something is extremely wrong with the tooltip.
-                    tooltipHidItself = false;
-                    tooltip.close();
+                    if(tooltip._isShown) {
+                        tooltipHidItself = false;
+                        tooltip.close();
+                    }
                     break;
                 case "beforeclose":
                     beforecloseTime = (new Date()).getTime();
-                    clearTimeout(window.timerForListener);
-                    window.timerForLisener = null;
                     break;
                 case "closed":
                     // Display the times just for debugging purposes.
@@ -141,12 +137,11 @@ TooltipHidingTests = function () {
                     else {
                         LiveUnit.Assert.isFalse(tooltipHidItself);
                     }
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     }
 
 

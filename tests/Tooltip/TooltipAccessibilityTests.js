@@ -14,6 +14,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/util.js" />
 /// <reference path="TooltipUtils.js"/>
 /// <reference path="Tooltip.css"/>
 
@@ -58,16 +59,6 @@ TooltipAccessibilityTests = function () {
                     break;
                 case "beforeopen":
                     LiveUnit.Assert.isNull(tooltip._anchorElement.getAttribute("aria-describedby"));
-
-                    // The tooltip DOM isn't created until after "beforeopen" returns so
-                    // lets immediately fire another event and check the tooltip's DOM
-                    // then.  We have to add the tooltipEventListener as a property
-                    // of a global object (let's try window), otherwise it's not available to setTimeout().
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'beforeopen+1'});");
-                    break;
-                case "beforeopen+1":
-                    LiveUnit.Assert.isNotNull(tooltip._anchorElement.getAttribute("aria-describedby"));
                     break;
                 case "opened":
                     LiveUnit.Assert.areEqual(tooltip._domElement.getAttribute("role"), "tooltip");
@@ -98,22 +89,14 @@ TooltipAccessibilityTests = function () {
                     if (hidden) {
                         LiveUnit.Assert.areEqual(hidden, "false");
                     }
-                    // The tooltip DOM is gone in the "closed" event, so just test it right after beforeclose.
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'beforeclose+1'});");
-                    break;
-                case "beforeclose+1":
-                    LiveUnit.Assert.isNotNull(tooltip._anchorElement.getAttribute("aria-describedby"));
                     break;
                 case "closed":
                     LiveUnit.Assert.isNull(tooltip._anchorElement.getAttribute("aria-describedby"));
-                    window.tooltipEventListener = null;
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
 
     

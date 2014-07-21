@@ -68,13 +68,12 @@ TooltipPlacementTests = function () {
                     tooltipUtils.getTooltipDistanceFromElement(tooltip);
                     tooltipUtils.getTooltipDistanceFromWindow(tooltip);
 
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     testComplete = true;
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     }
 
     // Element in the center

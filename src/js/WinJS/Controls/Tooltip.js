@@ -580,7 +580,7 @@ define([
                         if (this._hideDelay !== "never") {
                             var that = this;
                             var delay = this._infotip ? Math.min(3 * messageDuration, HIDE_DELAY_MAX) : messageDuration;
-                            this._hideDelayTimer = _Global.setTimeout(function () {
+                            this._hideDelayTimer = this._setTimeout(function () {
                                 that._onDismiss();
                             }, delay);
                         }
@@ -858,14 +858,14 @@ define([
                         }
                     }
 
-                    _Global.clearTimeout(this._delayTimer);
-                    _Global.clearTimeout(this._hideDelayTimer);
+                    this._clearTimeout(this._delayTimer);
+                    this._clearTimeout(this._hideDelayTimer);
 
                     // Set the delay time
                     var delay = this._decideOnDelay(type);
                     if (delay > 0) {
                         var that = this;
-                        this._delayTimer = _Global.setTimeout(function () {
+                        this._delayTimer = this._setTimeout(function () {
                             that._showTooltip(type);
                         }, delay);
                     } else {
@@ -899,6 +899,14 @@ define([
                         this._raiseEvent("beforeclose");
                         this._raiseEvent("closed");
                     }
+                },
+
+                _setTimeout: function(callback, delay) {
+                    return _Global.setTimeout(callback, delay);
+                },
+
+                _clearTimeout: function(id) {
+                    _Global.clearTimeout(id);
                 }
             }, {
 

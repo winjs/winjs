@@ -64,12 +64,11 @@ TooltipDisplayingTests = function () {
 
                     // fire mouse out which should dismiss the tooltip.
                     commonUtils.mouseOverUsingMiP(element, null);
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -135,12 +134,11 @@ TooltipDisplayingTests = function () {
                     LiveUnit.Assert.areEqual(element.title, "titlebeforeclose");
                     LiveUnit.Assert.areEqual(tooltip.innerHTML, "tooltip");
 
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -156,7 +154,7 @@ TooltipDisplayingTests = function () {
         tooltipUtils.positionElement(element, "center");
 
         // set up the tooltip
-        var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "<div>beforeopen</div>" });
+        var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "<div>opened</div>" });
         LiveUnit.Assert.isFalse(tooltipUtils.isTooltipFullyVisible(tooltip));
 
         function tooltipEventListener(event) {
@@ -170,20 +168,6 @@ TooltipDisplayingTests = function () {
                     tooltipUtils.displayTooltip("mouse", element);
                     break;
                 case "beforeopen":
-                    // The tooltip DOM isn't created until after "beforeopen" returns so
-                    // lets immediately fire another event and check the tooltip's DOM
-                    // then.  We have to add the tooltipEventListener as a property
-                    // of a global object (let's try window), otherwise it's not available to setTimeout().
-                    LiveUnit.Assert.isFalse(tooltipUtils.isTooltipFullyVisible(tooltip));
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'beforeopen+1'});");
-                    break;
-                case "beforeopen+1":
-                    // Verify the tooltip text has changed.
-                    LiveUnit.Assert.areEqual(tooltip._domElement.innerHTML, "<div>beforeopen</div>");
-                    tooltip.innerHTML = "<div>opened</div>";
-                    LiveUnit.Assert.areEqual(tooltip._domElement.innerHTML, "<div>opened</div>");
-
                     LiveUnit.Assert.isFalse(tooltipUtils.isTooltipFullyVisible(tooltip));
                     break;
                 case "opened":
@@ -199,29 +183,17 @@ TooltipDisplayingTests = function () {
                 case "beforeclose":
                     // Verify the tooltip text has changed.
                     LiveUnit.Assert.areEqual(tooltip._domElement.innerHTML, "<div>beforeclose</div>");
-                    tooltip.innerHTML = "<div>beforeclose+1</div>";
-                    LiveUnit.Assert.areEqual(tooltip._domElement.innerHTML, "<div>beforeclose+1</div>");
-                    LiveUnit.Assert.isTrue(tooltipUtils.isTooltipFullyVisible(tooltip));
-
-                    // The tooltip DOM is gone in the "closed" event, so just test it right after beforeclose.
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'beforeclose+1'});");
-                    break;
-                case "beforeclose+1":
-                    // Verify the tooltip text has changed.
-                    LiveUnit.Assert.areEqual(tooltip._domElement.innerHTML, "<div>beforeclose+1</div>");
                     tooltip.innerHTML = "<div>closed</div>";
                     LiveUnit.Assert.areEqual(tooltip._domElement.innerHTML, "<div>closed</div>");
+                    LiveUnit.Assert.isTrue(tooltipUtils.isTooltipFullyVisible(tooltip));
                     break;
                 case "closed":
                     LiveUnit.Assert.isFalse(tooltipUtils.isTooltipFullyVisible(tooltip));
-                    window.tooltipEventListener = null;
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -287,12 +259,11 @@ TooltipDisplayingTests = function () {
                     LiveUnit.Assert.areNotEqual(tooltip._domElement.getAttribute("class").indexOf("win-tooltip"), -1);
                     break;
                 case "closed":
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -321,13 +292,9 @@ TooltipDisplayingTests = function () {
                     break;
                 case "beforeopen":
                     LiveUnit.Assert.isNull(tooltip._phantomDiv);
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'beforeopen+1'});");
-                    break;
-                case "beforeopen+1":
-                    LiveUnit.Assert.isNotNull(tooltip._phantomDiv);
                     break;
                 case "opened":
+                    LiveUnit.Assert.isNotNull(tooltip._phantomDiv);
                     // Verify the tooltip's styles.  Since this is just a DOM element, just check a few of
                     // them to verify the styles in .win-tooltip-phantom class are getting through.
                     LiveUnit.LoggingCore.logComment(tooltip._phantomDiv.getAttribute("class"));
@@ -358,23 +325,14 @@ TooltipDisplayingTests = function () {
                 case "beforeclose":
                     LiveUnit.LoggingCore.logComment(tooltip._phantomDiv.getAttribute("class"));
                     LiveUnit.Assert.areNotEqual(tooltip._phantomDiv.getAttribute("class").indexOf("win-tooltip-phantom"), -1);
-
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'beforeclose+1'});");
-                    break;
-                case "beforeclose+1":
-                    // Make sure Phantom div still exists.
-                    LiveUnit.Assert.isNotNull(tooltip._phantomDiv);
                     break;
                 case "closed":
                     LiveUnit.Assert.isNull(tooltip._phantomDiv);
-                    window.tooltipEventListener = null;
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -407,47 +365,36 @@ TooltipDisplayingTests = function () {
                 case "trigger":
                     tooltipUtils.displayTooltip("mouse", element);
                     break;
-                case "beforeopen":
-                    // The tooltip DOM isn't created yet, so fire another event.
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'beforeopen+1'});");
-                    break;
-                case "beforeopen+1":
-                    // We can't easily change the style of the tooltip's <div> _domElement (see Win8 Bug 271461), so just
-                    // manually add the css to the tooltip's DOM element.
-                    tooltip._domElement.setAttribute("class", tooltipClass + " tooltip-test-css");
-                    window.tooltipEventListener = null;
-                    break;
                 case "opened":
                     // Verify the tooltip's styles.  Since this is just a DOM element, just check a few of
                     // them to verify the styles in .win-tooltip class are getting through.
-                    LiveUnit.Assert.areNotEqual(tooltipClass.indexOf("tooltip-test-css"), -1);
+                    tooltip._domElement.setAttribute("class", tooltipClass + " tooltip-test-css");
+                    WinJS.Utilities._setImmediate(function() {
+                        // See Tooltip.css for the values
+                        var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
 
-                    // See Tooltip.css for the values
-                    var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
+                        // fontFamily is in the default stylesheet, but not specifically the tooltip section.
+                        // Make sure we can override it.
+                        LiveUnit.LoggingCore.logComment(tooltipStyle.fontFamily);
+                        Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
 
-                    // fontFamily is in the default stylesheet, but not specifically the tooltip section.
-                    // Make sure we can override it.
-                    LiveUnit.LoggingCore.logComment(tooltipStyle.fontFamily);
-                    Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
+                        // zIndex is specifically in .win-tooltip.  Make sure we can override it.
+                        LiveUnit.LoggingCore.logComment(tooltipStyle.zIndex);
+                        LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
 
-                    // zIndex is specifically in .win-tooltip.  Make sure we can override it.
-                    LiveUnit.LoggingCore.logComment(tooltipStyle.zIndex);
-                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
-
-                    // fire mouse out which should dismiss the tooltip.
-                    commonUtils.mouseOverUsingMiP(element, null);
+                        // fire mouse out which should dismiss the tooltip.
+                        commonUtils.mouseOverUsingMiP(element, null);
+                    });
                     break;
                 case "beforeclose":
                     LiveUnit.Assert.areNotEqual(tooltipClass.indexOf("tooltip-test-css"), -1);
                     break;
                 case "closed":
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -474,26 +421,8 @@ TooltipDisplayingTests = function () {
                 case "trigger":
                     tooltipUtils.displayTooltip("mouse", element);
                     break;
-                case "beforeopen":
-                    // The tooltip DOM isn't created yet, so fire another event.
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'beforeopen+1'});");
-                    break;
-                case "beforeopen+1":
-                    // zIndex is specifically in .win-tooltip.  Make sure we can override it using our extraClass.
-                    var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
-                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
-                    window.tooltipEventListener = null;
-                    break;
                 case "opened":
-                    var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
-
-                    // fontFamily is in the default stylesheet, but not specifically the tooltip section.
-                    // Make sure we can override it using our extraClass.
-                    Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
-
-                    // zIndex is specifically in .win-tooltip.  Make sure we can override it using extraClass.
-                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
+                    LiveUnit.Assert.areNotEqual(tooltip._domElement.className.indexOf("tooltip-test-css"), -1);
 
                     // Now remove the class and verify it does NOT get removed.  This is by design.
                     tooltip.extraClass = "";
@@ -503,17 +432,14 @@ TooltipDisplayingTests = function () {
                     break;
                 case "beforeclose":
                     // Verify the extraClass is still affecting us now.
-                    var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
-                    Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
-                    LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
+                    LiveUnit.Assert.areNotEqual(tooltip._domElement.className.indexOf("tooltip-test-css"), -1);
                     break;
                 case "closed":
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -545,18 +471,12 @@ TooltipDisplayingTests = function () {
                     break;
                 case "opened":
                     timesTooltipOpened++;
-                    var tooltipStyle = window.getComputedStyle(tooltip._domElement, null);
 
-                    // fontFamily is in the default stylesheet, but not specifically the tooltip section.
-                    // Make sure it's not being affected.
-                    // zIndex is specifically in the win-tooltip section.
                     if (timesTooltipOpened == 1) {
-                        Helper.Assert.areFontFamiliesEqual(tooltipStyle.fontFamily, "Courier New");
-                        LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9998);
+                        LiveUnit.Assert.areNotEqual(tooltip._domElement.className.indexOf("tooltip-test-css"), -1);
                     }
                     else {
-                        Helper.Assert.areFontFamiliesNotEqual(tooltipStyle.fontFamily, "Courier New");
-                        LiveUnit.Assert.areEqual(+tooltipStyle.zIndex, 9999);
+                        LiveUnit.Assert.areEqual(tooltip._domElement.className.indexOf("tooltip-test-css"), -1);
                     }
 
                     // fire mouse out which should dismiss the tooltip.
@@ -564,17 +484,16 @@ TooltipDisplayingTests = function () {
                     break;
                 case "closed":
                     if (timesTooltipOpened == 1) {
-                        tooltipUtils.fireTriggerEvent(tooltipEventListener);
                         tooltip.extraClass = "";
+                        tooltipUtils.fireTriggerEvent(tooltipEventListener);
                     }
                     else {
-                        tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                        signalTestCaseCompleted();
                     }
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
     
     
@@ -645,7 +564,7 @@ TooltipDisplayingTests = function () {
                     LiveUnit.Assert.areNotEqual(typeof (openedTime), 'undefined');
                     LiveUnit.Assert.areNotEqual(typeof (beforecloseTime), 'undefined');
 
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    signalTestCaseCompleted();
                     break;
                 default:
                     LiveUnit.Assert.fail("Unkown event received");
@@ -670,7 +589,6 @@ TooltipDisplayingTests = function () {
                 LiveUnit.Assert.fail("Unkown parameter " + howAddEventListeners);
                 break;
         }
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
 
     this.testTooltip_VerifyEvents = function (signalTestCaseCompleted) {
@@ -701,11 +619,25 @@ TooltipDisplayingTests = function () {
 
         // set up the tooltip on the element but not the child.
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "tooltip" });
+        var testFinished = false;
+        var callCount = 0;
+        tooltip._setTimeout = function(callback, delay) {
+
+            // after "opened" fires, the default "hide" timeout will get called,
+            // which we can ignore.
+            if(testFinished) {
+                return;
+            }
+
+            callCount++;
+            if(callCount > 1) {
+                LiveUnit.Assert.fail("Tooltip shouldn't close.");
+            } else {
+                callback();
+            }
+        }
 
         var beforeopen = 0;
-        var opened = 0;
-        var beforeclose = 0;
-        var closed = 0;
 
         function tooltipEventListener(event) {
             LiveUnit.Assert.isNotNull(event);
@@ -721,32 +653,16 @@ TooltipDisplayingTests = function () {
                     beforeopen++;
                     break;
                 case "opened":
-                    opened++;
+                    LiveUnit.Assert.areEqual(beforeopen, 1);
                     // Mouse over the child element which should NOT cause the tooltip to close and open again.
                     // This is primarily a test for Win8 bug 287368.
                     commonUtils.mouseOverUsingMiP(null, childElement);
-                    break;
-                case "beforeclose":
-                    beforeclose++;
-                    break;
-                case "closed":
-                    closed++;
-                    break;
-                case "5 seconds later":
-                    LiveUnit.Assert.areEqual(beforeopen, 1);
-                    LiveUnit.Assert.areEqual(opened, 1);
-                    LiveUnit.Assert.areEqual(beforeclose, 0);
-                    LiveUnit.Assert.areEqual(closed, 0);
-                    window.tooltipEventListener = null;
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
+                    testFinished = true;
+                    signalTestCaseCompleted();
                     break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
-
-        window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
-        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", tooltipUtils.DEFAULT_MESSAGE_DURATION);
     };
     
     
@@ -764,6 +680,23 @@ TooltipDisplayingTests = function () {
         // set up the tooltip on the element.
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: null });
 
+        var callCount = 0;
+        tooltip._setTimeout = function(callback, delay) {
+
+            callCount++;
+
+            LiveUnit.Assert.areEqual(1, callCount, "Tooltip should be cancelled.");
+
+            // let beforeopen fire
+            callback();
+            LiveUnit.Assert.areEqual(tooltipUtils.isTooltipFullyVisible(tooltip), false);
+            LiveUnit.Assert.areEqual(beforeopen, 1);
+            LiveUnit.Assert.areEqual(opened, 0);
+            LiveUnit.Assert.areEqual(beforeclose, 0);
+            LiveUnit.Assert.areEqual(closed, 0);
+            signalTestCaseCompleted();
+        }
+
         var beforeopen = 0;
         var opened = 0;
         var beforeclose = 0;
@@ -791,29 +724,12 @@ TooltipDisplayingTests = function () {
                 case "closed":
                     closed++;
                     break;
-                case "5 seconds later":
-                    LiveUnit.Assert.areEqual(tooltipUtils.isTooltipFullyVisible(tooltip), false);
-                    LiveUnit.Assert.areEqual(beforeopen, 1);
-                    LiveUnit.Assert.areEqual(opened, 0);
-                    LiveUnit.Assert.areEqual(beforeclose, 0);
-                    LiveUnit.Assert.areEqual(closed, 0);
-                    window.tooltipEventListener = null;
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
-                    break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
-
-        window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
-        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", tooltipUtils.DEFAULT_MESSAGE_DURATION);
     };
     
     
-    
-    
-    
-
     this.testTooltip_VerifyFocusDoesntDisplayTooltip = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
 
@@ -823,6 +739,10 @@ TooltipDisplayingTests = function () {
 
         // set up the tooltip on the element.
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: null });
+
+        tooltip._setTimeout = function(callback, delay) {
+            LiveUnit.Assert.fail("Tooltip should never display on focus");
+        }
 
         var beforeopen = 0;
         var opened = 0;
@@ -851,22 +771,15 @@ TooltipDisplayingTests = function () {
                 case "closed":
                     closed++;
                     break;
-                case "5 seconds later":
-                    LiveUnit.Assert.areEqual(tooltipUtils.isTooltipFullyVisible(tooltip), false);
-                    LiveUnit.Assert.areEqual(beforeopen, 0);
-                    LiveUnit.Assert.areEqual(opened, 0);
-                    LiveUnit.Assert.areEqual(beforeclose, 0);
-                    LiveUnit.Assert.areEqual(closed, 0);
-                    window.tooltipEventListener = null;
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
-                    break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
-
-        window.tooltipEventListener = LiveUnit.GetWrappedCallback(tooltipEventListener);
-        setTimeout("window.tooltipEventListener({type:'5 seconds later'});", tooltipUtils.DEFAULT_MESSAGE_DURATION);
+        LiveUnit.Assert.areEqual(tooltipUtils.isTooltipFullyVisible(tooltip), false);
+        LiveUnit.Assert.areEqual(beforeopen, 0);
+        LiveUnit.Assert.areEqual(opened, 0);
+        LiveUnit.Assert.areEqual(beforeclose, 0);
+        LiveUnit.Assert.areEqual(closed, 0);
+        signalTestCaseCompleted();
     };
     
     
@@ -884,6 +797,19 @@ TooltipDisplayingTests = function () {
         // set up the tooltip
         var tooltip = tooltipUtils.instantiate(tooltipUtils.defaultElementID, { innerHTML: "tooltip" });
 
+        var callCount = 0;
+        tooltip._setTimeout = function(callback, delay) {
+
+            callCount++;
+            LiveUnit.Assert.areEqual(1, callCount, "before close/close should not fire");
+
+            // let open fire
+            callback();
+            LiveUnit.Assert.isFalse(tooltipUtils.isTooltipFullyVisible(tooltip));
+            
+
+        }
+
         function tooltipEventListener(event) {
             LiveUnit.Assert.isNotNull(event);
             LiveUnit.LoggingCore.logComment(event.type);
@@ -894,16 +820,13 @@ TooltipDisplayingTests = function () {
                     // Display the tooltip.  Use touch since that makes the tooltip stay up forever.
                     tooltipUtils.displayTooltip("touch", element);
                     break;
-                case "beforeopen":
-                    break;
                 case "opened":
                     LiveUnit.Assert.isTrue(tooltipUtils.isTooltipFullyVisible(tooltip));
                     // remove the anchor from the DOM.  This should not trigger beforeclose and closed to fire.
                     // Win8 Bug 275290: If you remove the "anchor element" the tooltip is attached to from the DOM,
                     // you don't receive beforeclose and closed events
                     commonUtils.removeElementById(tooltipUtils.defaultElementID);
-                    window.tooltipEventListener = tooltipEventListener;
-                    setTimeout("window.tooltipEventListener({type:'several seconds later'});", (tooltipUtils.DEFAULT_MESSAGE_DURATION + tooltipUtils.DEFAULT_MESSAGE_DURATION / 5));
+                    signalTestCaseCompleted();
                     break;
                 case "beforeclose":
                     LiveUnit.Assert.fail("This should fail if win8 bug 275290 is fixed");
@@ -911,22 +834,10 @@ TooltipDisplayingTests = function () {
                 case "closed":
                     LiveUnit.Assert.fail("This should fail if win8 bug 275290 is fixed");
                     break;
-                case "several seconds later":
-                    LiveUnit.Assert.isFalse(tooltipUtils.isTooltipFullyVisible(tooltip));
-                    window.tooltipEventListener = null;
-                    tooltipUtils.fireSignalTestCaseCompleted(signalTestCaseCompleted);
-                    break;
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-        tooltipUtils.addSignalTestCaseCompleted(tooltip, signalTestCaseCompleted, tooltipUtils);
     };
-    
-    
-    
-    
-    
-
 };
 
 // Register the object as a test class by passing in the name

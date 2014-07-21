@@ -173,6 +173,11 @@ TooltipUtils.prototype = (function () {
             LiveUnit.Assert.isNull(exception, "Verify no exception occurred");
             LiveUnit.Assert.isNotNull(tooltip, "Verify tooltip creation succeeded");
 
+            // make tooltip events synchronous
+            tooltip._setTimeout = function(callback, delay) {
+                callback();
+            }
+
             return tooltip;
         },
 
@@ -473,18 +478,13 @@ TooltipUtils.prototype = (function () {
                     LiveUnit.Assert.fail("Unknown inputMethod" + inputMethod);
                     break;
             }
-            // Clean up after ourselves, since displaying the tooltip was probably triggered by calling
-            // the setupTooltipListener function.
-            window.tooltipEventListenerForDisplay = null;;
-            window.timerForDisplay = null;
         },
 
         fireTriggerEvent: function (tooltipEventListener) {
             // Trigger the tooltip after a short delay since LiveUnit runs all the tests in the same HTML page.
             // If we don't have a delay, we trigger the "reshow time" for the tooltip,
             // which displays the tooltip quicker and with no animation, and this can cause our tests to fail.
-            window.tooltipEventListenerForDisplay = LiveUnit.GetWrappedCallback(tooltipEventListener);
-            window.timerForDisplay = setTimeout("window.tooltipEventListenerForDisplay({type:'trigger'});", this.RESHOW_THRESHOLD);
+            tooltipEventListener({type:'trigger'});
         },
 
         // Common setup most of our tests use.
@@ -495,62 +495,6 @@ TooltipUtils.prototype = (function () {
             tooltip.addEventListener("closed", LiveUnit.GetWrappedCallback(tooltipEventListener));
 
             this.fireTriggerEvent(tooltipEventListener);
-        },
-
-        // We usually call signalTestCaseCompleted() when the tooltip closes, but if for some reason the tooltip never appears,
-        // we never call signalTestCaseCompleted, the system times out and "semi-crashes" and we lose any logging events.  This seems more
-        // of Web/LiveUnit's problem, but until this is fixed, lets just set up our own "timeout" timer, and fire the signalTestCompleted()
-        // after a timeout period.
-        addSignalTestCaseCompleted: function (tooltip, signalTestCaseCompleted, tooltipUtils, timeoutMilliseconds) {
-            /// <summary>
-            ///  Helper function that fires signalTestCaseCompleted when the tooltip closes, or if we simply timeout.
-            /// </summary>
-            /// <param name="tooltip" type="object">
-            ///  Win.UI.Tooltip object
-            /// </param>
-            function tooltipEventListenerForClosingOutTest(event) {
-                switch (event.type) {
-                    case "timeout":
-                        LiveUnit.Assert.isNotNull(event);
-                        LiveUnit.LoggingCore.logComment(event.type);
-                        tooltipUtils.logTooltipInformation(tooltip);
-
-                        LiveUnit.Assert.fail("Timing out.");
-                        window.tooltipEventListenerForTimeout = null;
-                        signalTestCaseCompleted();
-                        break;
-                }
-            }
-
-            if (!tooltip) {
-                LiveUnit.Assert.fail("Tooltip not available");
-                signalTestCaseCompleted();
-            }
-            else {
-                // Set up the timeout timer.
-                window.tooltipEventListenerForTimeout = LiveUnit.GetWrappedCallback(tooltipEventListenerForClosingOutTest);
-                window.timerForTimeout = setTimeout("window.tooltipEventListenerForTimeout({type:'timeout'});",
-                    ((timeoutMilliseconds === undefined) ? this.TIMEOUT_DIDNT_RECEIVE_EVENTS : timeoutMilliseconds));
-            }
-        },
-
-        // Companion function to addSignalTestCaseCompleted that stops the timeout timer and fires signalTestCaseCompleted().
-        fireSignalTestCaseCompleted: function (signalTestCaseCompleted) {
-            /// <summary>
-            ///  Helper function that fires signalTestCaseCompleted and stops the timeout timer.
-            /// </summary>
-            /// <param name="tooltip" type="object">
-            ///  Win.UI.Tooltip object
-            /// </param>
-
-            if (window.timerForTimeout) {
-                clearTimeout(window.timerForTimeout);
-            }
-            window.timerForTimeout = null;
-            window.tooltipEventListenerForTimeout = null;
-
-            signalTestCaseCompleted();
-        },
-
+        }
     };
 })();
