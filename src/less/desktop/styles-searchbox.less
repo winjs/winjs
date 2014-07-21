@@ -1,4 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+@import "../mixins.less";
+
 .win-searchbox {
     white-space: normal;
     position: relative;
@@ -76,9 +79,8 @@ Hide clear button in search box control.
 }
 
 .win-searchbox-suggestion-result {
+    #flex > .display-flex();
     padding: 0 18px;
-    display: -webkit-flex;
-    display: flex;
     height: 60px;
     font-family: "Segoe UI";
     font-size: 11pt;

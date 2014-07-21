@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+@import "../mixins.less";
+
 //
 // Date Picker
 //
 .win-datepicker {
-    display: inline-flex;
+    #flex > .display-inline-flex();
     height: auto;
     width: auto;
 }
@@ -35,7 +38,7 @@
 // Time Picker
 //
 .win-timepicker {
-    display: inline-flex;
+    #flex > .display-inline-flex();
     height: auto;
     width: auto;
 }
@@ -52,7 +55,7 @@
     margin-right: 0;
     margin-left: 20px;
 }
-.win-timepicker .win-timepicker-minute.win-order1:-ms-lang(@{rtl}), 
+.win-timepicker .win-timepicker-minute.win-order1:-ms-lang(@{rtl}),
 .win-timepicker .win-timepicker-minute.win-order0:-ms-lang(@{rtl}) {
     margin-left: 20px;
     margin-right: 0;

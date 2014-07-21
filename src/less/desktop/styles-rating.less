@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+@import "../mixins.less";
+
 .win-rating {
-    display: -ms-inline-flexbox;
-    display: -webkit-inline-flex;
-    display: inline-flex;
+    #flex > .display-inline-flex();
     height: auto;
     width: auto;
     white-space: normal;
@@ -12,9 +13,7 @@
 }
 
 .win-rating .win-star {
-    -ms-flex: 1 1 auto;
-    -webkit-flex: 1 1 auto;
-    flex: 1 1 auto;
+    #flex > .flex(1; 1; auto);
     height:28px;
     width: 28px;
     padding: 0 6px;
