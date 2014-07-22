@@ -143,8 +143,7 @@ Hide clear button in search box control.
 }
 
 .win-searchbox-suggestion-separator {
-    display: -ms-grid;
-    -ms-grid-columns: auto 1fr;
+    #flex > .display-flex();
     padding: 0 18px;
     height: 40px;
     font-family: "Segoe UI";
@@ -152,8 +151,7 @@ Hide clear button in search box control.
 }
 
 .win-searchbox-suggestion-separator hr {
-    -ms-grid-column: 2;
-    -ms-grid-row: 1;
+    #flex > .flex(@grow: 1);
     margin-top: 18px;
     border-style: solid;
     border-width: 1px 0px 0px 0px;
@@ -165,8 +163,6 @@ Hide clear button in search box control.
 }
 
 .win-searchbox-suggestion-separator div {
-    -ms-grid-column: 1;
-    -ms-grid-row: 1;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
