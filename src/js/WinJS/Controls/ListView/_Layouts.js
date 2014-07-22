@@ -213,8 +213,7 @@ define([
                 // so that we do the detection later when the app calls recalculateItemPosition/forceLayout.
                 
                 environmentDetails = {
-                    supportsCSSGrid: !!(browserStyleEquivalents["grid-row"] && browserStyleEquivalents["grid-rows"] && browserStyleEquivalents["grid-row-span"] &&
-                        browserStyleEquivalents["grid-column"] && browserStyleEquivalents["grid-columns"] && browserStyleEquivalents["grid-column-span"]),
+                    supportsCSSGrid: !!("-ms-grid-row" in _Global.document.documentElement.style),
                     // Detects Chrome flex issue 345433: Incorrect sizing for nested flexboxes
                     // https://code.google.com/p/chromium/issues/detail?id=345433
                     // With nested flexboxes, the inner flexbox's width is proportional to the number of elements intead

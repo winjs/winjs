@@ -4,6 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
@@ -724,7 +725,7 @@ var WinJSTests = WinJSTests || {};
             runTests(listview, tests);
         };
         this.generate("testMaximumRowsOrColumnsHorizontal", "GridLayout", testMaximumRowsOrColumnsHorizontal);
-        if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+        if (Helper.Browser.supportsCSSGrid) {
             this.generate("testMaximumRowsOrColumnsHorizontal", "CellSpanningLayout", testMaximumRowsOrColumnsHorizontal);
         }
 

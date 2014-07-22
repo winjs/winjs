@@ -1003,7 +1003,7 @@ var WinJSTests = WinJSTests || {};
             }).then(complete);
         };
     };
-    
+      
     WinJSTests.CellSpanningGridLayoutTests = function (complete) {
         var testRootEl;
         
@@ -2704,7 +2704,7 @@ var WinJSTests = WinJSTests || {};
         // is in the middle of measuring.
         // Regression test for WinBlue#281129.
         this.testCancelationWithDefaultItemInfo = function (complete) {
-            if (!WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+            if (!Helper.Browser.supportsCSSGrid) {
                 LiveUnit.LoggingCore.logComment("Cellspanning not supported on this platform.");
                 complete();
                 return;
@@ -2779,7 +2779,7 @@ var WinJSTests = WinJSTests || {};
     LiveUnit.registerTestClass("WinJSTests.UniformGridLayoutTests");
     LiveUnit.registerTestClass("WinJSTests.LayoutTests");
     
-    if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+    if (Helper.Browser.supportsCSSGrid) {
         LiveUnit.registerTestClass("WinJSTests.GroupedGridLayoutTests");
         LiveUnit.registerTestClass("WinJSTests.CellSpanningGridLayoutTests");
     }

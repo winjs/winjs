@@ -4,6 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
 /// <reference path="../TestData/ListView.less.css" />
@@ -251,7 +252,7 @@ WinJSTests.MultisizeTests = function () {
     this.generateLayout("GridLayout");
     this.generateLayout("GridLayout", true);
 
-    if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+    if (Helper.Browser.supportsCSSGrid) {
         this.generateLayout("CellSpanningLayout");
         this.generateLayout("CellSpanningLayout", true);
     }
@@ -1119,7 +1120,7 @@ WinJSTests.MultisizeTests = function () {
     };
 };
 
-if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+if (Helper.Browser.supportsCSSGrid) {
     // register the object as a test class by passing in the name
     LiveUnit.registerTestClass("WinJSTests.MultisizeTests");
 }

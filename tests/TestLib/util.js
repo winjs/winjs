@@ -332,6 +332,11 @@ var Helper;
         areFontFamiliesEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "fontFamily"),
         areFontFamiliesNotEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areNotEqual.bind(LiveUnit.Assert), "fontFamily")
     };
+    
+    Helper.Browser = {
+        // Taken from ListView's CSS grid feature detection
+        supportsCSSGrid: !!("-ms-grid-row" in document.documentElement.style)
+    };
 
     // Returns the group key for an item as defined by createData() below
     Helper.groupKey = function groupKey(item) {

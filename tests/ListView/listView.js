@@ -937,7 +937,7 @@ WinJSTests.ListView = function () {
     function generateTest(validator, failWhen, error, failingItem) {
         testFailingDataAdptor(validator, "GridLayout", failWhen, error, failingItem, false, false, "UniformGrid");
         testFailingDataAdptor(validator, "GridLayout", failWhen, error, failingItem, true, false, "UniformGrid");
-        if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+        if (Helper.Browser.supportsCSSGrid) {
             testFailingDataAdptor(validator, "GridLayout", failWhen, error, failingItem, false, false, "Multisize", defaultGetGroupInfo);
         }
 
@@ -1102,7 +1102,7 @@ WinJSTests.ListView = function () {
         ["noResponse", "notPermitted", "noLongerMeaningful"].forEach(function (error) {
             testFailingEdits(name, "GridLayout", error, action, false, false, "UniformGrid");
             testFailingEdits(name, "GridLayout", error, action, false, true, "UniformGrid");
-            if (WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+            if (Helper.Browser.supportsCSSGrid) {
                 testFailingEdits(name, "GridLayout", error, action, false, false, "Multisize", defaultGetGroupInfo);
             }
         })
@@ -1322,7 +1322,7 @@ WinJSTests.ListView = function () {
     // with cell spanning groups which use the default itemInfo function.
     // Regression test for WinBlue#384025.
     this.testResizeDuringCellSpanningMeasuring = function (complete) {
-        if (!WinJS.Utilities._browserStyleEquivalents["grid-column"]) {
+        if (!Helper.Browser.supportsCSSGrid) {
             LiveUnit.LoggingCore.logComment("Cellspanning layout not supported on this platform.");
             complete();
             return;

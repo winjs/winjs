@@ -4,6 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <deploy src="../TestData/" />
 
@@ -235,7 +236,7 @@ WinJSTests.PropertyTests = function () {
         },
         layout: {
             getValidValues: function () {
-                return (isPhone && WinJS.Utilities._browserStyleEquivalents["grid-column"]) ?
+                return (isPhone || !Helper.Browser.supportsCSSGrid) ?
                 [
                     new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.horizontal }),
                     new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.vertical }),
