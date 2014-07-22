@@ -642,11 +642,11 @@ define([
 
                         if (oldValue !== value) {
                             if (value === closedDisplayModes.none) {
-                                this._closedDisplayMode = closedDisplayModes.none;                               
+                                this._closedDisplayMode = closedDisplayModes.none;
                                 _ElementUtilities.removeClass(this._element, _Constants.minimalClass);
                             } else {
                                 // Minimal is default fallback.
-                                this._closedDisplayMode = closedDisplayModes.minimal;                                
+                                this._closedDisplayMode = closedDisplayModes.minimal;
                                 _ElementUtilities.addClass(this._element, _Constants.minimalClass);
                             }
 
@@ -1165,7 +1165,7 @@ define([
                     var beginningVisiblePixelHeight = this._visiblePixels[fromPosition],
                         endingVisiblePixelHeight = this._visiblePixels[toPosition],
                         distance = Math.abs(endingVisiblePixelHeight - beginningVisiblePixelHeight),
-                        offsetTop = (this._placement === _Constants.appBarPlacementTop) ? -distance : distance;                                                   
+                        offsetTop = (this._placement === _Constants.appBarPlacementTop) ? -distance : distance;
 
                     // Animate
                     this._element.style.opacity = 1;
@@ -1428,12 +1428,12 @@ define([
                     this._element.style.bottom = offSet.bottom;
                     this._element.style.top = offSet.top;
 
-                },                
+                },
 
                 _computePositionOffset: function AppBar_computePositionOffset() {
                     // Calculates and returns top and bottom offsets for the AppBar element, relative to the top or bottom edge of the visible
                     // document.
-                    var positionOffSet = {};                  
+                    var positionOffSet = {};
 
                     if (this._placement === _Constants.appBarPlacementBottom) {
                         // If the IHM is open, the bottom of the visual viewport may or may not be obscured 
