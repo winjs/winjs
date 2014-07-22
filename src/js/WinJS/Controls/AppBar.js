@@ -1442,7 +1442,7 @@ define([
                         positionOffSet.top = "";
                     } else if (this._placement === _Constants.appBarPlacementTop) {
                         positionOffSet.bottom = "";
-                        positionOffSet.top = this._getTopOfVisualViewport();
+                        positionOffSet.top = this._getTopOfVisualViewport() + "px";
                     }
 
                     return positionOffSet;
