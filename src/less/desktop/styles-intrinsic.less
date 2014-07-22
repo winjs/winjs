@@ -80,16 +80,13 @@ input[type=tel], input[type=url], input[type=search] {
     min-width: 64px;
     min-height: 28px;
     background-clip: border-box;
-    padding: 0px 8px;
+    padding: 0 8px;
     outline: 0;
     .win-type-medium-internal();
 }
 
 input::-ms-value {
-    margin-right: 0px;
-    margin-top: 4px;
-    margin-bottom: 0px;
-    margin-left: 0px;
+    margin: 0;
 }
 
 //
@@ -172,6 +169,7 @@ input[type=submit], button[type=submit] {
 }
 
 input::-ms-clear, input::-ms-reveal {
+    margin-right: -8px;
     margin-left: 2px;
 }
 input:-ms-lang(@{rtl})::-ms-clear,
