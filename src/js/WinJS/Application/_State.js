@@ -248,7 +248,7 @@ define([
         initWithStub();
     }
 
-    var sessionState;
+    var sessionState = {};
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Application", {
         sessionState: {

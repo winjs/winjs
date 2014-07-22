@@ -210,7 +210,16 @@ define([
                         return this._orientation;
                     },
                     set: function (value) {
+                        if (value === this._orientation) {
+                            return;
+                        }
                         this._measured = false;
+                        // clear existing scroll before we switch orientation
+                        if (this._names) { // handle setting orientation before we measure
+                            var newScrollPos = {};
+                            newScrollPos[this._names.scrollPos] = 0;
+                            _ElementUtilities.setScrollPosition(this._viewportElement, newScrollPos);
+                        }
                         if (value === _UI.Orientation.vertical) {
                             _ElementUtilities.removeClass(this.element, Hub._ClassName.hubHorizontal);
                             _ElementUtilities.addClass(this.element, Hub._ClassName.hubVertical);
