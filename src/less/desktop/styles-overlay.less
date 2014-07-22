@@ -256,7 +256,7 @@ AppBar
     &.win-appbar-hiding .win-appbar-invokebutton,
     &.win-appbar-hidden .win-appbar-invokebutton {
         width: 100%;
-}
+    }
 
     .win-appbar-invokebutton {
         width: 40px;
@@ -267,6 +267,7 @@ AppBar
         padding: 0px;
         border: none;
         min-width: 0px;
+        display: none;
 
         .win-appbar-ellipsis {
             width: 36px;
@@ -296,13 +297,27 @@ AppBar
     &.win-top .win-appbar-invokebutton .win-appbar-ellipsis {
         bottom: 0px;
     }
+
+     &.win-appbar-minimal {
+        // Minimal AppBar makes room for the invokeButton.
+        padding-right: 40px;
+        width: ~"calc(100% - 40px)";
+
+        .win-appbar-invokebutton {
+            display:block;
+        }
+    }
 }
 
 /*
 AppBar commands layout
 */
 .win-commandlayout {
-    min-height: 88px;
+    &.win-appbar-showing,
+    &.win-appbar-shown,
+    &.win-appbar-hiding {
+        min-height: 88px;
+    }
     #flex > .display-flex();
     #flex > .flex-direction(row);
     #flex > .flex-wrap(nowrap);
@@ -384,7 +399,16 @@ AppBar commands layout
     padding-left: 10px;
     padding-right: 10px;
     width: ~"calc(100% - 20px)";
-    min-height: 68px;
+    &.win-appbar-showing,
+    &.win-appbar-shown,
+    &.win-appbar-hiding {
+        min-height: 68px;
+    }
+
+    &.win-appbar-minimal{
+        padding-right: 40px;
+        width: ~"calc(100% - 50px)"; // 100% - left & right padding.
+    }
 }
 
 /*
@@ -429,12 +453,20 @@ High contrast AppBar needs a border
     }
 
     .win-commandlayout {
-        min-height: 86px;
+        &.win-appbar-showing,
+        &.win-appbar-shown,
+        &.win-appbar-hiding {
+            min-height: 86px;
+        }
     }
 
     /* High Contrast Reduced sizes slightly different */
     .win-commandlayout.win-reduced {
-        min-height: 66px;
+        &.win-appbar-showing,
+        &.win-appbar-shown,
+        &.win-appbar-hiding {
+            min-height: 66px;
+        }
     }
 
     .win-appbar.win-reduced.win-top hr.win-command {

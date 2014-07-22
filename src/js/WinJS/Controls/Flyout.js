@@ -789,7 +789,7 @@ define([
 
                 // Hide all other flyouts besides this one
                 _hideAllOtherFlyouts: function Flyout_hideAllOtherFlyouts(thisFlyout) {
-                    var flyouts = _Global.document.querySelectorAll(_Constants.flyoutSelector);
+                    var flyouts = _Global.document.querySelectorAll("." + _Constants.flyoutClass);
                     for (var i = 0; i < flyouts.length; i++) {
                         var flyoutControl = flyouts[i].winControl;
                         if (flyoutControl && !flyoutControl.hidden && (flyoutControl !== thisFlyout)) {
@@ -800,7 +800,7 @@ define([
 
                 // Returns true if there is a flyout in the DOM that is not hidden
                 _isThereVisibleFlyout: function Flyout_isThereVisibleFlyout() {
-                    var flyouts = _Global.document.querySelectorAll(_Constants.flyoutSelector);
+                    var flyouts = _Global.document.querySelectorAll("." + _Constants.flyoutClass);
                     for (var i = 0; i < flyouts.length; i++) {
                         var flyoutControl = flyouts[i].winControl;
                         if (flyoutControl && !flyoutControl.hidden) {

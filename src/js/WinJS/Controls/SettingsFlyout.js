@@ -68,7 +68,7 @@ define([
             // Get the settings control by matching the settingsCommandId
             // if no match we'll try to match element id
             function _getChildSettingsControl(parentElement, id) {
-                var settingElements = parentElement.querySelectorAll(_Constants.settingsFlyoutSelector);
+                var settingElements = parentElement.querySelectorAll("." + _Constants.settingsFlyoutClass);
                 var retValue,
                     control;
                 for (var i = 0; i < settingElements.length; i++) {

@@ -304,7 +304,7 @@ define([
 
                         // Hiding, but not none
                         this._element.style.display = "";
-                            this._element.style.visibility = "hidden";
+                        this._element.style.visibility = "hidden";
 
                         // In case their event is going to manipulate commands, see if there are
                         // any queued command animations we can handle while we're still hidden.
@@ -1072,7 +1072,7 @@ define([
                 _flyoutEdgeLightDismissEvent: false,
 
                 _hideFlyouts: function (testElement, notSticky) {
-                    var elements = testElement.querySelectorAll(_Constants.flyoutSelector);
+                    var elements = testElement.querySelectorAll("." + _Constants.flyoutClass);
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
                         var element = elements[i];
@@ -1086,7 +1086,7 @@ define([
                 },
 
                 _hideSettingsFlyouts: function (testElement, notSticky) {
-                    var elements = testElement.querySelectorAll(_Constants.settingsFlyoutSelector);
+                    var elements = testElement.querySelectorAll("." + _Constants.settingsFlyoutClass);
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
                         var element = elements[i];
@@ -1218,7 +1218,7 @@ define([
                 _showClickEatingDivAppBar: function () {
                     Scheduler.schedule(function Overlay_async_showClickEatingDivAppBar() {
                         if (_Overlay._clickEatingAppBarDiv) {
-                        _Overlay._clickEatingAppBarDiv.style.display = "block";
+                            _Overlay._clickEatingAppBarDiv.style.display = "block";
                         }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._showClickEatingDivAppBar");
                 },
@@ -1226,7 +1226,7 @@ define([
                 _hideClickEatingDivAppBar: function () {
                     Scheduler.schedule(function Overlay_async_hideClickEatingDivAppBar() {
                         if (_Overlay._clickEatingAppBarDiv) {
-                        _Overlay._clickEatingAppBarDiv.style.display = "none";
+                            _Overlay._clickEatingAppBarDiv.style.display = "none";
                         }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._hideClickEatingDivAppBar");
                 },
@@ -1234,7 +1234,7 @@ define([
                 _showClickEatingDivFlyout: function () {
                     Scheduler.schedule(function Overlay_async_showClickEatingDivFlyout() {
                         if (_Overlay._clickEatingFlyoutDiv) {
-                        _Overlay._clickEatingFlyoutDiv.style.display = "block";
+                            _Overlay._clickEatingFlyoutDiv.style.display = "block";
                         }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._showClickEatingDivFlyout");
                 },
@@ -1242,7 +1242,7 @@ define([
                 _hideClickEatingDivFlyout: function () {
                     Scheduler.schedule(function Overlay_async_hideClickEatingDivFlyout() {
                         if (_Overlay._clickEatingFlyoutDiv) {
-                        _Overlay._clickEatingFlyoutDiv.style.display = "none";
+                            _Overlay._clickEatingFlyoutDiv.style.display = "none";
                         }
                     }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._hideClickEatingDivFlyout");
                 },
@@ -1279,8 +1279,8 @@ define([
                     }
                     // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
                     if (active &&
-                        (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
-                         _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
+                            (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
+                             _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
                         return;
                     }
 

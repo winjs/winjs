@@ -21,7 +21,8 @@ define([
         showingClass : "win-appbar-showing",
         shownClass : "win-appbar-shown",
         hidingClass : "win-appbar-hiding",
-        hiddenClass : "win-appbar-hidden",
+        hiddenClass: "win-appbar-hidden",
+        minimalClass: "win-appbar-minimal",
 
         // Constants for AppBar placement
         appBarPlacementTop: "top",
@@ -53,12 +54,10 @@ define([
         // Other class names
         overlayClass: "win-overlay",
         flyoutClass: "win-flyout",
-        flyoutSelector: ".win-flyout",
         flyoutLightClass: "win-ui-light",
         menuClass: "win-menu",
         menuToggleClass: "win-menu-toggle",
         settingsFlyoutClass: "win-settingsflyout",
-        settingsFlyoutSelector: ".win-settingsflyout",
         scrollsClass: "win-scrolls",
 
         // Constants for AppBarCommand full-size widths.

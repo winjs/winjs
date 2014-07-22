@@ -1504,7 +1504,7 @@ CorsicaTests.AppBarTests = function () {
         then(function () { return testInvokeBehavior(actions.click(bottomBar)); }).
         then(function () { return testInvokeBehavior(actions.tap(bottomBar)); }).
         done(function () { complete(); });
-    };
+    };    
 }
 
 // register the object as a test class by passing in the name
