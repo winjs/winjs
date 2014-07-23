@@ -15,7 +15,7 @@ define([
 
     var _keyboardSeenLast = false;
 
-    _Global.addEventListener("pointerdown", function () {
+    _ElementUtilities._addEventListener(_Global, "pointerdown", function () {
         if (_keyboardSeenLast) {
             _keyboardSeenLast = false;
         }
@@ -42,7 +42,7 @@ define([
             // so that you can style .foo.win-keyboard:focus vs .foo:focus to add a keyboard rect
             // on an item only when the last input method was keyboard.
             // Reminder: Touch edgy does not count as an input method.
-            element.addEventListener("pointerdown", function (ev) {
+            _ElementUtilities._addEventListener(element, "pointerdown", function (ev) {
                 // In case pointer down came on the active element.
                 _ElementUtilities.removeClass(ev.target, "win-keyboard");
             }, true);
@@ -124,7 +124,7 @@ define([
                 _Control.setOptions(this, options);
 
                 this._element.addEventListener('keydown', this._keyDownHandler.bind(this));
-                this._element.addEventListener('pointerdown', this._MSPointerDownHandler.bind(this));
+                _ElementUtilities._addEventListener(this._element, 'pointerdown', this._MSPointerDownHandler.bind(this));
                 this._element.addEventListener("beforeactivate", this._beforeActivateHandler.bind(this));
             }, {
                 element: {
