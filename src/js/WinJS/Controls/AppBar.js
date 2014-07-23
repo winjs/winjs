@@ -947,8 +947,11 @@ define([
                         _Overlay._Overlay._hideLightDismissAppBars(null, true);
                     }
 
-                    // Layout might want to handle additional keys
-                    this._layout.handleKeyDown(event);
+                    // If the current active element isn't an intrinsic part of the AppBar, 
+                    // Layout might want to handle additional keys. 
+                    if (!this._invokeButton.contains(_Global.document.activeElement)) {
+                        this._layout.handleKeyDown(event);
+                    }
                 },
 
                 _visiblePixels: {
@@ -958,7 +961,7 @@ define([
                             hidden: knownVisibleHeights.hidden,
                             minimal: knownVisibleHeights.minimal,
                             // Element can change size as content gets added or removed or if it 
-                            // experinces style changes. We have to look this up at run time.      
+                            // experinces style changes. We have to look this up at run time.
                             shown: this._element.offsetHeight,
                         };
                     }
@@ -967,7 +970,7 @@ define([
                 _visiblePosition: {
                     // Returns string value of our nearest, stationary, visible position.
                     get: function () {
-                        // If we're animating into a new posistion, return the position we're animating into.  
+                        // If we're animating into a new posistion, return the position we're animating into.
                         if (this._animating && displayModeVisiblePositions[this._element.winAnimating]) {
                             return this._element.winAnimating;
                         } else {
