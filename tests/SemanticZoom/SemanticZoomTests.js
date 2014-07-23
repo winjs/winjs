@@ -12,15 +12,15 @@ var WinJSTests = WinJSTests || {};
 
 WinJSTests.SemanticZoomTests = function () {
     "use strict";
-    
+
     var testRootEl;
-    
+
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         var newNode = document.createElement("div");
         newNode.id = "SemanticZoomTests";
         newNode.innerHTML =
@@ -346,7 +346,6 @@ WinJSTests.SemanticZoomTests = function () {
         that["testSezoOpacityAndVisibilityWithoutResizeGridLayout"] = generateTest("GridLayout", false);
     })();
 
-
     (function () {
         function generateTest(layoutName, dsType) {
             return function (complete) {
@@ -455,7 +454,7 @@ WinJSTests.SemanticZoomTests = function () {
                     }).
                     then(function () {
                         return WinJS.Promise.join([waitForReady(listDiv1.winControl)(), waitForReady(listDiv2.winControl)()]);
-                    }).                    
+                    }).
                     done(complete, function (er) {
                         throw er;
                     });
@@ -759,10 +758,10 @@ WinJSTests.SemanticZoomTests = function () {
         childDiv1.winControl = {
             zoomableView: {
                 pinching: false,
-                getPanAxis: function() {
+                getPanAxis: function () {
                     return "horizontal";
                 },
-                configureForZoom: function() {
+                configureForZoom: function () {
                     //noop
                 }
             }
@@ -771,10 +770,10 @@ WinJSTests.SemanticZoomTests = function () {
         childDiv2.winControl = {
             zoomableView: {
                 pinching: false,
-                getPanAxis: function() {
+                getPanAxis: function () {
                     return "horizontal";
                 },
-                configureForZoom: function() {
+                configureForZoom: function () {
                     //noop
                 }
             }
@@ -788,7 +787,7 @@ WinJSTests.SemanticZoomTests = function () {
         sezo._pinching = true;
         LiveUnit.Assert.areEqual(true, childDiv1.winControl.zoomableView.pinching);
         LiveUnit.Assert.areEqual(true, childDiv2.winControl.zoomableView.pinching);
-        
+
         sezo._pinching = false;
         LiveUnit.Assert.areEqual(false, childDiv1.winControl.zoomableView.pinching);
         LiveUnit.Assert.areEqual(false, childDiv2.winControl.zoomableView.pinching);
