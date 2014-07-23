@@ -138,7 +138,6 @@
         "WinJSTests.LayoutTests.testAssureMarginRuleSpecificityDoesNotTrumpWin8",
         "WinJSTests.LayoutTests.testDefaultItemsContainerMargins",
         "WinJSTests.LayoutTests.testMeasuringContainerWithZeroSizedPlaceholder",
-        "WinJSTests.LayoutTests.testSurfaceLength",
         
         "WinJSTests.LayoutTestsExtra.testCSSChange",
         "WinJSTests.LayoutTestsExtra.testChangeLayout",
