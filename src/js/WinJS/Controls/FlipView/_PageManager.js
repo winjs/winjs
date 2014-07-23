@@ -181,27 +181,35 @@ define([
                         return;
                     }
 
-                    if (horizontal !== this._horizontal) {
-                        this._isOrientationChanging = true;
-                        this._horizontal = horizontal;
-                        this._forEachPage(function (curr) {
+                    if (horizontal === this._horizontal) {
+                        return;
+                    }
+
+                    this._isOrientationChanging = true;
+
+                    if (this._horizontal) {
+                        _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: this._getItemStart(this._currentPage), scrollTop: 0});
+                    } else {
+                        _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: 0, scrollTop: this._getItemStart(this._currentPage)});
+                    }
+                    this._horizontal = horizontal;
+
+                    var containerStyle = this._panningDivContainer.style;
+                    containerStyle.overflowX = "hidden";
+                    containerStyle.overflowY = "hidden";
+
+                    var that = this;
+                    _Global.requestAnimationFrame(function () {
+                        that._isOrientationChanging = false;
+                        that._forEachPage(function (curr) {
                             var currStyle = curr.pageRoot.style;
                             currStyle.left = "0px";
                             currStyle.top = "0px";
                         });
-                        _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: 0, scrollTop: 0 });
-                        var containerStyle = this._panningDivContainer.style;
-                        containerStyle.overflowX = "hidden";
-                        containerStyle.overflowY = "hidden";
-
-                        var that = this;
-                        _Global.requestAnimationFrame(function () {
-                            that._isOrientationChanging = false;
-                            containerStyle.overflowX = ((that._horizontal && that._environmentSupportsTouch) ? "scroll" : "hidden");
-                            containerStyle.overflowY = ((that._horizontal || !that._environmentSupportsTouch) ? "hidden" : "scroll");
-                            that._ensureCentered();
-                        });
-                    }
+                        containerStyle.overflowX = ((that._horizontal && that._environmentSupportsTouch) ? "scroll" : "hidden");
+                        containerStyle.overflowY = ((that._horizontal || !that._environmentSupportsTouch) ? "hidden" : "scroll");
+                        that._ensureCentered();
+                    });
                 },
 
                 resetState: function (initialIndex) {
@@ -277,7 +285,7 @@ define([
                         return;
                     }
 
-                    while (this._currentPage.element && this._itemStart(this._currentPage) > newPos && this._currentPage.prev.element) {
+                    while (this._currentPage.element && this._getItemStart(this._currentPage) > newPos && this._currentPage.prev.element) {
                         this._currentPage = this._currentPage.prev;
                         this._fetchOnePrevious(bufferEnd.prev);
                         bufferEnd = bufferEnd.prev;
@@ -438,8 +446,8 @@ define([
                             incomingFlipPage.pageRoot.style.position = "absolute";
                             outgoingFlipPage.pageRoot.style.zIndex = 1;
                             incomingFlipPage.pageRoot.style.zIndex = 2;
-                            this._itemStart(outgoingFlipPage, 0, 0);
-                            this._itemStart(incomingFlipPage, 0, 0);
+                            this._setItemStart(outgoingFlipPage, 0);
+                            this._setItemStart(incomingFlipPage, 0);
                             this._blockTabs = true;
                             this._visibleElements.push(incomingElement);
                             this._announceElementVisible(incomingElement);
@@ -463,7 +471,7 @@ define([
                         if (!outgoingRemoved) {
                             // Advance only when the element in the current page was not removed because if it did, all the pages
                             // were shifted.
-                            this._viewportStart(this._itemStart(goForward ? this._currentPage.next : this._currentPage.prev));
+                            this._viewportStart(this._getItemStart(goForward ? this._currentPage.next : this._currentPage.prev));
                         }
                         this._navigationAnimationRecord = null;
                         this._itemSettledOn();
@@ -518,8 +526,8 @@ define([
                             newFlipPage.pageRoot.style.position = "absolute";
                             oldFlipPage.pageRoot.style.zIndex = 1;
                             newFlipPage.pageRoot.style.zIndex = 2;
-                            that._itemStart(oldFlipPage, 0, 0);
-                            that._itemStart(newFlipPage, that._itemSize(that._currentPage), 0);
+                            that._setItemStart(oldFlipPage, 0);
+                            that._setItemStart(newFlipPage, that._itemSize(that._currentPage));
                             that._visibleElements.push(newElement);
                             that._announceElementVisible(newElement);
                             that._navigationAnimationRecord.elementContainers = [oldFlipPage, newFlipPage];
@@ -845,7 +853,7 @@ define([
                                     animationPromises.push(that._changeFlipPage(curr, record.oldElement, record.newElement));
                                 }
                                 record.newLocation = curr.location;
-                                that._itemStart(curr, record.originalLocation);
+                                that._setItemStart(curr, record.originalLocation);
                                 if (record.inserted) {
                                     curr.elementRoot.style.opacity = 0.0;
                                 }
@@ -866,7 +874,7 @@ define([
                         function animateOldViewportItemRemoved(record, item) {
                             that._writeProfilerMark("WinJS.UI.FlipView:_animateOldViewportItemRemoved,info");
                             var removedPage = that._createDiscardablePage(item);
-                            that._itemStart(removedPage, record.originalLocation);
+                            that._setItemStart(removedPage, record.originalLocation);
                             animationPromises.push(that._deleteFlipPage(removedPage));
                         }
 
@@ -888,9 +896,9 @@ define([
                                 newLocation = record.newLocation;
                             }
                             if (movedPage) {
-                                that._itemStart(movedPage, record.originalLocation);
+                                that._setItemStart(movedPage, record.originalLocation);
                                 animationPromises.push(that._moveFlipPage(movedPage, function () {
-                                    that._itemStart(movedPage, newLocation);
+                                    that._setItemStart(movedPage, newLocation);
                                 }));
                             }
                         }
@@ -942,7 +950,7 @@ define([
                                                 (record === oldCurrentRecord && !oldCurrentRecord.moved) ||
                                                 (record === oldNextRecord && !oldNextRecord.moved)) {
                                                 animationPromises.push(that._moveFlipPage(curr, function () {
-                                                    that._itemStart(curr, record.newLocation);
+                                                    that._setItemStart(curr, record.newLocation);
                                                 }));
                                             }
                                         }
@@ -1184,7 +1192,7 @@ define([
 
                 _ensureCentered: function (delayBoundariesSet) {
                     this._writeProfilerMark("WinJS.UI.FlipView:_ensureCentered,info");
-                    this._itemStart(this._currentPage, leftBufferAmount * this._viewportSize());
+                    this._setItemStart(this._currentPage, leftBufferAmount * this._viewportSize());
                     var curr = this._currentPage;
                     while (curr !== this._prevMarker) {
                         this._movePageBehind(curr, curr.prev);
@@ -1201,7 +1209,7 @@ define([
                         this._setListEnds();
                         boundariesSet = true;
                     }
-                    this._lastScrollPos = this._itemStart(this._currentPage);
+                    this._lastScrollPos = this._getItemStart(this._currentPage);
                     this._viewportStart(this._lastScrollPos);
                     this._checkElementVisibility(true);
                     this._setupSnapPoints();
@@ -1545,7 +1553,7 @@ define([
                 },
 
                 _itemInView: function (flipPage) {
-                    return this._itemEnd(flipPage) > this._viewportStart() && this._itemStart(flipPage) < this._viewportEnd();
+                    return this._itemEnd(flipPage) > this._viewportStart() && this._getItemStart(flipPage) < this._viewportEnd();
                 },
 
                 _viewportStart: function (newValue) {
@@ -1584,17 +1592,16 @@ define([
                     return this._horizontal ? this._panningDivContainerOffsetWidth : this._panningDivContainerOffsetHeight;
                 },
 
-                _itemStart: function (flipPage, newValue) {
-                    if (newValue === undefined) {
-                        return flipPage.location;
-                    }
+                _getItemStart: function (flipPage) {
+                    return flipPage.location;
+                },
 
-                    if (this._horizontal) {
+                _setItemStart: function (flipPage, newValue) {
+                     if (this._horizontal) {
                         flipPage.pageRoot.style.left = (this._rtl ? -newValue : newValue) + "px";
                     } else {
                         flipPage.pageRoot.style.top = newValue + "px";
                     }
-
                     flipPage.location = newValue;
                 },
 
@@ -1608,12 +1615,12 @@ define([
 
                 _movePageAhead: function (referencePage, pageToPlace) {
                     var delta = this._itemSize(referencePage) + this._itemSpacing;
-                    this._itemStart(pageToPlace, this._itemStart(referencePage) + delta);
+                    this._setItemStart(pageToPlace, this._getItemStart(referencePage) + delta);
                 },
 
                 _movePageBehind: function (referencePage, pageToPlace) {
                     var delta = this._itemSize(referencePage) + this._itemSpacing;
-                    this._itemStart(pageToPlace, this._itemStart(referencePage) - delta);
+                    this._setItemStart(pageToPlace, this._getItemStart(referencePage) - delta);
                 },
 
                 _setupSnapPoints: function () {
@@ -1626,7 +1633,7 @@ define([
                     var snapInterval = viewportSize + this._itemSpacing;
                     var propertyName = "scroll-snap-points";
                     var startSnap = 0;
-                    var currPos = this._itemStart(this._currentPage);
+                    var currPos = this._getItemStart(this._currentPage);
                     startSnap = currPos % (viewportSize + this._itemSpacing);
                     containerStyle[styleEquivalents[(this._horizontal ? propertyName + "-x" : propertyName + "-y")].scriptName] = "snapInterval(" + startSnap + "px, " + snapInterval + "px)";
                 },
@@ -1665,15 +1672,15 @@ define([
                             }
                         }
 
-                        endScroll = this._itemStart(endNonEmptyPage);
-                        startScroll = this._itemStart(startNonEmptyPage);
+                        endScroll = this._getItemStart(endNonEmptyPage);
+                        startScroll = this._getItemStart(startNonEmptyPage);
                         containerStyle[startBoundaryStyle] = startScroll + "px";
                         containerStyle[endBoundaryStyle] = endScroll + "px";
                     }
                 },
 
                 _viewportOnItemStart: function () {
-                    return this._itemStart(this._currentPage) === this._viewportStart();
+                    return this._getItemStart(this._currentPage) === this._viewportStart();
                 },
 
                 _restoreAnimatedElement: function (oldPage, discardablePage) {
