@@ -121,7 +121,7 @@ RatingUtils.prototype = (function () {
                     LiveUnit.LoggingCore.logComment("Caught exception for WinBlue:280045 ... " + e.message);
                 }
             };
-            
+
             return WinJS.Promise.wrap();
         },
 
@@ -695,7 +695,14 @@ RatingUtils.prototype = (function () {
             var ratingControlStyle = window.getComputedStyle(element);
 
             LiveUnit.Assert.areEqual(Helper.translateCSSValue("display", "inline-flex"), ratingControlStyle.getPropertyValue("display"), "Overall element should be a flex box");
-            LiveUnit.Assert.areEqual("auto", ratingControlStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should not block panning at its root element.");
+
+            // Don't test touch action if it isn't supported
+            var touchActionSupported = "touchAction" in document.documentElement.style ||
+                                       "msTouchAction" in document.documentElement.style
+
+            if (touchActionSupported) {
+                LiveUnit.Assert.areEqual("auto", ratingControlStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should not block panning at its root element.");
+            }
 
             // Walk through the divs, verifying the proper number of star divs in the proper ratio of userRating/averageRating full stars followed by empty stars up to maxRating
             var rectElem = this.getClientRect(element);
@@ -730,8 +737,10 @@ RatingUtils.prototype = (function () {
                     if (expect === "disabled") {
                         LiveUnit.Assert.isTrue(this.classesMatch(this.parts.disabledFull, star.getAttribute("class")),
                             "Verify correct class used for partial star " + (i + 1) + ". Expected: '" + this.parts.disabledFull + "', Actual: '" + star.getAttribute("class") + "'");
-                        LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
-                    } else {
+                        if (touchActionSupported) {
+                            LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
+                        }
+                    } else if (touchActionSupported) {
                         LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action: none.");
                     }
 
@@ -770,8 +779,10 @@ RatingUtils.prototype = (function () {
                         if (expect === "disabled") {
                             LiveUnit.Assert.isTrue(this.classesMatch(this.parts.disabledEmpty, star.getAttribute("class")),
                                 "Verify correct class used for partial star " + (i + 1) + ". Expected: '" + this.parts.disabledEmpty + "', Actual: '" + star.getAttribute("class") + "'");
-                            LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
-                        } else {
+                            if (touchActionSupported) {
+                                LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
+                            }
+                        } else if (touchActionSupported) {
                             LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action: none.");
                         }
 
@@ -884,10 +895,12 @@ RatingUtils.prototype = (function () {
                     }
 
                     // Verify disabled stars enable panning
-                    if (expect === "disabled") {
-                        LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
-                    } else {
-                        LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action.");
+                    if (touchActionSupported) {
+                        if (expect === "disabled") {
+                            LiveUnit.Assert.areEqual("auto", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Disabled rating control should *not* block panning.  Verify star " + (i + 1) + " uses -ms-touch-action: auto.");
+                        } else {
+                            LiveUnit.Assert.areEqual("none", starStyle.getPropertyValue(Helper.translateCSSProperty("touch-action")), "Rating control should block panning at each star.  Verify star " + (i + 1) + " uses -ms-touch-action.");
+                        }
                     }
 
                     LiveUnit.Assert.isTrue(this.classesMatch(expectedClassName, star.getAttribute("class")),
