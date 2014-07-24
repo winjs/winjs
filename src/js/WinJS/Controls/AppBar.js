@@ -408,7 +408,7 @@ define([
 
                 // Need to set placement before closedDisplayMode, closedDisplayMode sets our starting position, which is dependant on placement.
                 this.placement = options.placement || _Constants.appBarPlacementBottom;
-                this.closedDisplayMode = options.closedDisplayMode || closedDisplayModes.none;
+                this.closedDisplayMode = options.closedDisplayMode || closedDisplayModes.minimal;
 
                 _Control.setOptions(this, options);
 
@@ -447,10 +447,10 @@ define([
                 // Need to hide ourselves if we lose focus
                 _ElementUtilities._addEventListener(this._element, "focusout", function () { _Overlay._Overlay._hideIfAllAppBarsLostFocus(); }, false);
 
-                // Commands layout AppBar measures and caches its content synchronously in setOptions through the .commands property setter.
-                // Remove the commands layout AppBar from the layout tree at this point so we don't cause unnecessary layout costs whenever
-                // the window resizes or when CSS changes are applied to the commands layout AppBar's parent element.
-                if (this.layout === _Constants.appBarLayoutCommands) {
+
+                if (this.closedDisplayMode === closedDisplayModes.none && this.layout === _Constants.appBarLayoutCommands) {
+                    // Remove the commands layout AppBar from the layout tree at this point so we don't cause unnecessary layout costs whenever
+                    // the window resizes or when CSS changes are applied to the commands layout AppBar's parent element.
                     this._element.style.display = "none";
                 }
 
@@ -1053,6 +1053,9 @@ define([
                         // also accounting for any viewport scrolling or soft keyboard positioning.                
                         this._ensurePosition();
 
+                        this._element.style.opacity = 1;
+                        this._element.style.visibility = "visible";
+
                         this._animationPromise = (performAnimation) ? this._animatePositionChange(fromPosition, toPosition) : Promise.wrap();
                         this._animationPromise.then(
                             function () { this._afterPositionChange(toPosition, newState); }.bind(this),
@@ -1171,8 +1174,6 @@ define([
                         offsetTop = (this._placement === _Constants.appBarPlacementTop) ? -distance : distance;
 
                     // Animate
-                    this._element.style.opacity = 1;
-                    this._element.style.visibility = "visible";
                     if (endingVisiblePixelHeight > beginningVisiblePixelHeight) {
                         var fromOffset = { top: offsetTop + "px", left: "0px" };
                         return Animations.showEdgeUI(this._element, fromOffset, { mechanism: "transition" });

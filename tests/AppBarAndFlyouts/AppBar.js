@@ -197,7 +197,7 @@ CorsicaTests.AppBarTests = function () {
         LiveUnit.Assert.isFalse(AppBar.sticky, "Verifying that sticky is false");
         LiveUnit.Assert.isFalse(AppBar.disabled, "Verifying that disabled is false");
         LiveUnit.Assert.isTrue(AppBar.hidden, "Verifying that hidden is true");
-        LiveUnit.Assert.areEqual(AppBar.closedDisplayMode, 'none', "Verifying closedDisplayMode is none");
+        LiveUnit.Assert.areEqual(AppBar.closedDisplayMode, 'minimal', "Verifying closedDisplayMode is minimal");
     }
     this.testDefaultAppBarParameters["Description"] = "Test default AppBar parameters";
 
@@ -1310,19 +1310,12 @@ CorsicaTests.AppBarTests = function () {
             "</div>";
         var appBar = new WinJS.UI.AppBar(root.querySelector("#appBar"), { sticky: false });
 
-        var msg = "Default AppBar should begin completely hidden.";
+        var msg = "Default AppBar should begin minimal.";
         LiveUnit.LoggingCore.logComment("Test: " + msg);
-        verifyAppBarCompletelyHidden(appBar);
+        verifyAppBarClosedMinimal(appBar);
 
-        msg = "Changing closedDisplayMode to 'minimal' while AppBar is closed should move the AppBar into mininmal position.";
-        LiveUnit.LoggingCore.logComment("Test: " + msg);
-
-        waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "minimal"; }).then(function () {
-            verifyAppBarClosedMinimal(appBar);
-
-            msg = "Changing closedDisplayMode to 'none' while AppBar is closed should hide the AppBar completely.";
-            return waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "none" });
-        }).then(function () {
+        msg = "Changing closedDisplayMode to 'none' while AppBar is closed should hide the AppBar completely.";
+        waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "none" }).then(function () {
             verifyAppBarCompletelyHidden(appBar);
 
             msg = "Disabling the AppBar should hide it completely.";
@@ -1404,6 +1397,101 @@ CorsicaTests.AppBarTests = function () {
             verifyAppBarCompletelyHidden(appBar);
             complete();
         });
+
+        //var msg = "Default AppBar should begin minimal.";
+        //LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //verifyAppBarCompletelyHidden(appBar);
+
+        //msg = "Changing closedDisplayMode to 'minimal' while AppBar is closed should move the AppBar into mininmal position.";
+        //LiveUnit.LoggingCore.logComment("Test: " + msg);
+
+        //waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "minimal"; }).then(function () {
+        //    verifyAppBarClosedMinimal(appBar);
+
+        //    msg = "Changing closedDisplayMode to 'none' while AppBar is closed should hide the AppBar completely.";
+        //    return waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "none" });
+        //}).then(function () {
+        //    verifyAppBarCompletelyHidden(appBar);
+
+        //    msg = "Disabling the AppBar should hide it completely.";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+
+        //    return waitForPositionChange(appBar, function () { appBar.disabled = true; });
+        //}).then(function () {
+        //    verifyAppBarCompletelyHidden(appBar);
+
+        //    msg = "Changing closedDisplayMode should not change the AppBar's visible position if the AppBar is disabled.";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //    return waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "minimal"; });
+        //}).then(function () {
+        //    verifyAppBarCompletelyHidden(appBar);
+
+        //    msg = "Disabled AppBar should not open.";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //    return waitForPositionChange(appBar, function () { appBar.show(); });
+        //}).then(function () {
+        //    verifyAppBarCompletelyHidden(appBar);
+
+        //    msg = "When AppBar is re-enabled, it should remain closed and assume the visible position of its closedDisplayMode.";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //    return waitForPositionChange(appBar, function () { appBar.disabled = false; });
+        //}).then(function () {
+        //    verifyAppBarClosedMinimal(appBar);
+
+        //    msg = "Calling AppBar.show() on non sticky AppBar should open the AppBar and make it light dismissable.";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //    return waitForPositionChange(appBar, function () { appBar.show(); });
+        //}).then(function () {
+        //    verifyAppBarOpenAndLightDismiss(appBar);
+
+        //    msg = "Changing AppBar.sticky to true, on Open Light Dismissable AppBar, should change it to an Open sticky AppBar. ";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //    appBar.sticky = true;
+
+        //    // We need to wait for the clickEatingDiv to hide, which is scheduled as a high priority job.
+        //    return new WinJS.Promise(function (signalComplete) {
+        //        WinJS.Utilities.Scheduler.schedule(function () {
+        //            verifyAppBarOpenAndSticky(appBar);
+        //            signalComplete();
+        //        }, WinJS.Utilities.Scheduler.Priority.idle);
+        //    });
+        //}).then(function () {
+
+        //    msg = "Changing closedDisplayMode on Open Sticky AppBar should not change its visible position.";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //    appBar.closedDisplayMode = "none";
+
+        //    // Nothing should have changed. Schedule a job on Idle and verify.
+        //    return new WinJS.Promise(function (signalComplete) {
+        //        WinJS.Utilities.Scheduler.schedule(function () {
+        //            verifyAppBarOpenAndSticky(appBar);
+        //            signalComplete();
+        //        }, WinJS.Utilities.Scheduler.Priority.idle);
+        //    });
+
+        //}).then(function () {
+
+        //    msg = "Changing AppBar.sticky to false, on Open sticky AppBar, should change it to an Open Light Dismissable AppBar. ";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //    appBar.sticky = false;
+
+        //    // We need to wait for the clickEatingDiv to show, which is scheduled as a high priority job.
+        //    return new WinJS.Promise(function (signalComplete) {
+        //        WinJS.Utilities.Scheduler.schedule(function () {
+        //            verifyAppBarOpenAndLightDismiss(appBar);
+        //            signalComplete();
+        //        }, WinJS.Utilities.Scheduler.Priority.idle);
+        //    });
+
+        //}).then(function () {
+
+        //    msg = "Closing an AppBar whose closedDisplayMode is equal to 'none', should hide the AppBar completely";
+        //    LiveUnit.LoggingCore.logComment("Test: " + msg);
+        //    return waitForPositionChange(appBar, function () { appBar.hide(); });
+        //}).then(function () {
+        //    verifyAppBarCompletelyHidden(appBar);
+        //    complete();
+        //});
     };
 
     this.testInvokeButtonBehavior = function (complete) {
@@ -1412,7 +1500,7 @@ CorsicaTests.AppBarTests = function () {
 
         var root = document.getElementById("appBarDiv");
         var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: [{ label: 'top cmd', icon: 'add' }], closedDisplayMode: 'minimal' });
-        var bottomBar = new WinJS.UI.AppBar(null, { placement: 'bottom', commands: [{ label: 'bottom cmd', icon: 'edit' }], closedDisplayMode: 'minimal', layout:'custom' })
+        var bottomBar = new WinJS.UI.AppBar(null, { placement: 'bottom', commands: [{ label: 'bottom cmd', icon: 'edit' }], closedDisplayMode: 'minimal', layout: 'custom' })
         root.appendChild(topBar.element);
         root.appendChild(bottomBar.element);
 
@@ -1436,8 +1524,8 @@ CorsicaTests.AppBarTests = function () {
 
                 // Sanity check that when we begin, all AppBars are hidden
                 verifyHidden();
-                
-                trigger();                
+
+                trigger();
                 WinJS.UI.AppBar._appBarsSynchronizationPromise.then(function () {
                     verifyShown()
 
@@ -1504,7 +1592,7 @@ CorsicaTests.AppBarTests = function () {
         then(function () { return testInvokeBehavior(actions.click(bottomBar)); }).
         then(function () { return testInvokeBehavior(actions.tap(bottomBar)); }).
         done(function () { complete(); });
-    };    
+    };
 }
 
 // register the object as a test class by passing in the name
