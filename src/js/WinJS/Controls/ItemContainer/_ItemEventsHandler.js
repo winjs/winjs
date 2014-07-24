@@ -720,7 +720,8 @@ define([
                 },
 
                 _dispatchSwipeBehavior: function ItemEventsHandler_dispatchSwipeBehavior(manipulationState) {
-                    if (this._site.pressedEntity.type === _UI.ObjectType.groupHeader) {
+                    if (this._site.pressedEntity.type === _UI.ObjectType.groupHeader ||
+                        this._site.swipeBehavior !== _UI.SwipeBehavior.select) {
                         return;
                     }
                     this._site.selection._pivot = _Constants._INVALID_INDEX;
