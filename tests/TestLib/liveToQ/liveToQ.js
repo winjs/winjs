@@ -188,7 +188,7 @@
                     actual: details.actual,
                     // Omit all but the first few callstacks to keep our results data small.
                     // If it's larger than 64 KB, Saucelabs will ignore it. 
-                    source: index < 3 ? details.source : null
+                    source: index < 3 && details.source ? details.source.substring(0, 500) : null
                 }
             });
             test_results.tests = tests;
