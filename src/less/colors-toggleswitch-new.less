@@ -1,0 +1,27 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+.Colors(@theme) {
+    .win-toggleswitch-new {
+        .variableDefs(light) {
+        }
+        .variableDefs(dark) {
+        }
+        .variableDefs(@theme);
+        @accentColor: rgb(70, 23, 180);
+
+        .win-toggleswitch-track-new {
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+        .win-toggleswitch-fill-new {
+        }
+        .win-toggleswitch-fill-lower-new {
+            background-color: @accentColor;
+        }
+        .win-toggleswitch-fill-upper-new {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+        .win-toggleswitch-thumb-new {
+            background-color: #fff;
+        }
+    }
+}

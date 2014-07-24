@@ -26,6 +26,8 @@ define([
                 var classThumb = 'win-toggleswitch-thumb-new';
                 var classValue = 'win-toggleswitch-value-new';
                 var classDescription = 'win-toggleswitch-description-new';
+                var classOn = 'win-toggleswitch-on-new';
+                var classOff = 'win-toggleswitch-off-new';
 
                 // Define the ToggleSwitch class
                 var Toggle = _Base.Class.define(function ToggleSwitchNew_ctor(element, options) {
@@ -83,10 +85,32 @@ define([
                     element.winControl = this;
                     _ElementUtilities.addClass(element, 'win-disposable');
 
+                    this._setChecked(false);
                 }, {
                     // Properties
                     element: {
                         get: function() {return this._domElement;}
+                    },
+                    checked: {
+                        get: function () {return this._checked;},
+                        set: function (value) {this._setChecked(value);}
+                    },
+
+                    // Methods
+                    _setChecked: function(value) {
+                        value = !!value;
+                        if (value === this.checked) {
+                            return;
+                        }
+
+                        this._checked = value;
+                        if (value) {
+                            _ElementUtilities.addClass(this._domElement, classOn);
+                            _ElementUtilities.removeClass(this._domElement, classOff);
+                        } else {
+                            _ElementUtilities.addClass(this._domElement, classOff);
+                            _ElementUtilities.removeClass(this._domElement, classOn);
+                        }
                     }
                 });
 

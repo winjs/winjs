@@ -1,0 +1,67 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+.win-toggleswitch-new {
+    @trackWidth: 50px;
+    @trackHeight: 19px;
+    @thumbWidth: 12px;
+    @fillOnWidth: @trackWidth - @thumbWidth - 3px;
+
+    display: inline-block;
+
+    .win-toggleswitch-header-new {
+    }
+    .win-toggleswitch-track-new {
+        position: relative;
+        display: inline-block;
+        width: @trackWidth;
+        height: @trackHeight;
+        border-style: solid;
+        border-width: 2px;
+        box-sizing: border-box;
+    }
+    .win-toggleswitch-fill-new {
+        position: absolute;
+        top: 1px;
+        display: inline-block;
+        width: 0;
+        height: @trackHeight - 6px;
+        box-sizing: border-box;
+    }
+    .win-toggleswitch-fill-lower-new {
+        left: 1px;
+    }
+    .win-toggleswitch-fill-upper-new {
+        right: 1px;
+    }
+    .win-toggleswitch-thumb-new {
+        position: absolute;
+        top: 0;
+        margin-top: -2px;
+        display: inline-block;
+        width: 12px;
+        height: @trackHeight;
+    }
+    .win-toggleswitch-value-new {
+    }
+    .win-toggleswitch-description-new {
+    }
+    
+    &.win-toggleswitch-on-new {
+        .win-toggleswitch-fill-lower-new {
+            width: @fillOnWidth;
+        }
+        .win-toggleswitch-thumb-new {
+            right: 0;
+            margin-right: -2px
+        }
+    }
+    &.win-toggleswitch-off-new {
+        .win-toggleswitch-fill-upper-new {
+            width: @fillOnWidth;
+        }
+        .win-toggleswitch-thumb-new {
+            left: 0;
+            margin-left: -2px
+        }
+    }
+}
