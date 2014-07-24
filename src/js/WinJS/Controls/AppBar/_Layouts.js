@@ -11,7 +11,7 @@ define([
     '../../Utilities/_ElementUtilities',
     './_Command',
     './_Constants'
-    ], function appBarLayoutsInit(exports, _Global, _Base, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
+], function appBarLayoutsInit(exports, _Global, _Base, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
 
     // AppBar will use this when AppBar.layout property is set to "custom"
@@ -148,7 +148,7 @@ define([
             var layoutType = _Constants.appBarLayoutCommands;
 
             var _AppBarCommandsLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarCommandsLayout_ctor(appBarEl) {
-                exports._AppBarBaseLayout.call(this, appBarEl, {_className: layoutClassName, _type: layoutType});
+                exports._AppBarBaseLayout.call(this, appBarEl, { _className: layoutClassName, _type: layoutType });
                 this._commandLayoutsInit(appBarEl);
             }, {
                 _getWidthOfFullSizeCommands: function _AppBarCommandsLayout_getWidthOfFullSizeCommands(commands) {
@@ -396,6 +396,10 @@ define([
                     this.scale();
                 }
             }
+        },
+        disconnect: function _commandLayoutsMixin_disconnect() {
+            _ElementUtilities.removeClass(this.appBarEl, _Constants.reducedClass);
+            exports._AppBarBaseLayout.prototype.disconnect.call(this);
         },
         _commandLayoutsInit: function _commandLayoutsMixin_commandLayoutsInit() {
             // Create layout infrastructure

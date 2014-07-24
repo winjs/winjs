@@ -815,7 +815,7 @@ CorsicaTests.AppBarTests = function () {
     };
 
     this.testCommandsLayoutCleansUpAfterItself = function (complete) {
-        // Verify that switching away from commands layout will remove the commandlayout class 
+        // Verify that switching away from commands layout will remove the commandlayout class, the win-reduced class,
         // and any commands layout specific HTML from the AppBar element.
         var root = document.getElementById("appBarDiv");
         root.innerHTML =
@@ -826,12 +826,16 @@ CorsicaTests.AppBarTests = function () {
         var appBar = new WinJS.UI.AppBar(root.querySelector("#appBar"), { layout: 'commands' });
 
         // Make sure we start from a sane place and verify initial commands layout HTML. 
-        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(appBar.element, "win-commandlayout"), "Commands Layout AppBar should have the win-commandlayout CSS class");
+        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(appBar.element, _Constants.commandLayoutClass), "Commands Layout AppBar should have the win-commandlayout CSS class");
         var layoutHTML = appBar.element.querySelectorAll(".win-primarygroup, .win-secondarygroup");
         LiveUnit.Assert.isTrue(layoutHTML.length === 2, "commands layout appbar should have its own HTML inside of the AppBar element.");
 
+        // Programatically add the win-reduced class to verify that switching away from commands layout removes it.
+        WinJS.Utilities.addClass(appBar.element, _Constants.reducedClass);
+
         appBar.layout = "custom";
-        LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(appBar.element, "win-commandlayout"), "Custom Layout AppBar should not have the commands layout CSS class");
+        LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(appBar.element, _Constants.commandLayoutClass), "Custom Layout AppBar should not have the commands layout CSS class");
+        LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(appBar.element, _Constants.reducedClass), "Custom Layout AppBar should not have the win-reduced CSS class");
         layoutHTML = appBar.element.querySelectorAll(".win-primarygroup, .win-secondarygroup");
         LiveUnit.Assert.isTrue(layoutHTML.length === 0, "custom layout appbar should not have commands layout HTML inside of the AppBar element.");
 
