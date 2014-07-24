@@ -274,15 +274,15 @@ define([
                         if (this._focusOnKeyboardInput && !value) {
                             if (!(this._searchSuggestionManager instanceof _SearchSuggestionManagerShim._SearchSuggestionManagerShim)) {
                                 this._searchSuggestionManager.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
-                            } else if (window.document.implementation.hasFeature("TypeToSearch", "1.0")) {
-                                this._updateKeydownCaptureListeners(window.top, false /*add*/);
+                            } else {
+                                this._updateKeydownCaptureListeners(_Global.top, false /*add*/);
                             }
 
                         } else if (!this._focusOnKeyboardInput && !!value) {
                             if (!(this._searchSuggestionManager instanceof _SearchSuggestionManagerShim._SearchSuggestionManagerShim)) {
                                 this._searchSuggestionManager.addEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
-                            } else if (window.document.implementation.hasFeature("TypeToSearch", "1.0")) {
-                                this._updateKeydownCaptureListeners(window.top, true /*add*/);
+                            } else {
+                                this._updateKeydownCaptureListeners(_Global.top, true /*add*/);
                             }
 
                         }
@@ -379,8 +379,8 @@ define([
                     if (this._focusOnKeyboardInput) {
                         if (!(this._searchSuggestionManager instanceof _SearchSuggestionManagerShim._SearchSuggestionManagerShim)) {
                             this._searchSuggestionManager.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
-                        } else if (window.document.implementation.hasFeature("TypeToSearch", "1.0")) {
-                            this._updateKeydownCaptureListeners(window.top, false /*add*/);
+                        } else if (_Global.document.implementation.hasFeature("TypeToSearch", "1.0")) {
+                            this._updateKeydownCaptureListeners(_Global.top, false /*add*/);
                         }
 
                     }
@@ -1449,12 +1449,11 @@ define([
                         } else {
                             win.document.removeEventListener('keydown', this._keydownCaptureHandlerBind, true);
                         }
-                    }
-                    catch (e) { // if the IFrame crosses domains, we'll get a permission denied error                        
+                    } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error                        
                     }
 
-                    if (win.frames != null) {
-                        for (var i = 0; i < win.frames.length; i++) {
+                    if (win.frames) {
+                        for (var i = 0, l = win.frames.length; i < l; i++) {
                             var childWin = win.frames[i];
                             this._updateKeydownCaptureListeners(childWin, add);
 
@@ -1468,8 +1467,7 @@ define([
                                         childWin.frameElement.removeEventListener('load', this._frameLoadCaptureHandlerBind, true);
                                     }
                                 }
-                            }
-                            catch (e) { // if the IFrame crosses domains, we'll get a permission denied error                        
+                            } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error                        
                             }
                         }
                     }
@@ -1477,10 +1475,11 @@ define([
 
                 _shouldKeyTriggerTypeToSearch: function SearchBox_shouldKeyTriggerTypeToSearch(event) {
                     var shouldTrigger = false;
-                    // First, check if a metaKey is pressed (only applies to macOS). If so, do nothing here.
+                    // First, check if a metaKey is pressed (only applies to MacOS). If so, do nothing here.
                     if (!event.metaKey) {
-                        // We also don't handle CTRL/ALT combinations, unless ALTGR is also set.
-                        if ((!event.ctrlKey && !event.altKey) || event.getModifierState("AltGraph")) {
+                        // We also don't handle CTRL/ALT combinations, unless ALTGR is also set. Since there is no shortcut for checking AltGR,
+                        // we need to use getModifierState, however, Safari currently doesn't support this.
+                        if ((!event.ctrlKey && !event.altKey) || (event.getModifierState && event.getModifierState("AltGraph"))) {
                             // Show on most keys for visible characters like letters, numbers, etc.
                             switch (event.keyCode) {
                                 case 0x30:  //0x30 0 key

@@ -9,10 +9,31 @@
 
 var SearchBoxTests = SearchBoxTests || {};
 
-SearchBoxTests.BasicTests = function () {
+SearchBoxTests.SearchBoxTests = function () {
     "use strict";
 
     var Key = WinJS.Utilities.Key;
+
+    function waitForSuggestionFlyoutRender(searchBox) {
+        return new WinJS.Promise(function (c) {
+            function register() {
+                searchBox._repeater.addEventListener("iteminserted", handle);
+                searchBox._repeater.addEventListener("itemremoved", handle);
+            }
+
+            function unregister() {
+                searchBox._repeater.removeEventListener("iteminserted", handle);
+                searchBox._repeater.removeEventListener("itemremoved", handle);
+            }
+
+            function handle() {
+                unregister();
+                WinJS.Promise.timeout().then(c);
+            }
+
+            register();
+        });
+    }
 
     // This is the setup function that will be called at the beginning of each test function.
     this.setUp = function () {
@@ -20,7 +41,7 @@ SearchBoxTests.BasicTests = function () {
         var searchBoxElement = document.createElement('div');
         searchBoxElement.id = "SearchBoxID";
         document.body.appendChild(searchBoxElement);
-        var searchBox = new WinJS.UI.SearchBox(searchBoxElement);
+        var searchBox = new WinJS.UI.SearchBox(searchBoxElement, { searchHistoryDisabled: true });
         LiveUnit.LoggingCore.logComment("SearchBox has been instantiated.");
         LiveUnit.Assert.isNotNull(searchBox, "SearchBox element should not be null when instantiated.");
     };
@@ -658,6 +679,151 @@ SearchBoxTests.BasicTests = function () {
         CommonUtilities.keyup(searchBox._inputElement, Key.enter, "ja");
     }
 
+    this.testSearchHistoryContext = function searchBoxTest_testSearchHistoryContext() {
+        var searchBox = document.getElementById("SearchBoxID").winControl;
+        var testContext = "Test Context";
+        searchBox.searchHistoryContext = testContext;
+        LiveUnit.Assert.areEqual(testContext, searchBox.searchHistoryContext, "Unable to set searchBox.searchHistoryContext");
+    };
+
+    this.testSearchHistoryDisabled = function searchBoxTest_testSearchHistoryDisabled() {
+        var searchBox = document.getElementById("SearchBoxID").winControl;
+        LiveUnit.LoggingCore.logComment("Waiting for control...");
+        var testContext = "Test Context";
+        searchBox.searchHistoryDisabled = true;
+        LiveUnit.Assert.areEqual(true, searchBox.searchHistoryDisabled, "Unable to set searchBox.searchHistoryDisabled");
+        searchBox.searchHistoryDisabled = false;
+        LiveUnit.Assert.areEqual(false, searchBox.searchHistoryDisabled, "Unable to set searchBox.searchHistoryDisabled");
+    };
+
+
+    this.testSuggestionsDisplayed = function searchBoxTest_testSuggestionsDisplayed(complete) {
+        // Verify whether all suggestions are rendered.
+        var searchBox = document.getElementById("SearchBoxID").winControl;
+        LiveUnit.LoggingCore.logComment("Verifying...");
+        searchBox.addEventListener("suggestionsrequested", function (e) {
+            e.detail.searchSuggestionCollection.appendQuerySuggestions(["Test query Suggestion1 test", "Test query Suggestion2 test"]);
+            e.detail.searchSuggestionCollection.appendSearchSeparator("Separator");
+            e.detail.searchSuggestionCollection.appendResultSuggestion("Test result Suggestion3 test", "Query suggestion3 detailed text", "tag3", WinJS.UI.SearchBox.createResultSuggestionImage("http://fakeurl"), "");
+            e.detail.searchSuggestionCollection.appendResultSuggestion("Test result Suggestion4 test", "Query suggestion4 detailed text", "tag4", WinJS.UI.SearchBox.createResultSuggestionImage("http://fakeurl"), "");
+
+            waitForSuggestionFlyoutRender(searchBox).done(function () {
+                var suggestion1 = searchBox._repeater.elementFromIndex(0);
+                LiveUnit.Assert.isTrue((suggestion1.textContent.indexOf("Test query Suggestion1 test") >= 0), "Suggestion1 text is not displayed.");
+
+                var suggestion2 = searchBox._repeater.elementFromIndex(1);
+                LiveUnit.Assert.isTrue((suggestion2.textContent.indexOf("Test query Suggestion2 test") >= 0), "Suggestion2 text is not displayed.");
+
+                var suggestion3 = searchBox._repeater.elementFromIndex(2);
+                LiveUnit.Assert.isTrue((suggestion3.textContent.indexOf("Separator") >= 0), "Suggestion3 text is not displayed.");
+
+                var suggestion4 = searchBox._repeater.elementFromIndex(3);
+                LiveUnit.Assert.isTrue((suggestion4.textContent.indexOf("Test result Suggestion3 test") >= 0), "Suggestion3 text is not displayed.");
+                LiveUnit.Assert.isTrue((suggestion4.textContent.indexOf("Query suggestion3 detailed text") >= 0), "Suggestion3 detailed text is not displayed.");
+
+                var suggestion5 = searchBox._repeater.elementFromIndex(4);
+                LiveUnit.Assert.isTrue((suggestion5.textContent.indexOf("Test result Suggestion4 test") >= 0), "Suggestion4 text is not displayed.");
+                LiveUnit.Assert.isTrue((suggestion5.textContent.indexOf("Query suggestion4 detailed text") >= 0), "Suggestion4 detailed text is not displayed.");
+
+                complete();
+            });
+        });
+        searchBox._inputElement.value = "a";
+        searchBox._inputElement.focus();
+    };
+
+    this.testQuerySuggestionSelected = function searchBoxTest_testQuerySuggestionSelected(complete) {
+        var searchBox = document.getElementById("SearchBoxID").winControl;
+        LiveUnit.LoggingCore.logComment("Verifying...");
+        searchBox.addEventListener("querysubmitted", function searchBoxTest_querySubmitted_listener(event) {
+            LiveUnit.Assert.areEqual("Test query Suggestion1 test", event.detail.queryText, "Query text not matching suggestion text");
+            complete();
+        });
+        searchBox.addEventListener("suggestionsrequested", function (e) {
+            e.detail.searchSuggestionCollection.appendQuerySuggestion("Test query Suggestion1 test");
+
+            waitForSuggestionFlyoutRender(searchBox).done(function () {
+                // Click on the first suggestion.
+                searchBox._repeater.elementFromIndex(0).click();
+            });
+        });
+        searchBox._inputElement.value = "a";
+        searchBox._inputElement.focus();
+    };
+
+    this.testResultSuggestionSelected = function searchBoxTest_testResultSuggestionSelected(complete) {
+        var searchBox = document.getElementById("SearchBoxID").winControl;
+        LiveUnit.LoggingCore.logComment("Verifying...");
+        searchBox.addEventListener("resultsuggestionchosen", function searchBoxTest_resultsuggestionchosen_listener(event) {
+            LiveUnit.Assert.areEqual("tag3", event.detail.tag, "Query text not matching suggestion tag");
+            complete();
+        });
+        searchBox.addEventListener("suggestionsrequested", function (e) {
+            e.detail.searchSuggestionCollection.appendResultSuggestion("Test result Suggestion3 test", "Query suggestion3 detailed text", "tag3", WinJS.UI.SearchBox.createResultSuggestionImage("http://fakeurl"), "");
+
+            waitForSuggestionFlyoutRender(searchBox).done(function () {
+                // Click on the first suggestion.
+                searchBox._repeater.elementFromIndex(0).click();
+            });
+        });
+        searchBox._inputElement.value = "a";
+        searchBox._inputElement.focus();
+    };
+
+    this.testChooseSuggestionOnEnterEnabled = function searchBoxTest_ChooseSuggestionOnEnterEnabled(complete) {
+        var searchBox = document.getElementById("SearchBoxID").winControl;
+        searchBox.chooseSuggestionOnEnter = true;
+        LiveUnit.LoggingCore.logComment("Verifying...");
+
+        searchBox.addEventListener("querysubmitted", function searchBoxTest_querysubmitted_listener(event) {
+            LiveUnit.Assert.areEqual("Test query Suggestion1 test", event.detail.queryText, "Query text not matching input");
+            if (!WinJS.Utilities.hasWinRT) {
+                // CommonUtilities.keyDown won't trick WinRT's SSM in setting the query language, however, on the web it should work.
+                LiveUnit.Assert.areEqual("ja-JP", event.detail.language, "Query text language not matching input");
+            }
+            complete();
+        });
+        searchBox.addEventListener("suggestionsrequested", function (e) {
+            e.detail.searchSuggestionCollection.appendQuerySuggestion("Test query Suggestion1 test");
+
+            WinJS.Utilities._setImmediate(function () {
+                CommonUtilities.keydown(searchBox._inputElement, Key.enter, "ja-JP");
+            });
+        });
+        searchBox._inputElement.value = "Test query";
+        searchBox._inputElement.focus();
+    };
+
+    this.testFocusOnKeyboardInputBringsUpSuggestions = function testFocusOnKeyboardInputBringsUpSuggestions(complete) {
+        if (WinJS.Utilities.hasWinRT) {
+            LiveUnit.LoggingCore.logComment("This test tests web implementation of Type-To-Search and has no value when WinRT is available");
+            complete();
+            return;
+        }
+
+        var searchBox = document.getElementById("SearchBoxID").winControl;
+        searchBox.focusOnKeyboardInput = true;
+        searchBox.addEventListener("suggestionsrequested", function (e) {
+            complete();
+        });
+        CommonUtilities.keydown(document, WinJS.Utilities.Key.t);
+    };
+
+    this.testFocusOnKeyboardInputDoesNotBringUpSuggestionsWhenDisabled = function testFocusOnKeyboardInputBringsUpSuggestions(complete) {
+        if (WinJS.Utilities.hasWinRT) {
+            LiveUnit.LoggingCore.logComment("This test tests web implementation of Type-To-Search and has no value when WinRT is available");
+            complete();
+            return;
+        }
+
+        var searchBox = document.getElementById("SearchBoxID").winControl;
+        searchBox.addEventListener("suggestionsrequested", function (e) {
+            LiveUnit.Assert.fail();
+        });
+        CommonUtilities.keydown(document, WinJS.Utilities.Key.t);
+        WinJS.Promise.timeout().done(complete);
+    };
+
     // Util functions
     function createCustomEvent(type, details) {
         var ev = document.createEvent("CustomEvent");
@@ -673,7 +839,9 @@ SearchBoxTests.BasicTests = function () {
                     return alternatives;
                 },
                 getCandidateWindowClientRect: function () {
-                    return { bottom: 0, height: 0, left: 0, right: 0, top: 0, width: 0 };
+                    return {
+                        bottom: 0, height: 0, left: 0, right: 0, top: 0, width: 0
+                    };
                 },
                 compositionEndOffset: compositionEndOffset,
                 compositionStartOffset: compositionStartOffset
@@ -694,4 +862,4 @@ SearchBoxTests.BasicTests = function () {
         }
     };
 };
-LiveUnit.registerTestClass("SearchBoxTests.BasicTests");
+LiveUnit.registerTestClass("SearchBoxTests.SearchBoxTests");
