@@ -197,7 +197,7 @@ CorsicaTests.AppBarTests = function () {
         LiveUnit.Assert.isFalse(AppBar.sticky, "Verifying that sticky is false");
         LiveUnit.Assert.isFalse(AppBar.disabled, "Verifying that disabled is false");
         LiveUnit.Assert.isTrue(AppBar.hidden, "Verifying that hidden is true");
-        LiveUnit.Assert.areEqual(AppBar.closedDisplayMode, 'none', "Verifying closedDisplayMode is none");
+        LiveUnit.Assert.areEqual(AppBar.closedDisplayMode, 'minimal', "Verifying closedDisplayMode is minimal");
     }
     this.testDefaultAppBarParameters["Description"] = "Test default AppBar parameters";
 
@@ -1310,19 +1310,12 @@ CorsicaTests.AppBarTests = function () {
             "</div>";
         var appBar = new WinJS.UI.AppBar(root.querySelector("#appBar"), { sticky: false });
 
-        var msg = "Default AppBar should begin completely hidden.";
+        var msg = "Default AppBar should begin minimal.";
         LiveUnit.LoggingCore.logComment("Test: " + msg);
-        verifyAppBarCompletelyHidden(appBar);
+        verifyAppBarClosedMinimal(appBar);
 
-        msg = "Changing closedDisplayMode to 'minimal' while AppBar is closed should move the AppBar into mininmal position.";
-        LiveUnit.LoggingCore.logComment("Test: " + msg);
-
-        waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "minimal"; }).then(function () {
-            verifyAppBarClosedMinimal(appBar);
-
-            msg = "Changing closedDisplayMode to 'none' while AppBar is closed should hide the AppBar completely.";
-            return waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "none" });
-        }).then(function () {
+        msg = "Changing closedDisplayMode to 'none' while AppBar is closed should hide the AppBar completely.";
+        waitForPositionChange(appBar, function () { appBar.closedDisplayMode = "none" }).then(function () {
             verifyAppBarCompletelyHidden(appBar);
 
             msg = "Disabling the AppBar should hide it completely.";
