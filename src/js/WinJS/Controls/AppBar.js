@@ -112,7 +112,7 @@ define([
                 if (edgyHappening === "showing") {
                     _Overlay._Overlay._hideAllBars(bars, false);
                 } else if (edgyHappening === "hiding") {
-                    _showAllBars(bars, false);
+                    _Overlay._Overlay._showAllBars(bars, false);
                 }
                 edgyHappening = null;
             }
@@ -160,27 +160,17 @@ define([
                 return AppBars;
             }
 
-            function _showAllBars(bars, keyboardInvoked) {
-                var len = bars.length;
-                var allBarsAnimationPromises = new Array(len);
-                for (var i = 0; i < len; i++) {
-                    bars[i]._keyboardInvoked = keyboardInvoked;
-                    bars[i]._doNotFocus = false;
-                    bars[i]._show();
-                    allBarsAnimationPromises[i] = bars[i]._animationPromise;
-                }
-                return Promise.join(allBarsAnimationPromises);
-            }
-
             // Sets focus to the last AppBar in the provided appBars array with given placement.
             // Returns true if focus was set.  False otherwise.
             function _setFocusToPreviousAppBarHelper(startIndex, appBarPlacement, appBars) {
+                var appBar;
                 for (var i = startIndex; i >= 0; i--) {
-                    if (appBars[i].winControl
-                     && appBars[i].winControl.placement === appBarPlacement
-                     && !appBars[i].winControl.hidden
-                     && appBars[i].winControl._focusOnLastFocusableElement
-                     && appBars[i].winControl._focusOnLastFocusableElement()) {
+                    appBar = appBars[i].winControl;
+                    if (appBar
+                     && appBar.placement === appBarPlacement
+                     && !appBar.hidden
+                     && appBar._focusOnLastFocusableElement
+                     && appBar._focusOnLastFocusableElement()) {
                         return true;
                     }
                 }
@@ -229,7 +219,7 @@ define([
                     appBar = appBars[i].winControl;
                     if (appBar
                      && appBar.placement === appBarPlacement
-                     && appBar.hidden
+                     && !appBar.hidden
                      && appBar._focusOnFirstFocusableElement
                      && appBar._focusOnFirstFocusableElement()) {
                         return true;
@@ -1597,7 +1587,7 @@ define([
                         return "hiding";
                     } else {
                         AppBar._appBarsSynchronizationPromise = AppBar._appBarsSynchronizationPromise.then(function () {
-                            return _showAllBars(bars, keyboardInvoked);
+                            return _Overlay._Overlay._showAllBars(bars, keyboardInvoked);
                         });
                         return "showing";
                     }

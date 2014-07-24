@@ -17,7 +17,7 @@ define([
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
     '../AppBar/_Constants'
-    ], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
+], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -1389,11 +1389,21 @@ define([
                     _Overlay._hideAllBars(AppBars, keyboardInvoked);
                 },
 
-                // Show or hide all bars
-                _hideAllBars: function _hideAllBars(bars, keyboardInvoked) {
+                // Show/Hide all bars
+                _hideAllBars: function _Overlay_hideAllBars(bars, keyboardInvoked) {
                     var allBarsAnimationPromises = bars.map(function (bar) {
                         bar._keyboardInvoked = keyboardInvoked;
                         bar.hide();
+                        return bar._animationPromise;
+                    });
+                    return Promise.join(allBarsAnimationPromises);
+                },
+
+                _showAllBars: function _Overlay_showAllBars(bars, keyboardInvoked) {
+                    var allBarsAnimationPromises = bars.map(function (bar) {
+                        bar._keyboardInvoked = keyboardInvoked;
+                        bar._doNotFocus = false;
+                        bar._show();
                         return bar._animationPromise;
                     });
                     return Promise.join(allBarsAnimationPromises);
@@ -1445,102 +1455,102 @@ define([
                     return null;
                 },
 
-                // Global keyboard hiding offset
-                _keyboardInfo: {
-                    // Determine if the keyboard is visible or not.
-                    get _visible() {
+            // Global keyboard hiding offset
+            _keyboardInfo: {
+                // Determine if the keyboard is visible or not.
+                get _visible() {
+                    try {
+                        return (
+                            _WinRT.Windows.UI.ViewManagement.InputPane &&
+                            _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height > 0
+                        );
+                    } catch (e) {
+                        return false;
+                    }
+                },
+
+                // See if we have to reserve extra space for the IHM
+                get _extraOccluded() {
+                    var occluded;
+                    if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                         try {
-                            return (
-                                _WinRT.Windows.UI.ViewManagement.InputPane &&
-                                _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height > 0
-                            );
+                            occluded = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
                         } catch (e) {
-                            return false;
                         }
-                    },
+                    }
 
-                    // See if we have to reserve extra space for the IHM
-                    get _extraOccluded() {
-                        var occluded;
-                        if (_WinRT.Windows.UI.ViewManagement.InputPane) {
-                            try {
-                                occluded = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
-                            } catch (e) {
-                            }
-                        }
+                    // Nothing occluded if not visible.
+                    if (occluded && !_Overlay._keyboardInfo._isResized) {
+                        // View hasn't been resized, need to return occluded height.
+                        return occluded;
+                    }
 
-                        // Nothing occluded if not visible.
-                        if (occluded && !_Overlay._keyboardInfo._isResized) {
-                            // View hasn't been resized, need to return occluded height.
-                            return occluded;
-                        }
+                    // View already has space for keyboard or there's no keyboard
+                    return 0;
+                },
 
-                        // View already has space for keyboard or there's no keyboard
-                        return 0;
-                    },
+                // See if the view has been resized to fit a keyboard
+                get _isResized() {
+                    // Compare ratios.  Very different includes IHM space.
+                    var heightRatio = _Global.document.documentElement.clientHeight / _Global.innerHeight,
+                        widthRatio = _Global.document.documentElement.clientWidth / _Global.innerWidth;
 
-                    // See if the view has been resized to fit a keyboard
-                    get _isResized() {
-                        // Compare ratios.  Very different includes IHM space.
-                        var heightRatio = _Global.document.documentElement.clientHeight / _Global.innerHeight,
-                            widthRatio = _Global.document.documentElement.clientWidth / _Global.innerWidth;
+                    // If they're nearly identical, then the view hasn't been resized for the IHM
+                    // Only check one bound because we know the IHM will make it shorter, not skinnier.
+                    return (widthRatio / heightRatio < 0.99);
+                },
 
-                        // If they're nearly identical, then the view hasn't been resized for the IHM
-                        // Only check one bound because we know the IHM will make it shorter, not skinnier.
-                        return (widthRatio / heightRatio < 0.99);
-                    },
+                // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement. 
+                // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
+                get _visibleDocTop() {
+                    return _Global.pageYOffset - _Global.document.documentElement.scrollTop;
+                },
 
-                    // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement. 
-                    // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
-                    get _visibleDocTop() {
-                        return _Global.pageYOffset - _Global.document.documentElement.scrollTop;
-                    },
+                // Get the bottom of our visible area.
+                get _visibleDocBottom() {
+                    return _Overlay._keyboardInfo._visibleDocTop + _Overlay._keyboardInfo._visibleDocHeight;
+                },
 
-                    // Get the bottom of our visible area.
-                    get _visibleDocBottom() {
-                        return _Overlay._keyboardInfo._visibleDocTop + _Overlay._keyboardInfo._visibleDocHeight;
-                    },
+                // Get the height of the visible document, e.g. the height of the visual viewport minus any IHM occlusion.
+                get _visibleDocHeight() {
+                    return _Overlay._keyboardInfo._visualViewportHeight - _Overlay._keyboardInfo._extraOccluded;
+                },
 
-                    // Get the height of the visible document, e.g. the height of the visual viewport minus any IHM occlusion.
-                    get _visibleDocHeight() {
-                        return _Overlay._keyboardInfo._visualViewportHeight - _Overlay._keyboardInfo._extraOccluded;
-                    },
+                // Get the visual viewport height. window.innerHeight doesn't return floating point values which are present with high DPI.
+                get _visualViewportHeight() {
+                    var boundingRect = _Overlay._keyboardInfo._visualViewportSpace;
+                    return boundingRect.bottom - boundingRect.top;
+                },
 
-                    // Get the visual viewport height. window.innerHeight doesn't return floating point values which are present with high DPI.
-                    get _visualViewportHeight() {
-                        var boundingRect = _Overlay._keyboardInfo._visualViewportSpace;
-                        return boundingRect.bottom - boundingRect.top;
-                    },
+                // Get the visual viewport width. window.innerHeight doesn't return floating point values which are present with high DPI.
+                get _visualViewportWidth() {
+                    var boundingRect = _Overlay._keyboardInfo._visualViewportSpace;
+                    return boundingRect.right - boundingRect.left;
+                },
 
-                    // Get the visual viewport width. window.innerHeight doesn't return floating point values which are present with high DPI.
-                    get _visualViewportWidth() {
-                        var boundingRect = _Overlay._keyboardInfo._visualViewportSpace;
-                        return boundingRect.right - boundingRect.left;
-                    },
+                get _visualViewportSpace() {
+                    var className = "win-visualviewport-space";
+                    var visualViewportSpace = _Global.document.body.querySelector("." + className);
+                    if (!visualViewportSpace) {
+                        visualViewportSpace = _Global.document.createElement("DIV");
+                        visualViewportSpace.className = className;
+                        _Global.document.body.appendChild(visualViewportSpace);
+                    }
 
-                    get _visualViewportSpace() {
-                        var className = "win-visualviewport-space";
-                        var visualViewportSpace = _Global.document.body.querySelector("." + className);
-                        if (!visualViewportSpace) {
-                            visualViewportSpace = _Global.document.createElement("DIV");
-                            visualViewportSpace.className = className;
-                            _Global.document.body.appendChild(visualViewportSpace);
-                        }
+                    return visualViewportSpace.getBoundingClientRect();
+                },
 
-                        return visualViewportSpace.getBoundingClientRect();
-                    },
+                // Get offset of visible window from bottom.
+                get _visibleDocBottomOffset() {
+                    // If the view resizes we can return 0 and rely on appbar's -ms-device-fixed css positioning. 
+                    return (_Overlay._keyboardInfo._isResized) ? 0 : _Overlay._keyboardInfo._extraOccluded;
+                },
 
-                    // Get offset of visible window from bottom.
-                    get _visibleDocBottomOffset() {
-                        // If the view resizes we can return 0 and rely on appbar's -ms-device-fixed css positioning. 
-                        return (_Overlay._keyboardInfo._isResized) ? 0 : _Overlay._keyboardInfo._extraOccluded;
-                    },
-
-                    // Get total length of the IHM showPanel animation
-                    get _animationShowLength() {
-                        if (_WinRT.Windows.UI.Core.AnimationMetrics) {
-                            var a = _WinRT.Windows.UI.Core.AnimationMetrics,
-                            animationDescription = new a.AnimationDescription(a.AnimationEffect.showPanel, a.AnimationEffectTarget.primary);
+                // Get total length of the IHM showPanel animation
+                get _animationShowLength() {
+                    if (_WinRT.Windows.UI.Core.AnimationMetrics) {
+                        var a = _WinRT.Windows.UI.Core.AnimationMetrics,
+                        animationDescription = new a.AnimationDescription(a.AnimationEffect.showPanel, a.AnimationEffectTarget.primary);
                         var animations = animationDescription.animations;
                         var max = 0;
                         for (var i = 0; i < animations.size; i++) {
@@ -1548,38 +1558,38 @@ define([
                             max = Math.max(max, animation.delay + animation.duration);
                         }
                         return max;
-                        } else {
-                            return 0;
-                        }
+                    } else {
+                        return 0;
                     }
-                },
-
-                _ElementWithFocusPreviousToAppBar: null,
-
-                // for tests
-                _clickEatingAppBarClass: _Constants._clickEatingAppBarClass,
-                _clickEatingFlyoutClass: _Constants._clickEatingFlyoutClass,
-
-                // Padding for IHM timer to allow for first scroll event
-                _scrollTimeout: 150,
-
-                // Events
-                beforeShow: BEFORESHOW,
-                beforeHide: BEFOREHIDE,
-                afterShow: AFTERSHOW,
-                afterHide: AFTERHIDE,
-
-                commonstrings: {
-                    get cannotChangeCommandsWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeCommandsWhenVisible").value; },
-                    get cannotChangeHiddenProperty() { return _Resources._getWinJSString("ui/cannotChangeHiddenProperty").value; }
                 }
-            });
+            },
 
-            _Base.Class.mix(_Overlay, _Control.DOMEventMixin);
+            _ElementWithFocusPreviousToAppBar: null,
 
-            return _Overlay;
-        })
-    });
+            // for tests
+            _clickEatingAppBarClass: _Constants._clickEatingAppBarClass,
+            _clickEatingFlyoutClass: _Constants._clickEatingFlyoutClass,
+
+            // Padding for IHM timer to allow for first scroll event
+            _scrollTimeout: 150,
+
+            // Events
+            beforeShow: BEFORESHOW,
+            beforeHide: BEFOREHIDE,
+            afterShow: AFTERSHOW,
+            afterHide: AFTERHIDE,
+
+            commonstrings: {
+                get cannotChangeCommandsWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeCommandsWhenVisible").value; },
+                get cannotChangeHiddenProperty() { return _Resources._getWinJSString("ui/cannotChangeHiddenProperty").value; }
+            }
+        });
+
+    _Base.Class.mix(_Overlay, _Control.DOMEventMixin);
+
+    return _Overlay;
+})
+});
 
 });
 
