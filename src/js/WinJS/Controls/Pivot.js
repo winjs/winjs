@@ -19,11 +19,12 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_TabContainer',
+    '../Utilities/_KeyboardBehavior',
     './Pivot/_Constants',
     './Pivot/_Item',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function pivotInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _Constants, _Item) {
+    ], function pivotInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _TabContainer, _KeyboardBehavior, _Constants, _Item) {
         "use strict";
 
         _Base.Namespace.define("WinJS.UI", {
@@ -133,6 +134,7 @@ define([
                     _ElementUtilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
                     _ElementUtilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler.bind(this));
 
+                    this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headersContainerElement);
                     this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
 
                     this._viewportElement = _Global.document.createElement("DIV");
