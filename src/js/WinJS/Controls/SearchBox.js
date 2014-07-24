@@ -379,7 +379,7 @@ define([
                     if (this._focusOnKeyboardInput) {
                         if (!(this._searchSuggestionManager instanceof _SearchSuggestionManagerShim._SearchSuggestionManagerShim)) {
                             this._searchSuggestionManager.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
-                        } else if (_Global.document.implementation.hasFeature("TypeToSearch", "1.0")) {
+                        } else {
                             this._updateKeydownCaptureListeners(_Global.top, false /*add*/);
                         }
 
