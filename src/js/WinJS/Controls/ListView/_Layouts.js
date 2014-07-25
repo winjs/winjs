@@ -275,11 +275,6 @@ define([
                         _ElementUtilities.addClass(site.surface, _Constants._gridLayoutClass);
                     }
                     
-                    this._envInfo = getEnvironmentSupportInformation(site) || {};
-                    
-                    if (!this._envInfo.supportsCSSGrid) {
-                        _ElementUtilities.addClass(site.surface, _Constants._noCSSGrid);
-                    }
                     if (this._backdropColorClassName) {
                         _ElementUtilities.addClass(site.surface, this._backdropColorClassName);
                     }
@@ -622,6 +617,11 @@ define([
                         return updateGroups();
                     }).then(function () {
                         that._syncDomWithGroupHeaderPosition(tree);
+                        var surfaceLength = 0;
+                        if (that._groups.length > 0) {
+                            var lastGroup = that._groups[that._groups.length - 1];
+                            surfaceLength = lastGroup.offset + that._getGroupSize(lastGroup);
+                        }
 
                         // Explicitly set the surface width/height. This maintains backwards
                         // compatibility with the original layouts by allowing the items
@@ -634,6 +634,9 @@ define([
                             } else {
                                 site.surface.style.height = that._sizes.surfaceContentSize + "px";
                             }
+                            if (that._envInfo.nestedFlexTooLarge || that._envInfo.nestedFlexTooSmall) {
+                                site.surface.style.width = surfaceLength + "px";
+                            }
                         } else {
                             if (that._groupsEnabled && that._groupHeaderPosition === HeaderPosition.top) {
                                 site.surface.style.cssText +=
@@ -641,6 +644,9 @@ define([
                                     "px;-ms-grid-rows: (" + that._sizes.headerContainerHeight + "px auto)[" + tree.length + "]";
                             } else {
                                 site.surface.style.width = that._sizes.surfaceContentSize + "px";
+                            }
+                            if (that._envInfo.nestedFlexTooLarge || that._envInfo.nestedFlexTooSmall) {
+                                site.surface.style.height = surfaceLength + "px";
                             }
                         }
 
@@ -2549,6 +2555,16 @@ define([
                     }
                     return this._measuringElements;
                 },
+                
+                _ensureEnvInfo: function _LayoutCommon_ensureEnvInfo() {
+                    if (!this._envInfo) {
+                        this._envInfo = getEnvironmentSupportInformation(this._site);
+                        if (this._envInfo && !this._envInfo.supportsCSSGrid) {
+                            _ElementUtilities.addClass(this._site.surface, _Constants._noCSSGrid);
+                        }
+                    }
+                    return !!this._envInfo;
+                },
 
                 _createMeasuringSurface: function _LayoutCommon_createMeasuringSurface() {
                     var surface = _Global.document.createElement("div");
@@ -2556,7 +2572,10 @@ define([
                     surface.style.cssText =
                         "visibility: hidden" +
                         ";-ms-grid-columns: auto" +
-                        ";-ms-grid-rows: auto";
+                        ";-ms-grid-rows: auto" +
+                        ";-ms-flex-align: start" +
+                        ";-webkit-align-items: flex-start" +
+                        ";align-items: flex-start";
                     surface.className = _Constants._scrollableClass + " " + (this._inListMode ? _Constants._listLayoutClass : _Constants._gridLayoutClass);
                     if (!this._envInfo.supportsCSSGrid) {
                         _ElementUtilities.addClass(surface, _Constants._noCSSGrid);
@@ -2877,7 +2896,12 @@ define([
                         // handler is executed (measuringPromise is referenced within measureItemImpl).
                         var promiseStoredSignal = new _Signal();
                         that._measuringPromise = measuringPromise = promiseStoredSignal.promise.then(function () {
-                            return measureItemImpl(index);
+                            if (that._ensureEnvInfo()) {
+                                return measureItemImpl(index);
+                            } else {
+                                // Couldn't get envInfo. ListView is invisible. Bail out.
+                                return Promise.cancel;
+                            }
                         }).then(function () {
                             site._writeProfilerMark(perfId + ":complete,info");
                             site._writeProfilerMark(perfId + ",StopTM");
@@ -4215,15 +4239,15 @@ define([
 
                 numberOfItemsPerItemsBlock: {
                     get: function ListLayout_getNumberOfItemsPerItemsBlock() {
-                        if (this._envInfo.nestedFlexTooLarge || this._envInfo.nestedFlexTooSmall) {
-                            this._usingStructuralNodes = false;
-                        } else {
-                            this._usingStructuralNodes = exports.ListLayout._numberOfItemsPerItemsBlock > 0;
-                        }
                         var that = this;
                         // Measure when numberOfItemsPerItemsBlock is called so that we measure before ListView has created the full tree structure
                         // which reduces the trident layout required by measure.
                         return this._measureItem(0).then(function () {
+                            if (that._envInfo.nestedFlexTooLarge || that._envInfo.nestedFlexTooSmall) {
+                                that._usingStructuralNodes = false;
+                            } else {
+                                that._usingStructuralNodes = exports.ListLayout._numberOfItemsPerItemsBlock > 0;
+                            }
                             return (that._usingStructuralNodes ? exports.ListLayout._numberOfItemsPerItemsBlock : null);
                         });
                     }

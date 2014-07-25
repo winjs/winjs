@@ -463,6 +463,7 @@ var WinJSTests = WinJSTests || {};
 
                 layout.initialize(listView._getLayoutSite(), groupsEnabled);
                 layout._measuringPromise = WinJS.Promise.wrap();
+                layout._envInfo = {};
                 var sizes = {
                     viewportContentSize: 100,
                     containerWidth: 90,
@@ -551,6 +552,7 @@ var WinJSTests = WinJSTests || {};
 
                 layout.initialize(listView._getLayoutSite(), groupsEnabled);
                 layout._measuringPromise = WinJS.Promise.wrap();
+                layout._envInfo = {};
                 var sizes = {
                     viewportContentSize: 100,
                     containerWidth: 90,
@@ -867,6 +869,7 @@ var WinJSTests = WinJSTests || {};
 
             layout.initialize(listView._getLayoutSite(), false);
             layout._measuringPromise = WinJS.Promise.wrap();
+            layout._envInfo = {};
             attachGenericSizesToLayout(layout, sizes);
             layout._itemsPerBar = Math.floor(viewportSize.height / 110);
             layout.layout(listView._tree, { firstIndex: 0, lastIndex: count - 1 }, [], []).layoutComplete.then(function () {
@@ -950,6 +953,7 @@ var WinJSTests = WinJSTests || {};
 
                 layout.initialize(listView._getLayoutSite(), false);
                 layout._measuringPromise = WinJS.Promise.wrap();
+                layout._envInfo = {};
                 attachGenericSizesToLayout(layout, sizes);
                 layout._itemsPerBar = Math.floor(viewportSize.height / 10);
                 return layout.layout(listView._tree, { firstIndex: 0, lastIndex: count - 1 }, [], []).layoutComplete.then(function () {

@@ -1448,7 +1448,7 @@ WinJSTests.GroupsTests = function () {
         var itemData = flavors;
         itemData.sort(function CompareForSort(item1, item2) {
             var first = groupKeys.indexOf(item1.kind), second = groupKeys.indexOf(item2.kind);
-            if (first === second) { return 0; }
+            if (first === second) { return item1.text.localeCompare(item2.text); }
             else if (first < second) { return -1; }
             else { return 1; }
         });
