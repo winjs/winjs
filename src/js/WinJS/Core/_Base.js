@@ -53,7 +53,7 @@ define([
         }
     }
 
-    (function (rootNamespace) {
+    (function () {
 
         var _rootNamespace = _WinJS;
         if (!_rootNamespace.Namespace) {
