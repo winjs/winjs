@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/* global WinJS */
 define([
+    'WinJS/Core/_WinJS',
     'WinJS/VirtualizedDataSource',
     'WinJS/Controls/ListView',
     'WinJS/Controls/FlipView',
@@ -22,10 +22,10 @@ define([
     'WinJS/Controls/NavBar',
     'WinJS/Controls/Tooltip',
     'WinJS/Controls/ViewBox'
-    ], function() {
+    ], function(_WinJS) {
     "use strict";
 
     //Wrapper module
 
-    return WinJS;
+    return _WinJS;
 });

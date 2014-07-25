@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/* global WinJS */
 define([
+    './_WinJS',
     './_Global',
     './_BaseCoreUtils',
     './_WriteProfilerMark'
-    ], function baseInit(_Global, _BaseCoreUtils, _WriteProfilerMark) {
+    ], function baseInit(_WinJS, _Global, _BaseCoreUtils, _WriteProfilerMark) {
     "use strict";
 
     function initializeProperties(target, members, prefix) {
@@ -55,13 +55,7 @@ define([
 
     (function (rootNamespace) {
 
-        // Create the rootNamespace in the global namespace
-        if (!_Global[rootNamespace]) {
-            _Global[rootNamespace] = Object.create(Object.prototype);
-        }
-
-        // Cache the rootNamespace we just created in a local variable
-        var _rootNamespace = _Global[rootNamespace];
+        var _rootNamespace = _WinJS;
         if (!_rootNamespace.Namespace) {
             _rootNamespace.Namespace = Object.create(Object.prototype);
         }
@@ -70,6 +64,10 @@ define([
             var currentNamespace = parentNamespace || {};
             if(name) {
                 var namespaceFragments = name.split(".");
+                if (currentNamespace === _Global && namespaceFragments[0] === "WinJS") {
+                    currentNamespace = _WinJS;
+                    namespaceFragments.splice(0, 1);
+                }
                 for (var i = 0, len = namespaceFragments.length; i < len; i++) {
                     var namespaceName = namespaceFragments[i];
                     if (!currentNamespace[namespaceName]) {
@@ -208,7 +206,7 @@ define([
 
         });
 
-    })("WinJS");
+    })();
 
     (function (WinJS) {
 
@@ -308,11 +306,11 @@ define([
             mix: mix
         });
 
-    })(WinJS);
+    })(_WinJS);
 
     return {
-        Namespace: WinJS.Namespace,
-        Class: WinJS.Class
+        Namespace: _WinJS.Namespace,
+        Class: _WinJS.Class
     };
 
 });
