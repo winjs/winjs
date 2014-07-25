@@ -414,7 +414,7 @@ define([
 
     // Custom pointer events
     //
-
+    
     // Sets the properties in *overrideProperties* on the object. Delegates all other
     // property accesses to *eventObject*.
     //
@@ -430,7 +430,7 @@ define([
             });
         });
     };
-
+    
     // Define PointerEventProxy properties which should be delegated to the original eventObject.
     [
         "altKey", "AT_TARGET", "bubbles", "BUBBLING_PHASE", "button", "buttons",
@@ -456,7 +456,11 @@ define([
     function touchEventTranslator(callback, eventObject) {
         var changedTouches = eventObject.changedTouches,
             retVal = null;
-
+        
+        if(!changedTouches) {
+            return retVal;
+        }
+        
         for (var i = 0, len = changedTouches.length; i < len; i++) {
             var touchObject = changedTouches[i];
             var pointerEventObject = new PointerEventProxy(eventObject, {
@@ -1020,7 +1024,7 @@ define([
         _initPointerEvent: function (event) {
             this._initEventImpl.apply(this, ["Pointer", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
-
+        
         _PointerEventProxy: PointerEventProxy,
 
         _bubbleEvent: bubbleEvent,
@@ -2025,11 +2029,11 @@ define([
         //  and return a function with a unified synchronous contract which is:
         //
         //  (data, container) => element
-        //
+        //      
         // Where:
         //
         //  1) if you pass container the content will be rendered into the container and the
-        //     container will be returned.
+        //     container will be returned. 
         //
         //  2) if you don't pass a container the content will be rendered and returned.
         //
