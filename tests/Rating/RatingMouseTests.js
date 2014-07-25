@@ -874,62 +874,62 @@ RatingMouseTests = function () {
 
     this.testRating_Scrub_Backward = function (signalTestCaseCompleted) {
         // Setup the page for test case
-        var rating = ratingUtils.instantiate("rating", { userRating: 7, maxRating: 12 });
+        var rating = ratingUtils.instantiate("rating", { userRating: 4, maxRating: 8 });
 
         // Register the test actions we will be taking
 
         // This test validates that "scrubbing" (mouse down on one star and release on another) properly sets the rating.
-        //  In this case, we drag from the eleventh star of a rating control with increased maxRating to the eigth star.
+        //  In this case, we drag from the 8th star of a rating control with increased maxRating to the 5th star.
         var actions = {
-            // Hover star 11
+            // Hover star 8
             1: {
                 action: function (star) { return function () { ratingUtils.mouseOver(null, star); }; }
-                    (rating.element.childNodes[10]),
+                    (rating.element.childNodes[7]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
-                tentativeRatingExpected: 11,
+                tentativeRatingExpected: 8,
                 styleExpected: "tentative",
-                userRatingExpected: 7
+                userRatingExpected: 4
             },
-            // MouseDown on star 11
+            // MouseDown on star 8
             2: {
                 action: function (star) { return function () { ratingUtils.mouseDown(star); }; }
-                    (rating.element.childNodes[10]),
+                    (rating.element.childNodes[7]),
                 expectedEvents: { previewchange: 0, change: 0, cancel: 0 }
             },
-            // Drag to star 10
+            // Drag to star 7
             3: {
                 action: function (fromElement, toElement) { return function () { ratingUtils.mouseOver(fromElement, toElement); }; }
-                    (rating.element.childNodes[10], rating.element.childNodes[9]),
+                    (rating.element.childNodes[7], rating.element.childNodes[6]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
-                tentativeRatingExpected: 10,
+                tentativeRatingExpected: 7,
                 styleExpected: "tentative",
-                userRatingExpected: 7
+                userRatingExpected: 4
             },
-            // Drag to star 9
+            // Drag to star 6
             4: {
                 action: function (fromElement, toElement) { return function () { ratingUtils.mouseOver(fromElement, toElement); }; }
-                    (rating.element.childNodes[9], rating.element.childNodes[8]),
+                    (rating.element.childNodes[6], rating.element.childNodes[5]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
-                tentativeRatingExpected: 9,
+                tentativeRatingExpected: 6,
                 styleExpected: "tentative",
-                userRatingExpected: 7
+                userRatingExpected: 4
             },
-            // Hover to star 8
+            // Hover to star 5
             5: {
                 action: function (fromElement, toElement) { return function () { ratingUtils.mouseOver(fromElement, toElement); }; }
-                    (rating.element.childNodes[8], rating.element.childNodes[7]),
+                    (rating.element.childNodes[5], rating.element.childNodes[4]),
                 expectedEvents: { previewchange: 1, change: 0, cancel: 0 },
-                tentativeRatingExpected: 8,
+                tentativeRatingExpected: 5,
                 styleExpected: "tentative",
-                userRatingExpected: 7
+                userRatingExpected: 4
             },
-            // Release on star 8, expecting change event
+            // Release on star 5, expecting change event
             6: {
                 action: function (star) { return function () { ratingUtils.mouseUp(star); }; }
-                    (rating.element.childNodes[7]),
+                    (rating.element.childNodes[4]),
                 expectedEvents: { previewchange: 0, change: 1, cancel: 0 },
-                tentativeRatingExpected: 8,
-                userRatingExpected: 8
+                tentativeRatingExpected: 5,
+                userRatingExpected: 5
             },
             // Move off
             7: {
