@@ -5,6 +5,7 @@
 
     module.exports = function (grunt) {
         var config = require("../config.js");
+        var pathUtils = require("path");
 
         grunt.registerTask("test", function () {
             if (config.inRazzle) {
@@ -55,21 +56,18 @@
                 
                 // realpathSync will abort the build if the file can't be resolved.
                 var fullPath = fs.realpathSync(path);
-                fullPath = fullPath.replace(/\\/g, "/");
 
                 // This part checks if the filepath is correctly cased by walking the path starting
                 // from the repository root and comparing each step with the directory listing.
-                var rootFolder = "winjs/tests/";
-                var split = fullPath.split(rootFolder);
-                var steps = split[1].split("/");
-                var csPath = split[0] + rootFolder;
+                var csPath = pathUtils.join(process.cwd(), "tests");
+                var steps = pathUtils.relative(csPath, fullPath).split(pathUtils.sep);
                 while (steps.length) {
                     var step = steps[0];
                     var files = fs.readdirSync(csPath);
                     if (files.indexOf(step) < 0) {
                         grunt.fail.warn("Incorrect casing for:\n" + line + "in file:\n" + fullPath + "\nstep: " + step);
                     }
-                    csPath += "/" + step;
+                    csPath = pathUtils.join(csPath, step);
                     steps = steps.slice(1);
                 }
             }
@@ -109,15 +107,6 @@
                     processedOne = true;
                 }
                 return deps;
-            }
-
-            function arrayIndexOf(arr, obj) {
-                for (var i = 0; i < arr.length; i++) {
-                    if (arr[i] === obj) {
-                        return i;
-                    }
-                }
-                return -1;
             }
 
             var testMenuTemplate =
@@ -240,11 +229,11 @@
                                 return;
                             }
                             if (dep.indexOf(".css") >= 0) {
-                                if (arrayIndexOf(csss, dep) < 0) {
+                                if (csss.indexOf(dep) < 0) {
                                     csss.push(dep);
                                 }
                             } else {
-                                var index = arrayIndexOf(srcsCopy, dep);
+                                var index = srcsCopy.indexOf(dep);
                                 if (index >= 0) {
                                     // If this dependency already exists, we need to reorder it to the bottom
                                     // of the array so it gets loaded first. This usually happens when a dependency
