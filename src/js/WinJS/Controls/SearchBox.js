@@ -1156,7 +1156,7 @@ define([
                     }
                 },
 
-                _searchBoxFocusInHandler: function SearchBox__searchBoxFocusInHandler(event) {
+                _searchBoxFocusHandler: function SearchBox__searchBoxFocusHandler(event) {
                     // Refresh hit highlighting if text has changed since focus was present
                     // This can happen if the user committed a suggestion previously.
                     if (this._inputElement.value !== this._prevQueryText) {
@@ -1192,7 +1192,7 @@ define([
                     this._updateSearchButtonClass();
                 },
 
-                _searchBoxFocusOutHandler: function SearchBox_searchBoxFocusOutHandler(event) {
+                _searchBoxBlurHandler: function SearchBox_searchBoxBlurHandler(event) {
                     this._hideFlyoutIfLeavingSearchControl(event.relatedTarget);
                     _ElementUtilities.removeClass(this.element, ClassName.searchBoxInputFocus);
                     this._updateSearchButtonClass();
@@ -1247,13 +1247,13 @@ define([
                     this._inputElement.addEventListener("keydown", this._keyDownHandler.bind(this));
                     this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));
                     this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
+                    this._inputElement.addEventListener("focus", this._searchBoxFocusHandler.bind(this));
+                    this._inputElement.addEventListener("blur", this._searchBoxBlurHandler.bind(this));
                     _ElementUtilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
                     _ElementUtilities._addEventListener(this._flyoutDivElement, "pointerdown", this._flyoutPointerDownHandler.bind(this));
                     _ElementUtilities._addEventListener(this._flyoutDivElement, "pointerup", this._flyoutPointerReleasedHandler.bind(this));
                     _ElementUtilities._addEventListener(this._flyoutDivElement, "pointercancel", this._flyoutPointerReleasedHandler.bind(this));
                     _ElementUtilities._addEventListener(this._flyoutDivElement, "pointerout", this._flyoutPointerReleasedHandler.bind(this));
-                    _ElementUtilities._addEventListener(this.element, "focusin", this._searchBoxFocusInHandler.bind(this), false);
-                    _ElementUtilities._addEventListener(this.element, "focusout", this._searchBoxFocusOutHandler.bind(this), false);
 
                     this._inputElement.addEventListener("compositionstart", inputOrImeChangeHandler);
                     this._inputElement.addEventListener("compositionupdate", inputOrImeChangeHandler);
