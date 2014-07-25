@@ -1172,14 +1172,17 @@ define([
             var styleObject = element.style;
             if (typeof flexParams.grow !== "undefined") {
                 styleObject.msFlexPositive = flexParams.grow;
+                styleObject.webkitFlexGrow = flexParams.grow;
                 styleObject.flexGrow = flexParams.grow;
             }
             if (typeof flexParams.shrink !== "undefined") {
                 styleObject.msFlexNegative = flexParams.shrink;
+                styleObject.webkitFlexShrink = flexParams.shrink;
                 styleObject.flexShrink = flexParams.shrink;
             }
             if (typeof flexParams.basis !== "undefined") {
                 styleObject.msFlexPreferredSize = flexParams.basis;
+                styleObject.webkitFlexBasis = flexParams.basis;
                 styleObject.flexBasis = flexParams.basis;
             }
         },
