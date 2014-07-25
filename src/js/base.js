@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/* global WinJS */
 define([
+    'WinJS/Core/_WinJS',
     'WinJS/Core',
     'WinJS/Promise',
     'WinJS/_Signal',
@@ -17,14 +17,13 @@ define([
     'WinJS/Pages',
     'WinJS/ControlProcessor',
     'WinJS/Controls/HtmlControl'
-    ], function() {
+    ], function(_WinJS) {
     "use strict";
 
-
-    WinJS.Namespace.define("WinJS.Utilities", {
+    _WinJS.Namespace.define("WinJS.Utilities", {
         _require: require,
         _define: define
     });
 
-    return WinJS;
+    return _WinJS;
 });
