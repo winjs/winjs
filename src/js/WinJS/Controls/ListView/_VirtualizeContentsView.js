@@ -1267,11 +1267,13 @@ define([
                         index = this._listView._groups.index(item);
                         type = _UI.ObjectType.groupHeader;
                         _ElementUtilities._setAttribute(item, "role", this._listView._headerRole);
+                        _ElementUtilities._setAttribute(item, "tabindex", this._listView._tabIndex);
                     } else {
                         index = this.items.index(item);
                         _ElementUtilities._setAttribute(item, "aria-setsize", count);
                         _ElementUtilities._setAttribute(item, "aria-posinset", index + 1);
                         _ElementUtilities._setAttribute(item, "role", this._listView._itemRole);
+                        _ElementUtilities._setAttribute(item, "tabindex", this._listView._tabIndex);
                     }
 
                     if (type === _UI.ObjectType.groupHeader) {
