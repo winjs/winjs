@@ -130,7 +130,7 @@ var Helper;
             } else if ("msFlexGrow" in document.documentElement.style) {
                 obj.property["flex-grow"] = "-ms-flex-grow";
             } else if ("msFlexPositive" in document.documentElement.style) {
-                obj.property["flex-positive"] = "-ms-flex-positive";
+                obj.property["flex-grow"] = "-ms-flex-positive";
             } else if ("webkitFlexGrow" in document.documentElement.style) {
                 obj.property["flex-grow"] = "-webkit-flex-grow";
             }
@@ -143,7 +143,7 @@ var Helper;
             } else if ("msFlexShrink" in document.documentElement.style) {
                 obj.property["flex-shrink"] = "-ms-flex-shrink";
             } else if ("msFlexNegative" in document.documentElement.style) {
-                obj.property["flex-negative"] = "-ms-flex-negative";
+                obj.property["flex-shrink"] = "-ms-flex-negative";
             } else if ("webkitFlexShrink" in document.documentElement.style) {
                 obj.property["flex-shrink"] = "-webkit-flex-shrink";
             }
@@ -156,7 +156,7 @@ var Helper;
             } else if ("msFlexBasis" in document.documentElement.style) {
                 obj.property["flex-basis"] = "-ms-flex-basis";
             } else if ("msFlexPreferredSize" in document.documentElement.style) {
-                obj.property["flex-preferred-size"] = "-ms-flex-preferred-size";
+                obj.property["flex-basis"] = "-ms-flex-preferred-size";
             } else if ("webkitFlexBasis" in document.documentElement.style) {
                 obj.property["flex-basis"] = "-webkit-flex-basis";
             }
@@ -267,18 +267,18 @@ var Helper;
             nums.length < 4 ? 1.0 : parseFloat(nums[3].trim())
         ];
     };
-    
+
     function normalizedCssValue(attributeName, value) {
         var div = document.createElement("div");
         document.body.appendChild(div);
-        
+
         div.style[attributeName] = value;
         var normalizedValue = getComputedStyle(div)[attributeName];
-        
+
         document.body.removeChild(div);
         return normalizedValue;
     }
-    
+
     function makeNormalizedCssValueAssertion(assertionFunction, attributeName) {
         return function (expected, actual, message) {
             assertionFunction(
@@ -328,11 +328,11 @@ var Helper;
         // Verifies CSS urls. *expectedUrl* and *actualUrl* are expected to be valid CSS rules. For example,
         // url("foo.png").
         areUrlsEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "backgroundImage"),
-        
+
         areFontFamiliesEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "fontFamily"),
         areFontFamiliesNotEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areNotEqual.bind(LiveUnit.Assert), "fontFamily")
     };
-    
+
     Helper.Browser = {
         // Taken from ListView's CSS grid feature detection
         supportsCSSGrid: !!("-ms-grid-row" in document.documentElement.style)
@@ -474,7 +474,7 @@ var Helper;
             includeDescendants: true
         });
     };
-    
+
     // A wrapper around the browser's MouseEvent.initMouseEvent that turns the large argument list
     // into an options object to make function calls easier to understand.
     Helper.initMouseEvent = function initMouseEvent(eventObject, type, options) {
