@@ -632,7 +632,7 @@ define([
                         }
                     });
 
-                    this._pageManager.initialize(initialIndex, this._horizontal, this._environmentSupportsTouch);
+                    this._pageManager.initialize(initialIndex, this._horizontal);
 
                     this._dataSource.getCount().then(function (count) {
                         that._pageManager._cachedSize = count;
@@ -691,7 +691,7 @@ define([
                         }, false);
 
                         _ElementUtilities._addEventListener(this._contentDiv, "pointermove", handleShowButtons, false);
-                        
+
                         _ElementUtilities._addEventListener(this._contentDiv, "pointerup", function (e) {
                             if (e.pointerType !== PT_TOUCH) {
                                 that._touchInteraction = false;
@@ -825,6 +825,8 @@ define([
                                 that._panningDivContainer.style["overflowX"] = "hidden";
                             }
                         });
+                    } else if (wheelWithinFlipper) {
+                        this._pageManager.simulateMouseWheelScroll(ev);
                     }
                 },
 

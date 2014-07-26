@@ -13,7 +13,7 @@ define([
         return;
     }
 
-    var zoomToDuration = 167;
+    var _zoomToDuration = 167;
 
     function removeEmpties(arr) {
         var len = arr.length;
@@ -414,7 +414,7 @@ define([
 
     // Custom pointer events
     //
-    
+
     // Sets the properties in *overrideProperties* on the object. Delegates all other
     // property accesses to *eventObject*.
     //
@@ -430,7 +430,7 @@ define([
             });
         });
     };
-    
+
     // Define PointerEventProxy properties which should be delegated to the original eventObject.
     [
         "altKey", "AT_TARGET", "bubbles", "BUBBLING_PHASE", "button", "buttons",
@@ -460,7 +460,7 @@ define([
         if(!changedTouches) {
             return retVal;
         }
-        
+
         for (var i = 0, len = changedTouches.length; i < len; i++) {
             var touchObject = changedTouches[i];
             var pointerEventObject = new PointerEventProxy(eventObject, {
@@ -1024,7 +1024,7 @@ define([
         _initPointerEvent: function (event) {
             this._initEventImpl.apply(this, ["Pointer", event].concat(Array.prototype.slice.call(arguments, 1)));
         },
-        
+
         _PointerEventProxy: PointerEventProxy,
 
         _bubbleEvent: bubbleEvent,
@@ -1042,6 +1042,8 @@ define([
         },
 
         _MSPointerEvent: _MSPointerEvent,
+
+        _zoomToDuration: _zoomToDuration,
 
         _zoomTo: function _zoomTo(element, args) {
             if (element.msZoomTo) {
@@ -1079,14 +1081,14 @@ define([
 
                     var thisZoomToId = element._zoomToId;
                     var start = _BaseUtils._now();
-                    var xFactor = (element._zoomToDestX - initialPos.scrollLeft) / zoomToDuration;
-                    var yFactor = (element._zoomToDestY - initialPos.scrollTop) / zoomToDuration;
+                    var xFactor = (element._zoomToDestX - initialPos.scrollLeft) / _zoomToDuration;
+                    var yFactor = (element._zoomToDestY - initialPos.scrollTop) / _zoomToDuration;
 
                     var update = function () {
                         var t = _BaseUtils._now() - start;
                         if (element._zoomToId !== thisZoomToId) {
                             return;
-                        } else if (t > zoomToDuration) {
+                        } else if (t > _zoomToDuration) {
                             setAdjustedScrollPosition(element, element._zoomToDestX, element._zoomToDestY);
                             element._zoomToDestX = null;
                             element._zoomToDestY = null;

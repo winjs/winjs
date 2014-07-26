@@ -188,9 +188,9 @@ define([
                     this._isOrientationChanging = true;
 
                     if (this._horizontal) {
-                        _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: this._getItemStart(this._currentPage), scrollTop: 0});
+                        _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: this._getItemStart(this._currentPage), scrollTop: 0 });
                     } else {
-                        _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: 0, scrollTop: this._getItemStart(this._currentPage)});
+                        _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: 0, scrollTop: this._getItemStart(this._currentPage) });
                     }
                     this._horizontal = horizontal;
 
@@ -274,6 +274,7 @@ define([
                 },
 
                 scrollPosChanged: function () {
+
                     if (!this._itemsManager || !this._currentPage.element || this._isOrientationChanging) {
                         return;
                     }
@@ -540,6 +541,31 @@ define([
                     }
 
                     return Promise.wrap(null);
+                },
+
+                simulateMouseWheelScroll: function (ev) {
+
+                    if (this._environmentSupportsTouch || this._waitingForMouseScroll) {
+                        return;
+                    }
+
+                    var wheelingForward = (ev.deltaX || ev.deltaY) > 0;
+                    var targetPage = wheelingForward ? this._currentPage.next : this._currentPage.prev;
+
+                    if (!targetPage.element) {
+                        return;
+                    }
+
+                    var zoomToContent = { contentX: 0, contentY: 0, viewportX: 0, viewportY: 0 };
+                    zoomToContent[this._horizontal ? "contentX" : "contentY"] = this._getItemStart(targetPage);
+                    _ElementUtilities._zoomTo(this._panningDivContainer, zoomToContent);
+                    this._waitingForMouseScroll = true;
+
+                    // The 100ms is added to the zoom duration to give the snap feeling where the page sticks
+                    // while scrolling
+                    _Global.setTimeout(function () {
+                        this._waitingForMouseScroll = false;
+                    }.bind(this), _ElementUtilities._zoomToDuration + 100);
                 },
 
                 endAnimatedJump: function (oldCurr, newCurr) {
@@ -842,7 +868,7 @@ define([
                     // The moved animation of the last part is joined with the moved animation of the previous part, so in the end it is:
                     // removed -> moved items in view + moved items not in view -> inserted.
                     var that = this;
-                    this._endNotificationsWork  && this._endNotificationsWork.cancel();
+                    this._endNotificationsWork && this._endNotificationsWork.cancel();
                     this._endNotificationsWork = this._ensureBufferConsistency().then(function () {
                         var animationPromises = [];
                         that._forEachPage(function (curr) {
@@ -1033,14 +1059,14 @@ define([
                     }
                 },
 
-                _writeProfilerMark: function(message) {
+                _writeProfilerMark: function (message) {
                     _WriteProfilerMark(message);
                     if (this._flipperDiv.winControl.constructor._enabledDebug) {
                         _Log.log && _Log.log(message, null, "flipviewdebug");
                     }
                 },
 
-                _getElementIndex: function(element) {
+                _getElementIndex: function (element) {
                     var index = 0;
                     try {
                         index = this._itemsManager.itemObject(element).index;
@@ -1568,10 +1594,9 @@ define([
                         _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: newValue });
                     } else {
                         if (newValue === undefined) {
-                            return this._panningDivContainer.scrollTop;
+                            return _ElementUtilities.getScrollPosition(this._panningDivContainer).scrollTop;
                         }
-
-                        this._panningDivContainer.scrollTop = newValue;
+                        _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollTop: newValue });
                     }
                 },
 
@@ -1597,7 +1622,7 @@ define([
                 },
 
                 _setItemStart: function (flipPage, newValue) {
-                     if (this._horizontal) {
+                    if (this._horizontal) {
                         flipPage.pageRoot.style.left = (this._rtl ? -newValue : newValue) + "px";
                     } else {
                         flipPage.pageRoot.style.top = newValue + "px";
@@ -1774,7 +1799,7 @@ define([
                             break;
                         }
                         curr = curr.next;
-                    } while(curr !== this._prevMarker);
+                    } while (curr !== this._prevMarker);
                 },
 
                 _changeFlipPage: function (page, oldElement, newElement) {
