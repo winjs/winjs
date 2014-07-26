@@ -1460,46 +1460,17 @@ CorsicaTests.AppBarTests = function () {
             return triggerTestPromise;
         }
 
-        // Run tests for mouse clicks, taps, enter key, and space key on the AppBar invoke button.
-        var actions = {
-            enter: function (appBar) {
-                var trigger = function () {
-                    CommonUtilities.keyup(appBar._invokeButton, Key.enter);
-                };
-                trigger.sourceAppBar = appBar;
-                return trigger;
-            },
-            space: function (appBar) {
-                var trigger = function () {
-                    CommonUtilities.keyup(appBar._invokeButton, Key.space);
-                };
-                trigger.sourceAppBar = appBar;
-                return trigger;
-            },
-            click: function (appBar) {
-                var trigger = function () {
-                    CommonUtilities.click(appBar._invokeButton);
-                };
-                trigger.sourceAppBar = appBar;
-                return trigger;
-            },
-            tap: function (appBar) {
-                var trigger = function () {
-                    CommonUtilities.tap(appBar._invokeButton);
-                };
-                trigger.sourceAppBar = appBar;
-                return trigger;
-            },
+        // Simulate click on invoke button.
+        var click = function (appBar) {
+            var trigger = function () {
+                CommonUtilities.click(appBar._invokeButton);
+            };
+            trigger.sourceAppBar = appBar;
+            return trigger;
         }
 
-        testInvokeBehavior(actions.enter(topBar)).
-        then(function () { return testInvokeBehavior(actions.space(topBar)); }).
-        then(function () { return testInvokeBehavior(actions.click(topBar)); }).
-        then(function () { return testInvokeBehavior(actions.tap(topBar)); }).
-        then(function () { return testInvokeBehavior(actions.enter(bottomBar)); }).
-        then(function () { return testInvokeBehavior(actions.space(bottomBar)); }).
-        then(function () { return testInvokeBehavior(actions.click(bottomBar)); }).
-        then(function () { return testInvokeBehavior(actions.tap(bottomBar)); }).
+        testInvokeBehavior(click(bottomBar)).
+        then(function () { return testInvokeBehavior(click(topBar)); }).
         done(function () { complete(); });
     };
 
@@ -1544,7 +1515,7 @@ CorsicaTests.AppBarTests = function () {
                     // Verify that focusing the firstDiv wraps focus around to the last AppBarCommand in the AppBar.
                     firstDiv.focus();
                     return WinJS.Promise.timeout(0);
-                }).then(function () { 
+                }).then(function () {
                     LiveUnit.Assert.areEqual(document.activeElement.id, commands[commands.length - 1].id);
 
                     // Verify that focusing the firstDiv wraps focus around to the last AppBarCommand in the AppBar.
@@ -1579,7 +1550,7 @@ CorsicaTests.AppBarTests = function () {
                     bar1Commands = bar1.element.querySelectorAll('.win-command'),
                     bar1FirstDiv,
                     bar1FinalDiv;
-                
+
                 var bar2Children = bar2.element.children,
                     bar2Commands = bar2.element.querySelectorAll('.win-command'),
                     bar2FirstDiv,
