@@ -1079,6 +1079,8 @@ CorsicaTests.AppBarTests = function () {
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             failures = checkShouldBeTabStop(childrenMinusInvokeButton, false);
             LiveUnit.Assert.isFalse(failures.length, msg);
+
+            verifyHidden(appBar);
         }
 
         var verifyAppBarCompletelyHidden = function (appBar) {
@@ -1105,6 +1107,8 @@ CorsicaTests.AppBarTests = function () {
             var subTree = appBar.querySelectorAll("*");
             var failures = checkShouldBeTabStop(subTree, false);
             LiveUnit.Assert.isFalse(failures.length, msg);
+
+            verifyHidden(appBar);
         }
 
         var checkShouldBeDisplayNone = function (elements, shouldBeDisplayNone) {
@@ -1303,7 +1307,13 @@ CorsicaTests.AppBarTests = function () {
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             failures = checkShouldBeDisplayNone(clickEater, false);
             LiveUnit.Assert.isFalse(failures.length, msg);
-        }
+        };
+
+        function verifyHidden(appBar) {
+            var msg = "Hidden AppBar should have cleaned up transforms applied by the hiding animation.";
+            var NameOfTransformProperty = WinJS.Utilities._browserStyleEquivalents["transform"].scriptName;
+            LiveUnit.Assert.isFalse(appBar.style[NameOfTransformProperty], msg);
+        };
 
         var root = document.getElementById("appBarDiv");
         root.innerHTML =
