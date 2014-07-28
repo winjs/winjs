@@ -28,6 +28,8 @@ define([
                 var classDescription = 'win-toggleswitch-description-new';
                 var classOn = 'win-toggleswitch-on-new';
                 var classOff = 'win-toggleswitch-off-new';
+                var classDragging = 'win-toggleswitch-dragging-new';
+                var classPressed = 'win-toggleswitch-pressed-new';
 
                 // Define the ToggleSwitch class
                 var Toggle = _Base.Class.define(function ToggleSwitchNew_ctor(element, options) {
@@ -85,6 +87,88 @@ define([
                     element.winControl = this;
                     _ElementUtilities.addClass(element, 'win-disposable');
 
+                    // Current x coord while being dragged
+                    var dragX = 0;
+
+                    // Event handlers
+                    var pointerDownHandler = function(e) {
+                        e.preventDefault();
+                        this._mousedown = true;
+                        _ElementUtilities.addClass(this._domElement, classPressed);
+                    }.bind(this);
+
+                    var pointerUpHandler = function(e) {
+                        // Since up is a global event we should only take action
+                        // if a mousedown was registered on us initially
+                        if (!this._mousedown) {
+                            return;
+                        }
+
+                        e.preventDefault();
+
+                        // If the thumb is being dragged, pick a new value based on what the thumb
+                        // was closest to
+                        if (this._dragging) {
+                            this.checked = dragX >= 18;
+                            this._dragging = false;
+                            _ElementUtilities.removeClass(this._domElement, classDragging);
+                        } else {
+                            // Otherwise, just toggle the value as the up constitutes a 
+                            // click event
+                            this.checked = !this.checked;
+                        }
+
+                        // Reset tracking variables and intermediate styles
+                        this._mousedown = false;
+                        this._thumbElement.style.left = '';
+                        this._fillLowerElement.style.width = '';
+                        this._fillUpperElement.style.width = '';
+                        _ElementUtilities.removeClass(this._domElement, classPressed);
+                    }.bind(this);
+
+                    var pointerMoveHandler = function(e) {
+                        // Not dragging if mouse isn't down
+                        if (!this._mousedown) {
+                            return;
+                        }
+
+                        e.preventDefault();
+
+                        // Always seem to get one move event even on a simple click
+                        // so we will eat the first move event
+                        if (!this._ateFirstDragEvent) {
+                            this._ateFirstDragEvent = true;
+                            return;
+                        }
+
+                        // On the first drag event, set dragging state
+                        if (!this._dragging) {
+                            _ElementUtilities.addClass(this._domElement, classDragging);
+                            this._dragging = true;
+                        }
+
+                        // Get pointer x coord relative to control
+                        var pageX = typeof(e.pageX) !== 'undefined' ? e.pageX : e.touches[0].pageX;
+                        var localMouseX = pageX - this._trackElement.offsetLeft;
+
+                        // Calculate a new width for the lower fill element and position for
+                        // the thumb
+                        dragX = Math.min(36, localMouseX - 6);
+                        dragX = Math.max(-2, dragX);
+                        this._thumbElement.style.left = dragX + 'px';
+                        this._fillLowerElement.style.width = dragX + 'px';
+                        this._fillUpperElement.style.width = (35 - dragX) + 'px';
+                    }.bind(this);
+
+                    // Add listeners
+                    this._clickElement.addEventListener('mousedown', pointerDownHandler);
+                    this._clickElement.addEventListener('touchstart', pointerDownHandler);
+                    this._clickElement.addEventListener('mousemove', pointerMoveHandler);
+                    this._clickElement.addEventListener('touchmove', pointerMoveHandler);
+                    window.addEventListener('mouseup', pointerUpHandler);
+                    window.addEventListener('touchend', pointerUpHandler);
+
+                    // Default state is unchecked
                     this._setChecked(false);
                 }, {
                     // Properties
