@@ -4,6 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <deploy src="../TestData/" />
 
@@ -97,21 +98,28 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
                 outListView.addEventListener("loadingstatechanged", onLoadingStateChanged);
             };
         }
+
         var that = this;
-        function generateTestSuite(layoutName) {
-            function generateTestsForOrientation(o) {
-                generateTest(that, o, false, false, false, layoutName);
-                generateTest(that, o, false, false, true, layoutName);
-                generateTest(that, o, true, false, false, layoutName);
-                generateTest(that, o, true, false, true, layoutName);
-                generateTest(that, o, true, true, false, layoutName);
-                generateTest(that, o, true, true, true, layoutName);
-            }
-            generateTestsForOrientation("horizontal");
-            generateTestsForOrientation("vertical");
-        }
-        generateTestSuite("ListLayout");
-        generateTestSuite("GridLayout");
+
+        // Cover all pair combinations of configurations.
+        Helper.pairwise({
+            direction: ["horizontal", "vertical"], 
+            grouped: [true, false], 
+            headersAbove: [true, false], 
+            rtl: [true, false], 
+            layoutName: ["ListLayout", "GridLayout"]
+        },[
+            // Some configurations are more important because they've found bugs in the past,
+            // so configure them explicitly
+
+            // Scenario 1: Horizontal grouped grid with headers to the side (with and without RTL)
+            { direction: "horizontal", grouped: true, headersAbove: false, rtl: true, layoutName: "GridLayout"},
+            { direction: "horizontal", grouped: true, headersAbove: false, rtl: false, layoutName: "GridLayout"},
+            // Scenario 2: Vertical grouped grid with headers above
+            { direction: "vertical", grouped: true, headersAbove: true, rtl: false, layoutName: "GridLayout"}
+        ]).forEach(function(testCase) {
+            generateTest(that, testCase.direction, testCase.grouped, testCase.headersAbove, testCase.rtl, testCase.layoutName);
+        });
     }
 
     var originalIsAnimationEnabled = null;
