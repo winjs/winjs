@@ -5,7 +5,7 @@
     var config = require("../../config.js");
     
     module.exports = {
-        addBom: {
+        bin: {
             files: [
                 {
                     cwd: config.outputFolder,
@@ -13,10 +13,7 @@
                     expand: true,
                     nocase: true
                 }
-            ],
-            options: {
-                add: true
-            }
+            ]
         }
     };
 })();

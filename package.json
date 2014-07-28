@@ -23,7 +23,6 @@
     "grunt-contrib-requirejs": "^0.4.4",
     "less": "^1.7.1",
     "madge": "^0.3.1",
-    "fs-extra": "^0.10.0",
-    "grunt-byte-order-mark": "0.1.0"
+    "fs-extra": "^0.10.0"
   }
 }

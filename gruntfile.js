@@ -7,7 +7,7 @@
         config.grunt = grunt;
 
         // Strip source files of their BOMs. BOMs will be added at the end of the build
-        // by the "bom" task.
+        // by the "add-bom" task.
         grunt.file.preserveBOM = false;
 
         // Helper function to load the config file
@@ -39,10 +39,10 @@
         // Register external tasks
         grunt.loadTasks("tasks/");
         
-        // Tasks that drop things in bin/ (should have "bom" as the last task)
-        grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "_build", "copy", "replace", "bom"]);
-        grunt.registerTask("release", ["jshint", "default", "uglify", "bom"]);
-        grunt.registerTask("minify", ["uglify", "bom"]);
+        // Tasks that drop things in bin/ (should have "add-bom" as the last task)
+        grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "_build", "copy", "replace", "add-bom"]);
+        grunt.registerTask("release", ["jshint", "default", "uglify", "add-bom"]);
+        grunt.registerTask("minify", ["uglify", "add-bom"]);
         
         // Private tasks (not designed to be used from the command line)
         grunt.registerTask("_build", ["requirejs:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "requirejs:singleFile"]);
