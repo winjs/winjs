@@ -29,6 +29,10 @@
         browserName: "iPhone",
         platform: "OS X 10.9",
         version: "7.1"
+    }, {
+        browserName: "Android",
+        platform: "Linux",
+        version: "4.4"
     }];
     var browsersExcludingIe11 = browsers.filter(function (b) {
         return !(b.browserName.toLowerCase() === "internet explorer" && b.version === "11");
