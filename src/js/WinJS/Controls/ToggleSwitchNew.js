@@ -153,18 +153,18 @@ define([
 
                         // Calculate a new width for the lower fill element and position for
                         // the thumb
-                        dragX = Math.min(36, localMouseX - 6);
+                        dragX = Math.min(36, localMouseX - this._thumbElement.offsetWidth / 2);
                         dragX = Math.max(-2, dragX);
                         this._thumbElement.style.left = dragX + 'px';
                         this._fillLowerElement.style.width = dragX + 'px';
-                        this._fillUpperElement.style.width = (35 - dragX) + 'px';
+                        this._fillUpperElement.style.width = (36 - dragX) + 'px';
                     }.bind(this);
 
                     // Add listeners
                     this._clickElement.addEventListener('mousedown', pointerDownHandler);
                     this._clickElement.addEventListener('touchstart', pointerDownHandler);
-                    this._clickElement.addEventListener('mousemove', pointerMoveHandler);
-                    this._clickElement.addEventListener('touchmove', pointerMoveHandler);
+                    window.addEventListener('mousemove', pointerMoveHandler);
+                    window.addEventListener('touchmove', pointerMoveHandler);
                     window.addEventListener('mouseup', pointerUpHandler);
                     window.addEventListener('touchend', pointerUpHandler);
 
