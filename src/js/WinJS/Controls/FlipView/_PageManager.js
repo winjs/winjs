@@ -125,13 +125,13 @@ define([
             }, {
                 // Public Methods
 
-                initialize: function (initialIndex, horizontal) {
+                initialize: function (initialIndex, isHorizontal) {
                     var currPage = null;
                     // Every call to offsetWidth/offsetHeight causes an switch from Script to Layout which affects
                     // the performance of the control. The values will be cached and will be updated when a resize occurs.
                     this._panningDivContainerOffsetWidth = this._panningDivContainer.offsetWidth;
                     this._panningDivContainerOffsetHeight = this._panningDivContainer.offsetHeight;
-                    this._horizontal = horizontal;
+                    this._isHorizontal = isHorizontal;
                     if (!this._currentPage) {
                         this._bufferAriaStartMarker = _Global.document.createElement("div");
                         this._bufferAriaStartMarker.id = uniqueID(this._bufferAriaStartMarker);
@@ -171,28 +171,28 @@ define([
                     } while (tmpPage !== curPage);
                 },
 
-                setOrientation: function (horizontal) {
+                setOrientation: function (isHorizontal) {
                     if (this._notificationsEndedSignal) {
                         var that = this;
                         this._notificationsEndedSignal.promise.done(function () {
                             that._notificationsEndedSignal = null;
-                            that.setOrientation(horizontal);
+                            that.setOrientation(isHorizontal);
                         });
                         return;
                     }
 
-                    if (horizontal === this._horizontal) {
+                    if (isHorizontal === this._isHorizontal) {
                         return;
                     }
 
                     this._isOrientationChanging = true;
 
-                    if (this._horizontal) {
+                    if (this._isHorizontal) {
                         _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: this._getItemStart(this._currentPage), scrollTop: 0 });
                     } else {
                         _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: 0, scrollTop: this._getItemStart(this._currentPage) });
                     }
-                    this._horizontal = horizontal;
+                    this._isHorizontal = isHorizontal;
 
                     var containerStyle = this._panningDivContainer.style;
                     containerStyle.overflowX = "hidden";
@@ -206,8 +206,8 @@ define([
                             currStyle.left = "0px";
                             currStyle.top = "0px";
                         });
-                        containerStyle.overflowX = ((that._horizontal && that._environmentSupportsTouch) ? "scroll" : "hidden");
-                        containerStyle.overflowY = ((that._horizontal || !that._environmentSupportsTouch) ? "hidden" : "scroll");
+                        containerStyle.overflowX = ((that._isHorizontal && that._environmentSupportsTouch) ? "scroll" : "hidden");
+                        containerStyle.overflowY = ((that._isHorizontal || !that._environmentSupportsTouch) ? "hidden" : "scroll");
                         that._ensureCentered();
                     });
                 },
@@ -279,7 +279,7 @@ define([
                         return;
                     }
 
-                    var newPos = this._viewportStart(),
+                    var newPos = this._getViewportStart(),
                         bufferEnd = (this._lastScrollPos > newPos ? this._getTailOfBuffer() : this._getHeadOfBuffer());
 
                     if (newPos === this._lastScrollPos) {
@@ -472,7 +472,7 @@ define([
                         if (!outgoingRemoved) {
                             // Advance only when the element in the current page was not removed because if it did, all the pages
                             // were shifted.
-                            this._viewportStart(this._getItemStart(goForward ? this._currentPage.next : this._currentPage.prev));
+                            this._setViewportStart(this._getItemStart(goForward ? this._currentPage.next : this._currentPage.prev));
                         }
                         this._navigationAnimationRecord = null;
                         this._itemSettledOn();
@@ -1236,7 +1236,7 @@ define([
                         boundariesSet = true;
                     }
                     this._lastScrollPos = this._getItemStart(this._currentPage);
-                    this._viewportStart(this._lastScrollPos);
+                    this._setViewportStart(this._lastScrollPos);
                     this._checkElementVisibility(true);
                     this._setupSnapPoints();
                     if (!boundariesSet) {
@@ -1579,32 +1579,36 @@ define([
                 },
 
                 _itemInView: function (flipPage) {
-                    return this._itemEnd(flipPage) > this._viewportStart() && this._getItemStart(flipPage) < this._viewportEnd();
+                    return this._itemEnd(flipPage) > this._getViewportStart() && this._getItemStart(flipPage) < this._viewportEnd();
                 },
 
-                _viewportStart: function (newValue) {
+                _getViewportStart: function () {
                     if (!this._panningDivContainer.parentNode) {
                         return;
                     }
+                    if (this._isHorizontal) {
+                        return _ElementUtilities.getScrollPosition(this._panningDivContainer).scrollLeft;
+                    } else {
+                        return _ElementUtilities.getScrollPosition(this._panningDivContainer).scrollTop;
+                    }
+                },
 
-                    if (this._horizontal) {
-                        if (newValue === undefined) {
-                            return _ElementUtilities.getScrollPosition(this._panningDivContainer).scrollLeft;
-                        }
+                _setViewportStart: function (newValue) {
+                    if (!this._panningDivContainer.parentNode) {
+                        return;
+                    }
+                    if (this._isHorizontal) {
                         _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollLeft: newValue });
                     } else {
-                        if (newValue === undefined) {
-                            return _ElementUtilities.getScrollPosition(this._panningDivContainer).scrollTop;
-                        }
                         _ElementUtilities.setScrollPosition(this._panningDivContainer, { scrollTop: newValue });
                     }
                 },
 
                 _viewportEnd: function () {
                     var element = this._panningDivContainer;
-                    if (this._horizontal) {
+                    if (this._isHorizontal) {
                         if (this._rtl) {
-                            return this._viewportStart() + this._panningDivContainerOffsetWidth;
+                            return this._getViewportStart() + this._panningDivContainerOffsetWidth;
                         } else {
                             return _ElementUtilities.getScrollPosition(element).scrollLeft + this._panningDivContainerOffsetWidth;
                         }
@@ -1614,7 +1618,7 @@ define([
                 },
 
                 _viewportSize: function () {
-                    return this._horizontal ? this._panningDivContainerOffsetWidth : this._panningDivContainerOffsetHeight;
+                    return this._isHorizontal ? this._panningDivContainerOffsetWidth : this._panningDivContainerOffsetHeight;
                 },
 
                 _getItemStart: function (flipPage) {
@@ -1622,7 +1626,8 @@ define([
                 },
 
                 _setItemStart: function (flipPage, newValue) {
-                    if (this._horizontal) {
+
+                    if (this._isHorizontal) {
                         flipPage.pageRoot.style.left = (this._rtl ? -newValue : newValue) + "px";
                     } else {
                         flipPage.pageRoot.style.top = newValue + "px";
@@ -1631,11 +1636,11 @@ define([
                 },
 
                 _itemEnd: function (flipPage) {
-                    return (this._horizontal ? flipPage.location + this._panningDivContainerOffsetWidth : flipPage.location + this._panningDivContainerOffsetHeight) + this._itemSpacing;
+                    return (this._isHorizontal ? flipPage.location + this._panningDivContainerOffsetWidth : flipPage.location + this._panningDivContainerOffsetHeight) + this._itemSpacing;
                 },
 
                 _itemSize: function () {
-                    return this._horizontal ? this._panningDivContainerOffsetWidth : this._panningDivContainerOffsetHeight;
+                    return this._isHorizontal ? this._panningDivContainerOffsetWidth : this._panningDivContainerOffsetHeight;
                 },
 
                 _movePageAhead: function (referencePage, pageToPlace) {
@@ -1660,7 +1665,7 @@ define([
                     var startSnap = 0;
                     var currPos = this._getItemStart(this._currentPage);
                     startSnap = currPos % (viewportSize + this._itemSpacing);
-                    containerStyle[styleEquivalents[(this._horizontal ? propertyName + "-x" : propertyName + "-y")].scriptName] = "snapInterval(" + startSnap + "px, " + snapInterval + "px)";
+                    containerStyle[styleEquivalents[(this._isHorizontal ? propertyName + "-x" : propertyName + "-y")].scriptName] = "snapInterval(" + startSnap + "px, " + snapInterval + "px)";
                 },
 
                 _setListEnds: function () {
@@ -1674,8 +1679,8 @@ define([
                             endScroll = 0,
                             startNonEmptyPage = this._getTailOfBuffer(),
                             endNonEmptyPage = this._getHeadOfBuffer(),
-                            startBoundaryStyle = styleEquivalents["scroll-limit-" + (this._horizontal ? "x-min" : "y-min")].scriptName,
-                            endBoundaryStyle = styleEquivalents["scroll-limit-" + (this._horizontal ? "x-max" : "y-max")].scriptName;
+                            startBoundaryStyle = styleEquivalents["scroll-limit-" + (this._isHorizontal ? "x-min" : "y-min")].scriptName,
+                            endBoundaryStyle = styleEquivalents["scroll-limit-" + (this._isHorizontal ? "x-max" : "y-max")].scriptName;
 
                         while (!endNonEmptyPage.element) {
                             endNonEmptyPage = endNonEmptyPage.prev;
@@ -1705,7 +1710,7 @@ define([
                 },
 
                 _viewportOnItemStart: function () {
-                    return this._getItemStart(this._currentPage) === this._viewportStart();
+                    return this._getItemStart(this._currentPage) === this._getViewportStart();
                 },
 
                 _restoreAnimatedElement: function (oldPage, discardablePage) {

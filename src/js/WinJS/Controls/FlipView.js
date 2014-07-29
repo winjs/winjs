@@ -21,7 +21,7 @@ define([
     './FlipView/_PageManager',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function flipperInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _ItemsManager, _UI, _Constants, _PageManager) {
+    ], function flipperInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _ItemsManager, _UI, _Constants, _PageManager) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -129,7 +129,7 @@ define([
 
                 element = element || _Global.document.createElement("div");
 
-                var horizontal = true,
+                var isHorizontal = true,
                     dataSource = null,
                     itemRenderer = _ItemsManager._trivialHtmlRenderer,
                     initialIndex = 0,
@@ -141,11 +141,11 @@ define([
                         if (typeof options.orientation === "string") {
                             switch (options.orientation.toLowerCase()) {
                                 case "horizontal":
-                                    horizontal = true;
+                                    isHorizontal = true;
                                     break;
 
                                 case "vertical":
-                                    horizontal = false;
+                                    isHorizontal = false;
                                     break;
                             }
                         }
@@ -181,7 +181,7 @@ define([
                 this._flipviewDiv = element;
                 element.winControl = this;
                 _Control._setOptions(this, options, true);
-                this._initializeFlipView(element, horizontal, dataSource, itemRenderer, initialIndex, itemSpacing);
+                this._initializeFlipView(element, isHorizontal, dataSource, itemRenderer, initialIndex, itemSpacing);
                 _ElementUtilities.addClass(element, "win-disposable");
                 this._avoidTrappingTime = 0;
                 this._windowWheelHandlerBound = this._windowWheelHandler.bind(this);
@@ -332,11 +332,11 @@ define([
                     },
                     set: function (orientation) {
                         _WriteProfilerMark("WinJS.UI.FlipView:set_orientation,info");
-                        var horizontal = orientation === "horizontal";
-                        if (horizontal !== this._horizontal) {
-                            this._horizontal = horizontal;
+                        var isHorizontal = orientation === "horizontal";
+                        if (isHorizontal !== this._isHorizontal) {
+                            this._isHorizontal = isHorizontal;
                             this._setupOrientation();
-                            this._pageManager.setOrientation(this._horizontal);
+                            this._pageManager.setOrientation(this._isHorizontal);
                         }
                     }
                 },
@@ -456,7 +456,7 @@ define([
 
                 // Private members
 
-                _initializeFlipView: function FlipView_initializeFlipView(element, horizontal, dataSource, itemRenderer, initialIndex, itemSpacing) {
+                _initializeFlipView: function FlipView_initializeFlipView(element, isHorizontal, dataSource, itemRenderer, initialIndex, itemSpacing) {
                     this._flipviewDiv = element;
                     _ElementUtilities.addClass(this._flipviewDiv, flipViewClass);
                     this._contentDiv = _Global.document.createElement("div");
@@ -465,7 +465,7 @@ define([
                     this._panningDiv = _Global.document.createElement("div");
                     this._prevButton = _Global.document.createElement("button");
                     this._nextButton = _Global.document.createElement("button");
-                    this._horizontal = horizontal;
+                    this._isHorizontal = isHorizontal;
                     this._dataSource = dataSource;
                     this._itemRenderer = itemRenderer;
                     this._itemsManager = null;
@@ -632,7 +632,7 @@ define([
                         }
                     });
 
-                    this._pageManager.initialize(initialIndex, this._horizontal);
+                    this._pageManager.initialize(initialIndex, this._isHorizontal, this._environmentSupportsTouch);
 
                     this._dataSource.getCount().then(function (count) {
                         that._pageManager._cachedSize = count;
@@ -725,7 +725,7 @@ define([
                         if (!that._isInteractive(event.target)) {
                             var Key = _ElementUtilities.Key,
                                 handled = false;
-                            if (that._horizontal) {
+                            if (that._isHorizontal) {
                                 switch (event.keyCode) {
                                     case Key.leftArrow:
                                         (that._rtl ? that.next() : that.previous());
@@ -817,7 +817,7 @@ define([
                             // Avoid being stuck between items
                             that._pageManager._ensureCentered();
 
-                            if (that._horizontal) {
+                            if (that._isHorizontal) {
                                 that._panningDivContainer.style["overflowX"] = (that._environmentSupportsTouch ? "scroll" : "hidden");
                                 that._panningDivContainer.style["overflowY"] = "hidden";
                             } else {
@@ -1097,11 +1097,11 @@ define([
                 },
 
                 _axisAsString: function FlipView_axisAsString() {
-                    return (this._horizontal ? "horizontal" : "vertical");
+                    return (this._isHorizontal ? "horizontal" : "vertical");
                 },
 
                 _setupOrientation: function FlipView_setupOrientation() {
-                    if (this._horizontal) {
+                    if (this._isHorizontal) {
                         this._panningDivContainer.style["overflowX"] = (this._environmentSupportsTouch ? "scroll" : "hidden");
                         this._panningDivContainer.style["overflowY"] = "hidden";
                         var rtl = _Global.getComputedStyle(this._flipviewDiv, null).direction === "rtl";
@@ -1207,8 +1207,8 @@ define([
                     next.style.top = "0px";
                     next.style.opacity = 0.0;
                     var pageDirection = ((curr.itemIndex > next.itemIndex) ? -animationMoveDelta : animationMoveDelta);
-                    incomingPageMove.left = (this._horizontal ? (this._rtl ? -pageDirection : pageDirection) : 0) + "px";
-                    incomingPageMove.top = (this._horizontal ? 0 : pageDirection) + "px";
+                    incomingPageMove.left = (this._isHorizontal ? (this._rtl ? -pageDirection : pageDirection) : 0) + "px";
+                    incomingPageMove.top = (this._isHorizontal ? 0 : pageDirection) + "px";
                     var fadeOutPromise = Animations.fadeOut(curr),
                         enterContentPromise = Animations.enterContent(next, [incomingPageMove], { mechanism: "transition" });
                     return Promise.join([fadeOutPromise, enterContentPromise]);
