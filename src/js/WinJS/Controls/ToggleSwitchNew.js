@@ -109,7 +109,8 @@ define([
                         // If the thumb is being dragged, pick a new value based on what the thumb
                         // was closest to
                         if (this._dragging) {
-                            this.checked = dragX >= 18;
+                            var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
+                            this.checked = dragX >= maxX / 2;
                             this._dragging = false;
                             _ElementUtilities.removeClass(this._domElement, classDragging);
                         } else {
@@ -149,15 +150,18 @@ define([
 
                         // Get pointer x coord relative to control
                         var pageX = typeof(e.pageX) !== 'undefined' ? e.pageX : e.touches[0].pageX;
-                        var localMouseX = pageX - this._trackElement.offsetLeft;
+                        var localMouseX = pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
 
-                        // Calculate a new width for the lower fill element and position for
+                        // Calculate a new width for the fill elements and position for
                         // the thumb
-                        dragX = Math.min(36, localMouseX - this._thumbElement.offsetWidth / 2);
-                        dragX = Math.max(-2, dragX);
+                        var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
+                        var trackOffset = this._fillLowerElement.offsetLeft + this._trackElement.offsetLeft + this._trackElement.clientLeft;
+                        dragX = Math.min(maxX, localMouseX);
+                        dragX = Math.max(0, dragX);
+
                         this._thumbElement.style.left = dragX + 'px';
-                        this._fillLowerElement.style.width = dragX + 'px';
-                        this._fillUpperElement.style.width = (36 - dragX) + 'px';
+                        this._fillLowerElement.style.width = (dragX - trackOffset) + 'px';
+                        this._fillUpperElement.style.width = (maxX - dragX - trackOffset) + 'px';
                     }.bind(this);
 
                     // Add listeners

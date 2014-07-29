@@ -37,6 +37,7 @@
         position: absolute;
         top: 0;
         margin-top: -2px;
+        margin-left: -2px;
         display: inline-block;
         width: 12px;
         height: @trackHeight;
@@ -51,8 +52,7 @@
             width: @fillOnWidth;
         }
         .win-toggleswitch-thumb-new {
-            right: 0;
-            margin-right: -2px
+            left: @trackWidth - @thumbWidth;
         }
     }
     &.win-toggleswitch-off-new {
@@ -61,13 +61,6 @@
         }
         .win-toggleswitch-thumb-new {
             left: 0;
-            margin-left: -2px
-        }
-    }
-    &.win-toggleswitch-dragging-new {
-        .win-toggleswitch-thumb-new {
-            margin-left: 0;
-            margin-right: 0;
         }
     }
 }
