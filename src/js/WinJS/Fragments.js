@@ -16,7 +16,7 @@ define([
     "use strict";
 
     var strings = {
-        get invalidFragmentUri() { return _Resources._getWinJSString("base/invalidFragmentUri").value; },
+        get invalidFragmentUri() { return "Unsupported uri for fragment loading. Fragments in the local context can only load from package content or local sources. To load fragments from other sources, use a web context."; },
     };
 
     // not supported in WebWorker

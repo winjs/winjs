@@ -10,10 +10,10 @@ define([
     "use strict";
 
     var strings = {
-        get invalidOptionsRecord() { return _Resources._getWinJSString("base/invalidOptionsRecord").value; },
-        get unexpectedTokenExpectedToken() { return _Resources._getWinJSString("base/unexpectedTokenExpectedToken").value; },
-        get unexpectedTokenExpectedTokens() { return _Resources._getWinJSString("base/unexpectedTokenExpectedTokens").value; },
-        get unexpectedTokenGeneric() { return _Resources._getWinJSString("base/unexpectedTokenGeneric").value; },
+        get invalidOptionsRecord() { return "Invalid options record: '{0}', expected to be in the format of an object literal. {1}"; },
+        get unexpectedTokenExpectedToken() { return "Unexpected token: {0}, expected token: {1}, at offset {2}"; },
+        get unexpectedTokenExpectedTokens() { return "Unexpected token: {0}, expected one of: {1}, at offset {2}"; },
+        get unexpectedTokenGeneric() { return "Unexpected token: {0}, at offset {1}"; },
     };
 
     /*

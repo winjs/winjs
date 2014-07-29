@@ -17,7 +17,7 @@ define([
         insertAdjacentHTMLUnsafe;
 
     var strings = {
-        get nonStaticHTML() { return _Resources._getWinJSString("base/nonStaticHTML").value; },
+        get nonStaticHTML() { return "Unable to add dynamic content. A script attempted to inject dynamic content, or elements previously modified dynamically, that might be unsafe. For example, using the innerHTML property or the document.write method to add a script element will generate this exception. If the content is safe and from a trusted source, use a method to explicitly manipulate elements and attributes, such as createElement, or use setInnerHTMLUnsafe (or other unsafe method)."; },
     };
 
     setInnerHTML = setInnerHTMLUnsafe = function (element, text) {

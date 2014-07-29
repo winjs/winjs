@@ -6,7 +6,6 @@
 
     // do this to avoid spidering the source tree six times.
     var filesToCheck = [];
-    filesToCheck = filesToCheck.concat(config.baseStringsFiles);
     filesToCheck = filesToCheck.concat(config.uiStringsFiles);
 
     module.exports = {

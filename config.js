@@ -31,16 +31,6 @@
     config.phoneOutput = config.outputFolder + config.phoneFramework + "/";
     config.modulesOutput = config.outputFolder + "modules/";
 
-    config.baseStringsFiles = [
-        "src/js/build/Copyright.js",
-        "src/js/library/stringsHeader.js",
-        "src/js/library/stringsBlockHeader.js",
-        "src/js/" + config.localeFolder + "/base.prefix.js",
-        "src/js/" + config.localeFolder + "/base.resjson",
-        "src/js/library/stringsBlockFooter.js",
-        "src/js/library/stringsFooter.js"
-    ];
-
     config.uiStringsFiles = [
         "src/js/build/Copyright.js",
         "src/js/library/stringsHeader.js",

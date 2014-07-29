@@ -13,7 +13,7 @@ This task cleans up our build output.
 
 ## concat
 
-This task is used to build the strings resource files base.strings.js and ui.strings.js.
+This task is used to build the strings resource file ui.strings.js.
 
 ## connect
 

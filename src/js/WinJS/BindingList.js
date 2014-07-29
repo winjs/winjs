@@ -15,8 +15,8 @@ define([
     "use strict";
 
     var strings = {
-        get sparseArrayNotSupported() { return _Resources._getWinJSString("base/sparseArrayNotSupported").value; },
-        get illegalListLength() { return _Resources._getWinJSString("base/illegalListLength").value; },
+        get sparseArrayNotSupported() { return "Sparse arrays are not supported with proxy: true"; },
+        get illegalListLength() { return "List length must be assigned a finite positive number"; },
     };
 
     function copyargs(args) {
