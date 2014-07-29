@@ -1,4 +1,8 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿/*!
+  Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+  Build: $(build.version).$(build.branch).$(build.date)
+  Version: $(TARGET_DESTINATION)
+*/
 
 (function (global) {
     global.strings = global.strings || {};
@@ -14,4 +18,4 @@
             global.strings[keyPrefix + key.replace("\\", "/")] = strings[key];
         });
     }
-    
+    addStrings(

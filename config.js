@@ -32,12 +32,9 @@
     config.modulesOutput = config.outputFolder + "modules/";
 
     config.uiStringsFiles = [
-        "src/js/build/Copyright.js",
         "src/js/library/stringsHeader.js",
-        "src/js/library/stringsBlockHeader.js",
         "src/js/" + config.localeFolder + "/ui.prefix.js",
         "src/js/" + config.localeFolder + "/ui.resjson",
-        "src/js/library/stringsBlockFooter.js",
         "src/js/library/stringsFooter.js"
     ];
 
