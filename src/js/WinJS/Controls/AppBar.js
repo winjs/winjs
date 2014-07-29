@@ -310,10 +310,10 @@ define([
 
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/appBarAriaLabel").value; },
-                get requiresCommands() { return _Resources._getWinJSString("ui/requiresCommands").value; },
-                get cannotChangePlacementWhenVisible() { return _Resources._getWinJSString("ui/cannotChangePlacementWhenVisible").value; },
-                get badLayout() { return _Resources._getWinJSString("ui/badLayout").value; },
-                get cannotChangeLayoutWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeLayoutWhenVisible").value; }
+                get requiresCommands() { return "Invalid argument: commands must not be empty"; },
+                get cannotChangePlacementWhenVisible() { return "Invalid argument: The placement property cannot be set when the AppBar is visible, call hide() first"; },
+                get badLayout() { return "Invalid argument: The layout property must be 'custom' or 'commands'"; },
+                get cannotChangeLayoutWhenVisible() { return "Invalid argument: The layout property cannot be set when the AppBar is visible, call hide() first"; }
             };
 
             var AppBar = _Base.Class.derive(_Overlay._Overlay, function AppBar_ctor(element, options) {

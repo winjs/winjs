@@ -59,12 +59,12 @@ define([
             }
 
             var strings = {
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get badClick() { return _Resources._getWinJSString("ui/badClick").value; },
-                get badDivElement() { return _Resources._getWinJSString("ui/badDivElement").value; },
-                get badHrElement() { return _Resources._getWinJSString("ui/badHrElement").value; },
-                get badButtonElement() { return _Resources._getWinJSString("ui/badButtonElement").value; },
-                get cannotChangeHiddenProperty() { return _Resources._getWinJSString("ui/cannotChangeHiddenProperty").value; } // Duplicate string getter from overlay
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get badClick() { return "Invalid argument: The onclick property for an {0} must be a function"; },
+                get badDivElement() { return "Invalid argument: For a content command, the element must be null or a div element"; },
+                get badHrElement() { return "Invalid argument: For a separator, the element must be null or an hr element"; },
+                get badButtonElement() { return "Invalid argument: For a button, toggle, or flyout command, the element must be null or a button element"; },
+                get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; } // Duplicate string getter from overlay
             };
 
             return _Base.Class.define(function AppBarCommand_ctor(element, options) {

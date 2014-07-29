@@ -34,7 +34,7 @@ define([
         ViewBox: _Base.Namespace._lazy(function () {
 
             var strings = {
-                get invalidViewBoxChildren() { return _Resources._getWinJSString("ui/invalidViewBoxChildren").value; },
+                get invalidViewBoxChildren() { return "ViewBox expects to only have one child element"; },
             };
 
             function onresize(control) {

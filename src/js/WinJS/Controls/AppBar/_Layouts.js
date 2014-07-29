@@ -20,7 +20,7 @@ define([
             var baseType = _Constants.appBarLayoutCustom;
 
             var strings = {
-                get nullCommand() { return _Resources._getWinJSString("ui/nullCommand").value; }
+                get nullCommand() { return "Invalid argument: command must not be null"; }
             };
 
             var _AppBarBaseLayout = _Base.Class.define(function _AppBarBaseLayout_ctor(appBarEl, options) {

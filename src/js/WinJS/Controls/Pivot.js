@@ -1336,9 +1336,9 @@ define([
                 _Base.Class.mix(Pivot, _Control.DOMEventMixin);
 
                 var strings = {
-                    get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
+                    get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
                     get duplicateItem() { return _Resources._getWinJSString("ui/duplicateItem").value; },
-                    get invalidContent() { return _Resources._getWinJSString("ui/invalidPivotContent").value; },
+                    get invalidContent() { return "Invalid content: Pivot content must be made up of PivotItems."; },
                     get pivotAriaLabel() { return _Resources._getWinJSString("ui/pivotAriaLabel").value; },
                     get pivotViewportAriaLabel() { return _Resources._getWinJSString("ui/pivotViewportAriaLabel").value; }
                 };

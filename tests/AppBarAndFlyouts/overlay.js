@@ -62,7 +62,7 @@ CorsicaTests.OverlayTests = function () {
         new WinJS.UI._Overlay(overlayElement);
     }
 
-    this.testOverlayMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    this.testOverlayMultipleInstantiation["LiveUnit.ExpectedException"] = { message: "Invalid argument: Controls may only be instantiated one time for each DOM element" }; // This is the exception that is expected
 
 
 

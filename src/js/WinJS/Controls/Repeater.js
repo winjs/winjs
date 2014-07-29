@@ -55,9 +55,9 @@ define([
 
             // Statics
             var strings = {
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get asynchronousRender() { return _Resources._getWinJSString("ui/asynchronousRender").value; },
-                get repeaterReentrancy() { return _Resources._getWinJSString("ui/repeaterReentrancy").value; },
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get asynchronousRender() { return "Top level items must render synchronously"; },
+                get repeaterReentrancy() { return "Cannot modify Repeater data until Repeater has commited previous modification."; },
             };
 
             var Repeater = _Base.Class.define(function Repeater_ctor(element, options) {

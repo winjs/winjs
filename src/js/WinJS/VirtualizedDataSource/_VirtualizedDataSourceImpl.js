@@ -31,15 +31,15 @@ define([
             // Private statics
 
             var strings = {
-                get listDataAdapterIsInvalid() { return _Resources._getWinJSString("ui/listDataAdapterIsInvalid").value; },
-                get indexIsInvalid() { return _Resources._getWinJSString("ui/indexIsInvalid").value; },
-                get keyIsInvalid() { return _Resources._getWinJSString("ui/keyIsInvalid").value; },
-                get invalidItemReturned() { return _Resources._getWinJSString("ui/undefinedItemReturned").value; },
-                get invalidKeyReturned() { return _Resources._getWinJSString("ui/invalidKeyReturned").value; },
-                get invalidIndexReturned() { return _Resources._getWinJSString("ui/invalidIndexReturned").value; },
-                get invalidCountReturned() { return _Resources._getWinJSString("ui/invalidCountReturned").value; },
-                get invalidRequestedCountReturned() { return _Resources._getWinJSString("ui/invalidRequestedCountReturned").value; },
-                get refreshCycleIdentified() { return _Resources._getWinJSString("ui/refreshCycleIdentified").value; },
+                get listDataAdapterIsInvalid() { return "Invalid argument: listDataAdapter must be an object or an array."; },
+                get indexIsInvalid() { return "Invalid argument: index must be a non-negative integer."; },
+                get keyIsInvalid() { return "Invalid argument: key must be a string."; },
+                get invalidItemReturned() { return "Error: data adapter returned item that is not an object."; },
+                get invalidKeyReturned() { return "Error: data adapter returned item with undefined or null key."; },
+                get invalidIndexReturned() { return "Error: data adapter should return undefined, null or a non-negative integer for the index."; },
+                get invalidCountReturned() { return "Error: data adapter should return undefined, null, CountResult.unknown, or a non-negative integer for the count."; },
+                get invalidRequestedCountReturned() { return "Error: data adapter should return CountResult.unknown, CountResult.failure, or a non-negative integer for the count."; },
+                get refreshCycleIdentified() { return "refresh cycle found, likely data inconsistency"; },
             };
 
             var statusChangedEvent = "statuschanged";

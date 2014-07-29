@@ -577,7 +577,7 @@ WinJSTests.RepeaterInitTests = function () {
         try {
             repeater = new WinJS.UI.Repeater(elem);
         } catch (e) {
-            LiveUnit.Assert.areEqual(WinJS.Resources._getWinJSString("ui/duplicateConstruction").value, e.message);
+            LiveUnit.Assert.areEqual("Invalid argument: Controls may only be instantiated one time for each DOM element", e.message);
         }
 
         complete();
@@ -595,7 +595,7 @@ WinJSTests.RepeaterInitTests = function () {
         try {
             repeater.template = function (item) { return null; };
         } catch (e) {
-            LiveUnit.Assert.areEqual(WinJS.Resources._getWinJSString("ui/asynchronousRender").value, e.message);
+            LiveUnit.Assert.areEqual("Top level items must render synchronously", e.message);
         }
 
         // Template returns promise
@@ -603,7 +603,7 @@ WinJSTests.RepeaterInitTests = function () {
             repeater.template = function (item) { return WinJS.Promise.wrap(document.createElement("div")); };
         } catch (e) {
             // TODO: What the repeater check for HTMLelement instead of a null check?
-            //LiveUnit.Assert.areEqual(WinJS.Resources._getWinJSString("ui/asynchronousRender").value, e.message);
+            //LiveUnit.Assert.areEqual("Top level items must render synchronously", e.message);
         }
 
         complete();

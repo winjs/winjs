@@ -144,7 +144,7 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.LoggingCore.logComment("Testing layout");
             testGoodInitOption("layout", "custom");
             testGoodInitOption("layout", "commands");
-            var badLayout = WinJS.Resources._getWinJSString("ui/badLayout").value;
+            var badLayout = "Invalid argument: The layout property must be 'custom' or 'commands'";
             testBadInitOption("layout", "fixed", "WinJS.UI.AppBar.BadLayout", badLayout);
             testBadInitOption("layout", -1, "WinJS.UI.AppBar.BadLayout", badLayout);
             testBadInitOption("layout", 12, "WinJS.UI.AppBar.BadLayout", badLayout);

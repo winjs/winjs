@@ -82,8 +82,8 @@ define([
             };
 
             var strings = {
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get invalidSearchBoxSuggestionKind() { return _Resources._getWinJSString("ui/invalidSearchBoxSuggestionKind").value; },
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get invalidSearchBoxSuggestionKind() { return "Error: Invalid search suggestion kind."; },
                 get ariaLabel() { return _Resources._getWinJSString("ui/searchBoxAriaLabel").value; },
                 get ariaLabelInputNoPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputNoPlaceHolder").value; },
                 get ariaLabelInputPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputPlaceHolder").value; },

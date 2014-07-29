@@ -71,9 +71,9 @@ define([
     // Private statics
 
     var strings = {
-        get listDataSourceIsInvalid() { return _Resources._getWinJSString("ui/listDataSourceIsInvalid").value; },
-        get itemRendererIsInvalid() { return _Resources._getWinJSString("ui/itemRendererIsInvalid").value; },
-        get itemIsInvalid() { return _Resources._getWinJSString("ui/itemIsInvalid").value; },
+        get listDataSourceIsInvalid() { return "Invalid argument: dataSource must be an object."; },
+        get itemRendererIsInvalid() { return "Invalid argument: itemRenderer must be a function."; },
+        get itemIsInvalid() { return "Invalid argument: item must be a DOM element that was returned by the Items Manager, and has not been replaced or released."; },
     };
 
     var imageLoader;

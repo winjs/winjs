@@ -95,7 +95,7 @@ CorsicaTests.AppBarTests = function () {
         }
     }
     this.testAppBarMultipleInstantiation["Description"] = "Test AppBar Duplicate Instantiation with same DOM element";
-    this.testAppBarMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    this.testAppBarMultipleInstantiation["LiveUnit.ExpectedException"] = { message: "Invalid argument: Controls may only be instantiated one time for each DOM element" }; // This is the exception that is expected
 
     // Test AppBar parameters
     this.testAppBarParams = function () {
@@ -159,7 +159,7 @@ CorsicaTests.AppBarTests = function () {
         LiveUnit.LoggingCore.logComment("Testing layout");
         testGoodInitOption("layout", "custom");
         testGoodInitOption("layout", "commands");
-        var badLayout = WinJS.Resources._getWinJSString("ui/badLayout").value;
+        var badLayout = "Invalid argument: The layout property must be 'custom' or 'commands'";
         testBadInitOption("layout", "fixed", "WinJS.UI.AppBar.BadLayout", badLayout);
         testBadInitOption("layout", -1, "WinJS.UI.AppBar.BadLayout", badLayout);
         testBadInitOption("layout", 12, "WinJS.UI.AppBar.BadLayout", badLayout);
@@ -269,7 +269,7 @@ CorsicaTests.AppBarTests = function () {
     }
     // This is the exception that is expected
     this.testAppBarThrowsWhenPlacementIsSetAndAppBarVisible["LiveUnit.ExpectedException"] = {
-        message: WinJS.Resources._getWinJSString("ui/cannotChangePlacementWhenVisible").value
+        message: "Invalid argument: The placement property cannot be set when the AppBar is visible, call hide() first"
     };
 
     this.testSynchronousShowHide = function (complete) {

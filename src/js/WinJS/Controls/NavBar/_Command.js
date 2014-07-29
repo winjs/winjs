@@ -119,7 +119,7 @@ define([
             var Key = _ElementUtilities.Key;
 
             var strings = {
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; }
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }
             };
 
             var NavBarCommand = _Base.Class.define(function NavBarCommand_ctor(element, options) {

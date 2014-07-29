@@ -87,8 +87,8 @@ define([
             }
 
             var strings = {
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get mustContainCommands() { return _Resources._getWinJSString("ui/mustContainCommands").value; },
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get mustContainCommands() { return "Invalid HTML: AppBars/Menus must contain only AppBarCommands/MenuCommands"; },
                 get closeOverlay() { return _Resources._getWinJSString("ui/closeOverlay").value; },
             };
 
@@ -1580,8 +1580,8 @@ define([
             afterHide: AFTERHIDE,
 
             commonstrings: {
-                get cannotChangeCommandsWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeCommandsWhenVisible").value; },
-                get cannotChangeHiddenProperty() { return _Resources._getWinJSString("ui/cannotChangeHiddenProperty").value; }
+                get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },
+                get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; }
             }
         });
 

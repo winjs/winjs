@@ -1409,9 +1409,9 @@ define([
             });
 
             var strings = {
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get duplicateSection() { return _Resources._getWinJSString("ui/duplicateSection").value; },
-                get invalidContent() { return _Resources._getWinJSString("ui/invalidHubContent").value; },
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get duplicateSection() { return "Hub duplicate sections: Each HubSection must be unique"; },
+                get invalidContent() { return "Invalid content: Hub content must be made up of HubSections."; },
                 get hubViewportAriaLabel() { return _Resources._getWinJSString("ui/hubViewportAriaLabel").value; }
             };
 

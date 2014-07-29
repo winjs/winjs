@@ -39,7 +39,7 @@ define([
             var browserStyleEquivalents = _BaseUtils._browserStyleEquivalents;
 
             var strings = {
-                get invalidZoomFactor() { return _Resources._getWinJSString("ui/invalidZoomFactor").value; },
+                get invalidZoomFactor() { return "Invalid zoomFactor"; },
             };
 
             function identity(item) {

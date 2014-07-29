@@ -70,11 +70,11 @@ define([
 
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/appBarCommandAriaLabel").value; },
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get badClick() { return _Resources._getWinJSString("ui/badClick").value; },
-                get badDivElement() { return _Resources._getWinJSString("ui/badDivElement").value; },
-                get badHrElement() { return _Resources._getWinJSString("ui/badHrElement").value; },
-                get badButtonElement() { return _Resources._getWinJSString("ui/badButtonElement").value; }
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get badClick() { return "Invalid argument: The onclick property for an {0} must be a function"; },
+                get badDivElement() { return "Invalid argument: For a content command, the element must be null or a div element"; },
+                get badHrElement() { return "Invalid argument: For a separator, the element must be null or an hr element"; },
+                get badButtonElement() { return "Invalid argument: For a button, toggle, or flyout command, the element must be null or a button element"; }
             };
 
             return _Base.Class.define(function AppBarCommand_ctor(element, options) {

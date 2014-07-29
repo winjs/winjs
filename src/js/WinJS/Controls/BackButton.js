@@ -98,8 +98,8 @@ define([
             // Statics
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/backbuttonarialabel").value; },
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get badButtonElement() { return _Resources._getWinJSString("ui/badButtonElement").value; }
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get badButtonElement() { return "Invalid argument: For a button, toggle, or flyout command, the element must be null or a button element"; }
             };
 
             var BackButton = _Base.Class.define(function BackButton_ctor(element, options) {
