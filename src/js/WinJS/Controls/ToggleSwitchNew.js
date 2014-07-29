@@ -155,7 +155,7 @@ define([
                         // Calculate a new width for the fill elements and position for
                         // the thumb
                         var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
-                        var trackOffset = this._fillLowerElement.offsetLeft + this._trackElement.offsetLeft + this._trackElement.clientLeft;
+                        var trackOffset = this._fillLowerElement.offsetLeft + this._trackElement.clientLeft;
                         dragX = Math.min(maxX, localMouseX);
                         dragX = Math.max(0, dragX);
 
