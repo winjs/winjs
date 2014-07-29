@@ -237,7 +237,7 @@
         //  else's job to ensure that base was loaded first.
         ui: {
             options: {
-                exclude: ['base'],
+                exclude: ['./base'],
             }
         },
 
@@ -254,7 +254,7 @@
                 platform: "phone",
                 name: 'ui-phone',
                 target: 'ui', // because ui-phone actually is built to ui.js
-                exclude: ['base'],
+                exclude: ['./base'],
             }
         },
 
