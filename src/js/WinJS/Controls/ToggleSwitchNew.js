@@ -19,6 +19,7 @@ define([
                 // Store some class names
                 var classContainer = 'win-toggleswitch-new';
                 var classHeader = 'win-toggleswitch-header-new';
+                var classClick = 'win-toggleswitch-clickregion-new';
                 var classTrack = 'win-toggleswitch-track-new';
                 var classFill = 'win-toggleswitch-fill-new';
                 var classFillLower = 'win-toggleswitch-fill-lower-new';
@@ -46,9 +47,11 @@ define([
                     this._headerElement = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._headerElement, classHeader);
                     this._domElement.appendChild(this._headerElement);
+                    this._headerElement.innerText = 'Header / Title';
 
                     // Clickable region
                     this._clickElement = _Global.document.createElement('div');
+                    _ElementUtilities.addClass(this._clickElement, classClick);
                     this._domElement.appendChild(this._clickElement);
 
                     // Slider track
@@ -77,11 +80,13 @@ define([
                     this._valueElement = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._valueElement, classValue);
                     this._clickElement.appendChild(this._valueElement);
+                    this._valueElement.innerText = 'Value';
 
                     // Description text
                     this._descriptionElement = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._descriptionElement, classDescription);
                     this._domElement.appendChild(this._descriptionElement);
+                    this._descriptionElement.innerText = 'Description Text';
 
                     // Some initialization of main element
                     element.winControl = this;

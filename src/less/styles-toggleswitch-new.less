@@ -9,6 +9,28 @@
     display: inline-block;
 
     .win-toggleswitch-header-new {
+        font-size: 12pt;
+        width: 22em;
+        margin-bottom: 20px;
+    }
+    .win-toggleswitch-value-new {
+        margin-left: 13px;
+        display: inline-block;
+        height: @trackHeight;
+        line-height: @trackHeight;
+        vertical-align: bottom;
+    }
+    .win-toggleswitch-description-new {
+        font-size: 12pt;
+        width: 22em;
+        margin-top: 28px;
+    }
+    .win-toggleswitch-clickregion-new {
+        touch-action: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
     }
     .win-toggleswitch-track-new {
         position: relative;
@@ -42,11 +64,6 @@
         width: 12px;
         height: @trackHeight;
     }
-    .win-toggleswitch-value-new {
-    }
-    .win-toggleswitch-description-new {
-    }
-    
     &.win-toggleswitch-on-new {
         .win-toggleswitch-fill-lower-new {
             width: @fillOnWidth;

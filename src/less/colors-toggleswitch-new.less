@@ -3,14 +3,35 @@
 .Colors(@theme) {
     .win-toggleswitch-new {
         .variableDefs(light) {
+            @mainColor: #000;
+            @fillUpperColor: fade(@mainColor, 35%);
+            @fillUpperPressedColor: fade(@mainColor, 26%);
+            @accentColor: rgb(70, 23, 180);
+            @accentHoverColor: rgb(95, 55, 190);
+            @accentPressedColor: rgb(114, 65, 228);
         }
         .variableDefs(dark) {
+            @mainColor: #fff;
+            @fillUpperColor: fade(@mainColor, 26%);
+            @fillUpperPressedColor: fade(@mainColor, 35%);
+            @accentColor: rgb(87, 41, 193);
+            @accentHoverColor: rgb(110, 70, 202);
+            @accentPressedColor: rgb(126, 79, 236);
         }
         .variableDefs(@theme);
-        @accentColor: rgb(70, 23, 180);
+        @borderColor: fade(@mainColor, 35%);
 
+        .win-toggleswitch-header-new {
+            font-color: @mainColor;
+        }
+        .win-toggleswitch-value-new {
+            font-color: @mainColor;
+        }
+        .win-toggleswitch-description-new {
+            font-color: @mainColor;
+        }
         .win-toggleswitch-track-new {
-            border-color: rgba(255, 255, 255, 0.35);
+            border-color: @borderColor;
         }
         .win-toggleswitch-fill-new {
         }
@@ -18,10 +39,28 @@
             background-color: @accentColor;
         }
         .win-toggleswitch-fill-upper-new {
-            background-color: rgba(255, 255, 255, 0.35);
+            background-color: @fillUpperColor;
         }
         .win-toggleswitch-thumb-new {
-            background-color: #fff;
+            background-color: @mainColor;
+        }
+
+        &:hover {
+            .win-toggleswitch-fill-lower-new {
+                background-color: @accentHoverColor;
+            }
+            .win-toggleswitch-fill-upper-new {
+                background-color: fade(@mainColor, 29%);
+            }
+        }
+
+        &.win-toggleswitch-pressed-new {
+            .win-toggleswitch-fill-lower-new {
+                background-color: @accentPressedColor;
+            }
+            .win-toggleswitch-fill-upper-new {
+                background-color: @fillUpperPressedColor;
+            }
         }
     }
 }
