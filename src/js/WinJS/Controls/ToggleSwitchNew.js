@@ -149,7 +149,7 @@ define([
                         }
 
                         // Get pointer x coord relative to control
-                        var pageX = typeof(e.pageX) !== 'undefined' ? e.pageX : e.touches[0].pageX;
+                        var pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
                         var localMouseX = pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
 
                         // Calculate a new width for the fill elements and position for
