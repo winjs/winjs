@@ -3,7 +3,11 @@
 @import "../mixins.less";
 
 .win-navbar {
-    min-height: 60px;
+    &.win-appbar-showing, 
+    &.win-appbar-shown, 
+    &.win-appbar-hiding {
+        min-height: 60px;
+    }
 }
 
 .win-navbarcontainer {

@@ -75,7 +75,7 @@ WinJSTests.NavBarLayoutTests = function () {
         navarrowWidth: 17
     };
 
-    var NavBarSize = {
+    var ShownNavBarSize = {
         minHeight: 60,
         height: 90
     };
@@ -691,16 +691,21 @@ WinJSTests.NavBarLayoutTests = function () {
             });
     };
 
-    this.testNavBarMinHeight = function (complete) {
+    this.testShownNavBarMinHeight = function (complete) {
         var navbarEl = document.createElement("div");
         this._element.appendChild(navbarEl);
         var navbar = new WinJS.UI.NavBar(navbarEl);
-        LiveUnit.Assert.areEqual(NavBarSize.minHeight, navbarEl.offsetHeight,
+
+        // Hidden NavBar gets its min-height from AppBar. Show NavBar first to get accurate height measurement of empty NavBar.
+        navbar.addEventListener('aftershow', function () {
+            LiveUnit.Assert.areEqual(ShownNavBarSize.minHeight, navbarEl.offsetHeight,
             "Incorrect NavBar height");
-        complete();
+            complete();
+        }, false);
+        navbar.show();
     };
 
-    this.testNavBarHeight = function (complete) {
+    this.testShownNavBarHeight = function (complete) {
         var navbarEl = document.createElement("div");
         this._element.appendChild(navbarEl);
         var navbar = new WinJS.UI.NavBar(navbarEl);
@@ -712,9 +717,9 @@ WinJSTests.NavBarLayoutTests = function () {
             data: navUtils.getNavBarCommandsData(6, true, true, true, true, true, true)
         });
 
-        // Hidden NavBar's children won't have dimensions. Show it first to get a full height measurement.
+        // Hidden NavBar's children won't have dimensions because of AppBar. Show it first to get accurate height measurement of NavBar with contents.
         navbar.addEventListener('aftershow', function () {
-            LiveUnit.Assert.areEqual(NavBarSize.height, navbarEl.offsetHeight,
+            LiveUnit.Assert.areEqual(ShownNavBarSize.height, navbarEl.offsetHeight,
             "Incorrect NavBar height");
             complete();
         }, false);
