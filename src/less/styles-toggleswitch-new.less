@@ -7,6 +7,7 @@
     @fillOnWidth: @trackWidth - @thumbWidth - 3px;
 
     display: inline-block;
+    outline: 0;
 
     .win-toggleswitch-header-new {
         font-size: 12pt;
@@ -67,6 +68,12 @@
         height: @trackHeight;
         -webkit-transition: left 0.1s;
         transition: left 0.1s;
+    }
+    &:focus {
+        .win-toggleswitch-track-new {
+            outline-width: 1px;
+            outline-style: dotted;
+        }
     }
     &.win-toggleswitch-dragging-new {
         .win-toggleswitch-fill-new, 

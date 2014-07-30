@@ -43,6 +43,7 @@ define([
                     element = element || _Global.document.createElement('div');
                     this._domElement = element;
                     _ElementUtilities.addClass(this._domElement, classContainer);
+                    this._domElement.setAttribute('tabindex', 0);
 
                     // Header/Title text
                     this._headerElement = _Global.document.createElement('div');
@@ -97,6 +98,24 @@ define([
                     var dragX = 0;
 
                     // Event handlers
+                    var keyDownHandler = function(e) {
+                        // Toggle checked on spacebar
+                        if (e.keyCode === _ElementUtilities.Key.space) {
+                            this.checked = !this.checked;
+                        }
+
+                        // Arrow keys set value
+                        if (e.keyCode === _ElementUtilities.Key.rightArrow || 
+                            e.keyCode === _ElementUtilities.Key.upArrow) {
+                            this.checked = true;
+                        }
+                        if (e.keyCode === _ElementUtilities.Key.leftArrow || 
+                            e.keyCode === _ElementUtilities.Key.downArrow) {
+                            this.checked = false;
+                        }
+
+                    }.bind(this);
+
                     var pointerDownHandler = function(e) {                        
                         e.preventDefault();
 
@@ -176,6 +195,7 @@ define([
                     }.bind(this);
 
                     // Add listeners
+                    this._domElement.addEventListener('keydown', keyDownHandler);
                     this._clickElement.addEventListener('mousedown', pointerDownHandler);
                     this._clickElement.addEventListener('touchstart', pointerDownHandler);
                     window.addEventListener('mousemove', pointerMoveHandler);
