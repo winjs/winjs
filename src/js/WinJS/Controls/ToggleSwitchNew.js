@@ -99,6 +99,8 @@ define([
 
                     // Event handlers
                     var keyDownHandler = function(e) {
+                        e.preventDefault();
+                        
                         // Toggle checked on spacebar
                         if (e.keyCode === _ElementUtilities.Key.space) {
                             this.checked = !this.checked;
