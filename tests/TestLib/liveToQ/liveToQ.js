@@ -3,7 +3,7 @@
 (function () {
     var qUnitGlobalErrorHandler = window.onerror;
 
-    var testTimeout = QUnit.urlParams.testtimeout ? QUnit.urlParams.testtimeout:  15000;
+    var testTimeout = QUnit.urlParams.testtimeout ? QUnit.urlParams.testtimeout : 15000;
     var startTime = -1;
     var hasRun = false;
     var testFailed = false;
@@ -137,7 +137,7 @@
         }
     }
 
-    function cleanUp(testName) {
+    function cleanUp() {
         testFailed = false;
         testError = "";
         verboseLog = "";
@@ -160,7 +160,7 @@
             console.log(args.module + ": " + args.name + ", " + args.passed + "/" + args.total + ", " + args.runtime + "ms");
             console.log(verboseLog);
         }
-        cleanUp(args.name);
+        cleanUp();
     });
 
     QUnit.moduleDone(function (args) {

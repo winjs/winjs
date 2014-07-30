@@ -2,7 +2,6 @@
 (function () {
     "use strict";
 
-
     module.exports = function (grunt) {
         var config = require("../config.js");
         var pathUtils = require("path");
@@ -25,12 +24,12 @@
                     fs.mkdirSync(dest);
                 }
                 var files = fs.readdirSync(source);
-                files.forEach(function(file) {
+                files.forEach(function (file) {
 
                     var filePath = path.join(source, file);
                     var destPath = path.join(dest, file);
-                    
-                    if(fs.lstatSync(filePath).isDirectory()) {
+
+                    if (fs.lstatSync(filePath).isDirectory()) {
 
                         copyAllFiles(filePath, destPath);
                     } else {
@@ -39,11 +38,11 @@
                 });
 
             }
-            
+
             function endsWith(s, suffix) {
                 return s.substring(s.length - suffix.length) === suffix;
             }
-            
+
             // Fails the build if the path doesn't exist or its casing is incorrect.
             function validatePath(path, line) {
                 if (endsWith(path, ".less.css")) {
@@ -53,7 +52,7 @@
                     // of ".less.css".
                     path = path.substring(0, path.length - ".css".length);
                 }
-                
+
                 // realpathSync will abort the build if the file can't be resolved.
                 var fullPath = fs.realpathSync(path);
 
@@ -223,7 +222,7 @@
                                 return;
                             }
                             // some tests require TestData be copied over
-                            if(dep === "<<deploy>>") {
+                            if (dep === "<<deploy>>") {
                                 copyTestData = true;
                                 return;
                             }
@@ -267,7 +266,7 @@
                     fs.mkdirSync(testFolder);
                 }
                 fs.writeFileSync(testFolder + "/test.html", html);
-                if(copyTestData) {
+                if (copyTestData) {
                     copyAllFiles("./tests/TestData", testFolder);
                 }
                 tests += '      <li><a href="' + dir + '/test.html?fastanimations=true" target="_blank">' + dir + " tests</a></li>\r\n";
