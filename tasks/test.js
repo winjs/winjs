@@ -269,7 +269,11 @@
                 if (copyTestData) {
                     copyAllFiles("./tests/TestData", testFolder);
                 }
-                tests += '      <li><a href="' + dir + '/test.html?fastanimations=true" target="_blank">' + dir + " tests</a></li>\r\n";
+
+                // Fast Animations overrides
+                var useFastAnimations = dir !== "Animations";
+
+                tests += '      <li id="id_' + dir + '"><div class="testLinkDiv"><a class="testLink" href="' + dir + '/test.html?fastanimations=' + useFastAnimations + '" target="_blank">' + dir + ' tests</a><span class="status"></span></div></li>\r\n';
             });
             tests = tests.substr(0, tests.length - 2);
             fs.writeFileSync("./bin/tests/tests.html", testMenuTemplate.replace("@@TESTS", tests));
