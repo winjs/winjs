@@ -226,6 +226,7 @@ define([
                 new _ElementUtilities._MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
 
                 if (!isPhone) {
+                    this._element.addEventListener("wheel", this._onWheel.bind(this), true);
                     this._element.addEventListener("mousewheel", this._onMouseWheel.bind(this), true);
                     this._element.addEventListener("keydown", this._onKeyDown.bind(this), true);
 
@@ -685,6 +686,15 @@ define([
                 _onSeZoChildrenScroll: function (ev) {
                     if (ev.target !== this.element) {
                         this._hideSemanticZoomButton(true);
+                    }
+                },
+
+                _onWheel: function (ev) {
+                    if (ev.ctrlKey) {
+                        this._zoom(ev.deltaY > 0, this._getPointerLocation(ev));
+
+                        ev.stopPropagation();
+                        ev.preventDefault();
                     }
                 },
 
