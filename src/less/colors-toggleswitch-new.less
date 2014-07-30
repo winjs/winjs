@@ -6,6 +6,8 @@
             @mainColor: #000;
             @fillUpperColor: fade(@mainColor, 35%);
             @fillUpperPressedColor: fade(@mainColor, 26%);
+            @fillLowerDisabledColor: fade(@mainColor, 12%);
+            @thumbDisabledColor: rgb(146, 146, 146);
             @accentColor: rgb(70, 23, 180);
             @accentHoverColor: rgb(95, 55, 190);
             @accentPressedColor: rgb(114, 65, 228);
@@ -14,21 +16,24 @@
             @mainColor: #fff;
             @fillUpperColor: fade(@mainColor, 26%);
             @fillUpperPressedColor: fade(@mainColor, 35%);
+            @fillLowerDisabledColor: rgb(126, 126, 126);
+            @thumbDisabledColor: rgb(126, 126, 126);
             @accentColor: rgb(87, 41, 193);
             @accentHoverColor: rgb(110, 70, 202);
             @accentPressedColor: rgb(126, 79, 236);
         }
         .variableDefs(@theme);
+        @fillUpperDisabledColor: fade(@mainColor, 12%);
         @borderColor: fade(@mainColor, 35%);
 
         .win-toggleswitch-header-new {
-            font-color: @mainColor;
+            color: @mainColor;
         }
         .win-toggleswitch-value-new {
-            font-color: @mainColor;
+            color: @mainColor;
         }
         .win-toggleswitch-description-new {
-            font-color: @mainColor;
+            color: @mainColor;
         }
         .win-toggleswitch-track-new {
             border-color: @borderColor;
@@ -53,13 +58,31 @@
                 background-color: fade(@mainColor, 29%);
             }
         }
-
         &.win-toggleswitch-pressed-new {
             .win-toggleswitch-fill-lower-new {
                 background-color: @accentPressedColor;
             }
             .win-toggleswitch-fill-upper-new {
                 background-color: @fillUpperPressedColor;
+            }
+        }
+        &.win-toggleswitch-disabled-new {
+            .win-toggleswitch-header-new,
+            .win-toggleswitch-value-new,
+            .win-toggleswitch-description-new {
+                color: fade(@mainColor, 40%);
+            }
+            .win-toggleswitch-track-new {
+                border-color: fade(@mainColor, 20%);
+            }
+            .win-toggleswitch-fill-lower-new {
+                background-color: @fillLowerDisabledColor;
+            }
+            .win-toggleswitch-fill-upper-new {
+                background-color: @fillUpperDisabledColor;
+            }
+            .win-toggleswitch-thumb-new {
+                background-color: @thumbDisabledColor;
             }
         }
     }

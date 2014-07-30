@@ -29,6 +29,7 @@ define([
                 var classDescription = 'win-toggleswitch-description-new';
                 var classOn = 'win-toggleswitch-on-new';
                 var classOff = 'win-toggleswitch-off-new';
+                var classDisabled = 'win-toggleswitch-disabled-new';
                 var classDragging = 'win-toggleswitch-dragging-new';
                 var classPressed = 'win-toggleswitch-pressed-new';
 
@@ -96,8 +97,13 @@ define([
                     var dragX = 0;
 
                     // Event handlers
-                    var pointerDownHandler = function(e) {
+                    var pointerDownHandler = function(e) {                        
                         e.preventDefault();
+
+                        if (this.disabled) {
+                            return;
+                        }
+
                         this._mousedown = true;
                         _ElementUtilities.addClass(this._domElement, classPressed);
                     }.bind(this);
@@ -177,18 +183,26 @@ define([
                     window.addEventListener('mouseup', pointerUpHandler);
                     window.addEventListener('touchend', pointerUpHandler);
 
-                    // Default state is unchecked
+                    // Default state
                     this.checked = false;
+                    this.disabled = false;
                     this.labelOn = 'On';
                     this.labelOff = 'Off';
+
+                    // Apply options
+                    _Control.setOptions(this, options);
                 }, {
                     // Properties
                     element: {
                         get: function() {return this._domElement;}
                     },
                     checked: {
-                        get: function () {return this._checked;},
-                        set: function (value) {this._setChecked(value);}
+                        get: function() {return this._checked;},
+                        set: function(value) {this._setChecked(value);}
+                    },
+                    disabled: {
+                        get: function() {return this._disabled;},
+                        set: function(value) {this._setDisabled(value);}
                     },
                     labelOn: {
                         get: function() {return this._labelOnElement.innerHTML;},
@@ -217,6 +231,10 @@ define([
 
                     // Private methods
                     _setChecked: function(value) {
+                        if (this.disabled) {
+                            return;
+                        }
+
                         value = !!value;
                         if (value === this.checked) {
                             return;
@@ -234,6 +252,20 @@ define([
                             _ElementUtilities.addClass(this._domElement, classOff);
                             _ElementUtilities.removeClass(this._domElement, classOn);
                         }
+                    },
+                    _setDisabled: function(value) {
+                        value = !!value;
+                        if (value === this._disabled) {
+                            return;
+                        }
+
+                        if (value) {
+                            _ElementUtilities.addClass(this._domElement, classDisabled);
+                        } else {
+                            _ElementUtilities.removeClass(this._domElement, classDisabled);
+                        }
+
+                        this._disabled = value;
                     }
                 });
 
