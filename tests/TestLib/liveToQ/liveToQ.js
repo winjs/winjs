@@ -4,6 +4,7 @@
     var qUnitGlobalErrorHandler = window.onerror;
 
     var testTimeout = QUnit.urlParams.testtimeout ? QUnit.urlParams.testtimeout:  15000;
+    var startTime = -1;
     var hasRun = false;
     var testFailed = false;
     var testError = "";
@@ -94,6 +95,7 @@
         // call asserts because the timeout itself is a failed assert.
         if (Date.now() - QUnit.config.current.started < testTimeout || typeof QUnit.config.testTimeout === 'undefined') {
             QUnit.assert.ok(!testFailed, testError);
+        if (Date.now() - startTime < testTimeout || typeof QUnit.config.testTimeout === 'undefined') {
         }
         QUnit.start();
     }
@@ -340,6 +342,7 @@
                 if (testFunc.length) {
                     // Async WebUnit tests take a 'complete' parameter
                     QUnit.asyncTest(testName, function () {
+                        startTime = Date.now();
                         hookupGlobalErrorHandler(testFunc);
                         var error = false;
                         try {
@@ -356,6 +359,7 @@
                     });
                 } else {
                     QUnit.asyncTest(testName, function () {
+                        startTime = Date.now();
                         hookupGlobalErrorHandler(testFunc);
                         try {
                             testFunc.call(testModule);
