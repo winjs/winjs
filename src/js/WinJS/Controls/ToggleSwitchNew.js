@@ -47,7 +47,6 @@ define([
                     this._headerElement = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._headerElement, classHeader);
                     this._domElement.appendChild(this._headerElement);
-                    this._headerElement.innerText = 'Header / Title';
 
                     // Clickable region
                     this._clickElement = _Global.document.createElement('div');
@@ -77,16 +76,17 @@ define([
                     this._trackElement.appendChild(this._fillUpperElement);
 
                     // Current value label
-                    this._valueElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._valueElement, classValue);
-                    this._clickElement.appendChild(this._valueElement);
-                    this._valueElement.innerText = 'Value';
+                    this._labelOnElement = _Global.document.createElement('div');
+                    this._labelOffElement = _Global.document.createElement('div');
+                    _ElementUtilities.addClass(this._labelOnElement, classValue);
+                    _ElementUtilities.addClass(this._labelOffElement, classValue);
+                    this._clickElement.appendChild(this._labelOnElement);
+                    this._clickElement.appendChild(this._labelOffElement);
 
                     // Description text
                     this._descriptionElement = _Global.document.createElement('div');
                     _ElementUtilities.addClass(this._descriptionElement, classDescription);
                     this._domElement.appendChild(this._descriptionElement);
-                    this._descriptionElement.innerText = 'Description Text';
 
                     // Some initialization of main element
                     element.winControl = this;
@@ -178,7 +178,9 @@ define([
                     window.addEventListener('touchend', pointerUpHandler);
 
                     // Default state is unchecked
-                    this._setChecked(false);
+                    this.checked = false;
+                    this.labelOn = 'On';
+                    this.labelOff = 'Off';
                 }, {
                     // Properties
                     element: {
@@ -188,8 +190,32 @@ define([
                         get: function () {return this._checked;},
                         set: function (value) {this._setChecked(value);}
                     },
+                    labelOn: {
+                        get: function() {return this._labelOnElement.innerHTML;},
+                        set: function(value) {this._labelOnElement.innerHTML = value;}
+                    },
+                    labelOff: {
+                        get: function() {return this._labelOffElement.innerHTML;},
+                        set: function(value) {this._labelOffElement.innerHTML = value;}
+                    },
+                    title: {
+                        get: function() {return this._headerElement.innerHTML;},
+                        set: function(value) {this._headerElement.innerHTML = value;}
+                    },
 
-                    // Methods
+                    // Events
+                    onchange: _Events._createEventProperty('change'),
+
+                    // Public methods
+                    dispose: function() {
+                        if (this._disposed) {
+                            return;
+                        }
+
+                        this._disposed = true;
+                    },
+
+                    // Private methods
                     _setChecked: function(value) {
                         value = !!value;
                         if (value === this.checked) {
@@ -198,9 +224,13 @@ define([
 
                         this._checked = value;
                         if (value) {
+                            this._labelOnElement.style.display = '';
+                            this._labelOffElement.style.display = 'none';
                             _ElementUtilities.addClass(this._domElement, classOn);
                             _ElementUtilities.removeClass(this._domElement, classOff);
                         } else {
+                            this._labelOnElement.style.display = 'none';
+                            this._labelOffElement.style.display = '';
                             _ElementUtilities.addClass(this._domElement, classOff);
                             _ElementUtilities.removeClass(this._domElement, classOn);
                         }
