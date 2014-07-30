@@ -48,6 +48,8 @@
         width: 0;
         height: @trackHeight - 6px;
         box-sizing: border-box;
+        -webkit-transition: width 0.1s;
+        transition: width 0.1s;
     }
     .win-toggleswitch-fill-lower-new {
         left: 1px;
@@ -63,6 +65,15 @@
         display: inline-block;
         width: 12px;
         height: @trackHeight;
+        -webkit-transition: left 0.1s;
+        transition: left 0.1s;
+    }
+    &.win-toggleswitch-dragging-new {
+        .win-toggleswitch-fill-new, 
+        .win-toggleswitch-thumb-new {
+            -webkit-transition: none;
+            transition: none;
+        }
     }
     &.win-toggleswitch-on-new {
         .win-toggleswitch-fill-lower-new {
