@@ -557,7 +557,7 @@ define([
                     }
 
                     var zoomToContent = { contentX: 0, contentY: 0, viewportX: 0, viewportY: 0 };
-                    zoomToContent[this._horizontal ? "contentX" : "contentY"] = this._getItemStart(targetPage);
+                    zoomToContent[this._isHorizontal ? "contentX" : "contentY"] = this._getItemStart(targetPage);
                     _ElementUtilities._zoomTo(this._panningDivContainer, zoomToContent);
                     this._waitingForMouseScroll = true;
 
