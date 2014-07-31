@@ -24,8 +24,8 @@ define([
         uniqueID = _ElementUtilities._uniqueID;
 
     var strings = {
-        get itemInfoIsInvalid() { return _Resources._getWinJSString("ui/itemInfoIsInvalid").value; },
-        get groupInfoResultIsInvalid() { return _Resources._getWinJSString("ui/groupInfoResultIsInvalid").value; }
+        get itemInfoIsInvalid() { return "Invalid argument: An itemInfo function must be provided which returns an object with numeric width and height properties."; },
+        get groupInfoResultIsInvalid() { return "Invalid result: groupInfo result for cell spanning groups must include the following numeric properties: cellWidth and cellHeight."; }
     };
 
     //

@@ -28,7 +28,7 @@ define([
     var createEvent = _Events._createEventProperty;
 
     var strings = {
-        get malformedFormatStringInput() { return _getWinJSString("base/malformedFormatStringInput").value; },
+        get malformedFormatStringInput() { return "Malformed, did you mean to escape your '{0}'?"; },
     };
 
     _Base.Namespace.define("WinJS.Resources", {

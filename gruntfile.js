@@ -45,7 +45,7 @@
         grunt.registerTask("minify", ["uglify", "add-bom"]);
         
         // Private tasks (not designed to be used from the command line)
-        grunt.registerTask("_build", ["requirejs:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "requirejs:singleFile"]);
+        grunt.registerTask("_build", ["onefile:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "onefile:WinJS"]);
         
         // Other tasks
         grunt.registerTask("modules", ["clean:modules", "requirejs:publicModules", "replace:base"]);

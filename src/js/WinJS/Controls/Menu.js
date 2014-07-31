@@ -42,8 +42,8 @@ define([
 
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/menuAriaLabel").value; },
-                get requiresCommands() { return _Resources._getWinJSString("ui/requiresCommands").value; },
-                get nullCommand() { return _Resources._getWinJSString("ui/nullCommand").value; },
+                get requiresCommands() { return "Invalid argument: commands must not be empty"; },
+                get nullCommand() { return "Invalid argument: command must not be null"; },
             };
 
             var Menu = _Base.Class.derive(Flyout.Flyout, function Menu_ctor(element, options) {

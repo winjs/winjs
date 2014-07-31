@@ -24,15 +24,15 @@ define([
     var optimizeBindingReferences = _WinRT.msSetWeakWinRTProperty && _WinRT.msGetWeakWinRTProperty;
 
     var strings = {
-        get attributeBindingSingleProperty() { return _Resources._getWinJSString("base/attributeBindingSingleProperty").value; },
-        get cannotBindToThis() { return _Resources._getWinJSString("base/cannotBindToThis").value; },
-        get creatingNewProperty() { return _Resources._getWinJSString("base/creatingNewProperty").value; },
-        get duplicateBindingDetected() { return _Resources._getWinJSString("base/duplicateBindingDetected").value; },
-        get elementNotFound() { return _Resources._getWinJSString("base/elementNotFound").value; },
-        get errorInitializingBindings() { return _Resources._getWinJSString("base/errorInitializingBindings").value; },
-        get propertyDoesNotExist() { return _Resources._getWinJSString("base/propertyDoesNotExist").value; },
-        get idBindingNotSupported() { return _Resources._getWinJSString("base/idBindingNotSupported").value; },
-        get nestedDOMElementBindingNotSupported() { return _Resources._getWinJSString("base/nestedDOMElementBindingNotSupported").value; }
+        get attributeBindingSingleProperty() { return "Attribute binding requires a single destination attribute name, often in the form \"this['aria-label']\" or \"width\"."; },
+        get cannotBindToThis() { return "Can't bind to 'this'."; },
+        get creatingNewProperty() { return "Creating new property {0}. Full path:{1}"; },
+        get duplicateBindingDetected() { return "Binding against element with id {0} failed because a duplicate id was detected."; },
+        get elementNotFound() { return "Element not found:{0}"; },
+        get errorInitializingBindings() { return "Error initializing bindings: {0}"; },
+        get propertyDoesNotExist() { return "{0} doesn't exist. Full path:{1}"; },
+        get idBindingNotSupported() { return "Declarative binding to ID field is not supported. Initializer: {0}"; },
+        get nestedDOMElementBindingNotSupported() { return "Binding through a property {0} of type HTMLElement is not supported, Full path:{1}."; }
     };
 
     var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;

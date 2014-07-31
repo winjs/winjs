@@ -27,10 +27,6 @@
                         replacement: config.targetName
                     },
                     {
-                        match: /\$\(TargetFramework\)/g,
-                        replacement: config.targetFramework
-                    },
-                    {
                         match: /\$\(build.version\)/g,
                         replacement: "<%= pkg.version %>"
                     },

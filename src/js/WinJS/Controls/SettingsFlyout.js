@@ -615,9 +615,9 @@ define([
 
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/settingsFlyoutAriaLabel").value; },
-                get badReference() { return _Resources._getWinJSString("ui/badReference").value; },
+                get badReference() { return "Invalid argument: Invalid href to settings flyout fragment"; },
                 get backbuttonAriaLabel() { return _Resources._getWinJSString("ui/backbuttonarialabel").value; },
-                get widthDeprecationMessage() { return _Resources._getWinJSString("ui/settingsFlyoutWidthIsDeprecated").value; },
+                get widthDeprecationMessage() { return "SettingsFlyout.width may be altered or unavailable in future versions. Instead, style the CSS width property on elements with the .win-settingsflyout class."; },
             };
 
             return SettingsFlyout;

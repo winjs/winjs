@@ -62,14 +62,14 @@ define([
             var closedDisplayMinimal = "minimal";
 
             var strings = {
-                get requiresCommands() { return _Resources._getWinJSString("ui/requiresCommands").value; },
-                get nullCommand() { return _Resources._getWinJSString("ui/nullCommand").value; },
-                get cannotChangePlacementWhenVisible() { return _Resources._getWinJSString("ui/cannotChangePlacementWhenVisible").value; },
-                get badLayout() { return _Resources._getWinJSString("ui/badLayout").value; },
-                get cannotChangeLayoutWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeLayoutWhenVisible").value; },
-                get cannotChangeCommandsWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeCommandsWhenVisible").value; }, // duplicate string getter from Overlay.        
-                get mustContainCommands() { return _Resources._getWinJSString("ui/mustContainCommands").value; }, // duplicate string getter from Overlay.  
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; }, // duplicate string getter from Overlay.  
+                get requiresCommands() { return "Invalid argument: commands must not be empty"; },
+                get nullCommand() { return "Invalid argument: command must not be null"; },
+                get cannotChangePlacementWhenVisible() { return "Invalid argument: The placement property cannot be set when the AppBar is visible, call hide() first"; },
+                get badLayout() { return "Invalid argument: The layout property must be 'custom' or 'commands'"; },
+                get cannotChangeLayoutWhenVisible() { return "Invalid argument: The layout property cannot be set when the AppBar is visible, call hide() first"; },
+                get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; }, // duplicate string getter from Overlay.        
+                get mustContainCommands() { return "Invalid HTML: AppBars/Menus must contain only AppBarCommands/MenuCommands"; }, // duplicate string getter from Overlay.  
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }, // duplicate string getter from Overlay.  
             };
 
             // Send one of our events, duplicate of private _Overlay member function

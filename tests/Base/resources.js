@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
+/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -69,8 +69,8 @@ WinJSTests.Resources = function () {
         // @TODO, when we get rid of _getWinJSString it should be because we can go back to the expected way of doing this
         //
         //var str = WinJS.Resources.getString("ms-resource://$(TargetFramework)/ui/On").value;
-        var str = WinJS.Resources._getWinJSString("base/sparseArrayNotSupported").value;
-        LiveUnit.Assert.areEqual("Sparse arrays are not supported with proxy: true", str);
+        var str = WinJS.Resources._getWinJSString("ui/selectDay").value;
+        LiveUnit.Assert.areEqual("Select Day", str);
     };
 }
 

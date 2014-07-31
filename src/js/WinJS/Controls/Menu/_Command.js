@@ -116,10 +116,10 @@ define([
 
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/menuCommandAriaLabel").value; },
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get badClick() { return _Resources._getWinJSString("ui/badClick").value; },
-                get badHrElement() { return _Resources._getWinJSString("ui/badHrElement").value; },
-                get badButtonElement() { return _Resources._getWinJSString("ui/badButtonElement").value; }
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get badClick() { return "Invalid argument: The onclick property for an {0} must be a function"; },
+                get badHrElement() { return "Invalid argument: For a separator, the element must be null or an hr element"; },
+                get badButtonElement() { return "Invalid argument: For a button, toggle, or flyout command, the element must be null or a button element"; }
             };
 
             return _Base.Class.define(function MenuCommand_ctor(element, options) {

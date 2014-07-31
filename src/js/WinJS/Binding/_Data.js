@@ -15,9 +15,9 @@ define([
 
 
     var strings = {
-        get exceptionFromBindingInitializer() { return _Resources._getWinJSString("base/exceptionFromBindingInitializer").value; },
-        get propertyIsUndefined() { return _Resources._getWinJSString("base/propertyIsUndefined").value; },
-        get unsupportedDataTypeForBinding() { return _Resources._getWinJSString("base/unsupportedDataTypeForBinding").value; },
+        get exceptionFromBindingInitializer() { return "Exception thrown from binding initializer: {0}"; },
+        get propertyIsUndefined() { return "{0} is undefined"; },
+        get unsupportedDataTypeForBinding() { return "Unsupported data type"; },
     };
 
     var observableMixin = {

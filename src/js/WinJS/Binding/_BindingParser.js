@@ -14,8 +14,8 @@ define([
 
 
     var strings = {
-        get invalidBinding() { return _Resources._getWinJSString("base/invalidBinding").value; },
-        get bindingInitializerNotFound() { return _Resources._getWinJSString("base/bindingInitializerNotFound").value; },
+        get invalidBinding() { return "Invalid binding:'{0}'. Expected to be '<destProp>:<sourceProp>;'. {1}"; },
+        get bindingInitializerNotFound() { return "Initializer not found:'{0}'"; },
     };
 
 /*

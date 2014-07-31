@@ -11,7 +11,7 @@
     config.buildDateString = config.buildDate.getFullYear() + "." + config.month + "." + config.buildDate.getDate();
     config.localeFolder = "en-US";
     config.outputFolder = "bin/";
-    config.copyright = '/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */';
+    config.copyright = '/*! Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */';
 
     config.testsOutput = "";
 
@@ -31,23 +31,10 @@
     config.phoneOutput = config.outputFolder + config.phoneFramework + "/";
     config.modulesOutput = config.outputFolder + "modules/";
 
-    config.baseStringsFiles = [
-        "src/js/build/Copyright.js",
-        "src/js/library/stringsHeader.js",
-        "src/js/library/stringsBlockHeader.js",
-        "src/js/" + config.localeFolder + "/base.prefix.js",
-        "src/js/" + config.localeFolder + "/base.resjson",
-        "src/js/library/stringsBlockFooter.js",
-        "src/js/library/stringsFooter.js"
-    ];
-
     config.uiStringsFiles = [
-        "src/js/build/Copyright.js",
         "src/js/library/stringsHeader.js",
-        "src/js/library/stringsBlockHeader.js",
         "src/js/" + config.localeFolder + "/ui.prefix.js",
         "src/js/" + config.localeFolder + "/ui.resjson",
-        "src/js/library/stringsBlockFooter.js",
         "src/js/library/stringsFooter.js"
     ];
 

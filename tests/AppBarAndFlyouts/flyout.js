@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // <!-- saved from url=(0014)about:internet -->
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/base.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
@@ -82,7 +81,7 @@ CorsicaTests.FlyoutTests = function () {
         new WinJS.UI.Flyout(that._element);
     }
 
-    this.testFlyoutMultipleInstantiation["LiveUnit.ExpectedException"] = { message: WinJS.Resources._getWinJSString("ui/duplicateConstruction").value }; // This is the exception that is expected
+    this.testFlyoutMultipleInstantiation["LiveUnit.ExpectedException"] = { message: "Invalid argument: Controls may only be instantiated one time for each DOM element" }; // This is the exception that is expected
 
 
 
@@ -128,7 +127,7 @@ CorsicaTests.FlyoutTests = function () {
         testGoodInitOption("alignment", "left");
         testGoodInitOption("alignment", "right");
         testGoodInitOption("alignment", "center");
-        var badAlignment = WinJS.Resources._getWinJSString("ui/badAlignment").value;
+        var badAlignment = "Invalid argument: Flyout alignment should be 'center' (default), 'left', or 'right'.";
         testBadInitOption("alignment", "fred", "WinJS.UI.Flyout.BadAlignment", badAlignment);
         testBadInitOption("alignment", -1, "WinJS.UI.Flyout.BadAlignment", badAlignment);
         testBadInitOption("alignment", 12, "WinJS.UI.Flyout.BadAlignment", badAlignment);
@@ -139,7 +138,7 @@ CorsicaTests.FlyoutTests = function () {
         testGoodInitOption("placement", "left");
         testGoodInitOption("placement", "right");
         testGoodInitOption("placement", "auto");
-        var badPlacement = WinJS.Resources._getWinJSString("ui/badPlacement").value;
+        var badPlacement = "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', or 'auto'.";
         testBadInitOption("placement", "fred", "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", -1, "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", 12, "WinJS.UI.Flyout.BadPlacement", badPlacement);
@@ -222,14 +221,14 @@ CorsicaTests.FlyoutTests = function () {
         try {
             flyout.show();
         } catch (e) {
-            LiveUnit.Assert.areEqual(WinJS.Resources._getWinJSString("ui/noAnchor").value, e.message);
+            LiveUnit.Assert.areEqual("Invalid argument: Showing flyout requires a DOM element as its parameter.", e.message);
         }
 
         LiveUnit.LoggingCore.logComment("Calling show() with null should throw");
         try {
             flyout.show(null);
         } catch (e) {
-            LiveUnit.Assert.areEqual(WinJS.Resources._getWinJSString("ui/noAnchor").value, e.message);
+            LiveUnit.Assert.areEqual("Invalid argument: Showing flyout requires a DOM element as its parameter.", e.message);
         }
 
         complete();

@@ -47,9 +47,9 @@ define([
 
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/flyoutAriaLabel").value; },
-                get noAnchor() { return _Resources._getWinJSString("ui/noAnchor").value; },
-                get badPlacement() { return _Resources._getWinJSString("ui/badPlacement").value; },
-                get badAlignment() { return _Resources._getWinJSString("ui/badAlignment").value; }
+                get noAnchor() { return "Invalid argument: Showing flyout requires a DOM element as its parameter."; },
+                get badPlacement() { return "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', or 'auto'."; },
+                get badAlignment() { return "Invalid argument: Flyout alignment should be 'center' (default), 'left', or 'right'."; }
             };
 
             var Flyout = _Base.Class.derive(_Overlay._Overlay, function Flyout_ctor(element, options) {

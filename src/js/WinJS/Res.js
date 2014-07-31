@@ -64,7 +64,7 @@ define([
 
         }
         else if (_BaseUtils.validation) {
-            throw new _ErrorFromName("WinJS.Res.NestingExceeded", _Resources._getWinJSString("base/nestingExceeded").value);
+            throw new _ErrorFromName("WinJS.Res.NestingExceeded", "NestingExceeded");
         }
 
         return Promise.as(rootElement);
@@ -96,7 +96,7 @@ define([
     }
 
     function notFound(name) {
-        throw new _ErrorFromName("WinJS.Res.NotFound", _Resources._formatString(_Resources._getWinJSString("base/notFound").value, name));
+        throw new _ErrorFromName("WinJS.Res.NotFound", _Resources._formatString("NotFound: {0}", name));
     }
 
     function setMembers(root, target, descriptor, count) {

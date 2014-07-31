@@ -15,9 +15,7 @@
         ],
         base: [
             config.desktopOutput + "js/base.js",
-            config.desktopOutput + "js/" + config.localeFolder + "/base.strings.js",
             config.phoneOutput + "js/base.js",
-            config.phoneOutput + "js/" + config.localeFolder + "/base.strings.js",
         ],
         ui: [
             config.desktopOutput + "js/ui.js",

@@ -13,7 +13,7 @@ define([
     "use strict";
 
     var strings = {
-        get notSupportedForProcessing() { return _Resources._getWinJSString("base/notSupportedForProcessing").value; }
+        get notSupportedForProcessing() { return "Value is not supported within a declarative processing context, if you want it to be supported mark it using WinJS.Utilities.markSupportedForProcessing. The value was: '{0}'"; }
     };
 
     var isPhone = false;

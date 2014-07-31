@@ -66,7 +66,7 @@ define([
     });
 
     var strings = {
-        get jobInfoIsNoLongerValid() { return _Resources._getWinJSString("base/jobInfoIsNoLongerValid").value; }
+        get jobInfoIsNoLongerValid() { return "The job info object can only be used while the job is running"; }
     };
 
     //

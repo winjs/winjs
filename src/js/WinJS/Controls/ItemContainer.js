@@ -51,7 +51,7 @@ define([
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         ItemContainer: _Base.Namespace._lazy(function () {
             var strings = {
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; }
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }
             };
 
             var ItemContainer = _Base.Class.define(function ItemContainer_ctor(element, options) {

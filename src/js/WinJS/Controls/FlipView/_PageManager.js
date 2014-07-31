@@ -31,7 +31,7 @@ define([
                 itemSelectedEventDelay = 250;
 
             var strings = {
-                get badCurrentPage() { return _Resources._getWinJSString("ui/badCurrentPage").value; }
+                get badCurrentPage() { return "Invalid argument: currentPage must be a number greater than or equal to zero and be within the bounds of the datasource"; }
             };
 
             function isFlipper(element) {

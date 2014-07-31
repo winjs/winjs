@@ -47,7 +47,7 @@ define([
                 get averageRating() { return _Resources._getWinJSString("ui/averageRating").value; },
                 get clearYourRating() { return _Resources._getWinJSString("ui/clearYourRating").value; },
                 get tentativeRating() { return _Resources._getWinJSString("ui/tentativeRating").value; },
-                get tooltipStringsIsInvalid() { return _Resources._getWinJSString("ui/tooltipStringsIsInvalid").value; },
+                get tooltipStringsIsInvalid() { return "Invalid argument: tooltipStrings must be null or an array of strings."; },
                 get unrated() { return _Resources._getWinJSString("ui/unrated").value; },
                 get userRating() { return _Resources._getWinJSString("ui/userRating").value; },
             };

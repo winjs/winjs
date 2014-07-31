@@ -69,8 +69,8 @@ define([
     var AnimationHelper = _Helpers._ListViewAnimationHelper;
 
     var strings = {
-        get notCompatibleWithSemanticZoom() { return _Resources._getWinJSString("ui/notCompatibleWithSemanticZoom").value; },
-        get listViewInvalidItem() { return _Resources._getWinJSString("ui/listViewInvalidItem").value; },
+        get notCompatibleWithSemanticZoom() { return "ListView can only be used with SemanticZoom if randomAccess loading behavior is specified."; },
+        get listViewInvalidItem() { return "Item must provide index, key or description of corresponding item."; },
         get listViewViewportAriaLabel() { return _Resources._getWinJSString("ui/listViewViewportAriaLabel").value; }
     };
 

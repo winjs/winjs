@@ -96,11 +96,11 @@ define([
             }
 
             var strings = {
-                get badAxis() { return _Resources._getWinJSString("ui/badAxis").value; },
-                get badCurrentPage() { return _Resources._getWinJSString("ui/badCurrentPage").value; },
-                get noitemsManagerForCount() { return _Resources._getWinJSString("ui/noitemsManagerForCount").value; },
-                get badItemSpacingAmount() { return _Resources._getWinJSString("ui/badItemSpacingAmount").value; },
-                get navigationDuringStateChange() { return _Resources._getWinJSString("ui/flipViewNavigationDuringStateChange").value; },
+                get badAxis() { return "Invalid argument: orientation must be a string, either 'horizontal' or 'vertical'"; },
+                get badCurrentPage() { return "Invalid argument: currentPage must be a number greater than or equal to zero and be within the bounds of the datasource"; },
+                get noitemsManagerForCount() { return "Invalid operation: can't get count if no dataSource has been set"; },
+                get badItemSpacingAmount() { return "Invalid argument: itemSpacing must be a number greater than or equal to zero"; },
+                get navigationDuringStateChange() { return "Error: After changing itemDataSource or itemTemplate, any navigation in the FlipView control should be delayed until the pageselected event is fired."; },
                 get panningContainerAriaLabel() { return _Resources._getWinJSString("ui/flipViewPanningContainerAriaLabel").value; }
             };
 

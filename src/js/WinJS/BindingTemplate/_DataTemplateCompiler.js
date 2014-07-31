@@ -27,9 +27,9 @@ define([
     }
 
     var strings = {
-        get attributeBindingSingleProperty() { return _Resources._getWinJSString("base/attributeBindingSingleProperty").value; },
-        get cannotBindToThis() { return _Resources._getWinJSString("base/cannotBindToThis").value; },
-        get idBindingNotSupported() { return _Resources._getWinJSString("base/idBindingNotSupported").value; },
+        get attributeBindingSingleProperty() { return "Attribute binding requires a single destination attribute name, often in the form \"this['aria-label']\" or \"width\"."; },
+        get cannotBindToThis() { return "Can't bind to 'this'."; },
+        get idBindingNotSupported() { return "Declarative binding to ID field is not supported. Initializer: {0}"; },
     };
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {

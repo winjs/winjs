@@ -19,7 +19,7 @@ define([
     }
 
     var strings = {
-        get errorActivatingControl() { return _Resources._getWinJSString("base/errorActivatingControl").value; },
+        get errorActivatingControl() { return "Error activating control: {0}"; },
     };
 
     var markSupportedForProcessing = _BaseUtils.markSupportedForProcessing;

@@ -87,8 +87,8 @@ define([
             }
 
             var strings = {
-                get duplicateConstruction() { return _Resources._getWinJSString("ui/duplicateConstruction").value; },
-                get mustContainCommands() { return _Resources._getWinJSString("ui/mustContainCommands").value; },
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get mustContainCommands() { return "Invalid HTML: AppBars/Menus must contain only AppBarCommands/MenuCommands"; },
                 get closeOverlay() { return _Resources._getWinJSString("ui/closeOverlay").value; },
             };
 
@@ -1107,8 +1107,8 @@ define([
                 _createClickEatingDivTemplate: function (divClass, hideClickEatingDivFunction) {
                     var clickEatingDiv = _Global.document.createElement("section");
                     _ElementUtilities.addClass(clickEatingDiv, divClass);
-                    _ElementUtilities._addEventListener(clickEatingDiv, "pointerdown", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
-                    _ElementUtilities._addEventListener(clickEatingDiv, "pointerup", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
+                    _ElementUtilities._addEventListener(clickEatingDiv, "pointerup", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
+                    _ElementUtilities._addEventListener(clickEatingDiv, "pointerdown", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
                     clickEatingDiv.addEventListener("click", hideClickEatingDivFunction, true);
                     // Tell Aria that it's clickable
                     clickEatingDiv.setAttribute("role", "menuitem");
@@ -1580,8 +1580,8 @@ define([
             afterHide: AFTERHIDE,
 
             commonstrings: {
-                get cannotChangeCommandsWhenVisible() { return _Resources._getWinJSString("ui/cannotChangeCommandsWhenVisible").value; },
-                get cannotChangeHiddenProperty() { return _Resources._getWinJSString("ui/cannotChangeHiddenProperty").value; }
+                get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },
+                get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; }
             }
         });
 
