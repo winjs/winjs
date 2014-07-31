@@ -23,6 +23,7 @@
     "grunt-contrib-requirejs": "^0.4.4",
     "less": "^1.7.4",
     "madge": "^0.3.1",
-    "fs-extra": "^0.10.0"
+    "fs-extra": "^0.10.0",
+    "websocket":  "^1.0.8"
   }
 }

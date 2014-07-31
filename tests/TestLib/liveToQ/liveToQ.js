@@ -7,9 +7,12 @@
     var startTime = -1;
     var hasRun = false;
     var testFailed = false;
-    var testError = "";
+    var testError = null;
     var verboseLog = "";
     var log = [];
+
+    var socketId = document.title;
+    var socketSignal = null;
 
     QUnit.config.autostart = false;
     QUnit.config.testTimeout = testTimeout;
@@ -76,6 +79,44 @@
             }
         }
         addOptions();
+
+        if (QUnit.urlParams.subscriptionKey) {
+            var socket = null;
+            var socketReady = false;
+            var listeners = [];
+            socketSignal = function (callback) {
+                if (socketReady) {
+                    callback(socket);
+                } else {
+                    listeners.push(callback);
+                }
+            };
+
+            var attempts = 0;
+            setTimeout(function connect() {
+                try {
+                    socket = new WebSocket("ws://localhost:9998");
+                    socket.onopen = function () {
+                        socket.send(JSON.stringify({ id: socketId, type: "registerReporter", args: { subscriptionKey: QUnit.urlParams.subscriptionKey } }));
+                        listeners.forEach(function (listener) {
+                            listener(socket);
+                        });
+                        socketReady = true;
+                    };
+                    socket.onclose = function (m) {
+                        setTimeout(window.close, 500);
+                    }
+                    attempts++;
+                } catch (e) {
+                    // new WebSocket() can throw a security exception when there are too many connections
+                    // going out at once; since the dashboard launches 4+ test pages at once, we may see
+                    // some of these.
+                    if (attempts < 5) {
+                        setTimeout(connect, 500);
+                    }
+                }
+            }, 500);
+        }
     });
 
     if (QUnit.urlParams.fastanimations === "true" || QUnit.urlParams.fastanimations === true) {
@@ -93,9 +134,10 @@
     function completeTest() {
         // Since we want one assert per test, if this test times out, then we do not
         // call asserts because the timeout itself is a failed assert.
-        if (Date.now() - QUnit.config.current.started < testTimeout || typeof QUnit.config.testTimeout === 'undefined') {
-            QUnit.assert.ok(!testFailed, testError);
         if (Date.now() - startTime < testTimeout || typeof QUnit.config.testTimeout === 'undefined') {
+            QUnit.assert.ok(!testFailed, testError && testError.message);
+        } else {
+            verboseLog = "Test timeout - " + verboseLog;
         }
         QUnit.start();
     }
@@ -139,7 +181,7 @@
 
     function cleanUp() {
         testFailed = false;
-        testError = "";
+        testError = {};
         verboseLog = "";
 
         qunitDiv.style.zIndex = 0;
@@ -147,23 +189,46 @@
 
     QUnit.testStart(function testStart(testDetails) {
         qunitDiv.style.zIndex = -1;
-        QUnit.log = function (details) {
-            if (!details.result) {
-                details.name = testDetails.name;
-                log.push(details);
-            }
+    });
+
+    QUnit.log(function (details) {
+        if (!details.result) {
+            testError = testError || {};
+            testError.source = details.source;
         }
     });
 
-    QUnit.testDone(function testDone(args) {
-        if (args.failed) {
-            console.log(args.module + ": " + args.name + ", " + args.passed + "/" + args.total + ", " + args.runtime + "ms");
+    QUnit.testDone(function testDone(test) {
+        if (test.failed) {
+            console.log(test.module + ": " + test.name + " failed, " + test.runtime + "ms");
             console.log(verboseLog);
+            log.push({
+                name: test.name,
+                result: !!test.failed,
+                expected: testError.expected,
+                actual: testError.actual,
+                // Omit all but the first few callstacks to keep our results data small.
+                // If it's larger than 64 KB, Saucelabs will ignore it. 
+                source: (log.length < 3 && testError.source) ? testError.source.substr(0, 500) : null
+            });
+            socketSignal && socketSignal(function (socket) {
+                socket.send(JSON.stringify({
+                    id: socketId,
+                    type: "report",
+                    args: {
+                        data: {
+                            type: "singleFailure",
+                            name: test.name,
+                            number: QUnit.config.current.testNumber
+                        }
+                    }
+                }));
+            });
         }
         cleanUp();
     });
 
-    QUnit.moduleDone(function (args) {
+    QUnit.moduleDone(function (module) {
         if (document.body.children.length > 2) {
             for (var i = document.body.children.length - 1; i >= 0; i--) {
                 var child = document.body.children[i];
@@ -171,31 +236,35 @@
                     continue;
                 }
 
-                console.log("Test: " + args.name + " - Incomplete cleanup!");
+                console.log("Test: " + module.name + " - Incomplete cleanup!");
                 WinJS.Utilities.disposeSubTree(child);
                 document.body.removeChild(child);
             }
         }
     });
 
-    QUnit.done(function (test_results) {
+    QUnit.done(function (results) {
         if (document.querySelector("#loopTests").checked) {
             document.querySelector("#startButton").click();
         } else {
-            var tests = log.map(function (details, index) {
-                return {
-                    name: details.name,
-                    result: details.result,
-                    expected: details.expected,
-                    actual: details.actual,
-                    // Omit all but the first few callstacks to keep our results data small.
-                    // If it's larger than 64 KB, Saucelabs will ignore it. 
-                    source: index < 3 && details.source ? details.source.substring(0, 500) : null
-                }
+            results.tests = log;
+            results.url = document.location.href;
+            window.global_test_results = results;
+
+            socketSignal && socketSignal(function (socket) {
+                socket.send(JSON.stringify({
+                    id: socketId,
+                    type: "report",
+                    args: {
+                        data: {
+                            type: "finished",
+                            runtime: results.runtime,
+                            failures: log.length
+                        }
+                    }
+                }));
+                socket.close();
             });
-            test_results.tests = tests;
-            test_results.url = document.location.href;
-            window.global_test_results = test_results;
         }
     });
 
@@ -220,7 +289,11 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("areEqual - {0} (expected: {1}, actual: {2})", message || "", expected, actual);
+                    testError = testError || {
+                        message: formatString("areEqual - {0} (expected: {1}, actual: {2})", message || "", expected, actual),
+                        expected: expected,
+                        actual: actual
+                    };
                     testFailed = true;
                 }
             },
@@ -230,7 +303,12 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("areNotEqual - {0} (both equal: {1})", message || "", left);
+                    testError = testError || {
+                        message:
+                            formatString("areNotEqual - {0} (both equal: {1})", message || "", left),
+                        expected: left,
+                        actual: right
+                    };
                     testFailed = true;
                 }
             },
@@ -239,7 +317,11 @@
                 if (QUnit.breakOnAssertFail) {
                     debugger;
                 }
-                testError = testError || formatString("fail - {0}", message || "");
+                testError = testError || {
+                    message: formatString("fail - {0}", message || ""),
+                    expected: "pass",
+                    actual: "fail"
+                };
                 testFailed = true;
             },
 
@@ -248,7 +330,11 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("isFalse - {0} (expected: falsy, actual: {1})", message || "", falsy);
+                    testError = testError || {
+                        message: formatString("isFalse - {0} (expected: falsy, actual: {1})", message || "", falsy),
+                        expected: "falsy",
+                        actual: falsy
+                    };
                     testFailed = true;
                 }
             },
@@ -258,7 +344,11 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("isTrue - {0} (expected: truthy, actual: {1})", message || "", truthy);
+                    testError = testError || {
+                        message: formatString("isTrue - {0} (expected: truthy, actual: {1})", message || "", truthy),
+                        expected: "truthy",
+                        actual: truthy
+                    };
                     testFailed = true;
                 }
             },
@@ -270,7 +360,11 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("isNull - {0} (expected: null or undefined, actual: {1})", message || "", obj);
+                    testError = testError || {
+                        message: formatString("isNull - {0} (expected: null or undefined, actual: {1})", message || "", obj),
+                        expected: "null",
+                        actual: obj
+                    };
                     testFailed = true;
                 }
             },
@@ -282,7 +376,11 @@
                     if (QUnit.breakOnAssertFail) {
                         debugger;
                     }
-                    testError = testError || formatString("isNotNull - {0} (expected: not null and not undefined, actual: {1})", message || "", obj);
+                    testError = testError || {
+                        message: formatString("isNotNull - {0} (expected: not null and not undefined, actual: {1})", message || "", obj),
+                        expected: "not null",
+                        actual: obj
+                    };
                     testFailed = true;
                 }
             },

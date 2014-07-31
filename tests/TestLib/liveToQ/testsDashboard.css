@@ -1,0 +1,30 @@
+body {
+    background-color: rgba(38, 0, 52, .9);
+    color: white;
+    font-family: "Segoe UI Light", "Helvetica";
+}
+
+a, a:active, a:hover, a:visited, a:hover:active {
+    color: white;
+    text-decoration: none;
+}
+
+li {
+    text-transform: capitalize;
+}
+
+    li .status {
+        margin-left: 4px;
+    }
+
+    li.passed a {
+        color: lightgreen;
+    }
+
+    li.failed a {
+        color: red;
+    }
+
+    li a.reproLink {
+        color: yellow;
+    }

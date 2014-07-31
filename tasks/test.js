@@ -1,6 +1,19 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 (function () {
     "use strict";
+    function formatString(string) {
+        var args = arguments;
+        if (args.length > 1) {
+            string = string.replace(/({{)|(}})|{(\d+)}|({)|(})/g,
+                function (unused, left, right, index, illegalLeft, illegalRight) {
+                    if (illegalLeft || illegalRight) {
+                        throw new Error(formatString("Malformed string input: {0}", illegalLeft || illegalRight));
+                    }
+                    return (left && "{") || (right && "}") || args[(index | 0) + 1];
+                });
+        }
+        return string;
+    }
 
     module.exports = function (grunt) {
         var config = require("../config.js");
@@ -10,8 +23,12 @@
             if (config.inRazzle) {
                 grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
             } else {
-                grunt.task.run(["default", "connect:localhost"]);
+                grunt.task.run(["default", "test-results-server", "connect:localhost"]);
             }
+        });
+
+        grunt.registerTask("rat", function () {
+            grunt.task.run(["release", "test-results-server", "connect:localhostAuto"]);
         });
 
         // Generate QUnit test pages
@@ -116,24 +133,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />                                                                 \r\n\
     <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                  \r\n\
     <title>WinJS Tests</title>                                                                                              \r\n\
-    <style>                                                                                                                 \r\n\
-        body {                                                                                                              \r\n\
-            background-color: rgba(38, 0, 52, .9);                                                                          \r\n\
-            color: white;                                                                                                   \r\n\
-            font-family: "Segoe UI Light", "Helvetica";                                                                     \r\n\
-        }                                                                                                                   \r\n\
-        a, a:active, a:hover, a:visited, a:hover:active {                                                                   \r\n\
-            color: white;                                                                                                   \r\n\
-            text-decoration: none;                                                                                          \r\n\
-        }                                                                                                                   \r\n\
-        li {                                                                                                                \r\n\
-            text-transform: capitalize;                                                                                     \r\n\
-        }                                                                                                                   \r\n\
-    </style>                                                                                                                \r\n\
+    <link type="text/css" rel="stylesheet" href="TestLib/liveToQ/testsDashboard.css" />                                     \r\n\
+    <script src="TestLib/liveToQ/testsDashboard.js"></script>                                                               \r\n\
 </head>                                                                                                                     \r\n\
 <body>                                                                                                                      \r\n\
   <img src="http://try.buildwinjs.com/images/winjs-logo.png" alt="WinJS Tests"/> <br/>                                      \r\n\
-  <a href="http://try.buildwinjs.com/#status" target="_blank">View Tests Status page</a>                                    \r\n\
+  <button onclick="window.open(\'http://try.buildwinjs.com/#status\')" >View Tests Status page</button>                     \r\n\
+  <button id="btnRunAll">Run all tests</button>                                                                             \r\n\
   <ul>                                                                                                                      \r\n\
 @@TESTS                                                                                                                     \r\n\
   <ul>                                                                                                                      \r\n\
@@ -277,6 +283,128 @@
             });
             tests = tests.substr(0, tests.length - 2);
             fs.writeFileSync("./bin/tests/tests.html", testMenuTemplate.replace("@@TESTS", tests));
+        });
+
+        grunt.registerTask("test-results-server", function () {
+            var http = require("http");
+            var ws = require("websocket");
+            var os = require("os");
+            var parseArgs = require("minimist");
+
+            var cpus = os.cpus();
+            var args = parseArgs(process.argv);
+
+            function log(client, message) {
+                if (args.verbose) {
+                    console.log(formatString("[{0}] {1}: {2}", client.role || "UNKNOWN CLIENT", client.id || "", message));
+                }
+            }
+
+            var clientRoles = {
+                reporter: "REPORTER",
+                subscriber: "SUBSCRIBER"
+            };
+
+
+            var subscribers = {};
+            var server = http.createServer();
+            server.listen(9998);
+
+            var wsServer = new ws.server({ httpServer: server });
+            wsServer.on("request", function (request) {
+                function cleanUp(client) {
+                    client.removeListener("close", cleanUpBind);
+                    client.removeListener("end", cleanUpBind);
+                    client.removeListener("error", cleanUpBind);
+                    client.close();
+
+                    if (client.role === clientRoles.reporter) {
+                        var sub = client.subscriber;
+                        if (sub.connected) {
+                            sub.sendUTF(JSON.stringify({ id: client.id, type: "reporterDisconnected" }));
+                        }
+                    } else if (client.role === clientRoles.subscriber) {
+                        client.reporters.forEach(function (r) {
+                            r.close();
+                        });
+                    }
+                    log(client, "disconnected");
+                }
+
+                var client = request.accept();
+
+                client.on("message", function (m) {
+                    /* Message protocol:
+                        id - id of the client to be referred to externally,
+                        type - indicates what to do with this message,
+                        args - arguments depending on the type of message
+                    */
+
+                    var message = JSON.parse(m.utf8Data);
+                    var id = message.id;
+                    if (client.id) {
+                        if (client.id !== id) {
+                            log(client, "inconsistent client id: " + id);
+                            cleanUp(client);
+                            return;
+                        }
+                    } else {
+                        client.id = id;
+                    }
+                    switch (message.type) {
+                        case "registerSubscriber":
+                            client.role = clientRoles.subscriber;
+
+                            var key = message.args.subscriptionKey;
+                            if (key) {
+                                client.reporters = [];
+                                subscribers[key] = client;
+                                client.subscriptionKey = key;
+                                log(client, "registered with key: " + key);
+                                client.sendUTF(JSON.stringify({ type: "osinfo", args: { cpu: { length: cpus.length, speed: cpus[0].speed }, platform: os.platform(), arch: os.arch() } }));
+                            } else {
+                                log(client, "tried to register without a key");
+                                cleanUp(client);
+                            }
+                            break;
+
+                        case "registerReporter":
+                            client.role = clientRoles.reporter;
+
+                            var key = message.args.subscriptionKey;
+                            var sub = subscribers[key];
+                            if (sub) {
+                                client.subscriber = sub;
+                                sub.reporters.push(client);
+                                log(client, "registered with key: " + key);
+                            } else {
+                                log(client, "tried to register with an invalid key");
+                                cleanUp(client);
+                            }
+                            break;
+
+                        case "report":
+                            var sub = client.subscriber;
+                            if (sub) {
+                                sub.sendUTF(JSON.stringify({ id: client.id, type: "report", args: { data: message.args.data } }));
+                                log(client, "reported: " + JSON.stringify(message.args.data));
+                            } else {
+                                log(client, "tried to report without a subscriber");
+                                cleanUp(client);
+                            }
+                            break;
+
+                        default:
+                            log(client, "unknown message, see raw data:");
+                            log(client, m.utf8Data);
+                            break;
+                    }
+                });
+                var cleanUpBind = cleanUp.bind(this, client);
+                client.on("close", cleanUpBind);
+                client.on("end", cleanUpBind);
+                client.on("error", cleanUpBind);
+            });
         });
     };
 })();
