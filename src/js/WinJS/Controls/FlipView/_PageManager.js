@@ -82,6 +82,7 @@ define([
                 if (this._tabIndex < 0) {
                     this._tabIndex = 0;
                 }
+                panningDiv.tabIndex = -1;
                 flipperDiv.tabIndex = -1;
                 this._tabManager = new _TabContainer.TabContainer(this._panningDivContainer);
                 this._tabManager.tabIndex = this._tabIndex;
@@ -107,12 +108,7 @@ define([
                 }, false);
                 new _ElementUtilities._MutationObserver(flipperPropertyChanged).observe(this._flipperDiv, { attributes: true, attributeFilter: ["dir", "style", "tabindex"] });
                 this._cachedStyleDir = this._flipperDiv.style.direction;
-                this._panningDiv.addEventListener("activate", function () {
-                    that._hasFocus = true;
-                }, true);
-                this._panningDiv.addEventListener("deactivate", function () {
-                    that._hasFocus = false;
-                }, true);
+
                 if (this._environmentSupportsTouch) {
                     this._panningDivContainer.addEventListener(_BaseUtils._browserEventEquivalents["manipulationStateChanged"], function (event) {
                         that._manipulationState = event.currentState;
@@ -1011,6 +1007,12 @@ define([
                 },
 
                 // Private methods
+
+                _hasFocus: {
+                    get: function() {
+                        return this._flipperDiv.contains(_Global.document.activeElement);
+                    }
+                },
 
                 _timeoutPageSelection: function () {
                     var that = this;
