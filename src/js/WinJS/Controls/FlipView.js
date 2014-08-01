@@ -703,7 +703,7 @@ define([
                         that._scrollPosChanged();
                     }, false);
 
-                    this._panningDiv.addEventListener("deactivate", function () {
+                    this._panningDiv.addEventListener("blur", function () {
                         if (!that._touchInteraction) {
                             that._fadeOutButtons();
                         }
