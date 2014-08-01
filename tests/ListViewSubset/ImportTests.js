@@ -17,7 +17,6 @@
 /// <reference path="../ListView/MultisizeTest.js" />
 /// <reference path="../ListView/PropertyTest.js" />
 /// <reference path="../ListView/ReuseTest.js" />
-
 /// <reference path="../ListViewComponents/BrowseModeTest.js" />
 /// <reference path="../ListViewComponents/CommonLayout2Tests.js" />
 /// <reference path="../ListViewComponents/Layout2Test.js" />

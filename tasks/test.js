@@ -142,7 +142,7 @@
   <button id="btnRunAll">Run all tests</button>                                                                             \r\n\
   <ul>                                                                                                                      \r\n\
 @@TESTS                                                                                                                     \r\n\
-  <ul>                                                                                                                      \r\n\
+  </ul>                                                                                                                     \r\n\
 </body>                                                                                                                     \r\n\
 </html>';
 
