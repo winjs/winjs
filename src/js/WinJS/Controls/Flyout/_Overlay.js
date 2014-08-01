@@ -1111,7 +1111,7 @@ define([
                     _ElementUtilities.addClass(clickEatingDiv, divClass);
                     _ElementUtilities._addEventListener(clickEatingDiv, "pointerup", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
                     _ElementUtilities._addEventListener(clickEatingDiv, "pointerdown", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
-                    clickEatingDiv.addEventListener("click", function (event) { clickEatingDiv._winHideClickEater(event) }, true);
+                    clickEatingDiv.addEventListener("click", function (event) { clickEatingDiv._winHideClickEater(event); }, true);
                     // Tell Aria that it's clickable
                     clickEatingDiv.setAttribute("role", "menuitem");
                     clickEatingDiv.setAttribute("aria-label", strings.closeOverlay);
