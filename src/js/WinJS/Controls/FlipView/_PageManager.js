@@ -553,7 +553,14 @@ define([
                         return;
                     }
 
-                    var wheelingForward = (ev.deltaX || ev.deltaY) > 0;
+                    var wheelingForward;
+
+                    if(typeof ev.deltaY === 'number') {
+                        wheelingForward = (ev.deltaX || ev.deltaY) > 0;
+                    } else {
+                        wheelingForward = ev.wheelDelta < 0;
+                    }
+                    
                     var targetPage = wheelingForward ? this._currentPage.next : this._currentPage.prev;
 
                     if (!targetPage.element) {

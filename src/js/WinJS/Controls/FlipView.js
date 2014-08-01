@@ -186,6 +186,7 @@ define([
                 this._avoidTrappingTime = 0;
                 this._windowWheelHandlerBound = this._windowWheelHandler.bind(this);
                 _Global.addEventListener('wheel', this._windowWheelHandlerBound);
+                _Global.addEventListener('mousewheel', this._windowWheelHandlerBound);
 
                 _WriteProfilerMark("WinJS.UI.FlipView:constructor,StopTM");
             }, {
@@ -204,6 +205,7 @@ define([
                     }
 
                     _Global.removeEventListener('wheel', this._windowWheelHandlerBound);
+                    _Global.removeEventListener('mousewheel', this._windowWheelHandlerBound);
                     _ElementUtilities._resizeNotifier.unsubscribe(this._flipviewDiv, flipviewResized);
 
 
