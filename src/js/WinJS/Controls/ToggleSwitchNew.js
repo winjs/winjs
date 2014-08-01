@@ -35,175 +35,52 @@ define([
 
                 // Define the ToggleSwitch class
                 var Toggle = _Base.Class.define(function ToggleSwitchNew_ctor(element, options) {
-                    // Constructor
-
-                    // Set up DOM elements
-
                     // Main container
                     element = element || _Global.document.createElement('div');
                     this._domElement = element;
                     _ElementUtilities.addClass(this._domElement, classContainer);
                     this._domElement.setAttribute('tabindex', 0);
 
-                    // Header/Title text
-                    this._headerElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._headerElement, classHeader);
-                    this._domElement.appendChild(this._headerElement);
+                    // Set up DOM elements
+                    this._domElement.innerHTML = 
+                      '<div class="' + classHeader + '"></div>'
+                    + '<div class="' + classClick + '">'
+                    + '   <div class="' + classTrack + '">'
+                    + '       <div class="' + classFill + ' ' + classFillLower + '"></div>'
+                    + '       <div class="' + classThumb + '"></div>'
+                    + '       <div class="' + classFill + ' ' + classFillUpper + '"></div>'
+                    + '   </div>'
+                    + '   <div class="' + classValue + '"></div>'
+                    + '   <div class="' + classValue + '"></div>'
+                    + '</div>'
+                    + '<div class="' + classDescription + '"></div>';
 
-                    // Clickable region
-                    this._clickElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._clickElement, classClick);
-                    this._domElement.appendChild(this._clickElement);
-
-                    // Slider track
-                    this._trackElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._trackElement, classTrack);
-                    this._clickElement.appendChild(this._trackElement);
-
-                    // Lower portion of slider
-                    this._fillLowerElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._fillLowerElement, classFill);
-                    _ElementUtilities.addClass(this._fillLowerElement, classFillLower);
-                    this._trackElement.appendChild(this._fillLowerElement);
-
-                    // Thumb element
-                    this._thumbElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._thumbElement, classThumb);
-                    this._trackElement.appendChild(this._thumbElement);
-
-                    // Upper portion of slider
-                    this._fillUpperElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._fillUpperElement, classFill);
-                    _ElementUtilities.addClass(this._fillUpperElement, classFillUpper);
-                    this._trackElement.appendChild(this._fillUpperElement);
-
-                    // Current value label
-                    this._labelOnElement = _Global.document.createElement('div');
-                    this._labelOffElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._labelOnElement, classValue);
-                    _ElementUtilities.addClass(this._labelOffElement, classValue);
-                    this._clickElement.appendChild(this._labelOnElement);
-                    this._clickElement.appendChild(this._labelOffElement);
-
-                    // Description text
-                    this._descriptionElement = _Global.document.createElement('div');
-                    _ElementUtilities.addClass(this._descriptionElement, classDescription);
-                    this._domElement.appendChild(this._descriptionElement);
+                    // Get references to elements
+                    this._headerElement = this._domElement.firstElementChild;
+                    this._clickElement = this._headerElement.nextElementSibling;
+                    this._trackElement = this._clickElement.firstElementChild;
+                    this._fillLowerElement = this._trackElement.firstElementChild;
+                    this._thumbElement = this._fillLowerElement.nextElementSibling;
+                    this._fillUpperElement = this._thumbElement.nextElementSibling;
+                    this._labelOnElement = this._trackElement.nextElementSibling;
+                    this._labelOffElement = this._labelOnElement.nextElementSibling;
+                    this._descriptionElement = this._clickElement.nextElementSibling;
 
                     // Some initialization of main element
                     element.winControl = this;
                     _ElementUtilities.addClass(element, 'win-disposable');
 
-                    // Current x coord while being dragged
-                    var dragX = 0;
-
-                    // Event handlers
-                    var keyDownHandler = function(e) {
-                        e.preventDefault();
-                        
-                        // Toggle checked on spacebar
-                        if (e.keyCode === _ElementUtilities.Key.space) {
-                            this.checked = !this.checked;
-                        }
-
-                        // Arrow keys set value
-                        if (e.keyCode === _ElementUtilities.Key.rightArrow || 
-                            e.keyCode === _ElementUtilities.Key.upArrow) {
-                            this.checked = true;
-                        }
-                        if (e.keyCode === _ElementUtilities.Key.leftArrow || 
-                            e.keyCode === _ElementUtilities.Key.downArrow) {
-                            this.checked = false;
-                        }
-
-                    }.bind(this);
-
-                    var pointerDownHandler = function(e) {                        
-                        e.preventDefault();
-
-                        if (this.disabled) {
-                            return;
-                        }
-
-                        this._mousedown = true;
-                        _ElementUtilities.addClass(this._domElement, classPressed);
-                    }.bind(this);
-
-                    var pointerUpHandler = function(e) {
-                        // Since up is a global event we should only take action
-                        // if a mousedown was registered on us initially
-                        if (!this._mousedown) {
-                            return;
-                        }
-
-                        e.preventDefault();
-
-                        // If the thumb is being dragged, pick a new value based on what the thumb
-                        // was closest to
-                        if (this._dragging) {
-                            var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
-                            this.checked = dragX >= maxX / 2;
-                            this._dragging = false;
-                            _ElementUtilities.removeClass(this._domElement, classDragging);
-                        } else {
-                            // Otherwise, just toggle the value as the up constitutes a 
-                            // click event
-                            this.checked = !this.checked;
-                        }
-
-                        // Reset tracking variables and intermediate styles
-                        this._mousedown = false;
-                        this._thumbElement.style.left = '';
-                        this._fillLowerElement.style.width = '';
-                        this._fillUpperElement.style.width = '';
-                        _ElementUtilities.removeClass(this._domElement, classPressed);
-                    }.bind(this);
-
-                    var pointerMoveHandler = function(e) {
-                        // Not dragging if mouse isn't down
-                        if (!this._mousedown) {
-                            return;
-                        }
-
-                        e.preventDefault();
-
-                        // Always seem to get one move event even on a simple click
-                        // so we will eat the first move event
-                        if (!this._ateFirstDragEvent) {
-                            this._ateFirstDragEvent = true;
-                            return;
-                        }
-
-                        // On the first drag event, set dragging state
-                        if (!this._dragging) {
-                            _ElementUtilities.addClass(this._domElement, classDragging);
-                            this._dragging = true;
-                        }
-
-                        // Get pointer x coord relative to control
-                        var pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
-                        var localMouseX = pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
-
-                        // Calculate a new width for the fill elements and position for
-                        // the thumb
-                        var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
-                        var trackOffset = this._fillLowerElement.offsetLeft + this._trackElement.clientLeft;
-                        dragX = Math.min(maxX, localMouseX);
-                        dragX = Math.max(0, dragX);
-
-                        this._thumbElement.style.left = dragX + 'px';
-                        this._fillLowerElement.style.width = (dragX - trackOffset) + 'px';
-                        this._fillUpperElement.style.width = (maxX - dragX - trackOffset) + 'px';
-                    }.bind(this);
-
                     // Add listeners
-                    this._domElement.addEventListener('keydown', keyDownHandler);
-                    this._clickElement.addEventListener('mousedown', pointerDownHandler);
-                    this._clickElement.addEventListener('touchstart', pointerDownHandler);
-                    window.addEventListener('mousemove', pointerMoveHandler);
-                    window.addEventListener('touchmove', pointerMoveHandler);
-                    window.addEventListener('mouseup', pointerUpHandler);
-                    window.addEventListener('touchend', pointerUpHandler);
+                    this._domElement.addEventListener('keydown', this._keyDownHandler.bind(this));
+                    this._clickElement.addEventListener('mousedown', this._pointerDownHandler.bind(this));
+                    this._clickElement.addEventListener('touchstart', this._pointerDownHandler.bind(this));
+                    window.addEventListener('mousemove', this._pointerMoveHandler.bind(this));
+                    window.addEventListener('touchmove', this._pointerMoveHandler.bind(this));
+                    window.addEventListener('mouseup', this._pointerUpHandler.bind(this));
+                    window.addEventListener('touchend', this._pointerUpHandler.bind(this));
+
+                    // Current x coord while being dragged
+                    this._dragX = 0;
 
                     // Default state
                     this.checked = false;
@@ -288,6 +165,102 @@ define([
                         }
 
                         this._disabled = value;
+                    },
+
+                    // Event handlers
+                    _keyDownHandler: function(e) {
+                        e.preventDefault();
+                        
+                        // Toggle checked on spacebar
+                        if (e.keyCode === _ElementUtilities.Key.space) {
+                            this.checked = !this.checked;
+                        }
+
+                        // Arrow keys set value
+                        if (e.keyCode === _ElementUtilities.Key.rightArrow || 
+                            e.keyCode === _ElementUtilities.Key.upArrow) {
+                            this.checked = true;
+                        }
+                        if (e.keyCode === _ElementUtilities.Key.leftArrow || 
+                            e.keyCode === _ElementUtilities.Key.downArrow) {
+                            this.checked = false;
+                        }
+
+                    },
+                    _pointerDownHandler: function(e) {                        
+                        e.preventDefault();
+
+                        if (this.disabled) {
+                            return;
+                        }
+
+                        this._mousedown = true;
+                        _ElementUtilities.addClass(this._domElement, classPressed);
+                    },
+                    _pointerUpHandler: function(e) {
+                        // Since up is a global event we should only take action
+                        // if a mousedown was registered on us initially
+                        if (!this._mousedown) {
+                            return;
+                        }
+
+                        e.preventDefault();
+
+                        // If the thumb is being dragged, pick a new value based on what the thumb
+                        // was closest to
+                        if (this._dragging) {
+                            var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
+                            this.checked = this._dragX >= maxX / 2;
+                            this._dragging = false;
+                            _ElementUtilities.removeClass(this._domElement, classDragging);
+                        } else {
+                            // Otherwise, just toggle the value as the up constitutes a 
+                            // click event
+                            this.checked = !this.checked;
+                        }
+
+                        // Reset tracking variables and intermediate styles
+                        this._mousedown = false;
+                        this._thumbElement.style.left = '';
+                        this._fillLowerElement.style.width = '';
+                        this._fillUpperElement.style.width = '';
+                        _ElementUtilities.removeClass(this._domElement, classPressed);
+                    },
+                    _pointerMoveHandler: function(e) {
+                        // Not dragging if mouse isn't down
+                        if (!this._mousedown) {
+                            return;
+                        }
+
+                        e.preventDefault();
+
+                        // Always seem to get one move event even on a simple click
+                        // so we will eat the first move event
+                        if (!this._ateFirstDragEvent) {
+                            this._ateFirstDragEvent = true;
+                            return;
+                        }
+
+                        // On the first drag event, set dragging state
+                        if (!this._dragging) {
+                            _ElementUtilities.addClass(this._domElement, classDragging);
+                            this._dragging = true;
+                        }
+
+                        // Get pointer x coord relative to control
+                        var pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
+                        var localMouseX = pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
+
+                        // Calculate a new width for the fill elements and position for
+                        // the thumb
+                        var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
+                        var trackOffset = this._fillLowerElement.offsetLeft + this._trackElement.clientLeft;
+                        this._dragX = Math.min(maxX, localMouseX);
+                        this._dragX = Math.max(0, this._dragX);
+
+                        this._thumbElement.style.left = this._dragX + 'px';
+                        this._fillLowerElement.style.width = (this._dragX - trackOffset) + 'px';
+                        this._fillUpperElement.style.width = (maxX - this._dragX - trackOffset) + 'px';
                     }
                 });
 
