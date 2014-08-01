@@ -748,6 +748,82 @@ define([
         }
     );
 
+
+    var GlobalListener = new (_Base.Class.define(
+        function GlobalListener_ctor() {
+            this.capture = {};
+            this.bubble = {};
+        },
+        {
+            addEventListener: function GlobalListener_addEventListener(element, name, listener, capture) {
+                name = name.toLowerCase();
+                var handlers = this._getHandlers(capture);
+                var handler = handlers[name];
+
+                if (!handler) {
+                    handler = this._getListener(name, capture);
+                    handler.refCount = 0;
+                    handlers[name] = handler;
+                    _Global.addEventListener(name, handler, capture);
+                }
+
+                handler.refCount++;
+                element.addEventListener(this._getEventName(name, capture), listener);
+                addClass(element, this._getClassName(name, capture));
+            },
+            removeEventListener: function GlobalListener_removeEventListener(element, name, listener, capture) {
+                name = name.toLowerCase();
+                var handlers = this._getHandlers(capture);
+                var handler = handlers[name];
+
+                if(handler) {
+                    handler.refCount--;
+                    if (handler.refCount === 0) {
+                        _Global.removeEventListener(name, handler, capture);
+                    }
+                    delete handlers[name];
+                }
+
+                removeClass(element, this._getClassName(name, capture));
+                element.removeEventListener(this._getEventName(name, capture), listener);
+            },
+
+            _getHandlers: function GlobalListener_getHandlers(capture) {
+                if (capture) {
+                    return this.capture;
+                } else {
+                    return this.bubble;
+                }
+            },
+
+            _getClassName: function GlobalListener_getClassName(name, capture) {
+                var captureSuffix = capture ? 'capture' : 'bubble';
+                return 'win-global-event-' + name + captureSuffix;
+            },
+
+            _getEventName: function GlobalListener_getEventName(name, capture) {
+                var captureSuffix = capture ? 'capture' : 'bubble';
+                return 'WinJSGlobalEvent-' + name + captureSuffix;
+            },
+
+            _getListener: function GlobalListener_getListener(name, capture) {
+                var listener = function GlobalListener_generatedListener(ev) {
+
+                    var targets = _Global.document.querySelectorAll('.' + this._getClassName(name, capture));
+                    var length = targets.length;
+                    for (var i = 0; i < length; i++) {
+                        var event = _Global.document.createEvent("Event");
+                        event.initEvent(this._getEventName(name, capture), false, true);
+                        event.detail = { originalEvent: ev };
+                        targets[i].dispatchEvent(event);
+                    }
+                };
+
+                return listener.bind(this);
+            }
+        }
+    ))();
+
     var determinedRTLEnvironment = false,
         usingWebkitScrollCoordinates = false,
         usingFirefoxScrollCoordinates = false;
@@ -1147,6 +1223,8 @@ define([
                 return _resizeNotifier;
             }
         },
+
+        _globalListener: GlobalListener,
 
         // Appends a hidden child to the given element that will listen for being added
         // to the DOM. When the hidden element is added to the DOM, it will dispatch a

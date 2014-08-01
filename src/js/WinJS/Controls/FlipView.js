@@ -185,8 +185,8 @@ define([
                 _ElementUtilities.addClass(element, "win-disposable");
                 this._avoidTrappingTime = 0;
                 this._windowWheelHandlerBound = this._windowWheelHandler.bind(this);
-                _Global.addEventListener('wheel', this._windowWheelHandlerBound);
-                _Global.addEventListener('mousewheel', this._windowWheelHandlerBound);
+                _ElementUtilities._globalListener.addEventListener(element, 'wheel', this._windowWheelHandlerBound);
+                _ElementUtilities._globalListener.addEventListener(element, 'mousewheel', this._windowWheelHandlerBound);
 
                 _WriteProfilerMark("WinJS.UI.FlipView:constructor,StopTM");
             }, {
@@ -204,8 +204,8 @@ define([
                         return;
                     }
 
-                    _Global.removeEventListener('wheel', this._windowWheelHandlerBound);
-                    _Global.removeEventListener('mousewheel', this._windowWheelHandlerBound);
+                    _ElementUtilities._globalListener.removeEventListener(this._flipviewDiv, 'wheel', this._windowWheelHandlerBound);
+                    _ElementUtilities._globalListener.removeEventListener(this._flipviewDiv, 'mousewheel', this._windowWheelHandlerBound);
                     _ElementUtilities._resizeNotifier.unsubscribe(this._flipviewDiv, flipviewResized);
 
 
@@ -803,6 +803,7 @@ define([
                     // When you are using the mouse wheel to scroll a horizontal area such as a WinJS.UI.Hub and one of the sections
                     // has a WinJS.UI.FlipView you may get stuck on that item. This logic is to allow a scroll event to skip the flipview's
                     // overflow scroll div and instead go to the parent scroller. We only skip the scroll wheel event for a fixed amount of time
+                    ev = ev.detail.originalEvent;
                     var wheelWithinFlipper = ev.target && (this._flipviewDiv.contains(ev.target) || this._flipviewDiv === ev.target);
                     var that = this;
                     var now = _BaseUtils._now();
