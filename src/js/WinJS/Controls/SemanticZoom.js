@@ -727,12 +727,14 @@ define([
                         switch (ev.keyCode) {
                             case Key.add:
                             case Key.equal:
+                            case 61: //Firefox uses a different keycode
                                 this._zoom(false);
                                 handled = true;
                                 break;
 
                             case Key.subtract:
                             case Key.dash:
+                            case 173: //Firefox uses a different keycode
                                 this._zoom(true);
                                 handled = true;
                                 break;
