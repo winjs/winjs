@@ -243,7 +243,7 @@ define([
                     onchange: _Events._createEventProperty('change'),
 
                     // Public methods
-                    dispose: function() {
+                    dispose: function ToggleSwitchNew_dispose() {
                         if (this._disposed) {
                             return;
                         }
@@ -252,7 +252,7 @@ define([
                     },
 
                     // Private methods
-                    _setChecked: function(value) {
+                    _setChecked: function ToggleSwitchNew_setChecked(value) {
                         if (this.disabled) {
                             return;
                         }
@@ -275,7 +275,7 @@ define([
                             _ElementUtilities.removeClass(this._domElement, classOn);
                         }
                     },
-                    _setDisabled: function(value) {
+                    _setDisabled: function ToggleSwitchNew_setDisabled(value) {
                         value = !!value;
                         if (value === this._disabled) {
                             return;
