@@ -12,7 +12,7 @@ define([
     './Utilities/_ElementUtilities',
     './Utilities/_SafeHtml',
     './Utilities/_Xhr'
-    ], function fragmentLoaderInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _SafeHtml, _Xhr) {
+], function fragmentLoaderInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _SafeHtml, _Xhr) {
     "use strict";
 
     var strings = {
@@ -288,8 +288,8 @@ define([
 
     function renderImpl(href, target, copy) {
         var profilerMarkIdentifier = (href instanceof _Global.HTMLElement ? _BaseUtils._getProfilerMarkIdentifier(href) : " href='" + href + "'") + "[" + (++uniqueId) + "]";
-        _WriteProfilerMark("WinJS.UI.Fragments:render" + profilerMarkIdentifier + ",StartTM");
-    
+        writeProfilerMark("WinJS.UI.Fragments:render" + profilerMarkIdentifier + ",StartTM");
+
         initialize();
         return getStateRecord(href, !copy).then(function (state) {
             var frag = state.docfrag;
@@ -312,7 +312,7 @@ define([
             } else {
                 retVal = frag;
             }
-            _WriteProfilerMark("WinJS.UI.Fragments:render" + profilerMarkIdentifier + ",StopTM");
+            writeProfilerMark("WinJS.UI.Fragments:render" + profilerMarkIdentifier + ",StopTM");
             return retVal;
         });
     }
@@ -382,14 +382,14 @@ define([
             //
             var a = _Global.document.createElement("a");
             a.href = uri;
-            
+
             var absolute = a.href;
 
             // WinRT Uri class doesn't provide URI construction, but can crack the URI
             // appart to let us reliably discover the scheme.
             //
             var wuri = new _WinRT.Windows.Foundation.Uri(absolute);
-            
+
             // Only "ms-appx" (local package content) are allowed when running in the local 
             // context. Both strings are known to be safe to compare in any culture (including Turkish).
             //
@@ -410,7 +410,7 @@ define([
         // in the local context. When running in the web context, this will be a no-op.
         //
         href = forceLocal(href);
-    
+
         var htmlDoc = _Global.document.implementation.createHTMLDocument("frag");
         var base = htmlDoc.createElement("base");
         htmlDoc.head.appendChild(base);
@@ -427,8 +427,9 @@ define([
         });
     }
 
-    var getFragmentContents = getFragmentContentsXHR;
+    var writeProfilerMark = _WriteProfilerMark;
 
+    var getFragmentContents = getFragmentContentsXHR;
     function getFragmentContentsXHR(href) {
         return _Xhr({ url: href }).then(function (req) {
             return req.responseText;
@@ -443,11 +444,19 @@ define([
         _cacheStore: { get: function () { return cacheStore; } },
         _forceLocal: forceLocal,
         _getFragmentContents: {
-            get: function() {
+            get: function () {
                 return getFragmentContents;
             },
-            set: function(value) {
+            set: function (value) {
                 getFragmentContents = value;
+            }
+        },
+        _writeProfilerMark: {
+            get: function () {
+                return writeProfilerMark;
+            },
+            set: function (value) {
+                writeProfilerMark = value;
             }
         }
     });
