@@ -4,8 +4,9 @@ define([
     '../Core/_Global',
     '../Core/_Base',
     './_Control',
-    './_ElementUtilities'
-    ], function KeyboardBehaviorInit(exports, _Global, _Base, _Control, _ElementUtilities) {
+    './_ElementUtilities',
+    './_TabContainer'
+    ], function KeyboardBehaviorInit(exports, _Global, _Base, _Control, _ElementUtilities, _TabContainer) {
     "use strict";
 
     // not supported in WebWorker
@@ -123,9 +124,16 @@ define([
 
                 _Control.setOptions(this, options);
 
+                // If there's a scroller, the TabContainer can't be inside of the scroller. Otherwise, tabbing into the
+                // TabContainer will cause the scroller to scroll.
+                this._tabContainer = new _TabContainer.TabContainer(this.scroller || this._element);
+                this._tabContainer.tabIndex = 0;
+                if (this._element.children.length > 0) {
+                    this._tabContainer.childFocus = this._getFocusInto(this._element.children[0]);
+                }
+
                 this._element.addEventListener('keydown', this._keyDownHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, 'pointerdown', this._MSPointerDownHandler.bind(this));
-                this._element.addEventListener("beforeactivate", this._beforeActivateHandler.bind(this));
             }, {
                 element: {
                     get: function () {
@@ -166,6 +174,7 @@ define([
                             var length = this._element.children.length;
                             value = Math.max(0, Math.min(length - 1, value));
                             this._currentIndex = value;
+                            this._tabContainer.childFocus = this._getFocusInto(this._element.children[value]);
                         }
                     }
                 },
@@ -284,14 +293,18 @@ define([
                     }
                 },
 
+                _getFocusInto: function _KeyboardBehavior_getFocusInto(elementToFocus, keyCode) {
+                    return elementToFocus && elementToFocus.winControl && elementToFocus.winControl._getFocusInto ?
+                        elementToFocus.winControl._getFocusInto(keyCode) :
+                        elementToFocus;
+                },
+
                 _focus: function _KeyboardBehavior_focus(index, keyCode) {
                     index = (+index === index) ? index : this.currentIndex;
 
                     var elementToFocus = this._element.children[index];
                     if (elementToFocus) {
-                        if (elementToFocus.winControl && elementToFocus.winControl._getFocusInto) {
-                            elementToFocus = elementToFocus.winControl._getFocusInto(keyCode);
-                        }
+                        elementToFocus = this._getFocusInto(elementToFocus, keyCode);
 
                         this.currentIndex = index;
 
@@ -316,21 +329,6 @@ define([
                     }
 
                     this.currentIndex = index;
-                },
-
-                _beforeActivateHandler: function _KeyboardBehavior_beforeActivateHandler(ev) {
-                    var allowActivate = false;
-                    if (this._element.children.length) {
-                        var currentItem = this._element.children[this.currentIndex];
-                        if (currentItem === ev.target || currentItem.contains(ev.target)) {
-                            allowActivate = true;
-                        }
-                    }
-
-                    if (!allowActivate) {
-                        ev.stopPropagation();
-                        ev.preventDefault();
-                    }
                 }
             }, {
                 FixedDirection: {

@@ -321,14 +321,12 @@ define([
                     var rightStr = this._rtl ? Key.leftArrow : Key.rightArrow;
 
                     if (!ev.altKey && (ev.keyCode === leftStr || ev.keyCode === Key.home || ev.keyCode === Key.end) && ev.target === this._splitButtonEl) {
-                        this._splitButtonActive = false;
                         _ElementUtilities._setActive(this._buttonEl);
                         if (ev.keyCode === leftStr) {
                             ev.stopPropagation();
                         }
                         ev.preventDefault();
                     } else if (!ev.altKey && ev.keyCode === rightStr && this.splitButton && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
-                        this._splitButtonActive = true;
                         _ElementUtilities._setActive(this._splitButtonEl);
                         if (ev.keyCode === rightStr) {
                             ev.stopPropagation();
@@ -347,10 +345,8 @@ define([
                 _getFocusInto: function NavBarCommand_getFocusInto(keyCode) {
                     var leftStr = this._rtl ? Key.rightArrow : Key.leftArrow;
                     if ((keyCode === leftStr) && this.splitButton) {
-                        this._splitButtonActive = true;
                         return this._splitButtonEl;
                     } else {
-                        this._splitButtonActive = false;
                         return this._buttonEl;
                     }
                 },
@@ -363,7 +359,7 @@ define([
                                 '<div class="' + NavBarCommand._ClassName.navbarcommandlabel + '"></div>' +
                             '</div>' +
                         '</div>' +
-                        '<div tabindex="0" aria-expanded="false" class="' + NavBarCommand._ClassName.navbarcommandsplitbutton + '"></div>';
+                        '<div tabindex="-1" aria-expanded="false" class="' + NavBarCommand._ClassName.navbarcommandsplitbutton + '"></div>';
                     this.element.insertAdjacentHTML("afterBegin", markup);
 
                     this._buttonEl = this.element.firstElementChild;
@@ -380,14 +376,10 @@ define([
                     this._splitButtonEl.setAttribute("aria-labelledby", this._buttonEl.id);
 
                     this._buttonEl.addEventListener("click", this._handleButtonClick.bind(this));
-                    this._buttonEl.addEventListener("beforeactivate", this._beforeactivateButtonHandler.bind(this));
-                    this._buttonEl.addEventListener("pointerdown", this._MSPointerDownButtonHandler.bind(this));
 
                     var mutationObserver = new _ElementUtilities._MutationObserver(this._splitButtonAriaExpandedPropertyChangeHandler.bind(this));
                     mutationObserver.observe(this._splitButtonEl, { attributes: true, attributeFilter: ["aria-expanded"] });
                     this._splitButtonEl.addEventListener("click", this._handleSplitButtonClick.bind(this));
-                    this._splitButtonEl.addEventListener("beforeactivate", this._beforeactivateSplitButtonHandler.bind(this));
-                    this._splitButtonEl.addEventListener("pointerdown", this._MSPointerDownSplitButtonHandler.bind(this));
 
                     // reparent any other elements.
                     var tempEl = this._splitButtonEl.nextSibling;
@@ -398,14 +390,6 @@ define([
                         }
                         tempEl = this._splitButtonEl.nextSibling;
                     }
-                },
-
-                _MSPointerDownButtonHandler: function NavBarCommand_MSPointerDownButtonHandler() {
-                    this._splitButtonActive = false;
-                },
-
-                _MSPointerDownSplitButtonHandler: function NavBarCommand_MSPointerDownSplitButtonHandler() {
-                    this._splitButtonActive = true;
                 },
 
                 _handleButtonClick: function NavBarCommand_handleButtonClick(ev) {
@@ -426,20 +410,6 @@ define([
 
                 _handleSplitButtonClick: function NavBarCommand_handleSplitButtonClick() {
                     this._toggleSplit();
-                },
-
-                _beforeactivateSplitButtonHandler: function NavBarCommand_beforeactivateSplitButtonHandler(ev) {
-                    if (!this._splitButtonActive) {
-                        ev.stopPropagation();
-                        ev.preventDefault();
-                    }
-                },
-
-                _beforeactivateButtonHandler: function NavBarCommand_beforeactivateButtonHandler(ev) {
-                    if (this._splitButtonActive) {
-                        ev.stopPropagation();
-                        ev.preventDefault();
-                    }
                 },
 
                 _fireEvent: function NavBarCommand_fireEvent(type, detail) {

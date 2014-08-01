@@ -334,9 +334,6 @@ define([
                             var hadFocus = this.element.contains(_Global.document.activeElement);
 
                             this._keyboardBehavior.currentIndex = value;
-                            if (this._surfaceEl.children.length > 0) {
-                                this._surfaceEl.children[this._keyboardBehavior.currentIndex].winControl._splitButtonActive = false;
-                            }
 
                             this._ensureVisible(this._keyboardBehavior.currentIndex, true);
 
@@ -501,9 +498,6 @@ define([
 
                 _reset: function NavBarContainer_reset() {
                     this._keyboardBehavior.currentIndex = 0;
-                    if (this._surfaceEl.children.length > 0) {
-                        this._surfaceEl.children[this._keyboardBehavior.currentIndex].winControl._splitButtonActive = false;
-                    }
 
                     if (this.element.contains(_Global.document.activeElement)) {
                         this._keyboardBehavior._focus(0);
@@ -729,9 +723,6 @@ define([
                         }
 
                         this._keyboardBehavior.currentIndex = 0;
-                        if (this._surfaceEl.children.length > 0) {
-                            this._surfaceEl.children[0].winControl._splitButtonActive = false;
-                        }
                         if (this.element.contains(_Global.document.activeElement)) {
                             this._keyboardBehavior._focus(this._keyboardBehavior.currentIndex);
                         }
@@ -799,7 +790,6 @@ define([
                             this._keyboardBehavior.currentIndex = index;
 
                             var element = this._surfaceEl.children[index].winControl._buttonEl;
-                            this._surfaceEl.children[index].winControl._splitButtonActive = false;
 
                             if (scrollPositionTarget !== null) {
                                 this._scrollTo(scrollPositionTarget);
@@ -851,7 +841,6 @@ define([
                             this._keyboardBehavior.currentIndex = index;
 
                             var element = this._surfaceEl.children[index].winControl._buttonEl;
-                            this._surfaceEl.children[index].winControl._splitButtonActive = false;
 
                             if (scrollPositionTarget !== null) {
                                 this._scrollTo(scrollPositionTarget);
@@ -1022,9 +1011,6 @@ define([
                         if (this._keyboardBehavior.currentIndex < firstIndexOnPage || this._keyboardBehavior.currentIndex > lastIndexOnPage) {
                             // Page change occurred.
                             this._keyboardBehavior.currentIndex = firstIndexOnPage;
-                            if (this._surfaceEl.children.length > 0) {
-                                this._surfaceEl.children[this._keyboardBehavior.currentIndex].winControl._splitButtonActive = false;
-                            }
 
                             if (this.element.contains(_Global.document.activeElement)) {
                                 this._keyboardBehavior._focus(this._keyboardBehavior.currentIndex);
