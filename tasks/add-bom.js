@@ -6,7 +6,6 @@
 
         grunt.registerMultiTask("add-bom", function () {
             var bom = new Buffer([0xef, 0xbb, 0xbf]);
-            
             function addBom(filePath) {
                 if (grunt.file.exists(filePath)) {
                     var content = grunt.file.read(filePath, { encoding: null });
