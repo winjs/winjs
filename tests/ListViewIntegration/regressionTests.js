@@ -3,6 +3,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/ListView/Helpers.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
@@ -702,6 +703,11 @@ WinJSTests.ListViewRegression = function () {
             });
         });
     };
+    
+    if (!Helper.Browser.isIE11) {
+        Helper.disableTest(this, "testWinBlue_148641");
+        Helper.disableTest(this, "testWin8_725480");
+    }
 }
 
 LiveUnit.registerTestClass("WinJSTests.ListViewRegression");

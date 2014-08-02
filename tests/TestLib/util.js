@@ -335,7 +335,10 @@ var Helper;
 
     Helper.Browser = {
         // Taken from ListView's CSS grid feature detection
-        supportsCSSGrid: !!("-ms-grid-row" in document.documentElement.style)
+        supportsCSSGrid: !!("-ms-grid-row" in document.documentElement.style),
+        
+        // Temporary for disabling tests outside of IE11
+        isIE11: "PointerEvent" in window
     };
 
     // Returns the group key for an item as defined by createData() below

@@ -140,6 +140,19 @@
                 onTestComplete: onTestComplete
             }
         },
+        allWithExtendedDuration: {
+            options: {
+                urls: testUrls.allWithExtendedDuration,
+                build: process.env.TRAVIS_JOB_ID,
+                testInterval: 1000,
+                throttled: 20,
+                browsers: browsers,
+                "max-duration": 500,
+                testname: "winjs qunit tests - extended duration",
+                tags: ["winjs"],
+                onTestComplete: onTestComplete
+            }
+        },
         ie11only: {
             options: {
                 urls: testUrls.ie11only,

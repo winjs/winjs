@@ -11,6 +11,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/ListView/Helpers.js"/>
 /// <reference path="../TestLib/ListView/globals.js"/>
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
@@ -877,6 +878,10 @@ var ListViewDSTestClass = function () {
     };
     this.generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("ListLayout");
     this.generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("GridLayout");
+    
+    if (!Helper.Browser.isIE11) {
+        Helper.disableTest(this, "testNoKeyDSSimulateLiveMailSendListLayout");
+    }
 };
 
 // register the object as a test class by passing in the fully qualified name
