@@ -315,10 +315,11 @@
         if (!options.dir) {
             options.name = options.name || key;
             var target = options.target || options.name;
+            var name = options.name;
             options.out = outputBase + target + ".js";
             options.wrap = {
                 start: header(target, options.exclude || []),
-                end: footer(target),
+                end: footer(name),
             };
         }
         return buildConfig;
