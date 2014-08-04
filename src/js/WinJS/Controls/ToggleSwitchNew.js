@@ -121,10 +121,10 @@ define([
                     this._domElement.addEventListener('keydown', this._keyDownHandler.bind(this));
                     this._clickElement.addEventListener('mousedown', this._pointerDownHandler.bind(this));
                     this._clickElement.addEventListener('touchstart', this._pointerDownHandler.bind(this));
-                    _ElementUtilities._globalListener.addEventListener('mousemove', this._pointerMoveHandler.bind(this));
-                    _ElementUtilities._globalListener.addEventListener('touchmove', this._pointerMoveHandler.bind(this));
-                    _ElementUtilities._globalListener.addEventListener('mouseup', this._pointerUpHandler.bind(this));
-                    _ElementUtilities._globalListener.addEventListener('touchend', this._pointerUpHandler.bind(this));
+                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'mousemove', this._pointerMoveHandler.bind(this));
+                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'touchmove', this._pointerMoveHandler.bind(this));
+                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'mouseup', this._pointerUpHandler.bind(this));
+                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'touchend', this._pointerUpHandler.bind(this));
 
                     // Current x coord while being dragged
                     this._dragX = 0;
@@ -289,6 +289,7 @@ define([
                             return;
                         }
 
+                        e = e.detail.originalEvent;
                         e.preventDefault();
 
                         // If the thumb is being dragged, pick a new value based on what the thumb
@@ -317,6 +318,7 @@ define([
                             return;
                         }
 
+                        e = e.detail.originalEvent;
                         e.preventDefault();
 
                         // Always seem to get one move event even on a simple click
