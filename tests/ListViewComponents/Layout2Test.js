@@ -128,6 +128,9 @@ var WinJSTests = WinJSTests || {};
         this._rtl = options.rtl || false;
         this._realizedRange = options.realizedRange || { firstPixel: 0, lastPixel: 1000000 };
         this._itemsCount = options.itemsCount;
+        if (WinJS.Utilities._supportsTouchActionCrossSlide) {
+            element.classList.add(WinJS.UI._listViewSupportsCrossSlideClass);
+        }
         if (this._rtl) {
             element.setAttribute("dir", "rtl");
         }

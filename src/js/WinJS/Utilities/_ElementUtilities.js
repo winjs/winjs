@@ -1002,6 +1002,23 @@ define([
             };
         },
 
+        _supportsTouchActionCrossSlide: {
+            get: function () {
+                if (this._supportsTouchActionCrossSlideValue === undefined) {
+                    this._supportsTouchActionCrossSlideValue = false;
+                    var touchActionStyle = _BaseUtils._browserStyleEquivalents["touch-action"];
+                    if (touchActionStyle) {
+                        var div = _Global.document.createElement("div");
+                        div.style.touchAction = "cross-slide-x";
+                        _Global.document.body.appendChild(div);
+                        this._supportsTouchActionCrossSlideValue = _Global.getComputedStyle(div).touchAction === "cross-slide-x";
+                        _Global.document.body.removeChild(div);
+                    }
+                }
+                return this._supportsTouchActionCrossSlideValue;
+            }
+        },
+
         _detectSnapPointsSupport: function () {
             // Snap point feature detection is special - On most platforms it is enough to check if 'msZoomTo'
             // is available, however, Windows Phone IEs claim that they support it but don't really do so we

@@ -114,6 +114,7 @@ define([
                 "scroll-snap-type",
                 "scroll-snap-x",
                 "scroll-snap-y",
+                "touch-action",
                 "overflow-style",
                 "user-select" // used for Template Compiler test
             ],

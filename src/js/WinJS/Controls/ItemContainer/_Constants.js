@@ -7,6 +7,7 @@ define([
 
     var members = {};
     members._listViewClass = "win-listview";
+    members._listViewSupportsCrossSlideClass = "win-listview-supports-cross-slide";
     members._viewportClass = "win-viewport";
     members._rtlListViewClass = "win-rtl";
     members._horizontalClass = "win-horizontal";

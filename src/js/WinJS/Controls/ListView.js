@@ -234,6 +234,10 @@ define([
                 /// </returns>
                 /// </signature>
                 element = element || _Global.document.createElement("div");
+                if (_ElementUtilities._supportsTouchActionCrossSlide) {
+                    element.classList.add(_Constants._listViewSupportsCrossSlideClass);
+                }
+
                 this._id = element.id || "";
                 this._writeProfilerMark("constructor,StartTM");
 

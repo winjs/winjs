@@ -263,6 +263,13 @@ WinJSTests.ListViewAnimation2Test = function () {
     this.testExpandItemsContainerForReflowNeeded = function (complete) {
         var bindingList = getBindingList(100);
         var listView = new WinJS.UI.ListView(listViewEl);
+
+        if (listView.element.classList.contains(WinJS.UI._listViewSupportsCrossSlideClass)) {
+            LiveUnit.LoggingCore.logComment("Negative margins not supported.");
+            complete();
+            return;
+        }
+
         listView.layout = new WinJS.UI.GridLayout();
         listView.itemTemplate = itemTemplate;
         listView.itemDataSource = bindingList.dataSource;
