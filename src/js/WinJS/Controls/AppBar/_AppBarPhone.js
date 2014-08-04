@@ -38,9 +38,9 @@ define([
         /// <event name="afterhide" locid="WinJS.UI.AppBar_e:afterhide">Raised immediately after the AppBar is fully hidden.</event>
         /// <part name="appbar" class="win-commandlayout" locid="WinJS.UI.AppBar_part:appbar">The AppBar control itself.</part>
         /// <part name="appBarCustom" class="win-appbar" locid="WinJS.UI.AppBar_part:appBarCustom">Style for a custom layout AppBar.</part>
-        /// <resource type="javascript" src="//Microsoft.Phone.WinJS.2.1/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//Microsoft.Phone.WinJS.2.1/js/ui.js" shared="true" />
-        /// <resource type="css" src="//Microsoft.Phone.WinJS.2.1/css/ui-dark.css" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="css" src="//$(TARGET_DESTINATION)/ui-dark.css" shared="true" />
         AppBar: _Base.Namespace._lazy(function () {
 
             var appBarCounter = 0;

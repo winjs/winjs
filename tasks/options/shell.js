@@ -28,7 +28,7 @@
                 }
 
                 // Build up command string
-                var command = "%_NTTREE%/Corsica/other.2.1.debug/Tools/WebUnit/WebUnit.exe";
+                var command = "%_NTTREE%/Corsica/other." + config.version + ".debug/Tools/WebUnit/WebUnit.exe";
                 for (var i = 0, l = files.length; i < l; ++i) {
                     command +=  " /s:%_NTTREE%/Corsica/other." + config.version + ".debug/Tests/UnitTests/" + files[i];
                 }
