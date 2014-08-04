@@ -42,18 +42,19 @@ define([
                     this._domElement.setAttribute('tabindex', 0);
 
                     // Set up DOM elements
-                    this._domElement.innerHTML = 
-                      '<div class="' + classHeader + '"></div>'
-                    + '<div class="' + classClick + '">'
-                    + '   <div class="' + classTrack + '">'
-                    + '       <div class="' + classFill + ' ' + classFillLower + '"></div>'
-                    + '       <div class="' + classThumb + '"></div>'
-                    + '       <div class="' + classFill + ' ' + classFillUpper + '"></div>'
-                    + '   </div>'
-                    + '   <div class="' + classValue + '"></div>'
-                    + '   <div class="' + classValue + '"></div>'
-                    + '</div>'
-                    + '<div class="' + classDescription + '"></div>';
+                    this._domElement.innerHTML = [
+                        '<div class="' + classHeader + '"></div>',
+                        '<div class="' + classClick + '">',
+                        '   <div class="' + classTrack + '">',
+                        '       <div class="' + classFill + ' ' + classFillLower + '"></div>',
+                        '       <div class="' + classThumb + '"></div>',
+                        '       <div class="' + classFill + ' ' + classFillUpper + '"></div>',
+                        '   </div>',
+                        '   <div class="' + classValue + '"></div>',
+                        '   <div class="' + classValue + '"></div>',
+                        '</div>',
+                        '<div class="' + classDescription + '"></div>'
+                    ].join('\n');
 
                     // Get references to elements
                     this._headerElement = this._domElement.firstElementChild;
