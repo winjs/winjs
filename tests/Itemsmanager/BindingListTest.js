@@ -4,6 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
 /// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ListView/Helpers.js" />
 
 (function (global) {
     "use strict";
@@ -21,41 +22,6 @@
         try {
             LiveUnit.Assert.fail('There was an unhandled error in your test: ' + msg);
         } catch (ex) { }
-    }
-
-    function waitForReady(listView, delay) {
-        if (listView.winControl) { listView = listView.winControl; }
-
-        return function (x) {
-            return new WinJS.Promise(function (c, e, p) {
-                function waitForReady_handler() {
-                    if (listView.loadingState === "complete") {
-                        c(x);
-                    }
-                }
-
-                function waitForReady_work() {
-                    if (listView.loadingState !== "complete") {
-                        listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
-                    }
-                    else {
-                        c(x);
-                    }
-                }
-
-                if (delay) {
-                    if (delay < 0) {
-                        WinJS.Utilities._setImmediate(waitForReady_work);
-                    }
-                    else {
-                        setTimeout(waitForReady_work, delay);
-                    }
-                }
-                else {
-                    waitForReady_work();
-                }
-            });
-        }
     }
 
     function LoggingNotificationHandler(retain) {
@@ -2287,32 +2253,20 @@
             return function () { document.body.removeChild(element); };
         }
 
-        function errorHandler(msg) {
-            try {
-                LiveUnit.Assert.fail('There was an unhandled error in your test: ' + msg);
-            } catch (ex) { }
-        }
-
         this.testListViewInstantiation = function (complete) {
             var div = document.createElement("DIV");
             var cleanup = parent(div);
 
-            var list = new WinJS.Binding.List();
+            var list = new WinJS.Binding.List([1, 2, 3]);
             var lv = new WinJS.UI.ListView(div);
-
-            WinJS.Promise.as()
-                .then(function () {
-                    lv.itemDataSource = list.dataSource;
-                    list.push(1, 2, 3);
-                })
-                .then(waitForReady(lv, -1))
+            lv.itemDataSource = list.dataSource;
+            waitForReady(lv)()
                 .then(function () {
                     LiveUnit.Assert.areEqual(3, div.querySelectorAll(".win-container").length);
                 })
                 .then(null, errorHandler)
-                .then(waitForReady(lv, -1))
                 .then(cleanup)
-                .then(complete);
+                .done(complete);
         };
 
     };
