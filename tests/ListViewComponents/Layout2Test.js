@@ -2778,6 +2778,11 @@ var WinJSTests = WinJSTests || {};
                 }).
                 done(complete);
         };
+        
+        if (!Helper.Browser.isIE11) {
+            Helper.disableTest(this, "testDefaultItemsContainerMargins");
+        }
+        
     };
 
     // register the object as a test class by passing in the name

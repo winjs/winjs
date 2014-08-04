@@ -5203,6 +5203,28 @@ WinJSTests.VirtualizedViewTests = function () {
             complete();
         });
     };
+    
+    if (!Helper.Browser.isIE11) {
+        Helper.disableTest(this, "testAnimationDuringSezoZoomingAndchange");
+        Helper.disableTest(this, "testAnimationDuringSezoZoomingAndremove");
+        Helper.disableTest(this, "testBackdropClass");
+        Helper.disableTest(this, "testDeferContainerCreationUntilSeZoZoomCompletes");
+        Helper.disableTest(this, "testDeferUnrealizingUntilSeZoZoomCompletes");
+        Helper.disableTest(this, "testDeleteAnimationStartsBeforeUpdateTreeIsDone");
+        Helper.disableTest(this, "testEditsDuringLazyCreation");
+        Helper.disableTest(this, "testGetAdjactentWait");
+        Helper.disableTest(this, "testInsertionsDuringLazyContainerCreation");
+        Helper.disableTest(this, "testLazyFlatTreeCreation");
+        Helper.disableTest(this, "testLazyGroupedTreeCreationWithBigGroups");
+        Helper.disableTest(this, "testLazyGroupedTreeCreationWithSmallGroups");
+        Helper.disableTest(this, "testLazyTreeCreationPriority");
+        Helper.disableTest(this, "testRebuildingStructureNodesAfterResize");
+        Helper.disableTest(this, "testResizeDuringLazyTreeCreation");
+        Helper.disableTest(this, "testResizeWithStructuralNodes");
+        Helper.disableTest(this, "testStoppingLazyTreeCreation");
+        Helper.disableTest(this, "testTogglingStructuralNodesDueToEdits");
+        Helper.disableTest(this, "testUpdateContainersUpdatesToAffectedRange");
+    }
 };
 
 // register the object as a test class by passing in the name

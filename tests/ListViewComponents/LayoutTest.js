@@ -1285,6 +1285,13 @@ var WinJSTests = WinJSTests || {};
             };
         };
         this.generateRecalculateItemPosition("GridLayout");
+        
+        if (!Helper.Browser.isIE11) {
+            Helper.disableTest(this, "testFirstLastDisplayedInGridLayout_GridLayout");
+            Helper.disableTest(this, "testHeightAutoLayoutGridLayout");
+            Helper.disableTest(this, "testHeightAutoLayoutListLayout");
+            Helper.disableTest(this, "testRestoringScrollpos");
+        }
     };
 
     // register the object as a test class by passing in the name

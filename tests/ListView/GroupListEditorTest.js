@@ -844,6 +844,11 @@ WinJSTests.GroupListEditorTest = function () {
             }).
             then(complete);
     });
+    
+    if (!Helper.Browser.isIE11) {
+        Helper.disableTest(this, "testInsertToEmpty_normal_grouped_grid_BindingList");
+        Helper.disableTest(this, "testInsertToEmpty_normal_grouped_grid_TestDataSource");
+    }
 };
 
 // register the object as a test class by passing in the name
