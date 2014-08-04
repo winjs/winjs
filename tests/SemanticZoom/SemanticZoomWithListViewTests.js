@@ -207,9 +207,26 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
             }
         };
 
+        var middleGroup = Math.floor(outViewDetails.layoutInfo.itemsCount / 3);
+        var lastGroup = outViewDetails.layoutInfo.itemsCount - 1;
+        var zoomedInIndicies = [
+            // first group
+            0,
+            zoomedInItemsPerZoomedOutItem - 1,
+            // middleGroup group
+            (middleGroup * zoomedInItemsPerZoomedOutItem),
+            (middleGroup * zoomedInItemsPerZoomedOutItem) + (zoomedInItemsPerZoomedOutItem / 2) | 0,
+            (middleGroup * zoomedInItemsPerZoomedOutItem) + zoomedInItemsPerZoomedOutItem - 1,
+            // last group
+            (lastGroup * zoomedInItemsPerZoomedOutItem),
+            (lastGroup * zoomedInItemsPerZoomedOutItem) + zoomedInItemsPerZoomedOutItem - 1,
+            // exit condition
+            Number.MAX_VALUE,
+        ];
+
         sezo.addEventListener("zoomchanged", function () {
             if (sezo.zoomedOut) {
-                currentZoomedInIndex += testStep;
+                currentZoomedInIndex = zoomedInIndicies.shift();
             } else {
                 currentZoomedOutIndex = Math.floor(currentZoomedInIndex / zoomedInItemsPerZoomedOutItem);
             }
