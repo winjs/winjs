@@ -83,7 +83,6 @@
         // require.js copies some undesirable source files over
         var toRemove = [
             "less",
-            "build/Copyright.js",
             "WinJS.js",
             "WinJS/css",
             "WinJS/Core",

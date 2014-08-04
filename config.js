@@ -32,10 +32,9 @@
     config.modulesOutput = config.outputFolder + "modules/";
 
     config.uiStringsFiles = [
-        "src/js/library/stringsHeader.js",
         "src/js/" + config.localeFolder + "/ui.prefix.js",
         "src/js/" + config.localeFolder + "/ui.resjson",
-        "src/js/library/stringsFooter.js"
+        "src/js/" + config.localeFolder + "/ui.suffix.js"
     ];
 
     config.lint = {
