@@ -94,39 +94,56 @@
             border-color: rgb(0, 0, 0);
 
             button.win-appbar-invokebutton {
-                &:enabled {
-                    background-color: transparent;
+                background-color: transparent;
 
+                .win-appbar-ellipsis {
+                    border-color: transparent;
+                }
+
+                &:enabled {
                     &:hover, &:-ms-keyboard-active {
                         // Override intrinsic button element styles
                         background-color: transparent;
                     }
+
+                    .win-appbar-ellipsis {
+                        color: rgb(255, 255, 255);
+                    }
+
+                    &:focus .win-appbar-ellipsis {
+                        border-color: rgb(255, 255, 255);
+                    }
                 }
 
-                .win-appbar-ellipsis {
-                    border-color: transparent;
-                    color: rgb(255, 255, 255);
-                }
+                &:disabled {
+                    &:hover, &:active, &:hover:active {
+                        background-color: transparent;
+                    }
 
-                &:focus .win-appbar-ellipsis {
-                    border-color: rgb(255, 255, 255);
+                    .win-appbar-ellipsis {
+                        color: rgba(255, 255, 255, 0.4);
+                    }
                 }
             }
             // When the AppBar is showing or shown, only the ellipsis has a hover background.*/
             &.win-appbar-showing, &.win-appbar-shown {
-                button.win-appbar-invokebutton:enabled {
-                    &:hover {
-                        .win-appbar-ellipsis {
-                            background-color: rgba(255, 255, 255, 0.13);
+                button.win-appbar-invokebutton {
+                    &:enabled {
+                        &:hover {
+                            .win-appbar-ellipsis {
+                                background-color: rgba(255, 255, 255, 0.13);
+                            }
                         }
                     }
                 }
             }
             // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
             &.win-appbar-hiding, &.win-appbar-hidden {
-                button.win-appbar-invokebutton:enabled {
-                    &:hover, &:hover:active {
-                        background-color: rgba(255, 255, 255, 0.13);
+                button.win-appbar-invokebutton {
+                    &:enabled {
+                        &:hover, &:hover:active {
+                            background-color: rgba(255, 255, 255, 0.13);
+                        }
                     }
                 }
             }
@@ -283,17 +300,20 @@
             background-color: rgb(240, 240, 240);
             border-color: rgb(240, 240, 240);
 
-            .win-appbar-invokebutton {
-                &:enabled {
-                    background-color: transparent;
+            button.win-appbar-invokebutton {
+                background-color: transparent;
 
+                .win-appbar-ellipsis {
+                    border-color: transparent;
+                }
+
+                &:enabled {
                     &:hover, &:-ms-keyboard-active {
-                        // Override intrinsic button element styles.
+                        // Override intrinsic button element styles
                         background-color: transparent;
                     }
 
                     .win-appbar-ellipsis {
-                        border-color: transparent;
                         color: rgb(0, 0, 0);
                     }
 
@@ -301,22 +321,36 @@
                         border-color: rgb(0, 0, 0);
                     }
                 }
+
+                &:disabled {
+                    &:hover, &:active, &:hover:active {
+                        background-color: transparent;
+                    }
+
+                    .win-appbar-ellipsis {
+                        color: rgba(0, 0, 0, 0.4)
+                    }
+                }
             }
             // When the AppBar is showing or shown, only the ellipsis has a hover background.*/
             &.win-appbar-showing, &.win-appbar-shown {
-                button.win-appbar-invokebutton:enabled {
-                    &:hover {
-                        .win-appbar-ellipsis {
-                            background-color: rgba(205, 205, 205, 0.82);
+                button.win-appbar-invokebutton {
+                    &:enabled {
+                        &:hover {
+                            .win-appbar-ellipsis {
+                                background-color: rgba(205, 205, 205, 0.82);
+                            }
                         }
                     }
                 }
             }
             // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
             &.win-appbar-hiding, &.win-appbar-hidden {
-                button.win-appbar-invokebutton:enabled {
-                    &:hover, &:hover:active {
-                        background-color: rgba(205, 205, 205, 0.82);
+                button.win-appbar-invokebutton {
+                    &:enabled {
+                        &:hover, &:hover:active {
+                            background-color: rgba(205, 205, 205, 0.82);
+                        }
                     }
                 }
             }

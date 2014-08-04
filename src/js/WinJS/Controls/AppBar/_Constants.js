@@ -33,7 +33,7 @@ define([
         appBarLayoutCommands: "commands",
 
         // Constant for AppBar invokebutton width
-        appBarInvokeButtonWidth: 40,
+        appBarInvokeButtonWidth: 60,
 
         // Constants for Commands
         typeSeparator: "separator",

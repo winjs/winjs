@@ -45,8 +45,8 @@ Command buttons.
 button.win-command {
     background: none;
     background-clip: border-box;
-    height: auto; /* height is 88px (label) or 68px (no label) */
-    padding: 12px 0; /* bottom dependent on label/img, 2px margin */
+    height: auto; /* height is 80px (label) or 60px (no label) */
+    padding: 8px 0; /* bottom dependent on label/img, 2px margin */
     margin: 0;
     border: 2px solid; /* reserve focus rect */
     min-width: 40px;
@@ -195,7 +195,7 @@ AppBarCommand separator types.
 hr.win-command {
     display: inline-block;
     padding: 0;
-    margin: 14px 29px 34px 30px;
+    margin: 10px 29px 30px 30px;
     width: 1px;
     height: 40px;
     border: 0;
@@ -214,7 +214,7 @@ div.win-command {
     display: inline-block;
     min-width: 0;
     min-height: 0;
-    padding: 12px 30px;
+    padding: 8px 30px;
     border: 2px solid; /* reserve focus rect */
     text-align: center;
     font-size: 9pt;
@@ -260,7 +260,7 @@ AppBar
     }
 
     .win-appbar-invokebutton {
-        width: 40px;
+        width: 60px;
         height: 40px;
         position: absolute;
         right: 0px;
@@ -271,17 +271,19 @@ AppBar
         display: none;
 
         .win-appbar-ellipsis {
-            width: 36px;
-            height: 21px; /* 21px + 4px of border ===  the height of the closed minimal AppBar.*/
+            width: 56px;
+            height: 21px; /* 21px + 4px of border === the height of the closed minimal AppBar.*/
             right: 0px;
             position: absolute;
+            display: inline-block;
             border: solid 2px;
-            font-size: 11pt;
+            font-size: 19px;
             text-align: center;
             font-family: "Segoe UI Symbol", "Symbols";
 
             &::before {
                 content: "\E10C";
+                position: relative;
             }
         }
 
@@ -290,23 +292,41 @@ AppBar
         }
     }
 
-    &.win-bottom .win-appbar-invokebutton,
-    &.win-bottom .win-appbar-invokebutton .win-appbar-ellipsis {
-        top: 0px;
+    &.win-bottom {
+        .win-appbar-invokebutton, 
+        .win-appbar-ellipsis {
+            top: 0px;
+        }
+
+        .win-appbar-ellipsis::before {
+            /* Necessary to adjust vertical position of Ellipsis Glyph in bottom AppBar so that the top of the 3 ellipsis dots are drawn ~10px away from the top of the AppBar.
+               This is to appear consistent with where the top of the win-commnandring element in an AppBarCommand button is drawn, also 10px away from the top of the AppBar. 
+               This value is dependant on the font-size of the Ellipsis Glyph being 19px and the height of the parent element being 21px */
+            top: -3px;
+        }
     }
 
-    &.win-top .win-appbar-invokebutton,
-    &.win-top .win-appbar-invokebutton .win-appbar-ellipsis {
-        bottom: 0px;
+    &.win-top {
+        .win-appbar-invokebutton, 
+        .win-appbar-ellipsis {
+            bottom: 0px;
+        }
+        
+        .win-appbar-ellipsis::before {
+            /* Necessary to adjust vertical position of Ellipsis Glyph in top AppBar so that the botom of the 3 ellipsis dots are drawn ~10px away from the bottom of the AppBar.
+               This is to appear consistent with where the bottom of the win-label in an AppBarCommand button is drawn, also 10px away from the bottom of the AppBar. 
+               This value is dependant on the font-size of the Ellipsis Glyph being 19px and the height of the parent element being 21px */
+            bottom: 2px;
+        }
     }
 
-     &.win-appbar-minimal {
+    &.win-appbar-minimal {
         // Minimal AppBar makes room for the invokeButton.
-        padding-right: 40px;
-        width: ~"calc(100% - 40px)";
+        padding-right: 60px;
+        width: ~"calc(100% - 60px)";
 
         .win-appbar-invokebutton {
-            display:block;
+            display: block;
         }
     }
 }
@@ -318,7 +338,7 @@ AppBar commands layout
     &.win-appbar-showing,
     &.win-appbar-shown,
     &.win-appbar-hiding {
-        min-height: 88px;
+        min-height: 80px;
     }
     #flex > .display-flex();
     #flex > .flex-direction(row);
@@ -375,8 +395,8 @@ AppBar commands layout
 
 /* Narrow Separators */
 .win-reduced hr.win-command {
-    margin-bottom: 14px;
-    margin-top: 14px;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .win-reduced hr.win-command {
@@ -404,12 +424,12 @@ AppBar commands layout
     &.win-appbar-showing,
     &.win-appbar-shown,
     &.win-appbar-hiding {
-        min-height: 68px;
+        min-height: 60px;
     }
 
     &.win-appbar-minimal{
-        padding-right: 40px;
-        width: ~"calc(100% - 50px)"; // 100% - left & right padding.
+        padding-right: 60px;
+        width: ~"calc(100% - 70px)"; // 100% - left & right padding.
     }
 }
 
@@ -438,27 +458,27 @@ High contrast AppBar needs a border
 
     .win-appbar.win-top button.win-command,
     .win-appbar.win-top div.win-command {
-        padding-bottom: 10px;
+        padding-bottom: 6px;
     }
 
     .win-appbar.win-bottom button.win-command,
     .win-appbar.win-bottom div.win-command {
-        padding-top: 10px;
+        padding-top: 6px;
     }
 
     .win-appbar.win-top hr.win-command {
-        margin-bottom: 32px;
+        margin-bottom: 28px;
     }
 
     .win-appbar.win-bottom hr.win-command {
-        margin-top: 12px;
+        margin-top: 8px;
     }
 
     .win-commandlayout {
         &.win-appbar-showing,
         &.win-appbar-shown,
         &.win-appbar-hiding {
-            min-height: 86px;
+            min-height: 78px;
         }
     }
 
@@ -467,16 +487,16 @@ High contrast AppBar needs a border
         &.win-appbar-showing,
         &.win-appbar-shown,
         &.win-appbar-hiding {
-            min-height: 66px;
+            min-height: 58px;
         }
     }
 
     .win-appbar.win-reduced.win-top hr.win-command {
-        margin-bottom: 12px;
+        margin-bottom: 8px;
     }
 
     .win-appbar.win-reduced.win-bottom hr.win-command {
-        margin-top: 12px;
+        margin-top: 8px;
     }
 }
 
