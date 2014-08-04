@@ -9,12 +9,13 @@ define([
     '../Promise',
     '../Scheduler',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
     './AppBar',
     './NavBar/_Command',
     './NavBar/_Container',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function NavBarInit(_Global,_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, AppBar, _Command, _Container) {
+], function NavBarInit(_Global,_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, _Hoverable, AppBar, _Command, _Container) {
     "use strict";
 
     var customLayout = "custom";

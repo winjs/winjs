@@ -12,8 +12,9 @@ define([
     '../Promise',
     '../Utilities/_Control',
     '../Utilities/_Dispose',
-    '../Utilities/_ElementUtilities'
-    ], function repeaterInit(exports, _Global, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities) {
+    '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
+    ], function repeaterInit(exports, _Global, _Base, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, BindingList, BindingTemplate, Promise, _Control, _Dispose, _ElementUtilities, _Hoverable) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {

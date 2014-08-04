@@ -7,10 +7,6 @@
             border-color: transparent;
         }
 
-        button:hover.win-semanticzoom-button {
-            background-color: rgba(216, 216, 216, 1.0);
-        }
-
         button.win-semanticzoom-button:active {
             .mixin(dark) {
                 background-color: rgb(255, 255, 255);
@@ -38,6 +34,15 @@
 
     .platform(@platform);
 }
+.ColorsHover(@theme) {
+
+    .platform(desktop) {
+        button:hover.win-semanticzoom-button {
+            background-color: rgba(216, 216, 216, 1.0);
+        }
+    }
+    .platform(@platform);
+}
 
 @media (-ms-high-contrast) {
     .win-semanticzoom-button {
@@ -60,7 +65,7 @@
         color: ButtonFace;
     }
 
-    .win-semanticzoom-button:hover {
+    html.win-hoverable win-semanticzoom-button:hover {
         background-color: Highlight;
         border-color: ButtonText;
         color: HighlightText;

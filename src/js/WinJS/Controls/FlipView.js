@@ -15,13 +15,14 @@ define([
     '../Utilities/_Control',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
     '../Utilities/_ItemsManager',
     '../Utilities/_UI',
     './FlipView/_Constants',
     './FlipView/_PageManager',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function flipperInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _ItemsManager, _UI, _Constants, _PageManager) {
+    ], function flipperInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _UI, _Constants, _PageManager) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {

@@ -4,6 +4,7 @@ define([
     './Utilities/_Dispose',
     './Utilities/_ElementListUtilities',
     './Utilities/_ElementUtilities',
+    './Utilities/_Hoverable',
     './Utilities/_ItemsManager',
     './Utilities/_KeyboardBehavior',
     './Utilities/_ParallelWorkQueue',

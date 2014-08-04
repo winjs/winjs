@@ -69,8 +69,16 @@ define(['require'], function(req) {
         ].join('\n');
         var colors = [
             '.Colors(@theme);',
+            'html.win-hoverable {',
+            '   .ColorsHover(@theme);',
+            '}',
             '.win-ui-@{inverseTheme} {',
             '   .Colors(@inverseTheme);',
+            '}',
+            'html.win-hoverable {',
+            '   .win-ui-@{inverseTheme} {',
+            '      .ColorsHover(@inverseTheme);',
+            '   }',
             '}'
         ].join('\n');
         var copyright = '/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */';

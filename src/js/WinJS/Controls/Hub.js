@@ -17,11 +17,12 @@ define([
     '../Scheduler',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
     '../Utilities/_UI',
     './Hub/_Section',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _UI, _Section) {
+    ], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _Section) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {

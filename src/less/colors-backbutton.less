@@ -2,18 +2,13 @@
 .Colors(@theme) {
     .mixin(dark) {
         .win-navigation-backbutton, .win-navigation-backbutton:active,
-        .win-navigation-backbutton:enabled:hover, .win-navigation-backbutton:enabled:hover:active {
+        .win-navigation-backbutton:enabled:hover:active {
             background-color: transparent;
         }
         .win-backbutton, .win-back {
             background-color: transparent;
             border-color: rgb(255, 255, 255);
             color: rgb(255, 255, 255);
-        }
-        .win-backbutton:enabled:hover,
-        .win-navigation-backbutton:enabled:hover .win-back {
-            background-color: rgba(255, 255, 255, 0.13);
-            border-color: rgb(255, 255, 255);
         }
         .win-backbutton:enabled:hover:active,
         .win-navigation-backbutton:enabled:hover:active .win-back,
@@ -40,7 +35,7 @@
 
     .mixin(light) {
         .win-navigation-backbutton, .win-navigation-backbutton:active,
-        .win-navigation-backbutton:enabled:hover, .win-navigation-backbutton:enabled:hover:active
+        .win-navigation-backbutton:enabled:hover:active
         {
             background-color: transparent;
         }
@@ -48,11 +43,6 @@
             background-color: transparent;
             border-color: rgb(0, 0, 0);
             color: rgb(0, 0, 0);
-        }
-        .win-backbutton:enabled:hover,
-        .win-navigation-backbutton:enabled:hover .win-back {
-            background-color: rgba(0, 0, 0, 0.13);
-            border-color: rgb(0, 0, 0);
         }
         .win-backbutton:enabled:hover:active,
         .win-navigation-backbutton:enabled:hover:active .win-back {
@@ -79,9 +69,35 @@
 
     .mixin(@theme);
 }
+.ColorsHover(@theme) {
+    .mixin(dark) {
+        .win-navigation-backbutton:enabled:hover {
+            background-color: transparent;
+        }
+        .win-backbutton:enabled:hover,
+        .win-navigation-backbutton:enabled:hover .win-back {
+            background-color: rgba(255, 255, 255, 0.13);
+            border-color: rgb(255, 255, 255);
+        }
+    }
+
+    .mixin(light) {
+        .win-navigation-backbutton:enabled:hover
+        {
+            background-color: transparent;
+        }
+        .win-backbutton:enabled:hover,
+        .win-navigation-backbutton:enabled:hover .win-back {
+            background-color: rgba(0, 0, 0, 0.13);
+            border-color: rgb(0, 0, 0);
+        }
+    }
+
+    .mixin(@theme);
+}
 
 button.win-navigation-backbutton, button.win-navigation-backbutton:active,
-button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton:enabled:hover:active {
+html.win-hoverable button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton:enabled:hover:active {
     // Overwrite default background and border styles from HTML button element
     background-color: transparent;
     border: none;
@@ -89,7 +105,7 @@ button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton
 
 @media (-ms-high-contrast) {
     button.win-navigation-backbutton, button.win-navigation-backbutton:active,
-    button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton:enabled:hover:active {
+    html.win-hoverable button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton:enabled:hover:active {
         /* Overwrite default background and border styles from BackButton control's <button> element */
         background-color: transparent;
         border: none;
@@ -123,8 +139,8 @@ button.win-navigation-backbutton:enabled:hover, button.win-navigation-backbutton
         color: ButtonFace;
     }
 
-    .win-backbutton:enabled:hover,
-    .win-navigation-backbutton:enabled:hover .win-back {
+    html.win-hoverable .win-backbutton:enabled:hover,
+    html.win-hoverable .win-navigation-backbutton:enabled:hover .win-back {
         background-color: Highlight;
         border-color: ButtonText;
         color: HighlightText;

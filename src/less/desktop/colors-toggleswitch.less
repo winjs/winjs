@@ -13,9 +13,6 @@
                 &:disabled::-ms-fill-upper, &:disabled::-ms-fill-lower {
                     background-color: rgba(255, 255, 255, 0.12);
                 }
-                &:enabled:hover::-ms-fill-upper {
-                    background-color: rgba(255, 255, 255, 0.29);
-                }
                 &:enabled:active::-ms-fill-upper {
                     background-color: rgba(255, 255, 255, 0.35);
                 }
@@ -57,9 +54,6 @@
                 &:disabled::-ms-fill-upper, &:disabled::-ms-fill-lower {
                     background-color: rgba(0, 0, 0, 0.12);
                 }
-                &:enabled:hover::-ms-fill-upper {
-                    background-color: rgba(0, 0, 0, 0.29);
-                }
                 &:enabled:active::-ms-fill-upper {
                     background-color: rgba(0, 0, 0, 0.35);
                 }
@@ -87,6 +81,28 @@
 
                 &.win-disabled {
                     color: rgba(0, 0, 0, 0.4);
+                }
+            }
+        }
+
+        .mixin(@theme);
+    }
+}
+.ColorsHover(@theme) {
+    .win-toggleswitch {
+
+        .mixin(dark) {
+            .win-switch {
+                &:enabled:hover::-ms-fill-upper {
+                    background-color: rgba(255, 255, 255, 0.29);
+                }
+            }
+        }
+
+        .mixin(light) {
+            .win-switch {
+                &:enabled:hover::-ms-fill-upper {
+                    background-color: rgba(0, 0, 0, 0.29);
                 }
             }
         }

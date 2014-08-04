@@ -8,9 +8,10 @@ define([
     '../Navigation',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function backButtonInit(_Global, _Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities) {
+    ], function backButtonInit(_Global, _Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities, _Hoverable) {
     "use strict";
 
     var Key = _ElementUtilities.Key;

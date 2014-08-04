@@ -16,6 +16,7 @@ define([
     '../Utilities/_Control',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
     '../Utilities/_KeyboardBehavior',
     './AppBar/_Constants',
     './AppBar/_Layouts',
@@ -24,7 +25,7 @@ define([
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay) {
+], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {

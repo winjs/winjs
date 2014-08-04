@@ -4,16 +4,17 @@
         background-color: rgba(213, 213, 213, 0.35);
         color: rgba(0, 0, 0, 0.60);
     }
-    .win-navbutton:hover {
-        background-color: rgba(215, 215, 215, 0.94);
-        color: rgba(0, 0, 0, 1.0);
-    }
     .win-navbutton:hover:active {
         background-color: rgba(41, 41, 41, 0.74);
         color: rgba(255, 255, 255, 1.0);
     }
 }
-
+html.win-hoverable .win-flipview {
+    .win-navbutton:hover {
+        background-color: rgba(215, 215, 215, 0.94);
+        color: rgba(0, 0, 0, 1.0);
+    }
+}
 @media (-ms-high-contrast) {
     .win-flipview {
         .win-navbottom {
@@ -29,16 +30,18 @@
             width: 65px;
             height: 35px;
         }
-        .win-navbutton:hover {
-            background-color: Highlight;
-            color: HighlightText;
-        }
         .win-navbutton:active {
             background-color: ButtonText;
             color: ButtonFace;
         }
         .win-navright {
             margin-left: -65px;
+        }
+    }
+    html.win-hoverable .win-flipview {    
+        .win-navbutton:hover {
+            background-color: Highlight;
+            color: HighlightText;
         }
     }
 }

@@ -16,9 +16,10 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_ElementListUtilities',
+    '../Utilities/_Hoverable',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function semanticZoomInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _ElementListUtilities) {
+    ], function semanticZoomInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {

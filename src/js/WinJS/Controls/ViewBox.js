@@ -10,9 +10,10 @@ define([
     '../Utilities/_Control',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities) {
+    ], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {

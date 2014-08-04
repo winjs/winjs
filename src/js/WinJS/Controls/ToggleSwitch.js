@@ -7,9 +7,10 @@ define([
     '../Core/_Resources',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities) {
+    ], function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Hoverable) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {

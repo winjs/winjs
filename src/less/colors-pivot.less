@@ -6,7 +6,6 @@
         }
 
         .win-pivot button.win-pivot-header,
-        .win-pivot button.win-pivot-header:hover,
         .win-pivot button.win-pivot-header:focus,
         .win-pivot button.win-pivot-header:hover:active {
             color: white;
@@ -15,11 +14,6 @@
         .win-pivot .win-pivot-navbutton {
             background-color: rgba(213, 213, 213, 0.298);
             color: rgba(255, 255, 255, 0.6);
-        }
-
-        .win-pivot .win-pivot-navbutton:hover {
-            background-color: rgba(49, 49, 49, 0.937);
-            color: white;
         }
 
         .win-pivot .win-pivot-navbutton:hover:active {
@@ -34,7 +28,6 @@
         }
 
         .win-pivot button.win-pivot-header,
-        .win-pivot button.win-pivot-header:hover,
         .win-pivot button.win-pivot-header:focus,
         .win-pivot button.win-pivot-header:hover:active {
             color: black;
@@ -45,14 +38,34 @@
             color: rgba(0, 0, 0, 0.6);
         }
 
-        .win-pivot .win-pivot-navbutton:hover {
-            background-color: rgba(215, 215, 215, 0.941);
-            color: black;
-        }
-
         .win-pivot .win-pivot-navbutton:hover:active {
             background-color: rgba(41, 41, 41, 0.741);
             color: white;
+        }
+    }
+
+    .mixin(@theme);
+}
+.ColorsHover(@theme) {
+    .mixin(dark) {
+        .win-pivot button.win-pivot-header:hover {
+            color: white;
+        }
+
+        .win-pivot .win-pivot-navbutton:hover {
+            background-color: rgba(49, 49, 49, 0.937);
+            color: white;
+        }
+    }
+
+    .mixin(light) {
+        .win-pivot button.win-pivot-header:hover {
+            color: black;
+        }
+
+        .win-pivot .win-pivot-navbutton:hover {
+            background-color: rgba(215, 215, 215, 0.941);
+            color: black;
         }
     }
 

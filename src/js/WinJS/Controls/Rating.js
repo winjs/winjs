@@ -7,11 +7,12 @@ define([
     '../Core/_Resources',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_Hoverable',
     '../Utilities/_SafeHtml',
     './Tooltip',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function ratingInit(_Global,_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, _SafeHtml, Tooltip) {
+    ], function ratingInit(_Global,_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, _Hoverable, _SafeHtml, Tooltip) {
     "use strict";
 
     // Rating control implementation
