@@ -4,8 +4,9 @@ define([
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
+    '../Promise',
     '../Scheduler'
-], function elementUtilities(exports, _Global, _Base, _BaseUtils, Scheduler) {
+], function elementUtilities(exports, _Global, _Base, _BaseUtils, Promise, Scheduler) {
     "use strict";
 
     // not supported in WebWorker
@@ -456,8 +457,8 @@ define([
     function touchEventTranslator(callback, eventObject) {
         var changedTouches = eventObject.changedTouches,
             retVal = null;
-        
-        if(!changedTouches) {
+
+        if (!changedTouches) {
             return retVal;
         }
 
@@ -921,22 +922,6 @@ define([
     var supportsZoomTo = !!_Global.HTMLElement.prototype.msZoomTo;
     var supportsTouchDetection = !!(_Global.MSPointerEvent || _Global.TouchEvent);
 
-    // Snap point feature detection is special - On most platforms it is enough to check if 'scroll-snap-type'
-    // is a valid style, however, IE10 and WP IE claim that they are valid styles but don't support them.
-    var supportsSnapPoints = false;
-    var snapTypeStyle = _BaseUtils._browserStyleEquivalents["scroll-snap-type"];
-    if (snapTypeStyle) {
-        if (snapTypeStyle.cssName.indexOf("-ms-") === 0) {
-            // We are on a Microsoft platform, if zoomTo isn't supported then we know we are on IE10 and WP IE.
-            if (supportsZoomTo) {
-                supportsSnapPoints = true;
-            }
-        } else {
-            // We are on a non-Microsoft platform, we assume that if the style is valid, it is supported.
-            supportsSnapPoints = true;
-        }
-    }
-
     var uniqueElementIDCounter = 0;
 
     function uniqueID(e) {
@@ -980,12 +965,6 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         _dataKey: _dataKey,
 
-        _supportsSnapPoints: {
-            get: function () {
-                return supportsSnapPoints;
-            }
-        },
-
         _supportsTouchDetection: {
             get: function () {
                 return supportsTouchDetection;
@@ -1021,6 +1000,48 @@ define([
                 addPointer: doNothing,
                 stop: doNothing
             };
+        },
+
+        _detectSnapPointsSupport: function () {
+            // Snap point feature detection is special - On most platforms it is enough to check if 'msZoomTo'
+            // is available, however, Windows Phone IEs claim that they support it but don't really do so we
+            // test by creating a scroller with mandatory snap points and test against ManipulationStateChanged events.
+            if (!this._snapPointsDetectionPromise) {
+                if (!_Global.HTMLElement.prototype.msZoomTo) {
+                    this._snapPointsDetectionPromise = Promise.wrap(false);
+                } else {
+                    this._snapPointsDetectionPromise = new Promise(function (c) {
+                        var scroller = _Global.document.createElement("div");
+                        scroller.style.width = "100px";
+                        scroller.style.overflowX = "scroll";
+                        scroller.style.msScrollSnapType = "mandatory";
+                        scroller.style.position = "absolute";
+                        scroller.style.opacity = "0";
+                        scroller.style.visibility = "hidden";
+                        var handler = function (e) {
+                            scroller.removeEventListener("MSManipulationStateChanged", handler);
+                            _Global.clearTimeout(timeoutHandle);
+                            _Global.document.body.removeChild(scroller);
+                            c(true);
+                        };
+                        scroller.addEventListener("MSManipulationStateChanged", handler);
+
+                        var content = _Global.document.createElement("div");
+                        content.style.width = content.style.height = "200px";
+                        scroller.appendChild(content);
+
+                        _Global.document.body.appendChild(scroller);
+                        scroller.msZoomTo({ contentX: 90 });
+
+                        var timeoutHandle = _Global.setTimeout(function () {
+                            scroller.removeEventListener("MSManipulationStateChanged", handler);
+                            _Global.document.body.removeChild(scroller);
+                            c(false);
+                        }, 50);
+                    });
+                }
+            }
+            return this._snapPointsDetectionPromise;
         },
 
         _MSGestureEvent: _MSGestureEvent,

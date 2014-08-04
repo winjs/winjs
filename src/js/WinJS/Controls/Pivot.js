@@ -65,6 +65,9 @@ define([
                     itemAnimationEnd: "itemanimationend",
                 };
                 var MSManipulationEventStates = _ElementUtilities._MSManipulationEvent;
+                
+                var supportsSnap = false;
+                var ready = null;
 
                 var Pivot = _Base.Class.define(function Pivot_ctor(element, options) {
                     /// <signature helpKeyword="WinJS.UI.Pivot.Pivot">
@@ -83,8 +86,13 @@ define([
                     /// <returns type="WinJS.UI.Pivot" locid="WinJS.UI.Pivot.constructor_returnValue">
                     /// The new Pivot.
                     /// </returns>
-                    /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                     /// </signature>
+
+                    if (!ready) {
+                        ready = _ElementUtilities._detectSnapPointsSupport().then(function (value) {
+                            supportsSnap = value;
+                        });
+                    }
 
                     element = element || _Global.document.createElement("DIV");
                     options = options || {};
@@ -101,10 +109,6 @@ define([
 
                     this._id = element.id || _ElementUtilities._uniqueID(element);
                     this._writeProfilerMark("constructor,StartTM");
-
-                    if (!_ElementUtilities._supportsSnapPoints) {
-                        _ElementUtilities.addClass(element, Pivot._ClassName.pivotNoSnap);
-                    }
 
                     // Attaching JS control to DOM element
                     element.winControl = this;
@@ -370,7 +374,7 @@ define([
                         get: function () {
                             if (!this._viewportElWidth) {
                                 this._viewportElWidth = parseFloat(_Global.getComputedStyle(this._viewportElement).width);
-                                if (_ElementUtilities._supportsSnapPoints) {
+                                if (supportsSnap) {
                                     this._viewportElement.style[_BaseUtils._browserStyleEquivalents["scroll-snap-points-x"].scriptName] = "snapInterval(0%, " + Math.ceil(this._viewportElWidth) + "px)";
                                 }
                             }
@@ -386,8 +390,6 @@ define([
                         if (this._disposed) {
                             return;
                         }
-
-                        this._pendingRefresh = false;
 
                         if (this._pendingItems) {
                             this._updateEvents(this._items, this._pendingItems);
@@ -407,9 +409,18 @@ define([
                         this._pendingIndexOnScreen = null;
                         this._currentIndexOnScreen = 0;
                         this._skipHeaderSlide = true;
-                        this.selectedIndex = Math.min(pendingIndexOnScreen, this.items.length - 1);
-                        this._skipHeaderSlide = false;
-                        this._recenterUI();
+
+                        var that = this;
+                        ready.done(function () {
+                            if (!supportsSnap) {
+                                _ElementUtilities.addClass(that.element, Pivot._ClassName.pivotNoSnap);
+                            }
+
+                            that._pendingRefresh = false;
+                            that.selectedIndex = Math.min(pendingIndexOnScreen, that.items.length - 1);
+                            that._skipHeaderSlide = false;
+                            that._recenterUI();
+                        });
                     },
 
                     _attachItems: function pivot_attachItems() {
@@ -698,7 +709,7 @@ define([
                         }
 
                         var zooming = false;
-                        if (_ElementUtilities._supportsSnapPoints && _ElementUtilities._supportsZoomTo && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
+                        if (supportsSnap && _ElementUtilities._supportsZoomTo && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                             if (this._skipHeaderSlide) {
                                 _Log.log && _Log.log('_skipHeaderSlide index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
                                 _ElementUtilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });
@@ -723,7 +734,7 @@ define([
                             if (that._disposed || loadId !== that._loadId) {
                                 return;
                             }
-                            if (_ElementUtilities._supportsSnapPoints) {
+                            if (supportsSnap) {
                                 // Position item:
                                 item.element.style[that._getDirectionAccessor()] = that._currentScrollTargetLocation + "px";
                                 that._showPivotItem(item.element, goPrevious);
@@ -770,7 +781,7 @@ define([
 
                     _MSManipulationStateChangedHandler: function pivot_MSManipulationStateChangedHandler(ev) {
                         this._currentManipulationState = ev.currentState;
-                        if (!_ElementUtilities._supportsSnapPoints || ev.target !== this._viewportElement) {
+                        if (!supportsSnap || ev.target !== this._viewportElement) {
                             // Ignore sub scroller manipulations.
                             return;
                         }
@@ -834,7 +845,7 @@ define([
                     },
 
                     _scrollHandler: function pivot_scrollHandler() {
-                        if (!_ElementUtilities._supportsSnapPoints || this._disposed) {
+                        if (!supportsSnap || this._disposed) {
                             return;
                         }
 
@@ -864,7 +875,7 @@ define([
                     },
 
                     _recenterUI: function pivot_recenterUI() {
-                        if (!_ElementUtilities._supportsSnapPoints) {
+                        if (!supportsSnap) {
                             return;
                         }
 
@@ -1031,7 +1042,7 @@ define([
 
                     // Input Handlers
                     _elementClickedHandler: function pivot_elementClickedHandler(ev) {
-                        if (this.locked) {
+                        if (this.locked || !supportsSnap) {
                             return;
                         }
 

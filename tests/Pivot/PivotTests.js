@@ -24,11 +24,27 @@ WinJSTests.PivotTests = function () {
         initFuncName = "initPointerEvent";
     }
 
+    var snapPointsDetectionFunc = WinJS.Utilities._detectSnapPointsSupport.bind(WinJS.Utilities);
+    var supportsSnap = null;
+    WinJS.Utilities._detectSnapPointsSupport = function () {
+        return WinJS.Promise.timeout(50).then(function () {
+            return supportsSnap;
+        });
+    };
+
     var pivotWrapperEl;
-    this.setUp = function () {
+    this.setUp = function (complete) {
         pivotWrapperEl = document.createElement('div');
         pivotWrapperEl.style.cssText = "width: " + pivotWidth + "px; height: 480px; background-color: #777;"
         document.body.appendChild(pivotWrapperEl);
+        if (supportsSnap === null) {
+            snapPointsDetectionFunc().done(function (value) {
+                supportsSnap = value;
+                complete();
+            });
+        } else {
+            complete();
+        }
     };
 
     this.tearDown = function () {
@@ -509,7 +525,7 @@ WinJSTests.PivotTests = function () {
         waitForNextItemAnimationEnd(pivot).
             then(function () {
                 var pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
-                if (WinJS.Utilities._supportsSnapPoints) {
+                if (supportsSnap) {
                     // When snap points aren't supported, the overflow is always hidden
                     LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
                     LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
@@ -534,7 +550,7 @@ WinJSTests.PivotTests = function () {
                 // Unlock the Pivot
                 pivot.locked = false;
                 var pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
-                if (WinJS.Utilities._supportsSnapPoints) {
+                if (supportsSnap) {
                     LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
                     LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
                 }
@@ -641,7 +657,7 @@ WinJSTests.PivotTests = function () {
     if (WinJS.UI.isAnimationEnabled()) {
 
         this.testFlip = function testFlip(complete) {
-            if (!WinJS.Utilities._supportsSnapPoints) {
+            if (!supportsSnap) {
                 LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
                 complete();
                 return;
@@ -782,7 +798,7 @@ WinJSTests.PivotTests = function () {
                 complete();
                 return;
             }
-            if (!WinJS.Utilities._supportsSnapPoints) {
+            if (!supportsSnap) {
                 LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
                 complete();
                 return;
@@ -829,7 +845,7 @@ WinJSTests.PivotTests = function () {
         };
 
         this.testNavigateViaScroll = function testNavigateViaScroll(complete) {
-            if (!WinJS.Utilities._supportsSnapPoints) {
+            if (!supportsSnap) {
                 LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
                 complete();
                 return;
@@ -930,7 +946,7 @@ WinJSTests.PivotTests = function () {
         };
 
         this.testEmptyPivotRecentersCorrectly = function (complete) {
-            if (!WinJS.Utilities._supportsSnapPoints) {
+            if (!supportsSnap) {
                 LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
                 complete();
                 return;
