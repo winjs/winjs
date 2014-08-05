@@ -765,7 +765,8 @@ define([
                     handler = this._getListener(name, capture);
                     handler.refCount = 0;
                     handlers[name] = handler;
-                    _Global.addEventListener(name, handler, capture);
+
+                    exports._addEventListener(_Global, name, handler, capture);
                 }
 
                 handler.refCount++;
@@ -780,7 +781,7 @@ define([
                 if(handler) {
                     handler.refCount--;
                     if (handler.refCount === 0) {
-                        _Global.removeEventListener(name, handler, capture);
+                        exports._removeEventListener(_Global, name, handler, capture);
                     }
                     delete handlers[name];
                 }
@@ -2147,11 +2148,11 @@ define([
         //  and return a function with a unified synchronous contract which is:
         //
         //  (data, container) => element
-        //      
+        //
         // Where:
         //
         //  1) if you pass container the content will be rendered into the container and the
-        //     container will be returned. 
+        //     container will be returned.
         //
         //  2) if you don't pass a container the content will be rendered and returned.
         //
