@@ -41,7 +41,7 @@
         
         // Tasks that drop things in bin/ (should have "add-bom" as the last task)
         grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "_build", "copy", "replace", "add-bom"]);
-        grunt.registerTask("release", ["jshint", "default", "uglify", "add-bom"]);
+        grunt.registerTask("release", ["lint", "default", "uglify", "add-bom"]);
         grunt.registerTask("minify", ["uglify", "add-bom"]);
         
         // Private tasks (not designed to be used from the command line)
@@ -49,7 +49,7 @@
         
         // Other tasks
         grunt.registerTask("modules", ["clean:modules", "requirejs:publicModules", "replace:base"]);
-        grunt.registerTask("lint", ["jshint"]);
+        grunt.registerTask("lint", ["jshint", "jscs"]);
         grunt.registerTask("saucelabs", ["connect:saucelabs", "saucelabs-qunit", "post-tests-results"]);
     };
 })();
