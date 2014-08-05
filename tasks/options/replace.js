@@ -47,7 +47,7 @@
               { expand: true, flatten: true, src: [config.phoneOutput + "js/" + config.localeFolder + "/*.js"], dest: config.phoneOutput + "js/" + config.localeFolder + "/" },
               { expand: true, flatten: true, src: [config.desktopOutput + "css/*.css"], dest: config.desktopOutput + "css/" },
               { expand: true, flatten: true, src: [config.phoneOutput + "css/*.css"], dest: config.phoneOutput + "css/" },
-              { expand: true, flatten: true, src: [config.modulesOutput + "build/*.js"], dest: config.modulesOutput + "build/" },
+              { expand: true, flatten: false, src: [config.modulesOutput + "**/*.js"], dest: "" },
             ]
         },
     };

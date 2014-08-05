@@ -25,6 +25,10 @@
                 var privateModules = [];
                 var processed = dependencies[module].slice(0);
 
+                if(module === 'WinJS/Core') {
+                    privateModules.push('require-json!en-US/ui.resjson');
+                }
+
                 var excludes = dependencies[module].slice(0).filter(function (dep) {
                     if (startsWith(dep, module)) {
                         privateModules.push(dep);
@@ -55,13 +59,17 @@
                     bundles[module] = privateModules;
                 }
 
-                var includes = [];
+                var remove = ['require-style', 'require-json'];
+
+                if(module !== 'WinJS/Core') {
+                    remove.push('require-json!en-US/ui.resjson');
+                }
 
                 moduleConfig.push({
                     name: module,
-                    exclude: ['require-style'],
+                    exclude: remove,
                     excludeShallow: excludes,
-                    include: includes
+                    include: []
                 });
 
             }
@@ -82,6 +90,7 @@
 
         // require.js copies some undesirable source files over
         var toRemove = [
+            "en-US",
             "less",
             "WinJS.js",
             "WinJS/css",
@@ -108,6 +117,7 @@
             paths: {
                 "amd": pkgRoot + "amd",
                 "require-style": pkgRoot + "require-style",
+                "require-json": pkgRoot + "require-json",
                 "WinJS": pkgRoot + "WinJS",
                 "less-phone": "empty:",
                 "less-desktop": "empty:"
@@ -162,6 +172,10 @@
         // Remove empty: pattern resources added by Less build.
         lines = lines.filter(function (line) {
             return line.indexOf("empty:") === -1;
+        });
+
+        lines = lines.filter(function (line) {
+            return line.indexOf("require-json!") === -1;
         });
 
         if (endsWith(bundle, desktopBase)) {
@@ -262,7 +276,7 @@
             options: {
                 skipDirOptimize: true,
                 removeCombined: true,
-                fileExclusionRegExp: /^(en-US|library|base.js|ui.js|ui-phone.js|\w+\.(md|htm|txt))$/i,
+                fileExclusionRegExp: /^(library|base.js|ui.js|ui-phone.js|\w+\.(md|htm|txt))$/i,
                 dir: config.modulesOutput,
                 modules: publicModules,
                 done: moduleDone
@@ -279,7 +293,7 @@
         options.platform = options.platform || "desktop";
         options.useStrict = true;
         options.optimize = "none"; // uglify2 is run seperately
-        options.stubModules = ["require-style"];
+        options.stubModules = ["require-style", "require-json"];
         options.done = options.done || done;
 
         // If it doesn't have an exclude then we include the default AMD implementations
@@ -295,6 +309,7 @@
                 options.paths = {
                     "less": "../less",
                     "less/phone": "empty:",
+                    "require-json": "../../tasks/utilities/require-json",
                     "require-style": "../../tasks/utilities/require-style"
                 };
                 break;
@@ -303,6 +318,7 @@
                 options.paths = {
                     "less": "../less",
                     "less/desktop": "empty:",
+                    "require-json": "../../tasks/utilities/require-json",
                     "require-style": "../../tasks/utilities/require-style"
                 };
                 break;

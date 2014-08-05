@@ -4,8 +4,9 @@ define([
     './_Global',
     './_WinRT',
     './_Base',
-    './_Events'
-    ], function resourcesInit(exports, _Global, _WinRT, _Base, _Events) {
+    './_Events',
+    'require-json!en-US/ui.resjson',
+    ], function resourcesInit(exports, _Global, _WinRT, _Base, _Events, defaultStrings) {
     "use strict";
 
     var appxVersion = "$(TARGET_DESTINATION)";
@@ -15,7 +16,27 @@ define([
     }
 
     function _getWinJSString(id) {
-        return getString("ms-resource://" + appxVersion + "/" + id);
+        var result = getString("ms-resource://" + appxVersion + "/" + id);
+
+        if(result.empty) {
+            result = _getStringBuiltIn(id);
+        }
+
+        return result;
+    }
+
+    function _getStringBuiltIn(resourceId) {
+
+        var parts = resourceId.split("/");
+        parts.shift(); // ignore the leading ui/
+
+        var str = defaultStrings[parts.join("\\")];
+
+        if (typeof str === "string") {
+            str = { value: str };
+        }
+        
+        return str || { value: resourceId, empty: true };
     }
 
     var resourceMap;
