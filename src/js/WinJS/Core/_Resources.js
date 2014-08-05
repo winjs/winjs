@@ -167,8 +167,14 @@ define([
 
         _getResourceContext: function () {
             if (_Global.document) {
-                if (!resourceContext) {
-                    resourceContext = _WinRT.Windows.ApplicationModel.Resources.Core.ResourceContext.getForCurrentView();
+                if (typeof(resourceContext) === 'undefined') {
+                    var context = _WinRT.Windows.ApplicationModel.Resources.Core.ResourceContext;
+                    if (context.getForCurrentView) {
+                        resourceContext = context.getForCurrentView();
+                    } else {
+                        resourceContext = null;
+                    }
+                    
                 }
             }
             return resourceContext;
