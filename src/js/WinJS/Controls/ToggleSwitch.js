@@ -93,27 +93,27 @@ define([
                     // Set up DOM elements
                     this._domElement.innerHTML = [
                         '<div class="' + classHeader + '"></div>',
+                        '<div class="' + classValue + '"></div>',
+                        '<div class="' + classValue + '"></div>',
                         '<div class="' + classClick + '">',
                         '   <div class="' + classTrack + '">',
                         '       <div class="' + classFill + ' ' + classFillLower + '"></div>',
                         '       <div class="' + classThumb + '"></div>',
                         '       <div class="' + classFill + ' ' + classFillUpper + '"></div>',
                         '   </div>',
-                        '   <div class="' + classValue + '"></div>',
-                        '   <div class="' + classValue + '"></div>',
                         '</div>',
                         '<div class="' + classDescription + '"></div>'
                     ].join('\n');
 
                     // Get references to elements
                     this._headerElement = this._domElement.firstElementChild;
-                    this._clickElement = this._headerElement.nextElementSibling;
+                    this._labelOnElement = this._headerElement.nextElementSibling;
+                    this._labelOffElement = this._labelOnElement.nextElementSibling;
+                    this._clickElement = this._labelOffElement.nextElementSibling;
                     this._trackElement = this._clickElement.firstElementChild;
                     this._fillLowerElement = this._trackElement.firstElementChild;
                     this._thumbElement = this._fillLowerElement.nextElementSibling;
                     this._fillUpperElement = this._thumbElement.nextElementSibling;
-                    this._labelOnElement = this._trackElement.nextElementSibling;
-                    this._labelOffElement = this._labelOnElement.nextElementSibling;
                     this._descriptionElement = this._clickElement.nextElementSibling;
 
                     // Some initialization of main element

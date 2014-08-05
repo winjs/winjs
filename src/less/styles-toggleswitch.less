@@ -6,27 +6,34 @@
     @thumbWidth: 12px;
     @fillOnWidth: @trackWidth - @thumbWidth - 3px;
 
-    display: inline-block;
     outline: 0;
 
     .win-toggleswitch-header {
+        max-width: 470px;
         font-size: 12pt;
         width: 22em;
-        margin-bottom: 20px;
+        margin-bottom: 7px;
+        margin-top: 10px;
+        font-weight: @win_font_weight_small;
     }
     .win-toggleswitch-value {
-        margin-left: 13px;
+        min-width: 65px;
+        margin-right: 20px;
         display: inline-block;
         height: @trackHeight;
         line-height: @trackHeight;
         vertical-align: top;
+        font-weight: @win_font_weight_large;
     }
     .win-toggleswitch-description {
         font-size: 12pt;
         width: 22em;
         margin-top: 28px;
+        // Not supported for now
+        display: none;
     }
     .win-toggleswitch-clickregion {
+        display: inline-block;
         touch-action: none;
         -ms-user-select: none;
         -webkit-user-select: none;
