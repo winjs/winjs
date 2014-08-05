@@ -185,7 +185,7 @@ define([
                 property: "opacity",
                 delay: 0,
                 duration: 350,
-                timing: fadeIn ? "cubic-bezier(0,2,0,2)" : "cubic-bezier(1,-0.42,0.995,-0.425)",
+                timing: fadeIn ? "steps(1, start)" : "steps(1, end)",
                 from: fadeIn ? 0 : 1,
                 to: fadeIn ? 1 : 0
             }]);
