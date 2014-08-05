@@ -121,10 +121,8 @@ define([
                     this._domElement.addEventListener('keydown', this._keyDownHandler.bind(this));
                     this._clickElement.addEventListener('mousedown', this._pointerDownHandler.bind(this));
                     this._clickElement.addEventListener('touchstart', this._pointerDownHandler.bind(this));
-                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'mousemove', this._pointerMoveHandler.bind(this));
-                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'touchmove', this._pointerMoveHandler.bind(this));
-                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'mouseup', this._pointerUpHandler.bind(this));
-                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'touchend', this._pointerUpHandler.bind(this));
+                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'pointermove', this._pointerMoveHandler.bind(this));
+                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'pointerup', this._pointerUpHandler.bind(this));
 
                     // Current x coord while being dragged
                     this._dragX = 0;
@@ -335,8 +333,7 @@ define([
                         }
 
                         // Get pointer x coord relative to control
-                        var pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
-                        var localMouseX = pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
+                        var localMouseX = e.pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
 
                         // Calculate a new width for the fill elements and position for
                         // the thumb
