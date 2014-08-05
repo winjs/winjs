@@ -143,7 +143,7 @@ WinJSTests.ItemContainerTests = function () {
         LiveUnit.Assert.isTrue(utilities.hasClass(element, WinJS.UI.ItemContainer._ClassName.vertical));
         LiveUnit.Assert.isFalse(utilities.hasClass(element, WinJS.UI.ItemContainer._ClassName.horizontal));
 
-        if (getComputedStyle(itemBox).touchAction) {
+        if (WinJS.Utilities._supportsTouchActionCrossSlide) {
             var crossSlideYIndex = getComputedStyle(itemBox).touchAction.toLowerCase().indexOf("cross-slide-y");
             var crossSlideXIndex = getComputedStyle(itemBox).touchAction.toLowerCase().indexOf("cross-slide-x");
             LiveUnit.Assert.isTrue(utilities.isPhone ? crossSlideYIndex === -1 : crossSlideYIndex > 0);
