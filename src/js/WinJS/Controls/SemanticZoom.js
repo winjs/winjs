@@ -808,7 +808,6 @@ define([
 
 
                     ev.stopImmediatePropagation();
-                    ev.cancelBubble = true;
                     ev.preventDefault();
                 },
 
@@ -1276,7 +1275,6 @@ define([
 
                         if (stopPropagation && this._pinchedDirection !== PinchDirection.none) {
                             ev.stopImmediatePropagation();
-                            ev.cancelBubble = true;
                         }
 
                         if (this._pointerCount === 0) {

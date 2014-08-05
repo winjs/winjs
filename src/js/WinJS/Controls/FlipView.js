@@ -793,7 +793,9 @@ define([
 
                             if (handled) {
                                 event.preventDefault();
-                                event.cancelBubble = cancelBubbleIfHandled;
+                                if (cancelBubbleIfHandled) {
+                                    event.stopPropagation();
+                                }
                                 return true;
                             }
                         }
