@@ -23,6 +23,17 @@
             {
                 "cmd": ["grunt.cmd", "--no-color"]
             }
+        },
+        {
+            "name": "Grunt Lint",
+            "cmd": ["grunt", "jscs", "--no-color"],
+            "file_regex": "(.*?): line ([0-9]+), col ([0-9]+), (.*)",
+            "working_dir": "$project_path/../../",
+            "selector": "source.js, source.less, source.json, source.html, source.htm",
+            "windows":
+            {
+                "cmd": ["grunt.cmd", "jscs", "--no-color"]
+            }
         }
     ]
 }

@@ -21,7 +21,7 @@
         "catch",
         "function",
         "typeof"
-    ]
+    ],
     // Below options from the "Crockford" preset.
     // Let's think about which make sense.
     // "requireSpaceBeforeBlockStatements": true,
@@ -55,7 +55,7 @@
     // "validateLineBreaks": "LF",
     // "validateQuoteMarks": "'",
     // "validateIndentation": 4,
-    // "disallowMixedSpacesAndTabs": true,
+    "disallowMixedSpacesAndTabs": true
     // "disallowTrailingWhitespace": true,
     // "disallowTrailingComma": true,
     // "disallowKeywordsOnNewLine": [ "else" ],

@@ -6,7 +6,8 @@
 
     module.exports = {
         options: {
-            config: ".jscsrc"
+            config: ".jscsrc",
+            reporter: "tasks/utilities/jscsreporter.js"
         },
         buildFiles: {
             src: config.lint.buildFiles,
