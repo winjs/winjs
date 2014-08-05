@@ -645,6 +645,10 @@ define([
                 },
 
                 _displayButton: function () {
+                    if (!_Hoverable.isHoverable) {
+                        return;
+                    }
+
                     _Global.clearTimeout(this._dismissButtonTimer);
                     this._showSemanticZoomButton();
 

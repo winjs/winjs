@@ -11,6 +11,7 @@ define([
     }
 
     _Global.document.documentElement.classList.add("win-hoverable");
+    exports.isHoverable = true;
 
     if (!_Global.MSPointerEvent) {
         var touchStartHandler = function() {
@@ -18,8 +19,9 @@ define([
             // Remove win-hoverable CSS class fromstartt . <html> to avoid :hover styles in webkit when there is
             // touch support.
             _Global.document.documentElement.classList.remove("win-hoverable");
+            exports.isHoverable = false;
         };
-        
+
         _Global.document.addEventListener("touchstart", touchStartHandler);
-    }    
+    }
 });
