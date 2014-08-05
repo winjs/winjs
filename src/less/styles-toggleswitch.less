@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-.win-toggleswitch-new {
+.win-toggleswitch {
     @trackWidth: 50px;
     @trackHeight: 19px;
     @thumbWidth: 12px;
@@ -9,31 +9,31 @@
     display: inline-block;
     outline: 0;
 
-    .win-toggleswitch-header-new {
+    .win-toggleswitch-header {
         font-size: 12pt;
         width: 22em;
         margin-bottom: 20px;
     }
-    .win-toggleswitch-value-new {
+    .win-toggleswitch-value {
         margin-left: 13px;
         display: inline-block;
         height: @trackHeight;
         line-height: @trackHeight;
         vertical-align: top;
     }
-    .win-toggleswitch-description-new {
+    .win-toggleswitch-description {
         font-size: 12pt;
         width: 22em;
         margin-top: 28px;
     }
-    .win-toggleswitch-clickregion-new {
+    .win-toggleswitch-clickregion {
         touch-action: none;
         -ms-user-select: none;
         -webkit-user-select: none;
         -moz-user-select: none;
         user-select: none;
     }
-    .win-toggleswitch-track-new {
+    .win-toggleswitch-track {
         position: relative;
         display: inline-block;
         width: @trackWidth;
@@ -42,7 +42,7 @@
         border-width: 2px;
         box-sizing: border-box;
     }
-    .win-toggleswitch-fill-new {
+    .win-toggleswitch-fill {
         position: absolute;
         top: 1px;
         display: inline-block;
@@ -52,13 +52,13 @@
         -webkit-transition: width 0.1s;
         transition: width 0.1s;
     }
-    .win-toggleswitch-fill-lower-new {
+    .win-toggleswitch-fill-lower {
         left: 1px;
     }
-    .win-toggleswitch-fill-upper-new {
+    .win-toggleswitch-fill-upper {
         right: 1px;
     }
-    .win-toggleswitch-thumb-new {
+    .win-toggleswitch-thumb {
         position: absolute;
         top: 0;
         margin-top: -2px;
@@ -70,31 +70,31 @@
         transition: left 0.1s;
     }
     &:focus {
-        .win-toggleswitch-track-new {
+        .win-toggleswitch-track {
             outline-width: 1px;
             outline-style: dotted;
         }
     }
-    &.win-toggleswitch-dragging-new {
-        .win-toggleswitch-fill-new, 
-        .win-toggleswitch-thumb-new {
+    &.win-toggleswitch-dragging {
+        .win-toggleswitch-fill, 
+        .win-toggleswitch-thumb {
             -webkit-transition: none;
             transition: none;
         }
     }
-    &.win-toggleswitch-on-new {
-        .win-toggleswitch-fill-lower-new {
+    &.win-toggleswitch-on {
+        .win-toggleswitch-fill-lower {
             width: @fillOnWidth;
         }
-        .win-toggleswitch-thumb-new {
+        .win-toggleswitch-thumb {
             left: @trackWidth - @thumbWidth;
         }
     }
-    &.win-toggleswitch-off-new {
-        .win-toggleswitch-fill-upper-new {
+    &.win-toggleswitch-off {
+        .win-toggleswitch-fill-upper {
             width: @fillOnWidth;
         }
-        .win-toggleswitch-thumb-new {
+        .win-toggleswitch-thumb {
             left: 0;
         }
     }

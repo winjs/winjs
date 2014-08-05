@@ -28,7 +28,6 @@ define([
     'WinJS/Controls/BackButton',
     'WinJS/Controls/Rating',
     'WinJS/Controls/ToggleSwitch',
-    'WinJS/Controls/ToggleSwitchNew',
     'WinJS/Controls/SemanticZoom',
     'WinJS/Controls/Pivot',
     'WinJS/Controls/Hub',

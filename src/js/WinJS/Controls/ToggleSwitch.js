@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     '../Core/_Global',
     '../Core/_Base',
@@ -7,449 +7,356 @@ define([
     '../Core/_Resources',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
-    '../Utilities/_Hoverable',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Hoverable) {
-    "use strict";
+    ], 
+    function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities) {
+        "use strict";
 
-    _Base.Namespace.define("WinJS.UI", {
-        /// <field>
-        /// <summary locid="WinJS.UI.ToggleSwitch">
-        /// A control that lets the user switch an option on or off.
-        /// </summary>
-        /// </field>
-        /// <icon src="ui_winjs.ui.toggleswitch.12x12.png" width="12" height="12" />
-        /// <icon src="ui_winjs.ui.toggleswitch.16x16.png" width="16" height="16" />
-        /// <htmlSnippet><![CDATA[<div data-win-control="WinJS.UI.ToggleSwitch"></div>]]></htmlSnippet>
-        /// <event name="change" bubbles="true" locid="WinJS.UI.ToggleSwitch_e:change">Raised when the switch is flipped to on (checked is set to true) or off (checked is set to false). </event>
-        /// <part name="toggle" class="win-toggleSwitch" locid="WinJS.UI.ToggleSwitch_part:toggle">The entire ToggleSwitch control.</part>
-        /// <part name="switch" class="win-switch" locid="WinJS.UI.ToggleSwitch_part:switch">The slider that enables the user to switch the state of the ToggleSwitch.</part>
-        /// <part name="title" class="win-title" locid="WinJS.UI.ToggleSwitch_part:title">The main text for the ToggleSwitch control.</part>
-        /// <part name="label-on" class="win-on" locid="WinJS.UI.ToggleSwitch_part:label-on">The text for when the switch is on.</part>
-        /// <part name="label-off" class="win-off" locid="WinJS.UI.ToggleSwitch_part:label-off:">The text for when the switch is off.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
-        /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        ToggleSwitch: _Base.Namespace._lazy(function () {
-            // Constants
-            var MOUSE_LBUTTON = 0;
+        _Base.Namespace.define("WinJS.UI", {
+            /// <field>
+            /// <summary locid="WinJS.UI.ToggleSwitch">
+            /// A control that lets the user switch an option on or off.
+            /// </summary>
+            /// </field>
+            /// <icon src="ui_winjs.ui.toggleswitch.12x12.png" width="12" height="12" />
+            /// <icon src="ui_winjs.ui.toggleswitch.16x16.png" width="16" height="16" />
+            /// <htmlSnippet><![CDATA[<div data-win-control="WinJS.UI.ToggleSwitch"></div>]]></htmlSnippet>
+            /// <event name="change" bubbles="true" locid="WinJS.UI.ToggleSwitch_e:change">Raised when the switch is flipped to on (checked is set to true) or off (checked is set to false). </event>
+            /// <part name="toggle" class="win-toggleswitch" locid="WinJS.UI.ToggleSwitch_part:toggle">The entire ToggleSwitch control.</part>
+            /// <part name="track" class="win-toggleswitch-track" locid="WinJS.UI.ToggleSwitch_part:track">The slider portion of the toggle.</part>
+            /// <part name="lower-fill" class="win-toggleswitch-fill-lower" locid="WinJS.UI.ToggleSwitch_part:fill-lower">The lower fill of the slider.</part>
+            /// <part name="upper-fill" class="win-toggleswitch-fill-upper" locid="WinJS.UI.ToggleSwitch_part:fill-upper">The upper fill of the slider.</part>
+            /// <part name="thumb" class="win-toggleswitch-thumb" locid="WinJS.UI.ToggleSwitch_part:thumb">The thumb of the slider.</part>
+            /// <part name="title" class="win-toggleswitch-header" locid="WinJS.UI.ToggleSwitch_part:title">The main text for the ToggleSwitch control.</part>
+            /// <part name="label-on" class="win-toggleswitch-value" locid="WinJS.UI.ToggleSwitch_part:label-on">The text for when the switch is on.</part>
+            /// <part name="label-off" class="win-toggleswitch-value" locid="WinJS.UI.ToggleSwitch_part:label-off:">The text for when the switch is off.</part>
+            /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
+            /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+            /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
+            ToggleSwitch: _Base.Namespace._lazy(function() {
 
-            var strings = {
-                get on() { return _Resources._getWinJSString("ui/on").value; },
-                get off() { return _Resources._getWinJSString("ui/off").value; },
-            };
+                // Store some class names
+                var classContainer = 'win-toggleswitch';
+                var classHeader = 'win-toggleswitch-header';
+                var classClick = 'win-toggleswitch-clickregion';
+                var classTrack = 'win-toggleswitch-track';
+                var classFill = 'win-toggleswitch-fill';
+                var classFillLower = 'win-toggleswitch-fill-lower';
+                var classFillUpper = 'win-toggleswitch-fill-upper';
+                var classThumb = 'win-toggleswitch-thumb';
+                var classValue = 'win-toggleswitch-value';
+                var classDescription = 'win-toggleswitch-description';
+                var classOn = 'win-toggleswitch-on';
+                var classOff = 'win-toggleswitch-off';
+                var classDisabled = 'win-toggleswitch-disabled';
+                var classDragging = 'win-toggleswitch-dragging';
+                var classPressed = 'win-toggleswitch-pressed';
 
-            // CSS class names
-            var msToggle = "win-toggleswitch";
-            var msToggleSwitch = "win-switch";
-            var msToggleTitle = "win-title";
-            var msToggleLabel = "win-label";
-            var msToggleOn = "win-on";
-            var msToggleOff = "win-off";
-            var msToggleDisabled = "win-disabled";
-            var msToggleHidden = "win-hidden";
-            var msFocusHide = "win-focus-hide";
-
-            var Control = _Base.Class.define(null, {
-                raiseEvent: function (type, eventProperties) {
-                    this.dispatchEvent(type, eventProperties);
-                }
-            });
-
-            function reloadChangeHandler(list) {
-                var that = list[0].target.winControl;
-                that.checked = that._switchElement.valueAsNumber;
-            }
-
-            _Base.Class.mix(Control, _Control.DOMEventMixin);
-
-            return _Base.Class.derive(Control, function (element, options) {
-                /// <signature helpKeyword="WinJS.UI.ToggleSwitch.ToggleSwitch">
-                /// <summary locid="WinJS.UI.ToggleSwitch.constructor">
-                /// Creates a new ToggleSwitch.
-                /// </summary>
-                /// <param name="element" domElement="true" locid="WinJS.UI.ToggleSwitch.constructor_p:element">
-                /// The DOM element that hosts the ToggleSwitch.
-                /// </param>
-                /// <param name="options" type="Object" locid="WinJS.UI.ToggleSwitch.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control.
-                /// Each property of the options object corresponds to one of the control's properties or events.
-                /// Event names must begin with "on". For example, to provide a handler for the change event,
-                /// add a property named "onchange" to the options object and set its value to the event handler.
-                /// This parameter is optional.
-                /// </param>
-                /// <returns type="WinJS.UI.ToggleSwitch" locid="WinJS.UI.ToggleSwitch.constructor_returnValue">
-                /// The new ToggleSwitch.
-                /// </returns>
-                /// </signature>
-
-                element = element || _Global.document.createElement("div");
-
-                var toggle = _ElementUtilities.data(element).toggle;
-                if (toggle) {
-                    return toggle;
-                }
-
-                // Elements
-                this._domElement = null;
-                this._switchElement = null;
-                this._titleElement = null;
-                this._labelGridElement = null;
-                this._labelOnElement = null;
-                this._labelOffElement = null;
-
-
-                // Strings
-                this._labelOn = strings.on;
-                this._labelOff = strings.off;
-
-                // Variable
-                this._disposed = false;
-                this._spaceKeyDown = false;
-
-                this._shouldHideFocus = false; // This variable is needed to prevent focus rect from showing between the time during pointer down and focus happens.
-                this._pointerId = 0;
-                this._hasCapture = false;
-
-                this._setElement(element);
-                this._setDefaultOptions();
-                _Control.setOptions(this, options);
-                element.winControl = this;
-                _ElementUtilities.addClass(element, "win-disposable");
-                _ElementUtilities.data(element).toggle = this;
-            }, {
-                // Properties
-
-                /// <field type="Boolean" locid="WinJS.UI.ToggleSwitch.checked" helpKeyword="WinJS.UI.ToggleSwitch.checked">
-                /// Gets or sets whether the control is on (checked is set to true) or off (checked is set to false).
-                /// </field>
-                checked: {
-                    get: function () {
-                        return this._checked;
+                // Localized strings
+                var strings = {
+                    get on() { 
+                        return _Resources._getWinJSString("ui/on").value; 
                     },
-                    set: function (value) {
-                        this._setChecked(value);
-                    }
-                },
-                /// <field type="Boolean" locid="WinJS.UI.ToggleSwitch.disabled" helpKeyword="WinJS.UI.ToggleSwitch.disabled">
-                /// Gets or sets a value that specifies whether the control is disabled.
-                /// </field>
-                disabled: {
-                    get: function () {
-                        return this._switchElement.disabled;
+                    get off() { 
+                        return _Resources._getWinJSString("ui/off").value; 
                     },
-                    set: function (value) {
-                        var disabled = !!value; // Sanitize for a bool
-                        this._switchElement.disabled = disabled; // This is necessary to apply the css to the toggle 'switch'
-                        if (disabled) { // This is necessary to apply the css to the toggle 'label' and 'title'
-                            _ElementUtilities.addClass(this._labelOnElement, msToggleDisabled);
-                            _ElementUtilities.addClass(this._labelOffElement, msToggleDisabled);
-                            _ElementUtilities.addClass(this._titleElement, msToggleDisabled);
-                        } else {
-                            _ElementUtilities.removeClass(this._labelOnElement, msToggleDisabled);
-                            _ElementUtilities.removeClass(this._labelOffElement, msToggleDisabled);
-                            _ElementUtilities.removeClass(this._titleElement, msToggleDisabled);
-                        }
-                        this._switchElement.setAttribute("aria-disabled", disabled);
-                    }
-                },
-                /// <field type='HTMLElement' domElement='true' hidden='true' locid="WinJS.UI.ToggleSwitch.element" helpKeyword="WinJS.UI.ToggleSwitch.element">
-                /// The DOM element that hosts the ToggleSwitch control.
-                /// </field>
-                element: {
-                    get: function () { return this._domElement; }
-                },
-                /// <field type="String" locid="WinJS.UI.ToggleSwitch.labelOn" helpKeyword="WinJS.UI.ToggleSwitch.labelOn">
-                /// Gets or sets the text that displays when the control is on (checked is set to true). The default value is "On".
-                /// </field>
-                labelOn: {
-                    get: function () {
-                        return this._labelOn;
-                    },
-                    set: function (value) {
-                        this._labelOn = value;
-                        this._labelOnElement.innerHTML = this._labelOn;
-                    }
-                },
-                /// <field type="String" locid="WinJS.UI.ToggleSwitch.labelOff" helpKeyword="WinJS.UI.ToggleSwitch.labelOff">
-                /// Gets or sets the text that displays when the control is off (checked is set to false). The default value is "Off".
-                /// </field>
-                labelOff: {
-                    get: function () {
-                        return this._labelOff;
-                    },
-                    set: function (value) {
-                        this._labelOff = value;
-                        this._labelOffElement.innerHTML = this._labelOff;
-                    }
-                },
+                };
 
-                /// <field type='String' locid="WinJS.UI.ToggleSwitch.title" helpKeyword="WinJS.UI.ToggleSwitch.title">
-                /// Gets or sets the main text for the ToggleSwitch control. This text is always displayed, regardless of whether
-                /// the control is switched on or off.
-                /// </field>
-                title: {
-                    get: function () {
-                        return this._titleElement.innerHTML;
-                    },
-                    set: function (value) {
-                        this._titleElement.innerHTML = value;
-                    }
-                },
+                // Define the ToggleSwitch class
+                var Toggle = _Base.Class.define(function ToggleSwitch_ctor(element, options) {
+                    /// <signature helpKeyword="WinJS.UI.ToggleSwitch.ToggleSwitch">
+                    /// <summary locid="WinJS.UI.ToggleSwitch.constructor">
+                    /// Creates a new ToggleSwitch.
+                    /// </summary>
+                    /// <param name="element" domElement="true" locid="WinJS.UI.ToggleSwitch.constructor_p:element">
+                    /// The DOM element that hosts the ToggleSwitch.
+                    /// </param>
+                    /// <param name="options" type="Object" locid="WinJS.UI.ToggleSwitch.constructor_p:options">
+                    /// An object that contains one or more property/value pairs to apply to the new control.
+                    /// Each property of the options object corresponds to one of the control's properties or events.
+                    /// Event names must begin with "on". For example, to provide a handler for the change event,
+                    /// add a property named "onchange" to the options object and set its value to the event handler.
+                    /// This parameter is optional.
+                    /// </param>
+                    /// <returns type="WinJS.UI.ToggleSwitch" locid="WinJS.UI.ToggleSwitch.constructor_returnValue">
+                    /// The new ToggleSwitch.
+                    /// </returns>
+                    /// </signature>
 
-                /// <field type="Function" locid="WinJS.UI.ToggleSwitch.onchange" helpKeyword="WinJS.UI.ToggleSwitch.onchange">
-                /// Occurs when the ToggleSwitch control is flipped to on (checked == true) or off (checked == false).
-                /// </field>
-                onchange: _Events._createEventProperty("change"),
+                    // Main container
+                    element = element || _Global.document.createElement('div');
+                    this._domElement = element;
+                    _ElementUtilities.addClass(this._domElement, classContainer);
+                    this._domElement.setAttribute('tabindex', 0);
 
-                _addControlsInOrder: function () {
-                    this._domElement.appendChild(this._titleElement);
-                    this._labelGridElement.appendChild(this._labelOnElement);
-                    this._labelGridElement.appendChild(this._labelOffElement);
-                    this._labelGridElement.appendChild(this._switchElement);
-                    this._domElement.appendChild(this._labelGridElement);
-                },
+                    // Set up DOM elements
+                    this._domElement.innerHTML = [
+                        '<div class="' + classHeader + '"></div>',
+                        '<div class="' + classClick + '">',
+                        '   <div class="' + classTrack + '">',
+                        '       <div class="' + classFill + ' ' + classFillLower + '"></div>',
+                        '       <div class="' + classThumb + '"></div>',
+                        '       <div class="' + classFill + ' ' + classFillUpper + '"></div>',
+                        '   </div>',
+                        '   <div class="' + classValue + '"></div>',
+                        '   <div class="' + classValue + '"></div>',
+                        '</div>',
+                        '<div class="' + classDescription + '"></div>'
+                    ].join('\n');
 
-                _setChecked: function (value) {
-                    value = !!value; // Sanitize the value
-                    if (value !== this._checked) {
-                        this._checked = value;
-                        if (this._checked) { // On state
-                            _ElementUtilities.removeClass(this._domElement, msToggleOff);
-                            _ElementUtilities.addClass(this._domElement, msToggleOn);
-                            _ElementUtilities.addClass(this._labelOffElement, msToggleHidden);
-                            _ElementUtilities.removeClass(this._labelOnElement, msToggleHidden);
-                            this._switchElement.valueAsNumber = 1; // Update the slider visual
-                        } else { // Off state
-                            _ElementUtilities.removeClass(this._domElement, msToggleOn);
-                            _ElementUtilities.addClass(this._domElement, msToggleOff);
-                            _ElementUtilities.addClass(this._labelOnElement, msToggleHidden);
-                            _ElementUtilities.removeClass(this._labelOffElement, msToggleHidden);
-                            this._switchElement.valueAsNumber = 0; // Update the slider visual
-                        }
-                        this._switchElement.setAttribute("aria-checked", this._checked); // Update accessibility information
-                    }
-                },
+                    // Get references to elements
+                    this._headerElement = this._domElement.firstElementChild;
+                    this._clickElement = this._headerElement.nextElementSibling;
+                    this._trackElement = this._clickElement.firstElementChild;
+                    this._fillLowerElement = this._trackElement.firstElementChild;
+                    this._thumbElement = this._fillLowerElement.nextElementSibling;
+                    this._fillUpperElement = this._thumbElement.nextElementSibling;
+                    this._labelOnElement = this._trackElement.nextElementSibling;
+                    this._labelOffElement = this._labelOnElement.nextElementSibling;
+                    this._descriptionElement = this._clickElement.nextElementSibling;
 
-                _setDefaultOptions: function () {
-                    this.labelOn = strings.on;
-                    this.labelOff = strings.off;
-                    this.title = "";
+                    // Some initialization of main element
+                    element.winControl = this;
+                    _ElementUtilities.addClass(element, 'win-disposable');
+
+                    // Add listeners
+                    this._domElement.addEventListener('keydown', this._keyDownHandler.bind(this));
+                    this._clickElement.addEventListener('mousedown', this._pointerDownHandler.bind(this));
+                    this._clickElement.addEventListener('touchstart', this._pointerDownHandler.bind(this));
+                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'pointermove', this._pointerMoveHandler.bind(this));
+                    _ElementUtilities._globalListener.addEventListener(this._domElement, 'pointerup', this._pointerUpHandler.bind(this));
+
+                    // Current x coord while being dragged
+                    this._dragX = 0;
+
+                    // Default state
                     this.checked = false;
                     this.disabled = false;
-                },
+                    this.labelOn = strings.on;
+                    this.labelOff = strings.off;
 
-                _setElement: function (element) {
-                    this._domElement = element;
-                    _ElementUtilities.addClass(this._domElement, msToggle);
-                    _ElementUtilities.addClass(this._domElement, msToggleOff);
+                    // Apply options
+                    _Control.setOptions(this, options);
+                }, {
+                    // Properties
 
-                    this._titleElement = _Global.document.createElement("div");
-                    this._titleElement.setAttribute("id", _ElementUtilities._uniqueID(this._titleElement));
-                    this._titleElement.setAttribute("role", "note");
-                    _ElementUtilities.addClass(this._titleElement, msToggleTitle);
-
-                    this._switchElement = _Global.document.createElement("input");
-                    this._switchElement.type = "range";
-                    this._switchElement.max = 1;
-                    this._switchElement.step = 1;
-                    this._switchElement.setAttribute("role", "checkbox");
-                    this._switchElement.setAttribute("aria-labelledby", this._titleElement.id);
-                    _ElementUtilities.addClass(this._switchElement, msToggleSwitch);
-
-                    this._labelGridElement = _Global.document.createElement("div");
-                    this._labelGridElement.style.display = "-ms-grid";
-
-                    if (_BaseUtils.isPhone) {
-                        this._labelGridElement.style.msGridColumns = "1fr auto";
-                    }
-
-                    this._labelOnElement = _Global.document.createElement("div");
-                    _ElementUtilities.addClass(this._labelOnElement, msToggleLabel);
-
-                    this._labelOffElement = _Global.document.createElement("div");
-                    _ElementUtilities.addClass(this._labelOffElement, msToggleLabel);
-
-                    this._addControlsInOrder();
-
-                    this._wireupEvents();
-                },
-
-
-                _valueHandler: function (fTapped) {
-                    var oldValue = this._checked;
-                    if (fTapped) {
-                        this.checked = !this.checked;
-                    } else {
-                        this.checked = this._switchElement.valueAsNumber;
-                    }
-
-                    if (oldValue !== this._checked) {
-                        this.raiseEvent("change");
-                    }
-                },
-
-                _wireupEvents: function () {
-                    var that = this;
-
-                    var keyDownHandler = function (event) {
-                        if (event.keyCode === _ElementUtilities.Key.space) { // Spacebar
-                            if (!that._spaceKeyDown) {
-                                that._switchElement.valueAsNumber = (that._switchElement.valueAsNumber + 1) % 2;
-                                that._spaceKeyDown = true;
+                    /// <field type='HTMLElement' domElement='true' hidden='true' locid="WinJS.UI.ToggleSwitch.element" helpKeyword="WinJS.UI.ToggleSwitch.element">
+                    /// The DOM element that hosts the ToggleSwitch control.
+                    /// </field>
+                    element: {
+                        get: function() {
+                            return this._domElement;
+                        }
+                    },
+                    /// <field type="Boolean" locid="WinJS.UI.ToggleSwitch.checked" helpKeyword="WinJS.UI.ToggleSwitch.checked">
+                    /// Gets or sets whether the control is on (checked is set to true) or off (checked is set to false).
+                    /// </field>
+                    checked: {
+                        get: function() {
+                            return this._checked;
+                        },
+                        set: function(value) {
+                            if (this.disabled) {
+                                return;
                             }
-                            event.preventDefault();
-                        }
-                    };
-                    var keyUpHandler = function (event) {
-                        if (event.keyCode === _ElementUtilities.Key.space || (event.keyCode >= _ElementUtilities.Key.end && event.keyCode <= _ElementUtilities.Key.downArrow)) { // Spacebar and arrow, home/end key
-                            that._valueHandler(false);
-                            if (event.keyCode === _ElementUtilities.Key.space) { //  Additional step for spacebar
-                                that._spaceKeyDown = false;
+
+                            value = !!value;
+                            if (value === this.checked) {
+                                return;
                             }
-                        }
-                    };
-                    var cancelHandler = function () {
-                        that._switchElement.valueAsNumber = that.checked;
-                        that._spaceKeyDown = false; // Reset flag on spaceKey
-                    };
-                    var onDOMAttrModified = function (event) {
-                        if (event.attrName === "aria-checked") {
-                            var attrNode = that._switchElement.getAttributeNode("aria-checked");
-                            if (attrNode !== null) {
-                                var oldValue = that._checked;
 
-                                if (attrNode.nodeValue === "true") { // "nodeValue" is a string
-                                    that._setChecked(true);
-                                }
-                                else {
-                                    that._setChecked(false);
-                                }
-
-                                if (oldValue !== that._checked) {
-                                    that.raiseEvent("change");
-                                }
+                            this._checked = value;
+                            if (value) {
+                                this._labelOnElement.style.display = '';
+                                this._labelOffElement.style.display = 'none';
+                                _ElementUtilities.addClass(this._domElement, classOn);
+                                _ElementUtilities.removeClass(this._domElement, classOff);
+                            } else {
+                                this._labelOnElement.style.display = 'none';
+                                this._labelOffElement.style.display = '';
+                                _ElementUtilities.addClass(this._domElement, classOff);
+                                _ElementUtilities.removeClass(this._domElement, classOn);
                             }
+                            this.dispatchEvent("change");
                         }
-                    };
-                    var switchFocus = function () {
-                        that._switchElement.focus();
-                        that._shouldHideFocus = false;
-                    };
-                    var dismissFocusRect = function () {
-                        _ElementUtilities.addClass(that._switchElement, msFocusHide);
-                        that._shouldHideFocus = true;
-                    };
-                    var enableFocusRect = function () {
-                        if (!that._shouldHideFocus) {
-                            _ElementUtilities.removeClass(that._switchElement, msFocusHide);
-                        }
-                    };
+                    },
+                    /// <field type="Boolean" locid="WinJS.UI.ToggleSwitch.disabled" helpKeyword="WinJS.UI.ToggleSwitch.disabled">
+                    /// Gets or sets a value that specifies whether the control is disabled.
+                    /// </field>
+                    disabled: {
+                        get: function() {
+                            return this._disabled;
+                        },
+                        set: function(value) {
+                            value = !!value;
+                            if (value === this._disabled) {
+                                return;
+                            }
 
-                    var pointerDownHandler = function(e) {
-                        if (that._switchElement.disabled || ("button" in e && e.button !== MOUSE_LBUTTON)) {
+                            if (value) {
+                                _ElementUtilities.addClass(this._domElement, classDisabled);
+                            } else {
+                                _ElementUtilities.removeClass(this._domElement, classDisabled);
+                            }
+
+                            this._disabled = value;
+                        }
+                    },
+                    /// <field type="String" locid="WinJS.UI.ToggleSwitch.labelOn" helpKeyword="WinJS.UI.ToggleSwitch.labelOn">
+                    /// Gets or sets the text that displays when the control is on (checked is set to true). The default value is "On".
+                    /// </field>
+                    labelOn: {
+                        get: function() {
+                            return this._labelOnElement.innerHTML;
+                        },
+                        set: function(value) {
+                            this._labelOnElement.innerHTML = value;
+                        }
+                    },
+                    /// <field type="String" locid="WinJS.UI.ToggleSwitch.labelOff" helpKeyword="WinJS.UI.ToggleSwitch.labelOff">
+                    /// Gets or sets the text that displays when the control is off (checked is set to false). The default value is "Off".
+                    /// </field>
+                    labelOff: {
+                        get: function() {
+                            return this._labelOffElement.innerHTML;
+                        },
+                        set: function(value) {
+                            this._labelOffElement.innerHTML = value;
+                        }
+                    },
+                    /// <field type='String' locid="WinJS.UI.ToggleSwitch.title" helpKeyword="WinJS.UI.ToggleSwitch.title">
+                    /// Gets or sets the main text for the ToggleSwitch control. This text is always displayed, regardless of whether
+                    /// the control is switched on or off.
+                    /// </field>
+                    title: {
+                        get: function() {
+                            return this._headerElement.innerHTML;
+                        },
+                        set: function(value) {
+                            this._headerElement.innerHTML = value;
+                        }
+                    },
+
+                    // Events
+
+                    /// <field type="Function" locid="WinJS.UI.ToggleSwitch.onchange" helpKeyword="WinJS.UI.ToggleSwitch.onchange">
+                    /// Occurs when the ToggleSwitch control is flipped to on (checked == true) or off (checked == false).
+                    /// </field>
+                    onchange: _Events._createEventProperty('change'),
+
+                    // Public methods
+                    dispose: function ToggleSwitch_dispose() {
+                        if (this._disposed) {
                             return;
                         }
 
-                        that._tapping = true;
-                        that._pointerDown = true;
-                        _Global.setTimeout(function() {
-                            that._tapping = false;
-                        }, 200);
-                        if (that._switchElement.setPointerCapture) {
-                            e.preventDefault();
-                        }
-                        switchFocus();
-                    };
+                        this._disposed = true;
+                    },
 
-                    var pointerUpHandler = function() {
-                        if (that._switchElement.disabled) {
+                    // Private event handlers
+                    _keyDownHandler: function ToggleSwitch_keyDown(e) {
+                        e.preventDefault();
+                        
+                        // Toggle checked on spacebar
+                        if (e.keyCode === _ElementUtilities.Key.space) {
+                            this.checked = !this.checked;
+                        }
+
+                        // Arrow keys set value
+                        if (e.keyCode === _ElementUtilities.Key.rightArrow || 
+                            e.keyCode === _ElementUtilities.Key.upArrow) {
+                            this.checked = true;
+                        }
+                        if (e.keyCode === _ElementUtilities.Key.leftArrow || 
+                            e.keyCode === _ElementUtilities.Key.downArrow) {
+                            this.checked = false;
+                        }
+
+                    },
+                    _pointerDownHandler: function ToggleSwitch_pointerDown(e) {                        
+                        e.preventDefault();
+
+                        if (this.disabled) {
                             return;
                         }
 
-                        that._pointerDown = false;
-                        that._valueHandler(that._tapping);
-                        that._hasCapture = false;
-                    };
-
-                    var pointerMoveHandler = function(e) {
-                        if (that._switchElement.disabled) {
+                        this._mousedown = true;
+                        _ElementUtilities.addClass(this._domElement, classPressed);
+                    },
+                    _pointerUpHandler: function ToggleSwitch_pointerUp(e) {
+                        // Since up is a global event we should only take action
+                        // if a mousedown was registered on us initially
+                        if (!this._mousedown) {
                             return;
                         }
 
-                        if (that._pointerDown && !that._hasCapture) {
-                            _ElementUtilities._setPointerCapture(that._switchElement, e.pointerId);
-                            that._hasCapture = true;
+                        e = e.detail.originalEvent;
+                        e.preventDefault();
+
+                        // If the thumb is being dragged, pick a new value based on what the thumb
+                        // was closest to
+                        if (this._dragging) {
+                            var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
+                            this.checked = this._dragX >= maxX / 2;
+                            this._dragging = false;
+                            _ElementUtilities.removeClass(this._domElement, classDragging);
+                        } else {
+                            // Otherwise, just toggle the value as the up constitutes a 
+                            // click event
+                            this.checked = !this.checked;
                         }
-                    };
 
-                    _ElementUtilities._addEventListener(this._domElement, "pointerdown", dismissFocusRect, true);
-                    _ElementUtilities._addEventListener(this._domElement, "focusin", switchFocus, false);
+                        // Reset tracking variables and intermediate styles
+                        this._mousedown = false;
+                        this._thumbElement.style.left = '';
+                        this._fillLowerElement.style.width = '';
+                        this._fillUpperElement.style.width = '';
+                        _ElementUtilities.removeClass(this._domElement, classPressed);
+                    },
+                    _pointerMoveHandler: function ToggleSwitch_pointerMove(e) {
+                        // Not dragging if mouse isn't down
+                        if (!this._mousedown) {
+                            return;
+                        }
 
-                    this._switchElement.addEventListener("lostpointercapture", cancelHandler, false);
-                    this._switchElement.addEventListener("DOMAttrModified", onDOMAttrModified, false); // Listen to DOMAttrModified for aria-checked change
-                    this._switchElement.addEventListener("change", function (ev) { ev.stopPropagation(); }, true); // Stop the change event from bubbling up and fire our own change event when the user interaction is done.
-                    this._switchElement.addEventListener("keydown", keyDownHandler, false);
-                    this._switchElement.addEventListener("keyup", keyUpHandler, false);
-                    _ElementUtilities._addEventListener(this._switchElement, "pointercancel", cancelHandler, false);
-                    _ElementUtilities._addEventListener(this._switchElement, "pointerdown", pointerDownHandler, false);
-                    _ElementUtilities._addEventListener(this._switchElement, "pointerup", pointerUpHandler, false);
-                    _ElementUtilities._addEventListener(this._switchElement, "pointermove", pointerMoveHandler, false);
-                    _ElementUtilities._addEventListener(this._switchElement, "focusout", function () { enableFocusRect(); cancelHandler(); }, false);
+                        e = e.detail.originalEvent;
+                        e.preventDefault();
 
-                    new _ElementUtilities._MutationObserver(reloadChangeHandler).observe(this._switchElement, { attributes: true, attributeFilter: ["value"] });
-                },
+                        // Always seem to get one move event even on a simple click
+                        // so we will eat the first move event
+                        if (!this._ateFirstDragEvent) {
+                            this._ateFirstDragEvent = true;
+                            return;
+                        }
 
-                dispose: function () {
-                    /// <signature helpKeyword="WinJS.UI.ToggleSwitch.dispose">
-                    /// <summary locid="WinJS.UI.ToggleSwitch.dispose">
-                    /// Disposes this ToggleSwitch.
-                    /// </summary>
-                    /// </signature>
-                    if (this._disposed) {
-                        return;
+                        // On the first drag event, set dragging state
+                        if (!this._dragging) {
+                            _ElementUtilities.addClass(this._domElement, classDragging);
+                            this._dragging = true;
+                        }
+
+                        // Get pointer x coord relative to control
+                        var localMouseX = e.pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
+
+                        // Calculate a new width for the fill elements and position for
+                        // the thumb
+                        var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
+                        var trackOffset = this._fillLowerElement.offsetLeft + this._trackElement.clientLeft;
+                        this._dragX = Math.min(maxX, localMouseX);
+                        this._dragX = Math.max(0, this._dragX);
+
+                        this._thumbElement.style.left = this._dragX + 'px';
+                        this._fillLowerElement.style.width = (this._dragX - trackOffset) + 'px';
+                        this._fillUpperElement.style.width = (maxX - this._dragX - trackOffset) + 'px';
                     }
+                });
 
-                    this._disposed = true;
-                },
+                // addEventListener, removeEventListener, dispatchEvent
+                _Base.Class.mix(Toggle, _Control.DOMEventMixin);
 
-                addEventListener: function (eventName, eventCallBack, capture) {
-                    /// <signature helpKeyword="WinJS.UI.ToggleSwitch.addEventListener">
-                    /// <summary locid="WinJS.UI.ToggleSwitch.addEventListener">
-                    /// Registers an event handler for the specified event.
-                    /// </summary>
-                    /// <param name="eventName" type="String" locid="WinJS.UI.ToggleSwitch.addEventListener_p:eventName">The name of the event.</param>
-                    /// <param name="eventCallback" type="Function" locid="WinJS.UI.ToggleSwitch.addEventListener_p:eventCallback">The event handler function to associate with this event.</param>
-                    /// <param name="capture" type="Boolean" locid="WinJS.UI.ToggleSwitch.addEventListener_p:capture">Set to true to register the event handler for the capturing phase; set to false to register for the bubbling phase.</param>
-                    /// </signature>
-                    if (eventName === "change") {
-                        // Set the capture to be false explicitly because we want the change events for Toggle to be listened only in bubble up phase
-                        // Therefore, the change events would only happen when users have finished their actions.
-                        capture = false;
-                    }
-                    this._domElement.addEventListener(eventName, eventCallBack, capture);
-
-                },
-
-                removeEventListener: function (eventName, eventCallBack, capture) {
-                    /// <signature helpKeyword="WinJS.UI.ToggleSwitch.removeEventListener">
-                    /// <summary locid="WinJS.UI.ToggleSwitch.removeEventListener">
-                    /// Unregisters an event handler for the specified event.
-                    /// </summary>
-                    /// <param name="eventName" type="String" locid="WinJS.UI.ToggleSwitch.removeEventListener_p:eventName">The name of the event.</param>
-                    /// <param name="eventCallback" type="Function" locid="WinJS.UI.ToggleSwitch.removeEventListener_p:eventCallback">The event handler function to remove.</param>
-                    /// <param name="capture" type="Boolean" locid="WinJS.UI.ToggleSwitch.removeEventListener_p:capture">Set to true to unregister the event handler for the capturing phase; otherwise, set to false to unregister the event handler for the bubbling phase.</param>
-                    /// </signature>
-                    if (eventName === "change") {
-                        // Set the capture to be false explicitly because we only allow the user to add change events that are listened to in bubble up phase.
-                        // Therefore it is not possible to remove a change event that is listened to in the capture phase.
-                        capture = false;
-                    }
-                    return this._domElement.removeEventListener(eventName, eventCallBack, capture);
-                }
-            });
-        })
-    });
-
-});
+                return Toggle;
+            })
+        });
+    }
+);

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 .Colors(@theme) {
-    .win-toggleswitch-new {
+    .win-toggleswitch {
         .variableDefs(light) {
             @mainColor: #000;
             @fillUpperColor: fade(@mainColor, 35%);
@@ -9,7 +9,6 @@
             @fillLowerDisabledColor: fade(@mainColor, 12%);
             @thumbDisabledColor: rgb(146, 146, 146);
             @accentColor: rgb(70, 23, 180);
-            @accentHoverColor: rgb(95, 55, 190);
             @accentPressedColor: rgb(114, 65, 228);
         }
         .variableDefs(dark) {
@@ -19,75 +18,89 @@
             @fillLowerDisabledColor: rgb(126, 126, 126);
             @thumbDisabledColor: rgb(126, 126, 126);
             @accentColor: rgb(87, 41, 193);
-            @accentHoverColor: rgb(110, 70, 202);
             @accentPressedColor: rgb(126, 79, 236);
         }
         .variableDefs(@theme);
         @fillUpperDisabledColor: fade(@mainColor, 12%);
         @borderColor: fade(@mainColor, 35%);
 
-        .win-toggleswitch-header-new {
+        .win-toggleswitch-header {
             color: @mainColor;
         }
-        .win-toggleswitch-value-new {
+        .win-toggleswitch-value {
             color: @mainColor;
         }
-        .win-toggleswitch-description-new {
+        .win-toggleswitch-description {
             color: @mainColor;
         }
-        .win-toggleswitch-track-new {
+        .win-toggleswitch-track {
             border-color: @borderColor;
         }
-        .win-toggleswitch-fill-new {
+        .win-toggleswitch-fill {
         }
-        .win-toggleswitch-fill-lower-new {
+        .win-toggleswitch-fill-lower {
             background-color: @accentColor;
         }
-        .win-toggleswitch-fill-upper-new {
+        .win-toggleswitch-fill-upper {
             background-color: @fillUpperColor;
         }
-        .win-toggleswitch-thumb-new {
+        .win-toggleswitch-thumb {
             background-color: @mainColor;
         }
 
-        &:hover {
-            .win-toggleswitch-fill-lower-new {
-                background-color: @accentHoverColor;
-            }
-            .win-toggleswitch-fill-upper-new {
-                background-color: fade(@mainColor, 29%);
-            }
-        }
         &:focus {
-            .win-toggleswitch-track-new {
+            .win-toggleswitch-track {
                 outline-color: @mainColor;
             }
         }
-        &.win-toggleswitch-pressed-new {
-            .win-toggleswitch-fill-lower-new {
+        &.win-toggleswitch-pressed {
+            .win-toggleswitch-fill-lower {
                 background-color: @accentPressedColor;
             }
-            .win-toggleswitch-fill-upper-new {
+            .win-toggleswitch-fill-upper {
                 background-color: @fillUpperPressedColor;
             }
         }
-        &.win-toggleswitch-disabled-new {
-            .win-toggleswitch-header-new,
-            .win-toggleswitch-value-new,
-            .win-toggleswitch-description-new {
+        &.win-toggleswitch-disabled {
+            .win-toggleswitch-header,
+            .win-toggleswitch-value,
+            .win-toggleswitch-description {
                 color: fade(@mainColor, 40%);
             }
-            .win-toggleswitch-track-new {
+            .win-toggleswitch-track {
                 border-color: fade(@mainColor, 20%);
             }
-            .win-toggleswitch-fill-lower-new {
+            .win-toggleswitch-fill-lower {
                 background-color: @fillLowerDisabledColor;
             }
-            .win-toggleswitch-fill-upper-new {
+            .win-toggleswitch-fill-upper {
                 background-color: @fillUpperDisabledColor;
             }
-            .win-toggleswitch-thumb-new {
+            .win-toggleswitch-thumb {
                 background-color: @thumbDisabledColor;
+            }
+        }
+    }
+}
+
+.ColorsHover(@theme) {
+    .win-toggleswitch {
+        .variableDefs(light) {
+            @mainColor: #000;
+            @accentHoverColor: rgb(95, 55, 190);
+        }
+        .variableDefs(dark) {
+            @mainColor: #fff;
+            @accentHoverColor: rgb(110, 70, 202);
+        }
+        .variableDefs(@theme);
+
+        &:hover {
+            .win-toggleswitch-fill-lower {
+                background-color: @accentHoverColor;
+            }
+            .win-toggleswitch-fill-upper {
+                background-color: fade(@mainColor, 29%);
             }
         }
     }
