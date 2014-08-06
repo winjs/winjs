@@ -163,11 +163,6 @@ WinJSTests.GroupListEditorTest = function () {
             var fullName = name + "_" + (multisize ? "multisize_grouped_grid" : "normal_grouped_grid")
                     + (bindingList ? "_BindingList" : "_TestDataSource") + (layout == "GridLayout" ? "" : "_" + layout);
 
-            // Issue #135
-            if (fullName === "InsertOutsideOfRealizedRange_multisize_grouped_grid_TestDataSource") {
-                return;
-            }
-
             that[fullName] = function (complete) {
                 LiveUnit.LoggingCore.logComment("in " + fullName);
 

@@ -245,7 +245,9 @@
 
     QUnit.done(function (results) {
         if (document.querySelector("#loopTests").checked) {
-            document.querySelector("#startButton").click();
+            if (!log.length) {
+                document.querySelector("#startButton").click();
+            }
         } else {
             results.tests = log;
             results.url = document.location.href;

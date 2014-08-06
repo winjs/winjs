@@ -811,8 +811,7 @@ var Tests = Tests || {};
                 done(complete);
         };
 
-        // Issue #135
-        this.xtestListViewUsingGroupSortedWithMutations = function (complete) {
+        this.testListViewUsingGroupSortedWithMutations = function (complete) {
             //BugID:  629543
             var sampleDataSource = [];
             for (var i = 0; i < 20; i++) {
