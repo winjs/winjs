@@ -181,7 +181,7 @@
 
     function cleanUp() {
         testFailed = false;
-        testError = {};
+        testError = null;
         verboseLog = "";
 
         qunitDiv.style.zIndex = 0;
@@ -306,8 +306,7 @@
                         debugger;
                     }
                     testError = testError || {
-                        message:
-                            formatString("areNotEqual - {0} (both equal: {1})", message || "", left),
+                        message: formatString("areNotEqual - {0} (both equal: {1})", message || "", left),
                         expected: left,
                         actual: right
                     };
