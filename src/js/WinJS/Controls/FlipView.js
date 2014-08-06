@@ -712,15 +712,12 @@ define([
                         }
                     }, true);
 
-                    // When an element is removed and inserted, its scroll position gets reset to 0 (and no onscroll event is generated). This is a major problem
-                    // for the flipview thanks to the fact that we 1) Do a lot of inserts/removes of child elements, and 2) Depend on our scroll location being right to
-                    // display the right stuff. The page manager preserves scroll location. When a flipview element is reinserted, it'll fire DOMNodeInserted and we can reset
-                    // its scroll location there.
-                    // This event handler won't be hit in IE8.
-                    this._flipviewDiv.addEventListener("DOMNodeInserted", function (event) {
-                        if (event.target === that._flipviewDiv) {
-                            that._pageManager.resized();
-                        }
+                    // Scroll position isn't maintained when an element is added/removed from
+                    // the DOM so every time we are placed back in, let the PageManager 
+                    // fix the scroll position.
+                    _ElementUtilities._addInsertedNotifier(this._flipviewDiv);
+                    this._flipviewDiv.addEventListener("WinJSNodeInserted", function (event) {
+                        that._pageManager.resized();
                     }, false);
 
                     this._flipviewDiv.addEventListener("keydown", function (event) {
