@@ -279,9 +279,7 @@ define([
                                             return imagePromise;
                                         });
                                     });
-                                }
-                                    // Otherwise, replace the existing version without animation.
-                                else {
+                                } else { // Otherwise, replace the existing version without animation.
                                     thumbnailPromise = thumbnailPromise.then(function (image) {
                                         return item.loadImage(url, image);
                                     });

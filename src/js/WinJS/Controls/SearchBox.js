@@ -1009,8 +1009,7 @@ define([
                             if ((this._inputElement.value !== this._prevQueryText) || (this._prevCompositionLength === 0) || (compositionLength > 0)) {
                                 queryTextPrefix = this._inputElement.value.substring(0, compositionStartOffset);
                                 queryTextSuffix = this._inputElement.value.substring(compositionStartOffset + compositionLength);
-                            }
-                            else {
+                            } else {
                                 // composition ended, but alternatives have been kept, need to reuse the previous query prefix/suffix, but still report to the client that the composition has ended (start & length of composition of 0)
                                 queryTextPrefix = this._inputElement.value.substring(0, this._prevCompositionStart);
                                 queryTextSuffix = this._inputElement.value.substring(this._prevCompositionStart + this._prevCompositionLength);
@@ -1061,14 +1060,11 @@ define([
                     this._lastKeyPressLanguage = event.locale;
                     if (event.keyCode === Key.tab) {
                         this._isProcessingTabKey = true;
-                    }
-                    else if (event.keyCode === Key.upArrow) {
+                    } else if (event.keyCode === Key.upArrow) {
                         this._isProcessingUpKey = true;
-                    }
-                    else if (event.keyCode === Key.downArrow) {
+                    } else if (event.keyCode === Key.downArrow) {
                         this._isProcessingDownKey = true;
-                    }
-                    else if ((event.keyCode === Key.enter) && (event.locale === "ko")) {
+                    } else if ((event.keyCode === Key.enter) && (event.locale === "ko")) {
                         this._isProcessingEnterKey = true;
                     }
                     // Ignore keys handled by ime.
@@ -1145,14 +1141,11 @@ define([
                 _keyUpHandler: function SearchBox_keyUpHandler(event) {
                     if (event.keyCode === Key.tab) {
                         this._isProcessingTabKey = false;
-                    }
-                    else if (event.keyCode === Key.upArrow) {
+                    } else if (event.keyCode === Key.upArrow) {
                         this._isProcessingUpKey = false;
-                    }
-                    else if (event.keyCode === Key.downArrow) {
+                    } else if (event.keyCode === Key.downArrow) {
                         this._isProcessingDownKey = false;
-                    }
-                    else if (event.keyCode === Key.enter) {
+                    } else if (event.keyCode === Key.enter) {
                         this._isProcessingEnterKey = false;
                     }
                 },
@@ -1235,8 +1228,7 @@ define([
                         var animation = Animations.createRepositionAnimation(this._flyoutDivElement.children);
                         this._flyoutDivElement.style.paddingTop = "";
                         animation.execute();
-                    }
-                    else {
+                    } else {
                         this._reflowImeOnPointerRelease = true;
                     }
                 },
@@ -1368,8 +1360,7 @@ define([
                             var existingElement = this._repeater.elementFromIndex(changeIndex);
                             if (_ElementUtilities.hasClass(existingElement, ClassName.searchBoxSuggestionQuery)) {
                                 this._addHitHighlightedText(existingElement, suggestion, suggestion.text);
-                            }
-                            else {
+                            } else {
                                 var resultSuggestionDiv = existingElement.querySelector("." + ClassName.searchBoxSuggestionResultText);
                                 if (resultSuggestionDiv) {
                                     this._addHitHighlightedText(resultSuggestionDiv, suggestion, suggestion.text);

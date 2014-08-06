@@ -62,8 +62,7 @@ define([
                 setMembers(e, e, decls, count);
             }
 
-        }
-        else if (_BaseUtils.validation) {
+        } else if (_BaseUtils.validation) {
             throw new _ErrorFromName("WinJS.Res.NestingExceeded", "NestingExceeded");
         }
 
@@ -88,8 +87,7 @@ define([
 
                         root.lang = data.lang;
                     }
-            }
-            else if (_BaseUtils.validation) {
+            } else if (_BaseUtils.validation) {
                 notFound(value);
             }
         }
@@ -123,16 +121,13 @@ define([
                     if (name === "innerHTML") {
                         processAllImpl(target, count + 1);
                     }
-                }
-                else if (_BaseUtils.validation) {
+                } else if (_BaseUtils.validation) {
                     notFound(value);
                 }
-            }
-            else if (root === target && name === "attributes") {
+            } else if (root === target && name === "attributes") {
                 //Exposing setAttribute for attributes that don't have HTML properties, like aria, through a fake 'attributes' property
                 setAttributes(root, value);
-            }
-            else {
+            } else {
                 setMembers(root, target[name], value, count);
             }
         }
@@ -155,8 +150,7 @@ define([
                     readyComplete = true;
                     return processAllImpl(rootElement);
                 });
-            }
-            else {
+            } else {
                 try {
                     return processAllImpl(rootElement);
                 }

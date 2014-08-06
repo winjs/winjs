@@ -55,10 +55,10 @@
     // "validateLineBreaks": "LF",
     // "validateQuoteMarks": "'",
     // "validateIndentation": 4,
-    "disallowMixedSpacesAndTabs": true
+    "disallowMixedSpacesAndTabs": true,
     // "disallowTrailingWhitespace": true,
     // "disallowTrailingComma": true,
-    // "disallowKeywordsOnNewLine": [ "else" ],
+    "disallowKeywordsOnNewLine": [ "else" ]
     // "requireLineFeedAtFileEnd": true,
     // "requireCapitalizedConstructors": true,
     // "requireDotNotation": true,

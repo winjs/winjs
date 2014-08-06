@@ -118,8 +118,7 @@ define([
                                 raiseNavigated(undefined, err || true);
                                 throw err;
                             }).then(function () { return true; });
-                    }
-                    else {
+                    } else {
                         return false;
                     }
                 });
@@ -249,8 +248,7 @@ define([
                                 raiseNavigated(undefined, err || true);
                                 throw err;
                             }).then(function () { return true; });
-                    }
-                    else {
+                    } else {
                         return false;
                     }
                 });

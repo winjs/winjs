@@ -137,8 +137,7 @@ define([
                 if (instance) {
                     control = instance.constructor;
                     // already activated, don't need to add to controls array
-                }
-                else {
+                } else {
                     controls[i] = control = getControlHandler(element);
                 }
                 if (control && control.isDeclarativeControlContainer) {
@@ -213,8 +212,7 @@ define([
                 processedAllCalled = true;
                 return processAllImpl(rootElement, skipRoot);
             });
-        }
-        else {
+        } else {
             return processAllImpl(rootElement, skipRoot);
         }
     }
@@ -239,8 +237,7 @@ define([
         var handler = getControlHandler(element);
         if (!handler) {
             return Promise.as(); // undefined, no handler
-        }
-        else {
+        } else {
             return activate(element, handler);
         }
     }

@@ -54,13 +54,11 @@ define([
                 if (typeof v === "object" && v.element) {
                     var elementPromise = Promise.as(v.element);
                     return elementPromise.then(function (e) { return { element: e, renderComplete: Promise.as(v.renderComplete) }; });
-                }
-                else {
+                } else {
                     var elementPromise = Promise.as(v);
                     return elementPromise.then(function (e) { return { element: e, renderComplete: Promise.as() }; });
                 }
-            }
-            else {
+            } else {
                 return { element: null, renderComplete: Promise.as() };
             }
         },
@@ -349,8 +347,7 @@ define([
                         if (possiblePlaceholder) {
                             if (!that.isPlaceholder(possiblePlaceholder)) {
                                 c(possiblePlaceholder);
-                            }
-                            else {
+                            } else {
                                 var placeholderID = uniqueID(possiblePlaceholder);
                                 var callbacks = that.$pipeline_callbacksMap[placeholderID];
                                 if (!callbacks) {
@@ -359,8 +356,7 @@ define([
                                     callbacks.push(c);
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             c(possiblePlaceholder);
                         }
                     });

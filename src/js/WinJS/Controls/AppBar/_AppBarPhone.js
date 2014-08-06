@@ -724,8 +724,7 @@ define([
                                 // If the element is in the DOM, then the WinJS Default CSS rules have been applied, so we can trust that 'transparent' is an explicit color override.
                                 commandBar.opacity = 0;
                             }
-                        }
-                        else if (bgColorString.substring(0, 3) === 'rgb') {
+                        } else if (bgColorString.substring(0, 3) === 'rgb') {
                             var bgColor = extractColorValue(bgColorString);
                             commandBar.backgroundColor = { a: 255, r: bgColor.r, g: bgColor.g, b: bgColor.b };
                             commandBar.opacity = bgColor.a;

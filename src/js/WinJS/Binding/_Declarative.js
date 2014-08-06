@@ -50,12 +50,10 @@ define([
         if (element) {
             if (element.winBindingToken === bindingId) {
                 return element;
-            }
-            else {
+            } else {
                 _Log.log && _Log.log(_Resources._formatString(strings.duplicateBindingDetected, element.id), "winjs binding", "error");
             }
-        }
-        else {
+        } else {
             return element;
         }
     }
@@ -81,16 +79,14 @@ define([
             if (cacheEntry) {
                 if (result && result.cancel) {
                     cacheEntry.bindings.push(function () { result.cancel(); });
-                }
-                else {
+                } else {
                     // notify the cache that we encountered an uncancellable thing
                     //
                     cacheEntry.nocache = true;
                 }
             }
             return result;
-        }
-        else if (initializer && initializer.render) {
+        } else if (initializer && initializer.render) {
             pend.count++;
 
             // notify the cache that we encountered an uncancellable thing
@@ -165,8 +161,7 @@ define([
             // declarative binding must use a weak ref to the target element
             //
             return makeBinding(ref, bindingId, pend, bindable, bind, cacheEntry);
-        }
-        else {
+        } else {
             nestedSet(e, bind.destination, getValue(source, bind.source));
         }
     }
@@ -198,8 +193,7 @@ define([
                 declBind = declBindCache;
             }
             return declBind;
-        }
-        else {
+        } else {
             return filterIdBinding(_BindingParser._bindingParser(bindingStr, _Global), bindingStr);
         }
     }
@@ -266,8 +260,7 @@ define([
                         bind.initializer = bind.initializer || defaultInitializer;
                         if (bind.initializer) {
                             bind.implementation = initializerOneBinding;
-                        }
-                        else {
+                        } else {
                             bind.implementation = sourceOneBinding;
                         }
                     }
@@ -399,8 +392,7 @@ define([
                     var found = checkBindingToken(_DomWeakRefTable._getWeakRefElement(ref), bindingId);
                     if (found) {
                         nestedSet(found, destProperties, convert(requireSupportedForProcessing(v)));
-                    }
-                    else if (workerResult) {
+                    } else if (workerResult) {
                         _Log.log && _Log.log(_Resources._formatString(strings.elementNotFound, ref), "winjs binding", "info");
                         workerResult.cancel();
                     }
@@ -436,8 +428,7 @@ define([
             if (!dest) {
                 _Log.log && _Log.log(_Resources._formatString(strings.propertyDoesNotExist, destProperties[i], destProperties.join(".")), "winjs binding", "error");
                 return;
-            }
-            else if (dest instanceof _Global.Node) {
+            } else if (dest instanceof _Global.Node) {
                 _Log.log && _Log.log(_Resources._formatString(strings.nestedDOMElementBindingNotSupported, destProperties[i], destProperties.join(".")), "winjs binding", "error");
                 return;
             }
@@ -518,8 +509,7 @@ define([
                 var found = checkBindingToken(_DomWeakRefTable._getWeakRefElement(ref), bindingId);
                 if (found) {
                     attributeSet(found, destProperties, requireSupportedForProcessing(v));
-                }
-                else if (workerResult) {
+                } else if (workerResult) {
                     _Log.log && _Log.log(_Resources._formatString(strings.elementNotFound, ref), "winjs binding", "info");
                     workerResult.cancel();
                 }
@@ -620,8 +610,7 @@ define([
             current[sourceProperties[sourceProperties.length - 1]] = func;
 
             return _Data.bind(bindable, root, true);
-        }
-        else if (sourceProperties.length === 1) {
+        } else if (sourceProperties.length === 1) {
             bindable.bind(sourceProperties[0], func, true);
             return {
                 cancel: function () {
@@ -629,8 +618,7 @@ define([
                     this.cancel = noop;
                 }
             };
-        }
-        else {
+        } else {
             // can't bind to object, so we just push it through
             //
             func(bindable);

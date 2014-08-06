@@ -340,8 +340,7 @@ define([
                             entity.index !== _Constants._INVALID_INDEX) {
                             fireInvokeEventImpl(this.site.groupDataSource, true);
                         }
-                    }
-                    else {
+                    } else {
                         if (this.site._tap !== _UI.TapBehavior.none && entity.index !== _Constants._INVALID_INDEX) {
                             fireInvokeEventImpl(this.site.itemDataSource, false);
                         }

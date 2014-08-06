@@ -88,17 +88,15 @@ define([
                         //
                         if (initial === 0) {
                             work = function (f, a, b, c) { return f(extractedChild || d, a, b, c); };
-                        }
+                        } else {
                             // We only grab the newly added nodes (always at the end)
                             // and in the common case of only adding a single new element
                             // we avoid the "join" overhead
                             //
-                        else {
                             var all = d.children;
                             if (all.length === initial + 1) {
                                 work = function (f, a, b, c) { return f(all[initial], a, b, c); };
-                            }
-                            else {
+                            } else {
                                 // we have to capture the elements first, in case
                                 // doing the work affects the children order/content
                                 //
@@ -146,8 +144,7 @@ define([
                                 workPromise = complete();
                                 return workPromise;
                             });
-                        }
-                        else {
+                        } else {
                             workPromise = complete();
                             return workPromise;
                         }

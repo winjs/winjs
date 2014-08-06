@@ -274,8 +274,7 @@ define([
                     then(null, function () {
                         exports.sessionState = {};
                     });
-            }
-            else {
+            } else {
                 return Promise.as();
             }
         },

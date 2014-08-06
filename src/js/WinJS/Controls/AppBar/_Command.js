@@ -118,8 +118,7 @@ define([
 
                 if (options.type === _Constants.typeContent) {
                     this._createContent();
-                }
-                else if (options.type === _Constants.typeSeparator) {
+                } else if (options.type === _Constants.typeSeparator) {
                     this._createSeparator();
                 } else {
                     // This will also set the icon & label

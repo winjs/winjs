@@ -363,8 +363,7 @@ define([
                     for (var i = 0; i <= this._maxRating; i++) {
                         if (i === this._maxRating) {
                             html = html + "<div class='" + msRatingAverageFull + "' style='" + hiddenAverageRatingCss + "'></div>";
-                        }
-                        else {
+                        } else {
                             html = html + "<div class='" + msRatingUserEmpty + "'></div>";
                         }
                     }
@@ -671,8 +670,7 @@ define([
                     var starNum;
                     if (star && (star.parentElement === this._element)) {
                         starNum = _ElementUtilities.data(star).msStarRating || 0;
-                    }
-                    else {
+                    } else {
                         var left = 0, right = this.maxRating;
                         if (_Global.getComputedStyle(this._element).direction === "rtl") {
                             left = right;
@@ -680,8 +678,7 @@ define([
                         }
                         if (eventObject.clientX < pointerAt.x) {
                             starNum = left;
-                        }
-                        else {
+                        } else {
                             starNum = right;
                         }
                     }

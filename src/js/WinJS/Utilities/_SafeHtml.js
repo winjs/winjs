@@ -121,8 +121,7 @@ define([
                 element.insertAdjacentHTML(position, text);
             });
         };
-    }
-    else if (_Global.msIsStaticHTML) {
+    } else if (_Global.msIsStaticHTML) {
         var check = function (str) {
             if (!_Global.msIsStaticHTML(str)) {
                 throw new _ErrorFromName("WinJS.Utitilies.NonStaticHTML", strings.nonStaticHTML);

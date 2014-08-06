@@ -293,8 +293,7 @@ define([
                     var parts = [];
                     if (this._peek(imports.tokenType.thisKeyword) && parts.length === 0) {
                         this._read();
-                    }
-                    else {
+                    } else {
                         parts.push(this._readIdentifier());
                     }
 

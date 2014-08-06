@@ -609,16 +609,14 @@ define([
                     if (type === "nodelay") {
                         value = 0;
                         this._useAnimation = false;
-                    }
-                    else {
+                    } else {
                         var curTime = (new Date()).getTime();
                         // If the mouse is moved immediately from another anchor that has
                         // tooltip open, we should use a shorter delay
                         if (curTime - lastCloseTime <= RESHOW_THRESHOLD) {
                             if (type === "touch") {
                                 value = this._infotip ? DELAY_RESHOW_INFOTIP_TOUCH : DELAY_RESHOW_NONINFOTIP_TOUCH;
-                            }
-                            else {
+                            } else {
                                 value = this._infotip ? DELAY_RESHOW_INFOTIP_NONTOUCH : DELAY_RESHOW_NONINFOTIP_NONTOUCH;
                             }
                             this._useAnimation = false;
@@ -729,8 +727,7 @@ define([
 
                     if (this._contactPoint && (contactType === "touch" || contactType === "mouse")) {
                         anchor = this._getAnchorPositionFromPointerWindowCoord(this._contactPoint);
-                    }
-                    else {
+                    } else {
                         // keyboard or programmatic is relative to element
                         anchor = this._getAnchorPositionFromElementWindowCoord();
                     }

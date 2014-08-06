@@ -51,8 +51,7 @@ define([
                                 // 
                                 runNext();
                             }
-                        }
-                        else {
+                        } else {
                             break;
                         }
                     }
@@ -71,8 +70,7 @@ define([
                             workItems[id] = w;
                             if (first) {
                                 workQueue.unshift(id);
-                            }
-                            else {
+                            } else {
                                 workQueue.push(id);
                             }
                             run();

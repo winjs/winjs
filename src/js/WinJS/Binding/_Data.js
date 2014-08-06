@@ -188,12 +188,10 @@ define([
                 // which means that "unbind" inside of a notification
                 // will not prevent that notification from occuring.
                 //
-            }
-            else if (name) {
+            } else if (name) {
                 this._cancel(name);
                 delete this._listeners[name];
-            }
-            else {
+            } else {
                 var that = this;
                 if (that._pendingNotifications) {
                     var v = that._pendingNotifications;
@@ -448,8 +446,7 @@ define([
                 simpleLast = simpleLast || [];
                 simpleLast.push({ source: observable, prop: k, listener: listener });
                 observable.bind(k, listener);
-            }
-            else {
+            } else {
                 var propChanged = function (v) {
                     cancelComplex(k);
                     var complexBind = bindImpl(as(v), listener, bindStateRef);
@@ -464,8 +461,7 @@ define([
                                 var item = root[key];
                                 if (item instanceof Function) {
                                     item(undefined, undefined);
-                                }
-                                else {
+                                } else {
                                     recursiveNotify(item);
                                 }
                             });
@@ -551,8 +547,7 @@ define([
         if (!data || typeof (data) !== "object" || (data instanceof Date) || Array.isArray(data)) {
             if (_BaseUtils.validation) {
                 throw new _ErrorFromName("WinJS.Binding.UnsupportedDataType", _Resources._formatString(strings.unsupportedDataTypeForBinding));
-            }
-            else {
+            } else {
                 return;
             }
         }
@@ -613,8 +608,7 @@ define([
                 }
             );
                 return observable;
-            }
-        else {
+            } else {
             return data;
         }
     };
@@ -633,8 +627,7 @@ define([
         /// </signature>
         if (data && data.backingData) {
             return data.backingData;
-        }
-        else {
+        } else {
             return data;
         }
     };

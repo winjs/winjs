@@ -100,12 +100,10 @@ define([
             var entry = table[id];
             if (entry) {
                 return entry.element;
-            }
-            else {
+            } else {
                 return _Global.document.getElementById(id);
             }
-        }
-        else {
+        } else {
             var element = _Global.document.getElementById(id);
             if (element) {
                 delete table[id];

@@ -88,8 +88,7 @@ define([
                 setDisabled: function (disabled) {
                     if (disabled) {
                         this._domElement.setAttribute("disabled", "disabled");
-                    }
-                    else {
+                    } else {
                         this._domElement.removeAttribute("disabled");
                     }
                 },

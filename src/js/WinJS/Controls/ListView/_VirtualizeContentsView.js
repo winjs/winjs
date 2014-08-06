@@ -716,8 +716,7 @@ define([
                                 return Promise._cancelBlocker(Promise.join(promises));
                             })
                         };
-                    }
-                    else {
+                    } else {
                         that._listView._writeProfilerMark(perfId + ",StopTM");
                         return {
                             viewportItemsRealized: Promise.wrap(),

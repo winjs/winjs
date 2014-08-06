@@ -31,8 +31,7 @@ define([
         var name = e.className || "";
         if (typeof (name) === "string") {
             return name;
-        }
-        else {
+        } else {
             return name.baseVal || "";
         }
     }
@@ -43,8 +42,7 @@ define([
         var name = e.className || "";
         if (typeof (name) === "string") {
             e.className = value;
-        }
-        else {
+        } else {
             e.className.baseVal = value;
         }
         return e;
@@ -97,8 +95,7 @@ define([
                 if (namesToAdd.length > 0) {
                     toAdd = namesToAdd.join(" ");
                 }
-            }
-            else {
+            } else {
                 var saw = false;
                 for (var i = 0; i < l; i++) {
                     if (names[i] === name) {
@@ -112,8 +109,7 @@ define([
             if (toAdd) {
                 if (l > 0 && names[0].length > 0) {
                     setClassName(e, className + " " + toAdd);
-                }
-                else {
+                } else {
                     setClassName(e, toAdd);
                 }
             }
@@ -156,8 +152,7 @@ define([
             if (name.indexOf(" ") >= 0) {
                 namesToRemove = name.split(" ");
                 namesToRemoveLen = removeEmpties(namesToRemove);
-            }
-            else {
+            } else {
                 // early out for the case where you ask to remove a single
                 // name and that name isn't found.
                 //
@@ -216,20 +211,16 @@ define([
             if (!found) {
                 if (l > 0 && names[0].length > 0) {
                     setClassName(e, className + " " + name);
-                }
-                else {
+                } else {
                     setClassName(e, className + name);
                 }
-            }
-            else {
+            } else {
                 setClassName(e, names.reduce(function (r, e) {
                     if (e === name) {
                         return r;
-                    }
-                    else if (r && r.length > 0) {
+                    } else if (r && r.length > 0) {
                         return r + " " + e;
-                    }
-                    else {
+                    } else {
                         return e;
                     }
                 }, ""));

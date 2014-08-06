@@ -568,8 +568,7 @@ define([
                             // If we haven't instantiated this item yet, do so now
                             if (!element) {
                                 that._itemsManager._itemFromPromise(itemPromise).then(elementReady);
-                            }
-                            else {
+                            } else {
                                 elementReady(element);
                             }
 

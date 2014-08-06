@@ -239,8 +239,7 @@ define([
                         catch (err) {
                             e(err);
                         }
-                    }
-                    else {
+                    } else {
                         c();
                     }
                 }
@@ -249,8 +248,7 @@ define([
                 if (!readyState) {
                     if (_Global.document) {
                         readyState = _Global.document.readyState;
-                    }
-                    else {
+                    } else {
                         readyState = "complete";
                     }
                 }
@@ -259,12 +257,10 @@ define([
                         Scheduler.schedule(function WinJS_Utilities_ready() {
                             complete();
                         }, Scheduler.Priority.normal, null, "WinJS.Utilities.ready");
-                    }
-                    else {
+                    } else {
                         complete();
                     }
-                }
-                else {
+                } else {
                     _Global.addEventListener("DOMContentLoaded", complete, false);
                 }
             });
