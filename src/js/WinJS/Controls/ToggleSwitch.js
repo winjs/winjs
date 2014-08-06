@@ -9,7 +9,7 @@ define([
     '../Utilities/_ElementUtilities',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], 
+    ],
     function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities) {
         "use strict";
 
@@ -55,11 +55,11 @@ define([
 
                 // Localized strings
                 var strings = {
-                    get on() { 
-                        return _Resources._getWinJSString("ui/on").value; 
+                    get on() {
+                        return _Resources._getWinJSString("ui/on").value;
                     },
-                    get off() { 
-                        return _Resources._getWinJSString("ui/off").value; 
+                    get off() {
+                        return _Resources._getWinJSString("ui/off").value;
                     },
                 };
 
@@ -88,7 +88,6 @@ define([
                     element = element || _Global.document.createElement('div');
                     this._domElement = element;
                     _ElementUtilities.addClass(this._domElement, classContainer);
-                    this._domElement.setAttribute('tabindex', 0);
 
                     // Set up DOM elements
                     this._domElement.innerHTML = [
@@ -116,16 +115,28 @@ define([
                     this._fillUpperElement = this._thumbElement.nextElementSibling;
                     this._descriptionElement = this._clickElement.nextElementSibling;
 
+                    // Set aria label info
+                    this._headerElement.setAttribute('aria-hidden', true);
+                    this._labelOnElement.setAttribute('aria-hidden', true);
+                    this._labelOffElement.setAttribute('aria-hidden', true);
+                    this._headerElement.setAttribute('role', 'note');
+                    this._headerElement.setAttribute('id', _ElementUtilities._uniqueID(this._headerElement));
+                    this._domElement.setAttribute('aria-labelledby', this._headerElement.id);
+                    this._domElement.setAttribute('role', 'checkbox');
+
                     // Some initialization of main element
-                    element.winControl = this;
-                    _ElementUtilities.addClass(element, 'win-disposable');
+                    this._domElement.winControl = this;
+                    _ElementUtilities.addClass(this._domElement, 'win-disposable');
 
                     // Add listeners
                     this._domElement.addEventListener('keydown', this._keyDownHandler.bind(this));
-                    this._clickElement.addEventListener('mousedown', this._pointerDownHandler.bind(this));
-                    this._clickElement.addEventListener('touchstart', this._pointerDownHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._clickElement, 'pointerdown', this._pointerDownHandler.bind(this));
                     _ElementUtilities._globalListener.addEventListener(this._domElement, 'pointermove', this._pointerMoveHandler.bind(this));
                     _ElementUtilities._globalListener.addEventListener(this._domElement, 'pointerup', this._pointerUpHandler.bind(this));
+
+                    // Need mutation observer to listen for aria checked change
+                    this._mutationObserver = new _ElementUtilities._MutationObserver(this._ariaChangedHandler.bind(this));
+                    this._mutationObserver.observe(this._domElement, {attributes: true, attributeFilter: ['aria-checked']});
 
                     // Current x coord while being dragged
                     this._dragX = 0;
@@ -157,16 +168,13 @@ define([
                             return this._checked;
                         },
                         set: function (value) {
-                            if (this.disabled) {
-                                return;
-                            }
-
                             value = !!value;
                             if (value === this.checked) {
                                 return;
                             }
 
                             this._checked = value;
+                            this._domElement.setAttribute('aria-checked', value);
                             if (value) {
                                 this._labelOnElement.style.display = '';
                                 this._labelOffElement.style.display = 'none';
@@ -201,6 +209,8 @@ define([
                             }
 
                             this._disabled = value;
+                            this._domElement.setAttribute('aria-disabled', value);
+                            this._domElement.setAttribute('tabIndex', value ? -1 : 0);
                         }
                     },
                     /// <field type="String" locid="WinJS.UI.ToggleSwitch.labelOn" helpKeyword="WinJS.UI.ToggleSwitch.labelOn">
@@ -255,26 +265,37 @@ define([
                     },
 
                     // Private event handlers
+                    _ariaChangedHandler: function ToggleSwitch_ariaChanged() {
+                        var value = this._domElement.getAttribute('aria-checked');
+                        value = (value === 'true') ? true : false;
+                        this.checked = value;
+                    },
                     _keyDownHandler: function ToggleSwitch_keyDown(e) {
-                        e.preventDefault();
-                        
+                        if (this.disabled) {
+                            return;
+                        }
+
                         // Toggle checked on spacebar
                         if (e.keyCode === _ElementUtilities.Key.space) {
                             this.checked = !this.checked;
                         }
 
                         // Arrow keys set value
-                        if (e.keyCode === _ElementUtilities.Key.rightArrow || 
+                        if (e.keyCode === _ElementUtilities.Key.rightArrow ||
                             e.keyCode === _ElementUtilities.Key.upArrow) {
                             this.checked = true;
                         }
-                        if (e.keyCode === _ElementUtilities.Key.leftArrow || 
+                        if (e.keyCode === _ElementUtilities.Key.leftArrow ||
                             e.keyCode === _ElementUtilities.Key.downArrow) {
                             this.checked = false;
                         }
 
                     },
-                    _pointerDownHandler: function ToggleSwitch_pointerDown(e) {                        
+                    _pointerDownHandler: function ToggleSwitch_pointerDown(e) {
+                        if (this.disabled) {
+                            return;
+                        }
+
                         e.preventDefault();
 
                         if (this.disabled) {
@@ -285,6 +306,10 @@ define([
                         _ElementUtilities.addClass(this._domElement, classPressed);
                     },
                     _pointerUpHandler: function ToggleSwitch_pointerUp(e) {
+                        if (this.disabled) {
+                            return;
+                        }
+
                         // Since up is a global event we should only take action
                         // if a mousedown was registered on us initially
                         if (!this._mousedown) {
@@ -302,7 +327,7 @@ define([
                             this._dragging = false;
                             _ElementUtilities.removeClass(this._domElement, classDragging);
                         } else {
-                            // Otherwise, just toggle the value as the up constitutes a 
+                            // Otherwise, just toggle the value as the up constitutes a
                             // click event
                             this.checked = !this.checked;
                         }
@@ -315,6 +340,10 @@ define([
                         _ElementUtilities.removeClass(this._domElement, classPressed);
                     },
                     _pointerMoveHandler: function ToggleSwitch_pointerMove(e) {
+                        if (this.disabled) {
+                            return;
+                        }
+
                         // Not dragging if mouse isn't down
                         if (!this._mousedown) {
                             return;
