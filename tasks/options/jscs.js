@@ -17,6 +17,7 @@
         srcFiles: {
             src: config.lint.srcFiles,
             options: {
+                excludeFiles: ["src/js/en-US/ui.prefix.js", "src/js/en-US/ui.suffix.js"]
             },
         },
     };

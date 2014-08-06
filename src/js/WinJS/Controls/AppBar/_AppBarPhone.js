@@ -309,7 +309,7 @@ define([
                         var changingState = (value !== this._disabled);
                         var initializing = this._initializing;
 
-                        if(!isCurrent || changingState || initializing){
+                        if (!isCurrent || changingState || initializing){
                             if (!value) { // Enabling
 
                                 // When we enable the AppBar, the AppBar should take control of the commandBar and inject itself into it.

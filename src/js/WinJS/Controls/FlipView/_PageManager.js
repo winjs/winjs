@@ -271,7 +271,7 @@ define([
 
                 scrollPosChanged: function () {
 
-                    if(this._hasFocus) {
+                    if (this._hasFocus) {
                         this._hadFocus = true;
                     }
 
@@ -482,7 +482,7 @@ define([
                 startAnimatedJump: function (index, cancelAnimationCallback, completionCallback) {
                     this._writeProfilerMark("WinJS.UI.FlipView:startAnimatedJump,info");
 
-                    if(this._hasFocus) {
+                    if (this._hasFocus) {
                         this._hadFocus = true;
                     }
                     if (this._currentPage.element) {
@@ -555,7 +555,7 @@ define([
 
                     var wheelingForward;
 
-                    if(typeof ev.deltaY === 'number') {
+                    if (typeof ev.deltaY === 'number') {
                         wheelingForward = (ev.deltaX || ev.deltaY) > 0;
                     } else {
                         wheelingForward = ev.wheelDelta < 0;
@@ -1024,7 +1024,7 @@ define([
                 // Private methods
 
                 _hasFocus: {
-                    get: function() {
+                    get: function () {
                         return this._flipperDiv.contains(_Global.document.activeElement);
                     }
                 },

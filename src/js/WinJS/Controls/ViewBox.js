@@ -156,7 +156,7 @@ define([
                         return;
                     }
 
-                    if(this.element) {
+                    if (this.element) {
                         _ElementUtilities._resizeNotifier.unsubscribe(this.element, onresizeBox);
                     }
                     if (this._sizer) {

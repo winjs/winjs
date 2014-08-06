@@ -10,6 +10,6 @@ define([
     './Core/_Trace',
     './Core/_WinRT',
     './Core/_WriteProfilerMark'
-    ], function() {
+    ], function () {
     // Wrapper module
 });

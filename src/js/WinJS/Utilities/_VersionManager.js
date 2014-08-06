@@ -39,7 +39,7 @@ define([
                     this._checkLocked();
                     this._updateCount++;
                 },
-                endUpdating: function() {
+                endUpdating: function () {
                     this._updateCount--;
                     this._checkUnlocked();
                 },

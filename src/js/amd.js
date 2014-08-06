@@ -4,12 +4,12 @@ var require;
 var define;
 /*jshint ignore:end */
 
-(function() {
+(function () {
     "use strict";
 
     var defined = {};
-    define = function(id, dependencies, factory) {
-        if(!Array.isArray(dependencies)) {
+    define = function (id, dependencies, factory) {
+        if (!Array.isArray(dependencies)) {
             factory = dependencies;
             dependencies = [];
         }
@@ -19,7 +19,7 @@ var define;
             factory: factory
         };
 
-        if(dependencies.indexOf('exports') !== -1) {
+        if (dependencies.indexOf('exports') !== -1) {
             mod.exports = {};
         }
 
@@ -31,14 +31,14 @@ var define;
     function normalize(id, dependencies) {
         var parent = id.split('/');
         parent.pop();
-        return dependencies.map(function(dep) {
-            if(dep[0] === '.') {
+        return dependencies.map(function (dep) {
+            if (dep[0] === '.') {
                 var parts = dep.split('/');
                 var current = parent.slice(0);
-                parts.forEach(function(part) {
-                    if(part === '..') {
+                parts.forEach(function (part) {
+                    if (part === '..') {
                         current.pop();
-                    } else if(part !== '.') {
+                    } else if (part !== '.') {
                         current.push(part);
                     }
                 });
@@ -50,19 +50,19 @@ var define;
     }
 
     function resolve(dependencies, exports) {
-        return dependencies.map(function(depName) {
-            if(depName === 'exports') {
+        return dependencies.map(function (depName) {
+            if (depName === 'exports') {
                 return exports;
             }
             var dep = defined[depName];
-            if(!dep) {
+            if (!dep) {
                 throw new Error("Undefined dependency: " + depName);
             }
 
-            if(!dep.resolved) {
+            if (!dep.resolved) {
                 dep.resolved = load(dep.dependencies, dep.factory, dep.exports);
                 // exports shadows whatever the module factory returns
-                if(dep.exports) {
+                if (dep.exports) {
                     dep.resolved = dep.exports;
                 }
             }
@@ -73,14 +73,14 @@ var define;
 
     function load(dependencies, factory, exports) {
         var deps = resolve(dependencies, exports);
-        if(factory && factory.apply) {
+        if (factory && factory.apply) {
             return factory.apply(null, deps);
         } else {
             return factory;
         }
     }
-    require = function(dependencies, factory) { //jshint ignore:line
-        if(!Array.isArray(dependencies)) {
+    require = function (dependencies, factory) { //jshint ignore:line
+        if (!Array.isArray(dependencies)) {
             dependencies = [dependencies];
         }
         load(dependencies, factory);

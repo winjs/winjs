@@ -14,7 +14,7 @@ define([
     exports.isHoverable = true;
 
     if (!_Global.MSPointerEvent) {
-        var touchStartHandler = function() {
+        var touchStartHandler = function () {
             _Global.document.removeEventListener("touchstart", touchStartHandler);
             // Remove win-hoverable CSS class fromstartt . <html> to avoid :hover styles in webkit when there is
             // touch support.

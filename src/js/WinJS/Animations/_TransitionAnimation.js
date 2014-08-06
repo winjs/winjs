@@ -459,19 +459,19 @@ define([
         },
 
         isAnimationEnabled: {
-            get: function() {
+            get: function () {
                 return isAnimationEnabled;
             },
-            set: function(value) {
+            set: function (value) {
                 isAnimationEnabled = value;
             }
         },
 
         _libraryDelay: {
-            get: function() {
+            get: function () {
                 return libraryDelay;
             },
-            set: function(value) {
+            set: function (value) {
                 libraryDelay = value;
             }
         },
@@ -521,10 +521,10 @@ define([
         },
 
         _animationTimeAdjustment: {
-            get: function() {
+            get: function () {
                 return animationTimeAdjustment;
             },
-            set: function(value) {
+            set: function (value) {
                 animationTimeAdjustment = value;
             }
         }
@@ -533,10 +533,10 @@ define([
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         _fastAnimations: {
-            get: function() {
+            get: function () {
                 return fastAnimations;
             },
-            set: function(value) {
+            set: function (value) {
                 fastAnimations = value;
             }
         }

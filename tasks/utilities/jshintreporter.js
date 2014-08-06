@@ -54,7 +54,7 @@
                   ((len === 1) ? "" : "s") + "\n")));
             }
 
-            if(len > 0) {
+            if (len > 0) {
                 grunt.fail.warn(len + " lint error" + ((len === 1) ? "" : "s"));
             }
         }

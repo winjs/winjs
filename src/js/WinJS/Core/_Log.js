@@ -31,7 +31,7 @@ define([
     }
     function defAction(message, tag, type) {
         var m = exports.formatLog(message, tag, type);
-        if(_Global.console) {
+        if (_Global.console) {
             _Global.console[(type && typeR.test(type)) ? type : "log"](m);
         }
     }
@@ -100,10 +100,10 @@ define([
 
     _Base.Namespace._moduleDefine(exports, "WinJS", {
         log: {
-            get: function() {
+            get: function () {
                 return WinJSLog;
             },
-            set: function(value) {
+            set: function (value) {
                 WinJSLog = value;
             }
         }

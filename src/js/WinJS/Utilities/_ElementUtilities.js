@@ -778,7 +778,7 @@ define([
                 var handlers = this._getHandlers(capture);
                 var handler = handlers[name];
 
-                if(handler) {
+                if (handler) {
                     handler.refCount--;
                     if (handler.refCount === 0) {
                         exports._removeEventListener(_Global, name, handler, capture);

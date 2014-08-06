@@ -58,10 +58,10 @@ define([
 
 */
     var imports = _Base.Namespace.defineWithParent(null, null, {
-        lexer: _Base.Namespace._lazy(function() {
+        lexer: _Base.Namespace._lazy(function () {
             return _OptionsLexer._optionsLexer;
         }),
-        tokenType: _Base.Namespace._lazy(function() {
+        tokenType: _Base.Namespace._lazy(function () {
             return _OptionsLexer._optionsLexer.tokenType;
         }),
     });

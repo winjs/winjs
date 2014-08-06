@@ -37,7 +37,7 @@ define([
                         /// </param>
                         /// </signature>
                     
-                        waitForPromise = waitForPromise.then(function() { return promise; });
+                        waitForPromise = waitForPromise.then(function () { return promise; });
                     },
                     location: proposed.location,
                     state: proposed.state
@@ -63,7 +63,7 @@ define([
                         /// </param>
                         /// </signature>
                     
-                        waitForPromise = waitForPromise.then(function() { return promise; });
+                        waitForPromise = waitForPromise.then(function () { return promise; });
                     },
                     location: history.current.location,
                     state: history.current.state,
@@ -90,7 +90,7 @@ define([
                 /// </param>
                 /// </signature>
             
-                waitForPromise = waitForPromise.then(function() { return promise; });
+                waitForPromise = waitForPromise.then(function () { return promise; });
             }
         };
         if (!value && err) {

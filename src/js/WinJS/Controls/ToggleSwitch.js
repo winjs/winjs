@@ -34,7 +34,7 @@ define([
             /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
             /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
             /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-            ToggleSwitch: _Base.Namespace._lazy(function() {
+            ToggleSwitch: _Base.Namespace._lazy(function () {
 
                 // Store some class names
                 var classContainer = 'win-toggleswitch';
@@ -145,7 +145,7 @@ define([
                     /// The DOM element that hosts the ToggleSwitch control.
                     /// </field>
                     element: {
-                        get: function() {
+                        get: function () {
                             return this._domElement;
                         }
                     },
@@ -153,10 +153,10 @@ define([
                     /// Gets or sets whether the control is on (checked is set to true) or off (checked is set to false).
                     /// </field>
                     checked: {
-                        get: function() {
+                        get: function () {
                             return this._checked;
                         },
-                        set: function(value) {
+                        set: function (value) {
                             if (this.disabled) {
                                 return;
                             }
@@ -185,10 +185,10 @@ define([
                     /// Gets or sets a value that specifies whether the control is disabled.
                     /// </field>
                     disabled: {
-                        get: function() {
+                        get: function () {
                             return this._disabled;
                         },
-                        set: function(value) {
+                        set: function (value) {
                             value = !!value;
                             if (value === this._disabled) {
                                 return;
@@ -207,10 +207,10 @@ define([
                     /// Gets or sets the text that displays when the control is on (checked is set to true). The default value is "On".
                     /// </field>
                     labelOn: {
-                        get: function() {
+                        get: function () {
                             return this._labelOnElement.innerHTML;
                         },
-                        set: function(value) {
+                        set: function (value) {
                             this._labelOnElement.innerHTML = value;
                         }
                     },
@@ -218,10 +218,10 @@ define([
                     /// Gets or sets the text that displays when the control is off (checked is set to false). The default value is "Off".
                     /// </field>
                     labelOff: {
-                        get: function() {
+                        get: function () {
                             return this._labelOffElement.innerHTML;
                         },
-                        set: function(value) {
+                        set: function (value) {
                             this._labelOffElement.innerHTML = value;
                         }
                     },
@@ -230,10 +230,10 @@ define([
                     /// the control is switched on or off.
                     /// </field>
                     title: {
-                        get: function() {
+                        get: function () {
                             return this._headerElement.innerHTML;
                         },
-                        set: function(value) {
+                        set: function (value) {
                             this._headerElement.innerHTML = value;
                         }
                     },

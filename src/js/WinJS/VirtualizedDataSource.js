@@ -4,7 +4,7 @@ define([
     './VirtualizedDataSource/_GroupDataSource',
     './VirtualizedDataSource/_GroupedItemDataSource',
     './VirtualizedDataSource/_StorageDataSource'
-     ], function() {
+     ], function () {
 
     //wrapper module
 });

@@ -394,7 +394,7 @@ define([
             enumerable: true
         },
         _setIsPhone: {
-            set: function(value) {
+            set: function (value) {
                 isPhone = value;
             }
         }
@@ -402,10 +402,10 @@ define([
 
     _Base.Namespace._moduleDefine(exports, "WinJS", {
         validation: {
-            get: function() {
+            get: function () {
                 return validation;
             },
-            set: function(value) {
+            set: function (value) {
                 validation = value;
             }
         }

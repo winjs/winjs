@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function() {
+(function () {
         "use strict";
 
         function sortByComponentName(array) {
-            return array.sort(function(a, b) {
+            return array.sort(function (a, b) {
                 var aName = a["name"];
                 var bName = b["name"];
                 var x = aName && aName.toLowerCase();
@@ -12,10 +12,10 @@
             });
         }
 
-        module.exports = function(grunt) {
+        module.exports = function (grunt) {
             var config = require("../config.js");
 
-            grunt.registerTask("post-tests-results", function() {
+            grunt.registerTask("post-tests-results", function () {
                     var done = this.async();
                     var http = require('http');
                     http.post = require('http-post');
@@ -47,7 +47,7 @@
                         travisBranch: process.env.TRAVIS_BRANCH,
                         travisPullRequest: process.env.TRAVIS_PULL_REQUEST,
                         auth: process.env.auth
-                    }, function() {
+                    }, function () {
                         done();
                     });
             });

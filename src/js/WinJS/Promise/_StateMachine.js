@@ -1410,7 +1410,7 @@ define([
     );
     Object.defineProperties(Promise, _Events.createEventProperties(errorET));
 
-    Promise._doneHandler = function(value) {
+    Promise._doneHandler = function (value) {
         _BaseCoreUtils._setImmediate(function Promise_done_rethrow() {
             throw value;
         });

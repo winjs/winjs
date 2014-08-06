@@ -10,12 +10,12 @@
 
             var realFileNames = [];
 
-            grunt.file.recurse(options.root, function(abspath) {
+            grunt.file.recurse(options.root, function (abspath) {
                 realFileNames.push(abspath);
             });
 
             function validateFile(file) {
-                if(realFileNames.indexOf(file) === -1) {
+                if (realFileNames.indexOf(file) === -1) {
                     grunt.fail.warn("Source file in build is not in filesystem:" + file + ". Check casing of filename.");
                 }
             }

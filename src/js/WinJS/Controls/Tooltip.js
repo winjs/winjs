@@ -902,11 +902,11 @@ define([
                     }
                 },
 
-                _setTimeout: function(callback, delay) {
+                _setTimeout: function (callback, delay) {
                     return _Global.setTimeout(callback, delay);
                 },
 
-                _clearTimeout: function(id) {
+                _clearTimeout: function (id) {
                     _Global.clearTimeout(id);
                 }
             }, {

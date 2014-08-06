@@ -82,7 +82,7 @@ define([
                         headerAtIndex: function (index) {
                             return site._groups.group(index).header;
                         },
-                        headerFromElement: function(element) {
+                        headerFromElement: function (element) {
                             return site._groups.headerFrom(element);
                         },
                         containerAtIndex: function (index) {

@@ -12,7 +12,7 @@ define([
     'WinJS/Controls/Pivot',
     'WinJS/Controls/AppBar/_AppBarPhone',
     'WinJS/Controls/ViewBox'
-    ], function(_WinJS) {
+    ], function (_WinJS) {
     "use strict";
 
     return _WinJS;

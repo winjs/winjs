@@ -2,7 +2,7 @@
 // Custom RequireJS plugin to handle style dependencies from Javascript modules
 // Has special WinJS-specific behavior that wasn't achievable with libraries like require-less
 // Requires the 'platform' key to exist in the RequireJS config, with a value of 'desktop' or 'phone'
-define(['require'], function(req) {
+define(['require'], function (req) {
     "use strict";
 
     var api = {};
@@ -12,7 +12,7 @@ define(['require'], function(req) {
 
     // Called to load a resource. This is the only mandatory API method that
     // needs to be implemented for the plugin to be useful.
-    api.load = function(name, parentRequire, onLoad, config) {
+    api.load = function (name, parentRequire, onLoad, config) {
         // Do nothing outside of optimized build
         if (!config.isBuild) {
             onLoad();
@@ -34,7 +34,7 @@ define(['require'], function(req) {
     };
 
     // Used to get the full path to a resource by name
-    api.normalize = function(name) {
+    api.normalize = function (name) {
         var relativePath = name;
         if (!relativePath.match(/\.less$/)) {
             relativePath += ".less";
@@ -48,7 +48,7 @@ define(['require'], function(req) {
 
     // Used by the optimizer to indicate when the plugin should write out
     // a representation of the the resource in the optimized file.
-    api.write = function(pluginName, filePath, write) {
+    api.write = function (pluginName, filePath, write) {
         // Output a stub module definition
         var name = moduleNames[filePath];
         write.asModule(pluginName + '!' + name, 'define(function(){})');
@@ -89,7 +89,7 @@ define(['require'], function(req) {
         lessConfig.async = false;
         lessConfig.syncImport = true;
         var parser = new less.Parser(lessConfig);
-        parser.parse(lessFile, function(error, tree) {
+        parser.parse(lessFile, function (error, tree) {
             if (error) {
                 console.error(error + ' in ' + error.filename + '\n' + 'line number: ' + error.line);
                 return;
@@ -102,7 +102,7 @@ define(['require'], function(req) {
     }
 
     // Called after the modules for the layer have been written to the layer.
-    api.onLayerEnd = function(write, data) {
+    api.onLayerEnd = function (write, data) {
         if (!configData) {
             return;
         }

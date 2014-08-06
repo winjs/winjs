@@ -13,7 +13,7 @@ define([
     './Utilities/_TabContainer',
     './Utilities/_UI',
     './Utilities/_VersionManager',
-    './Utilities/_Xhr' ], function() {
+    './Utilities/_Xhr' ], function () {
 
     //wrapper module
 });

@@ -5,5 +5,5 @@ define([
     'require-style!less/desktop/colors-intrinsic',
     'require-style!less/phone/styles-intrinsic',
     'require-style!less/phone/colors-intrinsic'
-    ], function(_Hoverable) {
+    ], function (_Hoverable) {
 });

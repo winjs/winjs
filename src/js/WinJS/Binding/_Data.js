@@ -322,7 +322,7 @@ define([
                 // even in strict mode, when set using a string accessor.
                 // To be consistent across browsers, only notify if the
                 // set succeeded.
-                if(this._backingData[name] === newValue) {
+                if (this._backingData[name] === newValue) {
                     return this.notify(name, newValue, oldValue);
                 }
             }

@@ -76,7 +76,7 @@ define([
             /// </returns>
             /// </signature>
         },
-        process: function(element, options) {
+        process: function (element, options) {
             /// <signature helpKeyword="WinJS.UI.Pages._mixin.process">
             /// <summary locid="WinJS.UI.Pages._mixin.process">
             /// Processes the unparented DOM elements returned by load.

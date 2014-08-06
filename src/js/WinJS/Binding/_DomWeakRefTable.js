@@ -123,35 +123,35 @@ define([
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities",  {
         _DOMWeakRefTable_noTimeoutUnderDebugger: {
-            get: function() {
+            get: function () {
                 return noTimeoutUnderDebugger;
             },
-            set: function(value) {
+            set: function (value) {
                 noTimeoutUnderDebugger = value;
             }
         },
         _DOMWeakRefTable_sweepPeriod: {
-            get: function() {
+            get: function () {
                 return SWEEP_PERIOD;
             },
-            set: function(value) {
+            set: function (value) {
                 SWEEP_PERIOD = value;
             }
         },
         _DOMWeakRefTable_timeout: {
-            get: function() {
+            get: function () {
                 return TIMEOUT;
             },
-            set: function(value) {
+            set: function (value) {
                 TIMEOUT = value;
             }
         },
         _DOMWeakRefTable_tableSize: { get: function () { return Object.keys(table).length; } },
         _DOMWeakRefTable_fastLoadPath: {
-            get: function() {
+            get: function () {
                 return fastLoadPath;
             },
-            set: function(value) {
+            set: function (value) {
                 fastLoadPath = value;
             }
         },

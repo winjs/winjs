@@ -207,10 +207,10 @@ define([
                 },
 
                 pinching: {
-                    get: function() {
+                    get: function () {
                         return this._listView._pinching;
                     },
-                    set: function(value) {
+                    set: function (value) {
                         this._listView._pinching = value;
                     }
                 }

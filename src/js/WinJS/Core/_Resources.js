@@ -18,7 +18,7 @@ define([
     function _getWinJSString(id) {
         var result = getString("ms-resource://" + appxVersion + "/" + id);
 
-        if(result.empty) {
+        if (result.empty) {
             result = _getStringBuiltIn(id);
         }
 
@@ -167,7 +167,7 @@ define([
 
         _getResourceContext: function () {
             if (_Global.document) {
-                if (typeof(resourceContext) === 'undefined') {
+                if (typeof (resourceContext) === 'undefined') {
                     var context = _WinRT.Windows.ApplicationModel.Resources.Core.ResourceContext;
                     if (context.getForCurrentView) {
                         resourceContext = context.getForCurrentView();
@@ -222,10 +222,10 @@ define([
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Resources", {
         getString: {
-            get: function() {
+            get: function () {
                 return getString;
             },
-            set: function(value) {
+            set: function (value) {
                 getString = value;
             }
         }

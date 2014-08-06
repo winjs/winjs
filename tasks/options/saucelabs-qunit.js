@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function() {
+(function () {
     "use strict";
 
     var config = require("../../config.js");
@@ -82,12 +82,12 @@
 
             if (!reportingStatus) {
                 reportingStatus = true;
-                setInterval(function() {
+                setInterval(function () {
                     // Log status to avoid termination from Travis for long running tests
                     console.log("Running saucelabs jobs...");
                 }, 1000*60);
             }
-        } catch(e) {
+        } catch (e) {
             console.log("onTestComplete error: " + e);
         } finally {
             // Always indicate that the test passed so that we can finish the grunt task successfully.
@@ -115,7 +115,7 @@
         return info;
     }
     var i = 1;
-    browsers.forEach(function(browser) {
+    browsers.forEach(function (browser) {
         var name = browser.platform + " / " + browser.browserName + " " + browser.version;
         var environment = ("e" + i++);
         var info = {};

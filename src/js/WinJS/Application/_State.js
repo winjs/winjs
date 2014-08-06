@@ -252,10 +252,10 @@ define([
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Application", {
         sessionState: {
-            get: function() {
+            get: function () {
                 return sessionState;
             },
-            set: function(value) {
+            set: function (value) {
                 sessionState = value;
             }
         },

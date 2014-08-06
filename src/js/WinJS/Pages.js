@@ -35,7 +35,7 @@ define([
                 return Fragments.renderCopy(_BasePage.abs(uri));
             }
         },
-        process: function(element, options) {
+        process: function (element, options) {
             /// <signature helpKeyword="WinJS.UI.Pages._mixin.process">
             /// <summary locid="WinJS.UI.Pages._mixin.process">
             /// Processes the unparented DOM elements returned by load.
@@ -97,7 +97,7 @@ define([
 
         var Page = _BasePage.get(uri);
 
-        if(!Page) {
+        if (!Page) {
             Page = _BasePage.define(uri, _mixin);
         }
 
@@ -105,7 +105,7 @@ define([
             Page = _Base.Class.mix(Page, members);
         }
 
-        if(Page.selfhost) {
+        if (Page.selfhost) {
             _BaseUtils.ready(function () {
                 render(_BasePage.abs(uri), _Global.document.body);
             }, true);

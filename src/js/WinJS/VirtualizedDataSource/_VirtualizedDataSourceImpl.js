@@ -1124,7 +1124,7 @@ define([
                                 delete fetchListeners[listenerID];
 
                                 // See if there are any other listeners
-                                if(Object.keys(fetchListeners).length > 0) {
+                                if (Object.keys(fetchListeners).length > 0) {
                                     return;
                                 }
                                 delete slot[listenersProperty];

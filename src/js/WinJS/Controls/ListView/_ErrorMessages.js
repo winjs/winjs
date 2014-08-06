@@ -61,7 +61,7 @@ define([
         },
         
         maxRowsIsDeprecated: {
-            get: function() { return "GridLayout.maxRows may be altered or unavailable in future versions. Instead, use the maximumRowsOrColumns property."; }
+            get: function () { return "GridLayout.maxRows may be altered or unavailable in future versions. Instead, use the maximumRowsOrColumns property."; }
         }
     });
 

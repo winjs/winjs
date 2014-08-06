@@ -43,7 +43,7 @@ define([
         var str;
         try {
             var seenObjects = [];
-            str = JSON.stringify(obj, function(key, value) {
+            str = JSON.stringify(obj, function (key, value) {
                 if (value === _Global) {
                     return "[window]";
                 } else if (value instanceof _Global.HTMLElement) {
@@ -51,7 +51,7 @@ define([
                 } else if (typeof value === "function") {
                     return "[function]";
                 } else if (typeof value === "object") {
-                    if(value === null) {
+                    if (value === null) {
                         return value;
                     } else if (seenObjects.indexOf(value) === -1) {
                         seenObjects.push(value);
@@ -87,7 +87,7 @@ define([
         // For more information on debugging and exception handling go to http://go.microsoft.com/fwlink/p/?LinkId=253583.
 
         debugger; // jshint ignore:line
-        if(_Global.MSApp) {
+        if (_Global.MSApp) {
             _Global.MSApp.terminateApp(data);
         }
     }
@@ -362,7 +362,7 @@ define([
     }
     function errorHandler(e) {
         var flattenedError = {};
-        for(var key in e) {
+        for (var key in e) {
             flattenedError[key] = e[key];
         }
         var data;
@@ -410,7 +410,7 @@ define([
         }
 
         // Work around browsers that don't serialize exceptions
-        if(details.exception instanceof Error) {
+        if (details.exception instanceof Error) {
             var error = {
                 stack: details.exception.stack,
                 message: details.exception.message
@@ -609,10 +609,10 @@ define([
         queueEvent: queueEvent,
 
         _terminateApp: {
-            get: function() {
+            get: function () {
                 return terminateAppHandler;
             },
-            set: function(value) {
+            set: function (value) {
                 terminateAppHandler = value;
             }
         },

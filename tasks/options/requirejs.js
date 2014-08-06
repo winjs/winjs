@@ -25,7 +25,7 @@
                 var privateModules = [];
                 var processed = dependencies[module].slice(0);
 
-                if(module === 'WinJS/Core') {
+                if (module === 'WinJS/Core') {
                     privateModules.push('require-json!en-US/ui.resjson');
                 }
 
@@ -61,7 +61,7 @@
 
                 var remove = ['require-style', 'require-json'];
 
-                if(module !== 'WinJS/Core') {
+                if (module !== 'WinJS/Core') {
                     remove.push('require-json!en-US/ui.resjson');
                 }
 

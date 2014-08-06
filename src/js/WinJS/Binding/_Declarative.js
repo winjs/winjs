@@ -571,7 +571,7 @@ define([
         dest = requireSupportedForProcessing(dest);
         var value = getValue(source, sourceProperties);
         if (Array.isArray(value)) {
-            value.forEach(function(className) {
+            value.forEach(function (className) {
                 _ElementUtilities.addClass(dest, className);
             });
         } else if (value) {

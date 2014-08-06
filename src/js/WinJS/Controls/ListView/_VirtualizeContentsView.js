@@ -1174,7 +1174,7 @@ define([
                         that.deferredActionCancelToken = -1;
                     }
 
-                    this.deferTimeout = this._lazilyRemoveRedundantItemsBlocks().then(function() {
+                    this.deferTimeout = this._lazilyRemoveRedundantItemsBlocks().then(function () {
                             return Promise.timeout(_Constants._DEFERRED_ACTION);
                         }).
                         then(function () {

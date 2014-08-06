@@ -34,8 +34,8 @@ define([
                 properties[key] = { value: member, enumerable: enumerable, configurable: true, writable: true };
                 continue;
             }
-            if(isArray) {
-                target.forEach(function(target) {
+            if (isArray) {
+                target.forEach(function (target) {
                     target[key] = member;
                 });
             } else {
@@ -43,8 +43,8 @@ define([
             }
         }
         if (properties) {
-            if(isArray) {
-                target.forEach(function(target) {
+            if (isArray) {
+                target.forEach(function (target) {
                     Object.defineProperties(target, properties);
                 });
             } else {
@@ -62,7 +62,7 @@ define([
 
         function createNamespace(parentNamespace, name) {
             var currentNamespace = parentNamespace || {};
-            if(name) {
+            if (name) {
                 var namespaceFragments = name.split(".");
                 if (currentNamespace === _Global && namespaceFragments[0] === "WinJS") {
                     currentNamespace = _WinJS;
@@ -185,7 +185,7 @@ define([
         function moduleDefine(exports, name, members) {
             var target = [exports];
             var publicNS = null;
-            if(name) {
+            if (name) {
                 publicNS = createNamespace(_Global, name);
                 target.push(publicNS);
             }
