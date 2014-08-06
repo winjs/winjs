@@ -12,18 +12,21 @@ WinJSTests.ListViewCancel = function () {
     "use strict";
 
     var listViewEl;
+    var defaultDisableCustomPagesPrefetch;
 
     this.setUp = function () {
         listViewEl = document.createElement("DIV");
         document.body.appendChild(listViewEl);
         listViewEl.style.cssText = "height: 200px; width: 200px; background-color: blue;";
+        defaultDisableCustomPagesPrefetch = WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch;
     };
     this.tearDown = function () {
         document.body.removeChild(listViewEl);
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = defaultDisableCustomPagesPrefetch;
     };
 
     this.testCancelItems = function (complete) {
-
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var pausedSignal = new WinJS._Signal();
         pausedSignal.complete();
         var canceledCount = 0;

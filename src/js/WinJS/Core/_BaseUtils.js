@@ -18,6 +18,8 @@ define([
 
     var isPhone = false;
     var validation = false;
+    var platform = _Global.navigator.platform;
+    var isiOS = platform === "iPhone" || platform === "iPad" || platform === "iPod";
 
     function nop(v) {
         return v;
@@ -203,6 +205,22 @@ define([
         /// <field type="Boolean" locid="WinJS.Utilities.hasWinRT" helpKeyword="WinJS.Utilities.hasWinRT">Determine if WinRT is accessible in this script context.</field>
         hasWinRT: {
             get: function () { return _BaseCoreUtils.hasWinRT; },
+            configurable: false,
+            enumerable: true
+        },
+
+        // Used for mocking in tests
+        _setIsiOS: {
+            value: function (value) {
+                isiOS = value;
+            },
+            configurable: false,
+            writable: false,
+            enumerable: false
+        },
+
+        _isiOS: {
+            get: function () { return isiOS; },
             configurable: false,
             enumerable: true
         },

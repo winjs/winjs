@@ -1097,6 +1097,24 @@ define([
                     }
                 },
 
+                _lastScrollPosition: {
+                    get: function () {
+                        return this._lastScrollPositionValue;
+                    },
+                    set: function (position) {
+                        if (position === 0) {
+                            this._lastDirection = "right";
+                            this._direction  = "right";
+                            this._lastScrollPositionValue = 0;
+                        } else {
+                            var currentDirection = position < this._lastScrollPositionValue ? "left" : "right";
+                            this._direction = this._scrollDirection(position);
+                            this._lastDirection = currentDirection;
+                            this._lastScrollPositionValue = position;
+                        }
+                    }
+                },
+
                 _supportsGroupHeaderKeyboarding: {
                     get: function () {
                         return this._groupDataSource;
@@ -2696,8 +2714,9 @@ define([
                     if (currentScrollPosition !== this._lastScrollPosition) {
                         this._pendingScroll = _Global.requestAnimationFrame(this._checkScroller.bind(this));
 
-                        var direction = (currentScrollPosition < this._lastScrollPosition) ? "left" : "right";
                         currentScrollPosition = Math.max(0, currentScrollPosition);
+                        var direction =  this._scrollDirection(currentScrollPosition);
+
                         this._lastScrollPosition = currentScrollPosition;
                         this._raiseViewLoading(true);
                         var that = this;
@@ -2711,6 +2730,16 @@ define([
                     } else {
                         this._pendingScroll = null;
                     }
+                },
+
+                _scrollDirection: function ListView_scrollDirectionl(currentScrollPosition) {
+                    var currentDirection = currentScrollPosition < this._lastScrollPosition ? "left" : "right";
+
+                    // When receiving a sequence of scroll positions, the browser may give us one scroll position
+                    // which doesn't fit (e.g. the scroll positions were increasing but just this one is decreasing).
+                    // To filter out this noise, _scrollDirection and _direction are stubborn -- they only change
+                    // when we've received a sequence of 3 scroll position which all indicate the same direction.
+                    return currentDirection === this._lastDirection ? currentDirection : this._direction;
                 },
 
                 _onTabEnter: function ListView_onTabEnter() {

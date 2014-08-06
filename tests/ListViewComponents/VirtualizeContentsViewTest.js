@@ -15,6 +15,8 @@ WinJSTests.VirtualizedViewTests = function () {
     "use strict";
     var that = this;
 
+    var defaultDisableCustomPagesPrefetch;
+    var defaultIsiOS;
     var BIG_DATASET = 15000,
         COUNT = 100,
         STRUCTURENODE_SIZE = 8;
@@ -91,6 +93,8 @@ WinJSTests.VirtualizedViewTests = function () {
         defaultPagesToPrefetch = WinJS.UI._VirtualizeContentsView._pagesToPrefetch;
         //WinBlue: 298587
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
+        defaultDisableCustomPagesPrefetch = WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch;
+        defaultIsiOS = WinJS.Utilities._isiOS;
     };
 
     this.tearDown = function () {
@@ -99,6 +103,8 @@ WinJSTests.VirtualizedViewTests = function () {
         WinJS.UI._VirtualizeContentsView._chunkSize = defaultChunkSize;
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = defaultMaxTime;
         WinJS.UI._VirtualizeContentsView._pagesToPrefetch = defaultPagesToPrefetch;
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = defaultDisableCustomPagesPrefetch;
+        WinJS.Utilities._setIsiOS(defaultIsiOS);
     };
 
     this.testInitalization = function (complete) {
@@ -1433,6 +1439,7 @@ WinJSTests.VirtualizedViewTests = function () {
 
     this.testLazyFlatTreeCreation = function (complete) {
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
 
         var placeholder = createListViewElement();
 
@@ -1478,6 +1485,7 @@ WinJSTests.VirtualizedViewTests = function () {
 
     this.testLazyTreeCreationPriority = function (complete) {
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
 
         var placeholder = createListViewElement();
 
@@ -2720,6 +2728,7 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testBackdropClass = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var placeholder = createListViewElement();
 
         var data = initData(COUNT),
@@ -2837,6 +2846,7 @@ WinJSTests.VirtualizedViewTests = function () {
     }
 
     this.testDeferRealizationOnDelete = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var element = document.createElement("div");
         element.style.width = "300px";
         element.style.height = "300px";
@@ -2876,6 +2886,7 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testDeferRealizationOnDeleteNotJustDeletes = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var element = document.createElement("div");
         element.style.width = "300px";
         element.style.height = "300px";
@@ -2980,6 +2991,7 @@ WinJSTests.VirtualizedViewTests = function () {
 
     // Regression test for WinBlue: 88018
     this.testEnsureVisibleAfterDataChange = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var newNode = document.createElement("div");
         newNode.innerHTML =
             "<div id='testListView' style='width:400px; height:300px'></div>" +
@@ -3050,6 +3062,7 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testSingleDeleteUpdateFollowedByInserts = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var newNode = document.createElement("div");
         newNode.innerHTML =
             "<div id='testListView' style='width:400px; height:300px'></div>" +
@@ -3159,6 +3172,7 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testReadySignalOrder = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var element = document.createElement("div");
         element.style.width = "100px";
         element.style.height = "200px";
@@ -3890,6 +3904,7 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testInsertsAnimationStartsBeforeRealizationIsDone = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var element = document.createElement("div");
         element.style.width = "300px";
         element.style.height = "300px";
@@ -3936,6 +3951,7 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testDeleteAnimationStartsBeforeUpdateTreeIsDone = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var element = document.createElement("div");
         element.style.width = "300px";
         element.style.height = "300px";
@@ -4005,6 +4021,7 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testInsertItemWithDeferredUnrealizedNonAnimatedItems = function (complete) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var element = document.createElement("div");
         element.style.width = "300px";
         element.style.height = "300px";
@@ -4059,6 +4076,7 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     function generateAnimationInViewportPendingFlagTest(complete, firstIndexToInsert, expectedValue) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var element = document.createElement("div");
         element.style.width = "300px";
         element.style.height = "300px";
@@ -4854,6 +4872,7 @@ WinJSTests.VirtualizedViewTests = function () {
         that["testDomTrim" + name] = function (complete) {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
             WinJS.UI._VirtualizeContentsView._pagesToPrefetch = 0;
+            WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
 
             var placeholder = createListViewElement();
             placeholder.id = "DomTrimTest";
@@ -5203,7 +5222,68 @@ WinJSTests.VirtualizedViewTests = function () {
             complete();
         });
     };
-    
+
+    this.testCustomPagesToPrefetch = function(complete) {
+        WinJS.Utilities._setIsiOS(true);
+
+        var viewPortHeight = 300,
+              count = 200,
+              list = new WinJS.Binding.List(initData(count));
+
+        function renderer(itemPromise) {
+                return itemPromise.then(function (item) {
+                    var element = document.createElement("div");
+                    element.textContent = item.data.title;
+                    element.style.width = element.style.height = "100px";
+                    return element;
+                });
+            }
+
+        var placeholder = createListViewElement(viewPortHeight + "px");
+        var listView = new WinJS.UI.ListView(placeholder, {
+            itemDataSource: list.dataSource,
+            itemTemplate: renderer,
+            layout: {
+                type: WinJS.UI.ListLayout
+            }
+        });
+
+        var elementsPerPage, expectedRealizedCount;
+        var customMaxPages = WinJS.UI._VirtualizeContentsView._customPagesToPrefetchMax;
+        var customMinPages = WinJS.UI._VirtualizeContentsView._customPagesToPrefetchMin;
+
+        waitForReady(listView, -1)().then(function () {
+            elementsPerPage = (listView.indexOfLastVisible - listView.indexOfFirstVisible) + 1
+
+            // When we are at the top of the list (scroll:0), we should have the current viewport full of items + customMaxPages pages ahead
+            expectedRealizedCount = elementsPerPage + (customMaxPages * elementsPerPage);
+            LiveUnit.Assert.areEqual(expectedRealizedCount, placeholder.querySelectorAll(".win-container:not(.win-backdrop)").length);
+
+            // Scroll to the bottom of the current viewport
+            listView.scrollPosition = viewPortHeight;
+
+            return waitForDeferredAction(listView, -1)();
+        }).then(function () {
+
+            // When our scroll position = viewPortHeight, we should have the current viewport full of items + up to 1 page behind + customMaxPages pages ahead
+            expectedRealizedCount = (customMinPages > 0 ? elementsPerPage : 0)  /* up to 1 page behind*/  + elementsPerPage  /* viewport*/  + (customMaxPages * elementsPerPage);
+            LiveUnit.Assert.areEqual(expectedRealizedCount, placeholder.querySelectorAll(".win-container:not(.win-backdrop)").length);
+
+            // Scroll down customMaxPages viewports
+            listView.scrollPosition = customMaxPages* viewPortHeight;
+
+            return waitForDeferredAction(listView, -1)();
+        }).then(function () {
+            LiveUnit.Assert.areEqual(listView.indexOfFirstVisible, customMaxPages * elementsPerPage);
+
+            // Since we are scrolling downward, we optimize the front buffer, so we should have customMinPages pages behind + current viewport + customMaxPages ahead
+            expectedRealizedCount = (customMinPages * elementsPerPage) /* behind*/  + elementsPerPage  /* viewport*/  + (customMaxPages * elementsPerPage);
+            LiveUnit.Assert.areEqual(expectedRealizedCount, placeholder.querySelectorAll(".win-container:not(.win-backdrop)").length);
+
+            complete();
+        });
+    };
+
     if (!Helper.Browser.isIE11) {
         Helper.disableTest(this, "testAnimationDuringSezoZoomingAndchange");
         Helper.disableTest(this, "testAnimationDuringSezoZoomingAndremove");

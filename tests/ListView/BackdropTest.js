@@ -17,6 +17,7 @@ var WinJSTests = WinJSTests || {};
         // This is the setup function that will be called at the beginning of each test function.
         var testRootEl;
         var defaultNumberOfItemsPerItemsBlock;
+        var defaultDisableCustomPagesPrefetch;
         this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
             
@@ -30,6 +31,7 @@ var WinJSTests = WinJSTests || {};
             testRootEl.appendChild(newNode);
             document.body.appendChild(testRootEl);
             defaultNumberOfItemsPerItemsBlock = WinJS.UI.ListLayout._numberOfItemsPerItemsBlock;
+            defaultDisableCustomPagesPrefetch = WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch;
         };
 
         this.tearDown = function () {
@@ -37,6 +39,7 @@ var WinJSTests = WinJSTests || {};
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
             WinJS.UI.ListLayout._numberOfItemsPerItemsBlock = defaultNumberOfItemsPerItemsBlock;
+            WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = defaultDisableCustomPagesPrefetch;
         };
 
         function setupListView(element, layout) {
@@ -115,7 +118,7 @@ var WinJSTests = WinJSTests || {};
         //
         this.testBackDropAfterDeleteInListLayout = function (complete) {
             WinJS.UI.ListLayout._numberOfItemsPerItemsBlock = 0;
-
+            WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.getElementById("BackdropTests");
             var listview = setupListView(element, new WinJS.UI.ListLayout());
             waitForReady(listview)().then(function () {

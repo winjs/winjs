@@ -12,6 +12,8 @@ var WinJSTests = WinJSTests || {};
 WinJSTests.ListView = function () {
     "use strict";
 
+    var defaultDisableCustomPagesPrefetch;
+
     function parent(element) {
         document.body.appendChild(element);
         return function () {
@@ -32,6 +34,12 @@ WinJSTests.ListView = function () {
 
     this.setUp = function () {
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 5;
+        defaultDisableCustomPagesPrefetch = WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch;
+    };
+
+    this.tearDown = function () {
+        LiveUnit.LoggingCore.logComment("In tearDown");
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = defaultDisableCustomPagesPrefetch;
     };
 
     this.testForceLayoutSavesContainers = function (complete) {
@@ -490,6 +498,7 @@ WinJSTests.ListView = function () {
     this.generateListViewDisposeTest("GridLayout");
 
     this.generateListViewDisposeDuringVirtualizationTest = function (layoutName) {
+        WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         this["testListViewDisposeDuringVirtualization" + layoutName] = function (complete) {
             var disposing = false;
             var dispose = function () {

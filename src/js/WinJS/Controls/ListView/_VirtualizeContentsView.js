@@ -1694,13 +1694,32 @@ define([
                             // While the zoom animation is played we want to minimize the # of pages 
                             // being fetched to improve TtFF for SeZo scenarios
                             var pagesToPrefetch = _VirtualizeContentsView._pagesToPrefetch;
+                            var customPagesToPrefetchMax = _VirtualizeContentsView._customPagesToPrefetchMax;
+                            var customPagesToPrefetchMin = _VirtualizeContentsView._customPagesToPrefetchMin;
                             if (that._listView._zooming) {
                                 pagesToPrefetch = 0;
+                                customPagesToPrefetchMax = 0;
+                                customPagesToPrefetchMin = 0;
                             }
 
-                            var viewportLength = that._listView._getViewportLength(),
-                                beginningOffset = Math.max(0, that._scrollbarPos - pagesToPrefetch * viewportLength),
-                                endingOffset = that._scrollbarPos + (1 + pagesToPrefetch) * viewportLength;
+                            var viewportLength = that._listView._getViewportLength();
+                            var pagesBefore, pagesAfter;
+
+                            if (_BaseUtils._isiOS && !_VirtualizeContentsView._disableCustomPagesPrefetch) {
+                                pagesBefore = (that._direction === "left" ? customPagesToPrefetchMax : customPagesToPrefetchMin);
+
+                                // Optimize the beginning of the list such that if you scroll, then change direction and start going back towards the beginning of the list,
+                                // we maintain a remainder of pages that can be added to pagesAfter. This ensures that at beginning of the list, which is the common case,
+                                // we always have customPagesToPrefetchMax ahead, even when the scrolling direction is constantly changing.
+                                var pagesShortBehind = Math.max(0, (pagesBefore - (that._scrollbarPos / viewportLength)));
+                                pagesAfter = Math.min(customPagesToPrefetchMax, pagesShortBehind + (that._direction === "right" ? customPagesToPrefetchMax : customPagesToPrefetchMin));
+                            } else {
+                                pagesBefore = pagesToPrefetch;
+                                pagesAfter = pagesToPrefetch;
+                            }
+
+                            var beginningOffset = Math.max(0, that._scrollbarPos - pagesBefore * viewportLength),
+                                  endingOffset = that._scrollbarPos + (1 + pagesAfter) * viewportLength;
 
                             var range = that._listView._layout.itemsFromRange(beginningOffset, endingOffset - 1);
                             if ((range.firstIndex < 0 || range.firstIndex >= count) && (range.lastIndex < 0 || range.lastIndex >= count)) {
@@ -2666,6 +2685,9 @@ define([
                 }
             },{
                 _pagesToPrefetch: 2,
+                _customPagesToPrefetchMax: 6, 
+                _customPagesToPrefetchMin: 2, 
+                _disableCustomPagesPrefetch: false,
                 _waitForSeZoIntervalDuration: 100,
                 _waitForSeZoTimeoutDuration: 500,
                 _chunkSize: 500,
