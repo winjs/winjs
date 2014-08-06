@@ -8,15 +8,18 @@ var WinJSTests = WinJSTests || {};
 
 WinJSTests.ToggleSwitchTests = function () {
     "use strict";
-    
+
     function setup() {
 
     }
 
     function tearDown() {
     }
-    
+
+    this.testStub = function() {
+        LiveUnit.Assert.isTrue(true, 'Stub Test');
+    };
 }
 
 // register the object as a test class by passing in the name
-LiveUnit.registerTestClass("WinJSTests.ToggleSwitchTests");
+LiveUnit.registerTestClass('WinJSTests.ToggleSwitchTests');
