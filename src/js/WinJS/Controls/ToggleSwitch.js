@@ -50,6 +50,7 @@ define([
                 var classOn = 'win-toggleswitch-on';
                 var classOff = 'win-toggleswitch-off';
                 var classDisabled = 'win-toggleswitch-disabled';
+                var classEnabled = 'win-toggleswitch-enabled';
                 var classDragging = 'win-toggleswitch-dragging';
                 var classPressed = 'win-toggleswitch-pressed';
 
@@ -119,7 +120,6 @@ define([
                     this._headerElement.setAttribute('aria-hidden', true);
                     this._labelOnElement.setAttribute('aria-hidden', true);
                     this._labelOffElement.setAttribute('aria-hidden', true);
-                    this._headerElement.setAttribute('role', 'note');
                     this._headerElement.setAttribute('id', _ElementUtilities._uniqueID(this._headerElement));
                     this._domElement.setAttribute('aria-labelledby', this._headerElement.id);
                     this._domElement.setAttribute('role', 'checkbox');
@@ -204,8 +204,10 @@ define([
 
                             if (value) {
                                 _ElementUtilities.addClass(this._domElement, classDisabled);
+                                _ElementUtilities.removeClass(this._domElement, classEnabled);
                             } else {
                                 _ElementUtilities.removeClass(this._domElement, classDisabled);
+                                _ElementUtilities.addClass(this._domElement, classEnabled);
                             }
 
                             this._disabled = value;
