@@ -434,7 +434,7 @@ define([
         "pointerId", "pointerType", "pressure", "preventDefault", "relatedTarget",
         "rotation", "screenX", "screenY", "shiftKey", "srcElement", "stopImmediatePropagation",
         "stopPropagation", "target", "tiltX", "tiltY", "timeStamp", "toElement", "type",
-        "view", "which", "width", "x", "y", "_normalizedType"
+        "view", "which", "width", "x", "y", "_normalizedType", "_fakedBySemanticZoom"
     ].forEach(function (propertyName) {
         Object.defineProperty(PointerEventProxy.prototype, propertyName, {
             get: function () {
@@ -468,7 +468,8 @@ define([
                 force: touchObject.force,
                 _currentTouch: touchObject
             });
-            retVal = retVal || callback(pointerEventObject);
+            var newRetVal = callback(pointerEventObject);
+            retVal = retVal || newRetVal;
         }
         return retVal;
     }
