@@ -118,6 +118,7 @@ define([
                 this._closeSplitAndResetBound = this._closeSplitAndReset.bind(this);
                 this._currentManipulationState = MS_MANIPULATION_STATE_STOPPED;
 
+                this._panningDisabled = false;
                 this._fixedSize = false;
                 this._maxRows = 1;
                 this._sizes = {};
@@ -155,7 +156,19 @@ define([
                     this.currentIndex = options.currentIndex;
                 }
 
-                this._updatePageUI();
+                var that = this;
+                var updatedPageUI = false;
+                _ElementUtilities._detectSnapPointsSupport().then(function (supportsSnap) {
+                    that._panningDisabled = !supportsSnap;
+                    if (!that._disposed) {
+                        that._updatePageUI();
+                        updatedPageUI = true;
+                    }
+                });
+
+                if (!updatedPageUI) {
+                    this._updatePageUI();
+                }
 
                 Scheduler.schedule(function NavBarContainer_async_initialize() {
                     this._updateAppBarReference();
@@ -1201,7 +1214,7 @@ define([
                     }
 
                     if (this._sizes.pages > 1) {
-                        this._viewportEl.style.overflowX = "";
+                        this._viewportEl.style.overflowX = this._panningDisabled ? "hidden" : "";
                         this._pageindicatorsEl.style.visibility = "";
                     } else {
                         this._viewportEl.style.overflowX = "hidden";
@@ -1241,7 +1254,7 @@ define([
                     // Previous and next are the arrows, not states. On mouse hover the arrows fade in immediately. If you
                     // mouse out the arrows fade out after a delay. When you reach the last/first page, the corresponding
                     // arrow fades out immediately as well.
-                    if (this._mouseInViewport && hasLeftContent) {
+                    if ((this._mouseInViewport || this._panningDisabled) && hasLeftContent) {
                         this._leftArrowWaitingToFadeOut && this._leftArrowWaitingToFadeOut.cancel();
                         this._leftArrowWaitingToFadeOut = null;
                         this._leftArrowFadeOut && this._leftArrowFadeOut.cancel();
@@ -1269,7 +1282,7 @@ define([
                     }
 
                     // Same pattern for Next arrow.
-                    if (this._mouseInViewport && hasRightContent) {
+                    if ((this._mouseInViewport || this._panningDisabled) && hasRightContent) {
                         this._rightArrowWaitingToFadeOut && this._rightArrowWaitingToFadeOut.cancel();
                         this._rightArrowWaitingToFadeOut = null;
                         this._rightArrowFadeOut && this._rightArrowFadeOut.cancel();
