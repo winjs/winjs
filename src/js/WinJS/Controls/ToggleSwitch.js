@@ -54,7 +54,7 @@ define([
                 var classDragging = 'win-toggleswitch-dragging';
                 var classPressed = 'win-toggleswitch-pressed';
 
-                // Localized strings
+                // Localized  strings
                 var strings = {
                     get on() {
                         return _Resources._getWinJSString("ui/on").value;
@@ -323,9 +323,10 @@ define([
 
                         // If the thumb is being dragged, pick a new value based on what the thumb
                         // was closest to
+                        var isRTL = _Global.getComputedStyle(this._domElement).direction === 'rtl';
                         if (this._dragging) {
                             var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
-                            this.checked = this._dragX >= maxX / 2;
+                            this.checked = isRTL ? this._dragX < maxX / 2 : this._dragX >= maxX / 2;
                             this._dragging = false;
                             _ElementUtilities.removeClass(this._domElement, classDragging);
                         } else {

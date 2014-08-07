@@ -4,7 +4,52 @@
     @trackWidth: 50px;
     @trackHeight: 19px;
     @thumbWidth: 12px;
-    @fillOnWidth: @trackWidth - @thumbWidth - 3px;
+    @fillWidth: @trackWidth - @thumbWidth - 3px;
+
+    .calculateFillSizes(@isRTL) when (@isRTL = false) {
+        @lowerFillWidthOn: @fillWidth;
+        @lowerFillWidthOff: 0;
+        @upperFillWidthOn: 0;
+        @upperFillWidthOff: @fillWidth;
+        @thumbPosOn: @trackWidth - @thumbWidth;
+        @thumbPosOff: 0;
+    }
+    .calculateFillSizes(@isRTL) when (@isRTL = true) {
+        @lowerFillWidthOn: 0;
+        @lowerFillWidthOff: @fillWidth;
+        @upperFillWidthOn: @fillWidth;
+        @upperFillWidthOff: 0;
+        @thumbPosOn: 0;
+        @thumbPosOff: @trackWidth - @thumbWidth;
+    }
+    .calculateFillSizes(false);
+
+    .rtlDependentStyles(@isRTL) {
+        .calculateFillSizes(@isRTL);
+
+        &.win-toggleswitch-on {
+            .win-toggleswitch-fill-lower {
+                width: @lowerFillWidthOn;
+            }
+            .win-toggleswitch-fill-upper {
+                width: @upperFillWidthOn;
+            }
+            .win-toggleswitch-thumb {
+                left: @thumbPosOn;
+            }
+        }
+        &.win-toggleswitch-off {
+            .win-toggleswitch-fill-lower {
+                width: @lowerFillWidthOff;
+            }
+            .win-toggleswitch-fill-upper {
+                width: @upperFillWidthOff;
+            }
+            .win-toggleswitch-thumb {
+                left: @thumbPosOff;
+            }
+        }
+    }
 
     outline: 0;
 
@@ -53,7 +98,6 @@
         position: absolute;
         top: 1px;
         display: inline-block;
-        width: 0;
         height: @trackHeight - 6px;
         box-sizing: border-box;
         -webkit-transition: width 0.1s;
@@ -89,20 +133,11 @@
             transition: none;
         }
     }
-    &.win-toggleswitch-on {
-        .win-toggleswitch-fill-lower {
-            width: @fillOnWidth;
-        }
-        .win-toggleswitch-thumb {
-            left: @trackWidth - @thumbWidth;
-        }
-    }
-    &.win-toggleswitch-off {
-        .win-toggleswitch-fill-upper {
-            width: @fillOnWidth;
-        }
-        .win-toggleswitch-thumb {
-            left: 0;
-        }
+
+    .rtlDependentStyles(false);
+
+    &:-ms-lang(@{rtl}) {
+        direction: rtl;
+        .rtlDependentStyles(true);
     }
 }
