@@ -1282,17 +1282,12 @@ define([
                     // Leave this blank for unit tests to overwrite.
                 },
 
-                // Get the top of the top appbars, this is always 0 because appbar uses
-                // -ms-device-fixed positioning.
+                // Get the top offset for top appbars. 
                 _getTopOfVisualViewport: function AppBar_getTopOfVisualViewPort() {
-                    return 0;
+                    return _Overlay._Overlay._keyboardInfo._visibleDocTop;
                 },
 
-                // Get the bottom of the bottom appbars, Bottom is just 0, if there's no IHM.
-                // When the IHM appears, the default behavior is to resize the view. If a resize
-                // happens, we can rely on -ms-device-fixed positioning and leave the bottom
-                // at 0. However if resize doesn't happen, then the keyboard obscures the appbar
-                // and we will need to adjust the bottom of the appbar by distance of the keyboard.
+                // Get the bottom offset for bottom appbars.
                 _getAdjustedBottom: function AppBar_getAdjustedBottom() {
                     // Need the distance the IHM moved as well.
                     return _Overlay._Overlay._keyboardInfo._visibleDocBottomOffset;

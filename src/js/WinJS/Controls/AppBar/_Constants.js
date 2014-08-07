@@ -68,5 +68,6 @@ define([
         wideClass: "win-wide",
         _clickEatingAppBarClass: "win-appbarclickeater",
         _clickEatingFlyoutClass: "win-flyoutmenuclickeater",
+        _visualViewportClass: "win-visualviewport-space",
     });
 });

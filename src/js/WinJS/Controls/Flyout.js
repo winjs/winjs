@@ -411,7 +411,7 @@ define([
                     // Set up the new position, and prep the offset for showPopup
                     this._getTopLeft();
                     // Panning top offset is calculated top
-                    this._scrollTop = this._nextTop;
+                    this._scrollTop = this._nextTop - _Overlay._Overlay._keyboardInfo._visibleDocTop;
 
                     // Adjust position
                     if (this._nextTop < 0) {
@@ -498,8 +498,8 @@ define([
                         case "top":
                             if (!this._fitTop(anchor, flyout)) {
                                 // Didn't fit, needs scrollbar
-                                this._nextTop = 0;
-                                this._nextHeight = anchor.top - this._nextMarginPadding;
+                                this._nextTop = _Overlay._Overlay._keyboardInfo._visibleDocTop;
+                                this._nextHeight = anchor.top - _Overlay._Overlay._keyboardInfo._visibleDocTop - this._nextMarginPadding;
                             }
                             this._centerHorizontally(anchor, flyout, this._currentAlignment);
                             break;
@@ -507,7 +507,7 @@ define([
                             if (!this._fitBottom(anchor, flyout)) {
                                 // Didn't fit, needs scrollbar
                                 this._nextTop = -1;
-                                this._nextHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - anchor.bottom - this._nextMarginPadding;
+                                this._nextHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - (anchor.bottom - _Overlay._Overlay._keyboardInfo._visibleDocTop) - this._nextMarginPadding;
                             }
                             this._centerHorizontally(anchor, flyout, this._currentAlignment);
                             break;
@@ -541,12 +541,12 @@ define([
                                     // Didn't fit left or right either, is top or bottom bigger?
                                     if (this._topHasMoreRoom(anchor)) {
                                         // Top, won't fit, needs scrollbar
-                                        this._nextTop = 0;
-                                        this._nextHeight = anchor.top - this._nextMarginPadding;
+                                        this._nextTop = _Overlay._Overlay._keyboardInfo._visibleDocTop;
+                                        this._nextHeight = anchor.top - _Overlay._Overlay._keyboardInfo._visibleDocTop - this._nextMarginPadding;
                                     } else {
                                         // Bottom, won't fit, needs scrollbar
                                         this._nextTop = -1;
-                                        this._nextHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - anchor.bottom - this._nextMarginPadding;
+                                        this._nextHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - (anchor.bottom - _Overlay._Overlay._keyboardInfo._visibleDocTop) - this._nextMarginPadding;
                                     }
                                     this._centerHorizontally(anchor, flyout, this._currentAlignment);
                                 } else {
@@ -577,14 +577,14 @@ define([
                 _fitTop: function Flyout_fitTop(anchor, flyout) {
                     this._nextTop = anchor.top - flyout.height;
                     this._nextAnimOffset = { top: "50px", left: "0px", keyframe: "WinJS-showFlyoutTop" };
-                    return (this._nextTop >= 0 &&
+                    return (this._nextTop >= _Overlay._Overlay._keyboardInfo._visibleDocTop &&
                             this._nextTop + flyout.height <= _Overlay._Overlay._keyboardInfo._visibleDocBottom);
                 },
 
                 _fitBottom: function Flyout_fitBottom(anchor, flyout) {
                     this._nextTop = anchor.bottom;
                     this._nextAnimOffset = { top: "-50px", left: "0px", keyframe: "WinJS-showFlyoutBottom" };
-                    return (this._nextTop >= 0 &&
+                    return (this._nextTop >= _Overlay._Overlay._keyboardInfo._visibleDocTop &&
                             this._nextTop + flyout.height <= _Overlay._Overlay._keyboardInfo._visibleDocBottom);
                 },
 
@@ -602,8 +602,8 @@ define([
 
                 _centerVertically: function Flyout_centerVertically(anchor, flyout) {
                     this._nextTop = anchor.top + anchor.height / 2 - flyout.height / 2;
-                    if (this._nextTop < 0) {
-                        this._nextTop = 0;
+                    if (this._nextTop < _Overlay._Overlay._keyboardInfo._visibleDocTop) {
+                        this._nextTop = _Overlay._Overlay._keyboardInfo._visibleDocTop;
                     } else if (this._nextTop + flyout.height >= _Overlay._Overlay._keyboardInfo._visibleDocBottom) {
                         // Flag to put on bottom
                         this._nextTop = -1;
@@ -705,7 +705,7 @@ define([
                     } else if (this._nextTop === -1) {
                         // Pinned to bottom counts as moved
                         this._keyboardMovedUs = true;
-                    } else if (this._nextTop < 0) {
+                    } else if (this._nextTop < _Overlay._Overlay._keyboardInfo._visibleDocTop) {
                         // Above the top of the viewport
                         this._scrollTop = 0;
                         this._keyboardMovedUs = true;
@@ -763,7 +763,7 @@ define([
                         this._element.style.top = "auto";
                     } else {
                         // Normal, attach to top
-                        this._element.style.top = "0px";
+                        this._element.style.top =  _Overlay._Overlay._keyboardInfo._visibleDocTop + "px";
                         this._element.style.bottom = "auto";
                     }
                 },

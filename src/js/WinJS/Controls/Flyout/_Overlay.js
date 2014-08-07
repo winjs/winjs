@@ -1457,10 +1457,11 @@ define([
                     return null;
                 },
 
-                // Global keyboard hiding offset
+                // WWA Soft Keyboard offsets
                 _keyboardInfo: {
                     // Determine if the keyboard is visible or not.
                     get _visible() {
+
                         try {
                             return (
                                 _WinRT.Windows.UI.ViewManagement.InputPane &&
@@ -1469,6 +1470,7 @@ define([
                         } catch (e) {
                             return false;
                         }
+
                     },
 
                     // See if we have to reserve extra space for the IHM
@@ -1489,6 +1491,7 @@ define([
 
                         // View already has space for keyboard or there's no keyboard
                         return 0;
+
                     },
 
                     // See if the view has been resized to fit a keyboard
@@ -1500,52 +1503,19 @@ define([
                         // If they're nearly identical, then the view hasn't been resized for the IHM
                         // Only check one bound because we know the IHM will make it shorter, not skinnier.
                         return (widthRatio / heightRatio < 0.99);
-                    },
 
-                    // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement. 
-                    // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
-                    get _visibleDocTop() {
-                        return _Global.pageYOffset - _Global.document.documentElement.scrollTop;
                     },
 
                     // Get the bottom of our visible area.
                     get _visibleDocBottom() {
                         return _Overlay._keyboardInfo._visibleDocTop + _Overlay._keyboardInfo._visibleDocHeight;
+
                     },
 
                     // Get the height of the visible document, e.g. the height of the visual viewport minus any IHM occlusion.
                     get _visibleDocHeight() {
                         return _Overlay._keyboardInfo._visualViewportHeight - _Overlay._keyboardInfo._extraOccluded;
-                    },
 
-                    // Get the visual viewport height. window.innerHeight doesn't return floating point values which are present with high DPI.
-                    get _visualViewportHeight() {
-                        var boundingRect = _Overlay._keyboardInfo._visualViewportSpace;
-                        return boundingRect.bottom - boundingRect.top;
-                    },
-
-                    // Get the visual viewport width. window.innerHeight doesn't return floating point values which are present with high DPI.
-                    get _visualViewportWidth() {
-                        var boundingRect = _Overlay._keyboardInfo._visualViewportSpace;
-                        return boundingRect.right - boundingRect.left;
-                    },
-
-                    get _visualViewportSpace() {
-                        var className = "win-visualviewport-space";
-                        var visualViewportSpace = _Global.document.body.querySelector("." + className);
-                        if (!visualViewportSpace) {
-                            visualViewportSpace = _Global.document.createElement("DIV");
-                            visualViewportSpace.className = className;
-                            _Global.document.body.appendChild(visualViewportSpace);
-                        }
-
-                        return visualViewportSpace.getBoundingClientRect();
-                    },
-
-                    // Get offset of visible window from bottom.
-                    get _visibleDocBottomOffset() {
-                        // If the view resizes we can return 0 and rely on appbar's -ms-device-fixed css positioning. 
-                        return (_Overlay._keyboardInfo._isResized) ? 0 : _Overlay._keyboardInfo._extraOccluded;
                     },
 
                     // Get total length of the IHM showPanel animation
@@ -1563,7 +1533,7 @@ define([
                         } else {
                             return 0;
                         }
-                    }
+                    },
                 },
 
                 _ElementWithFocusPreviousToAppBar: null,
@@ -1582,12 +1552,101 @@ define([
                 afterHide: AFTERHIDE,
 
                 commonstrings: {
-                get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },
-                get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; }
+                    get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },
+                    get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; }
                 }
             });
 
+            // Mixin for WWA Soft Keyboard offsets when -ms-device-fixed CSS positioning is supported.
+            // In this instance all _Overlay elements will use -ms-device-fixed positioning which fixes them to the visual viewport directly.
+            var _keyboardInfoDeviceFixedMixin = {
+
+                // Get the top offset of our visible area, aka the top of the visual viewport.
+                // This is always 0 when _Overlay elements use -ms-device-fixed positioning.
+                _visibleDocTop: function _visibleDocTop() {
+                    return 0;
+                },
+
+                // Get the bottom offset of the visual viewport, plus any IHM occlusion. 
+                _visibleDocBottomOffset: function _visibleDocBottomOffset() {
+                    // For -ms-device-fixed positioned elements, the bottom is just 0 when there's no IHM. 
+                    // When the IHM appears, the text input that invoked it may be in a position on the page that is occluded by the IHM.
+                    // In that instance, the default browser behavior is to resize the visual viewport and scroll the input back into view.
+                    // However, if the viewport resize is prevented by an IHM event listener, the keyboard will still occlude
+                    // -ms-device-fixed elements, so we adjust the bottom offset of the appbar by the height of the occluded rect of the IHM.
+                    return (_Overlay._keyboardInfo._isResized) ? 0 : _Overlay._keyboardInfo._extraOccluded;
+                },
+
+                // Get the visual viewport height. window.innerHeight doesn't return floating point values which are present with high DPI.
+                _visualViewportHeight: function _visualViewportHeight() {
+                    var boundingRect = _Overlay._keyboardInfo._visualViewportSpace;
+                    return boundingRect.bottom - boundingRect.top;
+                },
+
+                // Get the visual viewport width. window.innerWidth doesn't return floating point values which are present with high DPI.
+                _visualViewportWidth: function _visualViewportWidth() {
+                    var boundingRect = _Overlay._keyboardInfo._visualViewportSpace;
+                    return boundingRect.right - boundingRect.left;
+                },
+
+                _visualViewportSpace: function _visualViewportSpace() {
+                    var visualViewportSpace = _Global.document.body.querySelector("." + _Constants._visualViewportClass);
+                    if (!visualViewportSpace) {
+                        visualViewportSpace = _Global.document.createElement("DIV");
+                        visualViewportSpace.className = _Constants._visualViewportClass;
+                        _Global.document.body.appendChild(visualViewportSpace);
+                    }
+                    return visualViewportSpace.getBoundingClientRect();
+                },
+            };
+
+            // Mixin for WWA Soft Keyboard offsets when CSS -ms-device-fixed positioning is not supported. 
+            // In that instance, all _Overlay elements fall back to using CSS fixed positioning.
+            // This is for backwards compatibility with Apache Cordova Apps targeting WWA since they target IE10.
+            // This is essentially the original logic for WWA _Overlay / Soft Keyboard interactions we used when windows 8 first launched.
+            var _keyboardInfoFixedMixin = {
+                // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement. 
+                // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
+                _visibleDocTop: function _visibleDocTop() {
+                    return _Global.window.pageYOffset - _Global.document.documentElement.scrollTop;
+                },
+
+                // Get the bottom offset of the visual viewport from the bottom of the layout viewport, plus any IHM occlusion. 
+                _visibleDocBottomOffset: function _visibleDocBottomOffset() {
+                    return _Global.document.documentElement.clientHeight - _Overlay._keyboardInfo._visibleDocBottom;
+                },
+
+                _visualViewportHeight: function _visualViewportHeight() {
+                    return _Global.window.innerHeight;
+                },
+
+                _visualViewportWidth: function _visualViewportWidth() {
+                    return _Global.window.innerWidth;
+                },
+            };
+
             _Base.Class.mix(_Overlay, _Control.DOMEventMixin);
+
+            // Feature detect for -ms-device-fixed positioning and fill out the
+            // remainder of our WWA Soft KeyBoard handling logic with mixins.
+            var visualViewportSpace = _Global.document.createElement("DIV");
+            visualViewportSpace.className = _Constants._visualViewportClass;
+            _Global.document.body.appendChild(visualViewportSpace);
+
+            var propertiesMixin,
+                hasDeviceFixed = _Global.getComputedStyle(visualViewportSpace).position === "-ms-device-fixed";
+            if (hasDeviceFixed) {
+                propertiesMixin = _keyboardInfoDeviceFixedMixin;
+            } else {
+                propertiesMixin = _keyboardInfoFixedMixin;
+                _Global.document.body.removeChild(visualViewportSpace);
+            }
+
+            for (var propertyName in propertiesMixin) {
+                Object.defineProperty(_Overlay._keyboardInfo, propertyName, {
+                    get: propertiesMixin[propertyName],
+                });
+            }
 
             return _Overlay;
         })
