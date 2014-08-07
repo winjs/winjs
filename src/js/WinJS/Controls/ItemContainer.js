@@ -32,7 +32,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.ItemContainer">
-        /// Defines an item that can be pressed, swiped, and dragged. 
+        /// Defines an item that can be pressed, swiped, and dragged.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.itemcontainer.12x12.png" width="12" height="12" />
@@ -281,7 +281,7 @@ define([
                 },
 
                 /// <field type="Boolean" locid="WinJS.UI.ItemContainer.draggable" helpKeyword="WinJS.UI.ItemContainer.draggable">
-                /// Gets or sets a value that specifies whether the item can be dragged. The default value is false. 
+                /// Gets or sets a value that specifies whether the item can be dragged. The default value is false.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 draggable: {
@@ -338,7 +338,7 @@ define([
 
                 /// <field type="String" oamOptionsDatatype="WinJS.UI.TapBehavior" locid="WinJS.UI.ItemContainer.tapBehavior" helpKeyword="WinJS.UI.ItemContainer.tapBehavior">
                 /// Gets or sets how the ItemContainer control reacts when the user taps or clicks an item.
-                /// The tap or click can invoke the item, select it and invoke it, or have no effect. 
+                /// The tap or click can invoke the item, select it and invoke it, or have no effect.
                 /// Possible values: "toggleSelect", "invokeOnly", and "none". The default value is "invokeOnly".
                 /// </field>
                 tapBehavior: {
@@ -371,7 +371,7 @@ define([
                 },
 
                 /// <field type="Boolean" locid="WinJS.UI.ItemContainer.selectionDisabled" helpKeyword="WinJS.UI.ItemContainer.selectionDisabled">
-                /// Gets or sets whether the item selection is disabled. The default value is false. 
+                /// Gets or sets whether the item selection is disabled. The default value is false.
                 /// </field>
                 selectionDisabled: {
                     get: function () {
@@ -391,7 +391,7 @@ define([
                 },
 
                 /// <field type="Function" locid="WinJS.UI.ItemCotrol.oninvoked" helpKeyword="WinJS.UI.ItemCotrol.oninvoked">
-                /// Raised when the item is invoked. You can use the tapBehavior property to specify whether taps and clicks invoke the item. 
+                /// Raised when the item is invoked. You can use the tapBehavior property to specify whether taps and clicks invoke the item.
                 /// </field>
                 oninvoked: createEvent(eventNames.invoked),
 

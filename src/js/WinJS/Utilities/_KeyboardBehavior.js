@@ -60,7 +60,7 @@ define([
             var Key = _ElementUtilities.Key;
 
             var _KeyboardBehavior = _Base.Class.define(function KeyboardBehavior_ctor(element, options) {
-                // KeyboardBehavior allows you to easily convert a bunch of tabable elements into a single tab stop with 
+                // KeyboardBehavior allows you to easily convert a bunch of tabable elements into a single tab stop with
                 // navigation replaced by keyboard arrow (Up/Down/Left/Right) + Home + End + Custom keys.
                 //
                 // Example use cases:
@@ -89,22 +89,22 @@ define([
                 // [5][6]
                 // ...
                 //
-                // Currently it is a "behavior" instead of a "control" so it can be attached to the same element as a 
+                // Currently it is a "behavior" instead of a "control" so it can be attached to the same element as a
                 // winControl. The main scenario for this would be to attach it to the same element as a repeater.
                 //
-                // It also blocks "Portaling" where you go off the end of one column and wrap around to the other 
+                // It also blocks "Portaling" where you go off the end of one column and wrap around to the other
                 // column. It also blocks "Carousel" where you go from the end of the list to the beginning.
                 //
                 // Keyboarding behavior supports nesting. It supports your tab stops having sub tab stops. If you want
                 // an interactive element within the tab stop you need to use the win-interactive classname or during the
                 // keydown event stop propogation so that the event is skipped.
                 //
-                // If you have custom keyboarding the getAdjacent API is provided. This can be used to enable keyboarding 
-                // in multisize 2d lists or custom keyboard commands. PageDown and PageUp are the most common since this 
+                // If you have custom keyboarding the getAdjacent API is provided. This can be used to enable keyboarding
+                // in multisize 2d lists or custom keyboard commands. PageDown and PageUp are the most common since this
                 // behavior does not detect scrollers.
                 //
                 // It also allows developers to show/hide keyboard focus rectangles themselves.
-                // 
+                //
                 // It has an API called currentIndex so that Tab (or Shift+Tab) or a developer imitating Tab will result in
                 // the correct item having focus.
                 //
@@ -178,7 +178,7 @@ define([
                         this._getAdjacent = value;
                     }
                 },
-                
+
                 // If set, KeyboardBehavior will prevent *scroller* from scrolling when moving focus
                 scroller: {
                     get: function () {

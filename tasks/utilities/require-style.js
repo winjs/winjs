@@ -107,7 +107,7 @@ define(['require'], function (req) {
             return;
         }
 
-        
+
         var fs = require.nodeRequire('fs-extra');
         var path = require.nodeRequire('path');
 
@@ -119,7 +119,7 @@ define(['require'], function (req) {
         // Build a less file for each theme
         writeCssFile('dark', 'light', outputFilePath);
         writeCssFile('light', 'dark', outputFilePath);
-        
+
     };
 
     return api;

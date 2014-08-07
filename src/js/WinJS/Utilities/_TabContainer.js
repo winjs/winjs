@@ -23,7 +23,7 @@ define([
 
     // tabbableElementsNodeFilter works with the TreeWalker to create a view of the DOM tree that is built up of what we want the focusable tree to look like.
     // When it runs into a tab contained area, it rejects anything except the childFocus element so that any potentially tabbable things that the TabContainer
-    // doesn't want tabbed to get ignored. 
+    // doesn't want tabbed to get ignored.
     function tabbableElementsNodeFilter(node) {
         var nodeStyle = _Global.getComputedStyle(node);
         if (nodeStyle.display === "none" || nodeStyle.visibility === "hidden") {
@@ -214,7 +214,7 @@ define([
                             element.tabIndex = -1;
                         }
                         // If there's nothing else that can be tabbed to on the page, tab should wrap around back to the tab contained area.
-                        // We'll disable the sentinel node that's directly in the path of the tab order (catcherEnd for forward tabs, and 
+                        // We'll disable the sentinel node that's directly in the path of the tab order (catcherEnd for forward tabs, and
                         // catcherBegin for shift+tabs), but leave the other sentinel node untouched so tab can wrap around back into the region.
                         that._elementTabHelper[forwardTab ? "_catcherEnd" : "_catcherBegin"].tabIndex = -1;
 
@@ -222,7 +222,7 @@ define([
                             targetElement.removeEventListener("blur", restoreTabIndicesOnBlur, false);
                             for (var i = 0; i < len; i++) {
                                 if (originalTabIndices[i] !== -1) {
-                                    // When the original tabIndex was -1, don't try restoring to -1 again. A nested TabContainer might also be in the middle of handling this same code, 
+                                    // When the original tabIndex was -1, don't try restoring to -1 again. A nested TabContainer might also be in the middle of handling this same code,
                                     // and so would have set tabIndex = -1 on this element. The nested tab container will restore the element's tabIndex properly.
                                     allTabbableElements[i].tabIndex = originalTabIndices[i];
                                 }

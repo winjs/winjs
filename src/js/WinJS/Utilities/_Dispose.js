@@ -49,7 +49,7 @@ define([
         if (!element) {
             return;
         }
-        
+
         _WriteProfilerMark("WinJS.Utilities.disposeSubTree,StartTM");
         var query = element.querySelectorAll(".win-disposable");
 
@@ -94,7 +94,7 @@ define([
             disposeSubTree(element);
         }
     }
-    
+
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
 
         markDisposable: markDisposable,

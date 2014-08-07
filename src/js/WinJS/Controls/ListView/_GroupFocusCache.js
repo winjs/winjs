@@ -14,7 +14,7 @@ define([
                 // We store indices as strings in the cache so index=0 does not evaluate to false as
                 // when we check for the existance of an index in the cache. The index is converted
                 // back into a number when calling getIndexForGroup
-        
+
                 updateCache: function (groupKey, itemKey, itemIndex) {
                     itemIndex = "" + itemIndex;
                     this._itemToIndex[itemKey] = itemIndex;

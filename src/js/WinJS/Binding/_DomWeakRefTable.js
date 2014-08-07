@@ -30,7 +30,7 @@ define([
 
     }
 
-    // Defaults 
+    // Defaults
     var SWEEP_PERIOD = 500;
     var TIMEOUT = 1000;
     var table = {};

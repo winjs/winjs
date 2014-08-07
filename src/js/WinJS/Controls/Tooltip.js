@@ -65,7 +65,7 @@ define([
                 EVENTS_UPDATE = { "pointermove": "" },
                 EVENTS_DISMISS = { "pointerdown": "", "keydown": "", "focusout": "", "pointerout": "", "pointercancel": "", "pointerup": "" },
                 EVENTS_BY_CHILD = { "pointerover": "", "pointerout": "" };
-            
+
             function isInvokeEvent(eventType, pointerType) {
                 if (eventType === "pointerdown") {
                     return pointerType === PT_TOUCH;
@@ -73,7 +73,7 @@ define([
                     return eventType in EVENTS_INVOKE;
                 }
             }
-            
+
             function isDismissEvent(eventType, pointerType) {
                 if (eventType === "pointerdown") {
                     return pointerType !== PT_TOUCH;
@@ -536,7 +536,7 @@ define([
                                 //   - pointerover (from mouseover; causes the Tooltip to show)
                                 // At the end, the Tooltip should be hidden but instead it'll be shown due to mouseover coming
                                 // after touchend. To avoid this problem, we use the _skipMouseOver flag to ignore the mouseover
-                                // that follows touchend. 
+                                // that follows touchend.
                                 this._skipMouseOver = false;
                                 return;
                             } else {

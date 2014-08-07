@@ -123,7 +123,7 @@ define([
 
         /// <field type="Boolean" locid="WinJS.Utilities.Scheduler._JobNode.completed" helpKeyword="WinJS.Utilities.Scheduler._JobNode.completed">
         /// Gets a value that indicates whether the job has completed. This value is true if job has run to completion
-        /// and false if it hasn't yet run or was canceled. 
+        /// and false if it hasn't yet run or was canceled.
         /// </field>
         completed: {
             get: function () { return !!this._state.completed; }
@@ -145,7 +145,7 @@ define([
         },
 
         /// <field type="WinJS.Utilities.Scheduler._OwnerToken" locid="WinJS.Utilities.Scheduler._JobNode.owner" helpKeyword="WinJS.Utilities.Scheduler._JobNode.owner">
-        /// Gets an owner token for the job. You can use this owner token's cancelAll method to cancel related jobs. 
+        /// Gets an owner token for the job. You can use this owner token's cancelAll method to cancel related jobs.
         /// </field>
         owner: {
             get: function () { return this._owner; },
@@ -265,7 +265,7 @@ define([
             /// <signature helpKeyword="WinJS.Utilities.Scheduler._JobInfo.setPromise">
             /// <summary locid="WinJS.Utilities.Scheduler._JobInfo.setPromise">
             /// Called when the  work item is blocked on asynchronous work.
-            /// The scheduler waits for the specified Promise to complete before rescheduling the job. 
+            /// The scheduler waits for the specified Promise to complete before rescheduling the job.
             /// </summary>
             /// <param name="promise" type="WinJS.Promise" locid="WinJS.Utilities.Scheduler._JobInfo.setPromise_p:promise">
             /// A Promise value which, when completed, provides a work item function to be re-scheduled.
@@ -481,7 +481,7 @@ define([
     // Running
     //
     state_running.enter = function (job, shouldYield) {
-        // Remove the job from the list in case it throws an exception, this means in the 
+        // Remove the job from the list in case it throws an exception, this means in the
         //  yield case we have to add it back.
         //
         job._removeJob();
@@ -745,8 +745,8 @@ define([
     //  list and a separate marker list. This is used so that jobs can be easily added into a given
     //  priority level by simply traversing to the next marker in the list and inserting before it.
     //
-    // Markers may either be "static" or "dynamic". Static markers are the set of things which are 
-    //  named and are always in the list, they may exist with or without jobs at their priority 
+    // Markers may either be "static" or "dynamic". Static markers are the set of things which are
+    //  named and are always in the list, they may exist with or without jobs at their priority
     //  level. Dynamic markers are added as needed.
     //
     // @NOTE: Dynamic markers are NYI
@@ -951,7 +951,7 @@ define([
     //
     var TIME_SLICE = 30;
 
-    // high-water-mark is maintained any time priorities are adjusted, new jobs are 
+    // high-water-mark is maintained any time priorities are adjusted, new jobs are
     //  added or the scheduler pumps itself down through a priority marker. The goal
     //  of the high-water-mark is to be a fast check as to whether a job may exist
     //  at a higher priority level than we are currently at. It may be wrong but it
@@ -1061,7 +1061,7 @@ define([
     //
     // Interfacing with the WWA Scheduler
     //
-    
+
     // The purpose of yielding to the host is to give the host the opportunity to do some work.
     // setImmediate has this guarantee built-in so we prefer that. Otherwise, we do setTimeout 16
     // which should give the host a decent amount of time to do work.
@@ -1201,7 +1201,7 @@ define([
             //  break in user code we will generally yield immediately after that job due to the fact that any
             //  breakpoint will take longer than TIME_SLICE to process.
             //
-            
+
             var shouldYield = function () {
                 timesliceExhausted = false;
                 if (immediateYield) { return true; }
@@ -1417,7 +1417,7 @@ define([
         /// promise cancels the drain request. This promise will never enter an error state.
         /// </returns>
         /// </signature>
-        
+
         var id = globalDrainId++;
         if (name === undefined) {
             name = "Drain Request " + id;
@@ -1460,10 +1460,10 @@ define([
         /// <signature helpKeyword="WinJS.Utilities.Scheduler.createOwnerToken">
         /// <summary locid="WinJS.Utilities.Scheduler.createOwnerToken">
         /// Creates and returns a new owner token which can be set to the owner property of one or more jobs.
-        /// It can then be used to cancel all jobs it "owns". 
+        /// It can then be used to cancel all jobs it "owns".
         /// </summary>
         /// <returns type="WinJS.Utilities.Scheduler._OwnerToken" locid="WinJS.Utilities.Scheduler.createOwnerToken_returnValue">
-        /// The new owner token. You can use this token to control jobs that it owns. 
+        /// The new owner token. You can use this token to control jobs that it owns.
         /// </returns>
         /// </signature>
 
@@ -1476,19 +1476,19 @@ define([
         /// Schedules the specified function to execute asynchronously.
         /// </summary>
         /// <param name="work" type="Function" locid="WinJS.Utilities.Scheduler.schedule_p:work">
-        /// A function that represents the work item to be scheduled. When called the work item will receive as its first argument  
-        /// a JobInfo object which allows the work item to ask the scheduler if it should yield cooperatively and if so allows the 
+        /// A function that represents the work item to be scheduled. When called the work item will receive as its first argument
+        /// a JobInfo object which allows the work item to ask the scheduler if it should yield cooperatively and if so allows the
         /// work item to either provide a function to be run as a continuation or a WinJS.Promise which will when complete
         /// provide a function to run as a continuation.
         /// </param>
         /// <param name="priority" isOptional="true" type="WinJS.Utilities.Scheduler.Priority" locid="WinJS.Utilities.Scheduler.schedule_p:priority">
-        /// The priority at which to schedule the work item. The default value is Priority.normal. 
+        /// The priority at which to schedule the work item. The default value is Priority.normal.
         /// </param>
         /// <param name="thisArg" isOptional="true" type="Object" locid="WinJS.Utilities.Scheduler.schedule_p:thisArg">
-        /// A 'this' instance to be bound into the work item. The default value is null. 
+        /// A 'this' instance to be bound into the work item. The default value is null.
         /// </param>
         /// <param name="name" isOptional="true" type="String" locid="WinJS.Utilities.Scheduler.schedule_p:name">
-        /// A description of the work item for diagnostics. The default value is an empty string. 
+        /// A description of the work item for diagnostics. The default value is an empty string.
         /// </param>
         /// <returns type="WinJS.Utilities.Scheduler._JobNode" locid="WinJS.Utilities.Scheduler.schedule_returnValue">
         /// The Job instance which represents this work item.
@@ -1522,7 +1522,7 @@ define([
             /// Schedules a job to complete a returned Promise.
             /// There are four versions of this method for different commonly used priorities: schedulePromiseHigh,
             /// schedulePromiseAboveNormal, schedulePromiseNormal, schedulePromiseBelowNormal,
-            /// and schedulePromiseIdle. 
+            /// and schedulePromiseIdle.
             /// Example usage which shows how to
             /// ensure that the last link in a promise chain is run on the scheduler at high priority:
             /// asyncOp().then(Scheduler.schedulePromiseHigh).then(function (valueOfAsyncOp) { });

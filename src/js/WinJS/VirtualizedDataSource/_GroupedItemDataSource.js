@@ -16,34 +16,34 @@ define([
             /// of this data source evaluates to yet another data source that enumerates the groups themselves.
             /// </summary>
             /// <param name="listDataSource" type="VirtualizedDataSource" locid="WinJS.UI.computeDataSourceGroups_p:listDataSource">
-            /// The data source for the individual items to group. 
+            /// The data source for the individual items to group.
             /// </param>
             /// <param name="groupKey" type="Function" locid="WinJS.UI.computeDataSourceGroups_p:groupKey">
             /// A callback function that takes an item in the list as an argument. The function is called
-            /// for each item in the list and returns the group key for the item as a string. 
+            /// for each item in the list and returns the group key for the item as a string.
             /// </param>
             /// <param name="groupData" type="Function" locid="WinJS.UI.computeDataSourceGroups_p:groupData">
-            /// A callback function that takes an item in the IListDataSource as an argument. 
-            /// The function is called on one item in each group and returns 
-            /// an object that represents the header of that group. 
+            /// A callback function that takes an item in the IListDataSource as an argument.
+            /// The function is called on one item in each group and returns
+            /// an object that represents the header of that group.
             /// </param>
             /// <param name="options" type="Object" locid="WinJS.UI.computeDataSourceGroups_p:options">
-            /// An object that can contain properties that specify additional options: 
+            /// An object that can contain properties that specify additional options:
             ///
             /// groupCountEstimate:
-            /// A Number value that is the initial estimate for the number of groups. If you specify -1, 
+            /// A Number value that is the initial estimate for the number of groups. If you specify -1,
             /// this function returns no result is until the actual number of groups
             /// has been determined.
             ///
             /// batchSize:
-            /// A Number greater than 0 that specifies the number of items to fetch during each processing pass when 
+            /// A Number greater than 0 that specifies the number of items to fetch during each processing pass when
             /// searching for groups. (In addition to the number specified, one item from the previous batch
-            /// is always included.)  
+            /// is always included.)
             /// </param>
             /// <returns type="IListDataSource" locid="WinJS.UI.computeDataSourceGroups_returnValue">
             /// An IListDataSource that contains the items in the original data source and provides additional
             /// group info in a "groups" property. The "groups" property returns another
-            /// IListDataSource that enumerates the different groups in the list. 
+            /// IListDataSource that enumerates the different groups in the list.
             /// </returns>
             /// </signature>
 
@@ -79,7 +79,7 @@ define([
 
             groupedItemDataSource.createListBinding = function (notificationHandler) {
                 var groupedNotificationHandler;
-            
+
                 if (notificationHandler) {
                     groupedNotificationHandler = Object.create(notificationHandler);
 
@@ -179,7 +179,7 @@ define([
             });
 
             var groupDataSource = null;
-    
+
             Object.defineProperty(groupedItemDataSource, "groups", {
                 get: function () {
                     if (!groupDataSource) {

@@ -67,10 +67,10 @@ define([
         }
         catch (err) {
             // primitives, undefined, null, etc, all get serialized fine. In the
-            // case that stringify fails (typically due to circular graphs) we 
+            // case that stringify fails (typically due to circular graphs) we
             // just show "[object]". While we may be able to tighten the condition
             // for the exception, we never way this serialize to fail.
-            // 
+            //
             // Note: we make this be a JSON string, so that consumers of the log
             // can always call JSON.parse.
             str = JSON.stringify("[object]");
@@ -102,7 +102,7 @@ define([
         // If we have a deferralID we our table to find the
         // deferral. Since we remove it on completion, this
         // ensures that we never double notify a deferral
-        // in the case of a user call "Application.stop" in 
+        // in the case of a user call "Application.stop" in
         // the middle of processing an event
         //
         if (deferralID) {
@@ -130,7 +130,7 @@ define([
             /// <signature helpKeyword="WinJS.Application.eventRecord.setPromise">
             /// <summary locid="WinJS.Application.event.setPromise">
             /// Used to inform the application object that asynchronous work is being performed, and that this
-            /// event handler should not be considered complete until the promise completes. 
+            /// event handler should not be considered complete until the promise completes.
             /// </summary>
             /// <param name="promise" type="WinJS.Promise" locid="WinJS.Application.eventRecord.setPromise_p:promise">
             /// The promise to wait for.
@@ -452,7 +452,7 @@ define([
     }
 
     function hardwareButtonBackPressed(winRTBackPressedEvent) {
-        // Fire WinJS.Application 'backclick' event. If the winRTBackPressedEvent is not handled, the app will get suspended.            
+        // Fire WinJS.Application 'backclick' event. If the winRTBackPressedEvent is not handled, the app will get suspended.
         var eventRecord = { type: backClickET };
         Object.defineProperty(eventRecord, "_winRTBackPressedEvent", {
             value: winRTBackPressedEvent,
@@ -626,13 +626,13 @@ define([
         /// </field>
         onunload: createEvent(unloadET),
         /// <field type="Function" locid="WinJS.Application.onactivated" helpKeyword="WinJS.Application.onactivated">
-        /// Occurs when Windows Runtime activation has occurred. 
-        /// The name of this event is "activated" (and also "mainwindowactivated".) 
+        /// Occurs when Windows Runtime activation has occurred.
+        /// The name of this event is "activated" (and also "mainwindowactivated".)
         /// This event occurs after the loaded event and before the ready event.
         /// </field>
         onactivated: createEvent(activatedET),
         /// <field type="Function" locid="WinJS.Application.onloaded" helpKeyword="WinJS.Application.onloaded">
-        /// Occurs after the DOMContentLoaded event, which fires after the page has been parsed but before all the resources are loaded. 
+        /// Occurs after the DOMContentLoaded event, which fires after the page has been parsed but before all the resources are loaded.
         /// This event occurs before the activated event and the ready event.
         /// </field>
         onloaded: createEvent(loadedET),

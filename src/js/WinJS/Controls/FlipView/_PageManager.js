@@ -137,7 +137,7 @@ define([
                         currPage = this._currentPage;
                         this._panningDiv.appendChild(currPage.pageRoot);
 
-                        // flipPageBufferCount is added here twice. 
+                        // flipPageBufferCount is added here twice.
                         // Once for the buffer prior to the current item, and once for the buffer ahead of the current item.
                         var pagesToInit = 2 * this._bufferSize;
                         for (var i = 0; i < pagesToInit; i++) {
@@ -307,7 +307,7 @@ define([
                     this._setListEnds();
 
                     if (!this._manipulationState && this._viewportOnItemStart()) {
-                        // Setup a timeout to invoke _itemSettledOn in cases where the scroll position is changed, and the control 
+                        // Setup a timeout to invoke _itemSettledOn in cases where the scroll position is changed, and the control
                         // does not know when it has settled on an item (e.g. 1-finger swipe with narrator touch).
                         this._currentPage.element.setAttribute("aria-setsize", this._cachedSize);
                         this._currentPage.element.setAttribute("aria-posinset", this.currentIndex() + 1);
@@ -560,7 +560,7 @@ define([
                     } else {
                         wheelingForward = ev.wheelDelta < 0;
                     }
-                    
+
                     var targetPage = wheelingForward ? this._currentPage.next : this._currentPage.prev;
 
                     if (!targetPage.element) {
@@ -773,8 +773,8 @@ define([
                             work = this._itemsManager._previousItem(prevMarker.next.element).
                                 then(function (e) {
                                     if (e === element) {
-                                        // Because the VDS and Binding.List can send notifications in 
-                                        // different states we accomodate this here by fixing the case 
+                                        // Because the VDS and Binding.List can send notifications in
+                                        // different states we accomodate this here by fixing the case
                                         // where VDS hasn't yet removed an item when it sends a removed
                                         // or moved notification.
                                         //
@@ -793,8 +793,8 @@ define([
                             work = this._itemsManager._nextItem(prevMarker.prev.prev.element).
                                 then(function (e) {
                                     if (e === element) {
-                                        // Because the VDS and Binding.List can send notifications in 
-                                        // different states we accomodate this here by fixing the case 
+                                        // Because the VDS and Binding.List can send notifications in
+                                        // different states we accomodate this here by fixing the case
                                         // where VDS hasn't yet removed an item when it sends a removed
                                         // or moved notification.
                                         //
@@ -1506,7 +1506,7 @@ define([
                     page.element = null;
                     page.elementUniqueID = null;
 
-                    // The flip pages are managed as a circular doubly-linked list. this.currentItem should always refer to the current item in view, and this._prevMarker marks the point 
+                    // The flip pages are managed as a circular doubly-linked list. this.currentItem should always refer to the current item in view, and this._prevMarker marks the point
                     // in the list where the last previous item is stored. Why a circular linked list?
                     // The virtualized flipper reuses its flip pages. When a new item is requested, the flipper needs to reuse an old item from the buffer. In the case of previous items,
                     // the flipper has to go all the way back to the farthest next item in the buffer and recycle it (which is why having a .prev pointer on the farthest previous item is really useful),
@@ -1536,7 +1536,7 @@ define([
                             if (!element) {
                                 // If there are data source updates during the animation (e.g. item removed), a page element can be set to null when the shiftLeft/Right functions
                                 // call this function with a null element. However, since the element in the page is in the middle of an animation its page.elementUniqueID
-                                // is still set, so we need to explicitly clear its value so that when the animation completes, the animated element is not 
+                                // is still set, so we need to explicitly clear its value so that when the animation completes, the animated element is not
                                 // restored back into the internal buffer.
                                 page.elementUniqueID = null;
                             }
@@ -1788,7 +1788,7 @@ define([
                                             that._currentPage.element.dispatchEvent(event);
 
                                             // Fire the pagecompleted event when the render completes if we are still looking  at the same element.
-                                            // Check that the current element is not null, since the app could've triggered a navigation inside the 
+                                            // Check that the current element is not null, since the app could've triggered a navigation inside the
                                             // pageselected event handler.
                                             var originalElement = that._currentPage.element;
                                             if (originalElement) {

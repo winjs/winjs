@@ -140,8 +140,8 @@ define([
             /// with localized strings.
             /// </summary>
             /// <param name="rootElement" locid="WinJS.Resources.processAll_p:rootElement">
-            /// The DOM element at which to start processing. processAll processes the element and its child elements. 
-            /// If you don't specify root element, processAll processes the entire document. 
+            /// The DOM element at which to start processing. processAll processes the element and its child elements.
+            /// If you don't specify root element, processAll processes the entire document.
             /// </param>
             /// </signature>
 

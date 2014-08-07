@@ -124,7 +124,7 @@ define([
                     var first = (index - countBefore),
                         count = (countBefore + 1 + countAfter);
                     var that = this;
-                    // Fetch a minimum of 32 items on the first request for smoothness. Otherwise 
+                    // Fetch a minimum of 32 items on the first request for smoothness. Otherwise
                     // listview displays 2 items first and then the rest of the page.
                     if (that.firstDataRequest) {
                         that.firstDataRequest = false;
@@ -214,7 +214,7 @@ define([
                 /// The object to enumerate. It must support IStorageQueryResultBase.
                 /// </param>
                 /// <param name="options" mayBeNull="true" optional="true" type="Object" locid="WinJS.UI.StorageDataSource_p:options">
-                /// An object that specifies options for the data source. This parameter is optional. It can contain these properties: 
+                /// An object that specifies options for the data source. This parameter is optional. It can contain these properties:
                 ///
                 /// mode:
                 /// A Windows.Storage.FileProperties.ThumbnailMode - a value that specifies whether to request
@@ -251,7 +251,7 @@ define([
                     var thumbnailUpdateHandler,
                         thumbnailPromise,
                         shouldRespondToThumbnailUpdate = false;
-            
+
                     return new Promise(function (complete) {
                         // Load a thumbnail if it exists. The promise completes when a full quality thumbnail is visible.
                         var tagSupplied = (image ? true : false);
@@ -308,7 +308,7 @@ define([
                         };
                         item.data.addEventListener("thumbnailupdated", thumbnailUpdateHandler);
                         shouldRespondToThumbnailUpdate = true;
-                
+
                         // If we already have a thumbnail we should render it now.
                         processThumbnail(item.data.thumbnail);
                     }, function () {

@@ -107,7 +107,7 @@ define([
                 var multiline = string.indexOf("\n") !== -1;
                 var args = arguments;
                 //
-                // This allows you to format a string like: "hello{there}you{0} {{encased in curlies}}" and will 
+                // This allows you to format a string like: "hello{there}you{0} {{encased in curlies}}" and will
                 //  replace the holes {there} and {0} while turning the {{ and }} into single curlies.
                 //
                 // If the replacement is a number then it is inferred to be off of arguments, otherwise it is
@@ -178,8 +178,8 @@ define([
                 // There are a number of contexts in which we will be derefernceing developer provided
                 //  identifier access expressions, in those case we don't know whether or not the target
                 //  property exists or in fact if anything exists along the path.
-                // 
-                // In order to provide 'correct' behavior we dereference conditionally on whether 
+                //
+                // In order to provide 'correct' behavior we dereference conditionally on whether
                 //  we have a non-null value. This results in returning undefined unless the entire
                 //  path is defined.
                 //
@@ -381,7 +381,7 @@ define([
 
                 deadNodeElimination: function () {
 
-                    // Kill all dead nodes from the tree 
+                    // Kill all dead nodes from the tree
                     //
                     visit(this.tree, "", null, function post(node, key, childCount) {
                         if (!node.name || node.name.dead) {
@@ -595,7 +595,7 @@ define([
                         path[i] = Array.prototype.indexOf.call(e.children, child);
                         e = child;
                     }
-                    // Create the capture and put it on the 
+                    // Create the capture and put it on the
                     //
                     capture = this._captureCSE.createPathExpression(path, name.toLowerCase());
                     capture.element = element;
@@ -1039,7 +1039,7 @@ define([
                             i += element.querySelectorAll(selector).length;
                         }
 
-                        // Since we had to look for controls as well as bindings in order to skip controls 
+                        // Since we had to look for controls as well as bindings in order to skip controls
                         //  which are declarative control containers we have to check if this element is bound
                         if (!element.hasAttribute("data-win-bind")) {
                             continue;
@@ -1136,7 +1136,7 @@ define([
                     for (var i = 0, len = elements.length; i < len; i++) {
                         var element = elements[i];
                         var name = element.getAttribute("data-win-control");
-                        // Control constructors are checked along the entirety of their path to be supported 
+                        // Control constructors are checked along the entirety of their path to be supported
                         //  for processing when they are bound
                         var ControlConstructor = _BaseUtils._getMemberFiltered(name.trim(), _Global, requireSupportedForProcessing);
                         if (!ControlConstructor) {
@@ -1269,9 +1269,9 @@ define([
 
                 import: function (name, i) {
 
-                    // Used for functions which are gathered from user code (e.g. binding initializers and 
+                    // Used for functions which are gathered from user code (e.g. binding initializers and
                     //  control constructors). For these functions we need to assert that they are safe for
-                    //  use in a declarative context, however since the values are known at compile time we 
+                    //  use in a declarative context, however since the values are known at compile time we
                     //  can do that check once.
                     //
                     return this.importSafe(name, requireSupportedForProcessing(i));
@@ -1412,7 +1412,7 @@ define([
 
                             case TextBindingKind.booleanAttribute:
                                 // Boolean attributes work differently, the presence of the attribute in any
-                                //  form means true and its absence means false. This means that we need to 
+                                //  form means true and its absence means false. This means that we need to
                                 //  add or remove the whole thing and make the definition of the binding
                                 //  expression at runtime add it back.
                                 //
@@ -1452,7 +1452,7 @@ define([
 
                             case TextBindingKind.inlineStyle:
                                 var element = binding.elementCapture.element;
-                                // Inline styles require a little finesseing, their form always needs to be 
+                                // Inline styles require a little finesseing, their form always needs to be
                                 //  legal CSS include in the value space. We could attempt to special case
                                 //  all CSS properties and produce something which is legal in their value
                                 //  space but instead we wholesale replace the inline CSS with a extension
@@ -1637,12 +1637,12 @@ define([
                                 if (supported) {
                                     //  The mapping from css property name to JS property name is regular:
                                     //  Chrome uses webkit as the JS property name prefix.
-                                    //  IE uses ms as the JS property name prefix. 
+                                    //  IE uses ms as the JS property name prefix.
                                     //  Firefox uses Moz as the JS property name prefix.
                                     //
-                                    //  To calculate the css property name we replace capital letters with 
+                                    //  To calculate the css property name we replace capital letters with
                                     //  a dash followed by the lowercase version of that letter.
-                                    //  
+                                    //
                                     //  For Chrome and IE we have to add the leading dash manually since
                                     //  the JS property name prefix is lowercase. For Firefox the replace
                                     //  call will take care of this for us since their JS property name
@@ -1726,7 +1726,7 @@ define([
                     this._stage = Stage.optimze;
 
                     // Identify all bindings which can be turned into tree bindings, in some cases this consists
-                    //  of simply changing their type and providing a definition, in other cases it involves 
+                    //  of simply changing their type and providing a definition, in other cases it involves
                     //  adding a new tree binding to complement the other binding
                     //
                     for (var i = 0; i < this._bindings.length; i++) {
@@ -1822,7 +1822,7 @@ define([
                         if (Object.keys(textBindings).length) {
                             var newHtml = this._templateContent.innerHTML;
 
-                            // Perform any adjustments to the HTML that are needed for things like styles and 
+                            // Perform any adjustments to the HTML that are needed for things like styles and
                             //  boolean attributes
                             //
                             newHtml = this._htmlProcessors.reduce(
@@ -1834,7 +1834,7 @@ define([
 
                             // All the even indexes are content and all the odds are replacements
                             //
-                            // NOTE: this regular expression is 
+                            // NOTE: this regular expression is
                             var parts = newHtml.split(this._textBindingRegex);
                             for (var i = 1; i < parts.length; i += 2) {
                                 var binding = textBindings[parts[i]];
@@ -2023,7 +2023,7 @@ define([
                 });
             }
 
-            
+
             var renderImplMainCodePrefixTemplate = trimLinesRight(
 "container.classList.add(\"win-template\");                                                              \n" +
 "var html = {html};                                                                                      \n" +
@@ -2275,7 +2275,7 @@ define([
 
             //
             // End Templates
-            // 
+            //
 
             return TemplateCompiler;
         })

@@ -66,7 +66,7 @@ var define;
                     dep.resolved = dep.exports;
                 }
             }
-            
+
             return dep.resolved;
         });
     }

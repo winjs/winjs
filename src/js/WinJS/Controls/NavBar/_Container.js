@@ -32,7 +32,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.NavBarContainer">
-        /// Contains a group of NavBarCommand objects in a NavBar. 
+        /// Contains a group of NavBarCommand objects in a NavBar.
         /// </summary>
         /// <compatibleWith platform="Windows" minVersion="8.1"/>
         /// </field>
@@ -85,16 +85,16 @@ define([
                 /// The DOM element that will host the NavBarContainer control.
                 /// </param>
                 /// <param name="options" type="Object" isOptional="true" locid="WinJS.UI.NavBarContainer.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. 
-                /// Each property of the options object corresponds to one of the control's properties or events. 
-                /// Event names must begin with "on". 
+                /// An object that contains one or more property/value pairs to apply to the new control.
+                /// Each property of the options object corresponds to one of the control's properties or events.
+                /// Event names must begin with "on".
                 /// </param>
                 /// <returns type="WinJS.UI.NavBarContainer" locid="WinJS.UI.NavBarContainer.constructor_returnValue">
                 /// The new NavBarContainer.
                 /// </returns>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
-                
+
                 element = element || _Global.document.createElement("DIV");
                 this._id = element.id || _ElementUtilities._uniqueID(element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -113,7 +113,7 @@ define([
                 if (!element.getAttribute("tabIndex")) {
                     element.tabIndex = -1;
                 }
-                
+
                 this._focusCurrentItemPassivelyBound = this._focusCurrentItemPassively.bind(this);
                 this._closeSplitAndResetBound = this._closeSplitAndReset.bind(this);
                 this._currentManipulationState = MS_MANIPULATION_STATE_STOPPED;
@@ -156,7 +156,7 @@ define([
                 }
 
                 this._updatePageUI();
-                
+
                 Scheduler.schedule(function NavBarContainer_async_initialize() {
                     this._updateAppBarReference();
                 }, Scheduler.Priority.normal, this, "WinJS.UI.NavBarContainer_async_initialize");
@@ -348,8 +348,8 @@ define([
                 },
 
                 /// <field type="Boolean" locid="WinJS.UI.NavBarContainer.fixedSize" helpKeyword="WinJS.UI.NavBarContainer.fixedSize">
-                /// Gets or sets a value that specifies whether child NavBarCommand  objects should be a fixed width when there are multiple pages. A value of true indicates 
-                /// that the NavBarCommand objects use a fixed width; a value of false indicates that they use a dynamic width. 
+                /// Gets or sets a value that specifies whether child NavBarCommand  objects should be a fixed width when there are multiple pages. A value of true indicates
+                /// that the NavBarCommand objects use a fixed width; a value of false indicates that they use a dynamic width.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 fixedSize: {
@@ -386,7 +386,7 @@ define([
                 forceLayout: function NavBarContainer_forceLayout() {
                     /// <signature helpKeyword="WinJS.UI.NavBarContainer.forceLayout">
                     /// <summary locid="WinJS.UI.NavBarContainer.forceLayout">
-                    /// Forces the NavBarContainer to update scroll positions and if the NavBar has changed size, it will also re-measure. 
+                    /// Forces the NavBarContainer to update scroll positions and if the NavBar has changed size, it will also re-measure.
                     /// Use this function when making the NavBarContainer visible again after you set its style.display property to "none".
                     /// </summary>
                     /// <compatibleWith platform="Windows" minVersion="8.1"/>
@@ -409,13 +409,13 @@ define([
                             this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
                             this._appBarEl.removeEventListener('aftershow', this._focusCurrentItemPassivelyBound);
                         }
-                    
+
                         var appBarEl = this.element.parentNode;
                         while (appBarEl && !_ElementUtilities.hasClass(appBarEl, _Constants.appBarClass)) {
                             appBarEl = appBarEl.parentNode;
                         }
                         this._appBarEl = appBarEl;
-                        
+
                         if (this._appBarEl) {
                             this._appBarEl.addEventListener('beforeshow', this._closeSplitAndResetBound);
                             this._appBarEl.addEventListener('aftershow', this._focusCurrentItemPassivelyBound);
@@ -492,13 +492,13 @@ define([
                     this._ensureVisible(this._keyboardBehavior.currentIndex, true);
                     this._updatePageUI();
                 },
-                
+
                 _focusCurrentItemPassively: function NavBarContainer_focusCurrentItemPassively() {
                     if (this.element.contains(_Global.document.activeElement)) {
                         this._keyboardBehavior._focus();
                     }
                 },
-                
+
                 _reset: function NavBarContainer_reset() {
                     this._keyboardBehavior.currentIndex = 0;
                     if (this._surfaceEl.children.length > 0) {
@@ -700,14 +700,14 @@ define([
                             ? this._sizes.viewportOffsetWidth !== parseFloat(_Global.getComputedStyle(this._viewportEl).width)
                             : this._sizes.viewportOffsetHeight !== parseFloat(_Global.getComputedStyle(this._viewportEl).height);
                     if (!viewportResized) { return; }
-                    
+
                     this._measured = false;
 
                     if (!this._pendingResize) {
                         this._pendingResize = true;
 
                         this._resizeImplBound = this._resizeImplBound || this._resizeImpl.bind(this);
-                        
+
                         this._updateAppBarReference();
 
                         if (this._appBarEl && this._appBarEl.winControl && this._appBarEl.winControl.hidden) {
@@ -988,7 +988,7 @@ define([
 
                 _scrollHandler: function NavBarContainer_scrollHandler() {
                     if (this._disposed) { return; }
-                    
+
                     this._measured = false;
                     if (!this._checkingScroll) {
                         var that = this;
@@ -1161,7 +1161,7 @@ define([
                                 var spaceToDistribute = sizes.extraSpace - (sizes.maxColumns - sizes.columnsPerPage) * sizes.itemWidth;
                                 width = (sizes.itemOffsetWidth + (spaceToDistribute / sizes.maxColumns)) + "px";
                             }
-                            
+
                             var extraMarginRight;
                             var extraMarginLeft;
 
@@ -1179,7 +1179,7 @@ define([
                             marginRight = "";
                             marginLeft = "";
                         }
-                        
+
                         if (itemEl.style.marginRight !== marginRight) {
                             itemEl.style.marginRight = marginRight;
                         }
@@ -1252,8 +1252,8 @@ define([
                     var hasRightContent = this._sizes.rtl ? this._hasPreviousContent : this._hasNextContent;
 
                     var that = this;
-                    // Previous and next are the arrows, not states. On mouse hover the arrows fade in immediately. If you 
-                    // mouse out the arrows fade out after a delay. When you reach the last/first page, the corresponding 
+                    // Previous and next are the arrows, not states. On mouse hover the arrows fade in immediately. If you
+                    // mouse out the arrows fade out after a delay. When you reach the last/first page, the corresponding
                     // arrow fades out immediately as well.
                     if (this._mouseInViewport && hasLeftContent) {
                         this._leftArrowWaitingToFadeOut && this._leftArrowWaitingToFadeOut.cancel();

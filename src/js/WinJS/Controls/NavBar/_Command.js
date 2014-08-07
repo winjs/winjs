@@ -131,9 +131,9 @@ define([
                 /// The DOM element that will host the new  NavBarCommand control.
                 /// </param>
                 /// <param name="options" type="Object" isOptional="true" locid="WinJS.UI.NavBarCommand.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. 
-                /// Each property of the options object corresponds to one of the control's properties or events. 
-                /// Event names must begin with "on". 
+                /// An object that contains one or more property/value pairs to apply to the new control.
+                /// Each property of the options object corresponds to one of the control's properties or events.
+                /// Event names must begin with "on".
                 /// </param>
                 /// <returns type="WinJS.UI.NavBarCommand" locid="WinJS.UI.NavBarCommand.constructor_returnValue">
                 /// The new NavBarCommand.
@@ -157,7 +157,7 @@ define([
                 this._splitOpened = false;
                 this._buildDom();
                 element.addEventListener('keydown', this._keydownHandler.bind(this));
-                
+
                 _Control.setOptions(this, options);
             }, {
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.NavBarCommand.element" helpKeyword="WinJS.UI.NavBarCommand.element">
@@ -203,7 +203,7 @@ define([
                 },
 
                 /// <field type="String" locid="WinJS.UI.NavBarCommand.icon" helpKeyword="WinJS.UI.NavBarCommand.icon">
-                /// Gets or sets the icon of the NavBarCommand. This value is either one of the values of the AppBarIcon enumeration or the path of a custom PNG file. 
+                /// Gets or sets the icon of the NavBarCommand. This value is either one of the values of the AppBarIcon enumeration or the path of a custom PNG file.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 icon: {
@@ -236,7 +236,7 @@ define([
                 },
 
                 /// <field type="String" locid="WinJS.UI.NavBarCommand.location" helpKeyword="WinJS.UI.NavBarCommand.location">
-                /// Gets or sets the command's target location. 
+                /// Gets or sets the command's target location.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 location: {
@@ -249,7 +249,7 @@ define([
                 },
 
                 /// <field type="String" locid="WinJS.UI.NavBarCommand.state" helpKeyword="WinJS.UI.NavBarCommand.state">
-                /// Gets or sets the state value used for navigation. The command passes this object to the WinJS.Navigation.navigate function. 
+                /// Gets or sets the state value used for navigation. The command passes this object to the WinJS.Navigation.navigate function.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 state: {

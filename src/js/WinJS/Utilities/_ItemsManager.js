@@ -792,7 +792,7 @@ define([
                 },
 
                 _moved: function (itemPromise, previousHandle, nextHandle) {
-                    // no check for haveHandle, as we get move notification for items we 
+                    // no check for haveHandle, as we get move notification for items we
                     // are "next" to, so we handle the "null element" cases below
                     //
                     var element = this._elementFromHandle(itemPromise.handle);

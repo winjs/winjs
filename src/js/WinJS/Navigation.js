@@ -30,13 +30,13 @@ define([
                         /// <signature helpKeyword="WinJS.Navigation.beforenavigate.setPromise">
                         /// <summary locid="WinJS.Navigation.beforenavigate.setPromise">
                         /// Used to inform the ListView that asynchronous work is being performed, and that this
-                        /// event handler should not be considered complete until the promise completes. 
+                        /// event handler should not be considered complete until the promise completes.
                         /// </summary>
                         /// <param name="promise" type="WinJS.Promise" locid="WinJS.Navigation.beforenavigate.setPromise_p:promise">
                         /// The promise to wait for.
                         /// </param>
                         /// </signature>
-                    
+
                         waitForPromise = waitForPromise.then(function () { return promise; });
                     },
                     location: proposed.location,
@@ -56,13 +56,13 @@ define([
                         /// <signature helpKeyword="WinJS.Navigation.navigating.setPromise">
                         /// <summary locid="WinJS.Navigation.navigating.setPromise">
                         /// Used to inform the ListView that asynchronous work is being performed, and that this
-                        /// event handler should not be considered complete until the promise completes. 
+                        /// event handler should not be considered complete until the promise completes.
                         /// </summary>
                         /// <param name="promise" type="WinJS.Promise" locid="WinJS.Navigation.navigating.setPromise_p:promise">
                         /// The promise to wait for.
                         /// </param>
                         /// </signature>
-                    
+
                         waitForPromise = waitForPromise.then(function () { return promise; });
                     },
                     location: history.current.location,
@@ -83,13 +83,13 @@ define([
                 /// <signature helpKeyword="WinJS.Navigation.navigated.setPromise">
                 /// <summary locid="WinJS.Navigation.navigated.setPromise">
                 /// Used to inform the ListView that asynchronous work is being performed, and that this
-                /// event handler should not be considered complete until the promise completes. 
+                /// event handler should not be considered complete until the promise completes.
                 /// </summary>
                 /// <param name="promise" type="WinJS.Promise" locid="WinJS.Navigation.navigated.setPromise_p:promise">
                 /// The promise to wait for.
                 /// </param>
                 /// </signature>
-            
+
                 waitForPromise = waitForPromise.then(function () { return promise; });
             }
         };

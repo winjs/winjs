@@ -59,7 +59,7 @@ define([
         resetGroupHeaderIsDeprecated: {
             get: function () { return "resetGroupHeader may be altered or unavailable in future versions. Instead, mark the header element as disposable using WinJS.Utilities.markDisposable."; }
         },
-        
+
         maxRowsIsDeprecated: {
             get: function () { return "GridLayout.maxRows may be altered or unavailable in future versions. Instead, use the maximumRowsOrColumns property."; }
         }

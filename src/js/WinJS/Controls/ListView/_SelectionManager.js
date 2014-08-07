@@ -109,7 +109,7 @@ define([
                     /// Clears the selection.
                     /// </summary>
                     /// <returns type="Promise" locid="WinJS.UI._Selection.prototype.clear_returnValue">
-                    /// A Promise that is fulfilled when the clear operation completes.  
+                    /// A Promise that is fulfilled when the clear operation completes.
                     /// </returns>
                     /// </signature>
 
@@ -121,16 +121,16 @@ define([
                 set: function (items) {
                     /// <signature helpKeyword="WinJS.UI._Selection.prototype.set">
                     /// <summary locid="WinJS.UI._Selection.prototype.set">
-                    /// Clears the current selection and replaces it with the specified items. 
+                    /// Clears the current selection and replaces it with the specified items.
                     /// </summary>
                     /// <param name="items" locid="WinJS.UI._Selection.prototype.set_items">
-                    /// The indexes or keys of the items that make up the selection. 
-                    /// You can provide different types of objects for the items parameter: 
-                    /// you can specify an index, a key, or a range of indexes. 
-                    /// It can also be an array that contains one or more of these objects.  
+                    /// The indexes or keys of the items that make up the selection.
+                    /// You can provide different types of objects for the items parameter:
+                    /// you can specify an index, a key, or a range of indexes.
+                    /// It can also be an array that contains one or more of these objects.
                     /// </param>
                     /// <returns type="Promise" locid="WinJS.UI._Selection.prototype.set_returnValue">
-                    /// A Promise that is fulfilled when the operation completes. 
+                    /// A Promise that is fulfilled when the operation completes.
                     /// </returns>
                     /// </signature>
 
@@ -156,16 +156,16 @@ define([
                 add: function (items) {
                     /// <signature helpKeyword="WinJS.UI._Selection.prototype.add">
                     /// <summary locid="WinJS.UI._Selection.prototype.add">
-                    /// Adds one or more items to the selection. 
+                    /// Adds one or more items to the selection.
                     /// </summary>
                     /// <param name="items" locid="WinJS.UI._Selection.prototype.add_items">
-                    /// The indexes or keys of the items to add. 
-                    /// You can provide different types of objects for the items parameter: 
-                    /// you can specify an index, a key, or a range of indexes. 
-                    /// It can also be an array that contains one or more of these objects. 
+                    /// The indexes or keys of the items to add.
+                    /// You can provide different types of objects for the items parameter:
+                    /// you can specify an index, a key, or a range of indexes.
+                    /// It can also be an array that contains one or more of these objects.
                     /// </param>
                     /// <returns type="Promise" locid="WinJS.UI._Selection.prototype.add_returnValue">
-                    /// A Promise that is fulfilled when the operation completes. 
+                    /// A Promise that is fulfilled when the operation completes.
                     /// </returns>
                     /// </signature>
 
@@ -184,15 +184,15 @@ define([
                 remove: function (items) {
                     /// <signature helpKeyword="WinJS.UI._Selection.prototype.remove">
                     /// <summary locid="WinJS.UI._Selection.prototype.remove">
-                    /// Removes the specified items from the selection. 
+                    /// Removes the specified items from the selection.
                     /// </summary>
                     /// <param name="items" locid="WinJS.UI._Selection.prototype.remove_items">
-                    /// The indexes or keys of the items to remove. You can provide different types of objects for the items parameter: 
-                    /// you can specify an index, a key, or a range of indexes. 
-                    /// It can also be an array that contains one or more of these objects.  
+                    /// The indexes or keys of the items to remove. You can provide different types of objects for the items parameter:
+                    /// you can specify an index, a key, or a range of indexes.
+                    /// It can also be an array that contains one or more of these objects.
                     /// </param>
                     /// <returns type="Promise" locid="WinJS.UI._Selection.prototype.remove_returnValue">
-                    /// A Promise that is fulfilled when the operation completes. 
+                    /// A Promise that is fulfilled when the operation completes.
                     /// </returns>
                     /// </signature>
 
@@ -205,10 +205,10 @@ define([
                 selectAll: function () {
                     /// <signature helpKeyword="WinJS.UI._Selection.prototype.selectAll">
                     /// <summary locid="WinJS.UI._Selection.prototype.selectAll">
-                    /// Adds all the items in the ListView to the selection. 
+                    /// Adds all the items in the ListView to the selection.
                     /// </summary>
                     /// <returns type="Promise" locid="WinJS.UI._Selection.prototype.selectAll_returnValue">
-                    /// A Promise that is fulfilled when the operation completes.  
+                    /// A Promise that is fulfilled when the operation completes.
                     /// </returns>
                     /// </signature>
 
@@ -358,7 +358,7 @@ define([
                         return that._getListBinding().fromIndex(index).retain();
                     }
 
-                    // This method is called when a range needs to be unselected.  It is inspecting every range in the current selection comparing 
+                    // This method is called when a range needs to be unselected.  It is inspecting every range in the current selection comparing
                     // it to the range which is being unselected and it is building an array of new selected ranges
                     var ranges = [];
                     for (var i = 0, len = this._ranges.length; i < len; i++) {
@@ -531,10 +531,10 @@ define([
                 count: function () {
                     /// <signature helpKeyword="WinJS.UI._SelectionManager.prototype.count">
                     /// <summary locid="WinJS.UI._SelectionManager.prototype.count">
-                    /// Returns the number of items in the selection. 
+                    /// Returns the number of items in the selection.
                     /// </summary>
                     /// <returns type="Number" locid="WinJS.UI._SelectionManager.prototype.count_returnValue">
-                    /// The number of items in the selection.  
+                    /// The number of items in the selection.
                     /// </returns>
                     /// </signature>
                     return this._selected.count();
@@ -546,7 +546,7 @@ define([
                     /// Returns a list of the indexes for the items in the selection.
                     /// </summary>
                     /// <returns type="Array" locid="WinJS.UI._SelectionManager.prototype.getIndices_returnValue">
-                    /// The list of indexes for the items in the selection as an array of Number objects.  
+                    /// The list of indexes for the items in the selection as an array of Number objects.
                     /// </returns>
                     /// </signature>
                     return this._selected.getIndices();
@@ -558,7 +558,7 @@ define([
                     /// Returns an array that contains the items in the selection.
                     /// </summary>
                     /// <returns type="Promise" locid="WinJS.UI._SelectionManager.prototype.getItems_returnValue">
-                    /// A Promise that contains an array of the requested IItem objects. 
+                    /// A Promise that contains an array of the requested IItem objects.
                     /// </returns>
                     /// </signature>
 
@@ -571,7 +571,7 @@ define([
                     /// Gets an array of the index ranges for the selected items.
                     /// </summary>
                     /// <returns type="Array" locid="WinJS.UI._SelectionManager.prototype.getRanges_returnValue">
-                    /// An array that contains an ISelectionRange object for each index range in the selection. 
+                    /// An array that contains an ISelectionRange object for each index range in the selection.
                     /// </returns>
                     /// </signature>
                     return this._selected.getRanges();
@@ -583,7 +583,7 @@ define([
                     /// Returns a value that indicates whether the selection contains every item in the data source.
                     /// </summary>
                     /// <returns type="Boolean" locid="WinJS.UI._SelectionManager.prototype.isEverything_returnValue">
-                    /// true if the selection contains every item in the data source; otherwise, false. 
+                    /// true if the selection contains every item in the data source; otherwise, false.
                     /// </returns>
                     /// </signature>
                     return this._selected.isEverything();
@@ -592,16 +592,16 @@ define([
                 set: function (items) {
                     /// <signature helpKeyword="WinJS.UI._SelectionManager.prototype.set">
                     /// <summary locid="WinJS.UI._SelectionManager.prototype.set">
-                    /// Clears the current selection and replaces it with the specified items. 
+                    /// Clears the current selection and replaces it with the specified items.
                     /// </summary>
                     /// <param name="items" locid="WinJS.UI._SelectionManager.prototype.set_items">
-                    /// The indexes or keys of the items that make up the selection. 
-                    /// You can provide different types of objects for the items parameter: 
-                    /// you can specify an index, a key, or a range of indexes. 
-                    /// It can also be an array that contains one or more of these objects.  
+                    /// The indexes or keys of the items that make up the selection.
+                    /// You can provide different types of objects for the items parameter:
+                    /// you can specify an index, a key, or a range of indexes.
+                    /// It can also be an array that contains one or more of these objects.
                     /// </param>
                     /// <returns type="Promise" locid="WinJS.UI._SelectionManager.prototype.set_returnValue">
-                    /// A Promise that is fulfilled when the operation completes. 
+                    /// A Promise that is fulfilled when the operation completes.
                     /// </returns>
                     /// </signature>
                     var that = this,
@@ -628,7 +628,7 @@ define([
                     /// Clears the selection.
                     /// </summary>
                     /// <returns type="Promise" locid="WinJS.UI._SelectionManager.prototype.clear_returnValue">
-                    /// A Promise that is fulfilled when the clear operation completes.  
+                    /// A Promise that is fulfilled when the clear operation completes.
                     /// </returns>
                     /// </signature>
 
@@ -653,16 +653,16 @@ define([
                 add: function (items) {
                     /// <signature helpKeyword="WinJS.UI._SelectionManager.prototype.add">
                     /// <summary locid="WinJS.UI._SelectionManager.prototype.add">
-                    /// Adds one or more items to the selection. 
+                    /// Adds one or more items to the selection.
                     /// </summary>
                     /// <param name="items" locid="WinJS.UI._SelectionManager.prototype.add_items">
-                    /// The indexes or keys of the items to add. 
-                    /// You can provide different types of objects for the items parameter: 
-                    /// you can specify an index, a key, or a range of indexes. 
-                    /// It can also be an array that contains one or more of these objects. 
+                    /// The indexes or keys of the items to add.
+                    /// You can provide different types of objects for the items parameter:
+                    /// you can specify an index, a key, or a range of indexes.
+                    /// It can also be an array that contains one or more of these objects.
                     /// </param>
                     /// <returns type="Promise" locid="WinJS.UI._SelectionManager.prototype.add_returnValue">
-                    /// A Promise that is fulfilled when the operation completes. 
+                    /// A Promise that is fulfilled when the operation completes.
                     /// </returns>
                     /// </signature>
                     var that = this,
@@ -686,15 +686,15 @@ define([
                 remove: function (items) {
                     /// <signature helpKeyword="WinJS.UI._SelectionManager.prototype.remove">
                     /// <summary locid="WinJS.UI._SelectionManager.prototype.remove">
-                    /// Removes the specified items from the selection. 
+                    /// Removes the specified items from the selection.
                     /// </summary>
                     /// <param name="items" locid="WinJS.UI._SelectionManager.prototype.remove_items">
-                    /// The indexes or keys of the items to remove. You can provide different types of objects for the items parameter: 
-                    /// you can specify an index, a key, or a range of indexes. 
-                    /// It can also be an array that contains one or more of these objects.  
+                    /// The indexes or keys of the items to remove. You can provide different types of objects for the items parameter:
+                    /// you can specify an index, a key, or a range of indexes.
+                    /// It can also be an array that contains one or more of these objects.
                     /// </param>
                     /// <returns type="Promise" locid="WinJS.UI._SelectionManager.prototype.remove_returnValue">
-                    /// A Promise that is fulfilled when the operation completes. 
+                    /// A Promise that is fulfilled when the operation completes.
                     /// </returns>
                     /// </signature>
                     var that = this,
@@ -718,10 +718,10 @@ define([
                 selectAll: function () {
                     /// <signature helpKeyword="WinJS.UI._SelectionManager.prototype.selectAll">
                     /// <summary locid="WinJS.UI._SelectionManager.prototype.selectAll">
-                    /// Adds all the items in the ListView to the selection. 
+                    /// Adds all the items in the ListView to the selection.
                     /// </summary>
                     /// <returns type="Promise" locid="WinJS.UI._SelectionManager.prototype.selectAll_returnValue">
-                    /// A Promise that is fulfilled when the operation completes.  
+                    /// A Promise that is fulfilled when the operation completes.
                     /// </returns>
                     /// </signature>
                     var that = this,
@@ -793,7 +793,7 @@ define([
                             /// <signature helpKeyword="WinJS.UI.SelectionManager.selectionchanging.setPromise">
                             /// <summary locid="WinJS.UI.SelectionManager.selectionchanging.setPromise">
                             /// Used to inform the ListView that asynchronous work is being performed, and that this
-                            /// event handler should not be considered complete until the promise completes. 
+                            /// event handler should not be considered complete until the promise completes.
                             /// </summary>
                             /// <param name="promise" type="WinJS.Promise" locid="WinJS.UI.SelectionManager.selectionchanging.setPromise_p:promise">
                             /// The promise to wait for.

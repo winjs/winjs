@@ -24,7 +24,7 @@ define([
     _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBar">
-        /// Represents an application toolbar for display commands. 
+        /// Represents an application toolbar for display commands.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.appbar.12x12.png" width="12" height="12" />
@@ -67,9 +67,9 @@ define([
                 get cannotChangePlacementWhenVisible() { return "Invalid argument: The placement property cannot be set when the AppBar is visible, call hide() first"; },
                 get badLayout() { return "Invalid argument: The layout property must be 'custom' or 'commands'"; },
                 get cannotChangeLayoutWhenVisible() { return "Invalid argument: The layout property cannot be set when the AppBar is visible, call hide() first"; },
-                get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; }, // duplicate string getter from Overlay.        
-                get mustContainCommands() { return "Invalid HTML: AppBars/Menus must contain only AppBarCommands/MenuCommands"; }, // duplicate string getter from Overlay.  
-                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }, // duplicate string getter from Overlay.  
+                get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; }, // duplicate string getter from Overlay.
+                get mustContainCommands() { return "Invalid HTML: AppBars/Menus must contain only AppBarCommands/MenuCommands"; }, // duplicate string getter from Overlay.
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }, // duplicate string getter from Overlay.
             };
 
             // Send one of our events, duplicate of private _Overlay member function
@@ -193,7 +193,7 @@ define([
             var AppBar = _Base.Class.define(function AppBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBar.AppBar">
                 /// <summary locid="WinJS.UI.AppBar.constructor">
-                /// Creates a new AppBar control. 
+                /// Creates a new AppBar control.
                 /// </summary>
                 /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.AppBar.constructor_p:element">
                 /// The DOM element that will host the control.
@@ -207,7 +207,7 @@ define([
                 /// </signature>
 
                 // The first time getForCurrentView() is called, the commandBar will become visible. Subsequent calls just return the same static instance of the commandBar.
-                // The act of creating this AppBar will replace all of the static commandBar's contents and state with the contents and state of this AppBar 
+                // The act of creating this AppBar will replace all of the static commandBar's contents and state with the contents and state of this AppBar
                 // (unless options.disabled === true)
                 commandBar = core.WebUICommandBar.getForCurrentView();
                 commandBar.isOpen = false;
@@ -220,13 +220,13 @@ define([
                 // Simplify checking later
                 options = options || {};
 
-                // Make sure there's an input element            
+                // Make sure there's an input element
                 this._element = element || _Global.document.createElement("div");
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
-                // validate that if they didn't set commands, that the HTML 
-                // only contains commands.  Do this first so that we don't 
+                // validate that if they didn't set commands, that the HTML
+                // only contains commands.  Do this first so that we don't
                 // leave partial AppBars in the DOM.
                 if (!options.commands && this._element) {
                     // Shallow copy object so we can modify it.
@@ -246,7 +246,7 @@ define([
                     // Explicity set to false to ensure sure that setOptions sees the 'disabled' property on the options object.
                     options.disabled = false;
                 } else {
-                    // If we're supposed to be disabled, set the disabled property immediately to 
+                    // If we're supposed to be disabled, set the disabled property immediately to
                     // disconnect from the commandBar before setOptions() is called.
                     this.disabled = options.disabled;
                     delete options.disabled;
@@ -291,10 +291,10 @@ define([
                     }
                 },
 
-                /// <field type="Boolean" locid="WinJS.UI.AppBar.disabled" helpKeyword="WinJS.UI.AppBar.disabled"> 
+                /// <field type="Boolean" locid="WinJS.UI.AppBar.disabled" helpKeyword="WinJS.UI.AppBar.disabled">
                 /// Disable an AppBar.
-                /// When disabled the AppBar will animate off of the screen, stop firing events and will no longer respond to method or property changes until it is re-enabled. 
-                /// If another part of the App takes control of the commandBar while the AppBar is disabled, the AppBar will not know about it. 
+                /// When disabled the AppBar will animate off of the screen, stop firing events and will no longer respond to method or property changes until it is re-enabled.
+                /// If another part of the App takes control of the commandBar while the AppBar is disabled, the AppBar will not know about it.
                 /// While the AppBar is disabled it will not respond to any commandBar events that it has registered listeners for.
                 /// Re-enabling an AppBar will take back control of the commandBar and overwrite the commandBar's current state with the commands and state of the re-enabled AppBar.
                 /// </field>
@@ -313,12 +313,12 @@ define([
                             if (!value) { // Enabling
 
                                 // When we enable the AppBar, the AppBar should take control of the commandBar and inject itself into it.
-                                // It's IMPORTANT that we SET THIS FIRST, otherwise the AppBar components that interact with the commandBar will Nop.                                                                
+                                // It's IMPORTANT that we SET THIS FIRST, otherwise the AppBar components that interact with the commandBar will Nop.
                                 this._disabled = false;
 
                                 currentAppBar = this._uniqueId;
                                 if (!this._initializing) {
-                                    // An AppBar that was previously disabled is not guaranteed to be in sync with the commandBar when that AppBar is re-enabled. 
+                                    // An AppBar that was previously disabled is not guaranteed to be in sync with the commandBar when that AppBar is re-enabled.
                                     // Re-load this AppBar's state into the commandBar.
                                     this.closedDisplayMode = this.closedDisplayMode;
                                     this._setCommands(this._getCommands());
@@ -328,14 +328,14 @@ define([
                                 // Show AppBar UI
                                 commandBar.visible = true;
 
-                            } else { // Disabling  
-                                                                                            
+                            } else { // Disabling
+
                                 if (isCurrent) {
                                     // If the commandBar menu was open, hiding the commandBar will throw the "menuclosed" event.
                                     commandBar.visible = false;
                                     currentAppBar = null;
                                 }
-                               
+
                                 // It's IMPORTANT that we SET THIS LAST when disabling the AppBar. Otherwise we disconnect from the commandBar
                                 // too early, and fail to fire the AppBar "hiding" event if the commandBar tells us "menuclosed".
                                 this._disabled = true;
@@ -581,8 +581,8 @@ define([
 
                     this.disabled = true; // Stop talking to commandBar and remove it from view.
 
-                    // Make sure we only remove our commands from the CommandBar UI, in case something 
-                    // else had taken over the commandBar by the time this AppBar was disposed. 
+                    // Make sure we only remove our commands from the CommandBar UI, in case something
+                    // else had taken over the commandBar by the time this AppBar was disposed.
                     _showOnlyCommands.call(this, []);
 
                     // Now dispose our commands.
@@ -701,7 +701,7 @@ define([
                 _updateCommandBarColors: function AppBar_updateCommandBarColors() {
 
                     function extractColorValue(colorString) {
-                        // colorString is in the form of "rgb(r,g,b)", "rgba(r,g,b,a)" 
+                        // colorString is in the form of "rgb(r,g,b)", "rgba(r,g,b,a)"
                         // Remove the left paren, right paren, and commas.
                         var colorsArray = colorString.split("(")[1].split(")")[0].split(",");
 
@@ -730,10 +730,10 @@ define([
                             commandBar.opacity = bgColor.a;
                         }
 
-                        // Use the label color (RGB) in the first DOM ordered AppBarCommand to set the new WebUICommandBar.foregroundColor value. 
-                        // If there are no explicit styles on the AppBarCommands label element, the computedStyle of the label element's color 
-                        // can/will inherit from the AppBarCommand element itself. If there are no explicit styles on the AppBarCommand element 
-                        // the computedStyle of the label element's color can/will inherit form the AppBar element. Phone doesn't support 
+                        // Use the label color (RGB) in the first DOM ordered AppBarCommand to set the new WebUICommandBar.foregroundColor value.
+                        // If there are no explicit styles on the AppBarCommands label element, the computedStyle of the label element's color
+                        // can/will inherit from the AppBarCommand element itself. If there are no explicit styles on the AppBarCommand element
+                        // the computedStyle of the label element's color can/will inherit form the AppBar element. Phone doesn't support
                         // transparency in the foreground.
                         var colorSrc = this.element.querySelector(".win-label") || this.element;
                         var fgColorString = _Global.getComputedStyle(colorSrc).color;
@@ -783,7 +783,7 @@ define([
 
                     // Add CommandBarIconButton's whose corresponding AppBarComamnds are being shown in AppBar.
                     // Commands will be inserted into commandBar's Primary/Secondary Command properties.
-                    // The Primary/Secondary Command properties are kept sorted relative to the AppBar's 
+                    // The Primary/Secondary Command properties are kept sorted relative to the AppBar's
                     // DOM order of each WebUICommandBar elements' corresponding AppBarCommand object.
                     // We can leverage the fact that the Primary/Seconday Commands are already sorted as such.
                     // Iterate forwards while inserting WebUICommandBarIconButton's to minimize # of array shifts.
@@ -806,7 +806,7 @@ define([
                                     }
                                     DOMIndex++;
                                 }
-                                // Insert at the appropriate index to maintain sorted enviornment.                                
+                                // Insert at the appropriate index to maintain sorted enviornment.
                                 primaryCommands.insertAt(indexToInsert, showingCommand._commandBarIconButton);
                             } else {
                                 // Add as a secondary
@@ -816,7 +816,7 @@ define([
                                     }
                                     DOMIndex++;
                                 }
-                                // Insert at the appropriate index to maintain sorted enviornment.                               
+                                // Insert at the appropriate index to maintain sorted enviornment.
                                 secondaryCommands.insertAt(indexToInsert, showingCommand._commandBarIconButton);
                             }
                         }

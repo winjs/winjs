@@ -19,6 +19,6 @@
 
             this.filesSrc.forEach(addBom);
         });
-        
+
     };
 })();

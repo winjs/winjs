@@ -24,7 +24,7 @@
 
             results.forEach(function (line) {
                 if (tableHeader !== line.file) {
-                    
+
                     // Finish prev table.
                     if (tableRows !== []) {
                         appendTableRows();

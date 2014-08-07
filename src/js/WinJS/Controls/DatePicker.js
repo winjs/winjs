@@ -533,12 +533,12 @@ define([
                         year: localdatepattern.indexOf("{year")
                     };
                     order.sort(function (a, b) {
-                        if (indexes[a] < indexes[b]) { 
-                            return -1; 
-                        } else if (indexes[a] > indexes[b]) { 
-                            return 1; 
-                        } else { 
-                            return 0; 
+                        if (indexes[a] < indexes[b]) {
+                            return -1;
+                        } else if (indexes[a] > indexes[b]) {
+                            return 1;
+                        } else {
+                            return 0;
                         }
                     });
 

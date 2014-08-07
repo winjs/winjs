@@ -174,7 +174,7 @@ define([
         /// A constructor function that creates the page.
         /// </returns>
         /// </signature>
-        
+
         var base = get(uri);
         uri = abs(uri);
 
@@ -193,9 +193,9 @@ define([
                     this.selfhost = selfhost(uri);
                     element.winControl = this;
                     _ElementUtilities.addClass(element, "pagecontrol");
-                    
+
                     var profilerMarkIdentifier = " uri='" + uri + "'" + _BaseUtils._getProfilerMarkIdentifier(this.element);
-                    
+
                     _WriteProfilerMark("WinJS.UI.Pages:createPage" + profilerMarkIdentifier + ",StartTM");
 
                     var load = Promise.wrap().

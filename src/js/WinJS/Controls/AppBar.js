@@ -31,7 +31,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBar">
-        /// Represents an application toolbar for display commands. 
+        /// Represents an application toolbar for display commands.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.appbar.12x12.png" width="12" height="12" />
@@ -51,7 +51,7 @@ define([
         AppBar: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
 
-            // Enum of known constant pixel values for display modes. 
+            // Enum of known constant pixel values for display modes.
             var knownVisibleHeights = {
                 disabled: 0,
                 none: 0,
@@ -68,7 +68,7 @@ define([
                 shown: "shown",
             };
 
-            // Enum of closedDisplayMode constants 
+            // Enum of closedDisplayMode constants
             var closedDisplayModes = {
                 none: "none",
                 minimal: "minimal",
@@ -320,7 +320,7 @@ define([
             var AppBar = _Base.Class.derive(_Overlay._Overlay, function AppBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBar.AppBar">
                 /// <summary locid="WinJS.UI.AppBar.constructor">
-                /// Creates a new AppBar control. 
+                /// Creates a new AppBar control.
                 /// </summary>
                 /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.AppBar.constructor_p:element">
                 /// The DOM element that will host the control.
@@ -338,7 +338,7 @@ define([
                 // Simplify checking later
                 options = options || {};
 
-                // Make sure there's an element            
+                // Make sure there's an element
                 this._element = element || _Global.document.createElement("div");
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
@@ -387,8 +387,8 @@ define([
                 _ElementUtilities._addEventListener(this._invokeButton, "pointerdown", function () { _Overlay._Overlay._addHideFocusClass(that._invokeButton); }, false);
                 this._invokeButton.addEventListener("click", function () { AppBar._toggleAllAppBarsState(_KeyboardBehavior._keyboardSeenLast, that); }, false);
 
-                // Run layout setter immediately. We need to know our layout in order to correctly 
-                // position any commands that may be getting set through the constructor. 
+                // Run layout setter immediately. We need to know our layout in order to correctly
+                // position any commands that may be getting set through the constructor.
                 this.layout = options.layout || _Constants.appBarLayoutCommands;
                 delete options.layout;
 
@@ -508,7 +508,7 @@ define([
                         var commands;
                         if (!this._initializing) {
                             // Gather commands in preparation for hand off to new layout.
-                            // We expect prev layout to return commands in the order they were set in, 
+                            // We expect prev layout to return commands in the order they were set in,
                             // not necessarily the current DOM order the layout is using.
                             commands = this._layout.commandsInOrder;
                             this._layout.disconnect();
@@ -661,7 +661,7 @@ define([
                             this._element.disabled = disable;
                             var toPosition;
                             if (disable) {
-                                // Disabling. Move to the position mapped to the disabled state.                                                           
+                                // Disabling. Move to the position mapped to the disabled state.
                                 toPosition = displayModeVisiblePositions.disabled;
                             } else {
                                 // Enabling. Move to the position mapped to our closedDisplayMode.
@@ -923,7 +923,7 @@ define([
                     // On Left/Right arrow keys, moves focus to previous/next AppbarCommand element.
                     // On "Esc" key press hide flyouts and hide light dismiss AppBars.
 
-                    // Esc hides light-dismiss AppBars in all layouts but if the user has a text box with an IME 
+                    // Esc hides light-dismiss AppBars in all layouts but if the user has a text box with an IME
                     // candidate window open, we want to skip the ESC key event since it is handled by the IME.
                     // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
                     if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
@@ -933,8 +933,8 @@ define([
                         _Overlay._Overlay._hideLightDismissAppBars(null, true);
                     }
 
-                    // If the current active element isn't an intrinsic part of the AppBar, 
-                    // Layout might want to handle additional keys. 
+                    // If the current active element isn't an intrinsic part of the AppBar,
+                    // Layout might want to handle additional keys.
                     if (!this._invokeButton.contains(_Global.document.activeElement)) {
                         this._layout.handleKeyDown(event);
                     }
@@ -946,7 +946,7 @@ define([
                         return {
                             hidden: knownVisibleHeights.hidden,
                             minimal: knownVisibleHeights.minimal,
-                            // Element can change size as content gets added or removed or if it 
+                            // Element can change size as content gets added or removed or if it
                             // experinces style changes. We have to look this up at run time.
                             shown: this._element.offsetHeight,
                         };
@@ -975,7 +975,7 @@ define([
                 _changeVisiblePosition: function (toPosition, newState) {
                     /// <signature helpKeyword="WinJS.UI.AppBar._changeVisiblePosition">
                     /// <summary locid="WinJS.UI.AppBar._changeVisiblePosition">
-                    /// Changes the visible position of the AppBar.                    
+                    /// Changes the visible position of the AppBar.
                     /// </summary>
                     /// <param name="toPosition" type="String" locid="WinJS.UI.AppBar._changeVisiblePosition_p:toPosition">
                     /// Name of the visible position we want to move to.
@@ -984,14 +984,14 @@ define([
                     /// Name of the state we are entering. Values can be "showing", "hiding" or null.
                     /// If the value is null, then we are not changing states, only changing visible position.
                     /// </param>
-                    /// </signature>                   
+                    /// </signature>
 
                     if ((this._visiblePosition === toPosition && !this._keyboardObscured) ||
                         (this.disabled && toPosition !== displayModeVisiblePositions.disabled)) {
                         // If we want to go where we already are, or we're disabled, return false.
                         this._afterPositionChange(null);
                     } else if (this._animating || this._needToHandleShowingKeyboard || this._needToHandleHidingKeyboard) {
-                        // Only do one thing at a time. If we are already animating, 
+                        // Only do one thing at a time. If we are already animating,
                         // or the IHM is animating, schedule this for later.
                         this._doNext = toPosition;
                         this._afterPositionChange(null);
@@ -1005,7 +1005,7 @@ define([
                         // Assume we are animating from the last position visited.
                         var fromPosition = this._lastPositionVisited;
 
-                        // We'll need to measure our element to determine how far we need to animate. 
+                        // We'll need to measure our element to determine how far we need to animate.
                         // Make sure we have accurate dimensions.
                         this._element.style.display = "";
 
@@ -1013,15 +1013,15 @@ define([
                         var hidingCompletely = (toPosition === displayModeVisiblePositions.hidden);
 
                         if (this._keyboardObscured) {
-                            // We're changing position while covered by the IHM.                        
+                            // We're changing position while covered by the IHM.
                             if (hidingCompletely) {
-                                // If we're covered by the IHM we already look hidden. 
+                                // If we're covered by the IHM we already look hidden.
                                 // We can skip our animation and just hide.
                                 performAnimation = false;
                             } else {
                                 // Some portion of the AppBar should be visible to users after its position changes.
 
-                                // Un-obscure ourselves and become visible to the user again. 
+                                // Un-obscure ourselves and become visible to the user again.
                                 // Need to animate to our desired position as if we were coming up from behind the keyboard.
                                 fromPosition = displayModeVisiblePositions.hidden;
                             }
@@ -1035,8 +1035,8 @@ define([
                             this._beforeHide();
                         }
 
-                        // Position our element into the correct "end of animation" position, 
-                        // also accounting for any viewport scrolling or soft keyboard positioning.                
+                        // Position our element into the correct "end of animation" position,
+                        // also accounting for any viewport scrolling or soft keyboard positioning.
                         this._ensurePosition();
 
                         this._element.style.opacity = 1;
@@ -1051,7 +1051,7 @@ define([
                 },
 
                 _afterPositionChange: function AppBar_afterPosiitonChange(newPosition, newState) {
-                    // Defines body of work to perform after changing positions. 
+                    // Defines body of work to perform after changing positions.
                     if (this._disposed) {
                         return;
                     }
@@ -1088,7 +1088,7 @@ define([
 
                     this._afterPositionChangeCallBack();
                 },
-                
+
                 _afterPositionChangeCallBack: function () {
                     // Leave this blank for unit tests to overwrite.
                 },
@@ -1097,7 +1097,7 @@ define([
                     // Each overlay tracks the window width for triggering light-dismiss in the resize handler.
                     this._currentDocumentWidth = this._currentDocumentWidth || _Global.document.documentElement.offsetWidth;
 
-                    // In case their event 'beforeshow' event listener is going to manipulate commands, 
+                    // In case their event 'beforeshow' event listener is going to manipulate commands,
                     // first see if there are any queued command animations we can handle while we're still hidden.
                     if (this._queuedCommandAnimation) {
                         this._showAndHideFast(this._queuedToShow, this._queuedToHide);
@@ -1111,7 +1111,7 @@ define([
                     _ElementUtilities.removeClass(this._element, _Constants.hiddenClass);
                     _ElementUtilities.addClass(this._element, _Constants.showingClass);
 
-                    // Send our "beforeShow" event 
+                    // Send our "beforeShow" event
                     this._sendEvent(_Overlay._Overlay.beforeShow);
                 },
 
@@ -1135,7 +1135,7 @@ define([
 
                 _afterHide: function AppBar_afterHide() {
 
-                    // In case their 'afterhide' event handler is going to manipulate commands, 
+                    // In case their 'afterhide' event handler is going to manipulate commands,
                     // first see if there are any queued command animations we can handle now we're hidden.
                     if (this._queuedCommandAnimation) {
                         this._showAndHideFast(this._queuedToShow, this._queuedToHide);
@@ -1212,7 +1212,7 @@ define([
                 _shouldStealFocus: function AppBar_shouldStealFocus() {
                     var activeElementAppBar = _Overlay._Overlay._isAppBarOrChild(_Global.document.activeElement);
                     if (this._element === activeElementAppBar) {
-                        // This appbar already has focus and we don't want to move focus 
+                        // This appbar already has focus and we don't want to move focus
                         // from where it currently is in this appbar.
                         return false;
                     }
@@ -1258,7 +1258,7 @@ define([
                 },
 
                 _commandsUpdated: function AppBar_commandsUpdated() {
-                    // If we are still initializing then we don't have a layout yet so it doesn't need updating. 
+                    // If we are still initializing then we don't have a layout yet so it doesn't need updating.
                     if (!this._initializing) {
                         this._layout.commandsUpdated();
                         this._layout.scale();
@@ -1267,9 +1267,9 @@ define([
 
                 _beginAnimateCommands: function AppBar_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
                     // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
-                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show. 
+                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
                     // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
-                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide. 
+                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.
                     this._layout.beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands);
                 },
 
@@ -1282,7 +1282,7 @@ define([
                     // Leave this blank for unit tests to overwrite.
                 },
 
-                // Get the top offset for top appbars. 
+                // Get the top offset for top appbars.
                 _getTopOfVisualViewport: function AppBar_getTopOfVisualViewPort() {
                     return _Overlay._Overlay._keyboardInfo._visibleDocTop;
                 },
@@ -1422,7 +1422,7 @@ define([
                     var positionOffSet = {};
 
                     if (this._placement === _Constants.appBarPlacementBottom) {
-                        // If the IHM is open, the bottom of the visual viewport may or may not be obscured 
+                        // If the IHM is open, the bottom of the visual viewport may or may not be obscured
                         // Use _getAdjustedBottom to account for the IHM if it is covering the bottom edge.
                         positionOffSet.bottom = this._getAdjustedBottom() + "px";
                         positionOffSet.top = "";

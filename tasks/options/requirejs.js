@@ -242,11 +242,11 @@
     module.exports = {
 
         //
-        // Configs which are themselves a independent file can use default options and the 
+        // Configs which are themselves a independent file can use default options and the
         //  onefile grunt task and thus are not listed here
         //
 
-        // UI just has to specify that it is expected to depend on base and it is someone 
+        // UI just has to specify that it is expected to depend on base and it is someone
         //  else's job to ensure that base was loaded first.
         ui: {
             options: {

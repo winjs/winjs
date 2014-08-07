@@ -33,7 +33,7 @@ define([
                     this.connect(appBarEl);
                 }
             }, {
-                // Members               
+                // Members
                 className: {
                     get: function _AppBarBaseLayout_get_className() {
                         return this._className;
@@ -46,11 +46,11 @@ define([
                 },
                 commandsInOrder: {
                     get: function _AppBarBaseLayout_get_commandsInOrder() {
-                        // Gets a DOM ordered Array of the AppBarCommand elements in the AppBar.                        
+                        // Gets a DOM ordered Array of the AppBarCommand elements in the AppBar.
                         var commands = this.appBarEl.querySelectorAll("." + _Constants.appBarCommandClass);
 
                         // Needs to be an array, in case these are getting passed to a new layout.
-                        // The new layout will invoke the AppBar._layoutCommands, and it expects an 
+                        // The new layout will invoke the AppBar._layoutCommands, and it expects an
                         // Array.
                         return Array.prototype.slice.call(commands);
                     }
@@ -121,9 +121,9 @@ define([
                 },
                 beginAnimateCommands: function _AppBarBaseLayout_beginAnimateCommands() {
                     // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
-                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show. 
+                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
                     // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
-                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide. 
+                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.
 
                     // NOP
                 },
@@ -251,18 +251,18 @@ define([
                 }
             }
 
-            // Append layout containers to AppBar element. 
+            // Append layout containers to AppBar element.
             // Secondary Commands should come first in Tab Order.
             this.appBarEl.appendChild(this._secondaryCommands);
             this.appBarEl.appendChild(this._primaryCommands);
 
 
-            // Need to measure all content commands after they have been added to the AppBar to make sure we allow 
-            // user defined CSS rules based on the ancestor of the content command to take affect.                     
+            // Need to measure all content commands after they have been added to the AppBar to make sure we allow
+            // user defined CSS rules based on the ancestor of the content command to take affect.
             this._needToMeasureNewCommands = true;
 
-            // In case this is called from the constructor before the AppBar element has been appended to the DOM, 
-            // we schedule the initial scaling of commands, with the expectation that the element will be added 
+            // In case this is called from the constructor before the AppBar element has been appended to the DOM,
+            // we schedule the initial scaling of commands, with the expectation that the element will be added
             // synchronously, in the same block of code that called the constructor.
             Scheduler.schedule(function () {
                 if (this._needToMeasureNewCommands && !this._disposed) {
@@ -334,7 +334,7 @@ define([
         },
         commandsUpdated: function _commandLayoutsMixin_commandsUpdated(newSetOfVisibleCommands) {
             // Whenever new commands are set or existing commands are hiding/showing in the AppBar, this
-            // function is called to update the cached width measurement of all visible AppBarCommands.            
+            // function is called to update the cached width measurement of all visible AppBarCommands.
 
             var visibleCommands = (newSetOfVisibleCommands) ? newSetOfVisibleCommands : this.commandsInOrder.filter(function (command) {
                 return !command.winControl.hidden;
@@ -343,13 +343,13 @@ define([
         },
         beginAnimateCommands: function _commandLayoutsMixin_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
             // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
-            // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show. 
+            // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
             // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
-            // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.                               
+            // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.
 
             this._scaleAfterAnimations = false;
 
-            // Determine if the overall width of visible commands in the primary row will be increasing OR decreasing.                        
+            // Determine if the overall width of visible commands in the primary row will be increasing OR decreasing.
             var changeInWidth = this._getWidthOfFullSizeCommands(showCommands) - this._getWidthOfFullSizeCommands(hideCommands);
             if (changeInWidth > 0) {
                 // Width of contents is going to increase, update our command counts now, to what they will be after we complete the animations.
@@ -358,7 +358,7 @@ define([
                 // Make sure we will have enough room to fit everything on a single row.
                 this.scale();
             } else if (changeInWidth < 0) {
-                // Width of contents is going to decrease. Once animations are complete, check if 
+                // Width of contents is going to decrease. Once animations are complete, check if
                 // there is enough available space to make the remaining commands full size.
                 this._scaleAfterAnimations = true;
             }
@@ -371,7 +371,7 @@ define([
         },
         scale: function _commandLayoutsMixin_scale() {
             // If the total width of all AppBarCommands in the primary row is greater than the
-            // width of the AppBar, add the win-reduced class to the AppBar element and all 
+            // width of the AppBar, add the win-reduced class to the AppBar element and all
             // AppBarCommands will reduce in size.
 
             // Measure the width all visible commands in  AppBar's primary row, the AppBar's offsetWidth and the AppBar horizontal padding:
@@ -409,7 +409,7 @@ define([
             _ElementUtilities.addClass(this._secondaryCommands, _Constants.secondaryCommandsClass);
         },
         _scaleHelper: function _commandLayoutsMixin_scaleHelper() {
-            // This exists as a single line function so that unit tests can 
+            // This exists as a single line function so that unit tests can
             // overwrite it since they can't resize the WWA window.
 
             // It is expected that AppBar is an immediate child of the <body> and will have 100% width.
@@ -420,9 +420,9 @@ define([
         },
         _measureContentCommands: function _commandLayoutsMixin_measureContentCommands() {
             // AppBar measures the width of content commands when they are first added
-            // and then caches that value to avoid additional layouts in the future.     
+            // and then caches that value to avoid additional layouts in the future.
 
-            // Can't measure unless We're in the document body     
+            // Can't measure unless We're in the document body
             if (_Global.document.body.contains(this.appBarEl)) {
                 this._needToMeasureNewCommands = false;
 

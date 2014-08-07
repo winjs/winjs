@@ -183,7 +183,7 @@ define([
         }
         return itemsCount;
     }
-    
+
     var environmentDetails = null;
     // getEnvironmentSupportInformation does one-time checks on several browser-specific environment details (both to check the existence of styles,
     // and also to see if some environments have layout bugs the ListView needs to work around).
@@ -192,7 +192,7 @@ define([
             var surface = _Global.document.createElement("div");
             surface.style.width = "500px";
             surface.style.visibility = "hidden";
-                                                  
+
             // Set up the DOM
             var flexRoot = _Global.document.createElement("div");
             flexRoot.style.cssText += "width: 500px; height: 200px; display: -webkit-flex; display: flex";
@@ -203,7 +203,7 @@ define([
                     "<div style='width: 100px; height: 100px'></div>" +
                 "</div>");
             surface.appendChild(flexRoot);
-            
+
             // Read from the DOM and detect the bugs
             site.viewport.insertBefore(surface, site.viewport.firstChild);
             var canMeasure = surface.offsetWidth > 0,
@@ -211,7 +211,7 @@ define([
             if (canMeasure) {
                 // If we can't measure now (e.g. ListView is display:none), leave environmentDetails as null
                 // so that we do the detection later when the app calls recalculateItemPosition/forceLayout.
-                
+
                 environmentDetails = {
                     supportsCSSGrid: !!("-ms-grid-row" in _Global.document.documentElement.style),
                     // Detects Chrome flex issue 345433: Incorrect sizing for nested flexboxes
@@ -227,7 +227,7 @@ define([
                     nestedFlexTooSmall: flexRoot.firstElementChild.offsetWidth < expectedWidth
                 };
             }
-            
+
             // Clean up the DOM
             site.viewport.removeChild(surface);
         }
@@ -274,7 +274,7 @@ define([
                     if (!this._inListMode) {
                         _ElementUtilities.addClass(site.surface, _Constants._gridLayoutClass);
                     }
-                    
+
                     if (this._backdropColorClassName) {
                         _ElementUtilities.addClass(site.surface, this._backdropColorClassName);
                     }
@@ -814,65 +814,65 @@ define([
                 },
 
                 // Animation cycle:
-                // 
-                // Edits  
+                //
+                // Edits
                 //  ---     UpdateTree        Realize
                 // |   |      ---               /\/\
                 // |   |     |   |             |    |
                 // ------------------------------------------------------- Time
-                //      |   |     |   |   |   |      |   |              
+                //      |   |     |   |   |   |      |   |
                 //       ---      |   |    ---        ---/\/\/\/\/\/\/\/\/
                 //     setupAni   |   | layoutAni    endAni  (animations)
                 //                 ---/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
                 //                layout    (outside realized range)
-                //          
-                // 
-                // When there is a modification to the DataSource, the first thing that happens is setupAnimations is 
+                //
+                //
+                // When there is a modification to the DataSource, the first thing that happens is setupAnimations is
                 // called with the current tree. This allows us to cache the locations of the existing items.
-                // 
-                // The next 3 steps have to be completely synchronous otherwise users will see intermediate states and 
+                //
+                // The next 3 steps have to be completely synchronous otherwise users will see intermediate states and
                 // items will blink or jump between locations.
                 //
-                // ListView modifies the DOM tree. A container is added/removed from the group's itemsContainer for each 
+                // ListView modifies the DOM tree. A container is added/removed from the group's itemsContainer for each
                 // item added/removed to the group. The existing itemBoxes are shuffled between the different containers.
-                // The itemBoxes for the removed items will be removed from the containers completely. Since the DOM tree 
+                // The itemBoxes for the removed items will be removed from the containers completely. Since the DOM tree
                 // has been modified we have to apply a transform to position the itemBoxes at their original location. We
-                // compare the new locations with the cached locations to figure out how far to translate the itemBoxes. 
-                // Also the removed items need to be placed back in the DOM without affecting layout (by using position 
+                // compare the new locations with the cached locations to figure out how far to translate the itemBoxes.
+                // Also the removed items need to be placed back in the DOM without affecting layout (by using position
                 // absolute) so that they also do not jump or blink.
                 //
                 // We only tranform and add back removed items for items which were on screen or are now on screen.
                 //
-                // Now the ListView can realize other items asynchronously. The items to realize are items which have been 
-                // inserted into the DataSource or items which are in the realization range because a removal has occurred 
+                // Now the ListView can realize other items asynchronously. The items to realize are items which have been
+                // inserted into the DataSource or items which are in the realization range because a removal has occurred
                 // or the user has scroll slightly.
                 //
                 // During the realization pass the user may scroll. If they scroll to a range outside of the realization
                 // range the items will just appear in the correct location without any animations. If they scroll to a
                 // location within the old realization range we still have the items and they will animate correctly.
-                // 
+                //
                 // During the realization pass another data source edit can occur. A realization pass is unable to run when
-                // the tree and layout are out of sync. Otherwise it may try to request item at index X and get item at 
-                // index X + 1. This means that if another data source edit occurs before endAnimations is called we 
+                // the tree and layout are out of sync. Otherwise it may try to request item at index X and get item at
+                // index X + 1. This means that if another data source edit occurs before endAnimations is called we
                 // restart the whole animation cycle. To group the animations between the two edits we do not reset the
                 // caches of item box locations. We could add to it if there were items outside of the range however they
                 // will only play half of the animation and will probably look just as ugly as not playing the animation at
                 // all. This means setupAnimations will just be a no op in this scenario.
-                // 
-                // This also shows that batching data source edits and only changing the data source when in loadingstate 
+                //
+                // This also shows that batching data source edits and only changing the data source when in loadingstate
                 // "complete" is still a large performance win.
-                // 
-                // Once the realization pass has finished ListView calls executeAnimations. This is where the layout 
+                //
+                // Once the realization pass has finished ListView calls executeAnimations. This is where the layout
                 // effectively fades out the removed items (and then removes them from the dom), moves the itemBoxes back
                 // to translate(0,0), and fades in the inserted itemBoxes. ListView waits for the executeAnimations promise
                 // to complete before allowing more data source edits to trigger another animation cycle.
                 //
-                // If a resize occurs during the animation cycle the animations will be canceled and items will jump to 
+                // If a resize occurs during the animation cycle the animations will be canceled and items will jump to
                 // their final positions.
 
                 setupAnimations: function _LayoutCommon_setupAnimations() {
                     // This function is called after a data source change so that we can cache the locations
-                    // of the realized items. 
+                    // of the realized items.
 
                     if (this._groups.length === 0) {
                         // No animations if we haven't measured before
@@ -1218,7 +1218,7 @@ define([
                         currentAnimationPromise = Promise.join(pendingTransitionPromises);
                         currentAnimationPromise.done(function () {
                             pendingTransitionPromises = [];
-                            // The success is called even if the animations are canceled due to the WinJS.UI.executeTransition 
+                            // The success is called even if the animations are canceled due to the WinJS.UI.executeTransition
                             // API. To deal with that we check the animationSignal variable. If it is null the animations were
                             // canceled so we shouldn't continue.
                             if (animationSignal) {
@@ -1912,7 +1912,7 @@ define([
                         for (var i = 0, len = cachedRecordKeys.length; i < len; i++) {
                             var key = cachedRecordKeys[i],
                                 record = cachedRecords[key];
-                            // We need to filter out containers which were removed from the DOM. If container's item 
+                            // We need to filter out containers which were removed from the DOM. If container's item
                             // wasn't realized container can be removed without adding record to modifiedItems.
                             if (!record.element || existingContainers[uniqueID(record.element)]) {
                                 updatedCachedRecords[key] = record;
@@ -2217,9 +2217,9 @@ define([
                     }
                     // First, convert the key into a virtual form based off of horizontal layouts.
                     // In a horizontal layout, left/right keys switch between columns (AKA "bars"), and
-                    // up/down keys switch between rows (AKA "slots"). 
+                    // up/down keys switch between rows (AKA "slots").
                     // In vertical mode, we want up/down to switch between rows (AKA "bars" when vertical),
-                    // and left/right to switch between columns (AKA "slots" when vertical). 
+                    // and left/right to switch between columns (AKA "slots" when vertical).
                     // The first step is to convert keypresses in vertical so that up/down always correspond to moving between slots,
                     // and left/right moving between bars.
                     if (!this._horizontal) {
@@ -2555,7 +2555,7 @@ define([
                     }
                     return this._measuringElements;
                 },
-                
+
                 _ensureEnvInfo: function _LayoutCommon_ensureEnvInfo() {
                     if (!this._envInfo) {
                         this._envInfo = getEnvironmentSupportInformation(this._site);
@@ -2735,7 +2735,7 @@ define([
                             // Use the same for list mode when headers are inline with item containers.
                             // When headers are to the left of a vertical list, or above a horizontal list, put the rows/columns they would be in when laid out normally
                             // into the CSS text for measuring. We have to do this because list item containers should take up 100% of the space left over in the surface
-                            // once the group's header is laid out. 
+                            // once the group's header is laid out.
                             var itemsContainerRow = 1,
                                 itemsContainerColumn = 1,
                                 headerContainerRow = 2,
@@ -2810,7 +2810,7 @@ define([
                             } else {
                                 var sizes = that._sizes = measurements.sizes;
 
-                                // Wrappers for orientation-specific properties. 
+                                // Wrappers for orientation-specific properties.
                                 // Sizes prefaced with "cross" refer to the sizes orthogonal to the current layout orientation. Sizes without a preface are in the orientation's direction.
                                 Object.defineProperties(sizes, {
                                     surfaceOuterCrossSize: {
@@ -3317,7 +3317,7 @@ define([
                 /// </returns>
                 /// </signature>
                 options = options || {};
-                // Executing setters to display compatibility warning 
+                // Executing setters to display compatibility warning
                 this.itemInfo = options.itemInfo;
                 this.groupInfo = options.groupInfo;
                 this._maxRowsOrColumns = 0;
@@ -3338,7 +3338,7 @@ define([
 
                 /// <field type="Number" integer="true" locid="WinJS.UI.GridLayout.maximumRowsOrColumns" helpKeyword="WinJS.UI.GridLayout.maximumRowsOrColumns">
                 /// Gets the maximum number of rows or columns, depending on the orientation, that should present before it introduces wrapping to the layout.
-                /// A value of 0 indicates that there is no maximum. The default value is 0. 
+                /// A value of 0 indicates that there is no maximum. The default value is 0.
                 /// </field>
                 maximumRowsOrColumns: {
                     get: function () {
@@ -3450,7 +3450,7 @@ define([
 
                     // insertAfterIndex is determined by which half of the target element the mouse cursor is currently in.
                     // The trouble is that we can cut the element in half horizontally or cut it in half vertically.
-                    // Which one we choose depends on the order that elements are laid out in the grid. 
+                    // Which one we choose depends on the order that elements are laid out in the grid.
                     // A horizontal grid with multiple rows per column will lay items out starting from top to bottom, and move left to right.
                     // A vertical list is just a horizontal grid with an infinite number of rows per column, so it follows the same order.
                     // In both of these cases, each item is cut in half horizontally, since for any item n, n-1 should be above it and n+1 below (ignoring column changes).
@@ -4163,8 +4163,8 @@ define([
                 /// Creates a new ListLayout object.
                 /// </summary>
                 /// <param name="options" type="Object" locid="WinJS.UI.ListLayout_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. Each property of the options 
-                /// object corresponds to one of the object's properties or events. Event names must begin with "on". 
+                /// An object that contains one or more property/value pairs to apply to the new control. Each property of the options
+                /// object corresponds to one of the object's properties or events. Event names must begin with "on".
                 /// </param>
                 /// <returns type="WinJS.UI.ListLayout" locid="WinJS.UI.ListLayout_returnValue">
                 /// The new ListLayout object.
@@ -4267,8 +4267,8 @@ define([
                 /// Creates a new CellSpanningLayout object.
                 /// </summary>
                 /// <param name="options" type="Object" locid="WinJS.UI.CellSpanningLayout_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new object. Each property of the options 
-                /// object corresponds to one of the object's properties or events. Event names must begin with "on". 
+                /// An object that contains one or more property/value pairs to apply to the new object. Each property of the options
+                /// object corresponds to one of the object's properties or events. Event names must begin with "on".
                 /// </param>
                 /// <returns type="WinJS.UI.CellSpanningLayout" locid="WinJS.UI.CellSpanningLayout_returnValue">
                 /// The new CellSpanningLayout object.
@@ -4296,14 +4296,14 @@ define([
                 },
 
                 /// <field type="Function" locid="WinJS.UI.CellSpanningLayout.itemInfo" helpKeyword="WinJS.UI.CellSpanningLayout.itemInfo">
-                /// Gets or sets a function that returns the width and height of an item, as well as whether 
-                /// it should  appear in a new column. Setting this function improves performance because 
-                /// the ListView can allocate space for an item without having to measure it first. 
-                /// The function takes a single parameter: the index of the item to render. 
-                /// The function returns an object that has three properties: 
+                /// Gets or sets a function that returns the width and height of an item, as well as whether
+                /// it should  appear in a new column. Setting this function improves performance because
+                /// the ListView can allocate space for an item without having to measure it first.
+                /// The function takes a single parameter: the index of the item to render.
+                /// The function returns an object that has three properties:
                 /// width: The  total width of the item.
                 /// height: The total height of the item.
-                /// newColumn: Set to true to create a column break; otherwise, false. 
+                /// newColumn: Set to true to create a column break; otherwise, false.
                 /// </field>
                 itemInfo: {
                     enumerable: true,
@@ -4319,9 +4319,9 @@ define([
                 /// <field type="Function" locid="WinJS.UI.CellSpanningLayout.groupInfo" helpKeyword="WinJS.UI.CellSpanningLayout.groupInfo">
                 /// Gets or sets a function that enables cell-spanning and establishes base cell dimensions.
                 /// The function returns an object that has these properties:
-                /// enableCellSpanning: Set to true to allow the ListView to contain items of multiple sizes. 
+                /// enableCellSpanning: Set to true to allow the ListView to contain items of multiple sizes.
                 /// cellWidth: The width of the base cell.
-                /// cellHeight: The height of the base cell. 
+                /// cellHeight: The height of the base cell.
                 /// </field>
                 groupInfo: {
                     enumerable: true,

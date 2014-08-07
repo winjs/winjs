@@ -70,9 +70,9 @@ define([
                 /// The DOM element that will host the new control. The Repeater will create an element if this value is null.
                 /// </param>
                 /// <param name="options" type="Object" isOptional="true" locid="WinJS.UI.Repeater.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the 
-                /// new Repeater. Each property of the options object corresponds to one of the 
-                /// object's properties or events. Event names must begin with "on". 
+                /// An object that contains one or more property/value pairs to apply to the
+                /// new Repeater. Each property of the options object corresponds to one of the
+                /// object's properties or events. Event names must begin with "on".
                 /// </param>
                 /// <returns type="WinJS.UI.Repeater" locid="WinJS.UI.Repeater.constructor_returnValue">
                 /// The new Repeater control.
@@ -214,37 +214,37 @@ define([
                 onitemsloaded: createEvent(ITEMSLOADED),
 
                 /// <field type="Function" locid="WinJS.UI.Repeater.onitemchanging" helpKeyword="WinJS.UI.Repeater.onitemchanging">
-                /// Raised after an item in the Repeater control's data source changes but before the corresponding DOM element has been updated. 
+                /// Raised after an item in the Repeater control's data source changes but before the corresponding DOM element has been updated.
                 /// </field>
                 onitemchanging: createEvent(ITEMCHANGING),
 
                 /// <field type="Function" locid="WinJS.UI.Repeater.onitemchanged" helpKeyword="WinJS.UI.Repeater.onitemchanged">
-                /// Raised after an item in the Repeater control's data source changes and after the corresponding DOM element has been updated. 
+                /// Raised after an item in the Repeater control's data source changes and after the corresponding DOM element has been updated.
                 /// </field>
                 onitemchanged: createEvent(ITEMCHANGED),
 
                 /// <field type="Function" locid="WinJS.UI.Repeater.oniteminserting" helpKeyword="WinJS.UI.Repeater.oniteminserting">
-                /// Raised after an item has been added to the Repeater control's data source but before the corresponding DOM element has been added. 
+                /// Raised after an item has been added to the Repeater control's data source but before the corresponding DOM element has been added.
                 /// </field>
                 oniteminserting: createEvent(ITEMINSERTING),
 
                 /// <field type="Function" locid="WinJS.UI.Repeater.oniteminserted" helpKeyword="WinJS.UI.Repeater.oniteminserted">
-                /// Raised after an item has been added to the Repeater control's data source and after the corresponding DOM element has been added. 
+                /// Raised after an item has been added to the Repeater control's data source and after the corresponding DOM element has been added.
                 /// </field>
                 oniteminserted: createEvent(ITEMINSERTED),
 
                 /// <field type="Function" locid="WinJS.UI.Repeater.onitemmoving" helpKeyword="WinJS.UI.Repeater.onitemmoving">
-                /// Raised after an item has been moved from one index to another in the Repeater control's data source but before the corresponding DOM element has been moved. 
+                /// Raised after an item has been moved from one index to another in the Repeater control's data source but before the corresponding DOM element has been moved.
                 /// </field>
                 onitemmoving: createEvent(ITEMMOVING),
 
                 /// <field type="Function" locid="WinJS.UI.Repeater.onitemmoved" helpKeyword="WinJS.UI.Repeater.onitemmoved">
-                /// Raised after an item has been moved from one index to another in the Repeater control's data source and after the corresponding DOM element has been moved. 
+                /// Raised after an item has been moved from one index to another in the Repeater control's data source and after the corresponding DOM element has been moved.
                 /// </field>
                 onitemmoved: createEvent(ITEMMOVED),
 
                 /// <field type="Function" locid="WinJS.UI.Repeater.onitemremoving" helpKeyword="WinJS.UI.Repeater.onitemremoving">
-                /// Raised after an item has been removed from the Repeater control's data source but before the corresponding DOM element has been removed. 
+                /// Raised after an item has been removed from the Repeater control's data source but before the corresponding DOM element has been removed.
                 /// </field>
                 onitemremoving: createEvent(ITEMREMOVING),
 
@@ -413,7 +413,7 @@ define([
                 },
 
                 _dataItemMovedHandler: function Repeater_dataItemMovedHandler(eventInfo) {
-                    // Handles the 'itemmoved' event fired by WinJS.Binding.List 
+                    // Handles the 'itemmoved' event fired by WinJS.Binding.List
 
                     this._beginModification();
 
@@ -473,7 +473,7 @@ define([
                 },
 
                 _dataReloadHandler: function Repeater_dataReloadHandler() {
-                    // Handles the 'reload' event fired by WinJS.Binding.List whenever it performs operations such as reverse() or sort() 
+                    // Handles the 'reload' event fired by WinJS.Binding.List whenever it performs operations such as reverse() or sort()
 
                     this._beginModification();
                     var animationPromise;

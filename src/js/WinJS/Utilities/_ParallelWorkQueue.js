@@ -20,10 +20,10 @@ define([
                 function runNext() {
                     running--;
                     // if we have fallen out of this loop, then we know we are already
-                    // async, so "post" is OK. If we are still in the loop, then the 
-                    // loop will continue to run, so we don't need to "post" or 
+                    // async, so "post" is OK. If we are still in the loop, then the
+                    // loop will continue to run, so we don't need to "post" or
                     // recurse. This avoids stack overflow in the sync case.
-                    // 
+                    //
                     if (!processing) {
                         Scheduler.schedule(run, Scheduler.Priority.normal,
                             null, "WinJS._ParallelWorkQueue.runNext");
@@ -48,7 +48,7 @@ define([
                                 // this will only get hit if there is a queued item that
                                 // fails to return something that conforms to the Promise
                                 // contract
-                                // 
+                                //
                                 runNext();
                             }
                         } else {

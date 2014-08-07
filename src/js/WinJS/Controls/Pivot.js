@@ -66,7 +66,7 @@ define([
                     itemAnimationEnd: "itemanimationend",
                 };
                 var MSManipulationEventStates = _ElementUtilities._MSManipulationEvent;
-                
+
                 var supportsSnap = false;
                 var ready = null;
 

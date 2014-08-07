@@ -1431,7 +1431,7 @@ define([
 
                 _updateKeydownCaptureListeners: function SearchBox_updateTypeToSearchListeners(win, add) {
                     // Register for child frame keydown events in order to support FocusOnKeyboardInput
-                    // when focus is in a child frame.  Also register for child frame load events so 
+                    // when focus is in a child frame.  Also register for child frame load events so
                     // it still works after frame navigations.
                     // Note: This won't catch iframes added programmatically later, but that can be worked
                     // around by toggling FocusOnKeyboardInput off/on after the new iframe is added.
@@ -1441,7 +1441,7 @@ define([
                         } else {
                             win.document.removeEventListener('keydown', this._keydownCaptureHandlerBind, true);
                         }
-                    } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error                        
+                    } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error
                     }
 
                     if (win.frames) {
@@ -1459,7 +1459,7 @@ define([
                                         childWin.frameElement.removeEventListener('load', this._frameLoadCaptureHandlerBind, true);
                                     }
                                 }
-                            } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error                        
+                            } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error
                             }
                         }
                     }
@@ -1529,13 +1529,13 @@ define([
                                 case 0x6E:  // VK_DECIMAL,             //0x6E Decimal key
                                 case 0x6F:  // VK_DIVIDE,              //0x6F Divide key
 
-                                case 0xBA:  // VK_OEM_1,               //0xBA Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key 
+                                case 0xBA:  // VK_OEM_1,               //0xBA Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key
                                 case 0xBB:  // VK_OEM_PLUS,            //0xBB For any country/region, the '+' key
                                 case 0xBC:  // VK_OEM_COMMA,           //0xBC For any country/region, the ',' key
                                 case 0xBD:  // VK_OEM_MINUS,           //0xBD For any country/region, the '-' key
                                 case 0xBE:  // VK_OEM_PERIOD,          //0xBE For any country/region, the '.' key
-                                case 0xBF:  // VK_OEM_2,               //0xBF Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key 
-                                case 0xC0:  // VK_OEM_3,               //0xC0 Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '`~' key 
+                                case 0xBF:  // VK_OEM_2,               //0xBF Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key
+                                case 0xC0:  // VK_OEM_3,               //0xC0 Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '`~' key
 
                                 case 0xDB:  // VK_OEM_4,               //0xDB Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '[{' key
                                 case 0xDC:  // VK_OEM_5,               //0xDC Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '\|' key

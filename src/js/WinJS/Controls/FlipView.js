@@ -712,7 +712,7 @@ define([
                     }, true);
 
                     // Scroll position isn't maintained when an element is added/removed from
-                    // the DOM so every time we are placed back in, let the PageManager 
+                    // the DOM so every time we are placed back in, let the PageManager
                     // fix the scroll position.
                     _ElementUtilities._addInsertedNotifier(this._flipviewDiv);
                     this._flipviewDiv.addEventListener("WinJSNodeInserted", function (event) {

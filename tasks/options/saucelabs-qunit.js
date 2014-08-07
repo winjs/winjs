@@ -69,7 +69,7 @@
                         "Component: " +  component + "\n" +
                         "Time: " + details.result.runtime + "ms"
                         );
-            
+
             var componentResults = getComponentResults(component);
             if (componentResults) {
                 componentResults["e" + browserIndex] = {

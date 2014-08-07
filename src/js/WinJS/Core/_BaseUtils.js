@@ -346,15 +346,15 @@ define([
             writable: false,
             enumerable: true
         },
-        
+
         _setImmediate: _BaseCoreUtils._setImmediate,
-        
+
         // Allows the browser to finish dispatching its current set of events before running
         // the callback.
         _yieldForEvents: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
             _Global.setTimeout(handler, 0);
         },
-        
+
         // Allows the browser to notice a DOM modification before running the callback.
         _yieldForDomModification: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
             _Global.setTimeout(handler, 0);
@@ -380,7 +380,7 @@ define([
             });
             return o;
         },
-        
+
         _getProfilerMarkIdentifier: function _getProfilerMarkIdentifier(element) {
             var profilerMarkIdentifier = "";
             if (element.id) {

@@ -82,7 +82,7 @@ define([
                     if (+timeout !== timeout) {
                         timeout = _VirtualizeContentsView._waitForSeZoTimeoutDuration;
                     }
-                    //To improve SeZo's zoom animation and pinch detection perf, we want to ensure unimportant task 
+                    //To improve SeZo's zoom animation and pinch detection perf, we want to ensure unimportant task
                     //is only run while zooming or pinching is not in progress.
                     return Promise.timeout(_VirtualizeContentsView._waitForSeZoIntervalDuration).then(function () {
                         timeout -= _VirtualizeContentsView._waitForSeZoIntervalDuration;
@@ -311,7 +311,7 @@ define([
                         if (ignoreGaps) {
                             return;
                         }
-                        // If we realized items 0 through 20 and then scrolled so that items 25 - 30 are on screen when we 
+                        // If we realized items 0 through 20 and then scrolled so that items 25 - 30 are on screen when we
                         // append them to the dom we should remove items 0 - 20 from the dom so there are no gaps between the
                         // two realized spots.
 
@@ -620,7 +620,7 @@ define([
                         }
 
                         // Anything left in _previousRealizationPendingItemPromises can be canceled here.
-                        // Note: we are doing this synchronously. If we didn't do it synchronously we would have had to merge 
+                        // Note: we are doing this synchronously. If we didn't do it synchronously we would have had to merge
                         // _previousRealizationPendingItemPromises and _pendingItemPromises together. This also has the great
                         // benefit to cancel item promises in the backOffScreenArea which are much less important.
                         for (var i = 0, handles = Object.keys(this._previousRealizationPendingItemPromises), len = handles.length; i < len; i++) {
@@ -630,7 +630,7 @@ define([
                         this._previousRealizationPendingItemPromises = {};
 
 
-                        // Handle existing items in the second pass to make sure that raising ready signal is added to the queues after creating items 
+                        // Handle existing items in the second pass to make sure that raising ready signal is added to the queues after creating items
                         handleExistingRange(that._onscreenJob, firstInView, lastInView);
                         if (direction === "left") {
                             handleExistingRange(that._frontOffscreenJob, begin, firstInView - 1);
@@ -1691,7 +1691,7 @@ define([
                         var count = that.containers.length;
 
                         if (count) {
-                            // While the zoom animation is played we want to minimize the # of pages 
+                            // While the zoom animation is played we want to minimize the # of pages
                             // being fetched to improve TtFF for SeZo scenarios
                             var pagesToPrefetch = _VirtualizeContentsView._pagesToPrefetch;
                             var customPagesToPrefetchMax = _VirtualizeContentsView._customPagesToPrefetchMax;
@@ -1802,7 +1802,7 @@ define([
                                     that._unrealizeExcessiveItems();
 
                                 } else if (!that.lastRealizePass) {
-                                    // We are currently in the "itemsLoading" state and need to get back to "complete". The 
+                                    // We are currently in the "itemsLoading" state and need to get back to "complete". The
                                     // previous realize pass has been completed so proceed to the other states.
                                     finish(count);
                                 } else {
@@ -2685,8 +2685,8 @@ define([
                 }
             },{
                 _pagesToPrefetch: 2,
-                _customPagesToPrefetchMax: 6, 
-                _customPagesToPrefetchMin: 2, 
+                _customPagesToPrefetchMax: 6,
+                _customPagesToPrefetchMin: 2,
                 _disableCustomPagesPrefetch: false,
                 _waitForSeZoIntervalDuration: 100,
                 _waitForSeZoTimeoutDuration: 500,
@@ -2706,7 +2706,7 @@ define([
             function nop() { }
 
             /*
-            View is in this state before reload is called so during startup, after datasource change etc. 
+            View is in this state before reload is called so during startup, after datasource change etc.
             */
 
             var CreatedState = _Base.Class.define(function CreatedState_ctor(view) {
@@ -2735,12 +2735,12 @@ define([
                 updateTree: nop
             });
 
-            /* 
-            In this state View is building its DOM tree with win-container element for each item in the data set. 
-            To build the tree the view needs to know items count or for grouped case the count of groups and the 
-            count of items in each group. The view enters this state when the tree needs to be built during 
+            /*
+            In this state View is building its DOM tree with win-container element for each item in the data set.
+            To build the tree the view needs to know items count or for grouped case the count of groups and the
+            count of items in each group. The view enters this state when the tree needs to be built during
             startup or rebuild after data source change and etc.
-            
+
             BuildingState => LayingoutState | CreatedState
             */
             var BuildingState = _Base.Class.define(function BuildingState_ctor(view) {
@@ -2793,10 +2793,10 @@ define([
                 updateTree: nop
             });
 
-            /* 
-            In this state View waits for the layout to lay out win-container elements. The view enters this state 
+            /*
+            In this state View waits for the layout to lay out win-container elements. The view enters this state
             after edits or resize.
-                
+
             LayingoutState => RealizingState | BuildingState | CanceledState | CompletedState | LayoutCanceledState
             */
             var LayingoutState = _Base.Class.define(function LayingoutState_ctor(view, NextStateType) {
@@ -2896,9 +2896,9 @@ define([
             });
 
 
-            /* 
+            /*
             View enters this state when layout is canceled.
-                    
+
             LayoutCanceledState => LayingoutState | BuildingState
             */
             var LayoutCanceledState = _Base.Class.define(function LayoutCanceledState_ctor(view) {
@@ -2927,10 +2927,10 @@ define([
                 }
             });
 
-            /* 
-            Contents of items in the current viewport and prefetch area is realized during this stage. 
+            /*
+            Contents of items in the current viewport and prefetch area is realized during this stage.
             The view enters this state when items needs to be realized for instance during initialization, edits and resize.
-                    
+
             RealizingState => RealizingAnimatingState | UnrealizingState | LayingoutState | BuildingState | CanceledState
             */
             var RealizingState = _Base.Class.define(function RealizingState_ctor(view) {
@@ -3004,10 +3004,10 @@ define([
             });
 
             /*
-            The view enters this state when the realize pass, animations or unrealizing was canceled or after newContainers have been laid out. 
+            The view enters this state when the realize pass, animations or unrealizing was canceled or after newContainers have been laid out.
             In this state view waits for the next call from ListViewImpl. It can be scroll, edit etc.
-            
-            CanceledState => RealizingState | ScrollingState | LayingoutState | BuildingState 
+
+            CanceledState => RealizingState | ScrollingState | LayingoutState | BuildingState
             */
             var CanceledState = _Base.Class.define(function CanceledState_ctor(view) {
                 this.view = view;
@@ -3042,9 +3042,9 @@ define([
             });
 
             /*
-            This state is almost identical with RealizingState. Currently the difference is that in this state loadingStateChanged events aren’t 
+            This state is almost identical with RealizingState. Currently the difference is that in this state loadingStateChanged events aren’t
             raised and after complete the state is switched to ScrollingPausedState to wait until end of scrolling.
-            
+
             ScrollingState => RealizingAnimatingState | ScrollingPausedState | LayingoutState | BuildingState | CanceledState
             */
             var ScrollingState = _Base.Class.derive(RealizingState, function ScrollingState_ctor(view) {
@@ -3058,8 +3058,8 @@ define([
             });
 
             /*
-            The view waits in this state for end of scrolling which for touch is signaled by MSManipulationStateChanged event and for mouse it is timeout. 
-            
+            The view waits in this state for end of scrolling which for touch is signaled by MSManipulationStateChanged event and for mouse it is timeout.
+
             ScrollingPausedState => RealizingAnimatingState | ScrollingPausedState | LayingoutState | BuildingState | CanceledState
             */
             var ScrollingPausedState = _Base.Class.derive(CanceledState, function ScrollingPausedState_ctor(view) {
@@ -3079,9 +3079,9 @@ define([
                 },
             });
 
-            /* 
+            /*
             In this state, view unrealizes not needed items and then waits for all renderers to complete.
-                            
+
             UnrealizingState => CompletedState | RealizingState | ScrollingState | LayingoutState | BuildingState | CanceledState
             */
             var UnrealizingState = _Base.Class.define(function UnrealizingState_ctor(view) {
@@ -3127,7 +3127,7 @@ define([
 
             /*
             We enter this state, when there are animations to execute, and we have already fired the viewportloaded event
-            
+
             RealizingAnimatingState => RealizingState | UnrealizingState | LayingoutState | BuildingState | CanceledState
             */
             var RealizingAnimatingState = _Base.Class.define(function RealizingStateAnimating_ctor(view, realizePromise) {
@@ -3240,10 +3240,10 @@ define([
                 }
             });
 
-            /* 
-            The view enters this state when the tree is built, layout and realized after animations have 
-            finished. The layout can still laying out items outside of realized view during this stage. 
-                        
+            /*
+            The view enters this state when the tree is built, layout and realized after animations have
+            finished. The layout can still laying out items outside of realized view during this stage.
+
             CompletedState => RealizingState | ScrollingState | LayingoutState | BuildingState | LayingoutNewContainersState
             */
             var CompletedState = _Base.Class.derive(CanceledState, function CompletedState_ctor(view) {
@@ -3278,9 +3278,9 @@ define([
                 }
             });
 
-            /* 
+            /*
             The view waits in this state for previous layout pass to finish.
-            
+
             LayingoutNewContainersState => RealizingState | ScrollingState | LayingoutState | BuildingState
             */
             var LayingoutNewContainersState = _Base.Class.derive(CanceledState, function LayingoutNewContainersState(view) {

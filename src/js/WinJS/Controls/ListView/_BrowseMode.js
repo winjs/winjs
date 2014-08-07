@@ -15,7 +15,7 @@ define([
     "use strict";
 
     var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
-    // This component is responsible for handling input in Browse Mode. 
+    // This component is responsible for handling input in Browse Mode.
     // When the user clicks on an item in this mode itemInvoked event is fired.
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
 
@@ -698,7 +698,7 @@ define([
                     var that = this;
                     this._exitEventTimer = _Global.setTimeout(function () {
                         if (that.site._disposed) { return; }
-                        
+
                         if (that._pointerLeftRegion) {
                             that.site._layout.dragLeave && that.site._layout.dragLeave();
                             that._pointerLeftRegion = false;
@@ -896,7 +896,7 @@ define([
                 _reorderItems: function (dropIndex, reorderedItems, reorderingUnselectedItem, useMoveBefore, ensureVisibleAtEnd) {
                     var site = this.site;
                     var updateSelection = function updatedSelectionOnDrop(items) {
-                        // Update selection if the items were selected. If there is a range with length > 0 a move operation 
+                        // Update selection if the items were selected. If there is a range with length > 0 a move operation
                         // on the first or last item removes the range.
                         if (!reorderingUnselectedItem) {
                             site._selection.set({ firstKey: items[0].key, lastKey: items[items.length - 1].key });
@@ -1189,7 +1189,7 @@ define([
                                         // [Group A] [a] [b] [c] [Group B] [d] [e]
                                         // When [d] is focused, right/down arrow reports index: 4, insertAfterIndex: 4, which is right -- it means move [d] after [e].
                                         // Similarily, when [c] is focused and left/up is pressed, we report index: 1, insertAfterIndex: 0 -- move [c] to after [a].
-                                        // Take note that index does not tell us where focus is / what item is being moved. 
+                                        // Take note that index does not tell us where focus is / what item is being moved.
                                         // Like mouse/touch DnD, index tells us what the dragBetween slots would be were we to animate a dragBetween.
                                         // The problem cases are moving backwards into a previous group, or forward into the next group.
                                         // If [c] were focused and the user pressed right/down, we would report index: 3, insertAfterIndex: 3. In other words, move [c] after [d].

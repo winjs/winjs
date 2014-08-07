@@ -19,7 +19,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.PivotItem">
-        /// Defines a Item of a Pivot control. 
+        /// Defines a Item of a Pivot control.
         /// </summary>
         /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1"/>
         /// </field>
@@ -45,8 +45,8 @@ define([
                 /// The DOM element that hosts the PivotItem control.
                 /// </param>
                 /// <param name="options" type="Object" isOptional="true" locid="WinJS.UI.PivotItem.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. 
-                /// Each property of the options object corresponds to one of the control's properties or events. 
+                /// An object that contains one or more property/value pairs to apply to the new control.
+                /// Each property of the options object corresponds to one of the control's properties or events.
                 /// </param>
                 /// <returns type="WinJS.UI.PivotItem" locid="WinJS.UI.PivotItem.constructor_returnValue">
                 /// The new PivotItem.

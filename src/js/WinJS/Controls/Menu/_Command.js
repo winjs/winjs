@@ -17,7 +17,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.MenuCommand">
-        /// Represents a command to be displayed in a Menu. MenuCommand objects provide button, toggle button, flyout button, 
+        /// Represents a command to be displayed in a Menu. MenuCommand objects provide button, toggle button, flyout button,
         /// or separator functionality for Menu controls.
         /// </summary>
         /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -277,7 +277,7 @@ define([
                 },
 
                 /// <field type="Object" locid="WinJS.UI.MenuCommand.flyout" helpKeyword="WinJS.UI.MenuCommand.flyout">
-                /// For flyout type MenuCommands, this property  returns the WinJS.UI.Flyout that this command invokes. When setting this property, you can set 
+                /// For flyout type MenuCommands, this property  returns the WinJS.UI.Flyout that this command invokes. When setting this property, you can set
                 /// it to the string ID of the Flyout, the DOM object that hosts the Flyout, or the Flyout object itself.
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </field>
@@ -425,7 +425,7 @@ define([
                 addEventListener: function (type, listener, useCapture) {
                     /// <signature helpKeyword="WinJS.UI.MenuCommand.addEventListener">
                     /// <summary locid="WinJS.UI.MenuCommand.addEventListener">
-                    /// Registers an event handler for the specified event. 
+                    /// Registers an event handler for the specified event.
                     /// </summary>
                     /// <param name="type" type="String" locid="WinJS.UI.MenuCommand.addEventListener_p:type">The name of the event to register.</param>
                     /// <param name="listener" type="Function" locid="WinJS.UI.MenuCommand.addEventListener_p:listener">The function that handles the event.</param>
@@ -440,7 +440,7 @@ define([
                 removeEventListener: function (type, listener, useCapture) {
                     /// <signature helpKeyword="WinJS.UI.MenuCommand.removeEventListener">
                     /// <summary locid="WinJS.UI.MenuCommand.removeEventListener">
-                    /// Removes the specified event handler that the addEventListener method registered. 
+                    /// Removes the specified event handler that the addEventListener method registered.
                     /// </summary>
                     /// <param name="type" type="String" locid="WinJS.UI.MenuCommand.removeEventListener_p:type">The name of the event to remove.</param>
                     /// <param name="listener" type="Function" locid="WinJS.UI.MenuCommand.removeEventListener_p:listener">The event handler function to remove.</param>

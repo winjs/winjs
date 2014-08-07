@@ -21,7 +21,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBarCommand">
-        /// Represents a command to display in an AppBar. 
+        /// Represents a command to display in an AppBar.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.appbarcommand.12x12.png" width="12" height="12" />
@@ -76,7 +76,7 @@ define([
                 /// The DOM element that will host the control. AppBarCommand will create one if null.
                 /// </param>
                 /// <param name="options" type="Object" locid="WinJS.UI.AppBarCommand.constructor_p:options">
-                /// The set of properties and values to apply to the new AppBarCommand. 
+                /// The set of properties and values to apply to the new AppBarCommand.
                 /// </param>
                 /// <returns type="WinJS.UI.AppBarCommand" locid="WinJS.UI.AppBarCommand.constructor_returnValue">
                 /// The new AppBarCommand control.
@@ -211,7 +211,7 @@ define([
                                 this._imageSpan.style.msHighContrastAdjust = "none";
 
                                 // Parse the image url into a WebUICommandBarButtonBitmapIcon.
-                                // Use computed style to get a normalized "url(\"<pathname>\")" string from the DOM. 
+                                // Use computed style to get a normalized "url(\"<pathname>\")" string from the DOM.
                                 var imageUrl = _Global.getComputedStyle(this._imageSpan).backgroundImage;
                                 // Make sure returned value is a url.
                                 if (imageUrl.substring(0, 3) === 'url') {
@@ -253,7 +253,7 @@ define([
                         return this._section;
                     },
                     set: function (value) {
-                        // we allow settings section only one time 
+                        // we allow settings section only one time
                         if (!this._section || _WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
                             this._setSection(value);
                         }
@@ -342,7 +342,7 @@ define([
                 addEventListener: function (type, listener, useCapture) {
                     /// <signature helpKeyword="WinJS.UI.AppBarCommand.addEventListener">
                     /// <summary locid="WinJS.UI.AppBarCommand.addEventListener">
-                    /// Registers an event handler for the specified event. 
+                    /// Registers an event handler for the specified event.
                     /// </summary>
                     /// <param name="type" type="String" locid="WinJS.UI.AppBarCommand.addEventListener_p:type">
                     /// Required. The name of the event to register. It must be "beforeshow", "beforehide", "aftershow", or "afterhide".
@@ -358,7 +358,7 @@ define([
                 removeEventListener: function (type, listener, useCapture) {
                     /// <signature helpKeyword="WinJS.UI.AppBarCommand.removeEventListener">
                     /// <summary locid="WinJS.UI.AppBarCommand.removeEventListener">
-                    /// Removes an event handler that the addEventListener method registered. 
+                    /// Removes an event handler that the addEventListener method registered.
                     /// </summary>
                     /// <param name="type" type="String" locid="WinJS.UI.AppBarCommand.removeEventListener_p:type">Required. The name of the event to remove.</param>
                     /// <param name="listener" type="Function" locid="WinJS.UI.AppBarCommand.removeEventListener_p:listener">Required. The event handler function to remove.</param>

@@ -18,7 +18,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.HubSection">
-        /// Defines a section of a Hub control. 
+        /// Defines a section of a Hub control.
         /// </summary>
         /// <compatibleWith platform="Windows" minVersion="8.1"/>
         /// </field>
@@ -48,8 +48,8 @@ define([
                 /// The DOM element that hosts the HubSection control.
                 /// </param>
                 /// <param name="options" type="Object" isOptional="true" locid="WinJS.UI.HubSection.constructor_p:options">
-                /// An object that contains one or more property/value pairs to apply to the new control. 
-                /// Each property of the options object corresponds to one of the control's properties or events. 
+                /// An object that contains one or more property/value pairs to apply to the new control.
+                /// Each property of the options object corresponds to one of the control's properties or events.
                 /// </param>
                 /// <returns type="WinJS.UI.HubSection" locid="WinJS.UI.HubSection.constructor_returnValue">
                 /// The new HubSection.
@@ -118,7 +118,7 @@ define([
                     }
                 },
                 /// <field type="Boolean" locid="WinJS.UI.HubSection.isHeaderStatic" helpKeyword="WinJS.UI.HubSection.isHeaderStatic">
-                /// Gets or sets a value that specifies whether the header is static. Set this value to true to disable clicks and other interactions. 
+                /// Gets or sets a value that specifies whether the header is static. Set this value to true to disable clicks and other interactions.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 isHeaderStatic: {

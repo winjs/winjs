@@ -21,7 +21,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AppBarCommand">
-        /// Represents a command to display in an AppBar. 
+        /// Represents a command to display in an AppBar.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.appbarcommand.12x12.png" width="12" height="12" />
@@ -86,7 +86,7 @@ define([
                 /// The DOM element that will host the control. AppBarCommand will create one if null.
                 /// </param>
                 /// <param name="options" type="Object" locid="WinJS.UI.AppBarCommand.constructor_p:options">
-                /// The set of properties and values to apply to the new AppBarCommand. 
+                /// The set of properties and values to apply to the new AppBarCommand.
                 /// </param>
                 /// <returns type="WinJS.UI.AppBarCommand" locid="WinJS.UI.AppBarCommand.constructor_returnValue">
                 /// The new AppBarCommand control.
@@ -280,7 +280,7 @@ define([
 
                 /// <field type="Object" locid="WinJS.UI.AppBarCommand.flyout" helpKeyword="WinJS.UI.AppBarCommand.flyout">
                 /// For flyout-type AppBarCommands, this property returns the WinJS.UI.Flyout that this command invokes.
-                /// When setting this property, you may also use the String ID of the flyout to invoke, the DOM object 
+                /// When setting this property, you may also use the String ID of the flyout to invoke, the DOM object
                 /// for the flyout, or the WinJS.UI.Flayout object itself.
                 /// </field>
                 flyout: {
@@ -333,7 +333,7 @@ define([
                         return this._section;
                     },
                     set: function (value) {
-                        // we allow settings section only one time 
+                        // we allow settings section only one time
                         if (!this._section || _WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
                             this._setSection(value);
                         }
@@ -427,7 +427,7 @@ define([
                 },
 
                 /// <field type="HTMLElement" domElement="true" locid="WinJS.UI.AppBarCommand.firstElementFocus" helpKeyword="WinJS.UI.AppBarCommand.firstElementFocus">
-                /// Gets or sets the HTMLElement within a "content" type AppBarCommand that should receive focus whenever focus moves via Home or the arrow keys, 
+                /// Gets or sets the HTMLElement within a "content" type AppBarCommand that should receive focus whenever focus moves via Home or the arrow keys,
                 /// from the previous AppBarCommand to the this AppBarCommand. Returns the AppBarCommand object's host element by default.
                 /// </field>
                 firstElementFocus: {
@@ -479,7 +479,7 @@ define([
                 addEventListener: function (type, listener, useCapture) {
                     /// <signature helpKeyword="WinJS.UI.AppBarCommand.addEventListener">
                     /// <summary locid="WinJS.UI.AppBarCommand.addEventListener">
-                    /// Registers an event handler for the specified event. 
+                    /// Registers an event handler for the specified event.
                     /// </summary>
                     /// <param name="type" type="String" locid="WinJS.UI.AppBarCommand.addEventListener_p:type">
                     /// Required. The name of the event to register. It must be "beforeshow", "beforehide", "aftershow", or "afterhide".
@@ -495,7 +495,7 @@ define([
                 removeEventListener: function (type, listener, useCapture) {
                     /// <signature helpKeyword="WinJS.UI.AppBarCommand.removeEventListener">
                     /// <summary locid="WinJS.UI.AppBarCommand.removeEventListener">
-                    /// Removes an event handler that the addEventListener method registered. 
+                    /// Removes an event handler that the addEventListener method registered.
                     /// </summary>
                     /// <param name="type" type="String" locid="WinJS.UI.AppBarCommand.removeEventListener_p:type">Required. The name of the event to remove.</param>
                     /// <param name="listener" type="Function" locid="WinJS.UI.AppBarCommand.removeEventListener_p:listener">Required. The event handler function to remove.</param>
@@ -629,8 +629,8 @@ define([
                 },
 
                 _updateTabStop: function AppBarCommand_updateTabStop() {
-                    // Whenever the firstElementFocus or lastElementFocus properties are set for content type AppBarCommands, 
-                    // the containing command element is no longer a tabstop.                
+                    // Whenever the firstElementFocus or lastElementFocus properties are set for content type AppBarCommands,
+                    // the containing command element is no longer a tabstop.
 
                     if (this._firstElementFocus || this._lastElementFocus) {
                         this.element.tabIndex = -1;

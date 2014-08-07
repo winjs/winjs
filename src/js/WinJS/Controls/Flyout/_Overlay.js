@@ -629,7 +629,7 @@ define([
                         var hideCommands = this._queuedToHide;
                         var siblings = this._findSiblings(showCommands.concat(hideCommands));
 
-                        // Filter out the commands queued for animation that don't need to be animated. 
+                        // Filter out the commands queued for animation that don't need to be animated.
                         var count;
                         for (count = 0; count < showCommands.length; count++) {
                             // If this one's not real or not attached, skip it
@@ -686,16 +686,16 @@ define([
 
                 _baseBeginAnimateCommands: function _Overlay_baseBeginAnimateCommands(showCommands, hideCommands, siblings) {
                     // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
-                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show. 
+                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
                     // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE shceduled to hide.
                     // 3) siblings[]: i. All VISIBLE win-command elements that ARE NOT scheduled to hide.
-                    //               ii. All HIDDEN win-command elements that ARE NOT scheduled to hide OR show. 
+                    //               ii. All HIDDEN win-command elements that ARE NOT scheduled to hide OR show.
                     this._beginAnimateCommands(showCommands, hideCommands, this._getVisibleCommands(siblings));
 
                     var showAnimated = null,
                         hideAnimated = null;
 
-                    // Hide commands first, with siblings if necessary, 
+                    // Hide commands first, with siblings if necessary,
                     // so that the showing commands don't disrupt the hiding commands position.
                     if (hideCommands.length > 0) {
                         hideAnimated = Animations.createDeleteFromListAnimation(hideCommands, showCommands.length === 0 ? siblings : undefined);
@@ -758,7 +758,7 @@ define([
                         visibleCommands = [];
 
                     if (!commands) {
-                        // Crawl the inner HTML for the commands. 
+                        // Crawl the inner HTML for the commands.
                         commands = this.element.querySelectorAll(".win-command");
                     }
 
@@ -1552,8 +1552,8 @@ define([
                 afterHide: AFTERHIDE,
 
                 commonstrings: {
-                    get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },
-                    get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; }
+                get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },
+                get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; }
                 }
             });
 
@@ -1567,9 +1567,9 @@ define([
                     return 0;
                 },
 
-                // Get the bottom offset of the visual viewport, plus any IHM occlusion. 
+                // Get the bottom offset of the visual viewport, plus any IHM occlusion.
                 _visibleDocBottomOffset: function _visibleDocBottomOffset() {
-                    // For -ms-device-fixed positioned elements, the bottom is just 0 when there's no IHM. 
+                    // For -ms-device-fixed positioned elements, the bottom is just 0 when there's no IHM.
                     // When the IHM appears, the text input that invoked it may be in a position on the page that is occluded by the IHM.
                     // In that instance, the default browser behavior is to resize the visual viewport and scroll the input back into view.
                     // However, if the viewport resize is prevented by an IHM event listener, the keyboard will still occlude
@@ -1600,18 +1600,18 @@ define([
                 },
             };
 
-            // Mixin for WWA Soft Keyboard offsets when CSS -ms-device-fixed positioning is not supported. 
+            // Mixin for WWA Soft Keyboard offsets when CSS -ms-device-fixed positioning is not supported.
             // In that instance, all _Overlay elements fall back to using CSS fixed positioning.
             // This is for backwards compatibility with Apache Cordova Apps targeting WWA since they target IE10.
             // This is essentially the original logic for WWA _Overlay / Soft Keyboard interactions we used when windows 8 first launched.
             var _keyboardInfoFixedMixin = {
-                // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement. 
+                // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement.
                 // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
                 _visibleDocTop: function _visibleDocTop() {
                     return _Global.window.pageYOffset - _Global.document.documentElement.scrollTop;
                 },
 
-                // Get the bottom offset of the visual viewport from the bottom of the layout viewport, plus any IHM occlusion. 
+                // Get the bottom offset of the visual viewport from the bottom of the layout viewport, plus any IHM occlusion.
                 _visibleDocBottomOffset: function _visibleDocBottomOffset() {
                     return _Global.document.documentElement.clientHeight - _Overlay._keyboardInfo._visibleDocBottom;
                 },

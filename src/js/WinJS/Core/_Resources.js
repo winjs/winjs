@@ -35,7 +35,7 @@ define([
         if (typeof str === "string") {
             str = { value: str };
         }
-        
+
         return str || { value: resourceId, empty: true };
     }
 
@@ -174,14 +174,14 @@ define([
                     } else {
                         resourceContext = null;
                     }
-                    
+
                 }
             }
             return resourceContext;
         },
 
         oncontextchanged: createEvent(contextChangedET)
-        
+
     });
 
     var getStringImpl = _WinRT.Windows.ApplicationModel.Resources.Core.ResourceManager ? exports._getStringWinRT : exports._getStringJS;
@@ -196,21 +196,21 @@ define([
         /// </param>
         /// <returns type='Object' locid='WinJS.Resources.getString_returnValue'>
         /// An object that can contain these properties:
-        /// 
+        ///
         /// value:
         /// The value of the requested string. This property is always present.
-        /// 
+        ///
         /// empty:
         /// A value that specifies whether the requested string wasn't found.
         /// If its true, the string wasn't found. If its false or undefined,
         /// the requested string was found.
-        /// 
+        ///
         /// lang:
         /// The language of the string, if specified. This property is only present
         /// for multi-language resources.
-        /// 
+        ///
         /// </returns>
-        /// </signature>          
+        /// </signature>
 
         return getStringImpl(resourceId);
     };

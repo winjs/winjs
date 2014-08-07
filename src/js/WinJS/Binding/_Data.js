@@ -490,7 +490,7 @@ define([
         };
     };
 
-    
+
     var ObservableProxy = _Base.Class.mix(function (data) {
         this._initObservable(data);
         Object.defineProperties(this, expandProperties(data));

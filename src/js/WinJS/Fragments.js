@@ -184,9 +184,9 @@ define([
         forEach(cd.getElementsByTagName('style'), function (e, i) { addStyle(e, href, i); });
 
         // In DOCMODE 11 IE moved to the standards based script loading behavior of
-        // having out-of-line script elements which are dynamically added to the DOM 
+        // having out-of-line script elements which are dynamically added to the DOM
         // asynchronously load. This raises two problems for our fragment loader,
-        // 
+        //
         //  1) out-of-line scripts need to execute in order
         //
         //  2) so do in-line scripts.
@@ -390,7 +390,7 @@ define([
             //
             var wuri = new _WinRT.Windows.Foundation.Uri(absolute);
 
-            // Only "ms-appx" (local package content) are allowed when running in the local 
+            // Only "ms-appx" (local package content) are allowed when running in the local
             // context. Both strings are known to be safe to compare in any culture (including Turkish).
             //
             var scheme = wuri.schemeName;
@@ -405,7 +405,7 @@ define([
     }
 
     function populateDocument(state, href) {
-        // Because we later use "setInnerHTMLUnsafe" ("Unsafe" is the magic word here), we 
+        // Because we later use "setInnerHTMLUnsafe" ("Unsafe" is the magic word here), we
         // want to force the href to only support local package content when running
         // in the local context. When running in the web context, this will be a no-op.
         //

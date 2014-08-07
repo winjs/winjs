@@ -58,7 +58,7 @@ define([
     members._clipClass = "win-clip";
     members._selectionModeClass = "win-selectionmode";
     members._noCSSGrid = "win-nocssgrid";
-    
+
     members._INVALID_INDEX = -1;
     members._UNINITIALIZED = -1;
 
@@ -66,7 +66,7 @@ define([
     members._RIGHT_MSPOINTER_BUTTON = 2;
 
     members._TAP_END_THRESHOLD = 10;
-    
+
     members._DEFAULT_PAGES_TO_LOAD = 5;
     members._DEFAULT_PAGE_LOAD_THRESHOLD = 2;
 

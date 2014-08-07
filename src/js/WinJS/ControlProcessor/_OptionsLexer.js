@@ -255,7 +255,7 @@ StringLiteral       7.8.4
         case isIdentifierStartCharacter(code) && code:
         case isDecimalDigit(code) && code:
         return true;
-        
+
         default:
         return false;
         }

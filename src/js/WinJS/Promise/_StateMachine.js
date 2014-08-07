@@ -114,8 +114,8 @@ define([
         name: "waiting",
         enter: function (promise) {
             var waitedUpon = promise._value;
-            // We can special case our own intermediate promises which are not in a 
-            //  terminal state by just pushing this promise as a listener without 
+            // We can special case our own intermediate promises which are not in a
+            //  terminal state by just pushing this promise as a listener without
             //  having to create new indirection functions
             if (waitedUpon instanceof ThenPromise &&
                 waitedUpon._state !== state_error &&
@@ -126,7 +126,7 @@ define([
                     if (waitedUpon._errorId) {
                         promise._chainedError(value, waitedUpon);
                     } else {
-                        // Because this is an interop boundary we want to indicate that this 
+                        // Because this is an interop boundary we want to indicate that this
                         //  error has been handled by the promise infrastructure before we
                         //  begin a new handling chain.
                         //
@@ -1381,7 +1381,7 @@ define([
             _cancelBlocker: function Promise__cancelBlocker(input) {
                 //
                 // Returns a promise which on cancelation will still result in downstream cancelation while
-                //  protecting the promise 'input' from being  canceled which has the effect of allowing 
+                //  protecting the promise 'input' from being  canceled which has the effect of allowing
                 //  'input' to be shared amoung various consumers.
                 //
                 if (!Promise.is(input)) {
