@@ -10,6 +10,13 @@
         // by the "add-bom" task.
         grunt.file.preserveBOM = false;
 
+        // Parse custom args
+        var args = require("minimist")(process.argv);
+        if (args.quiet) {
+            grunt.log.write = function () {return grunt.log;};
+            grunt.log.writeln = function () {return grunt.log;};
+        }
+
         // Helper function to load the config file
         function loadConfig(path) {
             var glob = require("glob");
@@ -38,15 +45,15 @@
 
         // Register external tasks
         grunt.loadTasks("tasks/");
-        
+
         // Tasks that drop things in bin/ (should have "add-bom" as the last task)
         grunt.registerTask("default", ["clean", "check-file-names", "build-qunit", "less", "concat", "_build", "copy", "replace", "add-bom"]);
         grunt.registerTask("release", ["lint", "default", "uglify", "add-bom"]);
         grunt.registerTask("minify", ["uglify", "add-bom"]);
-        
+
         // Private tasks (not designed to be used from the command line)
         grunt.registerTask("_build", ["onefile:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "onefile:WinJS"]);
-        
+
         // Other tasks
         grunt.registerTask("modules", ["clean:modules", "requirejs:publicModules", "replace:base"]);
         grunt.registerTask("lint", ["jshint", "jscs"]);
