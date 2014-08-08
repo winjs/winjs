@@ -275,7 +275,7 @@ define([
                         }
                     },
 
-                    /// <field type="Number" integer="true" locid="WinJS.UI.Pivot.selectedItem" helpKeyword="WinJS.UI.Pivot.selectedItem">
+                    /// <field type="WinJS.UI.PivotItem" locid="WinJS.UI.Pivot.selectedItem" helpKeyword="WinJS.UI.Pivot.selectedItem">
                     /// Gets or sets the item in view. This property is useful for restoring a previous view when your app launches or resumes.
                     /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                     /// </field>
@@ -1043,7 +1043,8 @@ define([
 
                     // Input Handlers
                     _elementClickedHandler: function pivot_elementClickedHandler(ev) {
-                        if (this.locked || !supportsSnap) {
+                        if (this.locked || this._navigationHandled) {
+                            this._navigationHandled = false;
                             return;
                         }
 
@@ -1110,19 +1111,19 @@ define([
 
                         var dx = e.clientX - this._headersPointerDownPoint.x;
                         dx = this._rtl ? -dx : dx;
-                        var swiped = false;
+                        this._navigationHandled = false;
                         if ((!_ElementUtilities._supportsTouchDetection || (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH))) {
                             // Header swipe navigation detection
                             // If touch detection is not supported then we will detect swipe gestures for any pointer type.
                             if (dx < -Pivot._headerSwipeTriggerDistance) {
                                 this._goNext();
-                                swiped = true;
+                                this._navigationHandled = true;
                             } else if (dx > Pivot._headerSwipeTriggerDistance) {
                                 this._goPrevious();
-                                swiped = true;
+                                this._navigationHandled = true;
                             }
                         }
-                        if (!swiped) {
+                        if (!this._navigationHandled) {
                             // Detect header click
                             var element = e.target;
                             while (element !== null && !_ElementUtilities.hasClass(element, Pivot._ClassName.pivotHeader)) {
@@ -1130,6 +1131,7 @@ define([
                             }
                             if (element !== null) {
                                 this._activateHeader(element);
+                                this._navigationHandled = true;
                             }
                         }
                         this._headersPointerDownPoint = null;
