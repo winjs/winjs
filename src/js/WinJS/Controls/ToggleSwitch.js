@@ -142,6 +142,7 @@ define([
 
                     // Current x coord while being dragged
                     this._dragX = 0;
+                    this._dragging = false;
 
                     // Default state
                     this.checked = false;
@@ -307,6 +308,9 @@ define([
                         }
 
                         this._mousedown = true;
+                        this._dragXStart = e.pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
+                        this._dragX = this._dragXStart;
+                        this._dragging = false;
                         _ElementUtilities.addClass(this._domElement, classPressed);
                     },
                     _pointerUpHandler: function ToggleSwitch_pointerUp(e) {
@@ -357,19 +361,6 @@ define([
                         e = e.detail.originalEvent;
                         e.preventDefault();
 
-                        // Always seem to get one move event even on a simple click
-                        // so we will eat the first move event
-                        if (!this._ateFirstDragEvent) {
-                            this._ateFirstDragEvent = true;
-                            return;
-                        }
-
-                        // On the first drag event, set dragging state
-                        if (!this._dragging) {
-                            _ElementUtilities.addClass(this._domElement, classDragging);
-                            this._dragging = true;
-                        }
-
                         // Get pointer x coord relative to control
                         var localMouseX = e.pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
 
@@ -379,6 +370,12 @@ define([
                         var trackOffset = this._fillLowerElement.offsetLeft + this._trackElement.clientLeft;
                         this._dragX = Math.min(maxX, localMouseX);
                         this._dragX = Math.max(0, this._dragX);
+
+                        // Calculate if this pointermove constitutes switching to drag mode
+                        if (!this._dragging && Math.abs(this._dragX - this._dragXStart) > 3) {
+                            this._dragging = true;
+                            _ElementUtilities.addClass(this._domElement, classDragging);
+                        }
 
                         this._thumbElement.style.left = this._dragX + 'px';
                         this._fillLowerElement.style.width = (this._dragX - trackOffset) + 'px';

@@ -4,6 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -39,7 +40,7 @@ WinJSTests.ToggleSwitchTests = function () {
         document.body.removeChild(container);
     }
 
-    this.testInstantiation = function () {
+    this.testInstantiation = function testInstantiation() {
         // Test instantiating the toggle for each case we got
         testCases.forEach(function (testCase) {
             // Set lang attribute to RTL if necessary
@@ -117,6 +118,53 @@ WinJSTests.ToggleSwitchTests = function () {
         });
     };
 
+    this.testClick = function testMouse() {
+        var container = document.querySelector('#toggleswitch-tests');
+
+        testCases.forEach(function (testCase) {
+            var toggle = new WinJS.UI.ToggleSwitch(null, testCase);
+            container.appendChild(toggle.element);
+            var toggleClickRegion = toggle.element.querySelector('.win-toggleswitch-clickregion');
+
+            // Test that the toggle reacts properly to a click
+            var oldState = toggle.checked;
+            CommonUtilities.mouseDownUsingMiP(toggleClickRegion);
+            CommonUtilities.mouseUpUsingMiP(toggleClickRegion);
+            var newState = toggle.checked;
+
+            if (testCase.disabled) {
+                LiveUnit.Assert.areEqual(oldState, newState, 'Toggle should not change state when clicked while disabled');
+            } else {
+                LiveUnit.Assert.areNotEqual(oldState, newState, 'Toggle should change state when clicked');
+            }
+
+            container.removeChild(toggle.element);
+        });
+    };
+
+    this.testTap = function testMouse() {
+        var container = document.querySelector('#toggleswitch-tests');
+
+        testCases.forEach(function (testCase) {
+            var toggle = new WinJS.UI.ToggleSwitch(null, testCase);
+            container.appendChild(toggle.element);
+            var toggleClickRegion = toggle.element.querySelector('.win-toggleswitch-clickregion');
+
+            // Test that the toggle reacts properly to a tap
+            var oldState = toggle.checked;
+            CommonUtilities.touchDown(toggleClickRegion);
+            CommonUtilities.touchUp(toggleClickRegion);
+            var newState = toggle.checked;
+
+            if (testCase.disabled) {
+                LiveUnit.Assert.areEqual(oldState, newState, 'Toggle should not change state when tapped while disabled');
+            } else {
+                LiveUnit.Assert.areNotEqual(oldState, newState, 'Toggle should change state when tapped');
+            }
+
+            container.removeChild(toggle.element);
+        });
+    };
 }
 
 // register the object as a test class by passing in the name
