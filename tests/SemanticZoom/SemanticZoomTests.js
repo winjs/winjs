@@ -724,27 +724,16 @@ WinJSTests.SemanticZoomTests = function () {
 
         var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
 
-        function isWithinTolerance(expected, actual, tolerance) {
-            var expectedAsFloat = parseFloat(expected);
-            var actualAsFloat = parseFloat(actual);
-            if ((expectedAsFloat + tolerance) > actualAsFloat && (expectedAsFloat - tolerance) < actualAsFloat) {
-                return true;
-            }
-            return false;
-        }
-
         WinJS.Utilities._setImmediate(function () {
             var csSezo = getComputedStyle(sezoDiv);
             var csLv1 = getComputedStyle(lv1.element);
             var csLv2 = getComputedStyle(lv2.element);
 
-            LiveUnit.Assert.isTrue(isWithinTolerance(width, csSezo.width, 0.1));
-            LiveUnit.Assert.isTrue(isWithinTolerance(width, csLv1.width, 0.1));
-            LiveUnit.Assert.isTrue(isWithinTolerance(width, csLv2.width, 0.1));
+            LiveUnit.Assert.isTrue(csSezo.width, csLv1.width);
+            LiveUnit.Assert.isTrue(csSezo.width, csLv2.width);
 
-            LiveUnit.Assert.isTrue(isWithinTolerance(height, csSezo.height, 0.1));
-            LiveUnit.Assert.isTrue(isWithinTolerance(height, csLv1.height, 0.1));
-            LiveUnit.Assert.isTrue(isWithinTolerance(height, csLv2.height, 0.1));
+            LiveUnit.Assert.isTrue(csSezo.height, csLv1.height);
+            LiveUnit.Assert.isTrue(csSezo.height, csLv2.height);
 
             complete();
         });
