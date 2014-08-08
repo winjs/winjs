@@ -46,6 +46,8 @@ define([
                 var classFillUpper = 'win-toggleswitch-fill-upper';
                 var classThumb = 'win-toggleswitch-thumb';
                 var classValue = 'win-toggleswitch-value';
+                var classValueOn = 'win-toggleswitch-value-on';
+                var classValueOff = 'win-toggleswitch-value-off';
                 var classDescription = 'win-toggleswitch-description';
                 var classOn = 'win-toggleswitch-on';
                 var classOff = 'win-toggleswitch-off';
@@ -93,8 +95,8 @@ define([
                     // Set up DOM elements
                     this._domElement.innerHTML = [
                         '<div class="' + classHeader + '"></div>',
-                        '<div class="' + classValue + '"></div>',
-                        '<div class="' + classValue + '"></div>',
+                        '<div class="' + classValue + ' ' + classValueOn + '"></div>',
+                        '<div class="' + classValue + ' ' + classValueOff + '"></div>',
                         '<div class="' + classClick + '">',
                         '   <div class="' + classTrack + '">',
                         '       <div class="' + classFill + ' ' + classFillLower + '"></div>',
