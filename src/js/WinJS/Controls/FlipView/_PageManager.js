@@ -109,14 +109,10 @@ define([
                 new _ElementUtilities._MutationObserver(flipperPropertyChanged).observe(this._flipperDiv, { attributes: true, attributeFilter: ["dir", "style", "tabindex"] });
                 this._cachedStyleDir = this._flipperDiv.style.direction;
 
+                this._handleManipulationStateChangedBound = this._handleManipulationStateChanged.bind(this);
+
                 if (this._environmentSupportsTouch) {
-                    this._panningDivContainer.addEventListener(_BaseUtils._browserEventEquivalents["manipulationStateChanged"], function (event) {
-                        that._manipulationState = event.currentState;
-                        if (event.currentState === 0 && event.target === that._panningDivContainer) {
-                            that._itemSettledOn();
-                            that._ensureCentered();
-                        }
-                    }, true);
+                    this._panningDivContainer.addEventListener(_BaseUtils._browserEventEquivalents["manipulationStateChanged"], this._handleManipulationStateChangedBound, true);
                 }
             }, {
                 // Public Methods
@@ -1021,6 +1017,29 @@ define([
                     });
                 },
 
+                disableTouchFeatures: function () {
+                    this._environmentSupportsTouch = false;
+                    var panningContainerStyle = this._panningDivContainer.style;
+                    this._panningDivContainer.removeEventListener(_BaseUtils._browserEventEquivalents["manipulationStateChanged"], this._handleManipulationStateChangedBound, true);
+                    panningContainerStyle.overflowX = "hidden";
+                    panningContainerStyle.overflowY = "hidden";
+                    var panningContainerPropertiesToClear = [
+                        "scroll-snap-type",
+                        "scroll-snap-points-x",
+                        "scroll-snap-points-y",
+                        "scroll-limit-x-min",
+                        "scroll-limit-x-max",
+                        "scroll-limit-y-min",
+                        "scroll-limit-y-max"
+                    ];
+                    panningContainerPropertiesToClear.forEach(function (propertyName) {
+                        var platformPropertyName = styleEquivalents[propertyName];
+                        if (platformPropertyName) {
+                            panningContainerStyle[platformPropertyName.scriptName] = "";
+                        }
+                    });
+                },
+
                 // Private methods
 
                 _hasFocus: {
@@ -1897,6 +1916,14 @@ define([
                             }
                         }
                     });
+                },
+
+                _handleManipulationStateChanged: function (event) {
+                    this._manipulationState = event.currentState;
+                    if (event.currentState === 0 && event.target === this._panningDivContainer) {
+                        this._itemSettledOn();
+                        this._ensureCentered();
+                    }
                 }
             }, {
                 supportedForProcessing: false,

@@ -460,6 +460,8 @@ define([
                 // Private members
 
                 _initializeFlipView: function FlipView_initializeFlipView(element, isHorizontal, dataSource, itemRenderer, initialIndex, itemSpacing) {
+                    var that = this;
+                    var flipViewInitialized = false;
                     this._flipviewDiv = element;
                     _ElementUtilities.addClass(this._flipviewDiv, flipViewClass);
                     this._contentDiv = _Global.document.createElement("div");
@@ -484,6 +486,7 @@ define([
                         "scroll-snap-y",
                         "overflow-style",
                     ];
+
                     var allFeaturesSupported = true,
                         styleEquivalents = _BaseUtils._browserStyleEquivalents;
                     for (var i = 0, len = stylesRequiredForFullFeatureMode.length; i < len; i++) {
@@ -491,6 +494,27 @@ define([
                     }
                     allFeaturesSupported = allFeaturesSupported && !!_BaseUtils._browserEventEquivalents["manipulationStateChanged"];
                     this._environmentSupportsTouch = allFeaturesSupported;
+                    if (allFeaturesSupported) {
+                        // All of our synchronous checks indicate that touch is supported. Because the last check can be
+                        // asynchronous, we'll assume that touch is supported for now and if we later find out it isn't,
+                        // we'll tear down the touch features.
+                        _ElementUtilities._detectSnapPointsSupport().then(function (snapPointsSupported) {
+                            if (!snapPointsSupported) {
+                                that._environmentSupportsTouch = false;
+
+                                // Tear down the touch features
+                                if (flipViewInitialized) {
+                                    that._fadeInButton("prev");
+                                    that._fadeInButton("next");
+                                    _ElementUtilities._removeEventListener(that._contentDiv, "pointerdown", handlePointerDown, false);
+                                    _ElementUtilities._removeEventListener(that._contentDiv, "pointermove", handleShowButtons, false);
+                                    _ElementUtilities._removeEventListener(that._contentDiv, "pointerup", handlePointerUp, false);
+                                    that._panningDivContainer.style[that._isHorizontal ? "overflowX" : "overflowY"] = "hidden";
+                                    that._pageManager.disableTouchFeatures();
+                                }
+                            }
+                        });
+                    }
 
                     var accName = this._flipviewDiv.getAttribute("aria-label");
                     if (!accName) {
@@ -534,8 +558,6 @@ define([
                     this._panningDivContainer.appendChild(this._panningDiv);
                     this._contentDiv.appendChild(this._prevButton);
                     this._contentDiv.appendChild(this._nextButton);
-
-                    var that = this;
 
                     this._itemsManagerCallback = {
                         // Callbacks for itemsManager
@@ -607,7 +629,7 @@ define([
                         });
                     }
 
-                    this._pageManager = new _PageManager._FlipPageManager(this._flipviewDiv, this._panningDiv, this._panningDivContainer, this._itemsManager, itemSpacing, allFeaturesSupported,
+                    this._pageManager = new _PageManager._FlipPageManager(this._flipviewDiv, this._panningDiv, this._panningDivContainer, this._itemsManager, itemSpacing, this._environmentSupportsTouch,
                     {
                         hidePreviousButton: function () {
                             that._hasPrevContent = false;
@@ -634,7 +656,7 @@ define([
                         }
                     });
 
-                    this._pageManager.initialize(initialIndex, this._isHorizontal, this._environmentSupportsTouch);
+                    this._pageManager.initialize(initialIndex, this._isHorizontal);
 
                     this._dataSource.getCount().then(function (count) {
                         that._pageManager._cachedSize = count;
@@ -674,31 +696,33 @@ define([
                         }
                     }
 
-                    if (this._environmentSupportsTouch) {
-                        _ElementUtilities._addEventListener(this._contentDiv, "pointerdown", function (e) {
-                            if (e.pointerType === PT_TOUCH) {
-                                that._mouseInViewport = false;
-                                that._touchInteraction = true;
-                                that._fadeOutButtons(true);
-                            } else {
-                                that._touchInteraction = false;
-                                if (!that._isInteractive(e.target)) {
-                                    // Disable the default behavior of the mouse wheel button to avoid auto-scroll
-                                    if ((e.buttons & 4) !== 0) {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                    }
+                    function handlePointerDown(e) {
+                        if (e.pointerType === PT_TOUCH) {
+                            that._mouseInViewport = false;
+                            that._touchInteraction = true;
+                            that._fadeOutButtons(true);
+                        } else {
+                            that._touchInteraction = false;
+                            if (!that._isInteractive(e.target)) {
+                                // Disable the default behavior of the mouse wheel button to avoid auto-scroll
+                                if ((e.buttons & 4) !== 0) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
                                 }
                             }
-                        }, false);
+                        }
+                    }
 
+                    function handlePointerUp (e) {
+                        if (e.pointerType !== PT_TOUCH) {
+                            that._touchInteraction = false;
+                        }
+                    }
+
+                    if (this._environmentSupportsTouch) {
+                        _ElementUtilities._addEventListener(this._contentDiv, "pointerdown", handlePointerDown, false);
                         _ElementUtilities._addEventListener(this._contentDiv, "pointermove", handleShowButtons, false);
-
-                        _ElementUtilities._addEventListener(this._contentDiv, "pointerup", function (e) {
-                            if (e.pointerType !== PT_TOUCH) {
-                                that._touchInteraction = false;
-                            }
-                        }, false);
+                        _ElementUtilities._addEventListener(this._contentDiv, "pointerup", handlePointerUp, false);
                     }
 
                     this._panningDivContainer.addEventListener("scroll", function () {
@@ -796,6 +820,8 @@ define([
                             }
                         }
                     }, false);
+
+                    flipViewInitialized = true;
                 },
 
                 _windowWheelHandler: function FlipView_windowWheelHandler(ev) {
