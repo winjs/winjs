@@ -729,11 +729,11 @@ WinJSTests.SemanticZoomTests = function () {
             var csLv1 = getComputedStyle(lv1.element);
             var csLv2 = getComputedStyle(lv2.element);
 
-            LiveUnit.Assert.isTrue(csSezo.width, csLv1.width);
-            LiveUnit.Assert.isTrue(csSezo.width, csLv2.width);
+            LiveUnit.Assert.areEqual(csSezo.width, csLv1.width);
+            LiveUnit.Assert.areEqual(csSezo.width, csLv2.width);
 
-            LiveUnit.Assert.isTrue(csSezo.height, csLv1.height);
-            LiveUnit.Assert.isTrue(csSezo.height, csLv2.height);
+            LiveUnit.Assert.areEqual(csSezo.height, csLv1.height);
+            LiveUnit.Assert.areEqual(csSezo.height, csLv2.height);
 
             complete();
         });
