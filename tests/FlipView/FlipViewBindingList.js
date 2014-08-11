@@ -80,11 +80,11 @@ var Tests = Tests || {};
             }
             if (shift && list.length) {
                 var element = list.shift();
-                
+
             } else {
                 var newElement = {
                     title: iteration,
-                    detail: "New element unshifted on, iteration: " + iteration 
+                    detail: "New element unshifted on, iteration: " + iteration
                 };
                 list.unshift(newElement);
             }
@@ -130,7 +130,7 @@ var Tests = Tests || {};
                 var fvElement = flipView.itemDataSource.itemFromIndex(i)._value.data;
                 var listElement = list.getAt(i);
                 var objectShape = obj || listElement;
-                
+
                 for(var j in objectShape){
                     LiveUnit.Assert.areEqual(listElement[j], fvElement[j], "checking the correctness of the flipView element");
                     if (listElement[j] !== fvElement[j]){
@@ -142,9 +142,9 @@ var Tests = Tests || {};
         }
         function parent(element) {
             document.body.appendChild(element);
-            element.cleanup = function () { 
+            element.cleanup = function () {
                 WinJS.Utilities.disposeSubTree(element);
-                document.body.removeChild(element); 
+                document.body.removeChild(element);
             };
             return element;
         }
@@ -206,7 +206,7 @@ var Tests = Tests || {};
 
         WinJS.Promise.onerror = function (e) {
             var x = e;
-        }     
+        }
 
         this.testFlipWithViewBox = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Javascript Toolkit_" + i }; });
@@ -220,13 +220,12 @@ var Tests = Tests || {};
                     return waitForFlipViewReady(flipView);
                 }).
                 then(function () {
-                    var views = elements.querySelectorAll(".viewBoxInstance");
-                    for (var i = 0, len = views.length; i < len; i++) {
-                        LiveUnit.Assert.areEqual("25px", views[i].style.height);
-                        LiveUnit.Assert.areEqual("25px", views[i].style.width);
-                        LiveUnit.Assert.areEqual("translate(0px, 50px) scale(4)", views[i].style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
-                        LiveUnit.Assert.areEqual("0px 0px", getComputedStyle(views[i])[WinJS.Utilities._browserStyleEquivalents["transform-origin"].scriptName]);
-                    }
+                    // pagecompleted only guarantees the first page will be rendered
+                    var view = elements.querySelector(".viewBoxInstance");
+                    LiveUnit.Assert.areEqual("25px", view.style.height);
+                    LiveUnit.Assert.areEqual("25px", view.style.width);
+                    LiveUnit.Assert.areEqual("translate(0px, 50px) scale(4)", view.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
+                    LiveUnit.Assert.areEqual("0px 0px", getComputedStyle(view)[WinJS.Utilities._browserStyleEquivalents["transform-origin"].scriptName]);
                 }).
                 then(null, errorHandler).
                 then(elements.cleanup).
@@ -235,12 +234,12 @@ var Tests = Tests || {};
         }
 
         this.testReversingAndSortingFlipView = function (complete) {
-            var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Javascript Toolkit_" + i }; });            
+            var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Javascript Toolkit_" + i }; });
             var list = new WinJS.Binding.List(sampleDataSource);
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
-          
+
             WinJS.UI.processAll().
                 then(post).
                 then(function () {
@@ -289,7 +288,7 @@ var Tests = Tests || {};
         }
 
         this.testFlipViewWithOneElementAndThenDeletedAndThenAdded = function (complete) {
-            
+
             var sampleDataSource = [{ title: 3, detail: "hello world" }];
             var sorted = new WinJS.Binding.List (sampleDataSource);
             var list = sorted.createFiltered(function (num){ return num.title % 2 === 0 });
@@ -351,7 +350,7 @@ var Tests = Tests || {};
 
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Corsica_" + i }; });
             var objToCompare = { title: 1, detail: 1 };
-         
+
             var sort = new WinJS.Binding.List (sampleDataSource, { binding: true });
             var list = sort.createFiltered(function (num){ return (num.title % 2 === 0); });
 
@@ -383,7 +382,7 @@ var Tests = Tests || {};
         this.testFlipViewWithBindingAndSorted = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Corsica_" + i }; });
             var objToCompare = { title: 1, detail: 1 };
-            
+
             var sort = new WinJS.Binding.List (sampleDataSource, { binding: true });
             var list = sort.createSorted(function (l, r){ return l.title - r.title; });
 

@@ -1262,10 +1262,8 @@ define([
         // "WinJSNodeInserted" event on the provided element.
         _addInsertedNotifier: function (element) {
             var hiddenElement = _Global.document.createElement("div");
-            hiddenElement.style["animation-name"] = "WinJS-node-inserted";
-            hiddenElement.style["animation-duration"] = "0.01s";
-            hiddenElement.style["-webkit-animation-name"] = "WinJS-node-inserted";
-            hiddenElement.style["-webkit-animation-duration"] = "0.01s";
+            hiddenElement.style[_BaseUtils._browserStyleEquivalents["animation-name"].scriptName] = "WinJS-node-inserted";
+            hiddenElement.style[_BaseUtils._browserStyleEquivalents["animation-duration"].scriptName] = "0.01s";
             hiddenElement.style["position"] = "absolute";
             element.appendChild(hiddenElement);
 
