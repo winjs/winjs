@@ -5,7 +5,7 @@
 (function (global) {
     "use strict";
 
-    if (global.LiveUnit) {
+    if (global.document) {
         // This runs in the UI context
         global.CorsicaTests = global.CorsicaTests || {};
 
@@ -21,24 +21,31 @@
                     LiveUnit.Assert.areEqual(undefined, msg.data.z);
                     complete();
                 }
+                worker.postMessage(42);
             }
         }
 
         global.LiveUnit.registerTestClass("CorsicaTests.WebWorkerValidationTests");
-    }
-    else {
+    } else {
         // This runs in the worker context
-        try {
-            // Import base.js from the project reference
-            importScripts("//$(TargetFramework)/js/base.js");
+        global.onmessage = function() {
+            if (global.Windows) {
+                try {
+                    // Import base.js from the project reference
+                    importScripts("//$(TargetFramework)/js/base.js");
+                } catch (e) {
+                    // Import base.js from loose files
+                    importScripts("source/base.js");
+                }
+            } else {
+                // Import base.js from loose files
+                importScripts("source/base.js");
+            }
 
-        } catch (e) {
-            // Import base.js from loose files
-            importScripts("source/base.js");
-        }
-        var Point = WinJS.Class.define(function () { }, { x: 0, y: 5 });
-        var pt = new Point();
-        pt.x = 1;
-        postMessage({ x: pt.x, y: pt.y, z: pt.z });
+            var Point = WinJS.Class.define(function () { }, { x: 0, y: 5 });
+            var pt = new Point();
+            pt.x = 1;
+            postMessage({ x: pt.x, y: pt.y, z: pt.z });
+        };
     }
 })(this);
