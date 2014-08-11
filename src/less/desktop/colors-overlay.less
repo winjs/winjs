@@ -294,7 +294,7 @@
                     }
 
                     .win-appbar-ellipsis {
-                        color: rgba(0, 0, 0, 0.4)
+                        color: rgba(0, 0, 0, 0.4);
                     }
                 }
             }
@@ -530,6 +530,85 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
     .win-appbar {
         background-color: ButtonFace;
         border-color: Highlight;
+        // AppBar Invoke Button High-Contrast Styles
+        button.win-appbar-invokebutton {
+            background-color: transparent;
+
+            .win-appbar-ellipsis {
+                border-color: transparent;
+            }
+
+            &:enabled {
+                &:-ms-keyboard-active {
+                    // Override intrinsic button element styles
+                    background-color: transparent;
+                }
+
+                .win-appbar-ellipsis {
+                    color: ButtonText;
+                }
+
+                &:focus .win-appbar-ellipsis {
+                    border-color: ButtonText;
+                }
+
+                &:focus.win-hidefocus {
+                    .win-appbar-ellipsis {
+                        border-color: transparent;
+                    }
+                }
+            }
+
+            &:disabled {
+                &:active, &:hover:active {
+                    background-color: transparent;
+                }
+
+                .win-appbar-ellipsis {
+                    color: GrayText;
+                }
+            }
+        }
+        // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
+        &.win-appbar-hiding, &.win-appbar-hidden {
+            button.win-appbar-invokebutton {
+                &:enabled {
+                    &:hover:active {
+                        background-color: Highlight;
+                    }
+                }
+            }
+        }
+    }
+
+    // AppBar InvokeButton High-Contrast Hover Styles 
+    html.win-hoverable .win-appbar {
+        // When the AppBar is showing or shown, only the ellipsis has a hover background.*/
+        &.win-appbar-showing, &.win-appbar-shown {
+            button.win-appbar-invokebutton {
+                &:enabled {
+                    &:hover {
+                        background-color: transparent;
+
+                        .win-appbar-ellipsis {
+                            background-color: Highlight;
+                            border-color: ButtonText;
+                        }
+                    }
+                }
+            }
+        }
+        // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
+        &.win-appbar-hidden, &.win-appbar-hiding {
+            button.win-appbar-invokebutton {
+                &:enabled {
+                    &:hover {
+                        background-color: Highlight;
+                        border-color: ButtonText;
+                    }
+                }
+            }
+        }
     }
 
     /*
@@ -602,7 +681,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
     }
 
     /*
-    Command Image high contrast colors with states
+    Command Ring high contrast colors with states
     */
     .win-commandring {
         background-color: transparent;
