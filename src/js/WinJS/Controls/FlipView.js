@@ -738,8 +738,14 @@ define([
                     // Scroll position isn't maintained when an element is added/removed from
                     // the DOM so every time we are placed back in, let the PageManager
                     // fix the scroll position.
+                    var initiallyParented = _Global.document.body.contains(this._flipviewDiv);
                     _ElementUtilities._addInsertedNotifier(this._flipviewDiv);
                     this._flipviewDiv.addEventListener("WinJSNodeInserted", function (event) {
+                        // WinJSNodeInserted fires even if the element is already in the DOM
+                        if (initiallyParented) {
+                            initiallyParented = false;
+                            return;
+                        }
                         that._pageManager.resized();
                     }, false);
 
