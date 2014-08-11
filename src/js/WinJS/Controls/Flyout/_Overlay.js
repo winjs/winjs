@@ -295,8 +295,8 @@ define([
                         return false;
                     }
 
-                    // Each overlay tracks the window width for detecting resizes in the resize handler.
-                    this._currentDocumentWidth = this._currentDocumentWidth || _Global.document.documentElement.offsetWidth;
+                    // Each overlay tracks the size of the <HTML> element for triggering light-dismiss in the window resize handler.
+                    this._cachedDocumentSize = this._cachedDocumentSize || _Overlay._sizeOfDocument();
 
                     // "hiding" would need to cancel.
                     if (this._element.style.visibility !== "visible") {
@@ -856,14 +856,14 @@ define([
 
                 _baseResize: function _Overlay_baseResize(event) {
                     // Avoid the cost of a resize if the Overlay is hidden.
-                    if (this._currentDocumentWidth !== undefined) {
+                    if (this._cachedDocumentSize) {
                         if (this.hidden) {
-                            this._currentDocumentWidth = undefined;
+                            this._cachedDocumentSize = null;
                         } else {
-                            // Overlays can light dismiss on horizontal resize.
-                            var newWidth = _Global.document.documentElement.offsetWidth;
-                            if (this._currentDocumentWidth !== newWidth) {
-                                this._currentDocumentWidth = newWidth;
+                            // Overlays will light dismiss on <HTML> resize.
+                            var newDocSize = _Overlay._sizeOfDocument();
+                            if (this._cachedDocumentSize.width !== newDocSize.width || this._cachedDocumentSize.height !== newDocSize.height) {
+                                this._cachedDocumentSize = newDocSize;
                                 if (!this._sticky) {
                                     this._hideOrDismiss();
                                 }
@@ -1358,6 +1358,13 @@ define([
                     }
                 },
 
+                _sizeOfDocument: function () {
+                    return {
+                        width: _Global.document.documentElement.offsetWidth,
+                        height: _Global.document.documentElement.offsetHeight,
+                    };
+                },
+
                 _getParentControlUsingClassName: function (element, className) {
                     while (element && element !== _Global.document.body) {
                         if (_ElementUtilities.hasClass(element, className)) {
@@ -1552,8 +1559,8 @@ define([
                 afterHide: AFTERHIDE,
 
                 commonstrings: {
-                get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },
-                get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; }
+                    get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },
+                    get cannotChangeHiddenProperty() { return "Unable to set hidden property while parent {0} is visible."; }
                 }
             });
 

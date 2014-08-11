@@ -1094,8 +1094,8 @@ define([
                 },
 
                 _beforeShow: function AppBar_beforeShow() {
-                    // Each overlay tracks the window width for triggering light-dismiss in the resize handler.
-                    this._currentDocumentWidth = this._currentDocumentWidth || _Global.document.documentElement.offsetWidth;
+                    // Each overlay tracks the size of the <HTML> element for triggering light-dismiss in the window resize handler.
+                    this._cachedDocumentSize = this._cachedDocumentSize || _Overlay._Overlay._sizeOfDocument();
 
                     // In case their event 'beforeshow' event listener is going to manipulate commands,
                     // first see if there are any queued command animations we can handle while we're still hidden.
