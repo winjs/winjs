@@ -1,4 +1,7 @@
 {
+    "additionalRules": [
+        "tasks/utilities/disallow-trailing-whitespace.js"
+    ],
     "requireCurlyBraces": [
         "if",
         "else",
@@ -56,7 +59,7 @@
     // "validateQuoteMarks": "'",
     // "validateIndentation": 4,
     "disallowMixedSpacesAndTabs": true,
-    "disallowTrailingWhitespace": true,
+    "disallowTrailingWhitespaceAllowEmptyLines": true,
     // "disallowTrailingComma": true,
     "disallowKeywordsOnNewLine": [ "else" ]
     // "requireLineFeedAtFileEnd": true,
