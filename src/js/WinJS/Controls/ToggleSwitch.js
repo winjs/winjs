@@ -45,6 +45,7 @@ define([
                 var classFillLower = 'win-toggleswitch-fill-lower';
                 var classFillUpper = 'win-toggleswitch-fill-upper';
                 var classThumb = 'win-toggleswitch-thumb';
+                var classValues = 'win-toggleswitch-values';
                 var classValue = 'win-toggleswitch-value';
                 var classValueOn = 'win-toggleswitch-value-on';
                 var classValueOff = 'win-toggleswitch-value-off';
@@ -95,8 +96,10 @@ define([
                     // Set up DOM elements
                     this._domElement.innerHTML = [
                         '<div class="' + classHeader + '"></div>',
-                        '<div class="' + classValue + ' ' + classValueOn + '"></div>',
-                        '<div class="' + classValue + ' ' + classValueOff + '"></div>',
+                        '<div class="' + classValues + '">',
+                        '   <div class="' + classValue + ' ' + classValueOn + '"></div>',
+                        '   <div class="' + classValue + ' ' + classValueOff + '"></div>',
+                        '</div>',
                         '<div class="' + classClick + '">',
                         '   <div class="' + classTrack + '">',
                         '       <div class="' + classFill + ' ' + classFillLower + '"></div>',
@@ -109,9 +112,10 @@ define([
 
                     // Get references to elements
                     this._headerElement = this._domElement.firstElementChild;
-                    this._labelOnElement = this._headerElement.nextElementSibling;
+                    this._labelsElement = this._headerElement.nextElementSibling;
+                    this._labelOnElement = this._labelsElement.firstElementChild;
                     this._labelOffElement = this._labelOnElement.nextElementSibling;
-                    this._clickElement = this._labelOffElement.nextElementSibling;
+                    this._clickElement = this._labelsElement.nextElementSibling;
                     this._trackElement = this._clickElement.firstElementChild;
                     this._fillLowerElement = this._trackElement.firstElementChild;
                     this._thumbElement = this._fillLowerElement.nextElementSibling;
@@ -120,8 +124,7 @@ define([
 
                     // Set aria label info
                     this._headerElement.setAttribute('aria-hidden', true);
-                    this._labelOnElement.setAttribute('aria-hidden', true);
-                    this._labelOffElement.setAttribute('aria-hidden', true);
+                    this._labelsElement.setAttribute('aria-hidden', true);
                     this._headerElement.setAttribute('id', _ElementUtilities._uniqueID(this._headerElement));
                     this._domElement.setAttribute('aria-labelledby', this._headerElement.id);
                     this._domElement.setAttribute('role', 'checkbox');
@@ -179,13 +182,9 @@ define([
                             this._checked = value;
                             this._domElement.setAttribute('aria-checked', value);
                             if (value) {
-                                this._labelOnElement.style.display = '';
-                                this._labelOffElement.style.display = 'none';
                                 _ElementUtilities.addClass(this._domElement, classOn);
                                 _ElementUtilities.removeClass(this._domElement, classOff);
                             } else {
-                                this._labelOnElement.style.display = 'none';
-                                this._labelOffElement.style.display = '';
                                 _ElementUtilities.addClass(this._domElement, classOff);
                                 _ElementUtilities.removeClass(this._domElement, classOn);
                             }

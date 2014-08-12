@@ -61,10 +61,13 @@
         margin-top: 10px;
         font-weight: @win_font_weight_small;
     }
+    .win-toggleswitch-values {
+        display: inline-block;
+        vertical-align: top;
+    }
     .win-toggleswitch-value {
         min-width: 65px;
         margin-right: 20px;
-        display: inline-block;
         height: @trackHeight;
         line-height: @trackHeight;
         vertical-align: top;
@@ -132,6 +135,14 @@
             -webkit-transition: none;
             transition: none;
         }
+    }
+    &.win-toggleswitch-off .win-toggleswitch-value-on {
+        height: 0;
+        visibility: hidden;
+    }
+    &.win-toggleswitch-on .win-toggleswitch-value-off {
+        height: 0;
+        visibility: hidden;
     }
 
     .rtlDependentStyles(false);
