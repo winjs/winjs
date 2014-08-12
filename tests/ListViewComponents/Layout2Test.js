@@ -294,13 +294,13 @@ var WinJSTests = WinJSTests || {};
 
     WinJSTests.ListLayoutTests = function () {
         var testRootEl;
-        
+
         this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
-            
+
             testRootEl = document.createElement("div");
             testRootEl.className = "file-listview-css";
-            
+
             var newNode = document.createElement("div");
             newNode.id = "ListLayoutListView";
             newNode.style.width = "100px";
@@ -634,13 +634,13 @@ var WinJSTests = WinJSTests || {};
 
     WinJSTests.UniformGridLayoutTests = function (complete) {
         var testRootEl;
-        
+
         this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
-            
+
             testRootEl = document.createElement("div");
             testRootEl.className = "file-listview-css";
-            
+
             var newNode = document.createElement("div");
             newNode.id = "UniformGridLayoutListView";
             testRootEl.appendChild(newNode);
@@ -728,7 +728,11 @@ var WinJSTests = WinJSTests || {};
 
                                 // Items containers on uniform groups should be flush against the items
                                 // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                                LiveUnit.Assert.areEqual(utilities.isPhone ? 240 : 640, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
+                                if (!utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
+                                    LiveUnit.Assert.areEqual(640, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
+                                } else {
+                                    LiveUnit.Assert.areEqual(240, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
+                                }
                                 LiveUnit.Assert.areEqual(6, layout._itemsPerBar, "Incorrect items per column");
                             } else {
                                 LiveUnit.Assert.areEqual(2 * (WinJS.Utilities.getTotalHeight(itemsContainer) + sizes.headerContainerHeight),
@@ -738,7 +742,11 @@ var WinJSTests = WinJSTests || {};
 
                                 // Items containers on uniform groups should be flush against the items
                                 // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                                LiveUnit.Assert.areEqual(utilities.isPhone ? 198 : 598, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
+                                if (!utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
+                                    LiveUnit.Assert.areEqual(598, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
+                                } else {
+                                    LiveUnit.Assert.areEqual(198, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
+                                }
                                 LiveUnit.Assert.areEqual(3, layout._itemsPerBar, "Incorrect items per column");
                             }
                         } else {
@@ -750,7 +758,12 @@ var WinJSTests = WinJSTests || {};
 
                                 // Items containers on uniform groups should be flush against the items
                                 // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                                LiveUnit.Assert.areEqual(utilities.isPhone ? 320 : 720, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
+                                if (!utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
+                                    LiveUnit.Assert.areEqual(720, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
+                                } else {
+                                    LiveUnit.Assert.areEqual(320, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
+                                }
+
                                 LiveUnit.Assert.areEqual(8, layout._itemsPerBar, "Incorrect items per column");
                             } else {
                                 LiveUnit.Assert.areEqual(WinJS.Utilities.getTotalHeight(itemsContainer),
@@ -760,7 +773,11 @@ var WinJSTests = WinJSTests || {};
 
                                 // Items containers on uniform groups should be flush against the items
                                 // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                                LiveUnit.Assert.areEqual(utilities.isPhone ? 198 : 598, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
+                                if (!utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
+                                    LiveUnit.Assert.areEqual(598, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
+                                } else {
+                                    LiveUnit.Assert.areEqual(198, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
+                                }
                                 LiveUnit.Assert.areEqual(3, layout._itemsPerBar, "Incorrect items per row");
                             }
                         }
@@ -1009,16 +1026,16 @@ var WinJSTests = WinJSTests || {};
             }).then(complete);
         };
     };
-      
+
     WinJSTests.CellSpanningGridLayoutTests = function (complete) {
         var testRootEl;
-        
+
         this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
-            
+
             testRootEl = document.createElement("div");
             testRootEl.className = "file-listview-css";
-            
+
             var newNode = document.createElement("div");
             newNode.id = "CellSpanningGridLayoutListView";
             testRootEl.appendChild(newNode);
@@ -1726,13 +1743,13 @@ var WinJSTests = WinJSTests || {};
 
     WinJSTests.GroupedGridLayoutTests = function (complete) {
         var testRootEl;
-        
+
         this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
-            
+
             testRootEl = document.createElement("div");
             testRootEl.className = "file-listview-css";
-            
+
             var newNode = document.createElement("div");
             newNode.id = "GroupedGridLayoutListView";
             testRootEl.appendChild(newNode);
@@ -2411,7 +2428,7 @@ var WinJSTests = WinJSTests || {};
                     } else {
                         var originX =
                                 headerContainerWidth +          // header container 0
-                                itemsContainerMarginLeft +      // items container 0    
+                                itemsContainerMarginLeft +      // items container 0
                                 itemsContainerContentWidth +
                                 headerContainerWidth +          // header container 1
                                 itemsContainerMarginLeft,       // items container 1
@@ -2474,13 +2491,13 @@ var WinJSTests = WinJSTests || {};
 
     WinJSTests.LayoutTests = function (complete) {
         var testRootEl;
-        
+
         this.setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
-            
+
             testRootEl = document.createElement("div");
             testRootEl.className = "file-listview-css";
-            
+
             var newNode = document.createElement("div");
             newNode.id = "LayoutTest";
             testRootEl.appendChild(newNode);
@@ -2778,18 +2795,18 @@ var WinJSTests = WinJSTests || {};
                 }).
                 done(complete);
         };
-        
+
         if (!Helper.Browser.isIE11) {
             Helper.disableTest(this, "testDefaultItemsContainerMargins");
         }
-        
+
     };
 
     // register the object as a test class by passing in the name
     LiveUnit.registerTestClass("WinJSTests.ListLayoutTests");
     LiveUnit.registerTestClass("WinJSTests.UniformGridLayoutTests");
     LiveUnit.registerTestClass("WinJSTests.LayoutTests");
-    
+
     if (Helper.Browser.supportsCSSGrid) {
         LiveUnit.registerTestClass("WinJSTests.GroupedGridLayoutTests");
         LiveUnit.registerTestClass("WinJSTests.CellSpanningGridLayoutTests");
