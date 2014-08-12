@@ -79,6 +79,30 @@ define(['require'], function (req) {
             '   .win-ui-@{inverseTheme} {',
             '      .ColorsHover(@inverseTheme);',
             '   }',
+            '}',
+            // Stub define the HC mixins in case they don't exist
+            '.HighContrast() {}',
+            '.HighContrastHover() {}',
+            '.HighContrastThemed(@theme) {}',
+            '.HighContrastThemedHover(@theme) {}',
+            '@media (-ms-high-contrast) {',
+            // Call the HC mixins similar to the Color mixins
+            '   .HighContrast();',
+            '   html.win-hoverable {',
+            '      .HighContrastHover();',
+            '   }',
+            '   .HighContrastThemed(@theme);',
+            '   html.win-hoverable {',
+            '      .HighContrastThemedHover(@theme);',
+            '   }',
+            '   .win-ui-@{inverseTheme} {',
+            '      .HighContrastThemed(@inverseTheme);',
+            '   }',
+            '   html.win-hoverable {',
+            '      .win-ui-@{inverseTheme} {',
+            '         .HighContrastThemedHover(@inverseTheme);',
+            '      }',
+            '   }',
             '}'
         ].join('\n');
         var copyright = '/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */';
