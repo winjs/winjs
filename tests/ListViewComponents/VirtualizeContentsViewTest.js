@@ -82,7 +82,7 @@ WinJSTests.VirtualizedViewTests = function () {
     this.setUp = function () {
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         var testHost = document.createElement("div");
         testHost.id = "VirtualizeContentsViewTestHost";
         window.VirtualizeContentsViewTestHost = testHost;
@@ -2417,7 +2417,7 @@ WinJSTests.VirtualizedViewTests = function () {
             /*replace data source */
 
             LiveUnit.LoggingCore.logComment("Test: replacing the data source sends a changedRange of the appropriateSize");
-            list.splice(list.length - 1, 1) // Remove and item from the end of the list. 
+            list.splice(list.length - 1, 1) // Remove and item from the end of the list.
             list = new WinJS.Binding.List(data);
             list.length = COUNT - 50; // shrink the size of the list.
             listView.itemDataSource = list.dataSource;
@@ -2796,7 +2796,7 @@ WinJSTests.VirtualizedViewTests = function () {
             return waitForReady(listView, -1)();
         }).then(function () {
 
-            // We just deleted an item, and a new one won't be realized because of the 
+            // We just deleted an item, and a new one won't be realized because of the
             // skip realization on deletes optimization.
             //
             verifyBackdrop(0, (9 * 3) - 1);
@@ -2870,7 +2870,7 @@ WinJSTests.VirtualizedViewTests = function () {
                     LiveUnit.Assert.areEqual(13, listView._view.deletesWithoutRealize);
                     LiveUnit.Assert.areEqual(32, getNumberOfItemsRealized());
 
-                    // Deleting one more item will cause a full realize because we already lost one viewport full 
+                    // Deleting one more item will cause a full realize because we already lost one viewport full
                     // of data
                     list.splice(0, 1);
                     waitForReady(listView, 100)().then(function () {
@@ -3073,7 +3073,7 @@ WinJSTests.VirtualizedViewTests = function () {
         var listView = setupMailStyleListView();
         waitForReady(listView)().then(function () {
             // Delete a single item. This will use the defer realization on delete optimization and
-            // try to skip a full realization. However, another update will arrive to insert 
+            // try to skip a full realization. However, another update will arrive to insert
             // two items. This should force us to do a full realization.
             //
             listView.itemDataSource.itemFromIndex(0).then(function (item) {
@@ -4058,8 +4058,10 @@ WinJSTests.VirtualizedViewTests = function () {
                 // one item. However, we deferred the unrealize of the 1 item that goes away. Before
                 // the animation starts we should have 52 realized items.
                 LiveUnit.Assert.areEqual(52, Object.keys(listView._view.items._itemData).length);
-                // However we remove one from the dom so 2 are not sharing the same parents.
-                LiveUnit.Assert.areEqual(51, getNumberOfItemsRealized());
+                // Ensure 2 are not sharing the same parent. Note that structural nodes being disabled
+                // will cause the DOM to be slightly different. Without them we'll have 52 win-items
+                // and with them we'll have only 51.
+                LiveUnit.Assert.areEqual(0, document.querySelectorAll(".win-itembox:nth-child(2)").length);
                 oldExecuteAnimations.call(listView.layout);
             };
 
@@ -4825,7 +4827,7 @@ WinJSTests.VirtualizedViewTests = function () {
         };
     };
     this.testAriaWorkerCancellation.timeout = 30000;
-    
+
     this.testDeleteDoesNotLoseFocusRectangle = function (complete) {
         initUnhandledErrors();
 
