@@ -109,7 +109,7 @@ if (typeof (WinJS) !== "undefined") {
 
         // Check for accessibility attributes
         // 592099 ListView needs to set the aria attributes on the DOM elements before the loadingState is set to complete
-        // TODO: Uncomment following lines after the above bug is fixed    
+        // TODO: Uncomment following lines after the above bug is fixed
         //checkAttribute(element, "role", constants.aria.listViewRole);
         //checkAttribute(element, "aria-multiselectable", ((listView.selectionMode === "multi") ? "true" : "false"));
 
@@ -146,7 +146,51 @@ if (typeof (WinJS) !== "undefined") {
     }
 
     function waitForReady(listView, delay) {
-        return waitForState(listView, "complete", delay);
+        if (listView.winControl) { listView = listView.winControl; }
+        return function (x) {
+            return new WinJS.Promise(function (c, e, p) {
+                function waitForReady_handler() {
+                    LiveUnit.LoggingCore.logComment("waitForReady_handler, listView.loadingState:" + listView.loadingState);
+                    if (listView.loadingState === "complete") {
+                        listView.removeEventListener("loadingstatechanged", waitForReady_handler, false);
+                        waitForReady_work();
+                    }
+                }
+
+                function waitForReady_work() {
+                    if (listView.loadingState !== "complete") {
+                        if(listView._versionManager.locked) {
+                            listView._versionManager.unlocked.then(waitForReady_work);
+                        } else {
+                            listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
+                        }
+                    } else if (listView._versionManager.locked) {
+                        listView._versionManager.unlocked.then(waitForReady_work);
+                    } else {
+                        WinJS.Utilities.Scheduler.schedulePromiseIdle(null, "ListViewWaitForReadyComplete").then(function() {
+                            c(x);
+                        });
+                    }
+                }
+
+                function waitForReady_start() {
+                    WinJS.Utilities.Scheduler.schedulePromiseIdle(null, "ListViewWaitForReady").then(waitForReady_work);
+                }
+
+                LiveUnit.LoggingCore.logComment("listView.loadingState: " + listView.loadingState);
+                if (delay) {
+                    if (delay < 0) {
+                        WinJS.Utilities._setImmediate(waitForReady_start);
+                    }
+                    else {
+                        setTimeout(waitForReady_start, delay);
+                    }
+                }
+                else {
+                    waitForReady_work();
+                }
+            });
+        };
     }
 
     function waitForState(listView, state, delay) {
@@ -198,7 +242,7 @@ if (typeof (WinJS) !== "undefined") {
             return waitForReady(listView, -1)();
         });
     }
-        
+
     function waitForNotReady(listView) {
         if (listView.winControl) { listView = listView.winControl; }
 

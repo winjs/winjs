@@ -861,26 +861,37 @@ ListViewUtils.prototype = (function () {
                         LiveUnit.LoggingCore.logComment("waitForReady_handler, listView.loadingState:" + listView.loadingState);
                         if (listView.loadingState === "complete") {
                             listView.removeEventListener("loadingstatechanged", waitForReady_handler, false);
-                            c(x);
+                            waitForReady_work();
                         }
                     }
 
                     function waitForReady_work() {
                         if (listView.loadingState !== "complete") {
-                            listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
+                            if(listView._versionManager.locked) {
+                                listView._versionManager.unlocked.then(waitForReady_work);
+                            } else {
+                                listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
+                            }
+                        } else if (listView._versionManager.locked) {
+                            listView._versionManager.unlocked.then(waitForReady_work);
+                        } else {
+                            WinJS.Utilities.Scheduler.schedulePromiseIdle(null, "ListViewWaitForReadyComplete").then(function() {
+                                c(x);
+                            });
                         }
-                        else {
-                            c(x);
-                        }
+                    }
+
+                    function waitForReady_start() {
+                        WinJS.Utilities.Scheduler.schedulePromiseIdle(null, "ListViewWaitForReady").then(waitForReady_work);
                     }
 
                     LiveUnit.LoggingCore.logComment("listView.loadingState: " + listView.loadingState);
                     if (delay) {
                         if (delay < 0) {
-                            WinJS.Utilities._setImmediate(waitForReady_work);
+                            WinJS.Utilities._setImmediate(waitForReady_start);
                         }
                         else {
-                            setTimeout(waitForReady_work, delay);
+                            setTimeout(waitForReady_start, delay);
                         }
                     }
                     else {
