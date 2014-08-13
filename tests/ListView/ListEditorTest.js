@@ -21,10 +21,10 @@ WinJSTests.ListEditorTest = function () {
     // This is the setup function that will be called at the beginning of each test function.
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         var newNode = document.createElement("div");
         newNode.id = "ListEditorTest";
         newNode.innerHTML =
@@ -291,6 +291,7 @@ WinJSTests.ListEditorTest = function () {
     });
 
     this.generate("testDeleteAllAndInsert", function (listView, complete) {
+        var completed = false;
         var tests = [
             function () {
                 listView.ensureVisible(99);
@@ -317,20 +318,22 @@ WinJSTests.ListEditorTest = function () {
                 return true;
             },
             function lastTestFunc() {
-                // Depending on the timing, there could be multiple scroll events before the viewport is reset to 0
-                // and each one of them will put the listview back into 'itemsLoading' and then 'complete'. This
-                // ignores all the intermediate scroll events until the final one.
-                if (listView._currentScrollPosition !== 0) {
+                // Depending on the timing the listview can be put back into 'itemsLoading' state an
+                // indeterminate number of times before it actually completes loading. During each
+                // callback, we silently assert and if we fail, we reschedule this callback for the
+                // next complete state callback. This test will either pass when all asserts passed on,
+                // at least one callback, or timeout.
+                if (!completed) {
                     tests.push(lastTestFunc);
-                } else {
-                    listView.itemDataSource.getCount().
-                        done(function (count) {
-                            LiveUnit.Assert.areEqual(2, count);
-                            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll(".listEditorTestClass").length);
-                            LiveUnit.Assert.areEqual(0, listView.indexOfFirstVisible);
+                    listView.itemDataSource.getCount().done(function (count) {
+                        if (2 === count
+                            && 2 === listView.element.querySelectorAll(".listEditorTestClass").length
+                            && 0 === listView.indexOfFirstVisible) {
                             complete();
-                        });
-                }
+                            completed = true;
+                        }
+                    });
+                } 
                 return true;
             }
         ];
@@ -1211,7 +1214,7 @@ WinJSTests.ListEditorTest = function () {
                 complete();
             });
     }
-    
+
     if (!Helper.Browser.isIE11) {
         Helper.disableTest(this, "testDeleteWrapperSizeDuringAnimation");
     }
