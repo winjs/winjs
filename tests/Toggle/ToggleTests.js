@@ -77,11 +77,11 @@ WinJSTests.ToggleSwitchTests = function () {
             var labelOnStyle = window.getComputedStyle(labelOn);
             var labelOffStyle = window.getComputedStyle(labelOff);
             if (toggle.checked) {
-                LiveUnit.Assert.areNotEqual('none', labelOnStyle.display, 'labelOn display should be visible when toggle is checked');
-                LiveUnit.Assert.areEqual('none', labelOffStyle.display, 'labelOff display should be invisible when toggle is checked');
+                LiveUnit.Assert.areNotEqual('hidden', labelOnStyle.visibility, 'labelOn display should be visible when toggle is checked');
+                LiveUnit.Assert.areEqual('hidden', labelOffStyle.visibility, 'labelOff display should be invisible when toggle is checked');
             } else {
-                LiveUnit.Assert.areEqual('none', labelOnStyle.display, 'labelOn display should be invisible when toggle is not checked');
-                LiveUnit.Assert.areNotEqual('none', labelOffStyle.display, 'labelOff display should be visible when toggle is not checked');
+                LiveUnit.Assert.areEqual('hidden', labelOnStyle.visibility, 'labelOn display should be invisible when toggle is not checked');
+                LiveUnit.Assert.areNotEqual('hidden', labelOffStyle.visibility, 'labelOff display should be visible when toggle is not checked');
             }
 
             // Some other one off cases
