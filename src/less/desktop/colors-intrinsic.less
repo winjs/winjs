@@ -58,6 +58,10 @@
     input[type=tel], input[type=url],
     input[type=search], textarea, .win-textarea {
         .mixin(dark) {
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.87);
+            }
+
             &:focus {
                 background-color: rgb(255, 255, 255);
             }
@@ -95,6 +99,11 @@
             color: rgb(0, 0, 0);
         }
         .mixin(light) {
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.87);
+                border-color: rgba(0, 0, 0, 0.44);
+            }
+
             &:focus {
                 background-color: rgb(255, 255, 255);
             }
@@ -148,6 +157,17 @@
         color: rgb(0, 0, 0);
     }
 
+    input:hover::-ms-check {
+        .mixin(dark) {
+        }
+        .mixin(light) {
+            border-color: rgba(0, 0, 0, 0.44);
+        }
+        .mixin(@theme);
+
+        background-color: rgba(255, 255, 255, 0.87);
+    }
+
     input:disabled::-ms-check {
         .mixin(dark) {
             background-color: rgba(255, 255, 255, 0.4);
@@ -194,7 +214,9 @@
         background-color: rgb(255, 255, 255);
         color: rgb(0, 0, 0);
     }
-
+    input::-ms-clear:hover, input::-ms-reveal:hover {
+        background-color: rgb(222, 222, 222);
+    }
     input::-ms-clear:hover:active, input::-ms-reveal:hover:active {
         background-color: rgb(0, 0, 0);
         color: rgb(255, 255, 255);
@@ -230,6 +252,10 @@
                 color: rgb(0, 0, 0);
             }
 
+            &::-ms-browse:hover {
+                background-color: rgba(255, 255, 255, 0.13);
+            }
+
             &:disabled::-ms-browse {
                 border-color: rgba(255, 255, 255, 0.4);
                 color: rgba(255, 255, 255, 0.4);
@@ -253,6 +279,11 @@
                 color: rgb(255, 255, 255);
             }
 
+            &::-ms-browse:hover {
+                background-color: rgba(205, 205, 205, 0.82);
+                border-color: rgba(164, 164, 164, 0.45);
+            }
+
             &:disabled::-ms-browse {
                 background-color: rgba(202, 202, 202, 0.4);
                 border-color: rgba(0, 0, 0, 0.15);
@@ -273,7 +304,11 @@
                 color: rgb(0, 0, 0);
             }
 
-            &:disabled, &:disabled:hover:active {
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.13);
+            }
+
+            &:disabled, &:disabled:hover, &:disabled:hover:active {
                 background-color: transparent;
                 border-color: rgba(255, 255, 255, 0.4);
                 color: rgba(255, 255, 255, 0.4);
@@ -288,6 +323,11 @@
                 background-color: rgb(0, 0, 0);
                 border-color: rgb(0, 0, 0);
                 color: rgb(255, 255, 255);
+            }
+
+            &:hover {
+                background-color: rgba(205, 205, 205, 0.82);
+                border-color: rgba(164, 164, 164, 0.45);
             }
 
             &:disabled, &:disabled:hover:active {
@@ -311,6 +351,11 @@
                 color: rgb(0, 0, 0);
             }
 
+            &:hover {
+                background-color: rgb(95, 55, 190);
+                border-color: rgb(255, 255, 255);
+            }
+
             &:disabled, &:disabled:hover:active {
                 background-color: transparent;
                 border-color: rgba(255, 255, 255, 0.4);
@@ -322,6 +367,11 @@
                 background-color: rgb(0, 0, 0);
                 border-color: transparent;
                 color: rgb(255, 255, 255);
+            }
+
+            &:hover {
+                background-color: rgb(95, 55, 190);
+                border-color: transparent;
             }
 
             &:disabled, &:disabled:hover:active {
@@ -387,6 +437,10 @@
                 border-color: rgba(0, 0, 0, 0.6);
             }
 
+            &:enabled:hover {
+                border-color: rgba(0, 0, 0, 0.44);
+            }
+
             &:disabled {
                 background-color: rgba(202, 202, 202, 0.4);
                 border-color: rgba(0, 0, 0, 0.15);
@@ -406,11 +460,34 @@
         }
         .mixin(@theme);
 
+        &:enabled:focus {
+            option:hover {
+                background-color: rgb(222, 222, 222);
+            }
+
+            option:checked:hover {
+                color: rgb(255, 255, 255);
+                background-color: rgb(95, 55, 190);
+            }
+        }
+
+        &:enabled:hover {
+            background-color: rgba(255, 255, 255, 0.87);
+        }
+
         background-color: rgba(255, 255, 255, 0.8);
         color: rgb(0, 0, 0);
     }
 
     option {
+        &:hover {
+            background-color: rgb(197, 197, 197);
+        }
+
+        &:checked:hover {
+            background-color: rgb(95, 55, 190);
+        }
+
         &:checked {
             color: rgb(255, 255, 255);
             background-color: rgb(70, 23, 180);
@@ -540,6 +617,22 @@
                 color: rgba(255, 255, 255, 0.5);
             }
 
+            &:enabled:hover::-ms-fill-lower {
+                background-color: rgb(114, 75, 205);
+            }
+
+            &:enabled:hover::-ms-fill-upper {
+                background-color: rgba(255, 255, 255, 0.18);
+            }
+
+            &:enabled:hover::-webkit-slider-runnable-track {
+                background-color: rgba(255, 255, 255, 0.18);
+            }
+
+            &:enabled:hover::-moz-range-track {
+                background-color: rgba(255, 255, 255, 0.18);
+            }
+
             &:disabled::-ms-fill-lower {
                 background-color: rgba(255, 255, 255, 0.23);
             }
@@ -594,6 +687,22 @@
                 color: rgba(0, 0, 0, 0.5);
             }
 
+            &:enabled:hover::-ms-fill-lower {
+                background-color: rgb(95, 55, 190);
+            }
+
+            &:enabled:hover::-ms-fill-upper {
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+
+            &:enabled:hover::-webkit-slider-runnable-track {
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+
+            &:enabled:hover::-moz-range-track {
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+
             &:disabled::-ms-fill-lower {
                 background-color: rgba(0, 0, 0, 0.2);
             }
@@ -633,6 +742,10 @@
                 color: rgba(156, 114, 255, 0.6);
             }
 
+            &:hover {
+                color: rgba(156, 114, 255, 0.8);
+            }
+
             /*
             :disabled pseudo-class doesn't apply to a,
             even though disabled attribute stops navigation
@@ -646,6 +759,10 @@
         .mixin(light) {
             &:hover:active {
                 color: rgba(79, 26, 203, 0.6);
+            }
+
+            &:hover {
+                color: rgba(79, 26, 203, 0.8);
             }
 
             &[disabled], &[disabled]:active {
@@ -669,6 +786,10 @@
             &:hover:active {
                 color: rgba(255, 255, 255, 0.4);
             }
+
+            &:hover {
+                color: rgba(255, 255, 255, 0.8);
+            }
         }
         .mixin(light) {
             &:-ms-keyboard-active {
@@ -678,213 +799,7 @@
             &:hover:active {
                 color: rgba(0, 0, 0, 0.4);
             }
-        }
-        .mixin(@theme);
-    }
-}
-.ColorsHover(@theme) {
-    //
-    // Text input
-    //
-    input[type=text], input[type=password],
-    input[type=email], input[type=number],
-    input[type=tel], input[type=url],
-    input[type=search], textarea, .win-textarea {
-        .mixin(dark) {
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.87);
-            }
-        }
-        .mixin(light) {
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.87);
-                border-color: rgba(0, 0, 0, 0.44);
-            }
-        }
-        .mixin(@theme);
-    }
 
-    //
-    // Radio and Checkbox
-    //
-    input:hover::-ms-check {
-        .mixin(dark) {
-        }
-        .mixin(light) {
-            border-color: rgba(0, 0, 0, 0.44);
-        }
-        .mixin(@theme);
-
-        background-color: rgba(255, 255, 255, 0.87);
-    }
-
-    //
-    // Clear and reveal buttons
-    //
-    input::-ms-clear:hover, input::-ms-reveal:hover {
-        background-color: rgb(222, 222, 222);
-    }
-
-    //
-    // Button
-    //
-    input[type=file] {
-        .mixin(dark) {
-            &::-ms-browse:hover {
-                background-color: rgba(255, 255, 255, 0.13);
-            }
-        }
-        .mixin(light) {
-            &::-ms-browse:hover {
-                background-color: rgba(205, 205, 205, 0.82);
-                border-color: rgba(164, 164, 164, 0.45);
-            }
-        }
-        .mixin(@theme);
-    }
-
-    button, input[type=button], input[type=reset] {
-        .mixin(dark) {
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.13);
-            }
-
-            &:disabled:hover {
-                background-color: transparent;
-                border-color: rgba(255, 255, 255, 0.4);
-                color: rgba(255, 255, 255, 0.4);
-            }
-        }
-        .mixin(light) {
-            &:hover {
-                background-color: rgba(205, 205, 205, 0.82);
-                border-color: rgba(164, 164, 164, 0.45);
-            }
-        }
-        .mixin(@theme);
-    }
-
-    button[type=submit], input[type=submit] {
-        .mixin(dark) {
-            &:hover {
-                background-color: rgb(95, 55, 190);
-                border-color: rgb(255, 255, 255);
-            }
-        }
-        .mixin(light) {
-            &:hover {
-                background-color: rgb(95, 55, 190);
-                border-color: transparent;
-            }
-        }
-        .mixin(@theme);
-    }
-
-    //
-    // Dropdown
-    //
-    select {
-        .mixin(dark) {
-
-        }
-        .mixin(light ) {
-            &:enabled:hover {
-                border-color: rgba(0, 0, 0, 0.44);
-            }
-        }
-        .mixin(@theme);
-
-        &:enabled:focus {
-            option:hover {
-                background-color: rgb(222, 222, 222);
-            }
-
-            option:checked:hover {
-                color: rgb(255, 255, 255);
-                background-color: rgb(95, 55, 190);
-            }
-        }
-
-        &:enabled:hover {
-            background-color: rgba(255, 255, 255, 0.87);
-        }
-    }
-
-    option {
-        &:hover {
-            background-color: rgb(197, 197, 197);
-        }
-
-        &:checked:hover {
-            background-color: rgb(95, 55, 190);
-        }
-    }
-
-    //
-    // Slider
-    //
-    input[type=range] {
-        .mixin(dark) {
-            &:enabled:hover::-ms-fill-lower {
-                background-color: rgb(114, 75, 205);
-            }
-
-            &:enabled:hover::-ms-fill-upper {
-                background-color: rgba(255, 255, 255, 0.18);
-            }
-
-            &:enabled:hover::-webkit-slider-runnable-track {
-                background-color: rgba(255, 255, 255, 0.18);
-            }
-
-            &:enabled:hover::-moz-range-track {
-                background-color: rgba(255, 255, 255, 0.18);
-            }
-        }
-        .mixin(light) {
-            &:enabled:hover::-ms-fill-lower {
-                background-color: rgb(95, 55, 190);
-            }
-
-            &:enabled:hover::-ms-fill-upper {
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-
-            &:enabled:hover::-webkit-slider-runnable-track {
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-
-            &:enabled:hover::-moz-range-track {
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-        }
-        .mixin(@theme);
-    }
-
-    //
-    // Link
-    //
-    a {
-        .mixin(dark) {
-            &:hover {
-                color: rgba(156, 114, 255, 0.8);
-            }
-        }
-        .mixin(light) {
-            &:hover {
-                color: rgba(79, 26, 203, 0.8);
-            }
-        }
-        .mixin(@theme);
-    }
-
-    .win-type-interactive {
-        .mixin(dark) {
-            &:hover {
-                color: rgba(255, 255, 255, 0.8);
-            }
-        }
-        .mixin(light) {
             &:hover {
                 color: rgba(0, 0, 0, 0.8);
             }
@@ -897,7 +812,7 @@
     .win-type-interactive {
         color: WindowText;
     }
-    html.win-hoverable .win-type-interactive:hover, .win-type-interactive:hover:active {
+    .win-type-interactive:hover, .win-type-interactive:hover:active {
         color: -ms-hotlight;
     }
     .win-type-interactive:-ms-keyboard-active {
@@ -954,9 +869,9 @@
         color: ButtonFace;
     }
 
-    html.win-hoverable button:hover, html.win-hoverable input[type=button]:hover, html.win-hoverable input[type=reset]:hover,
-    html.win-hoverable input::-ms-clear:hover, html.win-hoverable input::-ms-reveal:hover,
-    html.win-hoverable input[type=file]::-ms-browse:hover {
+    button:hover, input[type=button]:hover, input[type=reset]:hover,
+    input::-ms-clear:hover, input::-ms-reveal:hover,
+    input[type=file]::-ms-browse:hover {
         background-color: Highlight;
         border-color: ButtonText;
         color: HighlightText;
@@ -1017,7 +932,7 @@
     /*
     Text input, checkbox, radio, and select high contrast colors.
     */
-    html.win-hoverable input:hover::-ms-check { /* only checkbox and radio have hover state */
+    input:hover::-ms-check { /* only checkbox and radio have hover state */
         background-color: Highlight;
         color: HighlightText;
     }
@@ -1138,7 +1053,7 @@
         background-color: GrayText;
         border-color: GrayText;
     }
-    html.win-hoverable input[type=range]:hover::-ms-thumb {
+    input[type=range]:hover::-ms-thumb {
         background-color: Highlight;
     }
 }

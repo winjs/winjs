@@ -3,7 +3,9 @@
     .mixin(dark) {
         /* Command colors */
         button:enabled.win-command:focus,
-        div:enabled.win-command:focus {
+        div:enabled.win-command:focus,
+        button:enabled.win-command.win-command:hover:focus,
+        div:enabled.win-command.win-command:hover:focus {
             border-color: rgb(255, 255, 255);
         }
         .win-commandimage {
@@ -23,7 +25,7 @@
         button[aria-checked=true]:active .win-commandimage {
             color: rgb(0, 0, 0);
         }
-        button[aria-checked=true]:enabled:hover:active .win-commandimage {
+        button[aria-checked=true]:enabled:hover:active .win-commandimage.win-commandimage {
             color: rgb(255, 255, 255);
         }
         button[aria-checked=true]:-ms-keyboard-active .win-commandimage {
@@ -39,7 +41,7 @@
             background-color: transparent;
             border-color: rgb(255, 255, 255);
         }
-        button:enabled:hover:active .win-commandring {
+        button:enabled:hover:active .win-commandring.win-commandring {
             background-color: rgb(255, 255, 255);
             border-color: rgb(255, 255, 255);
         }
@@ -53,11 +55,11 @@
             border-color: rgba(255, 255, 255, 0.4);
         }
         button[aria-checked=true] .win-commandring,
-        button[aria-checked=true]:active .win-commandring {
+        button[aria-checked=true]:active .win-commandring.win-commandring {
             background-color: rgb(255, 255, 255);
             border-color: rgb(255, 255, 255);
         }
-        button[aria-checked=true]:enabled:hover:active .win-commandring {
+        button[aria-checked=true]:enabled:hover:active .win-commandring.win-commandring {
             background-color: transparent;
             border-color: rgb(255, 255, 255);
         }
@@ -82,7 +84,7 @@
             background-color: rgb(0, 0, 0);
             border-color: rgb(0, 0, 0);
 
-            button.win-appbar-invokebutton {
+            button.win-appbar-invokebutton.win-appbar-invokebutton {
                 background-color: transparent;
 
                 .win-appbar-ellipsis {
@@ -116,7 +118,7 @@
             }
             // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
             &.win-appbar-hiding, &.win-appbar-hidden {
-                button.win-appbar-invokebutton {
+                button.win-appbar-invokebutton.win-appbar-invokebutton {
                     &:enabled {
                         &:hover:active {
                             background-color: rgba(255, 255, 255, 0.13);
@@ -176,6 +178,8 @@
         */
         &.win-command:enabled.win-hidefocus:focus,
         .win-command:enabled.win-hidefocus:focus,
+        &.win-command.win-command:enabled.win-hidefocus:hover:focus,
+        .win-command.win-command:enabled.win-hidefocus:hover:focus,
         &.win-appbar button.win-appbar-invokebutton:enabled.win-hidefocus:focus .win-appbar-ellipsis,
         .win-appbar button.win-appbar-invokebutton:enabled.win-hidefocus:focus .win-appbar-ellipsis {
             border-color: transparent;
@@ -184,7 +188,9 @@
 
     .mixin(light) {
         button:enabled.win-command:focus,
-        div:enabled.win-command:focus {
+        div:enabled.win-command:focus,
+        button:enabled.win-command.win-command:hover:focus,
+        div:enabled.win-command.win-command:hover:focus {
             border-color: rgb(0, 0, 0);
         }
 
@@ -203,10 +209,10 @@
             color: rgba(0, 0, 0, 0.4);
         }
         button[aria-checked=true] .win-commandimage,
-        button[aria-checked=true]:active .win-commandimage {
+        button[aria-checked=true]:active .win-commandimage.win-commandimage {
             color: rgb(255, 255, 255);
         }
-        button[aria-checked=true]:enabled:hover:active .win-commandimage {
+        button[aria-checked=true]:enabled:hover:active .win-commandimage.win-commandimage {
             color: rgb(0, 0, 0);
         }
         button[aria-checked=true]:-ms-keyboard-active .win-commandimage {
@@ -223,7 +229,7 @@
             background-color: transparent;
             border-color: rgb(0, 0, 0);
         }
-        button:enabled:hover:active .win-commandring {
+        button:enabled:hover:active .win-commandring.win-commandring {
             background-color: rgb(0, 0, 0);
             border-color: rgb(0, 0, 0);
         }
@@ -241,7 +247,7 @@
             background-color: rgb(0, 0, 0);
             border-color: rgb(0, 0, 0);
         }
-        button[aria-checked=true]:enabled:hover:active .win-commandring {
+        button[aria-checked=true]:enabled:hover:active .win-commandring.win-commandring {
             background-color: transparent;
             border-color: rgb(0, 0, 0);
         }
@@ -266,7 +272,7 @@
             background-color: rgb(240, 240, 240);
             border-color: rgb(240, 240, 240);
 
-            button.win-appbar-invokebutton {
+            button.win-appbar-invokebutton.win-appbar-invokebutton {
                 background-color: transparent;
 
                 .win-appbar-ellipsis {
@@ -300,7 +306,7 @@
             }
             // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
             &.win-appbar-hiding, &.win-appbar-hidden {
-                button.win-appbar-invokebutton {
+                button.win-appbar-invokebutton.win-appbar-invokebutton {
                     &:enabled {
                         &:hover:active {
                             background-color: rgba(205, 205, 205, 0.82);
@@ -348,6 +354,8 @@
         */
         &.win-command:enabled.win-hidefocus:focus,
         .win-command:enabled.win-hidefocus:focus,
+        &.win-command.win-command:enabled.win-hidefocus:hover:focus,
+        .win-command.win-command:enabled.win-hidefocus:hover:focus,
         &.win-appbar button.win-appbar-invokebutton:enabled.win-hidefocus:focus .win-appbar-ellipsis,
         .win-appbar button.win-appbar-invokebutton:enabled.win-hidefocus:focus .win-appbar-ellipsis {
             border-color: transparent;
@@ -368,7 +376,7 @@
         background-color: transparent;
         color: inherit;
     }
-    button.win-command:enabled:hover:active, div.win-command:enabled:hover:active {
+    button.win-command.win-command:enabled:hover:active, div.win-command.win-command:enabled:hover:active {
         background-color: transparent;
         color: inherit;
     }
@@ -655,7 +663,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         color: ButtonText;
     }
     button:active .win-commandimage,
-    button:enabled:hover:active .win-commandimage {
+    button:enabled:hover:active .win-commandimage.win-commandimage {
         color: ButtonFace;
     }
     html.win-hoverable button:enabled:hover .win-commandimage {
@@ -669,7 +677,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         color: ButtonFace;
     }
     button[aria-checked=true]:active .win-commandimage,
-    button[aria-checked=true]:enabled:hover:active .win-commandimage {
+    button[aria-checked=true]:enabled:hover:active .win-commandimage.win-commandimage {
         color: ButtonText;
     }
     html.win-hoverable button[aria-checked=true]:enabled:hover .win-commandimage {
@@ -688,7 +696,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         border-color: ButtonText;
     }
     button:active .win-commandring,
-    button:enabled:hover:active .win-commandring {
+    button:enabled:hover:active .win-commandring.win-commandring {
         background-color: ButtonText;
         border-color: ButtonText;
     }
@@ -706,7 +714,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         border-color: ButtonText;
     }
     button[aria-checked=true]:active .win-commandring,
-    button[aria-checked=true]:enabled:hover:active .win-commandring {
+    button[aria-checked=true]:enabled:hover:active .win-commandring.win-commandring {
         background-color: ButtonFace;
         border-color: ButtonText;
     }

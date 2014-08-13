@@ -4,7 +4,7 @@
         background-color: rgba(213, 213, 213, 0.35);
         color: rgba(0, 0, 0, 0.60);
     }
-    .win-navbutton:hover:active {
+    .win-navbutton.win-navbutton:hover:active {
         background-color: rgba(41, 41, 41, 0.74);
         color: rgba(255, 255, 255, 1.0);
     }
@@ -30,7 +30,8 @@ html.win-hoverable .win-flipview {
             width: 65px;
             height: 35px;
         }
-        .win-navbutton:active {
+        .win-navbutton.win-navbutton:hover:active,
+        .win-navbutton.win-navbutton:active {
             background-color: ButtonText;
             color: ButtonFace;
         }
@@ -38,7 +39,7 @@ html.win-hoverable .win-flipview {
             margin-left: -65px;
         }
     }
-    html.win-hoverable .win-flipview {    
+    html.win-hoverable .win-flipview {
         .win-navbutton:hover {
             background-color: Highlight;
             color: HighlightText;
