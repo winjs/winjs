@@ -1850,6 +1850,12 @@ WinJSTests.VirtualizedViewTests = function () {
                 layout: structureNodes ? new WinJS.UI.ListLayout() : new WinJS.UI.CellSpanningLayout(cellSpanningOptions)
             });
 
+            if (!listView.layout._usingStructuralNodes && structureNodes) {
+                placeholder.parentNode.removeChild(placeholder);
+                complete();
+                return;
+            }
+
             listView._view._createChunkWithBlocks = function (groups, count, blockSize, chunkSize) {
                 Object.getPrototypeOf(listView._view)._createChunkWithBlocks.call(listView._view, groups, count, blockSize, chunkSize);
                 if (listView._view.containers.length >= 100) {
