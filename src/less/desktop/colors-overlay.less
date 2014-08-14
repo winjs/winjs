@@ -3,9 +3,9 @@
     .mixin(dark) {
         /* Command colors */
         button:enabled.win-command:focus,
-        div:enabled.win-command:focus,
+        div.win-command:focus,
         button:enabled.win-command.win-command:hover:focus,
-        div:enabled.win-command.win-command:hover:focus {
+        div.win-command.win-command:hover:focus {
             border-color: rgb(255, 255, 255);
         }
         .win-commandimage {
@@ -188,9 +188,9 @@
 
     .mixin(light) {
         button:enabled.win-command:focus,
-        div:enabled.win-command:focus,
+        div.win-command:focus,
         button:enabled.win-command.win-command:hover:focus,
-        div:enabled.win-command.win-command:hover:focus {
+        div.win-command.win-command:hover:focus {
             border-color: rgb(0, 0, 0);
         }
 
@@ -376,7 +376,7 @@
         background-color: transparent;
         color: inherit;
     }
-    button.win-command.win-command:enabled:hover:active, div.win-command.win-command:enabled:hover:active {
+    button.win-command.win-command:enabled:hover:active, div.win-command.win-command:hover:active {
         background-color: transparent;
         color: inherit;
     }
@@ -505,7 +505,7 @@
         }
     }
 
-    button.win-command:enabled:hover, div.win-command:enabled:hover {
+    button.win-command:enabled:hover, div.win-command:hover {
         background-color: transparent;
         border-color: transparent;
     }
@@ -627,7 +627,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
     button.win-command:enabled:hover:active,
     div.win-command,
     div.win-command:active,
-    div.win-command:enabled:hover:active {
+    div.win-command:hover:active {
         background-color: transparent;
         border-color: transparent;
     }
@@ -643,7 +643,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         color: GrayText;
     }
     button:enabled.win-command:focus,
-    div:enabled.win-command:focus {
+    div.win-command:focus {
         border-color: ButtonText;
     }
     button.win-hidefocus:focus,
@@ -651,7 +651,7 @@ Settings flyout is light in both themes unless the app explicitly overrides it.
         outline: none;
     }
     button:enabled.win-command.win-hidefocus:focus,
-    div:enabled.win-command.win-hidefocus:focus {
+    div.win-command.win-hidefocus:focus {
         border-color: transparent;
     }
 
