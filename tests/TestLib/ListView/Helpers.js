@@ -158,14 +158,10 @@ if (typeof (WinJS) !== "undefined") {
                 }
 
                 function waitForReady_work() {
-                    if (listView.loadingState !== "complete") {
-                        if(listView._versionManager.locked) {
-                            listView._versionManager.unlocked.then(waitForReady_work);
-                        } else {
-                            listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
-                        }
-                    } else if (listView._versionManager.locked) {
+                if (listView._versionManager.locked) {
                         listView._versionManager.unlocked.then(waitForReady_work);
+                    } else if (listView.loadingState !== "complete") {
+                        listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
                     } else {
                         WinJS.Utilities.Scheduler.schedulePromiseIdle(null, "ListViewWaitForReadyComplete").then(function() {
                             c(x);
@@ -181,12 +177,10 @@ if (typeof (WinJS) !== "undefined") {
                 if (delay) {
                     if (delay < 0) {
                         WinJS.Utilities._setImmediate(waitForReady_start);
-                    }
-                    else {
+                    } else {
                         setTimeout(waitForReady_start, delay);
                     }
-                }
-                else {
+                } else {
                     waitForReady_work();
                 }
             });
