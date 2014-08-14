@@ -235,5 +235,13 @@ SearchBoxTests.SuggestionShimTests = function () {
         ssm.setQuery(inputQuery);
         suggestionsAreEqual(policy5ExpectedState, ssm, "Assert failures in policy 10");
     };
+
+    this.testSSMDoesNotCommitBlankQueryToHistory = function () {
+        var ssm = createSSM(null, function (e) {
+            LiveUnit.Assert.fail("SSM should not commit blank query to history");
+        });
+
+        ssm.addToHistory("");
+    };
 };
 LiveUnit.registerTestClass("SearchBoxTests.SuggestionShimTests");

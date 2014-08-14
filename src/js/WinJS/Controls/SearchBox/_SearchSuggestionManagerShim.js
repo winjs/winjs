@@ -110,6 +110,10 @@ define([
         this.searchHistoryEnabled = true;
     }, {
         addToHistory: function (queryText /*, language */) {
+            if (!queryText || !queryText.trim()) {
+                return;
+            }
+
             var history = this._history[this.searchHistoryContext];
             var dupeIndex = -1;
             for (var i = 0, l = history.length; i < l; i++) {
