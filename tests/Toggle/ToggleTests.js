@@ -11,19 +11,23 @@ var WinJSTests = WinJSTests || {};
 WinJSTests.ToggleSwitchTests = function () {
     'use strict';
 
+    var labelOnLongValue = 'A pretty long ON string';
+    var labelOffLongValue = 'A pretty long OFF string';
+
     // Describe all possible inputs to Toggle
     var possibleInputs = {
         checked: [true, false],
         disabled: [true, false],
         rtl: [true, false],
-        labelOn: ['1', 'A pretty long string'],
-        labelOff: ['0', 'Another pretty long string'],
+        labelOn: ['1', labelOnLongValue],
+        labelOff: ['0', labelOffLongValue],
         title: ['A title', 'A title that is much longer and should be wrapped to a second line']
     };
 
     // Describe any special combinations of inputs that we definitely want to test
     var interestingInputs = [
-        {checked: true, disabled: true}
+        {checked: true, disabled: true},
+        {labelOn: labelOnLongValue, labelOff: '0'}
     ];
 
     // Generate test combinations of init options to toggle
@@ -126,17 +130,23 @@ WinJSTests.ToggleSwitchTests = function () {
             container.appendChild(toggle.element);
             var toggleClickRegion = toggle.element.querySelector('.win-toggleswitch-clickregion');
 
-            // Test that the toggle reacts properly to a click
+            // Simulate clicking the toggle and store some before/after info
             var oldState = toggle.checked;
+            var oldPosition = toggleClickRegion.offsetLeft;
             CommonUtilities.mouseDownUsingMiP(toggleClickRegion);
             CommonUtilities.mouseUpUsingMiP(toggleClickRegion);
             var newState = toggle.checked;
+            var newPosition = toggleClickRegion.offsetLeft;
 
+            // Test that the toggle did the right thing with regards to disabled state
             if (testCase.disabled) {
                 LiveUnit.Assert.areEqual(oldState, newState, 'Toggle should not change state when clicked while disabled');
             } else {
                 LiveUnit.Assert.areNotEqual(oldState, newState, 'Toggle should change state when clicked');
             }
+
+            // Test that the toggle didn't move when toggled (possibly due to long ON label + short OFF label)
+            LiveUnit.Assert.areEqual(oldPosition, newPosition, 'Toggle Switch should not move when toggled');
 
             container.removeChild(toggle.element);
         });
@@ -163,6 +173,20 @@ WinJSTests.ToggleSwitchTests = function () {
             }
 
             container.removeChild(toggle.element);
+        });
+    };
+
+    test.testChangedEvent = function testChanged() {
+        testCases.forEach(function (testCase) {
+            var toggle = new WinJS.UI.ToggleSwitch(null, testCase);
+
+            var changedEventFired = false;
+            toggle.addEventListener('change', function () {
+                changedEventFired = true;
+            });
+
+            toggle.checked = !toggle.checked;
+            LiveUnit.Assert.isTrue(changedEventFired, 'Toggle should fire change event when toggled');
         });
     };
 }
