@@ -158,7 +158,7 @@ if (typeof (WinJS) !== "undefined") {
                 }
 
                 function waitForReady_work() {
-                if (listView._versionManager.locked) {
+                    if (listView._versionManager.locked) {
                         listView._versionManager.unlocked.then(waitForReady_work);
                     } else if (listView.loadingState !== "complete") {
                         listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
