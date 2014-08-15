@@ -176,7 +176,68 @@ WinJSTests.ToggleSwitchTests = function () {
         });
     };
 
-    test.testChangedEvent = function testChanged() {
+    this.testThumbDragToOtherSide = function testThumbDrag() {
+        var container = document.querySelector('#toggleswitch-tests');
+
+        testCases.forEach(function (testCase) {
+            if (testCase.rtl) {
+                container.setAttribute('lang', 'ar');
+            }
+
+            var toggle = new WinJS.UI.ToggleSwitch(null, testCase);
+            container.appendChild(toggle.element);
+            var toggleThumb = toggle.element.querySelector('.win-toggleswitch-thumb');
+            var toggleClickRegion = toggle.element.querySelector('.win-toggleswitch-clickregion');
+            var toggleThumbRect = toggleThumb.getBoundingClientRect();
+
+            // Try dragging the thumb from one side to the other
+            var direction = toggle.checked ? -1 : 1;
+            if (testCase.rtl) {
+                direction *= -1;
+            }
+
+            // We don't really need to create an actual pointer event to do the testing,
+            // as toggle only cares about a few properties on the event
+            var pointerEvent = {
+                preventDefault: function () {},
+                get detail() {return {originalEvent: this};},
+                pageX: toggleThumbRect.left + 1,
+                pageY: toggleThumbRect.top + 1
+            };
+
+            // Send a pointer down event to begin the drag
+            var oldThumbPos = toggleThumb.offsetLeft;
+            var oldState = toggle.checked;
+            toggle._pointerDownHandler(pointerEvent);
+
+            // Send a pointer move event to move the thumb to the other side
+            pointerEvent.pageX += toggleClickRegion.offsetWidth * direction;
+            toggle._pointerMoveHandler(pointerEvent);
+
+            // Verify thumb didn't move when disabled
+            if (toggle.disabled) {
+                LiveUnit.Assert.areEqual(toggleThumb.offsetLeft, oldThumbPos, 'Toggle thumb should not move when dragged while disabled');
+            }
+
+            // Send a pointer up event to end the drag
+            toggle._pointerUpHandler(pointerEvent);
+
+            // Verify the toggle changed
+            if (toggle.disabled) {
+                LiveUnit.Assert.areEqual(oldState, toggle.checked, 'Toggle should not change when thumb is dragged while disabled');
+            } else {
+                LiveUnit.Assert.areNotEqual(oldState, toggle.checked, 'Toggle should change when thumb is dragged to other side and released');
+            }
+
+            // Cleanup
+            if (testCase.rtl) {
+                container.removeAttribute('lang');
+            }
+            container.removeChild(toggle.element);
+        });
+    };
+
+    this.testChangedEvent = function testChanged() {
         testCases.forEach(function (testCase) {
             var toggle = new WinJS.UI.ToggleSwitch(null, testCase);
 

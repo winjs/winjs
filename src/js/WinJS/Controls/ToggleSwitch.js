@@ -302,10 +302,6 @@ define([
 
                         e.preventDefault();
 
-                        if (this.disabled) {
-                            return;
-                        }
-
                         this._mousedown = true;
                         this._dragXStart = e.pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
                         this._dragX = this._dragXStart;
