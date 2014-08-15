@@ -1576,7 +1576,7 @@ define([
                                             break;
 
                                         default:
-                                            return { kind: TextBindingKind.attribute, attribute: targetProperty };
+                                            return { kind: TextBindingKind.booleanAttribute, attribute: targetProperty };
                                     }
                                     break;
                             }
