@@ -56,28 +56,39 @@
                 throw "details argument is null ";
             }
 
-            if (!details.result || !details.result.url) {
-                throw "empty url in details argument " + JSON.stringify(details);
+            if (!details.testPageUrl) {
+                throw "empty testPageUrl in details argument " + JSON.stringify(details);
             }
 
-            var component = details.result.url.split('/')[5];
+            var component = details.testPageUrl.split('/')[5];
             var browserIndex = getBrowserIndex(details.platform);
-            console.log("======================================================\n" +
-                        "Passed: " + details.result.passed + "\n" +
-                        "Failed: " + details.result.failed + "\n" +
-                        "Total: " + details.result.total + "\n" +
-                        "Component: " +  component + "\n" +
-                        "Time: " + details.result.runtime + "ms"
-                        );
-
             var componentResults = getComponentResults(component);
             if (componentResults) {
-                componentResults["e" + browserIndex] = {
-                    "url": details.url,
-                    "passed": details.result.passed,
-                    "total": details.result.total,
-                    "time": Math.ceil(parseFloat(details.result.runtime) / 1000)
-                };
+                if (details.result && typeof details.result === "object") {
+                    console.log("======================================================\n" +
+                                "Passed: " + details.result.passed + "\n" +
+                                "Failed: " + details.result.failed + "\n" +
+                                "Total: " + details.result.total + "\n" +
+                                "Component: " +  component + "\n" +
+                                "Time: " + details.result.runtime + "ms"
+                                );
+
+                    componentResults["e" + browserIndex] = {
+                        "url": details.url,
+                        "passed": details.result.passed,
+                        "total": details.result.total,
+                        "time": Math.ceil(parseFloat(details.result.runtime) / 1000)
+                    };
+                } else {
+                    console.log("======================================================\n" +
+                                "Component: " +  component + "\n" +
+                                "Note: " + details.result + "\n"
+                                );
+                    componentResults["e" + browserIndex] = {
+                        "url": details.url,
+                        "result":  details.result
+                    };
+                }
             }
 
             if (!reportingStatus) {
