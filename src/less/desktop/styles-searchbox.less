@@ -41,9 +41,11 @@
     box-sizing: border-box;
 }
 
-.win-searchbox input:-ms-lang(@{rtl}) {
-    padding-right: 0;
-    padding-left: 28px;
+.win-searchbox input {
+    .RTL({
+        padding-right: 0;
+        padding-left: 28px;
+    });
 }
 
 /*
@@ -70,9 +72,11 @@ Hide clear button in search box control.
     text-align:center;
 }
 
-.win-searchbox-button:-ms-lang(@{rtl}) {
-    right: auto;
-    left: 0;
+.win-searchbox-button {
+    .RTL({
+        right: auto;
+        left: 0;
+    });
 }
 
 .win-searchbox-button.win-searchbox-button:before {
@@ -124,11 +128,13 @@ Hide clear button in search box control.
     padding-bottom: 10px;
 }
 
-.win-searchbox-suggestion-result img:-ms-lang(@{rtl}) {
-    margin-right: 0;
-    margin-left: auto;
-    padding-left: 10px;
-    padding-right: 0;
+.win-searchbox-suggestion-result img {
+    .RTL({
+        margin-right: 0;
+        margin-left: auto;
+        padding-left: 10px;
+        padding-right: 0;
+    });
 }
 
 .win-searchbox-suggestion-query {
@@ -158,9 +164,11 @@ Hide clear button in search box control.
     border-width: 1px 0px 0px 0px;
 }
 
-.win-searchbox-suggestion-separator hr:-ms-lang(@{rtl}) {
-    margin-right: 10px;
-    margin-left: auto;
+.win-searchbox-suggestion-separator hr {
+    .RTL({
+        margin-right: 10px;
+        margin-left: auto;
+    });
 }
 
 .win-searchbox-suggestion-separator div {
@@ -173,9 +181,11 @@ Hide clear button in search box control.
     margin-right: 10px;
 }
 
-.win-searchbox-suggestion-separator div:-ms-lang(@{rtl}) {
-    margin-left: 10px;
-    margin-right: auto;
+.win-searchbox-suggestion-separator div {
+    .RTL({
+        margin-left: 10px;
+        margin-right: auto;
+    });
 }
 
 /*

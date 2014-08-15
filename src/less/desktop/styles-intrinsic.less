@@ -22,8 +22,8 @@ html, body {
 html {
     overflow: hidden;
 }
-html:-ms-lang(@{rtl}) {
-    direction: rtl;
+html {
+    .RTL({direction: rtl;});
 }
 
 body {
@@ -103,20 +103,20 @@ input[type=radio] {
     margin-right: 4px;
     margin-bottom: -2px;
 
-    &:-ms-lang(@{rtl}) {
+    .RTL({
         margin-left: 4px;
         margin-right: -1px;
-    }
+    });
 }
 input[type=checkbox] {
     width: 21px;
     height: 21px;
     margin-right: 5px;
 
-    &:-ms-lang(@{rtl}) {
+    .RTL({
         margin-left: 5px;
         margin-right: 0px;
-    }
+    });
 }
 input::-ms-check {
     border-style: solid;
@@ -143,11 +143,11 @@ textarea, .win-textarea {
     outline: 0;
     .win-type-medium-internal();
 
-    &:-ms-lang(@{rtl}) {
+    .RTL({
         // Flip sides for autohiding scrollbar padding on RTL layouts
         padding-right: 8px;
         padding-left: 17px;
-    }
+    });
 }
 
 //
@@ -172,10 +172,14 @@ input::-ms-clear, input::-ms-reveal {
     margin-right: -8px;
     margin-left: 2px;
 }
-input:-ms-lang(@{rtl})::-ms-clear,
-input:-ms-lang(@{rtl})::-ms-reveal {
-    margin-left: -8px;
-    margin-right: 2px;
+input {
+    .RTL({
+        &::-ms-clear,
+        &::-ms-reveal {
+            margin-left: -8px;
+            margin-right: 2px;
+        }
+    });
 }
 
 //
@@ -201,10 +205,12 @@ input[type=file] {
         .win-type-medium-internal();
     }
 
-    &:-ms-lang(@{rtl})::-ms-value {
-        border-left-style: none;
-        border-right-style: solid;
-    }
+    .RTL({
+        &::-ms-value {
+            border-left-style: none;
+            border-right-style: solid;
+        }
+    });
 
     &::-ms-browse {
         margin: 0;
@@ -368,14 +374,18 @@ input[type=range] {
         margin-left: 6px;
     }
 
-    &:disabled:-ms-lang(@{rtl})::-ms-fill-lower {
-        margin-right: 0;
-        margin-left: 5px;
-    }
+    &:disabled {
+        .RTL({
+            &::-ms-fill-lower {
+                margin-right: 0;
+                margin-left: 5px;
+            }
 
-    &:disabled:-ms-lang(@{rtl})::-ms-fill-upper {
-        margin-left: 0;
-        margin-right: 6px;
+            &::-ms-fill-upper {
+                margin-left: 0;
+                margin-right: 6px;
+            }
+        });
     }
 }
 
@@ -409,17 +419,21 @@ input[type=range].win-vertical {
         display: none;
     }
 
-    &:disabled:-ms-lang(@{rtl})::-ms-fill-lower {
-        margin-left: 0;
+    &:disabled {
+        .RTL({
+            &::-ms-fill-lower {
+                margin-left: 0;
+            }
+
+            &::-ms-fill-upper {
+                margin-right: 0;
+            }
+        });
     }
 
-    &:disabled:-ms-lang(@{rtl})::-ms-fill-upper {
-        margin-right: 0;
-    }
-
-    &:-ms-lang(@{rtl}) {
+    .RTL({
         writing-mode: bt-rl;
-    }
+    });
 }
 
 //

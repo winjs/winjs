@@ -34,9 +34,11 @@
         right: 4px;
     }
 
-    .win-semanticzoom-button-location:-ms-lang(@{rtl}) {
-        left: 4px;
-        right: auto;
+    .win-semanticzoom-button-location {
+        .RTL({
+            left: 4px;
+            right: auto;
+        });
     }
 }
 
