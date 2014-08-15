@@ -19,8 +19,8 @@
 TooltipBasicTests = function () {
     var tooltipUtils = new TooltipUtils();
 
-    this.setUp = function (complete) {
-        tooltipUtils.setUp().then(complete);
+    this.setUp = function () {
+        tooltipUtils.setUp();
     };
 
     this.tearDown = function () {
@@ -38,10 +38,10 @@ TooltipBasicTests = function () {
         LiveUnit.Assert.areEqual(tooltip.innerHTML, null);
         LiveUnit.Assert.areEqual(tooltip.contentElement, null);
     };
-    
-    
-    
-    
+
+
+
+
 
     // Verify the properties can be set during initialization.  This is just a basic check
     // and these options are tested in other functions
@@ -59,7 +59,7 @@ TooltipBasicTests = function () {
         LiveUnit.Assert.areEqual(tooltip.contentElement, divElement);
         LiveUnit.Assert.areEqual(tooltip.extraClass, "dummyClass");
     };
-    
+
 
     // Verify passing incorrect values for the element property causes failure.
     // This property is set AFTER the tooltip is created.
@@ -96,10 +96,10 @@ TooltipBasicTests = function () {
         tooltip.element = document.getElementById(tooltipUtils.defaultElementID);
         LiveUnit.Assert.areEqual(tooltip.element, document.getElementById(tooltipUtils.defaultElementID), "original element");
     };
-    
-    
-    
-    
+
+
+
+
 
     // Verify tooltip either converts properties or throws an exception.
     // The only truly valid parameter to elementContent is an HTML element, but we don't throw any errors
@@ -126,10 +126,10 @@ TooltipBasicTests = function () {
         tooltip.elementContent = "<div>string</div>";
         LiveUnit.Assert.areEqual(tooltip.elementContent, "<div>string</div>");
     };
-    
-    
-    
-    
+
+
+
+
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_infotip = function () {
@@ -155,10 +155,10 @@ TooltipBasicTests = function () {
         tooltip.infotip = NaN;
         LiveUnit.Assert.areEqual(tooltip.infotip, false, "NaN");
     };
-    
-    
-    
-    
+
+
+
+
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_inner = function () {
@@ -190,10 +190,10 @@ TooltipBasicTests = function () {
         LiveUnit.Assert.isTrue((typeof (tooltip.delay) == "undefined"), "undefined");
 
     };
-    
-    
-    
-    
+
+
+
+
 
     // Verify tooltip either converts properties or throws an exception.
     this.testTooltip_Instantiation_placement = function () {
@@ -220,10 +220,10 @@ TooltipBasicTests = function () {
         testBadPlacement(tooltip, "");
         testBadPlacement(tooltip, NaN);
     };
-    
-    
-    
-    
+
+
+
+
 
     // Verify tooltip either converts properties or throws an exception.
     // The only truly valid parameter to extraClass is a string, but we don't throw any errors
@@ -250,10 +250,10 @@ TooltipBasicTests = function () {
         tooltip.extraClass = "<div>string</div>";
         LiveUnit.Assert.areEqual(tooltip.extraClass, "<div>string</div>");
     };
-    
-    
-    
-    
+
+
+
+
 
 };
 

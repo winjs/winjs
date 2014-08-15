@@ -20,8 +20,8 @@ TooltipAlignmentTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function (complete) {
-        tooltipUtils.setUp().then(complete);
+    this.setUp = function () {
+        tooltipUtils.setUp();
     };
 
     this.tearDown = function () {
@@ -70,11 +70,11 @@ TooltipAlignmentTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyAlignmentChangedPlacement = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -120,11 +120,11 @@ TooltipAlignmentTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // Verify the tooltip appears aligned correctly
@@ -175,38 +175,38 @@ TooltipAlignmentTests = function () {
     this.testTooltip_VerifyAlignmentCenterTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "top", "horizontal center");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_AlignmentCenterRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "right", "vertical center");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_AlignmentCenterBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "bottom", "horizontal center");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_AlignmentCenterLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyAlignment(signalTestCaseCompleted, "center", "left", "vertical center");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
 };
 

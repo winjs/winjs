@@ -20,8 +20,8 @@ TooltipInfotipTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function (complete) {
-        tooltipUtils.setUp().then(complete);
+    this.setUp = function () {
+        tooltipUtils.setUp();
     };
 
     this.tearDown = function () {
@@ -133,81 +133,81 @@ TooltipInfotipTests = function () {
     this.testTooltip_InfotipTrue = function (signalTestCaseCompleted) {
         testTooltip_Infotip(signalTestCaseCompleted, true, false, 5000, 500);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testTooltip_InfotipTrue.timeout = 30000;
 
     this.testTooltip_InfotipFalse = function (signalTestCaseCompleted) {
         testTooltip_Infotip(signalTestCaseCompleted, false, false, 5000, 500);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testTooltip_InfotipFalse.timeout = 30000;
 
     this.testTooltip_InfotipTrueUsingTouch = function (signalTestCaseCompleted) {
         testTooltip_Infotip(signalTestCaseCompleted, true, true, 5000, 500);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testTooltip_InfotipTrueUsingTouch.timeout = 30000;
 
     this.testTooltip_InfotipFalseUsingTouch = function (signalTestCaseCompleted) {
         testTooltip_Infotip(signalTestCaseCompleted, false, true, 5000, 500);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testTooltip_InfotipFalseUsingTouch.timeout = 30000;
 
     this.testTooltip_InfotipTrueIDX = function (signalTestCaseCompleted) {
         testTooltip_Infotip(signalTestCaseCompleted, true, false, 1000, 150);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testTooltip_InfotipTrueIDX.timeout = 30000;
 
     this.testTooltip_InfotipFalseIDX = function (signalTestCaseCompleted) {
         testTooltip_Infotip(signalTestCaseCompleted, false, false, 1000, 150);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testTooltip_InfotipFalseIDX.timeout = 30000;
 
     this.testTooltip_InfotipTrueUsingTouchIDX = function (signalTestCaseCompleted) {
         testTooltip_Infotip(signalTestCaseCompleted, true, true, 1000, 150);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testTooltip_InfotipTrueUsingTouchIDX.timeout = 30000;
 
     this.testTooltip_InfotipFalseUsingTouchIDX = function (signalTestCaseCompleted) {
         testTooltip_Infotip(signalTestCaseCompleted, false, true, 1000, 150);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     this.testTooltip_InfotipFalseUsingTouchIDX.timeout = 30000;
 };
 

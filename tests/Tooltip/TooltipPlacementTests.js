@@ -22,8 +22,8 @@ TooltipPlacementTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function (complete) {
-        tooltipUtils.setUp().then(complete);
+    this.setUp = function () {
+        tooltipUtils.setUp();
     };
 
     this.tearDown = function () {
@@ -79,343 +79,343 @@ TooltipPlacementTests = function () {
     this.testTooltip_PlacementCenterTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "center", "top", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementCenterRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "center", "right", "right");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementCenterBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "center", "bottom", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementCenterLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "center", "left", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Element at the top
 
     this.testTooltip_PlacementTopTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top", "top", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top", "right", "right");
     };
 
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top", "bottom", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top", "left", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Element at the top right
 
     this.testTooltip_PlacementTopRightTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top right", "top", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopRightRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top right", "right", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopRightBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top right", "bottom", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopRightLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top right", "left", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Element at the right
 
     this.testTooltip_PlacementRightTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "right", "top", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementRightRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "right", "right", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementRightBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "right", "bottom", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementRightLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "right", "left", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Element at the bottom right
 
     this.testTooltip_PlacementBottomRightTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom right", "top", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomRightRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom right", "right", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomRightBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom right", "bottom", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomRightLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom right", "left", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Element at the bottom
 
     this.testTooltip_PlacementBottomTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom", "top", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom", "right", "right");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom", "bottom", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom", "left", "left");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Element at the bottom left
 
     this.testTooltip_PlacementBottomLeftTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom left", "top", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomLeftRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom left", "right", "right");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomLeftBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom left", "bottom", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementBottomLeftLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "bottom left", "left", "right");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Element at the left
 
     this.testTooltip_PlacementLeftTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "left", "top", "top");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementLeftRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "left", "right", "right");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementLeftBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "left", "bottom", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementLeftLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "left", "left", "right");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Element at the top left
 
     this.testTooltip_PlacementTopLeftTop = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top left", "top", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopLeftRight = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top left", "right", "right");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopLeftBottom = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top left", "bottom", "bottom");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_PlacementTopLeftLeft = function (signalTestCaseCompleted) {
         testTooltip_VerifyPlacement(signalTestCaseCompleted, "top left", "left", "right");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
 };
 

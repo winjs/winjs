@@ -28,7 +28,7 @@ TooltipUtils.prototype = (function () {
         TIMEOUT_DIDNT_RECEIVE_EVENTS: 30000,
         pointerOutSupported: window.PointerEvent || window.MSPointerEvent,
         pointerOverSupported: window.PointerEvent || window.MSPointerEvent,
-        
+
         //-----------------------------------------------------------------------------------
         // Default/constant values for tooltip.  We could get these dynamically from the tooltip, but
         // we don't want to in case there's a bug in the tooltip (this would be rare).  The downside
@@ -60,7 +60,7 @@ TooltipUtils.prototype = (function () {
             ///  String specifying id of element to create.
             /// </param>
             LiveUnit.LoggingCore.logComment("In setup");
-            
+
             // Create a default "anchor/trigger" element the tooltip will be attached to
             // and give it a border and default text so it's easier to see when visually
             // watching the tests.
@@ -75,8 +75,6 @@ TooltipUtils.prototype = (function () {
             commonUtils.addTag("span", "temp");
             var element = document.getElementById("temp");
             element.tabIndex = "1";
-            
-            return WinJS.Promise.wrap();
         },
 
         //-----------------------------------------------------------------------------------

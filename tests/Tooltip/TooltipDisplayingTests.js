@@ -21,8 +21,8 @@ TooltipDisplayingTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function (complete) {
-        tooltipUtils.setUp().then(complete);
+    this.setUp = function () {
+        tooltipUtils.setUp();
     };
 
     this.tearDown = function () {
@@ -69,11 +69,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyTitleAttributeAfter = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -139,11 +139,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyCustomizationInnerHTML = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -194,11 +194,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyDefaultStyles = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -264,11 +264,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyPhantomDiv = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -333,11 +333,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyCustomizationStyles = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -395,11 +395,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyExtraClass = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -440,11 +440,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyExtraClassRemoved = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -494,11 +494,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     function testTooltip_VerifyEvents(signalTestCaseCompleted, howAddEventListeners) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -593,20 +593,20 @@ TooltipDisplayingTests = function () {
     this.testTooltip_VerifyEvents = function (signalTestCaseCompleted) {
         testTooltip_VerifyEvents(signalTestCaseCompleted, "normal");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyOnEvents = function (signalTestCaseCompleted) {
         testTooltip_VerifyEvents(signalTestCaseCompleted, "on");
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyAnchorContainingChild = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -663,11 +663,11 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_VerifyNullInnerHTML = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -727,8 +727,8 @@ TooltipDisplayingTests = function () {
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
-    
-    
+
+
     this.testTooltip_VerifyFocusDoesntDisplayTooltip = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
 
@@ -780,13 +780,13 @@ TooltipDisplayingTests = function () {
         LiveUnit.Assert.areEqual(closed, 0);
         signalTestCaseCompleted();
     };
-    
-    
-    
-    
-    
 
-    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved = function (signalTestCaseCompleted) {        
+
+
+
+
+
+    this.testTooltip_VerifyTooltipDisappearsWhenAnchorRemoved = function (signalTestCaseCompleted) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
 
         // Set up the anchor/trigger element.
@@ -805,7 +805,7 @@ TooltipDisplayingTests = function () {
             // let open fire
             callback();
             LiveUnit.Assert.isFalse(tooltipUtils.isTooltipFullyVisible(tooltip));
-            
+
 
         }
 

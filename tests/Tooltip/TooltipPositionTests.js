@@ -27,7 +27,7 @@ TooltipPositionTests = function () {
     // Since distances can be off due to rounding errors, use this tolerance for our comparisons.
     var DISTANCE_TOLERANCE = 1;
 
-    this.setUp = function (complete) {
+    this.setUp = function () {
         // Add a sibling element before our element.  This helps us test static positioning.
         commonUtils.addTag("div", "siblingBeforeElement");
         var siblingBeforeElement = document.getElementById("siblingBeforeElement");
@@ -35,28 +35,43 @@ TooltipPositionTests = function () {
         // Add a parent element.  This helps us with scrolling the anchor element when inside a <span>
         commonUtils.addTag("span", "parentElement");
         var parentElement = document.getElementById("parentElement");
-        var cssReady = tooltipUtils.setUp();
+        parentElement.style.backgroundColor = "Blue";
+        tooltipUtils.setUp();
         // Move the anchor element beneath a <span> so we can test scrolling the <span>
         var span1 = document.createElement("span");
         span1.innerHTML = "AAAAAAA BBBBBBB CCCCCCC DDDDDD";
         parentElement.appendChild(span1);
 
-        var element = commonUtils.removeElementById(tooltipUtils.defaultElementID);
+        var element = document.getElementById(tooltipUtils.defaultElementID);
+        commonUtils.removeElementById(tooltipUtils.defaultElementID);
+        element.textContent = "e";
         parentElement.appendChild(element);
 
         var span2 = document.createElement("span");
         span2.innerHTML = "EEEEE FFFFFF GGGGGG HHHHHHH";
         parentElement.appendChild(span2);
 
+        // Make each child element progressively larger, to ensure they can scroll.
+        document.documentElement.style.overflow = "scroll";
+        document.documentElement.style.width = (window.innerWidth + 200) + "px";
+        document.documentElement.style.height = (window.innerHeight + 200) + "px";
+        document.body.style.overflow = "scroll";
+        document.body.style.width = (window.innerWidth + 400) + "px";
+        document.body.style.height = (window.innerHeight + 400) + "px";
+
         // Add a sibling element after our element.  This helps us make our <body> scrollable if needed.
         commonUtils.addTag("div", "siblingAfterElement");
         var siblingAfterElement = document.getElementById("siblingAfterElement");
         siblingAfterElement.innerHTML = "siblingAfterElement";
-        
-        cssReady.then(complete);
+        siblingAfterElement.style.backgroundColor = "Gray";
+        siblingAfterElement.style.width = (window.innerWidth + 600) + "px";
+        siblingAfterElement.style.height = (window.innerHeight + 600) + "px";
+
     };
 
     this.tearDown = function () {
+        var element = document.getElementById(tooltipUtils.defaultElementID);
+        element.winControl.dispose();
         commonUtils.removeElementById("siblingBeforeElement");
         tooltipUtils.cleanUp();
         commonUtils.removeElementById("parentElement");
@@ -74,39 +89,24 @@ TooltipPositionTests = function () {
 
         // Set up the anchor/trigger element.
         var element = document.getElementById(tooltipUtils.defaultElementID);
-        element.innerHTML = "e";
 
-        // Colorize some of the elements so they're easier to see.
-        var siblingElement = commonUtils.getElementById("siblingAfterElement");
         var parentElement = document.getElementById("parentElement");
-        parentElement.style.backgroundColor = "Blue";
-        siblingElement.style.backgroundColor = "Gray";
 
-        // Make each child element progressively larger, to ensure they can scroll.
-        document.documentElement.style.overflow = "scroll";
-        document.documentElement.style.width = (window.innerWidth + 200) + "px";
-        document.documentElement.style.height = (window.innerHeight + 200) + "px";
-        document.body.style.overflow = "scroll";
-        document.body.style.width = (window.innerWidth + 400) + "px";
-        document.body.style.height = (window.innerHeight + 400) + "px";
-        siblingElement.style.width = (window.innerWidth + 600) + "px";
-        siblingElement.style.height = (window.innerHeight + 600) + "px";
-
-        if (scrollThe.indexOf("html") != -1) {
+        if (scrollThe === "html") {
             window.scrollTo(25, 25);
         }
         else {
             window.scrollTo(0, 0);
         }
 
-        if (scrollThe.indexOf("body") != -1) {
+        if (scrollThe === "body") {
             WinJS.Utilities.setScrollPosition(document.body, { scrollLeft: 25, scrollTop: 25 });
         }
         else {
             WinJS.Utilities.setScrollPosition(document.body, { scrollLeft: 0, scrollTop: 0 });
         }
 
-        if (scrollThe.indexOf("parent") != -1) {
+        if (scrollThe === "parent") {
             parentElement.style.width = "100px";
             parentElement.style.height = "100px";
             parentElement.style.top = "100px";
@@ -188,7 +188,7 @@ TooltipPositionTests = function () {
     Helper.pairwise({
         elementPosition: ['absolute', 'fixed', 'relative', 'static'],
         parentPosition: ['static', 'absolute'],
-        scrollThe: ['none', 'body', 'html' ,'parent', 'none'],
+        scrollThe: ['none', 'body', 'html' ,'parent'],
         inputMethod: ['mouse', 'mouseoverProgrammatic', 'keyboard']
     }).forEach(function(testCase) {
 
@@ -205,8 +205,9 @@ TooltipPositionTests = function () {
         }
 
     });
-    
+
 };
+
 
 // Register the object as a test class by passing in the name
 LiveUnit.registerTestClass("TooltipPositionTests");

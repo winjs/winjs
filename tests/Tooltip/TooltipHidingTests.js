@@ -23,8 +23,8 @@ TooltipHidingTests = function () {
     var commonUtils = new CommonUtils();
     var Key = WinJS.Utilities.Key;
 
-    this.setUp = function (complete) {
-        tooltipUtils.setUp().then(complete);
+    this.setUp = function () {
+        tooltipUtils.setUp();
     };
 
     this.tearDown = function () {
@@ -39,7 +39,7 @@ TooltipHidingTests = function () {
             signalTestCaseCompleted();
             return;
         }
-        
+
         LiveUnit.LoggingCore.logComment("When the tooltip is triggered by:  " + inputMethod);
         LiveUnit.LoggingCore.logComment("And the following event is fired:  " + hideMethod);
         LiveUnit.LoggingCore.logComment("We expect the tooltip to hide: " + shouldHide);
@@ -57,7 +57,7 @@ TooltipHidingTests = function () {
             callback();
         }
 
-        
+
 
         var openedTime;
         var beforecloseTime;
@@ -147,402 +147,402 @@ TooltipHidingTests = function () {
     this.testTooltip_Mouse_Blur = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "blur", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "close", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseDown", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseOut", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "mouseUp", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "shiftTab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "tab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchCancel", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouse_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouse", "touchUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
 
     this.testTooltip_Touch_Blur = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "blur", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "close", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "mouseUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "shiftTab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "tab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchCancel", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchOut", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touch", "touchUp", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
 
     this.testTooltip_Keyboard_Blur = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "blur", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_Close = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "close", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_MouseDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_MouseOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_MouseUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "mouseUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_ShiftTab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "shiftTab", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_Tab = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "tab", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_TouchCancel = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchCancel", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_TouchDown = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_TouchOut = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_TouchUp = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboard", "touchUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // Programmaticly opening the tooltip.
 
     this.testTooltip_Mouseover_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "blur", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "close", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "mouseUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "shiftTab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "tab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchCancel", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mouseover_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mouseoverProgrammatic", "touchUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     // We could have a large set of cases for _Mousedown_ but it's basically the same as _Default_
     // so just cover a few cases.
@@ -550,319 +550,319 @@ TooltipHidingTests = function () {
     this.testTooltip_Mousedown_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mousedownProgrammatic", "close", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Mousedown_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "mousedownProgrammatic", "mouseUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "blur", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "close", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "mouseUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "shiftTab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "tab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchCancel", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.xtestTooltip_Default_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Default_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "defaultProgrammatic", "touchUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
 
     this.testTooltip_Touch_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "blur", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "close", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "mouseUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "shiftTab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "tab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchCancel", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Touch_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "touchProgrammatic", "touchUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
 
     this.testTooltip_Keyboard_Blur_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "blur", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_Close_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "close", true);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_MouseDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_MouseOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_MouseUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "mouseUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_ShiftTab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "shiftTab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_Tab_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "tab", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_TouchCancel_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchCancel", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_TouchDown_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchDown", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_TouchOut_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchOut", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
     this.testTooltip_Keyboard_TouchUp_Programmatic = function (signalTestCaseCompleted) {
         testTooltip_Hiding(signalTestCaseCompleted, "keyboardProgrammatic", "touchUp", false);
     };
-    
-    
-    
-    
-    
+
+
+
+
+
 
 };
 

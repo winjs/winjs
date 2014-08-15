@@ -21,8 +21,8 @@ TooltipAccessibilityTests = function () {
     var tooltipUtils = new TooltipUtils();
     var commonUtils = new CommonUtils();
 
-    this.setUp = function (complete) {
-        tooltipUtils.setUp().then(complete);
+    this.setUp = function () {
+        tooltipUtils.setUp();
     };
 
     this.tearDown = function () {
@@ -98,11 +98,11 @@ TooltipAccessibilityTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     };
 
-    
-    
-    
-    
-    
+
+
+
+
+
 };
 
 // Register the object as a test class by passing in the name
