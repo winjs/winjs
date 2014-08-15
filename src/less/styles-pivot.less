@@ -50,8 +50,10 @@
         margin: 12px 0 -8px 18px;
     }
 
-    .win-pivot-title:-ms-lang(@{rtl}) {
-        margin: 12px 18px -8px 0;
+    .win-pivot-title {
+        .RTL({
+            margin: 12px 18px -8px 0;
+        });
     }
 
     & > .win-pivot-item {

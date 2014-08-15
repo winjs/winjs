@@ -58,8 +58,10 @@ button.win-command {
     writing-mode: lr-tb;
 }
 
-button.win-command:-ms-lang(@{rtl}) {
-    writing-mode: rl-tb;
+button {
+    .RTL({
+        writing-mode: rl-tb;
+    });
 }
 
 button.win-command:focus {
@@ -202,9 +204,11 @@ hr.win-command {
     vertical-align: top;
 }
 
-hr.win-command:-ms-lang(@{rtl}) {
-    margin-left: 29px;
-    margin-right: 30px;
+hr.win-command {
+    .RTL({
+        margin-left: 29px;
+        margin-right: 30px;
+    });
 }
 
 /*
@@ -225,8 +229,10 @@ div.win-command {
     writing-mode: lr-tb;
 }
 
-div.win-command:-ms-lang(@{rtl}) {
-    writing-mode: rl-tb;
+div.win-command {
+    .RTL({
+        writing-mode: rl-tb;
+    });
 }
 
 div.win-command:focus {
@@ -295,28 +301,28 @@ AppBar
     }
 
     &.win-bottom {
-        .win-appbar-invokebutton, 
+        .win-appbar-invokebutton,
         .win-appbar-ellipsis {
             top: 0px;
         }
 
         .win-appbar-ellipsis::before {
             /* Necessary to adjust vertical position of Ellipsis Glyph in bottom AppBar so that the top of the 3 ellipsis dots are drawn ~10px away from the top of the AppBar.
-               This is to appear consistent with where the top of the win-commnandring element in an AppBarCommand button is drawn, also 10px away from the top of the AppBar. 
+               This is to appear consistent with where the top of the win-commnandring element in an AppBarCommand button is drawn, also 10px away from the top of the AppBar.
                This value is dependant on the font-size of the Ellipsis Glyph being 19px and the height of the parent element being 21px */
             top: -3px;
         }
     }
 
     &.win-top {
-        .win-appbar-invokebutton, 
+        .win-appbar-invokebutton,
         .win-appbar-ellipsis {
             bottom: 0px;
         }
-        
+
         .win-appbar-ellipsis::before {
             /* Necessary to adjust vertical position of Ellipsis Glyph in top AppBar so that the botom of the 3 ellipsis dots are drawn ~10px away from the bottom of the AppBar.
-               This is to appear consistent with where the bottom of the win-label in an AppBarCommand button is drawn, also 10px away from the bottom of the AppBar. 
+               This is to appear consistent with where the bottom of the win-label in an AppBarCommand button is drawn, also 10px away from the bottom of the AppBar.
                This value is dependant on the font-size of the Ellipsis Glyph being 19px and the height of the parent element being 21px */
             bottom: 2px;
         }
@@ -374,16 +380,16 @@ AppBar commands layout
 }
 
 /* CommandsLayout RTL */
-.win-commandlayout:-ms-lang(@{rtl}) {
-    #flex > .flex-direction(row-reverse);
-
-    .win-primarygroup {
-    #flex > .flex-direction(row-reverse);
-}
-
-    .win-secondarygroup {
-    #flex > .flex-direction(row-reverse);
-}
+.win-commandlayout {
+    .RTL({
+        #flex > .flex-direction(row-reverse);
+        .win-primarygroup {
+            #flex > .flex-direction(row-reverse);
+        }
+        .win-secondarygroup {
+            #flex > .flex-direction(row-reverse);
+        }
+    });
 }
 
 /* Narrow buttons and no labels */
@@ -406,9 +412,11 @@ AppBar commands layout
     margin-right: 9px;
 }
 
-    .win-reduced hr.win-command:-ms-lang(@{rtl}) {
-    margin-left: 9px;
-    margin-right: 10px;
+.win-reduced hr.win-command {
+    .RTL({
+        margin-left: 9px;
+        margin-right: 10px;
+    });
 }
 
 /* Narrow Content Commands */
@@ -548,8 +556,11 @@ Menu control.
     max-width: none;
 }
 
-.win-menu:-ms-lang(@{rtl}) {
-    text-align: right; /* Set explicitly in case our parent has different alignment, like appbar overflow. */
+.win-menu {
+    /* Set explicitly in case our parent has different alignment, like appbar overflow. */
+    .RTL({
+        text-align: right;
+    });
 }
 
 /*
@@ -567,8 +578,10 @@ Menu commands.
     .win-type-large-internal(@lineHeight: 18px); /* 40px - 10px top padding - 12px bottom padding */
 }
 
-.win-menu button.win-command:-ms-lang(@{rtl}) {
-    text-align: right;
+.win-menu button.win-command {
+    .RTL({
+        text-align: right;
+    });
 }
 
 .win-menu button.win-command:focus {
@@ -600,10 +613,14 @@ Menu toggle buttons.
     visibility: visible;
 }
 
-.win-menu-toggle button.win-command:-ms-lang(@{rtl})::before {
-    padding-right: 0;
-    padding-left: 10px;
-    float: right;
+.win-menu-toggle button.win-command {
+    .RTL({
+        &::before {
+            padding-right: 0;
+            padding-left: 10px;
+            float: right;
+        }
+    });
 }
 
 /*
@@ -654,9 +671,11 @@ Settings Pane
     width: 345px; /* 346px - border (1px) */
 }
 
-.win-settingsflyout:-ms-lang(@{rtl}) {
-    border-left: none;
-    border-right: 1px solid;
+.win-settingsflyout {
+    .RTL({
+        border-left: none;
+        border-right: 1px solid;
+    });
 }
 
 .win-settingsflyout.win-wide { /* .win-wide is deprecated in Windows 8.1 */
@@ -698,16 +717,20 @@ Settings Pane
     .win-type-x-large-internal(normal);
 }
 
-.win-settingsflyout:-ms-lang(@{rtl}) {
-    right: auto;
-    left: 0;
-    border-left: none;
-    border-right: 1px solid;
+.win-settingsflyout {
+    .RTL({
+        right: auto;
+        left: 0;
+        border-left: none;
+        border-right: 1px solid;
+    });
 }
 
-.win-settingsflyout .win-header .win-label:-ms-lang(@{rtl}) {
-    padding-right: 40px;
-    padding-left: 0;
+.win-settingsflyout .win-header .win-label {
+    .RTL({
+        padding-right: 40px;
+        padding-left: 0;
+    });
 }
 
 .win-settingsflyout .win-content .win-settings-section {
@@ -754,28 +777,15 @@ Settings Pane
     padding-bottom: 15px;
 }
 
-.win-settingsflyout .win-content .win-settings-section button:-ms-lang(@{rtl}) {
-    margin-bottom: 25px;
-    margin-left: 20px;
-    margin-right: 0;
-}
-
-.win-settingsflyout .win-content .win-settings-section select:-ms-lang(@{rtl}) {
-    margin-bottom: 25px;
-    margin-left: 20px;
-    margin-right: 0;
-}
-
-.win-settingsflyout .win-content .win-settings-section input[type=text]:-ms-lang(@{rtl}) {
-    margin-bottom: 25px;
-    margin-left: 20px;
-    margin-right: 0;
-}
-
-.win-settingsflyout .win-content .win-settings-section input[type=button]:-ms-lang(@{rtl}) {
-    margin-bottom: 25px;
-    margin-left: 20px;
-    margin-right: 0;
+.win-settingsflyout .win-content .win-settings-section button,
+.win-settingsflyout .win-content .win-settings-section select,
+.win-settingsflyout .win-content .win-settings-section input[type=text],
+.win-settingsflyout .win-content .win-settings-section input[type=button] {
+    .RTL({
+        margin-bottom: 25px;
+        margin-left: 20px;
+        margin-right: 0;
+    });
 }
 
 /*Flyout control animations*/

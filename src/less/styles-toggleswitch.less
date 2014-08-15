@@ -147,8 +147,8 @@
 
     .rtlDependentStyles(false);
 
-    &:-ms-lang(@{rtl}) {
+    .RTL({
         direction: rtl;
         .rtlDependentStyles(true);
-    }
+    });
 }

@@ -41,6 +41,25 @@
     src: local("Microsoft JhengHei UI Bold");
 }
 
+// RTL mixin definition
+.RTL(@rules) {
+    &:lang(ar),
+    &:lang(dv),
+    &:lang(fa),
+    &:lang(he),
+    &:lang(ku-Arab),
+    &:lang(pa-Arab),
+    &:lang(prs),
+    &:lang(ps),
+    &:lang(sd-Arab),
+    &:lang(syr),
+    &:lang(ug),
+    &:lang(ur),
+    &:lang(qps-plocm) {
+        @rules();
+    }
+}
+
 // Mixin defines for the -ms-lang string per each supported language
 // The mixin with the matching string parameter will be used
 .getLanguageString("Ebrima") {

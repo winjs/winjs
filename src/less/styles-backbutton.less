@@ -41,9 +41,13 @@ html.win-hoverable .win-backbutton:hover, .win-backbutton:hover:active {
     vertical-align: 50%;
 }
 
-.win-backbutton:-ms-lang(@{rtl})::before, .win-back:-ms-lang(@{rtl})::before {
-    content: "\E0AE";
-}
+.RTL({
+    .win-backbutton&::before,
+    .win-back&::before {
+        content: "\E0AE";
+    }
+});
+
 .win-backbutton:disabled, .win-backbutton:disabled:active,
 .win-navigation-backbutton:disabled, .win-navigation-backbutton:disabled:active {
     visibility: hidden;

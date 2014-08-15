@@ -129,9 +129,11 @@
     #flex > .align-items(center);
     #flex > .justify-content(center);
 }
-.win-navbarcommand-icon:-ms-lang(@{rtl}) {
-    margin-right: 0;
-    margin-left: 10px;
+.win-navbarcommand-icon {
+    .RTL({
+        margin-right: 0;
+        margin-left: 10px;
+    });
 }
 .win-navbarcommand-label {
     #flex > .flex(@grow: 1);
@@ -152,9 +154,11 @@
     margin-left: 2px;
     position: relative;
 }
-.win-navbarcommand-splitbutton:-ms-lang(@{rtl}) {
-    margin-left: 0;
-    margin-right: 2px;
+.win-navbarcommand-splitbutton {
+    .RTL({
+        margin-left: 0;
+        margin-right: 2px;
+    });
 }
 .win-navbarcommand-splitbutton::before {
     content: '\E019';
