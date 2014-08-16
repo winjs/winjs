@@ -47,33 +47,41 @@ define([
     // perform insertions in a predictable location s.t. if we were to apply another sorted projection
     // over the same list (now containing the inserted data) the resulting order would be the same.
     //
-    function mergeSort(m, sorter) {
-        var length = m.length;
-        if (length <= 1) {
-            return m;
-        }
-        var middle = (length / 2) >>> 0;
-        var left = mergeSort(m.slice(0, middle), sorter);
-        var right = mergeSort(m.slice(middle), sorter);
-        return merge(left, right, sorter);
-    }
-    function merge(left, right, sorter) {
-        var result = [];
-        while (left.length && right.length) {
-            var r = sorter(left[0], right[0]);
-            if (r <= 0) {
-                result.push(left.shift());
-            } else {
-                result.push(right.shift());
+    function mergeSort(arr, sorter) {
+        var temp = new Array(arr.length);
+
+        function copyBack(start, end) {
+            for (; start < end; start++) {
+                arr[start] = temp[start];
             }
         }
-        if (left.length) {
-            result.push.apply(result, left);
+
+        function sort(start, end) {
+            if ((end - start) < 2) {
+                return;
+            }
+            var middle = Math.floor((end + start) / 2);
+            sort(start, middle);
+            sort(middle, end);
+            merge(start, middle, end);
+            copyBack(start, end);
         }
-        if (right.length) {
-            result.push.apply(result, right);
+
+        function merge(start, middle, end) {
+            for (var left = start, right = middle, i = start; i < end; i++) {
+                if (left < middle && (right >= end || sorter(arr[left], arr[right]) <= 0)) {
+                    temp[i] = arr[left];
+                    left++;
+                } else {
+                    temp[i] = arr[right];
+                    right++;
+                }
+            }
         }
-        return result;
+
+        sort(0, arr.length);
+
+        return arr;
     }
 
     // Private namespace used for local lazily init'd classes
