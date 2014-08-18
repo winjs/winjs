@@ -1,4 +1,8 @@
 {
+    "additionalRules": [
+        "tasks/utilities/disallow-direct-pointer-events.js"
+    ],
+    "disallowDirectPointerEvents": true,
     "requireCurlyBraces": [
         "if",
         "else",

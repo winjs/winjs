@@ -478,7 +478,7 @@ define([
                     //register the appropriate events for display the sezo button
                     this._sezoButton.addEventListener("click", this._onSeZoButtonZoomOutClick.bind(this), false);
                     this._element.addEventListener("scroll", this._onSeZoChildrenScroll.bind(this), true);
-                    this._element.addEventListener("pointermove", this._onPenHover.bind(this), false);
+                    _ElementUtilities._addEventListener(this._element, "pointermove", this._onPenHover.bind(this), false);
                 },
 
                 _removeSemanticZoomButton: function () {

@@ -32,13 +32,13 @@ define([
         function hookUpBackButtonGlobalEventHandlers() {
             // Subscribes to global events on the window object
             _Global.addEventListener('keyup', backButtonGlobalKeyUpHandler, false);
-            _Global.addEventListener('pointerup', backButtonGlobalMSPointerUpHandler, false);
+            _ElementUtilities._addEventListener(_Global, 'pointerup', backButtonGlobalMSPointerUpHandler, false);
         }
 
         function unHookBackButtonGlobalEventHandlers() {
             // Unsubscribes from global events on the window object
             _Global.removeEventListener('keyup', backButtonGlobalKeyUpHandler, false);
-            _Global.removeEventListener('pointerup', backButtonGlobalMSPointerUpHandler, false);
+            _ElementUtilities._removeEventListener(_Global, 'pointerup', backButtonGlobalMSPointerUpHandler, false);
         }
 
         function backButtonGlobalKeyUpHandler(event) {

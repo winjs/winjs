@@ -138,8 +138,8 @@ define([
                     }
                     this._disposed = true;
                     this._gestureRecognizer = null;
-                    _Global.removeEventListener("pointerup", this._resetPointerDownStateBound);
-                    _Global.removeEventListener("pointercancel", this._resetPointerDownStateBound);
+                    _ElementUtilities._removeEventListener(_Global, "pointerup", this._resetPointerDownStateBound);
+                    _ElementUtilities._removeEventListener(_Global, "pointercancel", this._resetPointerDownStateBound);
                 },
 
                 onMSManipulationStateChanged: function ItemEventsHandler_onMSManipulationStateChanged(eventObject) {
@@ -806,8 +806,8 @@ define([
                         this._endSwipeBehavior();
                     }
                     this._site.pressedElement = null;
-                    _Global.removeEventListener("pointerup", this._resetPointerDownStateBound);
-                    _Global.removeEventListener("pointercancel", this._resetPointerDownStateBound);
+                    _ElementUtilities._removeEventListener(_Global, "pointerup", this._resetPointerDownStateBound);
+                    _ElementUtilities._removeEventListener(_Global, "pointercancel", this._resetPointerDownStateBound);
 
                     this._resetPressedContainer();
 
