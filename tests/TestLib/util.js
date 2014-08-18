@@ -336,9 +336,10 @@ var Helper;
     Helper.Browser = {
         // Taken from ListView's CSS grid feature detection
         supportsCSSGrid: !!("-ms-grid-row" in document.documentElement.style),
-        
+
         // Temporary for disabling tests outside of IE11
-        isIE11: "PointerEvent" in window
+        isIE11: "PointerEvent" in window,
+        isIE10: navigator.appVersion.indexOf("MSIE 10") !== -1
     };
 
     // Returns the group key for an item as defined by createData() below
@@ -527,7 +528,7 @@ var Helper;
     // Useful for when you have a large number of configurations but don't want to
     // exhaustively test all unique combinations. This function takes an object that describes
     // all input parameters and their valid values, e.g.
-    // { rtl: [true, false], layout:['list', 'grid'] } 
+    // { rtl: [true, false], layout:['list', 'grid'] }
     // and returns an array of objects that describe test cases for each unique
     // pair combination of inputs, e.g.
     // [ {rtl: true, layout: 'list'}, {rtl: true, layout: 'grid'}, ...]

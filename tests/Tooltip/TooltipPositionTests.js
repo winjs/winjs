@@ -208,6 +208,8 @@ TooltipPositionTests = function () {
 
 };
 
-
-// Register the object as a test class by passing in the name
-LiveUnit.registerTestClass("TooltipPositionTests");
+// Saucelabs VMs hang on this test suite
+if(!Helper.Browser.isIE10) {
+    // Register the object as a test class by passing in the name
+    LiveUnit.registerTestClass("TooltipPositionTests");
+}
