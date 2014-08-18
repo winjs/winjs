@@ -76,10 +76,10 @@ define([
                 _resetPointer: function _WinPressed_resetPointer() {
                     this._pointerId = null;
 
-                    _Global.removeEventListener("pointerup", this._pointerUpBound, true);
-                    _Global.removeEventListener("pointercancel", this._pointerCancelBound, true);
-                    this._element.removeEventListener("pointerover", this._pointerOverBound, true);
-                    this._element.removeEventListener("pointerout", this._pointerOutBound, true);
+                    _ElementUtilities._removeEventListener(_Global, "pointerup", this._pointerUpBound, true);
+                    _ElementUtilities._removeEventListener(_Global, "pointercancel", this._pointerCancelBound, true);
+                    _ElementUtilities._removeEventListener(this._element, "pointerover", this._pointerOverBound, true);
+                    _ElementUtilities._removeEventListener(this._element, "pointerout", this._pointerOutBound, true);
 
                     _ElementUtilities.removeClass(this._element, WinPressed.winPressed);
                 },
