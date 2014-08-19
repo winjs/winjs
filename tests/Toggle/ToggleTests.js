@@ -96,7 +96,7 @@ WinJSTests.ToggleSwitchTests = function () {
             // Test that fill sizes update properly based on checked / rtl setting
             var fillLower = toggle.element.querySelector('.win-toggleswitch-fill-lower');
             var fillUpper = toggle.element.querySelector('.win-toggleswitch-fill-upper');
-            if (testCase.rtl && '-ms-flex' in document.documentElement.style) {
+            if (testCase.rtl) {
                 if (toggle.checked) {
                     LiveUnit.Assert.areEqual(0, fillLower.offsetWidth, 'Lower fill should be 0 width when checked in RTL');
                     LiveUnit.Assert.isTrue(fillUpper.offsetWidth > 0, 'Upper fill should be > 0 width when checked in RTL');
@@ -178,10 +178,9 @@ WinJSTests.ToggleSwitchTests = function () {
 
     this.testThumbDragToOtherSide = function testThumbDrag() {
         var container = document.querySelector('#toggleswitch-tests');
-        var testRTL = '-ms-flex' in document.documentElement.style;
 
         testCases.forEach(function (testCase) {
-            if (testCase.rtl && testRTL) {
+            if (testCase.rtl) {
                 container.setAttribute('lang', 'ar');
             }
 
@@ -193,7 +192,7 @@ WinJSTests.ToggleSwitchTests = function () {
 
             // Try dragging the thumb from one side to the other
             var direction = toggle.checked ? -1 : 1;
-            if (testCase.rtl && testRTL) {
+            if (testCase.rtl) {
                 direction *= -1;
             }
 
@@ -231,7 +230,7 @@ WinJSTests.ToggleSwitchTests = function () {
             }
 
             // Cleanup
-            if (testCase.rtl && testRTL) {
+            if (testCase.rtl) {
                 container.removeAttribute('lang');
             }
             container.removeChild(toggle.element);
