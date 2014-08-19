@@ -716,7 +716,7 @@ define([
                     _ElementUtilities.addClass(root, ClassName.searchBoxSuggestionQuery);
 
                     var that = this;
-                    root.addEventListener('click', function (ev) {
+                    _ElementUtilities._addEventListener(root, "pointerup", function (ev) {
                         that._inputElement.focus();
                         that._processSuggestionChosen(item, ev);
                     });
@@ -789,7 +789,7 @@ define([
                     _ElementUtilities.addClass(root, ClassName.searchBoxSuggestionResult);
 
                     var that = this;
-                    root.addEventListener('click', function (ev) {
+                    _ElementUtilities._addEventListener(root, "pointerup", function (ev) {
                         that._inputElement.focus();
                         that._processSuggestionChosen(item, ev);
                     });
