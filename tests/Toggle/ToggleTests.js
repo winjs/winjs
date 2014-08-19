@@ -96,7 +96,7 @@ WinJSTests.ToggleSwitchTests = function () {
             // Test that fill sizes update properly based on checked / rtl setting
             var fillLower = toggle.element.querySelector('.win-toggleswitch-fill-lower');
             var fillUpper = toggle.element.querySelector('.win-toggleswitch-fill-upper');
-            if (testCase.rtl && '-ms-flex' in document.documentElement.style) {
+            if (testCase.rtl) {
                 if (toggle.checked) {
                     LiveUnit.Assert.areEqual(0, fillLower.offsetWidth, 'Lower fill should be 0 width when checked in RTL');
                     LiveUnit.Assert.isTrue(fillUpper.offsetWidth > 0, 'Upper fill should be > 0 width when checked in RTL');
