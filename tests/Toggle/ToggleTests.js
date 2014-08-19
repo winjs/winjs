@@ -178,9 +178,10 @@ WinJSTests.ToggleSwitchTests = function () {
 
     this.testThumbDragToOtherSide = function testThumbDrag() {
         var container = document.querySelector('#toggleswitch-tests');
+        var testRTL = '-ms-flex' in document.documentElement.style;
 
         testCases.forEach(function (testCase) {
-            if (testCase.rtl) {
+            if (testCase.rtl && testRTL) {
                 container.setAttribute('lang', 'ar');
             }
 
@@ -192,7 +193,7 @@ WinJSTests.ToggleSwitchTests = function () {
 
             // Try dragging the thumb from one side to the other
             var direction = toggle.checked ? -1 : 1;
-            if (testCase.rtl) {
+            if (testCase.rtl && testRTL) {
                 direction *= -1;
             }
 
@@ -230,7 +231,7 @@ WinJSTests.ToggleSwitchTests = function () {
             }
 
             // Cleanup
-            if (testCase.rtl) {
+            if (testCase.rtl && testRTL) {
                 container.removeAttribute('lang');
             }
             container.removeChild(toggle.element);
