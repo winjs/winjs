@@ -6,8 +6,8 @@ before_script:
 - git submodule update --init --recursive
 script:
 - grunt release
-after_success: 
-- grunt saucelabs --force 
+after_success:
+- grunt saucelabs --force
 env:
   global:
   - SAUCE_USERNAME=winjs
@@ -16,4 +16,5 @@ env:
 branches:
   only:
   - master
+  - /^release\/.+$/
   - /^.*-runut$/
