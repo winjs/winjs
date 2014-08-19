@@ -742,8 +742,8 @@ SearchBoxTests.SearchBoxTests = function () {
             e.detail.searchSuggestionCollection.appendQuerySuggestion("Test query Suggestion1 test");
 
             waitForSuggestionFlyoutRender(searchBox).done(function () {
-                // Click on the first suggestion.
-                searchBox._repeater.elementFromIndex(0).click();
+                // Select the first suggestion.
+                CommonUtilities.touchUp(searchBox._repeater.elementFromIndex(0));
             });
         });
         searchBox._inputElement.value = "a";
@@ -761,8 +761,8 @@ SearchBoxTests.SearchBoxTests = function () {
             e.detail.searchSuggestionCollection.appendResultSuggestion("Test result Suggestion3 test", "Query suggestion3 detailed text", "tag3", WinJS.UI.SearchBox.createResultSuggestionImage("http://fakeurl"), "");
 
             waitForSuggestionFlyoutRender(searchBox).done(function () {
-                // Click on the first suggestion.
-                searchBox._repeater.elementFromIndex(0).click();
+                // Select the first suggestion.
+                CommonUtilities.touchUp(searchBox._repeater.elementFromIndex(0));
             });
         });
         searchBox._inputElement.value = "a";
