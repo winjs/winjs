@@ -269,6 +269,8 @@ AppBar
         border: none;
         min-width: 0px;
         display: none;
+        // Avoid hit detection issues with other non static positioned elements that may appear in a custom AppBar.
+        z-index: -1; 
 
         .win-appbar-ellipsis {
             width: 56px;
