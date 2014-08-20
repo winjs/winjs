@@ -222,6 +222,16 @@ define([
 
                 // Register event handlers
 
+                var initiallyParented = _Global.document.body.contains(this._element);
+                _ElementUtilities._addInsertedNotifier(this._element);
+                this._element.addEventListener("WinJSNodeInserted", function (event) {
+                    // WinJSNodeInserted fires even if the element is already in the DOM
+                    if (initiallyParented) {
+                        initiallyParented = false;
+                        return;
+                    }
+                    onSemanticZoomResize(event);
+                }, false);
                 this._element.addEventListener("mselementresize", onSemanticZoomResize);
                 _ElementUtilities._resizeNotifier.subscribe(this._element, onSemanticZoomResize);
                 new _ElementUtilities._MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
