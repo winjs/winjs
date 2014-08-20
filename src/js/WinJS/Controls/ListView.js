@@ -1550,6 +1550,17 @@ define([
                     this._onMSElementResizeBound = this._onMSElementResize.bind(this);
                     _ElementUtilities._resizeNotifier.subscribe(this._element, this._onMSElementResizeBound);
 
+                    var initiallyParented = _Global.document.body.contains(this._element);
+                    _ElementUtilities._addInsertedNotifier(this._element);
+                    this._element.addEventListener("WinJSNodeInserted", function (event) {
+                        // WinJSNodeInserted fires even if the element is already in the DOM
+                        if (initiallyParented) {
+                            initiallyParented = false;
+                            return;
+                        }
+                        that._onMSElementResizeBound(event);
+                    }, false);
+
                     var viewportEvents = [
                         listViewHandler("MSManipulationStateChanged", true),
                         listViewHandler("Scroll")
