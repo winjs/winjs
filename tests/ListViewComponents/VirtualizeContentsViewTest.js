@@ -77,9 +77,19 @@ WinJSTests.VirtualizedViewTests = function () {
         };
     }
 
+    function ensureResize() {
+        if(!canElementResize) {
+            WinJS.Utilities._resizeNotifier._handleResize();
+        }
+    }
+
     var testRootEl;
     var defaultChunkSize, defaultMaxTime, defaultPagesToPrefetch;
-    this.setUp = function () {
+
+    var canElementResize = null;
+
+    this.setUp = function (completed) {
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
 
@@ -95,6 +105,11 @@ WinJSTests.VirtualizedViewTests = function () {
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
         defaultDisableCustomPagesPrefetch = WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch;
         defaultIsiOS = WinJS.Utilities._isiOS;
+
+        CommonUtilities.detectMsElementResize(function(canResize) {
+            canElementResize = canResize;
+            completed();
+        });
     };
 
     this.tearDown = function () {
@@ -626,7 +641,7 @@ WinJSTests.VirtualizedViewTests = function () {
         });
     };
 
-    function validateFlatTree(listView, structureNodes, expectedItemsPerBlock) {
+    function validateFlatTree(listView, expectedItemsPerBlock) {
         expectedItemsPerBlock = expectedItemsPerBlock || STRUCTURENODE_SIZE;
 
         var containers;
@@ -634,7 +649,7 @@ WinJSTests.VirtualizedViewTests = function () {
         LiveUnit.Assert.areEqual(1, listView.element.querySelectorAll(".win-itemscontainer").length);
         LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll(".win-groupheadercontainer").length);
 
-        if (!structureNodes) {
+        if (!listView._view.tree[0].itemsContainer.itemsBlocks) {
             containers = listView.element.querySelectorAll(".win-container");
 
             LiveUnit.Assert.areEqual(listView.itemDataSource.list.length, containers.length);
@@ -652,7 +667,7 @@ WinJSTests.VirtualizedViewTests = function () {
                     LiveUnit.Assert.isFalse(utilities.hasClass(container, "win-selected"));
                 }
 
-                LiveUnit.Assert.isTrue(structureNodes || container === listView._view.tree[0].itemsContainer.items[i]);
+                LiveUnit.Assert.areEqual(container, listView._view.tree[0].itemsContainer.items[i]);
             }
 
             listView._view.finalItem().then(function (lastItem) {
@@ -761,11 +776,11 @@ WinJSTests.VirtualizedViewTests = function () {
         };
 
         verifyTreeUpdate(layout, function (listView) {
-            validateFlatTree(listView, true);
+            validateFlatTree(listView);
         }, complete);
     };
 
-    function validateGroupedTree(listView, structureNodes, expectedItemsPerBlock) {
+    function validateGroupedTree(listView, expectedItemsPerBlock) {
         expectedItemsPerBlock = expectedItemsPerBlock || STRUCTURENODE_SIZE;
 
         var containers,
@@ -775,7 +790,7 @@ WinJSTests.VirtualizedViewTests = function () {
         LiveUnit.Assert.areEqual(listView.groupDataSource.list.length, itemsContainers.length);
         LiveUnit.Assert.areEqual(listView.groupDataSource.list.length, headers.length);
 
-        if (!structureNodes) {
+        if (!listView._view.tree[0].itemsContainer.itemsBlocks) {
             containers = listView.element.querySelectorAll(".win-container");
 
             LiveUnit.Assert.areEqual(listView.itemDataSource.list.length, containers.length);
@@ -809,7 +824,7 @@ WinJSTests.VirtualizedViewTests = function () {
             LiveUnit.Assert.areEqual(prevElement.nextElementSibling, group.header);
             LiveUnit.Assert.areEqual(group.header.nextElementSibling, group.itemsContainer.element);
 
-            if (structureNodes) {
+            if (group.itemsContainer.itemsBlocks) {
                 var blocks = group.itemsContainer.itemsBlocks;
                 for (var j = 0; j < blocks.length; j++) {
                     var block = blocks[j];
@@ -932,7 +947,7 @@ WinJSTests.VirtualizedViewTests = function () {
         };
 
         verifyGroupedTreeUpdate(layout, function (listView) {
-            validateGroupedTree(listView, true);
+            validateGroupedTree(listView);
         }, complete);
     };
 
@@ -1190,60 +1205,62 @@ WinJSTests.VirtualizedViewTests = function () {
         var expectedItemsPerBlock = 6;
 
         var list = new WinJS.Binding.List(initData(30)),
-            groupedList = list.createGrouped(groupKey, groupData),
-            listView = new WinJS.UI.ListView(placeholder, {
-                itemDataSource: groupedList.dataSource,
-                groupDataSource: groupedList.groups.dataSource,
-                itemTemplate: generateRenderer("50px"),
-                groupHeaderTemplate: generateRenderer("50px"),
-                layout: Object.create({
-                    initialize: function (site, groups) {
-                        this.site = site;
-                        utilities.addClass(this.site.surface, "SimpleFlexBasedLayoutSurface");
-                        return "horizontal";
-                    },
-                    layout: function (tree) {
-                        for (var g = 0; g < tree.length; g++) {
-                            var group = tree[g];
-                            group.header.style.display = "none";
-                            utilities.addClass(group.itemsContainer.element, "SimpleFlexBasedLayout");
-                            var blocks = group.itemsContainer.itemsBlocks;
-                            for (var b = 0; b < blocks.length; b++) {
-                                var block = blocks[b];
-                                utilities.addClass(block.element, "SimpleFlexBasedLayout");
-                                LiveUnit.Assert.isTrue((b + 1) === blocks.length || (block.items.length === expectedItemsPerBlock));
-                            }
+        groupedList = list.createGrouped(groupKey, groupData),
+        listView = new WinJS.UI.ListView(placeholder, {
+            itemDataSource: groupedList.dataSource,
+            groupDataSource: groupedList.groups.dataSource,
+            itemTemplate: generateRenderer("50px"),
+            groupHeaderTemplate: generateRenderer("50px"),
+            layout: Object.create({
+                initialize: function (site, groups) {
+                    this.site = site;
+                    utilities.addClass(this.site.surface, "SimpleFlexBasedLayoutSurface");
+                    return "horizontal";
+                },
+                layout: function (tree) {
+                    for (var g = 0; g < tree.length; g++) {
+                        var group = tree[g];
+                        group.header.style.display = "none";
+                        utilities.addClass(group.itemsContainer.element, "SimpleFlexBasedLayout");
+                        var blocks = group.itemsContainer.itemsBlocks;
+                        for (var b = 0; b < blocks.length; b++) {
+                            var block = blocks[b];
+                            utilities.addClass(block.element, "SimpleFlexBasedLayout");
+                            LiveUnit.Assert.isTrue((b + 1) === blocks.length || (block.items.length === expectedItemsPerBlock));
                         }
                     }
-                }, {
-                    numberOfItemsPerItemsBlock: {
-                        get: function () {
-                            var retVal = Math.floor(this.site.viewportSize.height / 50);
-                            LiveUnit.Assert.areEqual(expectedItemsPerBlock, retVal);
-                            return retVal;
-                        }
+                }
+            }, {
+                numberOfItemsPerItemsBlock: {
+                    get: function () {
+                        var retVal = Math.floor(this.site.viewportSize.height / 50);
+                        LiveUnit.Assert.areEqual(expectedItemsPerBlock, retVal);
+                        return retVal;
                     }
-                })
-            });
+                }
+            })
+        });
 
-        return waitForReady(listView)().then(function () {
-            validateGroupedTree(listView, true, expectedItemsPerBlock);
+        waitForReady(listView)().then(function () {
+            validateGroupedTree(listView, expectedItemsPerBlock);
 
             listView._raiseViewLoading();
             placeholder.style.height = "530px";
+            ensureResize();
             expectedItemsPerBlock = 10;
 
             return waitForReady(listView, 50)();
         }).then(function () {
-            validateGroupedTree(listView, true, expectedItemsPerBlock);
+            validateGroupedTree(listView, expectedItemsPerBlock);
 
             listView._raiseViewLoading();
             placeholder.style.height = "430px";
+            ensureResize();
             expectedItemsPerBlock = 8;
 
             return waitForReady(listView, 50)();
-        }).then(function () {
-            validateGroupedTree(listView, true, expectedItemsPerBlock);
+        }).done(function () {
+            validateGroupedTree(listView, expectedItemsPerBlock);
 
             placeholder.parentNode.removeChild(placeholder);
 
@@ -1279,6 +1296,12 @@ WinJSTests.VirtualizedViewTests = function () {
             layout: new WinJS.UI.GridLayout()
         });
 
+        if(!listView.layout._usingStructuralNodes) {
+            placeholder.parentNode.removeChild(placeholder);
+            complete();
+            return;
+        }
+
         var jobNode;
         listView._view._scheduleLazyTreeCreation = function () {
             jobNode = Object.getPrototypeOf(listView._view)._scheduleLazyTreeCreation.call(listView._view);
@@ -1297,6 +1320,7 @@ WinJSTests.VirtualizedViewTests = function () {
             }
 
             placeholder.style.height = "280px";
+            ensureResize();
             listView._raiseViewLoading();
 
             return waitForReady(listView, -1)();
@@ -1312,9 +1336,9 @@ WinJSTests.VirtualizedViewTests = function () {
             jobNode.resume();
 
             return waitForAllContainers(listView);
-        }).then(function () {
+        }).done(function () {
 
-            validateGroupedTree(listView, true, WinJS.UI._LayoutCommon._barsPerItemsBlock * 2);
+            validateGroupedTree(listView, WinJS.UI._LayoutCommon._barsPerItemsBlock * 2);
 
             placeholder.parentNode.removeChild(placeholder);
 
@@ -1347,7 +1371,7 @@ WinJSTests.VirtualizedViewTests = function () {
         }
 
         function verifyStructuralNodesDisabled() {
-            validateGroupedTree(listView, false);
+            validateGroupedTree(listView);
             LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("." + WinJS.UI._itemsBlockClass).length,
                 "There shouldn't be any items blocks");
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(listView._canvas, WinJS.UI._structuralNodesClass),
@@ -1378,7 +1402,7 @@ WinJSTests.VirtualizedViewTests = function () {
                 },
                 function () {
                     // Now we have 2 groups (both uniform) so structural nodes should be enabled
-                    validateGroupedTree(listView, true, 12);
+                    validateGroupedTree(listView, 12);
                     LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(listView._canvas, WinJS.UI._structuralNodesClass),
                         "The surface should have the structuralnodes CSS class");
 
@@ -1396,6 +1420,12 @@ WinJSTests.VirtualizedViewTests = function () {
                 }
             ];
 
+        if(!listView.layout._usingStructuralNodes) {
+            placeholder.parentNode.removeChild(placeholder);
+            complete();
+            return;
+        }
+
         runTests(listView, tests);
     };
 
@@ -1406,7 +1436,7 @@ WinJSTests.VirtualizedViewTests = function () {
             LiveUnit.Assert.isTrue(placeholder.querySelectorAll("." + WinJS.UI._itemsBlockClass).length > 1,
                 "ListView must be using more than 1 items block in order for this test to verify that " +
                 "columns do not get split across items blocks during resize");
-            validateFlatTree(listView, true, WinJS.UI._LayoutCommon._barsPerItemsBlock * itemsPerColumn);
+            validateFlatTree(listView, WinJS.UI._LayoutCommon._barsPerItemsBlock * itemsPerColumn);
         }
 
         var list = new WinJS.Binding.List(initData(100)),
@@ -1422,6 +1452,7 @@ WinJSTests.VirtualizedViewTests = function () {
                     verifyTree();
 
                     placeholder.style.height = "400px";
+                    ensureResize();
                     // listView height = 400px, container height = 100px
                     itemsPerColumn = 4;
                     return true;
@@ -1433,6 +1464,12 @@ WinJSTests.VirtualizedViewTests = function () {
                     complete();
                 }
             ];
+
+        if(!listView.layout._usingStructuralNodes) {
+            placeholder.parentNode.removeChild(placeholder);
+            complete();
+            return;
+        }
 
         runTests(listView, tests);
     };
@@ -1471,7 +1508,7 @@ WinJSTests.VirtualizedViewTests = function () {
 
             return listView._view._creatingContainersWork ? listView._view._creatingContainersWork.promise : null;
         }).then(function () {
-            validateFlatTree(listView, true, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
+            validateFlatTree(listView, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
 
             LiveUnit.Assert.areEqual(1, stateChangeCounter.viewPortLoaded);
             LiveUnit.Assert.areEqual(1, stateChangeCounter.itemsLoaded);
@@ -1538,7 +1575,7 @@ WinJSTests.VirtualizedViewTests = function () {
 
             return listView._view._creatingContainersWork ? listView._view._creatingContainersWork.promise : null;
         }).then(function () {
-            validateFlatTree(listView, true, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
+            validateFlatTree(listView, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
 
             LiveUnit.Assert.isFalse(afterIdle);
             LiveUnit.Assert.areEqual(1, stateChangeCounter.viewPortLoaded);
@@ -1570,7 +1607,7 @@ WinJSTests.VirtualizedViewTests = function () {
         return waitForReady(listView)().then(function () {
             return listView._view._creatingContainersWork ? listView._view._creatingContainersWork.promise : null;
         }).then(function () {
-            validateGroupedTree(listView, true, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
+            validateGroupedTree(listView, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
 
             placeholder.parentNode.removeChild(placeholder);
             complete();
@@ -1675,7 +1712,7 @@ WinJSTests.VirtualizedViewTests = function () {
 
             LiveUnit.Assert.isFalse(result.state.canceled);
 
-            validateFlatTree(result.listView, true, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
+            validateFlatTree(result.listView, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
 
             result.listView.element.parentNode.removeChild(result.listView.element);
             result.listView._dispose();
@@ -1720,7 +1757,7 @@ WinJSTests.VirtualizedViewTests = function () {
         return waitForReady(listView)().then(function () {
             return listView._view._creatingContainersWork ? listView._view._creatingContainersWork.promise : null;
         }).then(function () {
-            validateGroupedTree(listView, true, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
+            validateGroupedTree(listView, WinJS.UI.ListLayout._numberOfItemsPerItemsBlock);
 
             placeholder.parentNode.removeChild(placeholder);
 
@@ -1732,6 +1769,10 @@ WinJSTests.VirtualizedViewTests = function () {
     // insertions occur before all of the containers have been created.
     // Regression test for WinBlue#427057.
     this.testInsertionsDuringLazyContainerCreation = function (complete) {
+        if (!Helper.Browser.supportsCSSGrid) {
+            complete();
+            return;
+        }
         WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
         initUnhandledErrors();
 
@@ -1850,11 +1891,6 @@ WinJSTests.VirtualizedViewTests = function () {
                 layout: structureNodes ? new WinJS.UI.ListLayout() : new WinJS.UI.CellSpanningLayout(cellSpanningOptions)
             });
 
-            if (!listView.layout._usingStructuralNodes && structureNodes) {
-                placeholder.parentNode.removeChild(placeholder);
-                complete();
-                return;
-            }
 
             listView._view._createChunkWithBlocks = function (groups, count, blockSize, chunkSize) {
                 Object.getPrototypeOf(listView._view)._createChunkWithBlocks.call(listView._view, groups, count, blockSize, chunkSize);
@@ -2734,6 +2770,10 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testBackdropClass = function (complete) {
+        if (!Helper.Browser.supportsCSSGrid) {
+            complete();
+            return;
+        }
         WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
         var placeholder = createListViewElement();
 
@@ -3986,6 +4026,13 @@ WinJSTests.VirtualizedViewTests = function () {
                 });
             }
         });
+
+        if(!listView.layout._usingStructuralNodes) {
+            VirtualizeContentsViewTestHost.removeChild(element);
+            complete();
+            return;
+        }
+
         listView.ensureVisible(20);
         waitForReady(listView)().then(function () {
             LiveUnit.Assert.areEqual(51, getNumberOfItemsRealized());
@@ -4444,7 +4491,8 @@ WinJSTests.VirtualizedViewTests = function () {
             };
 
             VirtualizeContentsViewTestHost.appendChild(wrapper);
-            WinJS.Utilities._setImmediate(function () {
+
+            waitForReady(zoomedIn, -1)().then(function () {
                 sezo.zoomedOut = true;
             });
         };
@@ -4526,7 +4574,7 @@ WinJSTests.VirtualizedViewTests = function () {
         });
     };
 
-    this.testGetAdjactentWait = function (complete) {
+    this.testGetAdjacentWait = function (complete) {
         var itemsCount = 300,
             list = new WinJS.Binding.List(initData(itemsCount));
 
@@ -4541,6 +4589,12 @@ WinJSTests.VirtualizedViewTests = function () {
             groupHeaderTemplate: generateRenderer("50px"),
             layout: new WinJS.UI.GridLayout()
         });
+
+        if(!listView.layout._usingStructuralNodes) {
+            placeholder.parentNode.removeChild(placeholder);
+            complete();
+            return;
+        }
 
         listView._view._createChunkWithBlocks = function (groups, count, blockSize, chunkSize) {
             Object.getPrototypeOf(listView._view)._createChunkWithBlocks.call(listView._view, groups, count, blockSize, chunkSize);
@@ -5159,6 +5213,12 @@ WinJSTests.VirtualizedViewTests = function () {
     };
 
     this.testUpdateContainersUpdatesToAffectedRange = function (complete) {
+
+        if (!Helper.Browser.supportsCSSGrid) {
+            complete();
+            return;
+        }
+
         initUnhandledErrors();
 
         var count = 20,
@@ -5292,27 +5352,26 @@ WinJSTests.VirtualizedViewTests = function () {
         });
     };
 
-    if (!Helper.Browser.isIE11) {
-        Helper.disableTest(this, "testAnimationDuringSezoZoomingAndchange");
-        Helper.disableTest(this, "testAnimationDuringSezoZoomingAndremove");
-        Helper.disableTest(this, "testBackdropClass");
-        Helper.disableTest(this, "testDeferContainerCreationUntilSeZoZoomCompletes");
-        Helper.disableTest(this, "testDeferUnrealizingUntilSeZoZoomCompletes");
-        Helper.disableTest(this, "testDeleteAnimationStartsBeforeUpdateTreeIsDone");
-        Helper.disableTest(this, "testEditsDuringLazyCreation");
-        Helper.disableTest(this, "testGetAdjactentWait");
-        Helper.disableTest(this, "testInsertionsDuringLazyContainerCreation");
-        Helper.disableTest(this, "testLazyFlatTreeCreation");
-        Helper.disableTest(this, "testLazyGroupedTreeCreationWithBigGroups");
-        Helper.disableTest(this, "testLazyGroupedTreeCreationWithSmallGroups");
-        Helper.disableTest(this, "testLazyTreeCreationPriority");
-        Helper.disableTest(this, "testRebuildingStructureNodesAfterResize");
-        Helper.disableTest(this, "testResizeDuringLazyTreeCreation");
-        Helper.disableTest(this, "testResizeWithStructuralNodes");
-        Helper.disableTest(this, "testStoppingLazyTreeCreation");
-        Helper.disableTest(this, "testTogglingStructuralNodesDueToEdits");
-        Helper.disableTest(this, "testUpdateContainersUpdatesToAffectedRange");
-    }
+    // Some browsers do not have good FlexBox behavior so we have to disable
+    // structure nodes.
+    this.testStructureNodesUsedWhenSupported = function (complete) {
+        var element = document.createElement("div");
+        element.style.width = "300px";
+        element.style.height = "300px";
+        VirtualizeContentsViewTestHost.appendChild(element);
+
+        var list = createBindingList(100);
+        var listView = new WinJS.UI.ListView(element, { layout: new WinJS.UI.GridLayout(), itemDataSource: list.dataSource, itemTemplate: fixedSizeTemplate });
+        waitForReady(listView)().then(function () {
+
+            var usingStructuralNodes = !!(listView._view.tree[0].itemsContainer.itemsBlocks);
+
+            LiveUnit.Assert.areEqual(usingStructuralNodes, listView.layout._usingStructuralNodes);
+
+            element.parentNode.removeChild(element);
+            complete();
+        });
+    };
 };
 
 // register the object as a test class by passing in the name
