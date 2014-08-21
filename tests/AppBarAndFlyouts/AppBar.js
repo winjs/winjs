@@ -1209,9 +1209,17 @@ CorsicaTests.AppBarTests = function () {
             failures = checkShouldBeDisplayNone(invokeButtonSubTree, false);
             LiveUnit.Assert.isFalse(failures.length, msg);
 
-            msg = "AppBar with 'minimal' closedDisplayMode should reserve right padding that matches the width of the invokeButton";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            LiveUnit.Assert.areEqual(invokeButtonWidth, parseInt(getComputedStyle(appBar).paddingRight), msg);
+            if (appBar.winControl.layout === _Constants.appBarLayoutCommands) {
+                msg = "AppBar with commands layout & 'minimal' closedDisplayMode should reserve right padding that matches the width of the invokeButton";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                LiveUnit.Assert.areEqual(invokeButtonWidth, parseInt(getComputedStyle(appBar).paddingRight), msg);
+            } else if (appBar.winControl.layout === _Constants.appBarLayoutCustom) {
+                msg = "AppBar with custom layout & 'minimal' closedDisplayMode should NOT reserve right padding for the invokeButton";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                LiveUnit.Assert.areNotEqual(invokeButtonWidth, parseInt(getComputedStyle(appBar).paddingRight), msg);
+            } else {
+                LiveUnit.Assert.fail("Test expects 'custom' or 'commands' layout AppBar");
+            }
         }
 
         function verifyNoInvokeButton(appBar) {
