@@ -393,7 +393,7 @@ define([
         },
 
         _now: function _now() {
-            return (_Global.performance && _Global.performance.now()) || Date.now();
+            return (_Global.performance && _Global.performance.now && _Global.performance.now()) || Date.now();
         },
 
         _traceAsyncOperationStarting: _Trace._traceAsyncOperationStarting,
