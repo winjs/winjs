@@ -275,8 +275,8 @@ AppBar
         border: none;
         min-width: 0px;
         display: none;
-        // Avoid hit detection issues with other non static positioned elements that may appear in a custom AppBar.
-        z-index: -1; 
+        // Setting explicit z-index here works around draw ordering issue that occurs in IE when other positioned elements are present in a custom AppBar.
+        z-index: 1; 
 
         .win-appbar-ellipsis {
             width: 56px;
@@ -328,14 +328,8 @@ AppBar
         }
     }
 
-    &.win-appbar-minimal {
-        // Minimal AppBar makes room for the invokeButton.
-        padding-right: 60px;
-        width: ~"calc(100% - 60px)";
-
-        .win-appbar-invokebutton {
+    &.win-appbar-minimal .win-appbar-invokebutton {
             display: block;
-        }
     }
 }
 
@@ -343,11 +337,6 @@ AppBar
 AppBar commands layout
 */
 .win-commandlayout {
-    &.win-appbar-showing,
-    &.win-appbar-shown,
-    &.win-appbar-hiding {
-        min-height: 80px;
-    }
     #flex > .display-flex();
     #flex > .flex-direction(row);
     #flex > .flex-wrap(nowrap);
@@ -355,28 +344,40 @@ AppBar commands layout
     #flex > .align-items(flex-start);
 
     .win-primarygroup {
-    #flex > .order(2);
-    #flex > .display-inline-flex();
-    #flex > .flex(1; 1; auto);
-    #flex > .flex-direction(row);
-    #flex > .flex-wrap(wrap);
-    #flex > .justify-content(flex-end);
-    #flex > .align-items(flex-start);
-}
+        #flex > .order(2);
+        #flex > .display-inline-flex();
+        #flex > .flex(1; 1; auto);
+        #flex > .flex-direction(row);
+        #flex > .flex-wrap(wrap);
+        #flex > .justify-content(flex-end);
+        #flex > .align-items(flex-start);
+    }
 
     .win-secondarygroup {
-    #flex > .order(1);
-    #flex > .display-inline-flex();
-    #flex > .flex(1; 1; auto);
-    #flex > .flex-direction(row);
-    #flex > .flex-wrap(wrap);
-    #flex > .justify-content(flex-start);
-    #flex > .align-items(flex-start);
-}
+        #flex > .order(1);
+        #flex > .display-inline-flex();
+        #flex > .flex(1; 1; auto);
+        #flex > .flex-direction(row);
+        #flex > .flex-wrap(wrap);
+        #flex > .justify-content(flex-start);
+        #flex > .align-items(flex-start);
+    }
 
     .win-command {
-    #flex > .flex(0; 0; auto);
-}
+        #flex > .flex(0; 0; auto);
+    }
+
+    &.win-appbar-showing,
+    &.win-appbar-shown,
+    &.win-appbar-hiding {
+        min-height: 80px;
+    }
+
+    &.win-appbar-minimal {
+        // Minimal AppBar with commands layout makes room for the invokeButton.
+        padding-right: 60px;
+        width: ~"calc(100% - 60px)";
+    }
 }
 
 /* CommandsLayout RTL */
