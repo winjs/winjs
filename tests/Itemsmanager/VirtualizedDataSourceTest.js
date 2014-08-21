@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="vds-tracing.js" />
 
 var VirtualizedDataSourceTests = function () {
     "use strict";
@@ -38,7 +38,7 @@ var VirtualizedDataSourceTests = function () {
 
     var SimpleDataAdapter = WinJS.Class.define(function (data) {
         this._data = data || [];
-        
+
     }, {
         compareByIdentity: true,
 
@@ -200,7 +200,7 @@ var VirtualizedDataSourceTests = function () {
 
         return Promise.timeout(100)
             .then(function () {
-                // because it is still in an 'unknown' state we don't get a 
+                // because it is still in an 'unknown' state we don't get a
                 //  countChanged for the insertion
                 LiveUnit.Assert.areEqual(0, countChangedCount);
                 LiveUnit.Assert.areEqual(1, insertedCount);
@@ -351,7 +351,7 @@ var VirtualizedDataSourceTests = function () {
 
         return Promise.timeout(100)
             .then(function () {
-                // because it is still in an 'unknown' state we don't get a 
+                // because it is still in an 'unknown' state we don't get a
                 //  countChanged for the insertion
                 LiveUnit.Assert.areEqual(0, countChangedCount);
                 LiveUnit.Assert.areEqual(1, insertedCount);

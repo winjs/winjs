@@ -2,10 +2,10 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="vds-tracing.js" />
 
 var EnumerationTests = function () {
     "use strict";
@@ -385,7 +385,7 @@ var EnumerationTests = function () {
                 TestComponents.verifyItemData(item, index);
                 listBinding.previous().then(handleitem);
             }
-            else {//  If the cursor moves past the start of the list, the promise completes with a value of null. 
+            else {//  If the cursor moves past the start of the list, the promise completes with a value of null.
                 LiveUnit.Assert.isTrue(!item, 'Expecting null when cursor moves past the start of the list.');
                 signalTestCaseCompleted();
             }
@@ -401,7 +401,7 @@ var EnumerationTests = function () {
     };
 
     // This test verfies next() and previous() functions on the listBinding. The scenario under test is to perform a forward traversal,
-    // then reversal the traversal and then forward again with random steps. 
+    // then reversal the traversal and then forward again with random steps.
     function testRandomTraversal(signalTestCaseCompleted, synchronous) {
 
         function forwardTraversal(listBinding, startIndex, steps) {
@@ -445,7 +445,7 @@ var EnumerationTests = function () {
         }
 
         var count = 100; // total items in datasource
-        var firstIndex = randomNumber(99);; // index of first item be retrived. 
+        var firstIndex = randomNumber(99);; // index of first item be retrived.
         var maxStep = 30; // max steps
 
         var log = VDSLogging.options.log || console.log.bind(console);
@@ -467,7 +467,7 @@ var EnumerationTests = function () {
         var listBinding = dataSource.createListBinding();
         var steps = 0;
 
-        // Get the item with index firstIndex. This item is set to current item. 
+        // Get the item with index firstIndex. This item is set to current item.
         listBinding.fromIndex(firstIndex).then(function (item) {
             steps = randomNumber(maxStep);
             LiveUnit.LoggingCore.logComment("Forward Traversal with Steps: " + steps.toString());
@@ -575,17 +575,17 @@ var EnumerationTests = function () {
 
         dataSource.testDataAdapter.setProperty("returnCount", 5);
 
-        // 5 items available. Fetching item 3 should return the item with index 3. 
+        // 5 items available. Fetching item 3 should return the item with index 3.
         dataSource.itemFromIndex(3).then(function handleItem(item) {
             LiveUnit.Assert.areEqual(3, item.index, "Wrong item returned when returnCount = 5: expecting item 3, item " + item.index.toString() + " returned.");
 
-            // DataSource growing. 10 items available. Fetching item 7 should return null since we did not invalidateAll. 
+            // DataSource growing. 10 items available. Fetching item 7 should return null since we did not invalidateAll.
             dataSource.testDataAdapter.setProperty("returnCount", 10);
             return dataSource.itemFromIndex(7);
         })
             .then(function handleItem(item) {
                 LiveUnit.Assert.isNull(item, "Wrong item returned when returnCount = 10: expecting null.");
-                // DataSource still have 10 items available. Fetching item 7 should return item 7 after invalidateAll called. 
+                // DataSource still have 10 items available. Fetching item 7 should return item 7 after invalidateAll called.
                 return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
             })
             .then(function handleItem() {
@@ -594,7 +594,7 @@ var EnumerationTests = function () {
             .then(function handleItem(item) {
                 LiveUnit.Assert.areEqual(7, item.index, "Wrong item returned when returnCount = 10: expecting item 7, item " + item.index.toString() + " returned.");
 
-                // DataSource shrinking. 9 items available. Fetching item 8. 
+                // DataSource shrinking. 9 items available. Fetching item 8.
                 dataSource.testDataAdapter.setProperty("returnCount", 9);
                 return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
             })
@@ -659,17 +659,17 @@ var EnumerationTests = function () {
         dataSource.testDataAdapter.setProperty("returnCountBeforePromise", 1);
         dataSource.testDataAdapter.setProperty("returnCount", 5);
 
-        // 5 items available. Fetching item 3 should return the item with index 3. 
+        // 5 items available. Fetching item 3 should return the item with index 3.
         listBinding.fromIndex(3).then(function handleItem(item) {
             LiveUnit.Assert.areEqual(3, item.index, "Wrong item returned when returnCount = 5: expecting item 3, item " + item.index.toString() + " returned.");
 
-            // DataSource growing. 10 items available. Fetching item 7 should return null since we did not invalidateAll. 
+            // DataSource growing. 10 items available. Fetching item 7 should return null since we did not invalidateAll.
             dataSource.testDataAdapter.setProperty("returnCount", 10);
             return listBinding.fromIndex(7);
         })
             .then(function handleItem(item) {
                 LiveUnit.Assert.isNull(item, "Wrong item returned when returnCount = 10: expecting null.");
-                // DataSource still have 10 items available. Fetching item 7 should return item 7 after invalidateAll called. 
+                // DataSource still have 10 items available. Fetching item 7 should return item 7 after invalidateAll called.
                 return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
             })
             .then(function handleItem() {
@@ -678,7 +678,7 @@ var EnumerationTests = function () {
             .then(function handleItem(item) {
                 LiveUnit.Assert.areEqual(7, item.index, "Wrong item returned when returnCount = 10: expecting item 7, item " + item.index.toString() + " returned.");
 
-                // DataSource shrinking. 9 items available. Fetching item 8. 
+                // DataSource shrinking. 9 items available. Fetching item 8.
                 dataSource.testDataAdapter.setProperty("returnCount", 9);
                 return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
             })

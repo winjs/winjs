@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="vds-tracing.js" />
 
 var EditingTests = function () {
     "use strict";
@@ -119,12 +119,12 @@ var EditingTests = function () {
                         "endNotifications"
                     ]);
                     handler.verifyState(state1, null, true);
-                    
+
                     insertPromise.then(function (item2) {
                         // After an asynchronous insertions, a changed notification will be sent when the edit
                         // completes.
                         handler.verifyExpectedNotifications(synchronous ?
-                            [] : 
+                            [] :
                             [
                                 "beginNotifications",
                                 "changed",
@@ -192,7 +192,7 @@ var EditingTests = function () {
                                 // After an asynchronous insertions, a changed notification will be sent when the edit
                                 // completes.
                                 handler.verifyExpectedNotifications(synchronous ?
-                                    [] : 
+                                    [] :
                                     [
                                         "beginNotifications",
                                         "changed",
@@ -245,7 +245,7 @@ var EditingTests = function () {
                                         // the edit completes.
                                         expectedNotifications.splice(4, 0, "changed");
                                     }
-                                    
+
                                     handler.verifyExpectedNotifications(expectedNotifications);
                                     handler.verifyState(state3, null, true);
 
@@ -253,7 +253,7 @@ var EditingTests = function () {
                                         // After an asynchronous insertion, a changed notification will be sent when
                                         // the edit completes.
                                         handler.verifyExpectedNotifications(synchronous ?
-                                            [] : 
+                                            [] :
                                             [
                                                 "beginNotifications",
                                                 "changed",
@@ -297,7 +297,7 @@ var EditingTests = function () {
            listBinding = dataSource.createListBinding(handler);
         dataSource.testDataAdapter.setProperty("readOnly", true);
 
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);     
+        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
 
         // Fetch the first item
         var itemPromise = listBinding.first();
@@ -314,11 +314,11 @@ var EditingTests = function () {
                     "endNotifications"
                 ]);
             });
-            
+
             clearLastEdit();
             var newData = "NewData0"
             dataSource.change("0", newData).then(editSuccess, editError);
-            
+
 
             function editSuccess() {
                 recordEditSuccess();
@@ -371,7 +371,7 @@ var EditingTests = function () {
             function removeError(error) {
                 LiveUnit.Assert.fail("Remove operation failed:" + error.name);
             }
-            
+
             function editSuccess() {
                 recordEditSuccess();
                 dataSource.testDataAdapter.setProperty("notMeaningfulEdit", true);
@@ -444,7 +444,7 @@ var EditingTests = function () {
 
         // track how mnay times countChanged notification is thrown
         var countChanged = 0;
-        
+
         TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
         dataSource.testDataAdapter.setProperty("count_NoResponse", true);
 
@@ -455,9 +455,9 @@ var EditingTests = function () {
         dataSource.getCount().then(countSuccess, countError);
 
         function countSuccess(count) {
-            LiveUnit.Assert.fail("countSuccess handler should not be called when error is returned from the data adapter");            
+            LiveUnit.Assert.fail("countSuccess handler should not be called when error is returned from the data adapter");
         }
-        
+
         function countError(e) {
             LiveUnit.Assert.areEqual("noResponse", e.name, "Wrong  Error code.");
             LiveUnit.Assert.areEqual(0, countChanged, "countChanged notification should not be thrown");

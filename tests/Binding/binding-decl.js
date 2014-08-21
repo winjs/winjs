@@ -3,8 +3,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 
 var CorsicaTests = CorsicaTests || {};
 
@@ -57,7 +57,7 @@ CorsicaTests.BindingDeclTests = function () {
             then(cleanup).
             then(complete, errorHandler);
     }
-    
+
     this.testNestedBadSourceOneTime = function (complete) {
         var mydiv = document.createElement('div');
         var cleanup = parent(mydiv);
@@ -359,7 +359,7 @@ CorsicaTests.BindingDeclTests = function () {
         var obj = { name: 'Franky', title: 'testing' };
         var bindable = WinJS.Binding.as(obj);
         var bindingDone = WinJS.Binding.processAll(mydiv, bindable);
-        
+
         bindingDone.
             then(function () {
                 LiveUnit.Assert.areEqual(1, hit, "WinJS.log should be hit in that case");
@@ -385,11 +385,11 @@ CorsicaTests.BindingDeclTests = function () {
         var obj = { name: 'Franky', title: 'testing' };
         var bindable = WinJS.Binding.as(obj);
         var bindingDone = WinJS.Binding.processAll(mydiv, bindable);
-        
+
         bindingDone.
             then(function () {
                 LiveUnit.Assert.areEqual(1, hit, "WinJS.log should be hit in that case");
-                
+
             })
             .then(null, errorHandler).
             then(function () { WinJS.log = old;}).
@@ -409,7 +409,7 @@ CorsicaTests.BindingDeclTests = function () {
 
         bindingDone.
             then(function () {
-                
+
             }, function (e) {
                 LiveUnit.Assert.isTrue(1, 0, "An error message should not have been thrown in that case");
             })
@@ -2319,7 +2319,7 @@ CorsicaTests.BindingDeclTests = function () {
 
         var obj = WinJS.Binding.as({ name: 'Sally'});
         var bindingDone = WinJS.Binding.processAll(mydiv, obj);
-        
+
         bindingDone.
            then(post).then(function () {
                LiveUnit.Assert.areEqual("Sally", mydiv.textContent);
@@ -2350,7 +2350,7 @@ CorsicaTests.BindingDeclTests = function () {
     };
 
     this.testAddClassOneTime = function (complete) {
-    
+
         var mydiv = document.createElement("div");
         var cleanup = parent(mydiv);
         mydiv.classList.add("originalClass");
@@ -2359,7 +2359,7 @@ CorsicaTests.BindingDeclTests = function () {
 
         var obj = WinJS.Binding.as({ name: "Sally"});
         var bindingDone = WinJS.Binding.processAll(mydiv, obj);
-        
+
         bindingDone.
            then(post).then(function () {
                LiveUnit.Assert.areEqual("originalClass Sally", mydiv.className);
@@ -2367,7 +2367,7 @@ CorsicaTests.BindingDeclTests = function () {
            then(null, errorHandler).
            then(cleanup).
            then(complete, errorHandler);
-        
+
     };
 
     this.testAddClassOneTimeWithEmptyBinding = function (complete) {
@@ -2411,7 +2411,7 @@ CorsicaTests.BindingDeclTests = function () {
          then(complete, errorHandler);
 
     };
-    
+
     this.testGetValue = function () {
       var obj = {
         title: "foo",

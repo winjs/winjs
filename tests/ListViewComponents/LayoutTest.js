@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -16,15 +16,15 @@ var WinJSTests = WinJSTests || {};
     WinJSTests.LayoutTestsExtra = function () {
 
         var testRootEl;
-        
+
         // This is the setup function that will be called at the beginning of each test function.
         this.setUp = function () {
 
             LiveUnit.LoggingCore.logComment("In setup");
-            
+
             testRootEl = document.createElement("div");
             testRootEl.className = "file-listview-css";
-            
+
             var newNode = document.createElement("div");
             newNode.id = "LayoutTests";
             newNode.innerHTML =
@@ -248,7 +248,7 @@ var WinJSTests = WinJSTests || {};
                     checkTile(listview, 4, 100, 100);
 
                     /* TODO Uncomment when bug 372547 is fixed
-                    
+
                                     element.style.height = "500px";
                                     return true;
                                 },
@@ -1285,7 +1285,7 @@ var WinJSTests = WinJSTests || {};
             };
         };
         this.generateRecalculateItemPosition("GridLayout");
-        
+
         if (!Helper.Browser.isIE11) {
             Helper.disableTest(this, "testFirstLastDisplayedInGridLayout_GridLayout");
             Helper.disableTest(this, "testHeightAutoLayoutGridLayout");

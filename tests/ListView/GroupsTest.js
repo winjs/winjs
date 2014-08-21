@@ -3,9 +3,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -13,7 +13,7 @@ var WinJSTests = WinJSTests || {};
 WinJSTests.GroupsTests = function () {
     "use strict";
 
-    var testRootEl, 
+    var testRootEl,
         smallGroups = [],
         bigGroups = [],
         LAST_LETTER = 26,
@@ -96,7 +96,7 @@ WinJSTests.GroupsTests = function () {
                 text: firstLetter(i, BIG_GROUPS_COUNT) + " tile " + i
             });
         }
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
 
@@ -1159,7 +1159,7 @@ WinJSTests.GroupsTests = function () {
     };
     this.generateLoadingStateScrolling("GridLayout");
 
-    // Regression test for WinBlue:212689 
+    // Regression test for WinBlue:212689
     this.testSwitchingFromNoStructureNodesToStructureNodesWithGroups = function (complete) {
         var list = new WinJS.Binding.List();
         var element = document.getElementById("groupTestList");

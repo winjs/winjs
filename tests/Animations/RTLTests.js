@@ -4,8 +4,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-light.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
 /// <reference path="AnimationCollection.js" />
-/// <reference path="../TestLib/animations/JSAnimationVerifier.js" />
-/// <reference path="../TestLib/animations/JSAnimationUtils.js" />
+/// <reference path="JSAnimationVerifier.js" />
+/// <reference path="JSAnimationUtils.js" />
 
 PVLRTLTests = function () {
     var verifier = new AnimationVerifier();
@@ -20,7 +20,7 @@ PVLRTLTests = function () {
         LiveUnit.LoggingCore.logComment("In tear down");
         util.removeDom("ui-light.css");
     }
-	
+
 	function verifyPerformance (duration, targetDuration) {
 		var deviation = Math.abs(duration - targetDuration);
 		var errorTolerance = 500;
@@ -37,7 +37,7 @@ PVLRTLTests = function () {
 			return true;
 		}
 	}
-	
+
     //Test enterPage animaiton with input offset and rtlflip set to false
     //Expect result: won't flip.
     this.testEnterPageRTLWithInput = function (signalTestCaseCompleted) {
@@ -196,7 +196,7 @@ PVLRTLTests = function () {
 		var start = WinJS.Utilities._now();
         WinJS.UI.Animation.enterContent(incoming, { top: '0px', left: '40px', rtlflip:true } ).done(callback);
     }
-  
+
 }
 
 LiveUnit.registerTestClass("PVLRTLTests");

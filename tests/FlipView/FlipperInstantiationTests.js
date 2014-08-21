@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
 /// <reference path="FlipperUtils.js"/>
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
+/// <reference path="../TestLib/TestDataSource.js"/>
 
 var InstantiationTests = null;
 

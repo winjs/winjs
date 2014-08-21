@@ -5,7 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
-/// <reference path="../TestLib/ListView/listviewutils.js" />
+/// <reference path="../TestLib/listviewutils.js" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -35,10 +35,10 @@ WinJSTests.HorizontalListTest = function () {
         this.lv = null;
         this.lvUtils = null;
     }
-    
-    this.setScrollAndWait = function (scrollLeft) {  
+
+    this.setScrollAndWait = function (scrollLeft) {
         var that = this;
-        var viewport = that.lv._viewport; 
+        var viewport = that.lv._viewport;
         return new WinJS.Promise(function (c) {
             viewport.addEventListener("scroll", function handleScroll() {
                 viewport.removeEventListener("scroll", handleScroll);
@@ -105,7 +105,7 @@ WinJSTests.HorizontalListTest = function () {
                 if (!scrollPositions) {
                     var scrollMax = viewport.scrollWidth - viewport.clientWidth;
                     scrollPositions = [50, Math.floor(scrollMax / 2), scrollMax];
-                    scrollIndex = 0;   
+                    scrollIndex = 0;
                 } else {
                     scrollIndex++;
                 }
@@ -113,7 +113,7 @@ WinJSTests.HorizontalListTest = function () {
             }, function () {
                 return new WinJS.Promise(function (c) {
                     var targetScrollPosition = scrollPositions[scrollIndex];
-                    
+
                     that.setScrollAndWait(targetScrollPosition).done(function() {
                         LiveUnit.Assert.areEqual(targetScrollPosition, lv.scrollPosition);
                         c();
@@ -160,7 +160,7 @@ WinJSTests.HorizontalListTest = function () {
                 if (!scrollPositions) {
                     var scrollMax = viewport.scrollWidth - viewport.clientWidth;
                     scrollPositions = [50, Math.floor(scrollMax / 2), scrollMax];
-                    scrollIndex = 0;   
+                    scrollIndex = 0;
                 } else {
                     scrollIndex++;
                 }
@@ -168,7 +168,7 @@ WinJSTests.HorizontalListTest = function () {
             }, function () {
                 return new WinJS.Promise(function (c) {
                     var targetScrollPosition = scrollPositions[scrollIndex];
-                    
+
                     that.setScrollAndWait(targetScrollPosition).done(function() {
                         checkFirstLastVisible(lv);
                         c();

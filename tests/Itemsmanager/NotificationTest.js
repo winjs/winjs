@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="vds-tracing.js" />
 
 var NotificationTests = function () {
     "use strict";
@@ -87,12 +87,12 @@ var NotificationTests = function () {
             });
         });
     };
-    
+
     function testSimpleNotifications(signalTestCaseCompleted, synchronous) {
         var dataSource = TestComponents.simpleAsynchronousDataSource(0),
             handler = TestComponents.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
-        
+
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
@@ -269,7 +269,7 @@ var NotificationTests = function () {
             });
         });
     };
-    
+
     this.testInsertAtEndNotifications = function (signalTestCaseCompleted) {
         var dataSource = TestComponents.simpleAsynchronousDataSource(5),
             handler = TestComponents.simpleListNotificationHandler(),
@@ -330,18 +330,18 @@ var NotificationTests = function () {
             });
         });
     };
-    
+
     function testInsertAfterClearNotifications(signalTestCaseCompleted, synchronous) {
         var dataSource = TestComponents.simpleAsynchronousDataSource(5),
             handler = TestComponents.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
-        
+
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
             TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
-        
+
         // Clear the data source
         var state0 = [];
         TestComponents.setState(dataSource, state0);
@@ -353,7 +353,7 @@ var NotificationTests = function () {
                 "endNotifications"
             ]);
             handler.verifyState(state0, dataSource);
-            
+
             // Append three items to the empty data source
             var state1 = [0, 1, 2];
             TestComponents.setState(dataSource, state1);
@@ -364,9 +364,9 @@ var NotificationTests = function () {
                     "countChanged",
                     "endNotifications"
                 ]);
-                
+
                 var promises = [];
-                
+
                 // Fetch all the items so that we can verify the state
                 var itemPromise = listBinding.first();
                 for (var i = 0; ; i++) {
@@ -384,7 +384,7 @@ var NotificationTests = function () {
 
                     itemPromise = listBinding.next();
                 }
-                
+
                 WinJS.Promise.join(promises).then(function () {
                     handler.verifyState(state1, dataSource);
                     signalTestCaseCompleted();
@@ -392,11 +392,11 @@ var NotificationTests = function () {
             });
         });
     }
-    
+
     this.testInsertAfterClearNotificationsAsynchronous = function (signalTestCaseCompleted) {
         testInsertAfterClearNotifications(signalTestCaseCompleted, false);
     };
-    
+
     this.testInsertAfterClearNotificationsSynchronous = function (signalTestCaseCompleted) {
         testInsertAfterClearNotifications(signalTestCaseCompleted, true);
     };
@@ -407,7 +407,7 @@ var NotificationTests = function () {
             listBinding1 = dataSource.createListBinding(handler1),
             handler2 = TestComponents.simpleListNotificationHandler(),
             listBinding2 = dataSource.createListBinding(handler2);
-        
+
         TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
 
         var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -539,7 +539,7 @@ var NotificationTests = function () {
             var handlePrev = itemPromise.handle;
 
             // Walk a small distance in each direction
-            
+
             var j;
 
             var countBefore = rand(walkMax);
@@ -597,7 +597,7 @@ var NotificationTests = function () {
                 countToIndicesSwitch = rand(countToIndicesSwitchMax);
             }
             directives.returnIndices = indicesProvided;
-            
+
             // Periodically switch between providing and not providing the count
             if (countToCountSwitch-- === 0) {
                 countProvided = occurs(indices);    // Use the same probability as for indices
@@ -639,7 +639,7 @@ var NotificationTests = function () {
             } else {
                 testDataAdapter.fulfillNextRequest();
             }
-            
+
             // The first binding reads by index only
             if (occurs(read1)) {
                 index = rand(count);
@@ -796,7 +796,7 @@ var NotificationTests = function () {
             } else {
                 // Refresh one last time in case there were errors and fetching stopped
                 dataSource.invalidateAll();
-                
+
                 // Rather than adding a then handler to invalidateAll, enter a loop to keep fulfilling requests until
                 // the requests have clearly stopped.
                 (function completeAllRequests() {
@@ -884,7 +884,7 @@ var NotificationTests = function () {
             listBinding = dataSource.createListBinding(handler);
         var newCountValue = 0;
         var oldCountValue = 0;
-        var testCount = 2; // number of countChanged should be called. Using this variable to terminate this test. 
+        var testCount = 2; // number of countChanged should be called. Using this variable to terminate this test.
 
         handler.countChanged = function (newCount, oldCount) {
             this.queueNotification("countChanged", arguments);

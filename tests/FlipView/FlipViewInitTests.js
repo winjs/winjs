@@ -3,8 +3,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 /// <reference path="FlipperHelpers.js" />
 /// <reference path="../TestLib/util.js" />
 
@@ -27,7 +27,7 @@ WinJSTests.FlipperInstantiationTests = function () {
                 var root = document.createElement("div");
                 root.innerHTML = "Microsoft " + item.data;
                 return root;
-            });            
+            });
         }
 
         var ds = new WinJS.Binding.List([1, 2, 3, 4, 5, 6, 7]);
@@ -72,7 +72,7 @@ WinJSTests.FlipperInstantiationTests = function () {
         function template(itemPromise) {
             var root = document.createElement("div");
             root.innerHTML = "Microsoft";
-            return root;            
+            return root;
         }
 
         var ds = new WinJS.Binding.List([1, 2, 3, 4, 5, 6, 7]);
@@ -86,7 +86,7 @@ WinJSTests.FlipperInstantiationTests = function () {
             document.body.removeChild(host);
             complete();
         });
-        
+
     };
 
     this.testNoNavigationOnResize = function (complete) {
@@ -118,8 +118,8 @@ WinJSTests.FlipperInstantiationTests = function () {
                 document.body.removeChild(flipperElement);
                 complete();
             });
-            
-        };               
+
+        };
         flipperElement.addEventListener("pagecompleted", onComplete);
 
         flipper = new WinJS.UI.FlipView(flipperElement, {
@@ -157,8 +157,8 @@ WinJSTests.FlipperInstantiationTests = function () {
                 document.body.removeChild(flipperElement);
                 complete();
             });
-            
-        };               
+
+        };
         flipperElement.addEventListener("pagecompleted", onComplete);
 
         flipper = new WinJS.UI.FlipView(flipperElement, {
@@ -193,16 +193,16 @@ WinJSTests.FlipperInstantiationTests = function () {
                             flipper.currentPage = 9;
                         });
                     });
-                };               
+                };
 
                 flipper = new WinJS.UI.FlipView(flipperElement, {
                     itemDataSource: ds,
-                    onpagecompleted: onComplete, 
+                    onpagecompleted: onComplete,
                     itemTemplate: Helper.syncJSTemplate
                 });
             }
         }
-        
+
         var bl = Helper.createBindingList(10).dataSource;
 
         that["testMoveItemAndJumpBL"] = generateTest(bl);
@@ -222,7 +222,7 @@ WinJSTests.FlipperInstantiationTests = function () {
                 // Item has been deleted and orientation changed
                 // Verify the item is displayed on screen
 
-                var expectedText = "title1", 
+                var expectedText = "title1",
                     currentText = flipper._pageManager._currentPage.element.textContent.trim();
 
                 LiveUnit.Assert.areEqual(expectedText, currentText, "FlipView is not displaying the expected page");
@@ -237,18 +237,18 @@ WinJSTests.FlipperInstantiationTests = function () {
             // Delete item
             flipper.itemDataSource.itemFromIndex(0).then(function (item) {
                 flipper.itemDataSource.remove(item.key);
-            
+
                 // Change orientation without waiting for pagecompleted
                 flipper.orientation = "vertical";
             });
-        };               
+        };
         flipperElement.addEventListener("pagecompleted", onComplete);
 
         flipper = new WinJS.UI.FlipView(flipperElement, {
             itemDataSource: Helper.createBindingList(10).dataSource,
             itemTemplate: Helper.syncJSTemplate
         });
-    }; 
+    };
 
     (function () {
         function generateTest(fromDS, toDS) {
@@ -269,16 +269,16 @@ WinJSTests.FlipperInstantiationTests = function () {
                     });
                     // Update the itemDataSource
                     flipper.itemDataSource = toDS;
-                };               
+                };
 
                 flipper = new WinJS.UI.FlipView(flipperElement, {
                     itemDataSource: fromDS,
-                    onpageselected: onComplete, 
+                    onpageselected: onComplete,
                     itemTemplate: Helper.syncJSTemplate
                 });
             }
         }
-        
+
         var bl = Helper.createBindingList(10).dataSource,
             vds = Helper.createTestDataSource(10),
             emptyBL = Helper.createBindingList(0).dataSource,
@@ -298,20 +298,20 @@ WinJSTests.FlipperInstantiationTests = function () {
                 document.body.appendChild(element);
                 element.innerHTML = '<div class="flipperTemplate" data-win-control="WinJS.Binding.Template">' +
                     '<div data-win-bind="innerHTML: title; style.width: itemWidth; style.height: itemHeight;"></div></div>' +
-                    '<div class="flipperDiv" data-win-control="WinJS.UI.FlipView" data-win-options="{ currentPage: '+ 
-                    currentPage + ', onpagecompleted: globTest.onComplete, itemDataSource: globTest.vds, itemTemplate: ' + 
+                    '<div class="flipperDiv" data-win-control="WinJS.UI.FlipView" data-win-options="{ currentPage: '+
+                    currentPage + ', onpagecompleted: globTest.onComplete, itemDataSource: globTest.vds, itemTemplate: ' +
                     'select(' + "'" + '.flipperTemplate' + "'" + ') }"></div>';
 
 
                 globTest.onComplete = WinJS.Utilities.markSupportedForProcessing(function (ev) {
-                    // Verify 
+                    // Verify
                     var flipper = element.querySelector(".flipperDiv").winControl;
                     LiveUnit.Assert.areEqual(flipper.currentPage, currentPage, "Flipper didn't instantiate at the expected page");
-                    
+
                     // Done
                     WinJS.Utilities.disposeSubTree(element);
                     document.body.removeChild(element);
-                    complete();                    
+                    complete();
                 });
 
                 WinJS.UI.processAll(element);
@@ -332,7 +332,7 @@ WinJSTests.FlipperInstantiationTests = function () {
                 document.body.appendChild(flipperElement);
 
                 var onComplete = function (ev) {
-                    // Verify 
+                    // Verify
                     flipper.count().then(function (count) {
                         LiveUnit.Assert.areEqual(0, count, "Unexpected flipper count");
 
@@ -343,11 +343,11 @@ WinJSTests.FlipperInstantiationTests = function () {
                     }, function (er) {
                         LiveUnit.Assert.fail("Flipper failed to return count");
                     });
-                };               
+                };
 
                 flipper = new WinJS.UI.FlipView(flipperElement, {
                     itemDataSource: ds,
-                    onpageselected: onComplete, 
+                    onpageselected: onComplete,
                     itemTemplate: Helper.syncJSTemplate
                 });
             }
@@ -379,7 +379,7 @@ WinJSTests.FlipperInstantiationTests = function () {
                         // Grab the currently visible element and compare to the previously current element
                         after = flipper._pageManager._currentPage.element.innerHTML;
 
-                        // Verify 
+                        // Verify
                         LiveUnit.Assert.areEqual(after, before, "Current Page elements are different");
 
                         // Done
@@ -540,7 +540,7 @@ WinJSTests.FlipperInstantiationTests = function () {
         var pageSelectedCalled = false;
         var testData = createArraySource(1, ["400px"], ["400px"]),
             rawData = testData.rawData,
-            options = { 
+            options = {
                 itemDataSource: testData.dataSource,
                 itemTemplate: basicInstantRenderer,
                 onpagevisibilitychanged: function() {
@@ -558,7 +558,7 @@ WinJSTests.FlipperInstantiationTests = function () {
             };
         var flipView = new WinJS.UI.FlipView(flipperElement, options);
     };
-    
+
     this.testFlipViewDispose = function (complete) {
         var flipperElement = document.createElement('div');
         flipperElement.id = "myFlipViewDiv";

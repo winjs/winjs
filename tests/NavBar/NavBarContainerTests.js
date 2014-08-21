@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="../TestLib/NavBar/NavBarUtils.js"/>
+/// <reference path="NavBarUtils.js"/>
 /// <reference path="../TestLib/util.js"/>
 /// <reference path="../TestData/NavBar.css" />
 
@@ -22,7 +22,7 @@ WinJSTests.NavBarContainerTests = function () {
     var itemWidth = 250;
     var itemWidthWithMargins = itemWidth + itemMargins + itemMargins;
     var marginAboveBelowItems = 30;
-    
+
     function nobodyHasFocus() {
         return document.activeElement === null || document.activeElement === document.body;
     }
@@ -124,7 +124,7 @@ WinJSTests.NavBarContainerTests = function () {
             complete();
         });
     };
-    
+
     this.testCurrentIndexAndMaxRowsConstructor = function (complete) {
         var navbarContainerEl = document.createElement('div');
         this._element.appendChild(navbarContainerEl);
@@ -148,7 +148,7 @@ WinJSTests.NavBarContainerTests = function () {
             complete();
         });
     };
-    
+
     this.testCurrentIndexAndMaxRows = function (complete) {
         var navbarContainerEl = document.createElement('div');
         this._element.appendChild(navbarContainerEl);
@@ -161,13 +161,13 @@ WinJSTests.NavBarContainerTests = function () {
         LiveUnit.Assert.areEqual(1, navbarContainer._sizes.rowsPerPage);
         LiveUnit.Assert.areEqual(Math.ceil(20 / (1 * 1)), navbarContainer._sizes.pages);
         LiveUnit.Assert.areEqual(0, navbarContainer._scrollPosition);
-        
+
         // Wait for the control to no longer be in the construction phase
         WinJS.Utilities.Scheduler.schedulePromiseNormal().then(function () {
             navbarContainer.maxRows = 2;
             navbarContainer.currentIndex = 10;
             navbarContainer.element.focus();
-            
+
             // Wait for focus to move
             return WinJS.Promise.timeout();
         }).then(function () {

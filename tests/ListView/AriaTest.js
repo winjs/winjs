@@ -3,9 +3,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -16,20 +16,20 @@ WinJSTests.AriaTests = function () {
     var COUNT = 100,
         ITEMS_PER_GROUP = 10;
 
-    
+
     var testRootEl;
     var origMaxTimePerCreateContainers;
     var origChunkSize;
     // This is the setup function that will be called at the beginning of each test function.
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
-        
+
         origMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         origChunkSize = WinJS.UI._VirtualizeContentsView._chunkSize;
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         var newNode = document.createElement("div");
         newNode.id = "AriaTests";
         newNode.innerHTML =

@@ -3,8 +3,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -18,10 +18,10 @@ WinJSTests.GroupListEditorTest = function () {
     // This is the setup function that will be called at the beginning of each test function.
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         var newNode = document.createElement("div");
         newNode.id = "groupListEditorTest";
         newNode.style.height = "200px";
@@ -839,7 +839,7 @@ WinJSTests.GroupListEditorTest = function () {
             }).
             then(complete);
     });
-    
+
     if (!Helper.Browser.isIE11) {
         Helper.disableTest(this, "testInsertToEmpty_normal_grouped_grid_BindingList");
         Helper.disableTest(this, "testInsertToEmpty_normal_grouped_grid_TestDataSource");

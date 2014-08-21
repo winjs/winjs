@@ -4,14 +4,14 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
 
 WinJSTests.ListViewAnimation2Test = function () {
     "use strict";
-    
+
     var testRootEl;
     var listViewEl;
     var itemId;
@@ -57,7 +57,7 @@ WinJSTests.ListViewAnimation2Test = function () {
             LiveUnit.Assert.areEqual(expectedRect[k], actualRect[k], message);
         });
     }
-    
+
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setUp");
         itemId = 0;
@@ -66,12 +66,12 @@ WinJSTests.ListViewAnimation2Test = function () {
         WinJS.Utilities._require('WinJS/Animations/_TransitionAnimation', function(_TransitionAnimation) {
             _TransitionAnimation.executeTransition = executeTransition;
         });
-        
+
         WinJS.UI.enableAnimations();
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         listViewEl = document.createElement('div');
         listViewEl.id = "Animations2TestListView";
         listViewEl.style.width = "500px";
@@ -259,7 +259,7 @@ WinJSTests.ListViewAnimation2Test = function () {
             });
         }
     }
-    
+
     this.testExpandItemsContainerForReflowNeeded = function (complete) {
         var bindingList = getBindingList(100);
         var listView = new WinJS.UI.ListView(listViewEl);
@@ -293,7 +293,7 @@ WinJSTests.ListViewAnimation2Test = function () {
                 complete();
             });
     };
-    
+
     this.testExpandItemsContainerForReflowNotNeeded = function (complete) {
         var bindingList = getBindingList(100);
         var listView = new WinJS.UI.ListView(listViewEl);
@@ -762,7 +762,7 @@ WinJSTests.ListViewAnimation2Test = function () {
                     groupHeaderPosition: WinJS.UI.HeaderPosition.left
                 }));
             }.bind(this));
-            
+
             if (Helper.Browser.supportsCSSGrid) {
                 this.generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
                     groupInfo: groupInfo,

@@ -4,9 +4,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -333,7 +333,7 @@ WinJSTests.ListEditorTest = function () {
                             completed = true;
                         }
                     });
-                } 
+                }
                 return true;
             }
         ];
@@ -1156,7 +1156,7 @@ WinJSTests.ListEditorTest = function () {
             done(complete);
     };
 
-    // Regression Test for Windows Blue Bug #409620   
+    // Regression Test for Windows Blue Bug #409620
     this.testReEntrancyEditsAfterLoadingStateComplete = function (complete) {
         initUnhandledErrors();
 

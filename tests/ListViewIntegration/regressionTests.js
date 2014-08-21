@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -18,13 +18,13 @@ WinJSTests.ListViewRegression = function () {
         testRootEl.appendChild(element);
         return function() { testRootEl.removeChild(element); };
     }
-    
+
     function errorHandler(msg) {
         try {
             LiveUnit.Assert.fail('There was an unhandled error in your test: ' + msg);
         } catch (ex) { }
     }
-    
+
     this.setUp = function () {
         removeListviewAnimations();
         testRootEl = document.createElement("div");
@@ -51,7 +51,7 @@ WinJSTests.ListViewRegression = function () {
     };
 
     this.testWin8_312074 = function(complete) {
-        
+
         function createDataSource(steps) {
             var count = 100,
                 step = 0;
@@ -126,7 +126,7 @@ WinJSTests.ListViewRegression = function () {
         function runTest(t) {
             if (t < tests.length) {
                 var test = tests[t];
-                
+
                 var newNode = document.createElement("div");
                 newNode.style.width = "1000px";
                 newNode.style.height = "600px";
@@ -148,7 +148,7 @@ WinJSTests.ListViewRegression = function () {
                         return WinJS.Promise.as(itemPromise).then(worker);
                     }
                     });
-                
+
                 var whenComplete = function whenComplete () {
                     if (listView.loadingState === "complete") {
                         listView.removeEventListener("loadingstatechanged", whenComplete, false);
@@ -156,7 +156,7 @@ WinJSTests.ListViewRegression = function () {
                         runTest(t + 1);
                     }
                 };
-                
+
                 listView.addEventListener("loadingstatechanged", whenComplete, false);
             } else {
                 complete();
@@ -164,7 +164,7 @@ WinJSTests.ListViewRegression = function () {
         }
 
         runTest(0);
-    }; 
+    };
 
     this.testWin8_370759 = function (complete) {
 
@@ -540,8 +540,8 @@ WinJSTests.ListViewRegression = function () {
             listView.scrollPosition = 850;
             return WinJS.Promise.join(rendererCalled.slice(45, 54));
         }).then(function () {
-            // items 51-53 aren't yet rendered. ListView is waiting for data. Forcing scrolling at this point. 
-            // This cancel the previous realizePass which is waiting for data for items 51-53 and starts a new realizePass. 
+            // items 51-53 aren't yet rendered. ListView is waiting for data. Forcing scrolling at this point.
+            // This cancel the previous realizePass which is waiting for data for items 51-53 and starts a new realizePass.
             // In middle of this new realize pass data for items 51-53 is delivered and items pool reuses wrappers corrupting items in in the pool
             LiveUnit.Assert.areEqual("itemsLoading", listView.loadingState);
             listView.scrollPosition = 4500;
@@ -703,7 +703,7 @@ WinJSTests.ListViewRegression = function () {
             });
         });
     };
-    
+
     if (!Helper.Browser.isIE11) {
         Helper.disableTest(this, "testWinBlue_148641");
         Helper.disableTest(this, "testWin8_725480");

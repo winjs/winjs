@@ -3,7 +3,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -16,10 +16,10 @@ WinJSTests.ConfigurationTests = function () {
     // This is the setup function that will be called at the beginning of each test function.
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         var newNode = document.createElement("div");
         newNode.id = "ConfigurationTests";
         newNode.innerHTML =

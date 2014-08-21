@@ -2,8 +2,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 /// <reference path="FlipperHelpers.js" />
 /// <deploy src="../TestData/" />
 
@@ -55,7 +55,7 @@ WinJSTests.FlipViewDatasourceTests = function () {
     this.generate("testFlipViewShiftAndChangeInDataSource", shiftAndChangeInDatasource);
     this.generate("testFlipViewNavigateAndSpliceTwiceInDataSource", navigateAndSpliceTwiceInDataSource);
     this.generate("testFlipViewInsertJumpAndChangeInDataSource", insertJumpAndChangeInDataSource);
-    
+
     function navigateAndSpliceTwiceInDataSource(element, flipView, rawData, complete) {
         var data = [
             { title: "New Delhi", data1: "India" },
@@ -169,7 +169,7 @@ WinJSTests.FlipViewDatasourceTests = function () {
     function verifyNoOldDataRemains(element, className) {
         LiveUnit.Assert.areEqual(0, element.querySelectorAll(className).length);
     }
-    
+
     function datasourceTest(element, flipView, rawData, complete) {
         var otherSource = createArraySource(COUNT * 2, ["400px"], ["400px"], "newData"),
             otherRawData = otherSource.rawData,
@@ -600,7 +600,7 @@ WinJSTests.FlipViewDatasourceTests = function () {
             bl.setAt(1, { title: "changed" });
 
             bl.dataSource.beginEdits();
-               
+
             //add item at index 3
             bl.splice(3, 0, { title: "new 1" });
 

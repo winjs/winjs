@@ -2,8 +2,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
+/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/TestDataSource.js"/>
 /// <reference path="../TestLib/util.js" />
 /// <deploy src="../TestData/" />
 
@@ -158,7 +158,7 @@ WinJSTests.PhotosAppScenarios = function () {
                     itemDataSource: ds,
                 });
 
-                // Intended to map a zoomed in item to a zoomed out item. 
+                // Intended to map a zoomed in item to a zoomed out item.
                 var zoomedOutItem = function (item) {
                     item.groupKey = item.key;
                     item.groupIndexHint = item.index;
@@ -166,7 +166,7 @@ WinJSTests.PhotosAppScenarios = function () {
                     return item;
                 };
 
-                // Intended to map a zoomed out item to a zoomed in item. 
+                // Intended to map a zoomed out item to a zoomed in item.
                 var zoomedInItem = function (item) {
                     item.groupSize = 1;
                     item.firstItemKey = item.key;
@@ -246,7 +246,7 @@ WinJSTests.PhotosAppScenarios = function () {
             that["testSemanticZoomMappingEndGridLayout"] = generateTest(999, "GridLayout");
         }
     })();
-        
+
     (function generateTemplateTests () {
         function foo (control) {
             return function (complete) {
@@ -264,7 +264,7 @@ WinJSTests.PhotosAppScenarios = function () {
                         templateDiv.style.height = "450px";
                         template.innerHTML = "OldTitle: " + item.data.title;
                         templateItems[item.key] = templateDiv;
-    
+
                         div.appendChild(templateDiv);
                         return div;
                     });
@@ -325,18 +325,18 @@ WinJSTests.PhotosAppScenarios = function () {
 
         function addItems() {
             for (var i = 0; i < 25; i++, dsCount++) {
-                ds.testDataAdapter.insertAtIndex({ 
+                ds.testDataAdapter.insertAtIndex({
                     title: "title",
                     index: dsCount,
                     itemWidth: "80px",
                     itemHeight: "80px"
                 }, dsCount);
             }
-            
+
             // Add items at an interval of 100 ms
             (dsCount < finalCount) ? setTimeout (addItems, 100) : complete();
         }
-        
+
         // Don't wait for pageselected to add items
         WinJS.Utilities._setImmediate(addItems);
     };

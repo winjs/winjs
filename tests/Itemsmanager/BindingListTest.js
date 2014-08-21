@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 
 (function (global) {
     "use strict";
@@ -64,7 +64,7 @@
             var that = this;
             return WinJS.Utilities.Scheduler.schedulePromiseHigh(null, "BindingListTests.assertEmptyAsync").then(function () {
                         that.assertEmpty(comment);
-            });              
+            });
         };
 
         function assert(name) {
@@ -105,7 +105,7 @@
         this.clearCount = function () {
             count = 0;
         };
-    
+
         function increment() {
             count++;
         }
@@ -127,7 +127,7 @@
     function simpleItem(i) {
         return "Item" + i;
     }
-    
+
     function listSortedAndFilteredToEvens (count, options) {
         // Creating a sorted even number list
         var list = new WinJS.Binding.List([], options);
@@ -154,7 +154,7 @@
             list.push(simpleItem(i));
         }
         return list.createSorted(function (l, r) { return (l - r); });
-    
+
     }
 
     function oddListFilter(count) {
@@ -164,7 +164,7 @@
         }
         return list.createFiltered(function (num) { return (num % 2); });
     }
-    
+
     global.BindingListTests = function () {
 
         this.testBindingListDecreasingTheLenghtNotifications = function (complete) {
@@ -174,7 +174,7 @@
             var dataSource = list.dataSource;
             var listBinding = dataSource.createListBinding(logger);
 
-            // Be explicit about setup so that these notifications don't 
+            // Be explicit about setup so that these notifications don't
             // get mixed up with the ones we care about.
             dataSource.beginEdits();
             list.push(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -1263,7 +1263,7 @@
             ]).
                 appendExpectedN("indexChanged", list.length - 1).
                 appendExpected(
-                    "countChanged", 
+                    "countChanged",
                     "endNotifications"
                 );
             dataSource.beginEdits();
@@ -1745,9 +1745,9 @@
                 .then(scanFor(listBinding, 100))
                 .then(function (item) {
                     dataSource.moveBefore(item.key, item.key);
-                    
+
                     LiveUnit.Assert.isTrue(verifyListContent(list, [80, 100, 90, 110]), "checking the correctness of moveBefore");
-                   
+
                     return listBinding.next();
                 })
                 .then(function (item) {
@@ -1977,8 +1977,8 @@
             dataSource.endEdits();
             //5, 2, 4, 0
             LiveUnit.Assert.isTrue(verifyListContent(list, [5, 2, 4, 0]));
-            logger.assertEmpty(); 
-                   
+            logger.assertEmpty();
+
             dataSource.beginEdits();
             list.pop();
             list.pop();
@@ -2241,7 +2241,7 @@
                     LiveUnit.Assert.areEqual(testArray[testIndex], item.data);
                 })
                 .then(complete);
-            
+
         };
 
     };

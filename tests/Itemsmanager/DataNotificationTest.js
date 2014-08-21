@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="vds-tracing.js" />
 
 var DataNotificationTests = function () {
     "use strict";
@@ -149,7 +149,7 @@ var DataNotificationTests = function () {
                         var state3 = [13, 12, 9, 10, 1, 3, 4, 5, 6, 0, 7, 11, 8];
 
                         // Try several more singleton edits, going through the following states:
-                        // 
+                        //
                         // [10, 0, 1, 3, 4, 5, 6, 7, 8, 9, 11]
                         // [10, 1, 3, 4, 5, 6, 0, 7, 8, 9, 11]
                         // [9, 10, 1, 3, 4, 5, 6, 0, 7, 8, 11]

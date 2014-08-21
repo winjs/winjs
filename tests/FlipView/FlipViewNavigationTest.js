@@ -2,8 +2,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 /// <reference path="FlipperHelpers.js" />
 /// <deploy src="../TestData/" />
 
@@ -40,7 +40,7 @@ WinJSTests.FlipViewNavigationTests = function () {
                     testData = createArraySource(COUNT, ["4200px"], ["4200px"]),
                     rawData = testData.rawData,
                     flipView;
-                
+
                 element.style.width = "4200px";
                 element.style.height = "4200px";
 
@@ -54,7 +54,7 @@ WinJSTests.FlipViewNavigationTests = function () {
         generateTest(this, "vertical");
     }
     this.generate("testFlipViewOn4KDisplay", navigationTest);
-    
+
     this.generate = function (name, testFunction) {
         function generateTest(that, orientation) {
             that[name + "_" + orientation] = function (complete) {
@@ -85,7 +85,7 @@ WinJSTests.FlipViewNavigationTests = function () {
                 } else {
                     flipview._panningDivContainer.scrollTop += 400;
                 }
-                // This should trigger a scroll position changed, and eventually 
+                // This should trigger a scroll position changed, and eventually
                 // a pageselected event. This simulates the 1-finger swipe
                 // scenario with the narrator touch
             },
@@ -100,13 +100,13 @@ WinJSTests.FlipViewNavigationTests = function () {
         ];
         runFlipViewTests(flipview, tests);
     }
-    
+
     function verifyDisplayedItem(flipView, rawData) {
         LiveUnit.LoggingCore.logComment("Verifying displayed page is correct");
         LiveUnit.Assert.isTrue(currentPageInView(flipView));
         flipView.itemTemplate.verifyOutput(getDisplayedElement(flipView), rawData);
     }
-    
+
     function navigationTest(element, flipView, rawData, complete) {
         var tests = [];
         for (var i = 0; i < COUNT - 1; i++) {
@@ -126,8 +126,8 @@ WinJSTests.FlipViewNavigationTests = function () {
             LiveUnit.LoggingCore.logComment("Should now be at end, flipView.next should fail");
             LiveUnit.Assert.areEqual(COUNT - 1, flipView.currentPage);
             verifyDisplayedItem(flipView, rawData[COUNT - 1]);
-            LiveUnit.Assert.isFalse(flipView.next());     
-            return true; 
+            LiveUnit.Assert.isFalse(flipView.next());
+            return true;
         });
 
         for (var i = COUNT - 1; i > 0; i--) {
@@ -147,13 +147,13 @@ WinJSTests.FlipViewNavigationTests = function () {
             LiveUnit.LoggingCore.logComment("Should now be at beginning, flipView.previous should fail");
             LiveUnit.Assert.areEqual(0, flipView.currentPage);
             verifyDisplayedItem(flipView, rawData[0]);
-            LiveUnit.Assert.isFalse(flipView.previous());   
-            complete();   
+            LiveUnit.Assert.isFalse(flipView.previous());
+            complete();
         });
 
         runFlipViewTests(flipView, tests);
     }
-    
+
     function jumpToTest(element, flipView, rawData, complete) {
         var tests = [],
             lastIndex = 0;

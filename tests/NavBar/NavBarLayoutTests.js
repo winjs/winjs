@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="../TestLib/NavBar/NavBarUtils.js"/>
+/// <reference path="NavBarUtils.js"/>
 
 var WinJSTests = WinJSTests || {};
 
@@ -13,7 +13,7 @@ WinJSTests.NavBarLayoutTests = function () {
 
     var Key = WinJS.Utilities.Key;
     var canElementResize = null;
-    
+
     function fireWindowResize() {
         var event = document.createEvent("Event");
         event.initEvent("resize", false, false);
@@ -385,7 +385,7 @@ WinJSTests.NavBarLayoutTests = function () {
                 });
             };
         }
-          
+
         that["testNavBarContainerLayoutSingleRowFixedSizeResize_LTR"] = generateTest(false, true, false);
         that["testNavBarContainerLayoutSingleRowFixedSizeResize_RTL"] = generateTest(true, true, false);
         that["testNavBarContainerLayoutSingleRowFixedSizeResizeWithForceLayout_LTR"] = generateTest(false, true, true);
@@ -551,7 +551,7 @@ WinJSTests.NavBarLayoutTests = function () {
                 });
             };
         }
-        
+
         that["testNavBarContainerLayoutSingleRowResize_LTR"] = generateTest(false, false);
         that["testNavBarContainerLayoutSingleRowResize_RTL"] = generateTest(true, false);
         that["testNavBarContainerLayoutSingleRowResizeWithForceLayout_LTR"] = generateTest(false, true);

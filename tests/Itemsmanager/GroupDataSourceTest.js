@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="vds-tracing.js" />
 
 var GroupDataSourceTests = function () {
     "use strict";
@@ -22,7 +22,7 @@ var GroupDataSourceTests = function () {
         };
         VDSLogging.on();
     }
-    
+
     this.tearDown = function () {
         VDSLogging.off();
         VDSLogging.options = previousTracingOptions;
@@ -55,7 +55,7 @@ var GroupDataSourceTests = function () {
 
     function testGetCount(itemCount, signalTestCaseCompleted) {
         var groupSize = groupSizeDefault;
-        
+
         var itemDataSource = createItemDataSource(itemCount, groupSize),
             groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData, { groupCountEstimate: -1 }).groups;
 
@@ -93,7 +93,7 @@ var GroupDataSourceTests = function () {
     this.testGetItemFromKey = function (signalTestCaseCompleted) {
         var itemCount = 2000,
             groupSize = groupSizeDefault;
-        
+
         var itemDataSource = createItemDataSource(itemCount, groupSize),
             groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData).groups;
 
@@ -148,7 +148,7 @@ var GroupDataSourceTests = function () {
     this.testGetItemFromIndex = function (signalTestCaseCompleted) {
         var itemCount = 4000,
             groupSize = groupSizeDefault;
-        
+
         var itemDataSource = createItemDataSource(itemCount, groupSize),
             groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData).groups;
 
@@ -170,7 +170,7 @@ var GroupDataSourceTests = function () {
         var itemCount = 300,
             groupSize = 44,
             batchSize = 11;
-        
+
         var itemDataSource = createItemDataSource(itemCount, groupSize),
             groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData, { batchSize: batchSize }).groups;
 
@@ -184,7 +184,7 @@ var GroupDataSourceTests = function () {
             then(function getPrevious(item1) {
                 if (item1) {
                     verifyGroup(group1--, item1, itemCount, groupSize);
-                
+
                     // Walk backwards to the start
                     listBinding.previous().retain().then(getPrevious);
                 } else {
@@ -195,7 +195,7 @@ var GroupDataSourceTests = function () {
                         then(function getNext(item2) {
                             if (item2) {
                                 verifyGroup(group2++, item2, itemCount, groupSize);
-                
+
                                 // Walk forwards to the end
                                 listBinding.next().retain().then(getNext);
                             } else {
@@ -212,7 +212,7 @@ var GroupDataSourceTests = function () {
     this.testDeletion = function (signalTestCaseCompleted) {
         var itemCount = 60,
             groupSize = 7;
-        
+
         var itemDataSource = createItemDataSource(itemCount, groupSize),
             groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData).groups;
 
@@ -226,7 +226,7 @@ var GroupDataSourceTests = function () {
                 if (item1) {
                     handler.updateItem(item1);
                     verifyGroup(group++, item1, itemCount, groupSize);
-                
+
                     // Walk forwards to the end
                     handler.appendItemPromise(listBinding.next()).then(getNext);
                 } else {
@@ -268,7 +268,7 @@ var GroupDataSourceTests = function () {
     this.testInsertion = function (signalTestCaseCompleted) {
         var itemCount = 60,
             groupSize = 7;
-        
+
         var itemDataSource = createItemDataSource(itemCount, groupSize),
             groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData).groups;
 
@@ -282,7 +282,7 @@ var GroupDataSourceTests = function () {
                 if (item1) {
                     handler.updateItem(item1);
                     verifyGroup(group++, item1, itemCount, groupSize);
-                
+
                     // Walk forwards to the end
                     handler.appendItemPromise(listBinding.next()).then(getNext);
                 } else {

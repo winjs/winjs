@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="vds-tracing.js" />
 
 var StatusTests = function () {
     "use strict";
@@ -43,7 +43,7 @@ var StatusTests = function () {
         }
     }
 
-    // VDS has three status: ready, waiting and failure. Among them, only failure status notice always trigger statuschanged event. 
+    // VDS has three status: ready, waiting and failure. Among them, only failure status notice always trigger statuschanged event.
     // Failure happens when one of the three errors occurs: UI.CountError.noResponse, UI.EditError.noResponse and UI.FetchError.noResponse.
 
     // This test verifies failure notification from VDS when UI.CountError.noResponse happens
@@ -66,7 +66,7 @@ var StatusTests = function () {
          //perform getCount to trigger UI.CountError.noResponse
          dataSource.getCount().done();
 
-         
+
     };
 
 
@@ -96,7 +96,7 @@ var StatusTests = function () {
          dataSource.testDataAdapter.setProperty("communicationFailure", true);
 
          // Perform itemFromIndex to trigger UI.FetchError.noResponse
-         // Error handler function is needed to avoid unhandled errors. However, no test is performed in these functions. 
+         // Error handler function is needed to avoid unhandled errors. However, no test is performed in these functions.
          dataSource.itemFromIndex(0).done(function fetchSuccess() {
              },
              function fetchError(e) {

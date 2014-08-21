@@ -4,13 +4,13 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-light.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
 /// <reference path="AnimationCollection.js" />
-/// <reference path="../TestLib/animations/JSAnimationVerifier.js" />
-/// <reference path="../TestLib/animations/JSAnimationUtils.js" />
+/// <reference path="JSAnimationVerifier.js" />
+/// <reference path="JSAnimationUtils.js" />
 
 SetAnimationsTests = function () {
     var verifier = new AnimationVerifier();
     var util = new JSAnimationUtils();
-	
+
     var animationsEnabledAtSetUp = true;
     this.setUp = function () {
         util.addDom("ui-light.css", false);
@@ -32,7 +32,7 @@ SetAnimationsTests = function () {
         LiveUnit.LoggingCore.logComment("opacity:" + opacity);
         return opacity;
     }
- 
+
     //test to ensure animations do not execute, as expected, when .disableAnimations() is called.
     this.testTurnOffAnimation = function() {
         var elem = document.getElementById("div1");
@@ -42,7 +42,7 @@ SetAnimationsTests = function () {
 		var result = (outputOpacity(elem) === "0");
 		LiveUnit.Assert.isTrue(result);
     }
-	
+
 	//test to make sure .disableAnimations() works and updates the WinJS.UI.isAnimationsEnabled boolean
 	this.testDisableAnimation = function () {
         var elem = document.getElementById("div1");
@@ -51,7 +51,7 @@ SetAnimationsTests = function () {
 		LiveUnit.LoggingCore.logComment("isAnimationEnabled: " + result);
         LiveUnit.Assert.isTrue(!result);
     }
-	
+
     //test to ensure animations execute as expected when .enableAnimations() is called.
     this.testTurnOnAnimation = function(complete) {
 		var callback = function () {
@@ -73,7 +73,7 @@ SetAnimationsTests = function () {
 		LiveUnit.LoggingCore.logComment("isAnimationEnabled: " + result);
         LiveUnit.Assert.isTrue(result);
     }
-	
+
 }
 
 LiveUnit.registerTestClass("SetAnimationsTests");

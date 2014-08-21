@@ -2,8 +2,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 /// <reference path="FlipperHelpers.js" />
 /// <deploy src="../TestData/" />
 
@@ -53,13 +53,13 @@ WinJSTests.FlipViewEventsTests = function () {
 
     }
     this.generate("testFlipViewPageEvents", eventsTest);
-    
+
     function verifyDisplayedItem(flipView, rawData) {
         LiveUnit.LoggingCore.logComment("Verifying displayed page is correct");
         LiveUnit.Assert.isTrue(currentPageInView(flipView));
         flipView.itemTemplate.verifyOutput(getDisplayedElement(flipView), rawData);
     }
-    
+
     function eventsTest(element, flipView, rawData, complete, useL0DomEvent) {
         var gotVisibilityChangedTrue,
             gotVisibilityChangedFalse,
@@ -72,7 +72,7 @@ WinJSTests.FlipViewEventsTests = function () {
             outgoingElement = null;
             expectedIncomingElement = null;
         }
-        
+
         function verifyExpectedResults(targetIndex) {
             LiveUnit.Assert.isTrue(gotVisibilityChangedTrue);
             LiveUnit.Assert.isTrue(gotVisibilityChangedFalse);
@@ -94,7 +94,7 @@ WinJSTests.FlipViewEventsTests = function () {
             next: customAnimation,
             previous: customAnimation,
             jump: customAnimation
-        }); 
+        });
 
         function pageVisibilityHandler(e) {
             if (e.detail.visible) {

@@ -3,8 +3,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
+/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/TestDataSource.js"/>
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -32,10 +32,10 @@ WinJSTests.InitializationTests = function () {
     // This setup function will be called at the beginning of each test function.
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         var newNode = document.createElement("div");
         newNode.id = "InitializationTests";
         newNode.innerHTML =
@@ -192,7 +192,7 @@ WinJSTests.InitializationTests = function () {
 
         // Since these test reassign the control properties to the same value, there
         // are no changes to underlying. Hence we should be able to reuse the datasources
-        // across tests. 
+        // across tests.
 
         // TODO: Add tests for Multisize grid and multisize grouped grid layout
 
@@ -276,7 +276,7 @@ WinJSTests.InitializationTests = function () {
         LiveUnit.Assert.isTrue(listView2._horizontal() === (layoutName.indexOf("GridLayout") == 0));
     }
 
-    // Tests listView initialization with grid layout    
+    // Tests listView initialization with grid layout
     this.testGridLayout = function (complete) {
         LiveUnit.LoggingCore.logComment("In testGridLayout");
         testLayout("GridLayout");

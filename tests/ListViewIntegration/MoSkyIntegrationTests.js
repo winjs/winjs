@@ -3,12 +3,12 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js"/>
-/// <reference path="../TestLib/ListView/globals.js"/>
+/// <reference path="../TestLib/ListViewHelpers.js"/>
+/// <reference path="globals.js"/>
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
-/// <reference path="../TestLib/ListView/listviewutils.js"/>
-/// <reference path="../TestLib/ListView/listviewverify.js"/>
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
+/// <reference path="../TestLib/listviewutils.js"/>
+/// <reference path="listviewverify.js"/>
+/// <reference path="../TestLib/TestDataSource.js"/>
 /// <deploy src="../TestData/" />
 
 var WinJSTests = WinJSTests || {};

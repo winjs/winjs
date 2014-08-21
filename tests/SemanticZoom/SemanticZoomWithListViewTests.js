@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.js" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 /// <deploy src="../TestData/" />
 
 var WinJSTests = WinJSTests || {};
@@ -102,10 +102,10 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
 
         // Cover all pair combinations of configurations.
         Helper.pairwise({
-            direction: ["horizontal", "vertical"], 
-            grouped: [true, false], 
-            headersAbove: [true, false], 
-            rtl: [true, false], 
+            direction: ["horizontal", "vertical"],
+            grouped: [true, false],
+            headersAbove: [true, false],
+            rtl: [true, false],
             layoutName: ["ListLayout", "GridLayout"]
         },[
             // Some configurations are more important because they've found bugs in the past,

@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/ItemsManager/ProxyDataSource.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
-/// <reference path="../TestLib/ItemsManager/vds-tracing.js" />
+/// <reference path="ProxyDataSource.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
+/// <reference path="vds-tracing.js" />
 
 var CustomDataSourceTests = function () {
     "use strict";
@@ -47,7 +47,7 @@ var CustomDataSourceTests = function () {
         for (i = 0; i < initialCount; i++) {
             array[i] = sampleData(i);
         }
-        
+
         var dataSource = new DatasourceTestComponents.ProxyDataSource(array, keyOf);
 
         var n1 = 5,

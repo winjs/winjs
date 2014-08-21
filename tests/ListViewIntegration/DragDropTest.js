@@ -3,9 +3,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 /// <reference path="../TestLib/util.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js" />
+/// <reference path="../TestLib/TestDataSource.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
 var WinJSTests = WinJSTests || {};
@@ -25,10 +25,10 @@ WinJSTests.ListViewDragDropTest = function () {
 
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");
-        
+
         testRootEl = document.createElement("div");
         testRootEl.className = "file-listview-css";
-        
+
         var newNode = document.createElement("div");
         newNode.id = "DragDropTest";
         newNode.style.width = "200px";
@@ -145,7 +145,7 @@ WinJSTests.ListViewDragDropTest = function () {
             }
         };
 
-        // Data adapter abilities - requirements for ListView Reordering.  
+        // Data adapter abilities - requirements for ListView Reordering.
         var abilities = {
             itemsFromIndex: true, // If these change, update the public docs!!
             itemsFromKey: true,
@@ -401,7 +401,7 @@ WinJSTests.ListViewDragDropTest = function () {
         // dragEnter/Leave events for the cursor moving inside of each of the item's child regions. The ListView should only fire one itemdragenter
         // event per unique drag-into-listview-region operation instead of spamming itemdragenter with HTML5's enter events.
         // Enter/Leave are weird because they fire in an unexpected order: Enter is fired before leave, so in theory a control
-        // could make the mistake of thinking two items are being dragged over at once, or make the mistake of assuming events go in a 
+        // could make the mistake of thinking two items are being dragged over at once, or make the mistake of assuming events go in a
         // leave-then-enter fashion, and clear out a global drag over flag when leave is received. We'll test to make sure the ListView
         // doesn't fire multiple dragEnter events, and handles dragEnter/leave in any order.
         generateEventInElement(listView, "onDragStart", listView.elementFromIndex(2), rtl);

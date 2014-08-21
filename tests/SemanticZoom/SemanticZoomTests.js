@@ -2,9 +2,9 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
-/// <reference path="../TestLib/ItemsManager/TestDataSource.js"/>
+/// <reference path="../TestLib/TestDataSource.js"/>
 /// <reference path="../TestLib/util.js" />
 /// <reference path="../TestData/ListView.less.css" />
 
@@ -122,7 +122,7 @@ WinJSTests.SemanticZoomTests = function () {
                 }
 
                 LiveUnit.Assert.isTrue(centerItemIndex >= 0, "Hit test failed. Index of item at viewport center: " + centerItemIndex);
-                // Get the item from datasource 
+                // Get the item from datasource
                 return list1.itemDataSource.itemFromIndex(centerItemIndex);
             }).
             then(function (itemAtIndex) {
@@ -191,7 +191,7 @@ WinJSTests.SemanticZoomTests = function () {
                 return waitForReady(list1)();
             }).
             then(function () {
-                // Get the item from datasource 
+                // Get the item from datasource
                 return list1.itemDataSource.itemFromIndex(startIndex);
             }).
             then(function (itemAtIndex) {
@@ -621,7 +621,7 @@ WinJSTests.SemanticZoomTests = function () {
 
             sezo = createSezoWithBindingList({ type: layoutName, orientation: WinJS.UI.Orientation.horizontal }, 10);
 
-            // Verify the aria-label is set 
+            // Verify the aria-label is set
             var actualLabel = sezoDiv.getAttribute("aria-label");
             LiveUnit.Assert.areEqual(mylabel, actualLabel, "aria-label is wrong");
             complete();

@@ -3,7 +3,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
 /// <deploy src="../TestData/" />
 
 var WinJSTests = WinJSTests || {};
@@ -60,7 +60,7 @@ WinJSTests.ListViewAnimationTest = function () {
     function hookAnimationsHelper() {
         var realFunctions = {};
         realFunctions.animateEntrance = WinJS.UI._ListViewAnimationHelper.animateEntrance;
-        
+
         var animationCallsRecord = {
             entranceAnimation: 0
         };

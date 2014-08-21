@@ -3,8 +3,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListView/Helpers.js" />
-/// <reference path="../TestLib/ItemsManager/UnitTestsCommon.js" />
+/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/UnitTestsCommon.js" />
 
 
 var Tests = Tests || {};
@@ -131,9 +131,9 @@ var Tests = Tests || {};
         }
         function parent(element) {
             document.body.appendChild(element);
-            element.cleanup = function () { 
+            element.cleanup = function () {
                 WinJS.Utilities.disposeSubTree(element);
-                document.body.removeChild(element); 
+                document.body.removeChild(element);
             };
             return element;
         }
@@ -296,7 +296,7 @@ var Tests = Tests || {};
         }
 
         this.testSortingListViewWithListBinding = function (complete) {
-            //BugID:  629543            
+            //BugID:  629543
             var sampleDataSource = []
             for (var i = 20; i > 0; i--) {
                 var t = i;
@@ -325,7 +325,7 @@ var Tests = Tests || {};
         }
 
         this.testListViewWithEmptyFiltered = function (complete) {
-            //BugID:  629543            
+            //BugID:  629543
             var sampleDataSource = [];
 
             var sorted = new WinJS.Binding.List(sampleDataSource);
@@ -351,7 +351,7 @@ var Tests = Tests || {};
         }
 
         this.testListViewWithOneElementAndThenDeletedAndThenAdded = function (complete) {
-            //BugID:  629543            
+            //BugID:  629543
             var sampleDataSource = [{ title: 3, detail: "hello world" }];
 
             var sorted = new WinJS.Binding.List(sampleDataSource);

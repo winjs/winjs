@@ -3,8 +3,8 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
 /// <reference path="AnimationCollection.js" />
-/// <reference path="../TestLib/animations/JSAnimationVerifier.js" />
-/// <reference path="../TestLib/animations/JSAnimationUtils.js" />
+/// <reference path="JSAnimationVerifier.js" />
+/// <reference path="JSAnimationUtils.js" />
 
 // $(TARGET_DESTINATION)
 
@@ -1505,7 +1505,7 @@ PVLJSFunctionTests = function () {
     this.testCancelEmptyAnimation = function(complete) {
         var promise = WinJS.UI.Animation.enterPage().then(onComplete, onError);
         LiveUnit.Assert.isTrue(result === null); //Verifty onComplete is not fired yet.
-        
+
         WinJS.Utilities._setImmediate(function () {
             promise.cancel();
             LiveUnit.Assert.isTrue(result);
