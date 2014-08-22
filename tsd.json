@@ -1,0 +1,12 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "bin/typings",
+  "bundle": "bin/typings/tsd.d.ts",
+  "installed": {
+    "winjs/winjs.d.ts": {
+      "commit": "807ba77ee6af4e587618535b0d820f03e3353823"
+    }
+  }
+}
