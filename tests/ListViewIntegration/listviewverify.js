@@ -437,7 +437,7 @@ ListViewVerify.prototype = (function () {
                 // checking for no selection
                 expectedSelectedArray = [];
             }
-            else if (!commonUtils.isArray(expectedSelectedArray)) {
+            else if (!Array.isArray(expectedSelectedArray)) {
                 // checking for single integer selection
                 expectedSelectedArray = [expectedSelectedArray];
             }

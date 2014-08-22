@@ -62,12 +62,21 @@
 
             // Fails the build if the path doesn't exist or its casing is incorrect.
             function validatePath(path, line) {
+
                 if (endsWith(path, ".less.css")) {
                     // Unit test's LESS files have the extension ".less" in the src directory
                     // and ".less.css" in the bin directory. Path validation is against the
                     // src directory so do the validation against the extension ".less" instead
                     // of ".less.css".
                     path = path.substring(0, path.length - ".css".length);
+                }
+
+                if (endsWith(path, ".ts")) {
+                    return;
+                }
+
+                if (!fs.existsSync(path) && fs.existsSync('./bin/' + path)) {
+                    return;
                 }
 
                 // realpathSync will abort the build if the file can't be resolved.
@@ -90,7 +99,13 @@
 
             function extractDependencies(path) {
                 // This function extracts the <reference path="..." /> tags in test files and returns their real paths.
-                var fileContents = fs.readFileSync(path, "utf-8");
+                var fileContents;
+                if (!fs.existsSync(path) && fs.existsSync('./bin/' + path)) {
+                    fileContents = fs.readFileSync('./bin/' + path, "utf-8");
+                } else {
+                    fileContents = fs.readFileSync(path, "utf-8");
+                }
+
                 var dir = path.substring(0, path.lastIndexOf("/"));
                 var deps = [];
 
@@ -118,6 +133,11 @@
                     var startIndex = line.indexOf('path="') + 6;
                     var endIndex = line.indexOf('"', startIndex);
                     var path = dir + "/" + line.substring(startIndex, endIndex);
+
+                    if (endsWith(path, ".d.ts")) {
+                        continue;
+                    }
+
                     validatePath(path, line);
                     deps.push(path);
                     processedOne = true;
@@ -213,6 +233,8 @@
                         csss.push("./tests/" + dir + "/" + file);
                     } else if (file.indexOf(".js") >= 0) {
                         srcs.push("./tests/" + dir + "/" + file);
+                    } else if (file.indexOf(".ts") >= 0) {
+                        srcs.push("./tests/" + dir + "/" + file);
                     }
                 }
                 var done = false;
@@ -262,6 +284,7 @@
                 }
                 for (var i = srcs.length - 1; i >= 0; i--) {
                     var url = srcs[i].replace("./tests/" + dir + "/", "");
+                    url = url.replace(/\.ts$/, ".js");
                     testReferences += '    <script src="' + url + '"></script>\r\n';
                 }
                 testReferences = testReferences.substr(0, testReferences.length - 2);

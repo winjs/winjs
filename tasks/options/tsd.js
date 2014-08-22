@@ -2,8 +2,6 @@
 (function () {
     "use strict";
 
-    var config = require("../../config.js");
-
     module.exports = {
         refresh: {
             options: {

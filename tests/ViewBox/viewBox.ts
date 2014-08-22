@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 
 var CorsicaTests = CorsicaTests || {};
 
@@ -39,7 +39,7 @@ CorsicaTests.ViewBox = function () {
             container.style.height = "50px";
 
             WinJS.UI.processAll(container);
-            var sizer = container.querySelector(".sizer");                
+            var sizer = <HTMLElement>container.querySelector(".sizer");                
             LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
             
             container.style.height = "300px";
@@ -71,7 +71,7 @@ CorsicaTests.ViewBox = function () {
             container.style.height = "50px";
 
             WinJS.UI.processAll(container);
-            var sizer = container.querySelector(".sizer");                
+            var sizer = <HTMLElement>container.querySelector(".sizer");            
             LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
             
             container.style.height = "300px";
@@ -84,7 +84,7 @@ CorsicaTests.ViewBox = function () {
                 LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
             }).
             then(function () {
-                var box = document.querySelector(".sizer").parentNode;
+                var box = <HTMLElement>document.querySelector(".sizer").parentNode;
                 var newChild = document.createElement("div");
                 newChild.className = "sizer";
                 newChild.style.width = "50px";
@@ -206,6 +206,8 @@ CorsicaTests.ViewBox = function () {
             container.style.width = "800px";
             container.style.height = "800px";
             WinJS.UI.processAll(container);
+
+            var testDiv = document.getElementById("testDiv");
             
             // validate the class was applied
             LiveUnit.Assert.isTrue(testDiv.classList.contains("win-viewbox"));
@@ -215,7 +217,7 @@ CorsicaTests.ViewBox = function () {
             LiveUnit.Assert.areEqual("800px", getComputedStyle(testDiv).height);
             LiveUnit.Assert.areEqual("relative", getComputedStyle(testDiv).position);
             
-            var sizer = container.querySelector(".sizer");  
+            var sizer = <HTMLElement>container.querySelector(".sizer");  
             var actualTransform = sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName];
             
 // consider container.clientWidth, clientHeight instead of window / 2 
@@ -248,7 +250,7 @@ CorsicaTests.ViewBox = function () {
 
             WinJS.UI.processAll(container).
                 then(function () {
-                    var sizer = container.querySelector(".sizer");
+                    var sizer = <HTMLElement>container.querySelector(".sizer");
                     LiveUnit.Assert.areEqual("", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
                     document.body.appendChild(container);
                     if(!canElementResize) {
@@ -257,7 +259,7 @@ CorsicaTests.ViewBox = function () {
                     return WinJS.Promise.timeout();
                 }).
                 then(function () {
-                    var sizer = container.querySelector(".sizer");
+                    var sizer = <HTMLElement>container.querySelector(".sizer");
                     LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
                     
                     container.style.height = "300px";
@@ -269,7 +271,7 @@ CorsicaTests.ViewBox = function () {
                     return WinJS.Promise.timeout(16);
                 }).
                 then(function () {
-                    var sizer = container.querySelector(".sizer");
+                    var sizer = <HTMLElement>container.querySelector(".sizer");
                     LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
                 }).
                 then(null, unhandledTestError).
@@ -291,6 +293,7 @@ CorsicaTests.ViewBox = function () {
             var squareHTML = "<div id='testDiv' dir='rtl' data-win-control='WinJS.UI.ViewBox'><div class='sizer' style='width:200px;height:200px;background:white;'><div class='inner' style='width:100px;height:100px;background:green;'>C</div></div></div>";
             document.body.appendChild(container);
             container.innerHTML = squareHTML;
+            var testDiv = document.getElementById("testDiv");
 
             // setting the width, height as values depends on the html tag getting styled to w=h=800px
             container.style.width = "800px";
@@ -305,7 +308,7 @@ CorsicaTests.ViewBox = function () {
             LiveUnit.Assert.areEqual("800px", getComputedStyle(testDiv).height);
             LiveUnit.Assert.areEqual("relative", getComputedStyle(testDiv).position);
 
-            var sizer = container.querySelector(".sizer");
+            var sizer = <HTMLElement>container.querySelector(".sizer");
             var actualTransform = sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName];
 
             LiveUnit.Assert.areEqual(0, actualTransform.indexOf("translate("));
@@ -321,10 +324,10 @@ CorsicaTests.ViewBox = function () {
     this.testViewBoxDispose = function () {
         var vb = new WinJS.UI.ViewBox();
         LiveUnit.Assert.isTrue(vb.dispose);
-        LiveUnit.Assert.isFalse(vb._disposed);
+        LiveUnit.Assert.isFalse((<any>vb)._disposed);
         
         // Double dispose sentinel
-        var sentinel = document.createElement("div");
+        var sentinel:any = document.createElement("div");
         sentinel.disposed = false;
         WinJS.Utilities.addClass(sentinel, "win-disposable");
         vb.element.appendChild(sentinel);
@@ -337,7 +340,7 @@ CorsicaTests.ViewBox = function () {
 
         vb.dispose();
         LiveUnit.Assert.isTrue(sentinel.disposed);
-        LiveUnit.Assert.isTrue(vb._disposed);
+        LiveUnit.Assert.isTrue((<any>vb)._disposed);
         vb.dispose();
     }
 };
