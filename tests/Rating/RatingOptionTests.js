@@ -14,7 +14,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="RatingUtils.js"/>
 
 
@@ -51,10 +51,10 @@ var OptionTests = function () {
         // Try to set averageRating to a value greater than maxRating, expecting coercion
         ratingUtils.setOptionsAndVerify("rating", { averageRating: ratingUtils.random(ratingUtils.defaultMaxRating + 0.1, ratingUtils.defaultMaxRating + 10) });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -82,10 +82,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -94,10 +94,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { maxRating: 0 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -106,10 +106,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { maxRating: null });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -118,10 +118,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { maxRating: undefined });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -135,10 +135,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -152,10 +152,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -169,10 +169,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // averageRating Tests
@@ -183,10 +183,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { averageRating: ratingUtils.randomInt(1, ratingUtils.defaultMaxRating) });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -200,10 +200,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -213,10 +213,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { averageRating: ratingUtils.random(1, ratingUtils.defaultMaxRating) });
 
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -230,20 +230,20 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
     this.testRating_Options_AverageRating_DefaultMax = function () {
         ratingUtils.instantiate("rating", { averageRating: ratingUtils.defaultMaxRating });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -253,10 +253,10 @@ var OptionTests = function () {
         ratingUtils.instantiate("rating", { maxRating: newMax });
         ratingUtils.setOptionsAndVerify("rating", { averageRating: newMax });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -265,10 +265,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { averageRating: 0 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -277,10 +277,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { averageRating: null });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -289,10 +289,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { averageRating: ratingUtils.random(ratingUtils.defaultMaxRating + 1, ratingUtils.defaultMaxRating * 2) });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -302,10 +302,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { averageRating: ratingUtils.random(newMax + 1, newMax * 2) });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -314,10 +314,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { averageRating: undefined });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -331,10 +331,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -348,10 +348,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -365,10 +365,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // userRating tests
@@ -379,10 +379,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: 2 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -396,10 +396,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -408,10 +408,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: ratingUtils.defaultMaxRating });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -421,10 +421,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: newMax });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -433,10 +433,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: 0 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -451,10 +451,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: null });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -463,10 +463,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: ratingUtils.randomInt(ratingUtils.defaultMaxRating + 1, ratingUtils.defaultMaxRating * 2) });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -476,10 +476,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: ratingUtils.randomInt(newMax + 1, newMax * 2) });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -488,10 +488,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: ratingUtils.randomInt(1, ratingUtils.defaultMaxRating) });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -506,10 +506,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -518,10 +518,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { userRating: undefined });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -535,10 +535,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -552,10 +552,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -569,10 +569,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // disabled tests
@@ -590,10 +590,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { userRating: 0 });
         ratingUtils.setOptionsAndVerify("rating", { averageRating: 2 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -609,10 +609,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { userRating: 0 });
         ratingUtils.setOptionsAndVerify("rating", { averageRating: 2 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -622,10 +622,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { disabled: 1 });
         ratingUtils.setOptionsAndVerify("rating", { disabled: 0 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -635,10 +635,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { disabled: "true" });
         ratingUtils.setOptionsAndVerify("rating", { disabled: "false" });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -652,10 +652,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // enableClear tests
@@ -675,10 +675,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { averageRating: 1 });
         ratingUtils.setOptionsAndVerify("rating", { userRating: 0 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -696,10 +696,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { averageRating: 1 });
         ratingUtils.setOptionsAndVerify("rating", { userRating: 0 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -709,10 +709,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { enableClear: 1 });
         ratingUtils.setOptionsAndVerify("rating", { enableClear: 0 });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -722,10 +722,10 @@ var OptionTests = function () {
         ratingUtils.setOptionsAndVerify("rating", { enableClear: "true" });
         ratingUtils.setOptionsAndVerify("rating", { enableClear: "false" });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -739,10 +739,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
     // tooltipStrings tests
@@ -761,10 +761,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: tooltipStrings });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -789,10 +789,10 @@ var OptionTests = function () {
             ratingUtils.setOptionsAndVerify("rating"); // Use verification in setOptionsAndVerify to verify we didn't break anything
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -814,10 +814,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -842,10 +842,10 @@ var OptionTests = function () {
             ratingUtils.setOptionsAndVerify("rating"); // Use verification in setOptionsAndVerify to verify we didn't break anything
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -862,10 +862,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: tooltipStrings });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -886,10 +886,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -898,10 +898,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: null });
     };
-    
-    
-    
-    
+
+
+
+
 
 
     //-----------------------------------------------------------------------------------
@@ -913,10 +913,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: tooltipStrings });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -932,10 +932,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -946,10 +946,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: tooltipStrings });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -958,10 +958,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: ["tooltip1", "tooltip1", "tooltip3"] });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -984,10 +984,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -996,10 +996,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: ["tooltip1", "tooltip1", "tooltip3", "tooltip4", "tooltip5", "tooltip6"] });
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -1022,10 +1022,10 @@ var OptionTests = function () {
             ratingUtils.addTag("div", "rating");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -1034,10 +1034,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: 5 }, true);
     };
-    
-    
-    
-    
+
+
+
+
 
     //-----------------------------------------------------------------------------------
 
@@ -1046,10 +1046,10 @@ var OptionTests = function () {
 
         ratingUtils.setOptionsAndVerify("rating", { tooltipStrings: "Bad Tooltips" }, true);
     };
-    
-    
-    
-    
+
+
+
+
 };
 
 // Register the object as a test class by passing in the name

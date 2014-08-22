@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="FlipperUtils.js"/>
 /// <reference path="../TestLib/TestDataSource.js"/>
 

@@ -3,7 +3,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="../TestLib/util.js" />
 
 var WinJSTests = WinJSTests || {};
@@ -12,7 +12,7 @@ WinJSTests.NavBarCommandTests = function () {
     "use strict";
 
     var Key = WinJS.Utilities.Key;
-    
+
     function assertHighContrastAdjust(element, expected) {
         if ("msHighContrastAdjust" in document.documentElement.style) {
             LiveUnit.Assert.areEqual(expected, element.style.msHighContrastAdjust);

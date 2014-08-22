@@ -3,7 +3,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.js" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js" />
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts" />
 /// <reference path="../TestLib/TestDataSource.js"/>
 /// <reference path="../TestLib/util.js" />
 /// <reference path="../TestData/ListView.less.css" />

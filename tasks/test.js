@@ -75,10 +75,6 @@
                     return;
                 }
 
-                if (!fs.existsSync(path) && fs.existsSync('./bin/' + path)) {
-                    return;
-                }
-
                 // realpathSync will abort the build if the file can't be resolved.
                 var fullPath = fs.realpathSync(path);
 
@@ -99,12 +95,8 @@
 
             function extractDependencies(path) {
                 // This function extracts the <reference path="..." /> tags in test files and returns their real paths.
-                var fileContents;
-                if (!fs.existsSync(path) && fs.existsSync('./bin/' + path)) {
-                    fileContents = fs.readFileSync('./bin/' + path, "utf-8");
-                } else {
-                    fileContents = fs.readFileSync(path, "utf-8");
-                }
+                var fileContents = fs.readFileSync(path, "utf-8");
+
 
                 var dir = path.substring(0, path.lastIndexOf("/"));
                 var deps = [];

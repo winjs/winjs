@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 
 if (WinJS.Utilities.isPhone) {
     var CorsicaTests = CorsicaTests || {};
@@ -245,7 +245,7 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Test: " + msg);
 
-            // Push two extra WinRT comandBarButtons into the commandBar primary and secondary commands.             
+            // Push two extra WinRT comandBarButtons into the commandBar primary and secondary commands.
             var extraButton1 = new core.WebUICommandBarIconButton();
             var extraButton2 = new core.WebUICommandBarIconButton();
             commandBar.primaryCommands.push(extraButton1);
@@ -253,7 +253,7 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.areEqual(commandBar.primaryCommands.length, 2);
             LiveUnit.Assert.areEqual(commandBar.secondaryCommands.length, 2);
 
-            // AppBar doesn't know about the extra buttons. 
+            // AppBar doesn't know about the extra buttons.
             // Make sure disposing the AppBar doesn't remove the extra buttons from the CommandBar.
             AppBar.dispose();
 
@@ -422,11 +422,11 @@ if (WinJS.Utilities.isPhone) {
             // Tests important scenarios regarding AppBar's ability to track which AppBar instance is currently in control of the commandBar.
             // SCN 1 Verifies that AppBars which are ENABLED during construction, become registered as the current AppBar.
             // SCN 2 Verifies that AppBars which are DISABLED during construction, DO NOT become registered as the current AppBar.
-            // SCN 3 Verifies that every AppBar gets a uniqueID.       
-            // SCN 4 Verifies that setting AppBar.disabled = "false" should register that AppBar as the current AppBar. 
+            // SCN 3 Verifies that every AppBar gets a uniqueID.
+            // SCN 4 Verifies that setting AppBar.disabled = "false" should register that AppBar as the current AppBar.
             // SCN 5 Verifies that disabling an AppBar that was not the current AppBar, has no impact on the currentAppBarId
             // SCN 6 Verifies that disabling the current AppBar unregisters it from being 'current'.
-            // SCN 7 Verifies that unregistering the current AppBar resulted in no AppBars registered as 'current'.                      
+            // SCN 7 Verifies that unregistering the current AppBar resulted in no AppBars registered as 'current'.
 
             var commands1 = [{ id: 'g1', label: "g1" }, { id: 's1', label: "s1", section: "selection" }];
             var commands2 = [{ id: 'g2', label: "g2" }, { id: 's2', label: "s2", section: "selection" }];
@@ -461,7 +461,7 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.areNotEqual(bar3._uniqueId, bar2._uniqueId, msg);
             LiveUnit.Assert.areNotEqual(bar1._uniqueId, bar3._uniqueId, msg);
 
-            // 4. Verify that setting AppBar.disabled = "false" should register that AppBar as the current AppBar. 
+            // 4. Verify that setting AppBar.disabled = "false" should register that AppBar as the current AppBar.
             msg = "Setting AppBar.disabled = 'false' should register that AppBar as the current AppBar";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
 
@@ -612,7 +612,7 @@ if (WinJS.Utilities.isPhone) {
         }
 
         this.testDynamicColorChange = function (complete) {
-            // Setting these properties or invoking these methods should trigger a recompute of the CommandBar background and foreground colors. 
+            // Setting these properties or invoking these methods should trigger a recompute of the CommandBar background and foreground colors.
             // Seting the AppBar.commands property.
             // AppBar.hideCommands()
             // AppBar.showCommands()
@@ -912,13 +912,13 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Test: " + msg);
 
-            // Push an extra WinRT commandBarButton into the commandBar.             
+            // Push an extra WinRT commandBarButton into the commandBar.
             var extraButton = new core.WebUICommandBarIconButton();
             LiveUnit.Assert.isFalse(commandBar.primaryCommands.indexOf(extraButton).returnValue)
             commandBar.primaryCommands.push(extraButton);
             LiveUnit.Assert.isTrue(commandBar.primaryCommands.indexOf(extraButton).returnValue, "extraButton should be among the primaryCommands in the commandBar");
 
-            // AppBar doesn't know about extraButton. 
+            // AppBar doesn't know about extraButton.
             // If AppBar commands get reloaded, extraButton will be absent from the commandBar.
             AppBar.disabled = false;
             LiveUnit.Assert.isTrue(commandBar.primaryCommands.indexOf(extraButton).returnValue, msg)

@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.js" />
 /// <reference path="../TestLib/UnitTestsCommon.js" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="../TestLib/util.js" />
 /// <reference path="FlipperHelpers.js" />
 /// <deploy src="../TestData/" />

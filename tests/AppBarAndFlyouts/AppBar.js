@@ -4,7 +4,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.js"/>
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="../TestLib/util.js" />
 /// <reference path="OverlayHelpers.js" />
 
@@ -453,7 +453,7 @@ CorsicaTests.AppBarTests = function () {
         "<div> <span id=\"nowplaying\">Now Playing</span><span id=\"songtitle\">Rumour Has It</span><span id=\"albumtitle\">21 (Deluxe Edition) By Adele</span></div></div>";
 
         that._element.innerHTML = htmlString;
-        /* Left/Right/Home/End key reachable commands in visual order. 
+        /* Left/Right/Home/End key reachable commands in visual order.
             Selection:
                 0) "buttons" Content Command: "orange"<->"yellow" (firstElementFocus is set to #orange and lastElementFocus is set to #yellow)
 
@@ -737,10 +737,10 @@ CorsicaTests.AppBarTests = function () {
     };
 
     this.testChangingLayoutsPreservesAppBarCommands = function (complete) {
-        // Verify that: 
-        // A) Switching from custom layout, to commands layout, and back to custom again, restores the AppBarCommands 
-        //  that were in the AppBar, back to the AppBar DOM in the same order that the custom layout AppBar DOM had 
-        //  them in originally.         
+        // Verify that:
+        // A) Switching from custom layout, to commands layout, and back to custom again, restores the AppBarCommands
+        //  that were in the AppBar, back to the AppBar DOM in the same order that the custom layout AppBar DOM had
+        //  them in originally.
         // B) Changing layouts does not dispose the commands
 
         var root = document.getElementById("appBarDiv");
@@ -760,7 +760,7 @@ CorsicaTests.AppBarTests = function () {
         }
 
         // Custom layout AppBar won't process commands automatically during construction
-        // Create and process AppBar child elements now.     
+        // Create and process AppBar child elements now.
         appBarElement.appendChild(new WinJS.UI.AppBarCommand(null, { id: 'Button0', label: 'Button 0', section: 'global' }).element);
         appBarElement.appendChild(document.createElement("INPUT")); // Not an AppBarCommand, so not expected to get restored.
         appBarElement.appendChild(new WinJS.UI.AppBarCommand(null, { id: 'Button1', label: 'Button 1', section: 'selection' }).element);
@@ -782,8 +782,8 @@ CorsicaTests.AppBarTests = function () {
     };
 
     this.testNewCommandsSetOrderPeserveredAfterSwitchingLayouts = function (complete) {
-        // Verify setting new commands while in commands layout, and then switching back to custom layout will leave the 
-        // new commands in the custom layout AppBar DOM in the same order they were initially passed to the commands 
+        // Verify setting new commands while in commands layout, and then switching back to custom layout will leave the
+        // new commands in the custom layout AppBar DOM in the same order they were initially passed to the commands
         // setter.
         var root = document.getElementById("appBarDiv");
         root.innerHTML =
@@ -802,7 +802,7 @@ CorsicaTests.AppBarTests = function () {
 
         appBar.commands = newCommands;
 
-        // Switch to custom layout and verify commands were placed into the AppBar DOM 
+        // Switch to custom layout and verify commands were placed into the AppBar DOM
         // in the same order the setter received them in.
         appBar.layout = "custom";
         var commands = appBar.element.querySelectorAll(".win-command");
@@ -824,7 +824,7 @@ CorsicaTests.AppBarTests = function () {
             "</div>";
         var appBar = new WinJS.UI.AppBar(root.querySelector("#appBar"), { layout: 'commands' });
 
-        // Make sure we start from a sane place and verify initial commands layout HTML. 
+        // Make sure we start from a sane place and verify initial commands layout HTML.
         LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(appBar.element, _Constants.commandLayoutClass), "Commands Layout AppBar should have the win-commandlayout CSS class");
         var layoutHTML = appBar.element.querySelectorAll(".win-primarygroup, .win-secondarygroup");
         LiveUnit.Assert.isTrue(layoutHTML.length === 2, "commands layout appbar should have its own HTML inside of the AppBar element.");
@@ -1064,7 +1064,7 @@ CorsicaTests.AppBarTests = function () {
             failures = checkShouldBeDisplayNone(appBar, false);
             LiveUnit.Assert.isFalse(failures.length, msg);
 
-            // Closed Minimal AppBar should have InvokeButton.        
+            // Closed Minimal AppBar should have InvokeButton.
             verifyHasInvokeButton(appBar);
 
             // Every all immediate children of the AppBar other than the invokeButton should not be displayed or be tabbable.
@@ -1125,7 +1125,7 @@ CorsicaTests.AppBarTests = function () {
 
             var filterFunction = function (element) {
                 var isFocusable = function (element) {
-                    // First make sure it isn't already the active element. 
+                    // First make sure it isn't already the active element.
                     // Firefox for example, doesn't clear focus when an element's display is set to "none".
                     element.blur();
                     element.focus();
@@ -1289,7 +1289,7 @@ CorsicaTests.AppBarTests = function () {
             var finalDiv = appBar.querySelector(".win-finaldiv");
             var clickEater = document.querySelector(".win-appbarclickeater");
 
-            // Verify light dismiss properties.           
+            // Verify light dismiss properties.
             msg = "Light dismiss AppBar should not be sticky";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             LiveUnit.Assert.isFalse(appBar.winControl.sticky, msg);
@@ -1461,7 +1461,7 @@ CorsicaTests.AppBarTests = function () {
                     verifyHidden();
 
                     // Set up next scenario so that one bar is shown and one is hidden. trigger invoke on the shown bar to
-                    // verify that both bars are hidden afterwards, ensuring that the invoke button behavior really is  
+                    // verify that both bars are hidden afterwards, ensuring that the invoke button behavior really is
                     // different than the Edgy event handler.
                     return waitForPositionChange(trigger.sourceAppBar, function () { trigger.sourceAppBar.show(); }).then(function () {
                         trigger();
