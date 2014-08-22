@@ -19,7 +19,7 @@
 
 TooltipAccessibilityTests = function () {
     var tooltipUtils = new TooltipUtils();
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
 
     this.setUp = function () {
         tooltipUtils.setUp();

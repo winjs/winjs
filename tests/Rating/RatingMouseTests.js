@@ -19,7 +19,7 @@
 
 RatingMouseTests = function () {
     var ratingUtils = new RatingUtils();
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
 
     this.setUp = function (complete) {
         ratingUtils.setUp().then(complete);

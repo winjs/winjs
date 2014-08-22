@@ -20,7 +20,7 @@
 
 TooltipHidingTests = function () {
     var tooltipUtils = new TooltipUtils();
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
     var Key = WinJS.Utilities.Key;
 
     this.setUp = function () {

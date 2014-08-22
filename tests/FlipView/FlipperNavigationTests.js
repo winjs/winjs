@@ -13,7 +13,7 @@ var NavigationTests = null;
     // Create NavigationTests object
     NavigationTests = function() {
         var flipperUtils = new FlipperUtils();
-        var commonUtils = new CommonUtils();
+        var commonUtils = CommonUtilities;
         var pageSelectedEvent = "pagecompleted";
 
         //

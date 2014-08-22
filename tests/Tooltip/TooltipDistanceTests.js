@@ -19,7 +19,7 @@
 
 TooltipDistanceTests = function () {
     var tooltipUtils = new TooltipUtils();
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
 
     // Since distances can be off due to rounding errors, use this tolerance for our comparisons.
     var DISTANCE_TOLERANCE = 1;

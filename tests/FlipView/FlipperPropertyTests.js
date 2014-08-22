@@ -13,7 +13,7 @@ var PropertyTests = null;
     // Create PropertyTests object
     PropertyTests = function() {
         var flipperUtils = new FlipperUtils();
-        var commonUtils = new CommonUtils();
+        var commonUtils = CommonUtilities;
 
         //
         // Function: SetUp

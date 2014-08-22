@@ -13,7 +13,7 @@ var ManipulationTests = null;
     // Create ManipulationTests object
     ManipulationTests = function() {
         var flipperUtils = new FlipperUtils();
-        var commonUtils = new CommonUtils();
+        var commonUtils = CommonUtilities;
 
         // Events
         var pageVisibilityEvent = "pagevisibilitychanged";

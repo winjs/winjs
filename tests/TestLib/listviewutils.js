@@ -15,7 +15,7 @@ function ListViewUtils() {
 
 ListViewUtils.prototype = (function () {
 
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
     var testCount = 0;
 
     // ---------------------------------------------------------------------------------------------------------

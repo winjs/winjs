@@ -13,7 +13,7 @@ var InstantiationTests = null;
     // Create InstantiationTests object
     InstantiationTests = function() {
         var flipperUtils = new FlipperUtils();
-        var commonUtils = new CommonUtils();
+        var commonUtils = CommonUtilities;
 
         //
         // Function: SetUp

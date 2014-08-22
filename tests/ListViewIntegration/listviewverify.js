@@ -17,7 +17,7 @@ ListViewVerify.prototype = (function () {
     // Private Functions & Variables
     // ---------------------------------------------------------------------------------------------------------
     var lvUtils = new ListViewUtils();
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
 
     // ---------------------------------------------------------------------------------------------------------
     // Public Functions

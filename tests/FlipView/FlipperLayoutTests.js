@@ -13,7 +13,7 @@ var LayoutTests = null;
     // Create LayoutTests object
     LayoutTests = function() {
         var flipperUtils = new FlipperUtils();
-        var commonUtils = new CommonUtils();
+        var commonUtils = CommonUtilities;
         var pageSelectedEvent = "pagecompleted";
 
         //

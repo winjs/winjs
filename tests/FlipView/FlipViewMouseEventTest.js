@@ -15,7 +15,7 @@ WinJSTests.FlipViewMouseEventTest = function () {
     "use strict"
 
     var COUNT = 2;
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
 
     this.setUp = function () {
         LiveUnit.LoggingCore.logComment("In setup");

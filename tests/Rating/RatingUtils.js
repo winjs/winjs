@@ -20,7 +20,7 @@ function RatingUtils() {
 }
 RatingUtils.prototype = (function () {
     "use strict";
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
 
     // Public functions
     return {

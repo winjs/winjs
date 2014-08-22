@@ -16,7 +16,7 @@ var eventTestsObject;
     // Create NavigationTests object
     EventTests = function() {
         var flipperUtils = new FlipperUtils();
-        var commonUtils = new CommonUtils();
+        var commonUtils = CommonUtilities;
         eventTestsObject = this;
 
         // This object stores validation information used to determine if the specific event test passed

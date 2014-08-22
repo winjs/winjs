@@ -13,7 +13,7 @@ var ParamTests = null;
     // Create ParamTests object
     ParamTests = function() {
         var flipperUtils = new FlipperUtils();
-        var commonUtils = new CommonUtils();
+        var commonUtils = CommonUtilities;
 
         //
         // Function: SetUp

@@ -23,7 +23,7 @@ function FlipperUtils() {
 
 FlipperUtils.prototype = (function () {
     var mainFlipperDivId = "MainFlipperDiv";
-    var utils = new CommonUtils();
+    var utils = CommonUtilities;
 
     // Used for TestDataSource
     var controller = {

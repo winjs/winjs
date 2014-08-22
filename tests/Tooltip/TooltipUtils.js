@@ -19,7 +19,7 @@
 function TooltipUtils() {
 }
 TooltipUtils.prototype = (function () {
-    var commonUtils = new CommonUtils();
+    var commonUtils = CommonUtilities;
 
     // Public functions
     return {
