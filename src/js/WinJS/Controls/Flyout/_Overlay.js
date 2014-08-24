@@ -1564,9 +1564,9 @@ define([
                 }
             });
 
-            // Mixin for WWA Soft Keyboard offsets when -ms-device-fixed CSS positioning is supported.
-            // In this instance all _Overlay elements will use -ms-device-fixed positioning which fixes them to the visual viewport directly.
-            var _keyboardInfoDeviceFixedMixin = {
+            // Mixin for WWA's Soft Keyboard offsets when -ms-device-fixed CSS positioning is supported, or for general _Overlay positioning whenever we are in a web browser outside of WWA.
+            // If we are in an instance of WWA, all _Overlay elements will use -ms-device-fixed positioning which fixes them to the visual viewport directly.
+            var _keyboardInfo_Mixin = {
 
                 // Get the top offset of our visible area, aka the top of the visual viewport.
                 // This is always 0 when _Overlay elements use -ms-device-fixed positioning.
@@ -1607,27 +1607,27 @@ define([
                 },
             };
 
-            // Mixin for WWA Soft Keyboard offsets when CSS -ms-device-fixed positioning is not supported.
+            // Mixin for WWA's Soft Keyboard offsets in IE10 mode, where -ms-device-fixed positioning is not available.
             // In that instance, all _Overlay elements fall back to using CSS fixed positioning.
             // This is for backwards compatibility with Apache Cordova Apps targeting WWA since they target IE10.
             // This is essentially the original logic for WWA _Overlay / Soft Keyboard interactions we used when windows 8 first launched.
-            var _keyboardInfoFixedMixin = {
+            var _keyboardInfo_Windows8WWA_Mixin = {
                 // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement.
                 // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
-                _visibleDocTop: function _visibleDocTop() {
+                _visibleDocTop: function _visibleDocTop_Windows8WWA() {
                     return _Global.window.pageYOffset - _Global.document.documentElement.scrollTop;
                 },
 
                 // Get the bottom offset of the visual viewport from the bottom of the layout viewport, plus any IHM occlusion.
-                _visibleDocBottomOffset: function _visibleDocBottomOffset() {
+                _visibleDocBottomOffset: function _visibleDocBottomOffset_Windows8WWA() {
                     return _Global.document.documentElement.clientHeight - _Overlay._keyboardInfo._visibleDocBottom;
                 },
 
-                _visualViewportHeight: function _visualViewportHeight() {
+                _visualViewportHeight: function _visualViewportHeight_Windows8WWA() {
                     return _Global.window.innerHeight;
                 },
 
-                _visualViewportWidth: function _visualViewportWidth() {
+                _visualViewportWidth: function _visualViewportWidth_Windows8WWA() {
                     return _Global.window.innerWidth;
                 },
             };
@@ -1642,11 +1642,13 @@ define([
 
             var propertiesMixin,
                 hasDeviceFixed = _Global.getComputedStyle(visualViewportSpace).position === "-ms-device-fixed";
-            if (hasDeviceFixed) {
-                propertiesMixin = _keyboardInfoDeviceFixedMixin;
-            } else {
-                propertiesMixin = _keyboardInfoFixedMixin;
+            if (!hasDeviceFixed && _WinRT.Windows.UI.ViewManagement.InputPane) {
+                // If we are in WWA with IE 10 mode, use special keyboard handling knowledge for IE10 IHM.
+                propertiesMixin = _keyboardInfo_Windows8WWA_Mixin;
                 _Global.document.body.removeChild(visualViewportSpace);
+            } else {
+                // If we are in WWA on IE 11 or outside of WWA on any web browser use general positioning logic.
+                propertiesMixin = _keyboardInfo_Mixin;
             }
 
             for (var propertyName in propertiesMixin) {
