@@ -63,6 +63,9 @@
     <Content Include="..\..\tests\**\*.js">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Content>
+    <Content Include="..\..\tests\**\*.ts">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
   <Target Name="BeforeBuild">
