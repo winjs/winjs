@@ -187,6 +187,17 @@
         qunitDiv.style.zIndex = 0;
     }
 
+    function AllObjectKeys(obj) {
+        var keys = Object.keys(obj);
+        var proto = Object.getPrototypeOf(obj);
+        if(proto) {
+            var protoKeys = AllObjectKeys(proto);
+            return keys.concat(protoKeys);
+        }
+
+        return keys;
+    }
+
     QUnit.testStart(function testStart(testDetails) {
         qunitDiv.style.zIndex = -1;
     });
@@ -208,7 +219,7 @@
                 expected: testError.expected,
                 actual: testError.actual,
                 // Omit all but the first few callstacks to keep our results data small.
-                // If it's larger than 64 KB, Saucelabs will ignore it. 
+                // If it's larger than 64 KB, Saucelabs will ignore it.
                 source: (log.length < 3 && testError.source) ? testError.source.substr(0, 500) : null
             });
             socketSignal && socketSignal(function (socket) {
@@ -431,7 +442,7 @@
                 }
             });
 
-            Object.keys(testModule).forEach(function (key) {
+            AllObjectKeys(testModule).forEach(function (key) {
                 if (key.indexOf("test") !== 0) {
                     return;
                 }
