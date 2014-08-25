@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+///<reference path="../../bin/typings/tsd.d.ts" />
+///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
+///<reference path="../TestLib/winjs.dev.d.ts" />
 
 (function (global) {
     "use strict";
@@ -13,7 +15,7 @@
             this.testBasicLoad = function (complete) {
                 var worker = new Worker("webworkervalidation.js");
                 worker.onerror = function (err) {
-                    LiveUnit.Assert.fail(err);
+                    LiveUnit.Assert.fail(<any>err);
                 }
                 worker.onmessage = function (msg) {
                     LiveUnit.Assert.areEqual(1, msg.data.x);
@@ -45,7 +47,7 @@
             var Point = WinJS.Class.define(function () { }, { x: 0, y: 5 });
             var pt = new Point();
             pt.x = 1;
-            postMessage({ x: pt.x, y: pt.y, z: pt.z });
+            (<any>postMessage)({ x: pt.x, y: pt.y, z: pt.z });
         };
     }
 })(this);

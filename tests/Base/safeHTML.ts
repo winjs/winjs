@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+///<reference path="../../bin/typings/tsd.d.ts" />
+///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
+///<reference path="../TestLib/winjs.dev.d.ts" />
 
-var CorsicaTests = CorsicaTests || {};
+module CorsicaTests {
 
-CorsicaTests.SafeHTML = function () {
     "use strict";
 
     var safeHTML = "<div data-win-control='MyControl'></div>";
@@ -13,8 +15,6 @@ CorsicaTests.SafeHTML = function () {
     var unsafeHTMLAttributeName = "custom-attribute";
     var unsafeHTMLAttributeValue = "value";
 
-    var MSApp = window.MSApp;
-    
     function runTest(setter, setterArgs, testFunc) {
         var div = document.createElement("div");
         document.body.appendChild(div);
@@ -41,63 +41,9 @@ CorsicaTests.SafeHTML = function () {
         }
     }
 
-    if (MSApp) {
-        this.testSetInnerHTML = function () {
-            runTest(WinJS.Utilities.setInnerHTML, [safeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
+    export class SafeHTML {
 
-            runTest(WinJS.Utilities.setInnerHTML, [unsafeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isTrue(exceptionThrown);
-            });
-        };
-        this.testSetInnerHTMLUnsafe = function () {
-            runTest(WinJS.Utilities.setInnerHTMLUnsafe, [safeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
-
-            runTest(WinJS.Utilities.setInnerHTMLUnsafe, [unsafeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
-        };
-        this.testSetOuterHTML = function () {
-            runTest(createDivAndCallFunc(WinJS.Utilities.setOuterHTML), [safeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
-
-            runTest(createDivAndCallFunc(WinJS.Utilities.setOuterHTML), [unsafeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isTrue(exceptionThrown);
-            });
-        };
-        this.testSetOuterHTMLUnsafe = function () {
-            runTest(createDivAndCallFunc(WinJS.Utilities.setOuterHTMLUnsafe), [safeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
-
-            runTest(createDivAndCallFunc(WinJS.Utilities.setOuterHTMLUnsafe), [unsafeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
-        };
-        this.testInsertAdjacentHTML = function () {
-            runTest(WinJS.Utilities.insertAdjacentHTML, ["afterBegin", safeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
-
-            runTest(WinJS.Utilities.insertAdjacentHTML, ["afterBegin", unsafeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isTrue(exceptionThrown);
-            });
-        };
-        this.testInsertAdjacentHTMLUnsafe = function () {
-            runTest(WinJS.Utilities.insertAdjacentHTMLUnsafe, ["afterBegin", safeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
-
-            runTest(WinJS.Utilities.insertAdjacentHTMLUnsafe, ["afterBegin", unsafeHTML], function (exceptionThrown) {
-                LiveUnit.Assert.isFalse(exceptionThrown);
-            });
-        };
-    } else {
-        this.testSetInnerHTML = function () {
+        testSetInnerHTML() {
             runTest(WinJS.Utilities.setInnerHTML, [safeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(safeHTMLAttributeValue, div.firstChild.getAttribute(safeHTMLAttributeName));
@@ -106,8 +52,9 @@ CorsicaTests.SafeHTML = function () {
             runTest(WinJS.Utilities.setInnerHTML, [unsafeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isTrue(exceptionThrown);
             });
-        };
-        this.testSetInnerHTMLUnsafe = function () {
+        }
+
+        testSetInnerHTMLUnsafe() {
             runTest(WinJS.Utilities.setInnerHTMLUnsafe, [safeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(safeHTMLAttributeValue, div.firstChild.getAttribute(safeHTMLAttributeName));
@@ -117,8 +64,9 @@ CorsicaTests.SafeHTML = function () {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(unsafeHTMLAttributeValue, div.firstChild.getAttribute(unsafeHTMLAttributeName));
             });
-        };
-        this.testSetOuterHTML = function () {
+        }
+
+        testSetOuterHTM() {
             runTest(createDivAndCallFunc(WinJS.Utilities.setOuterHTML), [safeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(safeHTMLAttributeValue, div.firstChild.getAttribute(safeHTMLAttributeName));
@@ -127,8 +75,9 @@ CorsicaTests.SafeHTML = function () {
             runTest(createDivAndCallFunc(WinJS.Utilities.setOuterHTML), [unsafeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isTrue(exceptionThrown);
             });
-        };
-        this.testSetOuterHTMLUnsafe = function () {
+        }
+
+        testSetOuterHTMLUnsafe() {
             runTest(createDivAndCallFunc(WinJS.Utilities.setOuterHTMLUnsafe), [safeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(safeHTMLAttributeValue, div.firstChild.getAttribute(safeHTMLAttributeName));
@@ -138,8 +87,9 @@ CorsicaTests.SafeHTML = function () {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(unsafeHTMLAttributeValue, div.firstChild.getAttribute(unsafeHTMLAttributeName));
             });
-        };
-        this.testInsertAdjacentHTML = function () {
+        }
+
+        testInsertAdjacentHTML() {
             runTest(WinJS.Utilities.insertAdjacentHTML, ["afterBegin", safeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(safeHTMLAttributeValue, div.firstChild.getAttribute(safeHTMLAttributeName));
@@ -148,8 +98,9 @@ CorsicaTests.SafeHTML = function () {
             runTest(WinJS.Utilities.insertAdjacentHTML, ["afterBegin", unsafeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isTrue(exceptionThrown);
             });
-        };
-        this.testInsertAdjacentHTMLUnsafe = function () {
+        }
+
+        testInsertAdjacentHTMLUnsafe() {
             runTest(WinJS.Utilities.insertAdjacentHTMLUnsafe, ["afterBegin", safeHTML], function (exceptionThrown, div) {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(safeHTMLAttributeValue, div.firstChild.getAttribute(safeHTMLAttributeName));
@@ -159,9 +110,9 @@ CorsicaTests.SafeHTML = function () {
                 LiveUnit.Assert.isFalse(exceptionThrown);
                 LiveUnit.Assert.areEqual(unsafeHTMLAttributeValue, div.firstChild.getAttribute(unsafeHTMLAttributeName));
             });
-        };
-    }
-};
+        }
+    };
+}
 
 if (window.msIsStaticHTML) {
     LiveUnit.registerTestClass("CorsicaTests.SafeHTML");
