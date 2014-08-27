@@ -300,6 +300,14 @@ AppBar
         }
     }
 
+    .RTL({
+        .win-appbar-invokebutton,
+        .win-appbar-invokebutton .win-appbar-ellipsis {
+            right: auto;
+            left: 0px;
+        }
+    });
+
     &.win-bottom {
         .win-appbar-invokebutton,
         .win-appbar-ellipsis {
@@ -383,12 +391,9 @@ AppBar commands layout
 /* CommandsLayout RTL */
 .win-commandlayout {
     .RTL({
-        #flex > .flex-direction(row-reverse);
-        .win-primarygroup {
-            #flex > .flex-direction(row-reverse);
-        }
-        .win-secondarygroup {
-            #flex > .flex-direction(row-reverse);
+        &.win-appbar-minimal {
+            padding-right: 0px;
+            padding-left: 60px;
         }
     });
 }
@@ -440,7 +445,12 @@ AppBar commands layout
 
     &.win-appbar-minimal{
         padding-right: 60px;
+        padding-left: 10px;
         width: ~"calc(100% - 70px)"; // 100% - left & right padding.
+        .RTL({
+            padding-left: 60px;
+            padding-right: 10px;
+        });
     }
 }
 
