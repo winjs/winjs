@@ -1625,6 +1625,69 @@ CorsicaTests.AppBarTests = function () {
         }).then(complete);
     };
 
+
+    this.testAppBarDirection = function (complete) {
+
+        // Verify element positions in LTR and RTL for commands layout and custom layout AppBars.
+
+        var commandElements,
+            commandsArgs = [
+            { type: 'button', section: 'selection', label: 's1' },
+            { type: 'button', section: 'selection', label: 's2' },
+            { type: 'button', section: 'global', label: 'g1' },
+            { type: 'button', section: 'global', label: 'g2' },
+        ];
+
+        var root = document.getElementById("appBarDiv");
+        var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: commandsArgs, closedDisplayMode: 'minimal', layout: 'commands'});
+        var bottomBar = new WinJS.UI.AppBar(null, { placement: 'bottom', commands: commandsArgs, closedDisplayMode: 'minimal', layout: 'custom'});
+        root.appendChild(topBar.element);
+        root.appendChild(bottomBar.element);
+
+        showAllAppBars().then(function () {
+
+            var html = document.documentElement,
+                originalDir = html.dir,
+                RTL = "rtl",
+                LTR = "ltr";
+
+            function runTest(appbar, direction) {
+                html.dir = direction;
+                commandElements = topBar.element.querySelectorAll(".win-command");
+
+                var currentElement = commandElements[0],
+                    nextIndex = 1,
+                    nextElement = commandElements[nextIndex];
+
+                // Verify AppBarCommands positioning
+                while (nextElement) {
+                    var currentBoundingRect = currentElement.getBoundingClientRect(),
+                        nextBoundingRect = nextElement.getBoundingClientRect();
+
+                    if (direction === LTR) {
+                        LiveUnit.Assert.isTrue(currentBoundingRect.left <= nextBoundingRect.left);
+                        LiveUnit.Assert.isTrue(currentBoundingRect.right <= nextBoundingRect.right);
+                    } else {
+                        LiveUnit.Assert.isTrue(currentBoundingRect.left >= nextBoundingRect.left);
+                        LiveUnit.Assert.isTrue(currentBoundingRect.right >= nextBoundingRect.right);
+                    }
+
+                    nextIndex++;
+                    currentElement = nextElement;
+                    nextElement = commandElements[nextIndex];
+                }
+            }
+
+            runTest(topBar, LTR);
+            runTest(topBar, RTL);
+            runTest(bottomBar, LTR);
+            runTest(bottomBar, RTL);
+
+            // Cleanup lang attribute
+            html.dir = originalDir;
+            complete();
+        });
+    }
 };
 
 // register the object as a test class by passing in the name
