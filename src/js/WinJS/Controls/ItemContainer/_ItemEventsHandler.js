@@ -1125,7 +1125,7 @@ define([
                     function applyUI() {
                         if (that._work.length > 0) {
                             that._flushUIBatches();
-                            that._paintedThisFrame = _Global.requestAnimationFrame(applyUI.bind(that));
+                            that._paintedThisFrame = _BaseUtils._requestAnimationFrame(applyUI.bind(that));
                         } else {
                             that._paintedThisFrame = null;
                         }

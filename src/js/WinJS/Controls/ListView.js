@@ -2712,7 +2712,7 @@ define([
 
                     var currentScrollPosition = this._viewportScrollPosition;
                     if (currentScrollPosition !== this._lastScrollPosition) {
-                        this._pendingScroll = _Global.requestAnimationFrame(this._checkScroller.bind(this));
+                        this._pendingScroll = _BaseUtils._requestAnimationFrame(this._checkScroller.bind(this));
 
                         currentScrollPosition = Math.max(0, currentScrollPosition);
                         var direction =  this._scrollDirection(currentScrollPosition);

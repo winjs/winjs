@@ -16,6 +16,9 @@ define([
         get notSupportedForProcessing() { return "Value is not supported within a declarative processing context, if you want it to be supported mark it using WinJS.Utilities.markSupportedForProcessing. The value was: '{0}'"; }
     };
 
+    var requestAnimationWorker;
+    var requestAnimationId = 0;
+    var requestAnimationHandlers = {};
     var isPhone = false;
     var validation = false;
     var platform = _Global.navigator.platform;
@@ -348,6 +351,25 @@ define([
         },
 
         _setImmediate: _BaseCoreUtils._setImmediate,
+
+        _requestAnimationFrame: _Global.requestAnimationFrame ? _Global.requestAnimationFrame.bind(_Global) : function (handler) {
+            var handle = ++requestAnimationId;
+            requestAnimationHandlers[handle] = handler;
+            requestAnimationWorker = requestAnimationWorker || _Global.setTimeout(function () {
+                var toProcess = requestAnimationHandlers;
+                var now = Date.now();
+                requestAnimationHandlers = {};
+                requestAnimationWorker = null;
+                Object.keys(toProcess).forEach(function (key) {
+                    toProcess[key](now);
+                });
+            }, 16);
+            return handle;
+        },
+
+        _cancelAnimationFrame: _Global.cancelAnimationFrame ? _Global.cancelAnimationFrame.bind(_Global) : function (handle) {
+            delete requestAnimationHandlers[handle];
+        },
 
         // Allows the browser to finish dispatching its current set of events before running
         // the callback.

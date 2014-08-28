@@ -191,7 +191,7 @@ define([
                     containerStyle.overflowY = "hidden";
 
                     var that = this;
-                    _Global.requestAnimationFrame(function () {
+                    _BaseUtils._requestAnimationFrame(function () {
                         that._isOrientationChanging = false;
                         that._forEachPage(function (curr) {
                             var currStyle = curr.pageRoot.style;

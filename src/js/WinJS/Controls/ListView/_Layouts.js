@@ -1207,7 +1207,7 @@ define([
                     }
 
                     if (exports.Layout._debugAnimations) {
-                        _Global.requestAnimationFrame(function () {
+                        _BaseUtils._requestAnimationFrame(function () {
                             startAnimations();
                         });
                     } else {
@@ -1223,7 +1223,7 @@ define([
                             // canceled so we shouldn't continue.
                             if (animationSignal) {
                                 if (exports.Layout._debugAnimations) {
-                                    _Global.requestAnimationFrame(function () {
+                                    _BaseUtils._requestAnimationFrame(function () {
                                         nextPhaseCallback();
                                     });
                                 } else {
@@ -1472,7 +1472,7 @@ define([
                         site._writeProfilerMark("Animation:prepareReflowedItems,StopTM");
 
                         if (exports.Layout._debugAnimations) {
-                            _Global.requestAnimationFrame(function () {
+                            _BaseUtils._requestAnimationFrame(function () {
                                 directMovePhase(true);
                             });
                         } else {

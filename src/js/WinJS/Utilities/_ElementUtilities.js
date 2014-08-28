@@ -1163,11 +1163,11 @@ define([
                             element._zoomToDestY = null;
                         } else {
                             setAdjustedScrollPosition(element, initialPos.scrollLeft + t * xFactor, initialPos.scrollTop + t * yFactor);
-                            _Global.requestAnimationFrame(update);
+                            _BaseUtils._requestAnimationFrame(update);
                         }
                     };
 
-                    _Global.requestAnimationFrame(update);
+                    _BaseUtils._requestAnimationFrame(update);
                 }, Scheduler.Priority.high, null, "WinJS.Utilities._zoomTo");
             }
         },
