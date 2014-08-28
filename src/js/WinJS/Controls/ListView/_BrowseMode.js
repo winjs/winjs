@@ -1016,10 +1016,10 @@ define([
                                             newScrollPos[that.site._scrollProperty] = that.site._viewportScrollPosition + delta;
                                             _ElementUtilities.setScrollPosition(that.site._viewport, newScrollPos);
                                             that._lastDragTimeout = currentTime;
-                                            that._autoScrollFrame = _Global.requestAnimationFrame(nextFrame);
+                                            that._autoScrollFrame = _BaseUtils._requestAnimationFrame(nextFrame);
                                         }
                                     };
-                                    that._autoScrollFrame = _Global.requestAnimationFrame(nextFrame);
+                                    that._autoScrollFrame = _BaseUtils._requestAnimationFrame(nextFrame);
                                 }
                             }, _Constants._AUTOSCROLL_DELAY);
                         }

@@ -3,6 +3,7 @@ define([
     'exports',
     '../../Core/_Global',
     '../../Core/_Base',
+    '../../Core/_BaseUtils',
     '../../Core/_ErrorFromName',
     '../../Core/_Events',
     '../../Core/_Log',
@@ -22,7 +23,7 @@ define([
     '../AppBar/_Constants',
     '../Repeater',
     './_Command'
-    ], function NavBarContainerInit(exports, _Global, _Base, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
+    ], function NavBarContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
     "use strict";
 
     function nobodyHasFocus() {
@@ -994,7 +995,7 @@ define([
                     this._measured = false;
                     if (!this._checkingScroll) {
                         var that = this;
-                        this._checkingScroll = _Global.requestAnimationFrame(function () {
+                        this._checkingScroll = _BaseUtils._requestAnimationFrame(function () {
                             if (that._disposed) { return; }
                             that._checkingScroll = null;
 
