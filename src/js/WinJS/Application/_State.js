@@ -68,7 +68,7 @@ define([
                 /// Content to be written to the file
                 /// </param>
                 /// <returns type="WinJS.Promise" locid="WinJS.Application.IOHelper.writeText_returnValue">
-                /// Promise with the count of characters written
+                /// Promise which is fulfilled when the file has been written
                 /// </returns>
                 /// </signature>
                 var sto = _WinRT.Windows.Storage;
@@ -193,7 +193,7 @@ define([
                     /// Content to be written to the file
                     /// </param>
                     /// <returns type="WinJS.Promise" locid="WinJS.Application.InMemoryHelper.writeText_returnValue">
-                    /// Promise with the count of characters written
+                    /// Promise which is fulfilled when the file has been written
                     /// </returns>
                     /// </signature>
                     this.storage[fileName] = str;
