@@ -215,7 +215,7 @@ define([
         var selector = "[data-win-bind],[data-win-control]";
         var elements = baseElement.querySelectorAll(selector);
         var neg;
-        if (!skipRoot && baseElement.getAttribute("data-win-bind")) {
+        if (!skipRoot && (baseElement.getAttribute("data-win-bind") || baseElement.winControl)) {
             neg = baseElement;
         }
 
