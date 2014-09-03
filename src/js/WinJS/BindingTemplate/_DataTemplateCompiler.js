@@ -430,11 +430,11 @@ define([
             };
 
             var StaticKind = {
-                "import": "import",
+                "imported": "import",
                 "variable": "variable",
             };
             var StaticKindPrefixes = {
-                "import": "i",
+                "imported": "i",
                 "variable": "sv",
             };
 
@@ -490,8 +490,8 @@ define([
                 this._htmlProcessors = [];
                 this._profilerMarkIdentifier = options.profilerMarkIdentifier;
                 this._captureCSE = new TreeCSE(this, "container", InstanceKind.capture, this.generateElementCaptureAccess.bind(this));
-                this._dataCSE = new TreeCSE(this, "data", InstanceKind.data, this.generateNormalAccess.bind(this), this.importSafe("dataSecurityCheck", requireSupportedForProcessing));
-                this._globalCSE = new TreeCSE(this, this.importSafe("global", _Global), InstanceKind.global, this.generateNormalAccess.bind(this), this.importSafe("globalSecurityCheck", requireSupportedForProcessing));
+                this._dataCSE = new TreeCSE(this, "data", InstanceKind.data, this.generateNormalAccess.bind(this), this.importFunctionSafe("dataSecurityCheck", requireSupportedForProcessing));
+                this._globalCSE = new TreeCSE(this, this.importFunctionSafe("global", _Global), InstanceKind.global, this.generateNormalAccess.bind(this), this.importFunctionSafe("globalSecurityCheck", requireSupportedForProcessing));
 
                 // Clone the template content and import it into its own HTML document for further processing
                 Fragments.renderCopy(this._templateElement, this._templateContent);
@@ -645,7 +645,7 @@ define([
                                 options: that.generateOptionsLiteral(control.optionsParsed, control.elementCapture),
                             }
                         );
-                        if (control.isDeclarativeControlContainer && typeof control.isDeclarativeControlContainer.import === "function") {
+                        if (control.isDeclarativeControlContainer && typeof control.isDeclarativeControlContainer.imported === "function") {
                             var result = [construction];
                             result.push(that.formatCode(
                                 "{isDeclarativeControlContainer}({target}.winControl, {delayedControlProcessing})",
@@ -954,7 +954,7 @@ define([
                                             call.target === "select" ? this.emitScopedSelect(call.arg0Value, elementCapture) : literal(null),
                                             node.parts.slice(1),
                                             this.nullableIdentifierAccessTemporary,
-                                            this.importSafe("requireSupportedForProcessing", requireSupportedForProcessing)
+                                            this.importFunctionSafe("requireSupportedForProcessing", requireSupportedForProcessing)
                                         )
                                     );
                                 } else if (node instanceof IdentifierExpression) {
@@ -1055,27 +1055,27 @@ define([
                                 if (initializer.render) {
                                     requireSupportedForProcessing(initializer.render);
                                     // We have already chceked this to be safe for import
-                                    binding.template = that.importSafe(initializerName, initializer);
+                                    binding.template = that.importFunctionSafe(initializerName, initializer);
                                     binding.pathExpression = that.bindingExpression(binding);
                                     binding.nestedTemplate = ++nestedTemplates;
                                     binding.kind = BindingKind.template;
                                 } else if (initializer.winControl && initializer.winControl.render) {
                                     requireSupportedForProcessing(initializer.winControl.render);
                                     // We have already checked this to be safe to import
-                                    binding.template = that.importSafe(initializerName, initializer.winControl);
+                                    binding.template = that.importFunctionSafe(initializerName, initializer.winControl);
                                     binding.pathExpression = that.bindingExpression(binding);
                                     binding.nestedTemplate = ++nestedTemplates;
                                     binding.kind = BindingKind.template;
                                 } else {
                                     // Don't get the path expression here, we will do it if needed in optimize
-                                    binding.initializer = that.import(initializerName, initializer);
+                                    binding.initializer = that.importFunction(initializerName, initializer);
                                     binding.bindToken = ++bindTokens;
                                     binding.kind = BindingKind.initializer;
                                 }
                             } else {
                                 // Don't get the path expression here, we will do it if needed in optimize
                                 // We have already checked this to be safe to import
-                                binding.initializer = that.importSafe("templateDefaultInitializer", that._defaultInitializer);
+                                binding.initializer = that.importFunctionSafe("templateDefaultInitializer", that._defaultInitializer);
                                 binding.bindToken = ++bindTokens;
                                 binding.kind = BindingKind.initializer;
                             }
@@ -1153,7 +1153,7 @@ define([
                         var isDeclarativeControlContainer = ControlConstructor.isDeclarativeControlContainer;
                         if (isDeclarativeControlContainer) {
                             if (typeof isDeclarativeControlContainer === "function") {
-                                isDeclarativeControlContainer = this.import(name + "_isDeclarativeControlContainer", isDeclarativeControlContainer);
+                                isDeclarativeControlContainer = this.importFunction(name + "_isDeclarativeControlContainer", isDeclarativeControlContainer);
                             }
 
                             element.isDeclarativeControlContainer = isDeclarativeControlContainer;
@@ -1164,7 +1164,7 @@ define([
                             elementCapture: this.capture(element),
                             name: name,
                             // We have already checked this for requireSupportedForProcessing
-                            SafeConstructor: this.importSafe(name, ControlConstructor),
+                            SafeConstructor: this.importFunctionSafe(name, ControlConstructor),
                             async: async,
                             optionsText: literal(optionsText),
                             optionsParsed: options_parser(optionsText),
@@ -1267,32 +1267,32 @@ define([
 
                 },
 
-                import: function (name, i) {
+                importFunction: function (name, i) {
 
                     // Used for functions which are gathered from user code (e.g. binding initializers and
                     //  control constructors). For these functions we need to assert that they are safe for
                     //  use in a declarative context, however since the values are known at compile time we
                     //  can do that check once.
                     //
-                    return this.importSafe(name, requireSupportedForProcessing(i));
+                    return this.importFunctionSafe(name, requireSupportedForProcessing(i));
 
                 },
 
-                importSafe: function (name, i) {
+                importFunctionSafe: function (name, i) {
 
                     // Used for functions and objects which are intrinsic to the template compiler and are safe
                     //  for their intended usages and don't need to be marked requireSupportedForProcessing.
                     //
                     var that = this;
                     var identifier = this.defineStatic(
-                        StaticKind.import,
+                        StaticKind.imported,
                         name,
                         function () { return that.formatCodeN("({0}{1})", IMPORTS_ARG_NAME, identifierAccessExpression([name])); }
                     );
-                    if (identifier.import && identifier.import !== i) {
+                    if (identifier.imported && identifier.imported !== i) {
                         throw "Duplicate import: '" + name + "'";
                     }
-                    identifier.import = i;
+                    identifier.imported = i;
                     return identifier;
 
                 },
@@ -1309,7 +1309,7 @@ define([
                     var that = this;
                     var result = Object.keys(imports).reduce(
                         function (o, key) {
-                            o[key] = that.importSafe(key, imports[key]);
+                            o[key] = that.importFunctionSafe(key, imports[key]);
                             return o;
                         },
                         {}
@@ -1331,10 +1331,10 @@ define([
                     //  are already safety checked for things like requireSupportedForProcessing.
                     //
                     var imports = keys(this._staticVariables)
-                        .filter(function (key) { return that._staticVariables[key].kind === StaticKind.import; })
+                        .filter(function (key) { return that._staticVariables[key].kind === StaticKind.imported; })
                         .reduce(
                             function (o, key) {
-                                o[key] = that._staticVariables[key].import;
+                                o[key] = that._staticVariables[key].imported;
                                 return o;
                             },
                             {}
@@ -1707,7 +1707,7 @@ define([
                                     binding.elementCapture,
                                     binding.destination.slice(0, -1),
                                     that.nullableIdentifierAccessTemporary,
-                                    that.importSafe("targetSecurityCheck", targetSecurityCheck)
+                                    that.importFunctionSafe("targetSecurityCheck", targetSecurityCheck)
                                 ),
                                 prop: identifierAccessExpression(binding.destination.slice(-1)),
                                 sourcePath: binding.value(),
@@ -1735,12 +1735,12 @@ define([
                             continue;
                         }
 
-                        switch (binding.initializer.import) {
+                        switch (binding.initializer.imported) {
                             case init_defaultBind:
                                 // Add a new tree binding for one-time binding and mark the defaultBind as delayable
                                 var newBinding = merge(binding, {
                                     kind: BindingKind.tree,
-                                    initializer: this.importSafe("init_oneTime", init_oneTime),
+                                    initializer: this.importFunctionSafe("init_oneTime", init_oneTime),
                                     original: binding,
                                 });
                                 newBinding.elementCapture.refCount++;
@@ -1754,7 +1754,7 @@ define([
                                 // Add a new tree binding for one-time setAttribute and mark the setAttribute as delayable
                                 var newBinding = merge(binding, {
                                     kind: BindingKind.tree,
-                                    initializer: this.importSafe("init_setAttributeOneTime", init_setAttributeOneTime),
+                                    initializer: this.importFunctionSafe("init_setAttributeOneTime", init_setAttributeOneTime),
                                     original: binding,
                                 });
                                 newBinding.elementCapture.refCount++;
@@ -1778,7 +1778,7 @@ define([
 
                             default:
                                 if (binding.initializer) {
-                                    binding.delayable = !!binding.initializer.import.delayable;
+                                    binding.delayable = !!binding.initializer.imported.delayable;
                                 }
                                 break;
                         }
@@ -1798,7 +1798,7 @@ define([
                                 continue;
                             }
 
-                            switch (binding.initializer.import) {
+                            switch (binding.initializer.imported) {
                                 case init_oneTime:
                                     this.oneTimeTextBinding(binding);
                                     break;
