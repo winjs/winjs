@@ -5,7 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="NavBarUtils.js"/>
-/// <reference path="../TestLib/util.js"/>
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="../TestData/NavBar.css" />
 
 var WinJSTests = WinJSTests || {};

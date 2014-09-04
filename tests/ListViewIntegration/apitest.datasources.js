@@ -11,13 +11,13 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/util.js" />
+/// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/ListViewHelpers.js"/>
 /// <reference path="globals.js"/>
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="../TestLib/listviewutils.js"/>
 /// <reference path="listviewverify.js"/>
-/// <reference path="../TestLib/TestDataSource.js"/>
+/// <reference path="../TestLib/TestDataSource.ts"/>
 /// <deploy src="../TestData/" />
 
 // Tests for ListView Api

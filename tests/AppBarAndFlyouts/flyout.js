@@ -5,7 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="../TestLib/util.js" />
+/// <reference path="../TestLib/util.ts" />
 /// <reference path="OverlayHelpers.js" />
 
 var CorsicaTests = CorsicaTests || {};

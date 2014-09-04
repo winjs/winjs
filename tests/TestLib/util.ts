@@ -16,7 +16,7 @@ function unhandledTestError(msg) {
 
 function isWinRTEnabled() {
     // detect if WinRT is available (running under WWAHOST) to enable/disable appropriate tests
-    return (window && (window.Windows !== undefined));
+    return (window && ((<any>window).Windows !== undefined));
 }
 
 function namedObjectContainsString(obj, string) {
@@ -37,19 +37,24 @@ function namedObjectContainsString(obj, string) {
 }
 
 function enableWebunitErrorHandler(enable) {
+    // QUnit doesn't use this feature
+    if (!(<any>LiveUnit).exceptionHandler) {
+        return;
+    }
     // if you disable the webunit error handler, it will affect all tests in the run.
     // **MAKE SURE** you put it back per test case using finally{} blocks and or proper promise error paths as necessary.
+
     try {
         if (enable) {
             // restore the webunit global error handler
-            window.addEventListener("error", LiveUnit.exceptionHandler, false);
+            window.addEventListener("error", (<any>LiveUnit).exceptionHandler, false);
         } else {
             // remove the webunit global handler which will call complete() if you encounter an error during fragment loading
-            window.removeEventListener("error", LiveUnit.exceptionHandler, false);
+            window.removeEventListener("error", (<any>LiveUnit).exceptionHandler, false);
         }
     } catch (ex) {
         // restore the webunit global error handler in case it was removed.  If already added, re-adding doesn't generate error.
-        window.addEventListener("error", LiveUnit.exceptionHandler, false);
+        window.addEventListener("error", (<any>LiveUnit).exceptionHandler, false);
         LiveUnit.Assert.fail("unhandled exception from enableWebuniteErrorHandler(), webunit global error handler restored.  Exception=" + ex);
     }
 };
@@ -81,15 +86,15 @@ function asyncWhile(conditionFunction, workFunction) {
     return loop();
 }
 
-var Helper;
-(function (Helper) {
+
+module Helper {
 
     // CSS property translation
     // Uses feature detection to map "standard" CSS property names and values to their
     // prefixed counterparts.
     // Best used through Helper.translateCSSProperty and Helper.translateCSSValue
     // Please add to this list as neccessary and use it where possible in test code
-    Helper.cssTranslations = {
+    export var cssTranslations = {
         "touch-action": function() {
             var obj = {property: {}, value: {}};
             if ("touchAction" in document.documentElement.style) {
@@ -166,7 +171,7 @@ var Helper;
 
     // Translate a standard CSS property name to the prefixed version, if one is necessary
     // Uses feature detection
-    Helper.translateCSSProperty = function(propertyName) {
+    export function translateCSSProperty(propertyName) {
         var translation = Helper.cssTranslations[propertyName]();
         if (!translation || !translation.property[propertyName]) {
             return propertyName;
@@ -176,7 +181,7 @@ var Helper;
 
     // Translate a standard CSS property value to the prefixed version, if one is necessary
     // Uses feature detection
-    Helper.translateCSSValue = function(propertyName, value) {
+    export function translateCSSValue(propertyName, value) {
         var translation = Helper.cssTranslations[propertyName]();
         if (!translation || !translation.value[value]) {
             return value;
@@ -190,7 +195,7 @@ var Helper;
     // and re-builds the expected value out of the sub style components, which works in all supported
     // browsers.
     // Please add to the list of supported properties in this method as necessary.
-    Helper.getCSSPropertyValue = function(styleObject, propertyName) {
+    export function getCSSPropertyValue(styleObject, propertyName) {
         if (propertyName === "flex") {
             var shrink = styleObject.getPropertyValue(Helper.translateCSSProperty("flex-grow"));
             var grow = styleObject.getPropertyValue(Helper.translateCSSProperty("flex-shrink"));
@@ -200,23 +205,23 @@ var Helper;
         return styleObject.getPropertyValue(Helper.translateCSSProperty(propertyName));
     };
 
-    Helper.endsWith = function endsWith(s, suffix) {
+    export function endsWith(s, suffix) {
         var expectedStart = s.length - suffix.length;
         return expectedStart >= 0 && s.lastIndexOf(suffix) === expectedStart;
     };
 
     // Rounds *n* such that it has at most *decimalPoints* digits after the decimal point.
-    Helper.round = function round(n, decimalPoints) {
+    export function round(n, decimalPoints) {
         return Math.round(n * Math.pow(10, decimalPoints)) / Math.pow(10, decimalPoints);
     };
 
     // Returns a random integer less than the given number
-    Helper.getRandomNumberUpto = function getRandomNumberUpto(num) {
+    export function getRandomNumberUpto(num) {
         return Math.floor(Math.random() * num);
     };
 
     // Returns a random item from the given array or binding list
-    Helper.getRandomItem = function getRandomItem(array) {
+    export function getRandomItem(array) {
         var randomIndex = Helper.getRandomNumberUpto(array.length);
         if (array instanceof Array) {
             return array[randomIndex];
@@ -225,7 +230,7 @@ var Helper;
         }
     };
 
-    Helper.enableStyleSheets = function enableStyleSheets(suffix) {
+    export function enableStyleSheets(suffix) {
         for (var i = 0; i < document.styleSheets.length; i++) {
             var sheet = document.styleSheets[i];
             if (sheet.href && Helper.endsWith(sheet.href, suffix)) {
@@ -234,7 +239,7 @@ var Helper;
         }
     };
 
-    Helper.disableStyleSheets = function disableStyleSheets(suffix) {
+    export function disableStyleSheets(suffix) {
         for (var i = 0; i < document.styleSheets.length; i++) {
             var sheet = document.styleSheets[i];
             if (sheet.href && Helper.endsWith(sheet.href, suffix)) {
@@ -251,7 +256,7 @@ var Helper;
     // Special cases the color "transparent" which IE returns when no color is specified:
     // Input: "transparent"
     // Output: [0, 0, 0, 0.0]
-    Helper.parseColor = function parseColor(colorString) {
+    export function parseColor(colorString) {
         if (colorString === "transparent") {
             return [0, 0, 0, 0.0];
         } else if (colorString.indexOf("rgb") !== 0) {
@@ -289,9 +294,9 @@ var Helper;
         };
     }
 
-    Helper.Assert = {
-        areArraysEqual: function areArraysEqual(expectedArray, actualArray, message) {
-            if (!expectedArray instanceof Array || !actualArray instanceof Array) {
+    export module Assert {
+        export function areArraysEqual(expectedArray, actualArray, message) {
+            if (!Array.isArray(expectedArray)|| !(Array.isArray(actualArray))) {
                 LiveUnit.Assert.fail(message);
             }
 
@@ -304,52 +309,52 @@ var Helper;
             for (var i = 0; i < expectedArray.length; i++) {
                 LiveUnit.Assert.areEqual(expectedArray[i], actualArray[i], message);
             }
-        },
+        }
 
-        areSetsEqual: function areArraysEqual(expectedArray, actualArray, message) {
+        export function areSetsEqual(expectedArray, actualArray, message) {
             var expected = expectedArray.slice().sort();
             var actual = actualArray.slice().sort();
             Helper.Assert.areArraysEqual(expected, actual, message);
-        },
+        }
 
         // Verifies CSS colors. *expectedColorString* and *actualColorString* are color strings of the form
         // returned by getComputedStyle. Specifically, they can look like this:
         // - "rgb(10, 24, 215)"
         // - "rgba(10, 24, 215, 0.25)"
-        areColorsEqual: function areColorsEqual(expectedColorString, actualColorString, message) {
+        export function areColorsEqual(expectedColorString, actualColorString, message) {
             var expectedColor = Helper.parseColor(expectedColorString);
             var actualColor = Helper.parseColor(actualColorString);
             // Verify red, green, blue
             Helper.Assert.areArraysEqual(expectedColor.slice(0, 3), actualColor.slice(0, 3), message);
             // Verify alpha with a tolerance of 0.05
             LiveUnit.Assert.isTrue(Math.abs(expectedColor[3] - actualColor[3]) <= .05, message);
-        },
+        }
 
         // Verifies CSS urls. *expectedUrl* and *actualUrl* are expected to be valid CSS rules. For example,
         // url("foo.png").
-        areUrlsEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "backgroundImage"),
+        export var areUrlsEqual = makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "backgroundImage");
 
-        areFontFamiliesEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "fontFamily"),
-        areFontFamiliesNotEqual: makeNormalizedCssValueAssertion(LiveUnit.Assert.areNotEqual.bind(LiveUnit.Assert), "fontFamily")
-    };
+        export var areFontFamiliesEqual = makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "fontFamily");
+        export var areFontFamiliesNotEqual = makeNormalizedCssValueAssertion(LiveUnit.Assert.areNotEqual.bind(LiveUnit.Assert), "fontFamily");
+    }
 
-    Helper.Browser = {
+    export module Browser {
         // Taken from ListView's CSS grid feature detection
-        supportsCSSGrid: !!("-ms-grid-row" in document.documentElement.style),
+        export var supportsCSSGrid = !!("-ms-grid-row" in document.documentElement.style);
 
         // Temporary for disabling tests outside of IE11
-        isIE11: "PointerEvent" in window,
-        isIE10: navigator.appVersion.indexOf("MSIE 10") !== -1
+        export var isIE11 = "PointerEvent" in window;
+        export var isIE10 = navigator.appVersion.indexOf("MSIE 10") !== -1;
     };
 
     // Returns the group key for an item as defined by createData() below
-    Helper.groupKey = function groupKey(item) {
+    export function groupKey(item) {
         var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
         return groupIndex.toString();
     };
 
     // Returns the group data for an item as defined by createData() below
-    Helper.groupData = function groupData(item) {
+    export function groupData(item) {
         var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
         var groupData = {
             title: "group" + groupIndex,
@@ -361,7 +366,7 @@ var Helper;
     };
 
     // Creates an array with data item objects
-    Helper.createData = function createData(size) {
+    export function createData(size) {
         var data = [];
         for (var i = 0; i < size; i++) {
             data.push({ title: "title" + i, index: i, itemWidth: "100px", itemHeight: "100px" });
@@ -371,13 +376,13 @@ var Helper;
 
     // Creates a binding list out of the provided array (data) or
     // creates a new data array of specified size
-    Helper.createBindingList = function createBindingList(size, data) {
+    export function createBindingList(size, data) {
         return (data ? new WinJS.Binding.List(data) : new WinJS.Binding.List(Helper.createData(size)));
     };
 
     // Creates a VDS out of the provided array (data) or
     // creates a new data array of specified size
-    Helper.createTestDataSource = function createTestDataSource(size, data, isSynchronous) {
+    export function createTestDataSource(size, data, isSynchronous) {
         // Populate a data array
         if (!data) {
             data = Helper.createData(size);
@@ -415,7 +420,7 @@ var Helper;
     };
 
     // Synchronous JS template for the data item created by createData() above
-    Helper.syncJSTemplate = function syncJSTemplate(itemPromise) {
+    export function syncJSTemplate(itemPromise) {
         return itemPromise.then(function (item) {
             var element = document.createElement("div");
             element.id = item.data.title;
@@ -427,13 +432,13 @@ var Helper;
         });
     };
 
-    Helper.getOffsetRight = function getOffsetRight(element) {
+    export function getOffsetRight(element) {
         return element.offsetParent.offsetWidth - element.offsetLeft - element.offsetWidth;
     };
 
     // Returns a promise which completes upon receiving a scroll event
     // from *element*.
-    Helper.waitForScroll = function waitForScroll(element) {
+    export function waitForScroll(element) {
         return new WinJS.Promise(function (c) {
             element.addEventListener("scroll", function onScroll() {
                 element.removeEventListener("scroll", onScroll);
@@ -445,7 +450,7 @@ var Helper;
     // Returns a promise which completes when *element* receives focus. When *includeDescendants* is true,
     // the promise completes when *element* or any of its descendants receives focus. *moveFocus* is a
     // callback which is expected to trigger the focus change that the caller is interested in.
-    Helper._waitForFocus = function focus(element, moveFocus, options) {
+    export function _waitForFocus(element, moveFocus, options) {
         options = options || {};
         var includeDescendants = options.includeDescendants;
 
@@ -461,19 +466,19 @@ var Helper;
         return p;
     };
 
-    Helper.focus = function focus(element) {
+    export function focus(element) {
         return Helper._waitForFocus(element, function () { element.focus(); }, {
             includeDescendants: false
         });
     };
 
-    Helper.waitForFocus = function focus(element, moveFocus) {
+    export function waitForFocus(element, moveFocus) {
         return Helper._waitForFocus(element, moveFocus, {
             includeDescendants: false
         });
     };
 
-    Helper.waitForFocusWithin = function focus(element, moveFocus) {
+    export function waitForFocusWithin(element, moveFocus) {
         return Helper._waitForFocus(element, moveFocus, {
             includeDescendants: true
         });
@@ -481,7 +486,7 @@ var Helper;
 
     // A wrapper around the browser's MouseEvent.initMouseEvent that turns the large argument list
     // into an options object to make function calls easier to understand.
-    Helper.initMouseEvent = function initMouseEvent(eventObject, type, options) {
+    export function initMouseEvent(eventObject, type, options) {
         options = options || {};
         var canBubble = !!options.canBubble;
         var cancelable = !!options.cancelable;
@@ -504,7 +509,7 @@ var Helper;
             button, relatedTarget);
     };
 
-    Helper.require = function (modulePath) {
+    export function require(modulePath) {
         var module = null;
         WinJS.Utilities._require(modulePath, function (mod) {
             // WinJS.Utilities._require is guaranteed to be synchronous
@@ -518,7 +523,7 @@ var Helper;
     // appropriate test file to ensure that the test has already been defined.
     //
     // Example usage: disableTest(WinJSTests.ConfigurationTests, "testDatasourceChange_incrementalGridLayout");
-    Helper.disableTest = function disableTest(testObj, testName) {
+    export function disableTest(testObj, testName) {
         var disabledName = "x" + testName;
 
         testObj[disabledName] = testObj[testName];
@@ -534,7 +539,7 @@ var Helper;
     // [ {rtl: true, layout: 'list'}, {rtl: true, layout: 'grid'}, ...]
     // The second argument provides an array of solutions that *must* be included in the output
     // more info: http://msdn.microsoft.com/en-us/library/cc150619.aspx
-    Helper.pairwise = function pairwise(inputs, include) {
+    export function pairwise(inputs, include) {
         var results = [];
         var inputKeys = Object.keys(inputs);
 
@@ -678,4 +683,4 @@ var Helper;
         return results;
     }
 
-})(Helper || (Helper = {}));
+}

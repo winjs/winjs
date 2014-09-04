@@ -15,9 +15,9 @@ declare module WinJS {
         constructor(oncancel?: Function);
         promise: Promise<T>;
         cancel();
-        complete(value: T);
-        error(value: any);
-        progress(value: any);
+        complete(value?: T);
+        error(value?: any);
+        progress(value?: any);
     }
 
     module Utilities {
@@ -37,11 +37,19 @@ declare module WinJS {
         function _traceAsyncCallbackStarting();
         function _traceAsyncCallbackCompleted();
 
-        function _require(deps:string[], callback);
+        function _require(deps: string[], callback);
+        function _uniqueID(e: HTMLElement):string;
+        function _isDOMElement(e: HTMLElement):boolean;
+
     }
 
     module Resources {
         function _getWinJSString(resourceId: string): { value: string; empty?: boolean; lang?: string; };
         function _getStringJS(resourceId: string): { value: string; empty?: boolean; lang?: string; };
+    }
+
+    module Application {
+        var _terminateApp: (data: any, e: any) => void;
+        function _loadState(e: any);
     }
 }

@@ -1,10 +1,18 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="../TestLib/util.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+/// <reference path="../TestLib/util.ts" />
+///<reference path="../../bin/typings/tsd.d.ts" />
+///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
+///<reference path="../TestLib/winjs.dev.d.ts" />
 
-var CorsicaTests = CorsicaTests || {};
+//used for intentional errors below
+declare var thisFunctionNotDefined;
+declare var thisVariableNotDefined;
+// WinRT tests
+declare var Windows;
 
-CorsicaTests.ApplicationTests = function () {
+module CorsicaTests {
+
     "use strict";
 
     // Returns a promise which completes after the event queue is given an opportunity to run
@@ -39,1293 +47,1248 @@ CorsicaTests.ApplicationTests = function () {
         return true;
     }
 
-    this.testApplicationLifecycleEvents = function (complete) {
-        var app = WinJS.Application;
-        WinJS.Application.stop();
-        WinJS.Application.queueEvent({ type: "loaded" });
-        WinJS.Application.queueEvent({ type: "ready" });
+    export class ApplicationTests {
 
-        window.addEventListener("error", stopAppAndIgnoreHandler, true);
 
-        var count = 0;
-        app.addEventListener("loaded", function (e) {
-            LiveUnit.Assert.areEqual(0, count, "Loaded should fire first.");
-            count++;
-        }, true);
-        app.addEventListener("ready", function (e) {
-            LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+
+        testApplicationLifecycleEvents(complete) {
+            var app = WinJS.Application;
             WinJS.Application.stop();
-            window.removeEventListener("error", stopAppAndIgnoreHandler, true);
-            complete();
-        }, true);
-        app.start();
-    }
-    this.testApplicationLifecycleEventsTyped = function (complete) {
-        var app = WinJS.Application;
-        WinJS.Application.stop();
-        WinJS.Application.queueEvent({ type: "loaded" });
-        WinJS.Application.queueEvent({ type: "ready" });
+            WinJS.Application.queueEvent({ type: "loaded" });
+            WinJS.Application.queueEvent({ type: "ready" });
 
-        window.addEventListener("error", stopAppAndIgnoreHandler, true);
+            window.addEventListener("error", stopAppAndIgnoreHandler, true);
 
-        var count = 0;
-        app.onloaded = function (e) {
-            LiveUnit.Assert.areEqual(0, count, "Loaded should fire first.");
-            count++;
-        };
-        app.onready = function (e) {
-            LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+            var count = 0;
+            app.addEventListener("loaded", function (e) {
+                LiveUnit.Assert.areEqual(0, count, "Loaded should fire first.");
+                count++;
+            }, true);
+            app.addEventListener("ready", function (e) {
+                LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+                WinJS.Application.stop();
+                window.removeEventListener("error", stopAppAndIgnoreHandler, true);
+                complete();
+            }, true);
+            app.start();
+        }
+        testApplicationLifecycleEventsTyped(complete) {
+            var app = WinJS.Application;
             WinJS.Application.stop();
-            window.removeEventListener("error", stopAppAndIgnoreHandler, true);
-            complete();
-        };
-        app.start();
-    }
-    this.testApplicationLifecycleEventsAsync = function (complete) {
-        var app = WinJS.Application;
-        WinJS.Application.stop();
-        WinJS.Application.queueEvent({ type: "loaded" });
-        WinJS.Application.queueEvent({ type: "ready" });
+            WinJS.Application.queueEvent({ type: "loaded" });
+            WinJS.Application.queueEvent({ type: "ready" });
 
-        window.addEventListener("error", stopAppAndIgnoreHandler, true);
+            window.addEventListener("error", stopAppAndIgnoreHandler, true);
 
-        var count = 0;
-        app.addEventListener("loaded", function (e) {
-            LiveUnit.Assert.areEqual(0, count, "Loaded should fire first.");
-            e.setPromise(WinJS.Promise.timeout(16).
-                then(function () { count++ }));
-        }, true);
-        app.addEventListener("ready", function (e) {
-            LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+            var count = 0;
+            app.onloaded = function (e) {
+                LiveUnit.Assert.areEqual(0, count, "Loaded should fire first.");
+                count++;
+            };
+            app.onready = function (e) {
+                LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+                WinJS.Application.stop();
+                window.removeEventListener("error", stopAppAndIgnoreHandler, true);
+                complete();
+            };
+            app.start();
+        }
+        testApplicationLifecycleEventsAsync(complete) {
+            var app = WinJS.Application;
             WinJS.Application.stop();
-            window.removeEventListener("error", stopAppAndIgnoreHandler, true);
-            complete();
-        }, true);
-        app.start();
-    }
+            WinJS.Application.queueEvent({ type: "loaded" });
+            WinJS.Application.queueEvent({ type: "ready" });
+
+            window.addEventListener("error", stopAppAndIgnoreHandler, true);
+
+            var count = 0;
+            app.addEventListener("loaded", function (e) {
+                LiveUnit.Assert.areEqual(0, count, "Loaded should fire first.");
+                e.setPromise(WinJS.Promise.timeout(16).
+                    then(function () { count++ }));
+            }, true);
+            app.addEventListener("ready", function (e) {
+                LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+                WinJS.Application.stop();
+                window.removeEventListener("error", stopAppAndIgnoreHandler, true);
+                complete();
+            }, true);
+            app.start();
+        }
 
 
-    this.testOutOfOrderAsync = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-
-        window.addEventListener("error", stopAppAndIgnoreHandler, true);
-
-        var count = 0;
-        app.addEventListener("loaded", function (e) {
-            LiveUnit.Assert.areEqual(0, count, "Loaded should fire second.");
-            e.setPromise(WinJS.Promise.timeout(16).
-                then(function () { count++ }));
-        }, true);
-        app.addEventListener("ready", function (e) {
-            LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
-            WinJS.Application.stop();
-            window.removeEventListener("error", stopAppAndIgnoreHandler, true);
-            complete();
-        }, true);
-        app.start();
-
-        app.queueEvent({ type: "loaded" });
-
-        setTimeout(function () {
-            app.queueEvent({ type: "activated" });
-        }, 32);
-    }
-
-    this.testOutOfOrderAsync2 = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-
-        window.addEventListener("error", stopAppAndIgnoreHandler, true);
-
-        var count = 0;
-        app.addEventListener("loaded", function (e) {
-            LiveUnit.Assert.areEqual(0, count, "Loaded should fire second.");
-            e.setPromise(WinJS.Promise.timeout(16).
-                then(function () { count++ }));
-        }, true);
-        app.addEventListener("ready", function (e) {
-            LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
-            WinJS.Application.stop();
-            window.removeEventListener("error", stopAppAndIgnoreHandler, true);
-            complete();
-        }, true);
-        app.start();
-
-        app.queueEvent({ type: "loaded" });
-
-        setTimeout(function () {
-            app.queueEvent({ type: "activated" });
-        }, 32);
-    }
-
-    this.testCheckpoint = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-
-        window.addEventListener("error", stopAppAndIgnoreHandler, true);
-
-        var count = 0;
-        app.addEventListener("checkpoint", function (e) {
-            LiveUnit.Assert.areEqual(0, count);
+        testOutOfOrderAsync(complete) {
+            var app = WinJS.Application;
             app.stop();
-            window.removeEventListener("error", stopAppAndIgnoreHandler, true);
+
+            window.addEventListener("error", stopAppAndIgnoreHandler, true);
+
+            var count = 0;
+            app.addEventListener("loaded", function (e) {
+                LiveUnit.Assert.areEqual(0, count, "Loaded should fire second.");
+                e.setPromise(WinJS.Promise.timeout(16).
+                    then(function () { count++ }));
+            }, true);
+            app.addEventListener("ready", function (e) {
+                LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+                WinJS.Application.stop();
+                window.removeEventListener("error", stopAppAndIgnoreHandler, true);
+                complete();
+            }, true);
+            app.start();
+
+            app.queueEvent({ type: "loaded" });
+
+            setTimeout(function () {
+                app.queueEvent({ type: "activated" });
+            }, 32);
+        }
+
+        testOutOfOrderAsync2(complete) {
+            var app = WinJS.Application;
+            app.stop();
+
+            window.addEventListener("error", stopAppAndIgnoreHandler, true);
+
+            var count = 0;
+            app.addEventListener("loaded", function (e) {
+                LiveUnit.Assert.areEqual(0, count, "Loaded should fire second.");
+                e.setPromise(WinJS.Promise.timeout(16).
+                    then(function () { count++ }));
+            }, true);
+            app.addEventListener("ready", function (e) {
+                LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+                WinJS.Application.stop();
+                window.removeEventListener("error", stopAppAndIgnoreHandler, true);
+                complete();
+            }, true);
+            app.start();
+
+            app.queueEvent({ type: "loaded" });
+
+            setTimeout(function () {
+                app.queueEvent({ type: "activated" });
+            }, 32);
+        }
+
+        testCheckpoint(complete) {
+            var app = WinJS.Application;
+            app.stop();
+
+            window.addEventListener("error", stopAppAndIgnoreHandler, true);
+
+            var count = 0;
+            app.addEventListener("checkpoint", function (e) {
+                LiveUnit.Assert.areEqual(0, count);
+                app.stop();
+                window.removeEventListener("error", stopAppAndIgnoreHandler, true);
+                WinJS.Application.stop();
+                complete();
+            }, true);
+            app.start();
+
+            app.checkpoint();
+        }
+        //        P0- Ensure on start() loaded, ready and checkpoint events   are fired   in the order
+        testApplication_orderOfStartEvents(complete) {
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "loaded" });
+            app.queueEvent({ type: "ready" });
+
+            var count = 0;
+            app.addEventListener("loaded", function (e) {
+                LiveUnit.Assert.areEqual(0, count, "Loaded should fire first.");
+                count++;
+            }, true);
+            app.addEventListener("ready", function (e) {
+                LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
+            }, true);
+
+            app.start();
             WinJS.Application.stop();
             complete();
-        }, true);
-        app.start();
-
-        app.checkpoint();
-    }
-    //        P0- Ensure on start() loaded, ready and checkpoint events   are fired   in the order
-    this.testApplication_orderOfStartEvents = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "loaded" });
-        app.queueEvent({ type: "ready" });
-
-        var count = 0;
-        app.addEventListener("loaded", function (e) {
-            LiveUnit.Assert.areEqual(0, count, "Loaded should fire first.");
-            count++;
-        }, true);
-        app.addEventListener("ready", function (e) {
-            LiveUnit.Assert.areEqual(1, count, "Ready should fire last.");
-        }, true);
-
-        app.start();
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P2- Testing addEventListener with non-string eventType
-    this.testApplication_addEventListenerWithNonString = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "test1" });
-
-        app.addEventListener({ x: 10 }, function (e) {
-            LiveUnit.Assert.areEqual(0, 1, "an exception should happen");
-
-        }, true);
-        app.addEventListener("error", function (e) {
-            LiveUnit.Assert.areEqual(0, 1, "an exception should happen");
-            return true;
-        });
-        app.start();
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P2- Testing addEventListener with undefined eventType
-    this.testApplication_addEventListenerWithUndefined = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "test1" });
-
-        app.addEventListener(undefined, function (e) {
-            LiveUnit.Assert.areEqual(0, 1, "an exception should happen");
-
-        }, true);
-        app.addEventListener("error", function (e) {
-            LiveUnit.Assert.areEqual(0, 1, "an exception should happen");
-            return true;
-        });
-        app.start();
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P0- verifying argument to listener has object with props:{detail, type}
-    this.testApplication_addEventListenerWithNonFunctionObject = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "test1" });
-        var count = 0;
-        app.addEventListener("test1", function (e) {
-            count++;
-            if (e.detail)
-                count++;
-            if (e.type)
-                count++;
-        });
-        app.start();
-        LiveUnit.Assert.areEqual(3, count, "an exception should happen");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P0- verify that throwing an exception in the eventhandler will not affecting calling the event handler again
-    this.testApplication_addEventListenerWithException = function (complete) {
-        function test() {
-            count++;
-            throw "error";
-        }
-        function errorHandler() {
-            return true;
         }
 
-        var app = WinJS.Application;
-        app.stop();
-        var count = 0;
-        app.addEventListener("test1", test);
-        app.addEventListener("error", errorHandler);
-        app.queueEvent({ type: "test1" });
-        app.queueEvent({ type: "test1" });
-        app.queueEvent({ type: "test1" });
+        //        P2- Testing addEventListener with undefined eventType
+        testApplication_addEventListenerWithUndefined(complete) {
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "test1" });
 
-        app.start();
-        LiveUnit.Assert.areEqual(3, count, "an exception should happen");
-        WinJS.Application.stop();
-        complete();
-    }
+            app.addEventListener(undefined, function (e) {
+                LiveUnit.Assert.areEqual(0, 1, "an exception should happen");
 
-    //        P0- events queue are NOT dispatched until previous event's asynchronous (promise) operation is complete
-    this.testApplication_firingEventsAfterPromiseComplete = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
+            }, true);
+            app.addEventListener("error", function (e) {
+                LiveUnit.Assert.areEqual(0, 1, "an exception should happen");
+                return true;
+            });
+            app.start();
+            WinJS.Application.stop();
+            complete();
+        }
 
-        var count = 0;
-        app.addEventListener("test1", function (e) {
-            e.setPromise(WinJS.Promise.timeout());
-            LiveUnit.Assert.areEqual(0, count, "This should be executed first");
-            count++;
-        });
+        //        P0- verifying argument to listener has object with props:{detail, type}
+        testApplication_addEventListenerWithNonFunctionObject(complete) {
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "test1" });
+            var count = 0;
+            app.addEventListener("test1", function (e) {
+                count++;
+                if (e.detail)
+                    count++;
+                if (e.type)
+                    count++;
+            });
+            app.start();
+            LiveUnit.Assert.areEqual(3, count, "an exception should happen");
+            WinJS.Application.stop();
+            complete();
+        }
 
-        app.addEventListener("test2", function (e) {
-            LiveUnit.Assert.areEqual(1, count, "This should be executed second");
-        });
-        app.queueEvent({ type: "test1" });
-        app.queueEvent({ type: "test2" });
+        //        P0- verify that throwing an exception in the eventhandler will not affecting calling the event handler again
+        testApplication_addEventListenerWithException(complete) {
+            function test() {
+                count++;
+                throw "error";
+            }
+            function errorHandler() {
+                return true;
+            }
 
-        app.start();
-        WinJS.Application.stop();
-        complete();
-    }
+            var app = WinJS.Application;
+            app.stop();
+            var count = 0;
+            app.addEventListener("test1", test);
+            app.addEventListener("error", errorHandler);
+            app.queueEvent({ type: "test1" });
+            app.queueEvent({ type: "test1" });
+            app.queueEvent({ type: "test1" });
 
-    this.testApplication_firingSameListenersWhereFirstIsDeferred = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
+            app.start();
+            LiveUnit.Assert.areEqual(3, count, "an exception should happen");
+            WinJS.Application.stop();
+            complete();
+        }
 
-        var count = 0;
-        app.addEventListener("test", function (e) {
-            e.setPromise(WinJS.Promise.timeout().then(function () {
+        //        P0- events queue are NOT dispatched until previous event's asynchronous (promise) operation is complete
+        testApplication_firingEventsAfterPromiseComplete(complete) {
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", function (e) {
+                e.setPromise(WinJS.Promise.timeout());
+                LiveUnit.Assert.areEqual(0, count, "This should be executed first");
+                count++;
+            });
+
+            app.addEventListener("test2", function (e) {
+                LiveUnit.Assert.areEqual(1, count, "This should be executed second");
+            });
+            app.queueEvent({ type: "test1" });
+            app.queueEvent({ type: "test2" });
+
+            app.start();
+            WinJS.Application.stop();
+            complete();
+        }
+
+        testApplication_firingSameListenersWhereFirstIsDeferred(complete) {
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test", function (e) {
+                e.setPromise(WinJS.Promise.timeout().then(function () {
+                    count++;
+                    LiveUnit.Assert.areEqual(3, count, "This should be executed third");
+                    WinJS.Application.stop();
+                    complete();
+                }));
+                count++;
+                LiveUnit.Assert.areEqual(1, count, "This should be executed first");
+            });
+            app.addEventListener("test", function (e) {
+                count++;
+                LiveUnit.Assert.areEqual(2, count, "This should be executed second");
+            });
+            app.queueEvent({ type: "test" });
+            app.start();
+        }
+
+        testApplication_firingDifferentListenersWhereFirstIsDeferred(complete) {
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", function (e) {
+                e.setPromise(WinJS.Promise.timeout().then(function () {
+                    count++;
+                    LiveUnit.Assert.areEqual(2, count, "This should be executed second");
+                }));
+                count++;
+                LiveUnit.Assert.areEqual(1, count, "This should be executed first");
+            });
+
+            app.addEventListener("test2", function (e) {
                 count++;
                 LiveUnit.Assert.areEqual(3, count, "This should be executed third");
                 WinJS.Application.stop();
                 complete();
-            }));
-            count++;
-            LiveUnit.Assert.areEqual(1, count, "This should be executed first");
-        });
-        app.addEventListener("test", function (e) {
-            count++;
-            LiveUnit.Assert.areEqual(2, count, "This should be executed second");
-        });
-        app.queueEvent({ type: "test" });
-        app.start();
-    }
+            });
+            app.queueEvent({ type: "test1" });
+            app.queueEvent({ type: "test2" });
+            app.start();
+        }
 
-    this.testApplication_firingDifferentListenersWhereFirstIsDeferred = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
+        ///////////////////////// WinJS.Application.removeEventListener(eventType, listener, useCapture)//////////////
 
-        var count = 0;
-        app.addEventListener("test1", function (e) {
-            e.setPromise(WinJS.Promise.timeout().then(function () {
-                count++;
-                LiveUnit.Assert.areEqual(2, count, "This should be executed second");
-            }));
-            count++;
-            LiveUnit.Assert.areEqual(1, count, "This should be executed first");
-        });
+        //        P0 - Ensure handler is called when event is dispatched
+        testApplication_handlerForEventDispatched(complete) {
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "test1" });
+            var isHandlerCalled = false;
+            app.addEventListener("test1", function (e) {
+                e.setPromise(WinJS.Promise.timeout());
+                isHandlerCalled = true;
+            });
 
-        app.addEventListener("test2", function (e) {
-            count++;
-            LiveUnit.Assert.areEqual(3, count, "This should be executed third");
+            app.start();
+            LiveUnit.Assert.areEqual(true, isHandlerCalled, "Event handler is not called");
             WinJS.Application.stop();
             complete();
-        });
-        app.queueEvent({ type: "test1" });
-        app.queueEvent({ type: "test2" });
-        app.start();
-    }
+        }
 
-    ///////////////////////// WinJS.Application.removeEventListener(eventType, listener, useCapture)//////////////
+        //        P1 - Verify adding multiple listeners for same event  type
+        testApplication_multipleListenersToSameEvent(complete) {
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "test1" });
+            var count = 0;
 
-    //        P0 - Ensure handler is called when event is dispatched
-    this.testApplication_handlerForEventDispatched = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "test1" });
-        var isHandlerCalled = false;
-        app.addEventListener("test1", function (e) {
-            e.setPromise(WinJS.Promise.timeout());
-            isHandlerCalled = true;
-        });
+            app.addEventListener("test1", function (e) {
+                e.setPromise(WinJS.Promise.timeout());
+                count++;
+            });
 
-        app.start();
-        LiveUnit.Assert.areEqual(true, isHandlerCalled, "Event handler is not called");
-        WinJS.Application.stop();
-        complete();
-    }
+            app.addEventListener("test1", function (e) {
+                count++;
+            });
 
-    //        P1 - Verify adding multiple listeners for same event  type
-    this.testApplication_multipleListenersToSameEvent = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "test1" });
-        var count = 0;
+            app.addEventListener("test1", function (e) {
+                e.setPromise(WinJS.Promise.timeout());
+                count++;
+            });
 
-        app.addEventListener("test1", function (e) {
-            e.setPromise(WinJS.Promise.timeout());
-            count++;
-        });
+            app.addEventListener("test1", function (e) {
+                count++;
+            });
 
-        app.addEventListener("test1", function (e) {
-            count++;
-        });
-
-        app.addEventListener("test1", function (e) {
-            e.setPromise(WinJS.Promise.timeout());
-            count++;
-        });
-
-        app.addEventListener("test1", function (e) {
-            count++;
-        });
-
-        app.start();
-        LiveUnit.Assert.areEqual(4, count, "Event handler is not called desired no. of times");
-        WinJS.Application.stop();
-        complete();
-    }
+            app.start();
+            LiveUnit.Assert.areEqual(4, count, "Event handler is not called desired no. of times");
+            WinJS.Application.stop();
+            complete();
+        }
 
 
-    //         P2 - Verify adding single handler for multiple event types.
-    this.testApplication_singleHandlerForMultipleEvents = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "test1" });
-        app.queueEvent({ type: "test2" });
-        app.queueEvent({ type: "test3" });
-        app.queueEvent({ type: "test4" });
-        var count = 0;
+        //         P2 - Verify adding single handler for multiple event types.
+        testApplication_singleHandlerForMultipleEvents(complete) {
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "test1" });
+            app.queueEvent({ type: "test2" });
+            app.queueEvent({ type: "test3" });
+            app.queueEvent({ type: "test4" });
+            var count = 0;
 
-        app.addEventListener("test1", handler);
-        app.addEventListener("test2", handler);
-        app.addEventListener("test3", handler);
-        app.addEventListener("test4", handler);
+            app.addEventListener("test1", handler);
+            app.addEventListener("test2", handler);
+            app.addEventListener("test3", handler);
+            app.addEventListener("test4", handler);
 
-        function handler(e) {
-            count++;
-            if (count === 4) {
+            function handler(e) {
+                count++;
+                if (count === 4) {
+                    WinJS.Application.stop();
+                    complete();
+                }
+                // else test gets timed out
+            }
+
+            app.start();
+        }
+
+        /////////////////////////////////////////////////////////////////////////
+
+        //        P0- creating three events and see whether they will be called on start
+        testApplication_testNewlyAddedEvent(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", listener, true);
+            app.addEventListener("test2", listener, true);
+            app.addEventListener("test3", listener, true);
+
+            app.queueEvent({ type: "test1" });
+            app.queueEvent({ type: "test2" });
+
+            function listener(e) {
+                count++;
+            }
+
+            app.start();
+            app.queueEvent({ type: "test3" });
+            yieldForEventQueue().done(function () {
+                LiveUnit.Assert.areEqual(3, count, "Testing DrainQueue through start function");
+                WinJS.Application.stop();
+                complete();
+            });
+        }
+
+        testApplication_queueAfterStartIsAsync(complete) {
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", listener, true);
+
+
+            function listener(e) {
+                count++;
+            }
+
+            app.start();
+            app.queueEvent({ type: "test1" });
+            LiveUnit.Assert.areEqual(0, count, "Event was queued synchronously after start()");
+            yieldForEventQueue().done(function () {
+                LiveUnit.Assert.areEqual(1, count, "QueueEvent after app.start() is fired async");
+                WinJS.Application.stop();
+                complete();
+            });
+        }
+
+        testApplication_startQueueStopKillsEvent(complete) {
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", listener, true);
+
+            function listener(e) {
+                count++;
+            }
+
+            app.start();
+            app.queueEvent({ type: "test1" });
+            app.stop();
+            yieldForEventQueue().done(function () {
+                WinJS.Application.stop();
+                LiveUnit.Assert.areEqual(0, count, "Testing Events after start() are not fired when stop() is called synchronously");
+                complete();
+            });
+        }
+
+
+
+        testApplication_maxPriJobAfterSchedulingEvent(complete) {
+            var S = WinJS.Utilities.Scheduler;
+            var app = WinJS.Application;
+            app.stop();
+            var count = 0;
+
+            try {
+
+                WinJS.Application.addEventListener("test", function () {
+                    count++;
+                    LiveUnit.Assert.areEqual(2, count, "runs second");
+                });
+
+                WinJS.Application.start();
+                WinJS.Application.queueEvent({ type: "test" });
+                S.schedule(function () {
+                    count++;
+                    LiveUnit.Assert.areEqual(1, count, "runs first");
+                }, S.Priority.max);
+                LiveUnit.Assert.areEqual(0, count);
+            } finally {
+                yieldForEventQueue().done(function () {
+                    WinJS.Application.stop();
+                    LiveUnit.Assert.areEqual(2, count, "Scheduled job and error handlers were all called");
+                    complete();
+                });
+            }
+        }
+
+
+        //         P0- make sure that stop removes events from the queue
+        testApplication_removeEventsUsingStop(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            app.addEventListener("test1", function (e) {
+                LiveUnit.Assert.fail("should never be called");
+            }, true);
+            app.queueEvent({ type: "test1" });
+
+            app.stop();
+
+            app.start();
+            WinJS.Application.stop();
+            complete();
+
+        }
+
+
+        //     P0- listener should not be called as long as the event is not queued
+        testApplication_eventListnerNotCalled(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            app.addEventListener("test1", listener, true);
+
+            function listener(e) {
+                LiveUnit.Assert.areEqual(1, 0, "should never be fired");
+                app.queueEvent({ type: "test1" });
+            }
+
+            app.start();
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //        P2- event listener should not be called again after being removed in the event handler
+        testApplication_removeEventinEventHandler(complete) {
+            // BugID: 286177
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.queueEvent({ type: "test1" });
+            app.addEventListener("test1", listener, true);
+
+            function listener(e) {
+                count++;
+                LiveUnit.Assert.areEqual(1, count, "fired once");
+                app.removeEventListener("test1", listener, true);
+                app.queueEvent({ type: "test1" });
+            }
+
+            app.start();
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //         P0- making sure that removing one of the eventhandlers will result in not calling it
+        testApplication_removeOneOfTheEventHandlers(complete) {
+            // BugID: 287595
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", foo1, true);
+            app.addEventListener("test1", foo2, true);
+            app.addEventListener("test1", foo3, true);
+
+            app.removeEventListener("test1", foo2, true);
+            app.queueEvent({ type: "test1" });
+
+            function foo1() {
+                count++;
+            }
+            function foo2() {
+                LiveUnit.Assert.areEqual(1, 0, "foo2 should not be fired");
+            }
+            function foo3() {
+                count++;
+            }
+            app.start();
+
+            LiveUnit.Assert.areEqual(2, count, "foo3 should be fired");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //         P0- removing one of the eventhandlers after the event is queued will result in not calling it
+        testApplication_removeOneOfTheEventHandlersAfterDispatching(complete) {
+            // BugID: 287595
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", foo1, true);
+            app.addEventListener("test1", foo2, true);
+            app.addEventListener("test1", foo3, true);
+
+            app.queueEvent({ type: "test1" });
+            app.removeEventListener("test1", foo2, true);
+
+            function foo1() {
+                count++;
+            }
+            function foo2() {
+                count += 10;
+                LiveUnit.Assert.areEqual(1, count, "foo2 should not be fired");
+            }
+            function foo3() {
+                count++;
+            }
+            app.start();
+            LiveUnit.Assert.areEqual(2, count, "foo3 should be fired");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //         P2- removing non-existing eventType
+        testApplication_removeNonExistingEventType(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", foo1, true);
+            app.addEventListener("test1", foo2, true);
+            app.addEventListener("test1", foo3, true);
+
+            app.queueEvent({ type: "test1" });
+            app.removeEventListener("test2", foo2, true);
+
+            function foo1() {
+                count++;
+            }
+            function foo2() {
+                count++;
+            }
+            function foo3() {
+                count++;
+            }
+            app.start();
+            LiveUnit.Assert.areEqual(3, count, "removing non-existent event type does not affect current events");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //         P2- verifying invalid values for eventType and listener
+        testApplication_invalidValuesForParameters(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", foo1, true);
+            app.addEventListener("test1", foo2, true);
+            app.addEventListener("test1", foo3, true);
+
+            app.queueEvent({ type: "test1" });
+            app.removeEventListener("test1", undefined, true);
+
+            function foo1() {
+                count++;
+            }
+            function foo2() {
+                count++;
+            }
+            function foo3() {
+                count++;
+            }
+            app.start();
+            LiveUnit.Assert.areEqual(3, count, "verifying invalid value for event listener");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //         P2- verifying invalid values for eventType
+        testApplication_invalidValuesForParameters2(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("test1", foo1, true);
+            app.addEventListener("test1", foo2, true);
+            app.addEventListener("test1", foo3, true);
+
+            app.queueEvent({ type: "test1" });
+            app.removeEventListener(undefined, foo2, true);
+
+            function foo1() {
+                count++;
+            }
+            function foo2() {
+                count++;
+            }
+            function foo3() {
+                count++;
+            }
+            app.start();
+            LiveUnit.Assert.areEqual(3, count, "verifying invalid value for eventType");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //         P0- testing funtion checkpoint
+        testApplication_testingCheckpoint(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("checkpoint", function (e) {
+                count++;
+            });
+
+            app.start();
+            app.checkpoint();
+            yieldForEventQueue().done(function () {
+                LiveUnit.Assert.areEqual(count, 1, "checkpoint is called based on the app.checkpoint()");
+                WinJS.Application.stop();
+                complete();
+            });
+        }
+
+        //         P0- testing funtion checkpoint before call to start
+        testApplication_testingCheckpointBeforeStart(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("checkpoint", function (e) {
+                count++;
+            });
+
+            app.checkpoint();
+            app.start();
+
+            LiveUnit.Assert.areEqual(count, 1, "checkpoint is called based on the app.checkpoint()");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //         P0- testing funtion checkpoint using queueEvent
+        testApplication_testingQueueCheckpoint(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("checkpoint", function (e) {
+                count++;
+            });
+
+            app.queueEvent({ type: "checkpoint" });
+            app.start();
+
+            LiveUnit.Assert.areEqual(count, 1, "checkpoint is called based on the app.checkpoint()");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //         P2- testing funtion checkpoint before call to stop
+        testApplication_testingCheckpointBeforeStop(complete) {
+
+            var app = WinJS.Application;
+            app.checkpoint();
+            app.start();
+            app.stop();
+
+            var count = 0;
+            app.addEventListener("checkpoint", function (e) {
+                count++;
+            });
+            app.start();
+            app.checkpoint();
+            yieldForEventQueue().done(function () {
+                LiveUnit.Assert.areEqual(count, 1, "checkpoint is called based on the app.checkpoint()");
+                WinJS.Application.stop();
+                complete();
+            });
+        }
+
+        // calling checkpoint without setting an event handler
+        testApplication_testingCheckpointWithoutEventHandler(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+            app.start();
+            app.checkpoint();
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //testing the loaded event
+        testApplication_testLoadEvent(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "loaded" }); //because stop will clear the whole state
+            var count = 0;
+            app.addEventListener("loaded", function (e) {
+                count++;
+
+                LiveUnit.Assert.areEqual("loaded", e.type, "check the presence of type parameter in the eventArgs");
+                var setPromiseAvailable = 0;
+                if (e.setPromise)
+                    setPromiseAvailable = 1;
+                LiveUnit.Assert.areEqual(1, setPromiseAvailable, "check the presence of the setPromise parameter in the eventArgs");
+
+            });
+            app.start();
+            LiveUnit.Assert.areEqual(1, count, "load event listener is called");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //testing the activated event
+        testApplication_testActivated(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "activated" }); //because stop will clear the whole state
+            var count = 0;
+            app.addEventListener("activated", function (e) {
+                count++;
+
+                LiveUnit.Assert.areEqual("activated", e.type, "check the presence of type parameter in the eventArgs");
+                var setPromiseAvailable = 0;
+                if (e.setPromise)
+                    setPromiseAvailable = 1;
+                LiveUnit.Assert.areEqual(1, setPromiseAvailable, "check the presence of the setPromise parameter in the eventArgs");
+                var detailAvailable = 0;
+                if (e.detail)
+                    detailAvailable = 1;
+                LiveUnit.Assert.areEqual(1, detailAvailable, "check the presence of the detailAvailable parameter in the eventArgs");
+
+            });
+            app.start();
+            LiveUnit.Assert.areEqual(1, count, "activated event listener is called");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //        P0- eventlistener for the unload event
+        testApplication_unloadEvent(complete) {
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+
+            app.addEventListener("unload", unloadHandler, true);
+
+            function unloadHandler(e) {
+                count++;
+
+                LiveUnit.Assert.areEqual("unload", e.type, "e.type = unloaded in the unloaded handler");
+                var promiseAvailable = 0;
+                if (e.setPromise)
+                    promiseAvailable = 1;
+                LiveUnit.Assert.areEqual(1, promiseAvailable, "check the presence of the setPromise parameter in the eventArgs");
+            }
+
+            app.start();
+            app.queueEvent({ type: "unload" }); //because stop will clear the whole state
+            yieldForEventQueue().done(function () {
+                LiveUnit.Assert.areEqual(1, count, "unloaded event got fired");
+                WinJS.Application.stop();
+                complete();
+            });
+        }
+
+        //        P2- event listener should not be called again after being removed in asynchronous function
+        testApplication_stopEventinEventHandlerWithPromise(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.queueEvent({ type: "test1" });
+            app.addEventListener("test1", listener, true);
+
+            function check() {
+                count++;
+                LiveUnit.Assert.areEqual(1, count, "fired once");
+                app.removeEventListener("test1", listener, true);
+                app.queueEvent({ type: "test1" });
+            }
+            function listener(e) {
+                var t = new WinJS.Promise(check, function () { });
+            }
+
+            app.start();
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //        P1- throw error in promise of event handler
+        testApplication_throwErrorInEventHandlerPromise(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.queueEvent({ type: "test1" });
+            app.addEventListener("test1", listener, true);
+            app.addEventListener("error", function (e) {
+                count++;
+                return true;
+            }, true);
+
+            function check() {
+                throw "error in promise";
+            }
+            function listener(e) {
+                var t = new WinJS.Promise(check, function () { });
+                e.setPromise(t);
+            }
+
+            app.start();
+            LiveUnit.Assert.areEqual(1, count, "Error handler was called when error is thrown in promise");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //        P2 - set eventRecord type which doesn't have a handler
+        testApplication_queueEventWithoutHandler(complete) {
+
+            var app = WinJS.Application;
+            app.stop();
+            app.queueEvent({ type: "test1" });
+
+            app.start();
+            WinJS.Application.stop();
+            complete();
+        }
+
+        //        P0- testing the Error eventhandler
+        testApplication_errorEventHandler(complete) {
+            //BUGID: 287821
+            var app = WinJS.Application;
+            app.stop();
+
+            var count = 0;
+            app.queueEvent({ type: "test1" });
+            app.addEventListener("test1", test, true);
+            app.addEventListener("error", errorHandler);
+
+            function test() {
+                throw "error in handler";
+            }
+            function errorHandler(e) {
+                count++;
+                LiveUnit.Assert.areEqual("error", e.type, "e.type is available in the parameter object");
+                var promiseAvailable = 0;
+                if (e.setPromise)
+                    promiseAvailable = 1;
+                LiveUnit.Assert.areEqual(1, promiseAvailable, "e.setPromise is available in the parameter object");
+                var errorObject = 0;
+                if (e.detail)
+                    errorObject = 1;
+                LiveUnit.Assert.areEqual(1, errorObject, "e.errror is available in the parameter object");
+                return true;
+            }
+            app.start();
+            LiveUnit.Assert.areEqual(1, count, "Error handler was called");
+            WinJS.Application.stop();
+            complete();
+        }
+
+        testApplication_BackClickEventFiresBeforeNavigationEvents1(complete) {
+            // Scenario 1: WinJS.Application 'backclick' fires even when the navigation backStack is empty
+            //
+            var createBackClickEvent = function () {
+                var fakeWinRTBackPressedEvent = { handled: false };
+                return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
+            }
+
+        var backPressedHappensFirst = function (e) {
+                WinJS.Application.removeEventListener("backclick", backPressedHappensFirst, true);
+                LiveUnit.Assert.areEqual("backclick", e.type);
+                cleanup(); // Test passed.
+            }
+
+        var beforeNavShouldntFire = function (e) {
+                // This eventhandler code should never be reached.
+                WinJS.Navigation.removeEventListener("beforenavigate", beforeNavShouldntFire, true);
+                LiveUnit.Assert.areEqual("beforenavigate", e.type);
+
+                // Sanity check our expectation that WinJS.Navigation will never fire navigation when navigating backwards if their is no history backStack.
+                LiveUnit.Assert.fail("It's expected that WinJS.Navigation events won't fire when there is no history backStack... has the implementation of WinJS.Navigation changed?");
+            };
+
+            WinJS.Application.start();
+
+            // Setup
+            WinJS.Navigation.history = { backStack: [] };
+            LiveUnit.Assert.isFalse(WinJS.Navigation.canGoBack)
+        WinJS.Application.addEventListener("backclick", backPressedHappensFirst, true);
+            WinJS.Application.addEventListener("beforenavigate", beforeNavShouldntFire, true);
+
+            // Simulate
+            var eventRecord = createBackClickEvent();
+            WinJS.Application.queueEvent(eventRecord);
+
+            // Cleanup
+            function cleanup() {
+                WinJS.Application.removeEventListener("backclick", backPressedHappensFirst, true);
+                WinJS.Navigation.removeEventListener("beforenavigate", beforeNavShouldntFire, true);
                 WinJS.Application.stop();
                 complete();
             }
-            // else test gets timed out
+
         }
 
-        app.start();
-    }
+        testApplication_BackClickEventFiresBeforeNavigationEvents2(complete) {
+            // Scenario2: WinJS.Application 'backclick' fires before navigation events, whenever WinJS.Navigation CAN go back.
+            //
+            var createBackClickEvent = function () {
+                var fakeWinRTBackPressedEvent = { handled: false };
+                return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
+            }
 
-    /////////////////////////////////////////////////////////////////////////
+        var backPressedHappensFirst = function (e) {
+                WinJS.Application.removeEventListener("backclick", backPressedHappensFirst, true);
+                LiveUnit.Assert.areEqual("backclick", e.type);
+                LiveUnit.Assert.isFalse(beforeNavHit, "WinJS.Navigation 'beforeNavigate' event should never occurr before WinJS.Application 'backclick'");
+                backPressedHit = true;
+            }
+        var beforeNavHappensSecond = function (e) {
+                WinJS.Navigation.removeEventListener("beforenavigate", beforeNavHappensSecond, true);
+                LiveUnit.Assert.areEqual("beforenavigate", e.type);
+                LiveUnit.Assert.isTrue(backPressedHit, "WinJS.Application 'backclick' event should have fired before WinJS.Navigation 'beforenavigate' event");
 
-    //        P0- creating three events and see whether they will be called on start
-    this.testApplication_testNewlyAddedEvent = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("test1", listener, true);
-        app.addEventListener("test2", listener, true);
-        app.addEventListener("test3", listener, true);
-
-        app.queueEvent({ type: "test1" });
-        app.queueEvent({ type: "test2" });
-
-        function listener(e) {
-            count++;
-        }
-
-        app.start();
-        app.queueEvent({ type: "test3" });
-        yieldForEventQueue().done(function () {
-            LiveUnit.Assert.areEqual(3, count, "Testing DrainQueue through start function");
-            WinJS.Application.stop();
-            complete();
-        });
-    }
-
-    this.testApplication_queueAfterStartIsAsync = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("test1", listener, true);
-
-
-        function listener(e) {
-            count++;
-        }
-
-        app.start();
-        app.queueEvent({ type: "test1" });
-        LiveUnit.Assert.areEqual(0, count, "Event was queued synchronously after start()");
-        yieldForEventQueue().done(function () {
-            LiveUnit.Assert.areEqual(1, count, "QueueEvent after app.start() is fired async");
-            WinJS.Application.stop();
-            complete();
-        });
-    }
-
-    this.testApplication_startQueueStopKillsEvent = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("test1", listener, true);
-
-        function listener(e) {
-            count++;
-        }
-
-        app.start();
-        app.queueEvent({ type: "test1" });
-        app.stop();
-        yieldForEventQueue().done(function () {
-            WinJS.Application.stop();
-            LiveUnit.Assert.areEqual(0, count, "Testing Events after start() are not fired when stop() is called synchronously");
-            complete();
-        });
-    }
-
-
-
-    this.testApplication_maxPriJobAfterSchedulingEvent = function (complete) {
-        var S = WinJS.Utilities.Scheduler;
-        var app = WinJS.Application;
-        app.stop();
-        var count = 0;
-
-        try {
-
-            WinJS.Application.addEventListener("test", function () {
-                count++;
-                LiveUnit.Assert.areEqual(2, count, "runs second");
-            });
+                cleanup();
+            };
 
             WinJS.Application.start();
-            WinJS.Application.queueEvent({ type: "test" });
-            S.schedule(function () {
-                count++;
-                LiveUnit.Assert.areEqual(1, count, "runs first");
-            }, S.Priority.max);
-            LiveUnit.Assert.areEqual(0, count);
-        } finally {
-            yieldForEventQueue().done(function () {
-                WinJS.Application.stop();
-                LiveUnit.Assert.areEqual(2, count, "Scheduled job and error handlers were all called");
-                complete();
-            });
-        }
-    }
 
-
-    this.xtestApplication_highPriJobInOrderWithSchedulingEventThatThrows = function (complete) {
-        //TODO
-    }
-
-    this.xtestApplication_highPriJobInOrderWithSchedulingEventThatThrowsPromiseError = function (complete) {
-        //TODO
-    }
-
-
-
-    //         P0- make sure that stop removes events from the queue
-    this.testApplication_removeEventsUsingStop = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        app.addEventListener("test1", function (e) {
-            LiveUnit.Assert.fail("should never be called");
-        }, true);
-        app.queueEvent({ type: "test1" });
-
-        app.stop();
-
-        app.start();
-        WinJS.Application.stop();
-        complete();
-
-    }
-
-
-    //     P0- listener should not be called as long as the event is not queued
-    this.testApplication_eventListnerNotCalled = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        app.addEventListener("test1", listener, true);
-
-        function listener(e) {
-            LiveUnit.Assert.areEqual(1, 0, "should never be fired");
-            app.queueEvent({ type: "test1" });
-        }
-
-        app.start();
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P2- event listener should not be called again after being removed in the event handler
-    this.testApplication_removeEventinEventHandler = function (complete) {
-        // BugID: 286177
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.queueEvent({ type: "test1" });
-        app.addEventListener("test1", listener, true);
-
-        function listener(e) {
-            count++;
-            LiveUnit.Assert.areEqual(1, count, "fired once");
-            app.removeEventListener("test1", listener, true);
-            app.queueEvent({ type: "test1" });
-        }
-
-        app.start();
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P0- making sure that removing one of the eventhandlers will result in not calling it
-    this.testApplication_removeOneOfTheEventHandlers = function (complete) {
-        // BugID: 287595
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("test1", foo1, true);
-        app.addEventListener("test1", foo2, true);
-        app.addEventListener("test1", foo3, true);
-
-        app.removeEventListener("test1", foo2, true);
-        app.queueEvent({ type: "test1" });
-
-        function foo1() {
-            count++;
-        }
-        function foo2() {
-            LiveUnit.Assert.areEqual(1, 0, "foo2 should not be fired");
-        }
-        function foo3() {
-            count++;
-        }
-        app.start();
-
-        LiveUnit.Assert.areEqual(2, count, "foo3 should be fired");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P0- removing one of the eventhandlers after the event is queued will result in not calling it
-    this.testApplication_removeOneOfTheEventHandlersAfterDispatching = function (complete) {
-        // BugID: 287595
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("test1", foo1, true);
-        app.addEventListener("test1", foo2, true);
-        app.addEventListener("test1", foo3, true);
-
-        app.queueEvent({ type: "test1" });
-        app.removeEventListener("test1", foo2, true);
-
-        function foo1() {
-            count++;
-        }
-        function foo2() {
-            count += 10;
-            LiveUnit.Assert.areEqual(1, count, "foo2 should not be fired");
-        }
-        function foo3() {
-            count++;
-        }
-        app.start();
-        LiveUnit.Assert.areEqual(2, count, "foo3 should be fired");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P2- removing non-existing eventType
-    this.testApplication_removeNonExistingEventType = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("test1", foo1, true);
-        app.addEventListener("test1", foo2, true);
-        app.addEventListener("test1", foo3, true);
-
-        app.queueEvent({ type: "test1" });
-        app.removeEventListener("test2", foo2, true);
-
-        function foo1() {
-            count++;
-        }
-        function foo2() {
-            count++;
-        }
-        function foo3() {
-            count++;
-        }
-        app.start();
-        LiveUnit.Assert.areEqual(3, count, "removing non-existent event type does not affect current events");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P2- verifying invalid values for eventType and listener
-    this.testApplication_invalidValuesForParameters = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("test1", foo1, true);
-        app.addEventListener("test1", foo2, true);
-        app.addEventListener("test1", foo3, true);
-
-        app.queueEvent({ type: "test1" });
-        app.removeEventListener("test1", undefined, true);
-
-        function foo1() {
-            count++;
-        }
-        function foo2() {
-            count++;
-        }
-        function foo3() {
-            count++;
-        }
-        app.start();
-        LiveUnit.Assert.areEqual(3, count, "verifying invalid value for event listener");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P2- verifying invalid values for eventType
-    this.testApplication_invalidValuesForParameters2 = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("test1", foo1, true);
-        app.addEventListener("test1", foo2, true);
-        app.addEventListener("test1", foo3, true);
-
-        app.queueEvent({ type: "test1" });
-        app.removeEventListener(undefined, foo2, true);
-
-        function foo1() {
-            count++;
-        }
-        function foo2() {
-            count++;
-        }
-        function foo3() {
-            count++;
-        }
-        app.start();
-        LiveUnit.Assert.areEqual(3, count, "verifying invalid value for eventType");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P0- testing funtion checkpoint
-    this.testApplication_testingCheckpoint = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("checkpoint", function (e) {
-            count++;
-        });
-
-        app.start();
-        app.checkpoint();
-        yieldForEventQueue().done(function () {
-            LiveUnit.Assert.areEqual(count, 1, "checkpoint is called based on the app.checkpoint()");
-            WinJS.Application.stop();
-            complete();
-        });
-    }
-
-    //         P0- testing funtion checkpoint before call to start
-    this.testApplication_testingCheckpointBeforeStart = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("checkpoint", function (e) {
-            count++;
-        });
-
-        app.checkpoint();
-        app.start();
-
-        LiveUnit.Assert.areEqual(count, 1, "checkpoint is called based on the app.checkpoint()");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P0- testing funtion checkpoint using queueEvent
-    this.testApplication_testingQueueCheckpoint = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("checkpoint", function (e) {
-            count++;
-        });
-
-        app.queueEvent({ type: "checkpoint" });
-        app.start();
-
-        LiveUnit.Assert.areEqual(count, 1, "checkpoint is called based on the app.checkpoint()");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P2- testing calling checkpoint on a loop
-    this.xtestApplication_testingCheckpointInLoop = function (complete) {
-        //BUGID: 369930
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        var n = 1000;
-        app.addEventListener("checkpoint", function (e) {
-            count++;
-        });
-
-        app.start();
-        for (var i = 0; i < n; i++)
-            app.checkpoint();
-
-        LiveUnit.Assert.areEqual(count, n, "checkpoint is called based on the app.checkpoint()");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //         P2- testing funtion checkpoint before call to stop
-    this.testApplication_testingCheckpointBeforeStop = function (complete) {
-
-        var app = WinJS.Application;
-        app.checkpoint();
-        app.start();
-        app.stop();
-
-        var count = 0;
-        app.addEventListener("checkpoint", function (e) {
-            count++;
-        });
-        app.start();
-        app.checkpoint();
-        yieldForEventQueue().done(function () {
-            LiveUnit.Assert.areEqual(count, 1, "checkpoint is called based on the app.checkpoint()");
-            WinJS.Application.stop();
-            complete();
-        });
-    }
-
-    // calling checkpoint without setting an event handler
-    this.testApplication_testingCheckpointWithoutEventHandler = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-        app.start();
-        app.checkpoint();
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //testing the loaded event
-    this.testApplication_testLoadEvent = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "loaded" }); //because stop will clear the whole state
-        var count = 0;
-        app.addEventListener("loaded", function (e) {
-            count++;
-
-            LiveUnit.Assert.areEqual("loaded", e.type, "check the presence of type parameter in the eventArgs");
-            var setPromiseAvailable = 0;
-            if (e.setPromise)
-                setPromiseAvailable = 1;
-            LiveUnit.Assert.areEqual(1, setPromiseAvailable, "check the presence of the setPromise parameter in the eventArgs");
-
-        });
-        app.start();
-        LiveUnit.Assert.areEqual(1, count, "load event listener is called");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //testing the activated event
-    this.testApplication_testActivated = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "activated" }); //because stop will clear the whole state
-        var count = 0;
-        app.addEventListener("activated", function (e) {
-            count++;
-
-            LiveUnit.Assert.areEqual("activated", e.type, "check the presence of type parameter in the eventArgs");
-            var setPromiseAvailable = 0;
-            if (e.setPromise)
-                setPromiseAvailable = 1;
-            LiveUnit.Assert.areEqual(1, setPromiseAvailable, "check the presence of the setPromise parameter in the eventArgs");
-            var detailAvailable = 0;
-            if (e.detail)
-                detailAvailable = 1;
-            LiveUnit.Assert.areEqual(1, detailAvailable, "check the presence of the detailAvailable parameter in the eventArgs");
-
-        });
-        app.start();
-        LiveUnit.Assert.areEqual(1, count, "activated event listener is called");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P0- eventlistener for the unload event
-    this.testApplication_unloadEvent = function (complete) {
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-
-        app.addEventListener("unload", unloadHandler, true);
-
-        function unloadHandler(e) {
-            count++;
-
-            LiveUnit.Assert.areEqual("unload", e.type, "e.type = unloaded in the unloaded handler");
-            var promiseAvailable = 0;
-            if (e.setPromise)
-                promiseAvailable = 1;
-            LiveUnit.Assert.areEqual(1, promiseAvailable, "check the presence of the setPromise parameter in the eventArgs");
-        }
-
-        app.start();
-        app.queueEvent({ type: "unload" }); //because stop will clear the whole state
-        yieldForEventQueue().done(function () {
-            LiveUnit.Assert.areEqual(1, count, "unloaded event got fired");
-            WinJS.Application.stop();
-            complete();
-        });
-    }
-
-    //        P2- event listener should not be called again after being removed in asynchronous function
-    this.testApplication_stopEventinEventHandlerWithPromise = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.queueEvent({ type: "test1" });
-        app.addEventListener("test1", listener, true);
-
-        function check() {
-            count++;
-            LiveUnit.Assert.areEqual(1, count, "fired once");
-            app.removeEventListener("test1", listener, true);
-            app.queueEvent({ type: "test1" });
-        }
-        function listener(e) {
-            var t = new WinJS.Promise(check, function () { });
-        }
-
-        app.start();
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P1- throw error in promise of event handler
-    this.testApplication_throwErrorInEventHandlerPromise = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.queueEvent({ type: "test1" });
-        app.addEventListener("test1", listener, true);
-        app.addEventListener("error", function (e) {
-            count++;
-            return true;
-        }, true);
-
-        function check() {
-            throw "error in promise";
-        }
-        function listener(e) {
-            var t = new WinJS.Promise(check, function () { });
-            e.setPromise(t);
-        }
-
-        app.start();
-        LiveUnit.Assert.areEqual(1, count, "Error handler was called when error is thrown in promise");
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P2 - set eventRecord type which doesn't have a handler
-    this.testApplication_queueEventWithoutHandler = function (complete) {
-
-        var app = WinJS.Application;
-        app.stop();
-        app.queueEvent({ type: "test1" });
-
-        app.start();
-        WinJS.Application.stop();
-        complete();
-    }
-
-    //        P0- testing the Error eventhandler
-    this.testApplication_errorEventHandler = function (complete) {
-        //BUGID: 287821
-        var app = WinJS.Application;
-        app.stop();
-
-        var count = 0;
-        app.queueEvent({ type: "test1" });
-        app.addEventListener("test1", test, true);
-        app.addEventListener("error", errorHandler);
-
-        function test() {
-            throw "error in handler";
-        }
-        function errorHandler(e) {
-            count++;
-            LiveUnit.Assert.areEqual("error", e.type, "e.type is available in the parameter object");
-            var promiseAvailable = 0;
-            if (e.setPromise)
-                promiseAvailable = 1;
-            LiveUnit.Assert.areEqual(1, promiseAvailable, "e.setPromise is available in the parameter object");
-            var errorObject = 0;
-            if (e.detail)
-                errorObject = 1;
-            LiveUnit.Assert.areEqual(1, errorObject, "e.errror is available in the parameter object");
-            return true;
-        }
-        app.start();
-        LiveUnit.Assert.areEqual(1, count, "Error handler was called");
-        WinJS.Application.stop();
-        complete();
-    }    
-
-    this.testApplication_BackClickEventFiresBeforeNavigationEvents1 = function (complete) {
-        // Scenario 1: WinJS.Application 'backclick' fires even when the navigation backStack is empty
-        //
-        var createBackClickEvent = function () {
-            var fakeWinRTBackPressedEvent = { handled: false };
-            return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
-        }
-
-        var backPressedHappensFirst = function (e) {
-            WinJS.Application.removeEventListener("backclick", backPressedHappensFirst, true);
-            LiveUnit.Assert.areEqual("backclick", e.type);
-            cleanup(); // Test passed.
-        }
-
-        var beforeNavShouldntFire = function (e) {
-            // This eventhandler code should never be reached.
-            WinJS.Navigation.removeEventListener("beforenavigate", beforeNavShouldntFire, true);
-            LiveUnit.Assert.areEqual("beforenavigate", e.type);
-
-            // Sanity check our expectation that WinJS.Navigation will never fire navigation when navigating backwards if their is no history backStack.
-            LiveUnit.Assert.fail("It's expected that WinJS.Navigation events won't fire when there is no history backStack... has the implementation of WinJS.Navigation changed?");
-        };
-
-        WinJS.Application.start();
-
-        // Setup          
-        WinJS.Navigation.history = { backStack: [] };
-        LiveUnit.Assert.isFalse(WinJS.Navigation.canGoBack)
-        WinJS.Application.addEventListener("backclick", backPressedHappensFirst, true);
-        WinJS.Application.addEventListener("beforenavigate", beforeNavShouldntFire, true);
-
-        // Simulate        
-        var eventRecord = createBackClickEvent();
-        WinJS.Application.queueEvent(eventRecord);
-
-        // Cleanup
-        function cleanup() {
-            WinJS.Application.removeEventListener("backclick", backPressedHappensFirst, true);
-            WinJS.Navigation.removeEventListener("beforenavigate", beforeNavShouldntFire, true);
-            WinJS.Application.stop();
-            complete();
-        }
-
-    }
-
-    this.testApplication_BackClickEventFiresBeforeNavigationEvents2 = function (complete) {
-        // Scenario2: WinJS.Application 'backclick' fires before navigation events, whenever WinJS.Navigation CAN go back. 
-        //
-        var createBackClickEvent = function () {
-            var fakeWinRTBackPressedEvent = { handled: false };
-            return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
-        }
-
-        var backPressedHappensFirst = function (e) {
-            WinJS.Application.removeEventListener("backclick", backPressedHappensFirst, true);
-            LiveUnit.Assert.areEqual("backclick", e.type);
-            LiveUnit.Assert.isFalse(beforeNavHit, "WinJS.Navigation 'beforeNavigate' event should never occurr before WinJS.Application 'backclick'");
-            backPressedHit = true;
-        }
-        var beforeNavHappensSecond = function (e) {
-            WinJS.Navigation.removeEventListener("beforenavigate", beforeNavHappensSecond, true);
-            LiveUnit.Assert.areEqual("beforenavigate", e.type);
-            LiveUnit.Assert.isTrue(backPressedHit, "WinJS.Application 'backclick' event should have fired before WinJS.Navigation 'beforenavigate' event");
-
-            cleanup();
-        };
-
-        WinJS.Application.start();
-
-        // Setup       
-        WinJS.Navigation.history = { backStack: [{}] };
-        LiveUnit.Assert.isTrue(WinJS.Navigation.canGoBack)
+            // Setup
+            WinJS.Navigation.history = { backStack: [{}] };
+            LiveUnit.Assert.isTrue(WinJS.Navigation.canGoBack)
         var backPressedHit = false;
-        var beforeNavHit = false;
-        WinJS.Application.addEventListener("backclick", backPressedHappensFirst, true);
-        WinJS.Navigation.addEventListener("beforenavigate", beforeNavHappensSecond, true);
+            var beforeNavHit = false;
+            WinJS.Application.addEventListener("backclick", backPressedHappensFirst, true);
+            WinJS.Navigation.addEventListener("beforenavigate", beforeNavHappensSecond, true);
 
-        // Simulate
-        var eventRecord = createBackClickEvent();
-        WinJS.Application.queueEvent(eventRecord);
+            // Simulate
+            var eventRecord = createBackClickEvent();
+            WinJS.Application.queueEvent(eventRecord);
 
-        // Cleanup
-        function cleanup() {
-            WinJS.Application.removeEventListener("backclick", backPressedHappensFirst, true);
-            WinJS.Navigation.removeEventListener("beforenavigate", beforeNavHappensSecond, true);
-            WinJS.Application.stop();
-            complete();
+            // Cleanup
+            function cleanup() {
+                WinJS.Application.removeEventListener("backclick", backPressedHappensFirst, true);
+                WinJS.Navigation.removeEventListener("beforenavigate", beforeNavHappensSecond, true);
+                WinJS.Application.stop();
+                complete();
+            }
         }
-    }
 
-    this.testApplication_CancellingApplicationBackClickPreventsNavigationEvents = function (complete) {
-        // Scenario: Cancelling backclick event, prevents navigation events from firing. 
-        //
-        var createBackClickEvent = function () {
-            var fakeWinRTBackPressedEvent = { handled: false };
-            return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
-        }
+        testApplication_CancellingApplicationBackClickPreventsNavigationEvents(complete) {
+            // Scenario: Cancelling backclick event, prevents navigation events from firing.
+            //
+            var createBackClickEvent = function () {
+                var fakeWinRTBackPressedEvent = { handled: false };
+                return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
+            }
 
         var cancelBackClick = function (e) {
-            WinJS.Application.removeEventListener("backclick", cancelBackClick, true);
-            backPressedHit = true;
-            return true; // signify's to the App model that the event is cancelled.
-        };
-        var beforeNav = function (e) {
-            WinJS.Navigation.removeEventListener("beforenavigate", beforeNav, true);
-            LiveUnit.Assert.areEqual("beforenavigate", e.type);
-            LiveUnit.Assert.isTrue(backPressedHit, "WinJS.Application 'backclick' event should have fired before WinJS.Navigation 'beforenavigate' event");
-            beforeNavHit = true;
-        };
+                WinJS.Application.removeEventListener("backclick", cancelBackClick, true);
+                backPressedHit = true;
+                return true; // signify's to the App model that the event is cancelled.
+            };
+            var beforeNav = function (e) {
+                WinJS.Navigation.removeEventListener("beforenavigate", beforeNav, true);
+                LiveUnit.Assert.areEqual("beforenavigate", e.type);
+                LiveUnit.Assert.isTrue(backPressedHit, "WinJS.Application 'backclick' event should have fired before WinJS.Navigation 'beforenavigate' event");
+                beforeNavHit = true;
+            };
 
-        var verify = function (e) {
-            WinJS.Application.removeEventListener("verification", verify, true);
-            LiveUnit.Assert.isTrue(backPressedHit)
+            var verify = function (e) {
+                WinJS.Application.removeEventListener("verification", verify, true);
+                LiveUnit.Assert.isTrue(backPressedHit)
             LiveUnit.Assert.isFalse(beforeNavHit, "Cancelling WinJS.Application 'backclick' event should prevent any WinJS.Navigation 'beforenavigate' from firing.");
 
-            cleanup();
-        }
+                cleanup();
+            }
 
         WinJS.Application.start();
 
-        // Setup        
-        WinJS.Navigation.history = { backStack: [{}] };
-        LiveUnit.Assert.isTrue(WinJS.Navigation.canGoBack)
+            // Setup
+            WinJS.Navigation.history = { backStack: [{}] };
+            LiveUnit.Assert.isTrue(WinJS.Navigation.canGoBack)
         var backPressedHit = false;
-        var beforeNavHit = false;
-        WinJS.Application.addEventListener("backclick", cancelBackClick, true);
-        WinJS.Navigation.addEventListener("beforenavigate", beforeNav, true);
-        WinJS.Application.addEventListener("verification", verify, true);
+            var beforeNavHit = false;
+            WinJS.Application.addEventListener("backclick", cancelBackClick, true);
+            WinJS.Navigation.addEventListener("beforenavigate", beforeNav, true);
+            WinJS.Application.addEventListener("verification", verify, true);
 
-        // Simulate
-        var eventRecord = createBackClickEvent();
-        WinJS.Application.queueEvent(eventRecord);
+            // Simulate
+            var eventRecord = createBackClickEvent();
+            WinJS.Application.queueEvent(eventRecord);
 
-        // Verify
-        WinJS.Application.queueEvent({ type: 'verification' });
+            // Verify
+            WinJS.Application.queueEvent({ type: 'verification' });
 
-        // Cleanup
-        function cleanup() {
-            WinJS.Application.removeEventListener("backclick", cancelBackClick, true);
-            WinJS.Navigation.removeEventListener("beforenavigate", beforeNav, true);
-            WinJS.Application.removeEventListener("verification", verify, true);
-            WinJS.Application.stop();
-            complete();
+            // Cleanup
+            function cleanup() {
+                WinJS.Application.removeEventListener("backclick", cancelBackClick, true);
+                WinJS.Navigation.removeEventListener("beforenavigate", beforeNav, true);
+                WinJS.Application.removeEventListener("verification", verify, true);
+                WinJS.Application.stop();
+                complete();
+            }
         }
-    }
 
-    this.testApplication_WinRTBackPressedEventHandling1 = function (complete) {
-        // Scenario 1: _winRTBackPressed event is not handled if the WinJS.Application 'backclick' event is not cancelled and WinJS.Navigation.canGoBack is false.
-        //
-        var createBackClickEvent = function () {
-            var fakeWinRTBackPressedEvent = { handled: false };
-            return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
-        }
+        testApplication_WinRTBackPressedEventHandling1(complete) {
+            // Scenario 1: _winRTBackPressed event is not handled if the WinJS.Application 'backclick' event is not cancelled and WinJS.Navigation.canGoBack is false.
+            //
+            var createBackClickEvent = function () {
+                var fakeWinRTBackPressedEvent = { handled: false };
+                return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
+            }
 
         var backPressed = function (e) {
-            WinJS.Application.removeEventListener("backclick", backPressed, true);
-            LiveUnit.Assert.areEqual("backclick", e.type);
-            backPressedHit = true;
-        }
+                WinJS.Application.removeEventListener("backclick", backPressed, true);
+                LiveUnit.Assert.areEqual("backclick", e.type);
+                backPressedHit = true;
+            }
 
         var verify = function (e) {
-            WinJS.Application.removeEventListener("verification", verify, true);
+                WinJS.Application.removeEventListener("verification", verify, true);
 
-            // Verify that both 'backclick' and 'beforenavigate' handlers fired already.
-            LiveUnit.Assert.isTrue(backPressedHit)
+                // Verify that both 'backclick' and 'beforenavigate' handlers fired already.
+                LiveUnit.Assert.isTrue(backPressedHit)
 
             // Verify that the _winRTBackPressed event shows as being unhandled.
             LiveUnit.Assert.isFalse(eventRecord._winRTBackPressedEvent.handled, "'_winRTBackPressed' event should not be handled if the WinJS.Application 'backclick' event is not cancelled and WinJS.Navigation.canGoBack is false.");
-            cleanup();
-        }
+                cleanup();
+            }
 
         WinJS.Application.start();
-        // Setup
-        WinJS.Navigation.history = { backStack: [] };
-        LiveUnit.Assert.isFalse(WinJS.Navigation.canGoBack)
+            // Setup
+            WinJS.Navigation.history = { backStack: [] };
+            LiveUnit.Assert.isFalse(WinJS.Navigation.canGoBack)
         var backPressedHit = false;
-        var beforeNavHit = false;
-        WinJS.Application.addEventListener("backclick", backPressed, true);
-        WinJS.Application.addEventListener("verification", verify, true);
+            var beforeNavHit = false;
+            WinJS.Application.addEventListener("backclick", backPressed, true);
+            WinJS.Application.addEventListener("verification", verify, true);
 
-        // Simulate
-        var eventRecord = createBackClickEvent();
-        WinJS.Application.queueEvent(eventRecord);
+            // Simulate
+            var eventRecord = createBackClickEvent();
+            WinJS.Application.queueEvent(eventRecord);
 
-        // Verify
-        WinJS.Application.queueEvent({ type: "verification" });
+            // Verify
+            WinJS.Application.queueEvent({ type: "verification" });
 
-        // Cleanup
-        function cleanup() {
-            WinJS.Application.removeEventListener("backclick", backPressed, true);
-            WinJS.Application.removeEventListener("verification", verify, true);
-            WinJS.Application.stop();
-            complete();
+            // Cleanup
+            function cleanup() {
+                WinJS.Application.removeEventListener("backclick", backPressed, true);
+                WinJS.Application.removeEventListener("verification", verify, true);
+                WinJS.Application.stop();
+                complete();
+            }
         }
-    }
 
-    this.testApplication_WinRTBackPressedEventHandling2 = function (complete) {
-        // Scenario 2: _winRTBackPressed event is handled when the WinJS.Application 'backclick' event is cancelled.
-        //
-        var createBackClickEvent = function () {
-            var fakeWinRTBackPressedEvent = { handled: false };
-            return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
-        }
+        testApplication_WinRTBackPressedEventHandling2(complete) {
+            // Scenario 2: _winRTBackPressed event is handled when the WinJS.Application 'backclick' event is cancelled.
+            //
+            var createBackClickEvent = function () {
+                var fakeWinRTBackPressedEvent = { handled: false };
+                return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
+            }
 
         var cancelBackClick = function (e) {
-            WinJS.Application.removeEventListener("backclick", cancelBackClick, true);
-            backPressedHit = true;
-            return true;
-        };
+                WinJS.Application.removeEventListener("backclick", cancelBackClick, true);
+                backPressedHit = true;
+                return true;
+            };
 
-        var verify = function (e) {
-            WinJS.Application.removeEventListener("verification", verify, true);
+            var verify = function (e) {
+                WinJS.Application.removeEventListener("verification", verify, true);
 
-            // Verify that 'backclick' fired already.
-            LiveUnit.Assert.isTrue(backPressedHit)
+                // Verify that 'backclick' fired already.
+                LiveUnit.Assert.isTrue(backPressedHit)
 
             // Verify that the _winRTBackPressed event shows as being handled.
             LiveUnit.Assert.isTrue(eventRecord._winRTBackPressedEvent.handled, "_winRTBackPressed should be handled when the WinJS.Application 'backclick' event is cancelled.");
-            cleanup();
-        }
+                cleanup();
+            }
 
         WinJS.Application.start();
 
-        // Setup
-        WinJS.Navigation.history = { backStack: [] };
-        LiveUnit.Assert.isFalse(WinJS.Navigation.canGoBack)
+            // Setup
+            WinJS.Navigation.history = { backStack: [] };
+            LiveUnit.Assert.isFalse(WinJS.Navigation.canGoBack)
         var backPressedHit = false;
-        var beforeNavHit = false;
-        WinJS.Application.addEventListener("backclick", cancelBackClick, true);
-        WinJS.Application.addEventListener("verification", verify, true);
+            var beforeNavHit = false;
+            WinJS.Application.addEventListener("backclick", cancelBackClick, true);
+            WinJS.Application.addEventListener("verification", verify, true);
 
-        // Simulate
-        var eventRecord = createBackClickEvent();
-        WinJS.Application.queueEvent(eventRecord);
+            // Simulate
+            var eventRecord = createBackClickEvent();
+            WinJS.Application.queueEvent(eventRecord);
 
-        // Verify
-        WinJS.Application.queueEvent({ type: "verification" });
+            // Verify
+            WinJS.Application.queueEvent({ type: "verification" });
 
-        // Cleanup
-        function cleanup() {
-            WinJS.Application.removeEventListener("backclick", cancelBackClick, true);
-            WinJS.Application.removeEventListener("verification", verify, true);
-            WinJS.Application.stop();
-            complete();
+            // Cleanup
+            function cleanup() {
+                WinJS.Application.removeEventListener("backclick", cancelBackClick, true);
+                WinJS.Application.removeEventListener("verification", verify, true);
+                WinJS.Application.stop();
+                complete();
+            }
         }
-    }
-    this.testApplication_WinRTBackPressedEventHandling3 = function (complete) {
-        // Scenario 3: _winRTBackPressed event is handled when the WinJS.Application 'backclick' is not cancelled but WinJS.Navigation.canGoBack is true.
-        //
-        var createBackClickEvent = function () {
-            var fakeWinRTBackPressedEvent = { handled: false };
-            return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
-        }
+        testApplication_WinRTBackPressedEventHandling3(complete) {
+            // Scenario 3: _winRTBackPressed event is handled when the WinJS.Application 'backclick' is not cancelled but WinJS.Navigation.canGoBack is true.
+            //
+            var createBackClickEvent = function () {
+                var fakeWinRTBackPressedEvent = { handled: false };
+                return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
+            }
 
         var verify = function (e) {
-            WinJS.Application.removeEventListener("verification", verify, true);
+                WinJS.Application.removeEventListener("verification", verify, true);
 
-            LiveUnit.Assert.isTrue(eventRecord._winRTBackPressedEvent.handled, "_winRTBackPressed should be handled whenever WinJS.Navigation.canGoBack is true");
-            cleanup();
-        }
+                LiveUnit.Assert.isTrue(eventRecord._winRTBackPressedEvent.handled, "_winRTBackPressed should be handled whenever WinJS.Navigation.canGoBack is true");
+                cleanup();
+            }
 
         WinJS.Application.start();
 
-        // Setup
-        WinJS.Navigation.history = { backStack: [{}] };
-        LiveUnit.Assert.isTrue(WinJS.Navigation.canGoBack)
+            // Setup
+            WinJS.Navigation.history = { backStack: [{}] };
+            LiveUnit.Assert.isTrue(WinJS.Navigation.canGoBack)
         var backPressedHit = false;
-        var beforeNavHit = false;
+            var beforeNavHit = false;
 
-        WinJS.Application.addEventListener("verification", verify, true);
+            WinJS.Application.addEventListener("verification", verify, true);
 
-        // Simulate
-        var eventRecord = createBackClickEvent();
-        WinJS.Application.queueEvent(eventRecord);
+            // Simulate
+            var eventRecord = createBackClickEvent();
+            WinJS.Application.queueEvent(eventRecord);
 
-        // Verify
-        WinJS.Application.queueEvent({ type: "verification" });
+            // Verify
+            WinJS.Application.queueEvent({ type: "verification" });
 
-        // Cleanup
-        function cleanup() {
-            WinJS.Application.removeEventListener("verification", verify, true);
-            WinJS.Application.stop();
-            complete();
+            // Cleanup
+            function cleanup() {
+                WinJS.Application.removeEventListener("verification", verify, true);
+                WinJS.Application.stop();
+                complete();
+            }
         }
     }
 
-    if (isWinRTEnabled()) {
+    export class ApplicationWinRTTests {
 
-        this.testApplication_maxPriJobAfterStartHitsDeferredEvent = function (complete) {
+        testApplication_maxPriJobAfterStartHitsDeferredEvent(complete) {
             var S = WinJS.Utilities.Scheduler;
             var app = WinJS.Application;
             app.stop();
@@ -1338,7 +1301,7 @@ CorsicaTests.ApplicationTests = function () {
                     count++;
                     LiveUnit.Assert.areEqual(1, count, "This runs first");
                     // defer the event until signal completes
-                    data.setPromise(signal._promise);
+                    data.setPromise(signal.promise);
                 });
                 WinJS.Application.addEventListener("test2", function (data) {
                     count++;
@@ -1360,12 +1323,12 @@ CorsicaTests.ApplicationTests = function () {
                     LiveUnit.Assert.areEqual(3, count, "Scheduled job and error handlers were all called");
                     complete();
                 }, function (e) {
-                    debugger;
-                });
+                        debugger;
+                    });
             }
         }
 
-        this.testApplication_firingSameListenersWhereFirstIsDeferredThenScheduleHighPriJob = function (complete) {
+        testApplication_firingSameListenersWhereFirstIsDeferredThenScheduleHighPriJob(complete) {
             var S = WinJS.Utilities.Scheduler;
             var app = WinJS.Application;
             app.stop();
@@ -1393,7 +1356,7 @@ CorsicaTests.ApplicationTests = function () {
             app.start();
         }
 
-        this.testApplication_highPriJobInOrderWithSchedulingADeferredEvent = function (complete) {
+        testApplication_highPriJobInOrderWithSchedulingADeferredEvent(complete) {
             var S = WinJS.Utilities.Scheduler;
             var app = WinJS.Application;
             app.stop();
@@ -1404,7 +1367,7 @@ CorsicaTests.ApplicationTests = function () {
                 WinJS.Application.addEventListener("test1", function (data) {
                     count++;
                     // defer the event
-                    data.setPromise(signal._promise);
+                    data.setPromise(signal.promise);
                     LiveUnit.Assert.areEqual(1, count, "runs first");
                 });
                 WinJS.Application.addEventListener("test2", function (data) {
@@ -1431,7 +1394,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testApplication_normalPriJobInOrderWithSchedulingADeferredEvent = function (complete) {
+        testApplication_normalPriJobInOrderWithSchedulingADeferredEvent(complete) {
             var S = WinJS.Utilities.Scheduler;
             var app = WinJS.Application;
             app.stop();
@@ -1441,7 +1404,7 @@ CorsicaTests.ApplicationTests = function () {
             WinJS.Application.addEventListener("test1", function (data) {
                 count++;
                 // defer the event
-                data.setPromise(signal._promise);
+                data.setPromise(signal.promise);
                 LiveUnit.Assert.areEqual(1, count, "runs first");
             });
             WinJS.Application.addEventListener("test2", function (data) {
@@ -1464,7 +1427,7 @@ CorsicaTests.ApplicationTests = function () {
 
         }
 
-        this.testApplication_highPriJobInOrderWithQueuingAnError = function (complete) {
+        testApplication_highPriJobInOrderWithQueuingAnError(complete) {
             var S = WinJS.Utilities.Scheduler;
             var app = WinJS.Application;
             app.stop();
@@ -1502,7 +1465,7 @@ CorsicaTests.ApplicationTests = function () {
 
         /* Testing the file operation winRts*/
         //        P0- testing the exists function when file does not exist
-        this.testApplication_notExistingLocalFile = function (complete) {
+        testApplication_notExistingLocalFile(complete) {
             var app = WinJS.Application;
             app.stop();
             app.queueEvent({ type: "test1" });
@@ -1513,18 +1476,18 @@ CorsicaTests.ApplicationTests = function () {
                     count++;
                     LiveUnit.Assert.areEqual(false, exists, "file not found");
                 }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(1, count, "function exists got called");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(1, count, "function exists got called");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
 
         //        P0- testing the exists function when file does not exist in the roaming
-        this.testApplication_notExistingRoamingFile = function (complete) {
+        testApplication_notExistingRoamingFile(complete) {
 
 
             var app = WinJS.Application;
@@ -1540,17 +1503,17 @@ CorsicaTests.ApplicationTests = function () {
                     count++;
                     LiveUnit.Assert.areEqual(false, exists, "file not found");
                 }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(1, count, "function exists got called");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(1, count, "function exists got called");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to writeText to a file
-        this.testApplication_writeTextToLocalFile = function (complete) {
+        testApplication_writeTextToLocalFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1581,8 +1544,8 @@ CorsicaTests.ApplicationTests = function () {
             app.start();
         }
         //        P1- trying to writeText to a file with a unicode character
-        this.testApplication_writeTextToLocalFileWithUnicode = function (complete) {
-            //BUGID: 584128    
+        testApplication_writeTextToLocalFileWithUnicode(complete) {
+            //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
 
@@ -1606,14 +1569,14 @@ CorsicaTests.ApplicationTests = function () {
                     then(function () {
                         LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
                     }).
-                then(null, errorHandler).
-                then(complete);
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to overwrite the content of a file using writeText to a file
-        this.testApplication_overwriteTextToLocalFile = function (complete) {
-            //BUGID: 584128    
+        testApplication_overwriteTextToLocalFile(complete) {
+            //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
             app.queueEvent({ type: "test1" });
@@ -1642,14 +1605,14 @@ CorsicaTests.ApplicationTests = function () {
                     then(function () {
                         LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
                     }).
-                then(null, errorHandler).
-                then(complete);
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P1- trying to overwrite the content of a file with a unicode character using writeText to a file
-        this.testApplication_overwriteTextToLocalFileWithUnicode = function (complete) {
-            //BUGID: 584128   
+        testApplication_overwriteTextToLocalFileWithUnicode(complete) {
+            //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
             app.queueEvent({ type: "test1" });
@@ -1678,13 +1641,13 @@ CorsicaTests.ApplicationTests = function () {
                     then(function () {
                         LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
                     }).
-                then(null, errorHandler).
-                then(complete);
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P1- trying to overwrite the content of a file with a unicode character using writeText to a file
-        this.testApplication_bug = function (complete) {
+        testApplication_bug(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1711,13 +1674,13 @@ CorsicaTests.ApplicationTests = function () {
                     then(function () {
                         LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
                     }).
-                then(null, errorHandler).
-                then(complete);
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to overwrite the content of a file with unicode string using writeText to a file
-        this.testApplication_overwriteUnicodeTextToLocalFile = function (complete) {
+        testApplication_overwriteUnicodeTextToLocalFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1747,13 +1710,13 @@ CorsicaTests.ApplicationTests = function () {
                     then(function () {
                         LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
                     }).
-                then(null, errorHandler).
-                then(complete);
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P1- trying to overwrite the content of a file with a unicode character with unicode string using writeText to a file
-        this.testApplication_overwriteUnicodeTextToLocalFileWithUnicode = function (complete) {
+        testApplication_overwriteUnicodeTextToLocalFileWithUnicode(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1768,32 +1731,32 @@ CorsicaTests.ApplicationTests = function () {
 
                 var text = "testing the writeText meth\u006Fd";
                 app.local.writeText(fileName, tempText).
-                then(function () {
-                    return app.local.writeText(fileName, text);
-                }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.local.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        return app.local.writeText(fileName, text);
+                    }).
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.local.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
 
         //        P2- trying to write objects with properties using writeText to a file
         // I am not sure about the assertion in this case. Not obvious in the spec
-        this.testApplication_writeObjectToLocalFile0 = function (complete) {
+        testApplication_writeObjectToLocalFile0(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1806,25 +1769,25 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "found.txt";
                 var text = { x: 1 };
                 app.local.writeText(fileName, JSON.stringify(text)).
-                then(function () {
-                    count++;
-                    return app.local.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(JSON.stringify(text), str, "file not found");
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.local.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(JSON.stringify(text), str, "file not found");
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P2- trying to write the largest possible string using writeText to a file
         //        This is sort of stress testing
-        this.testApplication_writeObjectToLocalFile1 = function (complete) {
+        testApplication_writeObjectToLocalFile1(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1840,25 +1803,25 @@ CorsicaTests.ApplicationTests = function () {
                     text += 'a';
 
                 app.local.writeText(fileName, text).
-                then(function () {
-                    count++;
-                    return app.local.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text.toString(), str, "file not found");
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.local.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text.toString(), str, "file not found");
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the local folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        Read methods are tested within the write methods
         //        P0- Trying to read a non existing file
-        this.testApplication_readNonExistingFile = function (complete) {
+        testApplication_readNonExistingFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1871,21 +1834,21 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "notfound.txt";
 
                 app.local.readText(fileName).
-                then(function (str) {
-                    count++;
+                    then(function (str) {
+                        count++;
 
-                }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(1, count, "writing to a file with unicode character in the local folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    }).
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(1, count, "writing to a file with unicode character in the local folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to writeText to a temp file
-        this.testApplication_writeTextTotempFile = function (complete) {
+        testApplication_writeTextTotempFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1898,26 +1861,26 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "test.txt";
                 var text = "testing the writeText method";
                 app.temp.writeText(fileName, text).
-                then(function () {
-                    count++;
-                    return app.temp.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file in the temp folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.temp.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P1- trying to writeText to a temp file with a unicode character
-        this.testApplication_writeTextTotempFileWithUnicode = function (complete) {
+        testApplication_writeTextTotempFileWithUnicode(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1929,24 +1892,24 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "\u0066\u006F\u0075\u006E\u0064.txt";
                 var text = "testing the writeText method";
                 app.temp.writeText(fileName, text).
-                then(function () {
-                    count++;
-                    return app.temp.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.temp.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to overwrite the content of a file using writeText to a file
-        this.testApplication_overwriteTextTotempFile = function (complete) {
+        testApplication_overwriteTextTotempFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1959,30 +1922,30 @@ CorsicaTests.ApplicationTests = function () {
                 var tempText = "this will be overwritten";
                 var text = "testing the writeText method";
                 app.temp.writeText(fileName, tempText).
-                then(function () {
-                    return app.temp.writeText(fileName, text);
-                }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.temp.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        return app.temp.writeText(fileName, text);
+                    }).
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.temp.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P1- trying to overwrite the content of a file with a unicode character using writeText to a file
-        this.testApplication_overwriteTextTotempFileWithUnicode = function (complete) {
+        testApplication_overwriteTextTotempFileWithUnicode(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -1996,30 +1959,30 @@ CorsicaTests.ApplicationTests = function () {
                 var tempText = "this will be overwritten";
                 var text = "testing the writeText method";
                 app.temp.writeText(fileName, tempText).
-                then(function () {
+                    then(function () {
                     return app.temp.writeText(fileName, text)
                 }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.temp.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.temp.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to overwrite the content of a file with unicode string using writeText to a file
-        this.testApplication_overwriteUnicodeTextTotempFile = function (complete) {
+        testApplication_overwriteUnicodeTextTotempFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2032,30 +1995,30 @@ CorsicaTests.ApplicationTests = function () {
                 var tempText = "this will be overwritten";
                 var text = "testing the writeText meth\u006Fd";
                 app.temp.writeText(fileName, tempText).
-                then(function () {
-                    return app.temp.writeText(fileName, text);
-                }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.temp.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        return app.temp.writeText(fileName, text);
+                    }).
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.temp.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P1- trying to overwrite the content of a file with a unicode character with unicode string using writeText to a file
-        this.testApplication_overwriteUnicodeTextTotempFileWithUnicode = function (complete) {
+        testApplication_overwriteUnicodeTextTotempFileWithUnicode(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2068,31 +2031,31 @@ CorsicaTests.ApplicationTests = function () {
                 var tempText = "this will be overwritten";
                 var text = "testing the writeText meth\u006Fd";
                 app.temp.writeText(fileName, tempText).
-                then(function () {
-                    return app.temp.writeText(fileName, text);
-                }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.temp.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                 then(post).
-                 then(function () {
-                     LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
-                 }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        return app.temp.writeText(fileName, text);
+                    }).
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.temp.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P2- trying to write objects with properties using writeText to a file
         // I am not sure about the assertion in this case. Not obvious in the spec
-        this.testApplication_writeObjectTotempFile1 = function (complete) {
+        testApplication_writeObjectTotempFile1(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2104,23 +2067,23 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "found.txt";
                 var text = { x: 1 };
                 app.temp.writeText(fileName, JSON.stringify(text)).
-                then(function () {
-                    count++;
-                    return app.temp.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    LiveUnit.Assert.areEqual(JSON.stringify(text), str, "file not found");
-                    LiveUnit.Assert.areEqual(1, count, "writing to a file with unicode character in the temp folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.temp.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        LiveUnit.Assert.areEqual(JSON.stringify(text), str, "file not found");
+                        LiveUnit.Assert.areEqual(1, count, "writing to a file with unicode character in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P2- trying to write the largest possible string using writeText to a file
         //        This is sort of stress testing
-        this.testApplication_writeObjectTotempFile2 = function (complete) {
+        testApplication_writeObjectTotempFile2(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2136,25 +2099,25 @@ CorsicaTests.ApplicationTests = function () {
                     text += 'a';
 
                 app.temp.writeText(fileName, text).
-                then(function () {
-                    count++;
-                    return app.temp.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text.toString(), str, "file not found");
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.temp.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text.toString(), str, "file not found");
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        Read methods are tested within the write methods
         //        P0- Trying to read a non existing file
-        this.testApplication_readNonExistingFile = function (complete) {
+        testApplication_readNonExistingFileTemp(complete) {
 
             var app = WinJS.Application;
             app.stop();
@@ -2166,19 +2129,19 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "notfound.txt";
 
                 app.temp.readText(fileName).then(post).
-                then(function (str) {
-                    //it should contue even if the file is not existing
-                    count++;
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(1, count, "writing to a file with unicode character in the temp folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function (str) {
+                        //it should contue even if the file is not existing
+                        count++;
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(1, count, "writing to a file with unicode character in the temp folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to writeText to a roaming file
-        this.testApplication_writeTextToroamingFile = function (complete) {
+        testApplication_writeTextToroamingFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2190,25 +2153,25 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "test.txt";
                 var text = "testing the writeText method";
                 app.roaming.writeText(fileName, text).
-                then(function () {
-                    count++;
-                    return app.roaming.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.roaming.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
 
         //        P1- trying to writeText to a roaming file with a unicode character
-        this.testApplication_writeTextToroamingFileWithUnicode = function (complete) {
+        testApplication_writeTextToroamingFileWithUnicode(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2220,24 +2183,24 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "\u0066\u006F\u0075\u006E\u0064.txt";
                 var text = "testing the writeText method";
                 app.roaming.writeText(fileName, text).
-                then(function () {
-                    count++;
-                    return app.roaming.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.roaming.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to overwrite the content of a file using writeText to a file
-        this.testApplication_overwriteTextToroamingFile = function (complete) {
+        testApplication_overwriteTextToroamingFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2250,28 +2213,28 @@ CorsicaTests.ApplicationTests = function () {
                 var roamingText = "this will be overwritten";
                 var text = "testing the writeText method";
                 app.roaming.writeText(fileName, roamingText).then(post).
-                then(function () {
-                    return app.roaming.writeText(fileName, text);
-                }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.roaming.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        return app.roaming.writeText(fileName, text);
+                    }).
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.roaming.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P1- trying to overwrite the content of a file with a unicode character using writeText to a file
-        this.testApplication_overwriteTextToroamingFileWithUnicode = function (complete) {
+        testApplication_overwriteTextToroamingFileWithUnicode(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2284,29 +2247,29 @@ CorsicaTests.ApplicationTests = function () {
                 var roamingText = "this will be overwritten";
                 var text = "testing the writeText method";
                 app.roaming.writeText(fileName, roamingText).
-                then(function () {
-                    return app.roaming.writeText(fileName, text);
-                }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.roaming.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        return app.roaming.writeText(fileName, text);
+                    }).
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.roaming.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P0- trying to overwrite the content of a file with unicode string using writeText to a file
-        this.testApplication_overwriteUnicodeTextToroamingFile = function (complete) {
+        testApplication_overwriteUnicodeTextToroamingFile(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2319,29 +2282,29 @@ CorsicaTests.ApplicationTests = function () {
                 var roamingText = "this will be overwritten";
                 var text = "testing the writeText meth\u006Fd";
                 app.roaming.writeText(fileName, roamingText).
-                then(function () {
-                    return app.roaming.writeText(fileName, text);
-                }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.roaming.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        return app.roaming.writeText(fileName, text);
+                    }).
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.roaming.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P1- trying to overwrite the content of a file with a unicode character with unicode string using writeText to a file
-        this.testApplication_overwriteUnicodeTextToroamingFileWithUnicode = function (complete) {
+        testApplication_overwriteUnicodeTextToroamingFileWithUnicode(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2354,30 +2317,30 @@ CorsicaTests.ApplicationTests = function () {
                 var roamingText = "this will be overwritten";
                 var text = "testing the writeText meth\u006Fd";
                 app.roaming.writeText(fileName, roamingText).
-                then(function () {
-                    return app.roaming.writeText(fileName, text);
-                }).
-                then(post).
-                then(function () {
-                    count++;
-                    return app.roaming.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text, str, "file not found");
-                }).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        return app.roaming.writeText(fileName, text);
+                    }).
+                    then(post).
+                    then(function () {
+                        count++;
+                        return app.roaming.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text, str, "file not found");
+                    }).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P2- trying to write objects with properties using writeText to a file
         // I am not sure about the assertion in this case. Not obvious in the spec
-        this.testApplication_writeObjectToroamingFile1 = function (complete) {
+        testApplication_writeObjectToroamingFile1(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2389,24 +2352,24 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "found.txt";
                 var text = { x: 1 };
                 app.roaming.writeText(fileName, JSON.stringify(text)).
-                then(function () {
-                    count++;
-                    return app.roaming.readText(fileName);
-                }).
-                then(post).then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(JSON.stringify(text), str, "file not found");
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.roaming.readText(fileName);
+                    }).
+                    then(post).then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(JSON.stringify(text), str, "file not found");
+                    }).then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        P2- trying to write the largest possible string using writeText to a file
         //        This is sort of stress testing
-        this.testApplication_writeObjectToRoamingFile2 = function (complete) {
+        testApplication_writeObjectToRoamingFile2(complete) {
             //BUGID: 584128
             var app = WinJS.Application;
             app.stop();
@@ -2422,26 +2385,26 @@ CorsicaTests.ApplicationTests = function () {
                     text += 'a';
 
                 app.roaming.writeText(fileName, text).
-                then(function () {
-                    count++;
-                    return app.roaming.readText(fileName);
-                }).
-                then(post).
-                then(function (str) {
-                    count++;
-                    LiveUnit.Assert.areEqual(text.toString(), str, "file not found");
-                }).
-                then(function () {
-                    LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function () {
+                        count++;
+                        return app.roaming.readText(fileName);
+                    }).
+                    then(post).
+                    then(function (str) {
+                        count++;
+                        LiveUnit.Assert.areEqual(text.toString(), str, "file not found");
+                    }).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(2, count, "writing to a file with unicode character in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
         //        Read methods are tested within the write methods
         //        P0- Trying to read a non existing file
-        this.testApplication_readNonExistingFile = function (complete) {
+        testApplication_readNonExistingFileRoaming(complete) {
 
             var app = WinJS.Application;
             app.stop();
@@ -2453,42 +2416,21 @@ CorsicaTests.ApplicationTests = function () {
                 var fileName = "notfound.txt";
 
                 app.roaming.readText(fileName).
-                then(function (str) {
-                    //it should contue even if the file is not existing
-                    count++;
-                }).
-                then(post).
-                then(function () {
-                    LiveUnit.Assert.areEqual(1, count, "writing to a file with unicode character in the roaming folder");
-                }).
-                then(null, errorHandler).
-                then(complete);
+                    then(function (str) {
+                        //it should contue even if the file is not existing
+                        count++;
+                    }).
+                    then(post).
+                    then(function () {
+                        LiveUnit.Assert.areEqual(1, count, "writing to a file with unicode character in the roaming folder");
+                    }).
+                    then(null, errorHandler).
+                    then(complete);
             }
             app.start();
         }
-        //        P0- check setting and changing the name of the application
-        this.testApplication_setAndReplaceAppName = function () {
 
-            var app = WinJS.Application;
-
-            var str = "multi word string";
-            app.Name = str;
-            LiveUnit.Assert.areEqual(str, app.Name, "multi word string");
-
-            var str = "";
-            app.Name = str;
-            LiveUnit.Assert.areEqual(str, app.Name, "empty string");
-
-            var n = 100;
-            for (var i = 0; i < n; i++) {
-                var rand = Math.floor(Math.random() * 52);
-                str = str + String.fromCharCode("A".charCodeAt() + rand);
-                app.Name = str;
-                LiveUnit.Assert.areEqual(str, app.Name, "checking with various lengths");
-            }
-        }
-
-        this.testOnErrorAppTermination = function () {
+        testOnErrorAppTermination = function () {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2517,7 +2459,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorHandled = function () {
+        testOnErrorHandled = function () {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2545,7 +2487,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorHandledByAtLeastOneHandler = function () {
+        testOnErrorHandledByAtLeastOneHandler = function () {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2580,7 +2522,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorAppTerminationPromiseError = function (complete) {
+        testOnErrorAppTerminationPromiseError(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2616,7 +2558,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorAppTerminationPromiseError2 = function (complete) {
+        testOnErrorAppTerminationPromiseError2(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2656,7 +2598,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorAppTerminationPromiseException = function (complete) {
+        testOnErrorAppTerminationPromiseException(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2696,7 +2638,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorPromiseHandledException = function (complete) {
+        testOnErrorPromiseHandledException(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2738,7 +2680,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorSerializeCircular = function (complete) {
+        testOnErrorSerializeCircular(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2764,7 +2706,7 @@ CorsicaTests.ApplicationTests = function () {
                 enableWebunitErrorHandler(false);
 
                 WinJS.Application.onactivated = function () {
-                    var x = {};
+                    var x: any = {};
                     x.y = x;
                     throw x;
                 };
@@ -2778,7 +2720,7 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    yieldForEventQueue().then(function() {
+                    yieldForEventQueue().then(function () {
                         enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
                         WinJS.Application.stop();
@@ -2792,7 +2734,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorSerializeCircularThrowingANumber = function (complete) {
+        testOnErrorSerializeCircularThrowingANumber(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2831,7 +2773,7 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    yieldForEventQueue().done(function() {
+                    yieldForEventQueue().done(function () {
                         LiveUnit.Assert.areEqual(1, count);
                         enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
@@ -2843,7 +2785,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorSerializeCircularThrowingAnObject = function (complete) {
+        testOnErrorSerializeCircularThrowingAnObject(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2861,7 +2803,7 @@ CorsicaTests.ApplicationTests = function () {
                     LiveUnit.Assert.isNotNull(data.number);
                     error = JSON.parse(data.description);
 
-                    LiveUnit.Assert.isNotNull(JSON.parse(data.description).x, e.detail.x, "getting the correct content of thrown exception");
+                    LiveUnit.Assert.areEqual(error.x, e.detail.x, "getting the correct content of thrown exception");
                     LiveUnit.Assert.areEqual("error", e.type, "making sure that the type is error");
                 }
                 window.onerror = function () {
@@ -2882,7 +2824,7 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    yieldForEventQueue().done(function() {
+                    yieldForEventQueue().done(function () {
                         LiveUnit.Assert.areEqual(1, count);
                         enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
@@ -2894,7 +2836,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorSerializeCircularThrowingString = function (complete) {
+        testOnErrorSerializeCircularThrowingString(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2913,7 +2855,7 @@ CorsicaTests.ApplicationTests = function () {
 
                     error = JSON.parse(data.description);
 
-                    LiveUnit.Assert.isNotNull(str, e.detail, "getting the correct content of thrown exception");
+                    LiveUnit.Assert.areEqual(str, e.detail, "getting the correct content of thrown exception");
                     LiveUnit.Assert.areEqual("error", e.type, "making sure that the type is error");
                 }
                 window.onerror = function () {
@@ -2934,7 +2876,7 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    yieldForEventQueue().done(function() {
+                    yieldForEventQueue().done(function () {
                         LiveUnit.Assert.areEqual(1, count);
                         enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
@@ -2946,7 +2888,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorSerializeCircularThrowingException = function (complete) {
+        testOnErrorSerializeCircularThrowingException(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -2981,7 +2923,7 @@ CorsicaTests.ApplicationTests = function () {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    yieldForEventQueue().done(function() {
+                    yieldForEventQueue().done(function () {
                         LiveUnit.Assert.areEqual(1, count);
                         enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
@@ -2993,7 +2935,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorUnhandledException = function (complete) {
+        testOnErrorUnhandledException(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3040,7 +2982,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testOnErrorAppTerminationPromiseExceptionWithDone = function (complete) {
+        testOnErrorAppTerminationPromiseExceptionWithDone(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3093,7 +3035,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testThrowExceptionInsideDoneAppTermination = function (complete) {
+        testThrowExceptionInsideDoneAppTermination(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3146,7 +3088,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testUndefinedErrorInsideDoneAppTermination = function (complete) {
+        testUndefinedErrorInsideDoneAppTermination(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3199,7 +3141,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testReferenceErrorInsideDoneAppTermination = function (complete) {
+        testReferenceErrorInsideDoneAppTermination(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3259,7 +3201,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testPromiseStaticWrapErrorAppTermination = function (complete) {
+        testPromiseStaticWrapErrorAppTermination(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3303,9 +3245,9 @@ CorsicaTests.ApplicationTests = function () {
                     complete();
                 });
             }
-        };
+        }
 
-        this.testThrowAppTerminationFrom3ChainPromise = function (complete) {
+        testThrowAppTerminationFrom3ChainPromise(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3354,7 +3296,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testThrowAppTerminationFrom3ChainPromiseWithDone = function (complete) {
+        testThrowAppTerminationFrom3ChainPromiseWithDone(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3418,7 +3360,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testPromiseErrorAppTerminationFrom3ChainPromise = function (complete) {
+        testPromiseErrorAppTerminationFrom3ChainPromise(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3465,7 +3407,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testUndefinedErrorInsidePromiseAppTermination = function (complete) {
+        testUndefinedErrorInsidePromiseAppTermination(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3514,56 +3456,56 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        if (isWinRTEnabled()) {
-            this.testOnErrorWinRTInteropHandled = function (complete) {
-                WinJS.Application.stop();
 
-                var count = 0;
-                var old = WinJS.Application._terminateApp;
-                var error;
+        testOnErrorWinRTInteropHandled(complete) {
+            WinJS.Application.stop();
 
-                WinJS.Application._terminateApp = function (data) {
-                    count++;
-                    LiveUnit.Assert.isNull(data.stack);
-                    LiveUnit.Assert.isNotNull(data.description);
-                    LiveUnit.Assert.areEqual(0, data.errorNumber);
-                    LiveUnit.Assert.areEqual(0, data.number);
-                    var e = JSON.parse(data.description);
-                    error = e.exception;
-                }
+            var count = 0;
+            var old = WinJS.Application._terminateApp;
+            var error;
+
+            WinJS.Application._terminateApp = function (data) {
+                count++;
+                LiveUnit.Assert.isNull(data.stack);
+                LiveUnit.Assert.isNotNull(data.description);
+                LiveUnit.Assert.areEqual(0, data.errorNumber);
+                LiveUnit.Assert.areEqual(0, data.number);
+                var e = JSON.parse(data.description);
+                error = e.exception;
+            }
 
                 WinJS.Application.start();
 
-                Windows.Storage.PathIO.readTextAsync("Some file that definitely doesn't exist, right?")
-                    .then(
-                        function () {
-                            LiveUnit.Assert.fail();
-                        },
-                        function (e) {
-                            // catch the error
-                            return;
-                        }
-                    )
-                    .then(function () {
-                        return new WinJS.Promise(function (c, e) {
-                            e("this is an error");
-                        });
-                    })
-                    .then(null, function () {
-                        return WinJS.Promise.timeout().then(function () {
-                            WinJS.Application.stop();
-                            WinJS.Application._terminateApp = old;
+            Windows.Storage.PathIO.readTextAsync("Some file that definitely doesn't exist, right?")
+                .then(
+                function () {
+                    LiveUnit.Assert.fail("Shouldn't be able to load a file that doesn't exist");
+                },
+                function (e) {
+                    // catch the error
+                    return;
+                }
+                )
+                .then(function () {
+                    return new WinJS.Promise(function (c, e) {
+                        e("this is an error");
+                    });
+                })
+                .then(null, function () {
+                    return WinJS.Promise.timeout().then(function () {
+                        WinJS.Application.stop();
+                        WinJS.Application._terminateApp = old;
 
-                            LiveUnit.Assert.areEqual(0, count);
-                        });
-                    })
-                    .then(null, errorHandler)
-                    .then(complete);
-            }
+                        LiveUnit.Assert.areEqual(0, count);
+                    });
+                })
+                .then(null, errorHandler)
+                .then(complete);
         }
 
+
         // generate an error that will propagate through window.onerror, verify details show up in Application error event
-        this.testWindowOnErrorEventOrdering = function (complete) {
+        testWindowOnErrorEventOrdering(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3611,20 +3553,20 @@ CorsicaTests.ApplicationTests = function () {
                 WinJS.Application.start();
 
                 // generate error that result in calls to window.onerror to validate
-                // errors get passed through to the Application error event by 
+                // errors get passed through to the Application error event by
                 // intentionally using undefined variable
-                WinJS.Utilities._setImmediate(function() {
+                WinJS.Utilities._setImmediate(function () {
                     var x = thisVariableNotDefined + 1;
                 });
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    signal._promise.then(function() {
+                    signal.promise.then(function () {
                         window.onerror = oldOnError;
                         enableWebunitErrorHandler(true);
                         WinJS.Application.stop();
                         WinJS.Application._terminateApp = old;
 
-                        // verify 
+                        // verify
                         LiveUnit.Assert.areEqual("error", error.type);
                         LiveUnit.Assert.areEqual(onerrorMessage, error.detail.errorMessage);
                         LiveUnit.Assert.areEqual(onerrorUrl, error.detail.errorUrl);
@@ -3639,7 +3581,7 @@ CorsicaTests.ApplicationTests = function () {
         }
 
         // generate an error from a promise and verify details show up in Application error event
-        this.testPromiseErrorEventDetails = function (complete) {
+        testPromiseErrorEventDetails(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3709,7 +3651,7 @@ CorsicaTests.ApplicationTests = function () {
             }
         }
 
-        this.testExceptionInsideProgressIsIgnored = function (complete) {
+        testExceptionInsideProgressIsIgnored(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3744,28 +3686,28 @@ CorsicaTests.ApplicationTests = function () {
                     };
                     c(1);
                 },
-                5);
+                    5);
             });
 
             x
-            .then(
+                .then(
                 null,
                 null,
                 function () {
                     count++;
                     throw "exception from progress";
                 }
-            )
-            .then(
+                )
+                .then(
                 function () {
                     // exceptions from progress should be ignored, no count from terminateApp
                     LiveUnit.Assert.areEqual(loopCount, count);
                 }
-            )
-            .done(cleanup, cleanup);
+                )
+                .done(cleanup, cleanup);
         }
 
-        this.testExceptionFromCanceledPromiseIsIgnored = function (complete) {
+        testExceptionFromCanceledPromiseIsIgnored(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3788,7 +3730,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 WinJS.Application.start();
 
-                // create promise with a cancel handler.  
+                // create promise with a cancel handler.
                 // This promise waits 500ms before completing to give time to cancel
                 promiseToCancel = new WinJS.Promise(
                     function (c) {
@@ -3801,7 +3743,7 @@ CorsicaTests.ApplicationTests = function () {
 
                 // call the promise which throws when canceled
                 promiseToCancel.
-                then(
+                    then(
                     function () {
                         count += 10;    // should not get called, expecting error path from canceled promise
                     },
@@ -3828,7 +3770,7 @@ CorsicaTests.ApplicationTests = function () {
 
 
         // generate an error from inside window.onerror
-        this.testExceptionInsideWindowOnError = function (complete) {
+        testExceptionInsideWindowOnError(complete) {
             WinJS.Application.stop();
 
             var count = 0;
@@ -3867,7 +3809,7 @@ CorsicaTests.ApplicationTests = function () {
                 WinJS.Application.start();
 
                 // generate error that result in calls to window.onerror by intentionally using undefined variable
-                WinJS.Utilities._setImmediate(function() {
+                WinJS.Utilities._setImmediate(function () {
                     var x = thisVariableNotDefined + 1;
                 });
             } finally {
@@ -3888,8 +3830,12 @@ CorsicaTests.ApplicationTests = function () {
                     complete();
                 });
             }
-        }       
-    }   // if winRT
-};
+        }
+    }
+}
 
 LiveUnit.registerTestClass("CorsicaTests.ApplicationTests");
+
+if (isWinRTEnabled()) {
+    LiveUnit.registerTestClass("CorsicaTests.ApplicationWinRTTests");
+}

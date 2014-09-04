@@ -3,7 +3,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/util.js" />
+/// <reference path="../TestLib/util.ts" />
 /// <deploy src="../TestData/" />
 /// <reference path="../TestData/page1.js" />
 /// <reference path="../TestData/page2.js" />
@@ -14,7 +14,7 @@ WinJSTests.FragmentControl = function () {
     "use strict";
     this.testFragmentControlBasicRender = function (complete) {
         var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
-            
+
         WinJS.UI.Pages._remove(fragfile);
 
         var d = document.createElement("div");
@@ -29,7 +29,7 @@ WinJSTests.FragmentControl = function () {
         }).
         then(complete);
     };
-    
+
     this.testFragmentControlBasicRenderHTMLBody = function (complete) {
         var fragfile = "$(TESTDATA)/FragmentBasic.html";
         WinJS.UI.Pages._remove(fragfile);
@@ -49,16 +49,16 @@ WinJSTests.FragmentControl = function () {
         var d = document.createElement("div");
         var ctor = WinJS.UI.Pages.get(fragfile);
         var instance = new ctor(d);
-        
+
         // fragment file should be present in the cache after calling constructor
         LiveUnit.Assert.isTrue(namedObjectContainsString(WinJS.UI.Fragments._cacheStore, fragfile) >= 0);
-        
+
         instance.elementReady.then(function(element) {
             LiveUnit.Assert.isTrue(element === d);
         }).
         then(function() {
             WinJS.UI.Pages._remove(fragfile);
-            
+
             // fragment file should no longer be in the cache after calling remove
             LiveUnit.Assert.isFalse(namedObjectContainsString(WinJS.UI.Fragments._cacheStore, fragfile) >= 0);
         }).
@@ -74,7 +74,7 @@ WinJSTests.FragmentControl = function () {
         WinJS.UI.Pages._remove("$(TESTDATA)/FragmentControlBasic.html");
         LiveUnit.Assert.isTrue(WinJS.UI.Pages.get("FragmentControlBasic.html") !== undefined);
     };
-    
+
     this.testElementReady = function (complete) {
         // verify elementReady promise returns rendered element, but processAll() + other has not been called
         var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
@@ -83,7 +83,7 @@ WinJSTests.FragmentControl = function () {
         var d = document.createElement("div");
         var ctor = WinJS.UI.Pages.get(fragfile);
         var instance = new ctor(d);
-        
+
         instance.elementReady.then(function(element) {
             LiveUnit.Assert.isTrue(element === d);
             LiveUnit.Assert.isTrue(element === instance.element);
@@ -113,7 +113,7 @@ WinJSTests.FragmentControl = function () {
 
         instance.renderComplete.then(function (docfrag) {
             LiveUnit.Assert.areEqual(docfrag.element, d, "expected return from renderComplete to be the dest element");
-            
+
             var rendered = d.firstElementChild;
             LiveUnit.Assert.areEqual("This is just a test.", rendered.textContent);
         }).
@@ -124,7 +124,7 @@ WinJSTests.FragmentControl = function () {
         then(null, unhandledTestError).
         then(complete);
     };
-    
+
     if (WinJS.UI.DatePicker) {
         this.testRenderCompleteProcessAll = function (complete) {
             // verify renderComplete promise returns rendered element and that processAll() has been called
@@ -172,21 +172,21 @@ WinJSTests.FragmentControl = function () {
         // load fragment with embedded JS and CSS, call fragment JS function, validate CSS
         var fragfile = "$(TESTDATA)/FragmentFindmeInternal.html";
         WinJS.UI.Pages._remove(fragfile);
-        
+
         var d = document.createElement("div");
         document.body.appendChild(d);
-        
+
         WinJS.UI.Pages.render(fragfile, d).
         then(function (docfrag) {
             LiveUnit.Assert.isTrue(docfrag !== undefined, "expecting rendered fragment returned from render");
             LiveUnit.Assert.isTrue(docfrag.element === d);
-            
+
             // call JS that got loaded up with the fragment
             var x = findmeInternal();
             LiveUnit.Assert.isTrue(x.id, "findmeInternal");
-            
+
             // make sure CSS was applied
-            Helper.Assert.areColorsEqual("rgb(255, 0, 0)", getComputedStyle(x).color);            
+            Helper.Assert.areColorsEqual("rgb(255, 0, 0)", getComputedStyle(x).color);
         }).
         then(null, unhandledTestError).
         then(function() {
@@ -197,30 +197,30 @@ WinJSTests.FragmentControl = function () {
         }).
         then(complete);
     }
-    
+
     this.testExternalJSCSS = function(complete) {
         // load fragment with links to external JS and CSS, call fragment JS function, validate CSS
         var fragfile = "$(TESTDATA)/FragmentWithExternalScriptAndStyles.html";
         WinJS.UI.Pages._remove(fragfile);
-        
+
         var d = document.createElement("div");
         document.body.appendChild(d);
-        
+
         WinJS.UI.Pages.render(fragfile, d).
         then(function (docfrag) {
             LiveUnit.Assert.isTrue(docfrag !== undefined, "expecting rendered fragment returned from render");
             LiveUnit.Assert.isTrue(docfrag.element === d);
-            
+
             // call JS that got loaded up with the fragment
-            fragmentWithExternalScriptAndStylesLoad(docfrag.element); 
+            fragmentWithExternalScriptAndStylesLoad(docfrag.element);
             LiveUnit.Assert.areEqual(1, document.head.querySelectorAll("[data-magic='testFragmentWithExternalScriptAndStyles']").length, "should have cloned the custom attribute on style");
             LiveUnit.Assert.areEqual(4, d.children.length, "Missing expected child");
-            
+
             // verify CSS was applied
             return WinJS.Promise.timeout(500).then(function() {
                 Helper.Assert.areColorsEqual("rgb(255, 0, 0)", getComputedStyle(d.children[3]).backgroundColor, "Referenced style should have been applied and colored the generated element");
                 LiveUnit.Assert.areEqual("hit", d.children[3].textContent, "Loaded script should have run and updated the body for the generated element");
-            }); 
+            });
         }).
         then(null, unhandledTestError).
         then(function() {
@@ -281,7 +281,7 @@ WinJSTests.FragmentControl = function () {
         then(function() {
             // clean up after the test
             WinJS.UI.Pages._remove(fragfile);
-        }).        
+        }).
         then(null, unhandledTestError).
         then(complete);
     };
@@ -422,7 +422,7 @@ WinJSTests.FragmentControl = function () {
         WinJS.UI.Pages._remove(fragfile);
 
         var iframe = document.createElement("iframe");
-        
+
         var signal;
         var listener = function (m) {
             if (m.data === "FragmentControlSelfHost_ready:true") {
@@ -439,7 +439,7 @@ WinJSTests.FragmentControl = function () {
             .then(
                 function (result) {
                     LiveUnit.Assert.isTrue(result, "Should have recieved a message from the self-hosted fragment in the iframe");
-                }, 
+                },
                 function () {
                     LiveUnit.Assert.fail("Should not get here");
                 }
@@ -457,10 +457,10 @@ WinJSTests.FragmentControl = function () {
         // load fragment with links to external JS and CSS, call fragment JS function, validate CSS
         var fragfile = "$(TESTDATA)/FragmentControlNotSelfHost.html";
         WinJS.UI.Pages._remove(fragfile);
-        
+
         var d = document.createElement("div");
         document.body.appendChild(d);
-        
+
         WinJS.UI.Pages.render(fragfile, d).
             then(function (control) {
                 LiveUnit.Assert.isTrue(control !== undefined, "expecting rendered fragment returned from render");
@@ -477,7 +477,7 @@ WinJSTests.FragmentControl = function () {
             }).
             then(complete);
     }
-    
+
     function pageNavigated(e) {
         // get the element where we want the fragment to load into
         var content = WinJS.Utilities.query("#pageContent")[0];
@@ -487,10 +487,10 @@ WinJSTests.FragmentControl = function () {
         // For this to work, the control needs to be previously "defined" or loaded via WinJS.UI.Pages.define().  In this case
         // it got defined by global JS code when page1.js was included at the top of this test.
         var ctor = WinJS.Utilities.getMember(e.detail.location, PageControlsDemo);
-        
+
         // render the control into the destination element.  Note the control returned from this
         // constructor can also be retrieved later via contentElement.winControl.
-        new ctor(content);        
+        new ctor(content);
     }
 
     this.xtestPageControlScenario1 = function(complete) {
@@ -502,11 +502,11 @@ WinJSTests.FragmentControl = function () {
         var contentElement = document.createElement("div");
         contentElement.setAttribute("id", "pageContent");
         document.body.appendChild(contentElement);
-        
+
         WinJS.Navigation.addEventListener("navigated", pageNavigated);
-        
-        // pass the name of the Control to navigation.  
-        // Note: "Page1" is the member name inside the PageControlsDemo namespace defined by page1.js when it was 
+
+        // pass the name of the Control to navigation.
+        // Note: "Page1" is the member name inside the PageControlsDemo namespace defined by page1.js when it was
         // included at the top of this test
         WinJS.Navigation.navigate("Page1").
         then(function(navigationSuccess) {
@@ -515,14 +515,14 @@ WinJSTests.FragmentControl = function () {
             // get the control that's been inserted into our content element
             var pageControl = contentElement.winControl;
             LiveUnit.Assert.isTrue(pageControl !== undefined, "pageControl is undefined");
-            
+
             // wait for the control to finish rendering, then verify content has been added to DOM
             pageControl.renderComplete.then(function (fragment) {
                 // now we should have navigated to Page1
                 LiveUnit.Assert.isTrue(fragment.element.id == "pageContent", "expecting fragment.element.id == pageContent");
 
                 // verify content from page1.html is on the page
-                var page1Content = WinJS.Utilities.query(".page1")[0];        
+                var page1Content = WinJS.Utilities.query(".page1")[0];
                 LiveUnit.Assert.isTrue(page1Content !== undefined);
             }).
             then(null, unhandledTestError).
@@ -530,15 +530,15 @@ WinJSTests.FragmentControl = function () {
                 // clean up after the test
                 WinJS.UI.Pages._remove(contentElement);
                 WinJS.Navigation.history = {};
-                WinJS.Navigation.removeEventListener("navigated", pageNavigated, true);                
+                WinJS.Navigation.removeEventListener("navigated", pageNavigated, true);
             }).
             then(complete);
         });
     };
-  
+
     this.testRenderSetsWinControlOnHostElement = function (complete) {
         var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
-            
+
         WinJS.UI.Pages._remove(fragfile);
 
         var d = document.createElement("div");
@@ -554,7 +554,7 @@ WinJSTests.FragmentControl = function () {
         }).
         then(complete);
     };
-    
+
     this.testNewInstanceSetsWinControlOnHostElement = function () {
         var fragfile = "$(TESTDATA)/FragmentControlBasic.html";
         WinJS.UI.Pages._remove(fragfile);
@@ -566,7 +566,7 @@ WinJSTests.FragmentControl = function () {
         LiveUnit.Assert.isTrue(d.winControl !== undefined);
         LiveUnit.Assert.areEqual(instance, d.winControl);
     };
-    
+
     this.testDisposePageControl = function(complete) {
         var fragfile = "$(TESTDATA)/FragmentForDisposeTests.html";
         WinJS.UI.Pages._remove(fragfile);

@@ -1,43 +1,42 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+///<reference path="../../bin/typings/tsd.d.ts" />
+///<reference path="../TestLib/winjs.dev.d.ts" />
 
 // Code shared by Items Manager unit tests
 
-var TestComponents = TestComponents || {};
-
-(function (thisNamespace) {
+module TestComponents {
     "use strict";
 
     var Scheduler = WinJS.Utilities.Scheduler;
 
     // Override this on the WebUnit command line to desired multiplier
-    thisNamespace.stressLevel = 1;
+    export var stressLevel = 1;
 
-    thisNamespace.setTimeout = function (callback, delay) {
+    export function setTimeout(callback, delay) {
         return window.setTimeout(LiveUnit.GetWrappedCallback(callback), delay);
     };
 
-    thisNamespace.setImmediate = function (callback) {
+    export function setImmediate(callback) {
         return WinJS.Utilities._setImmediate(LiveUnit.GetWrappedCallback(callback));
     };
 
     var seed = 0;
     
-    thisNamespace.seedPseudorandom = function (n) {
+    export function seedPseudorandom(n) {
         seed = n;
     };
 
-    thisNamespace.pseudorandom = function (nMax) {
+    export function pseudorandom(nMax) {
         seed = (seed + 0.81282849124) * 2375.238208308;
         seed -= Math.floor(seed);
         
         return Math.floor(seed * nMax);
     };
 
-    thisNamespace.runStressTest = function (testOnce, repetitionMultiplier, signalTestCaseCompleted) {
+    export function runStressTest(testOnce, repetitionMultiplier, signalTestCaseCompleted) {
         var test = 0,
             testMax = repetitionMultiplier * TestComponents.stressLevel;
 
@@ -54,14 +53,14 @@ var TestComponents = TestComponents || {};
         })();
     }
 
-    thisNamespace.simpleItem = function (index) {
+    export function simpleItem(index) {
         return "Item" + index;
-    };
+    }
 
     function simpleItemArray(count) {
         var array = [];
         for (var i = 0; i < count; ++i) {
-            array[i] = thisNamespace.simpleItem(i);
+            array[i] = TestComponents.simpleItem(i);
         }
         return array;
     }
@@ -69,7 +68,7 @@ var TestComponents = TestComponents || {};
     function bindingList(count) {
         var list = new WinJS.Binding.List();
         for (var i = 0; i < count; ++i) {
-            list.push(thisNamespace.simpleItem(i));
+            list.push(TestComponents.simpleItem(i));
         }
         return list.dataSource;
     }
@@ -77,22 +76,22 @@ var TestComponents = TestComponents || {};
     function bindingListSimpleFilter(count) {
         var list = new WinJS.Binding.List();
         for (var i = 0; i < count; ++i) {
-            list.push(thisNamespace.simpleItem(i));
+            list.push(TestComponents.simpleItem(i));
         }
         return list.createFiltered(function () { return true; }).dataSource;
     }
 
-    thisNamespace.simpleTestDataSource = function (controller, abilities, count) {
-        return thisNamespace.createTestDataSource(simpleItemArray(count), controller, abilities);
+    export function simpleTestDataSource(controller, abilities, count) {
+        return TestComponents.createTestDataSource(simpleItemArray(count), controller, abilities);
     };
 
-    thisNamespace.defaultLength = 80;
+    export var defaultLength = 80;
 
     function listLength(length) {
-        return length === undefined ? thisNamespace.defaultLength : length;
+        return length === undefined ? TestComponents.defaultLength : length;
     }
 
-    thisNamespace.testDataSourceWithDirectives = function (createTestDataSource) {
+    export function testDataSourceWithDirectives(createTestDataSource) {
         var directives = {
             callMethodsSynchronously: false,
             sendChangeNotifications: false,
@@ -126,28 +125,28 @@ var TestComponents = TestComponents || {};
         return dataSource;
     };
 
-    thisNamespace.ensureAllAsynchronousRequestsFulfilled = function (dataSource) {
+    export function ensureAllAsynchronousRequestsFulfilled(dataSource) {
         dataSource.testDataAdapter.directives.delay = 0;
     }
 
-    thisNamespace.simpleAsynchronousDataSource = function (length) {
-        return thisNamespace.testDataSourceWithDirectives(function (controller) {
+    export function simpleAsynchronousDataSource(length) {
+        return TestComponents.testDataSourceWithDirectives(function (controller) {
             // All abilities are enabled
-            return thisNamespace.simpleTestDataSource(controller, null, listLength(length));
+            return TestComponents.simpleTestDataSource(controller, null, listLength(length));
         });
     };
 
-    thisNamespace.simpleSynchronousArrayDataSource = function (array) {
-        var dataSource = thisNamespace.testDataSourceWithDirectives(function (controller) {
+    export function simpleSynchronousArrayDataSource(array) {
+        var dataSource = TestComponents.testDataSourceWithDirectives(function (controller) {
             // All abilities are enabled
-            return thisNamespace.createTestDataSource(array, controller, null);
+            return TestComponents.createTestDataSource(array, controller, null);
         });
 
         dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         return dataSource;
     };
 
-    thisNamespace.defaultNotificationHandler = function () {
+    export function defaultNotificationHandler() {
         function assertUnexpected(methodName) {
             LiveUnit.Assert.isTrue(false, 'Unexpected "' + methodName + '" notification received');
         };
@@ -291,11 +290,11 @@ var TestComponents = TestComponents || {};
         };
     };
     
-    thisNamespace.verifyRequestCount = function (testDataSource, expectedCount) {
+    export function verifyRequestCount(testDataSource, expectedCount) {
         LiveUnit.Assert.areEqual(expectedCount, testDataSource.testDataAdapter.requestCount(), "Unexpected number of outstanding requests");
     };
 
-    thisNamespace.defaultListNotificationHandler = function () {
+    export function defaultListNotificationHandler() {
         function assertUnexpected(methodName) {
             LiveUnit.Assert.isTrue(false, 'Unexpected "' + methodName + '" notification received');
         };
@@ -439,16 +438,16 @@ var TestComponents = TestComponents || {};
                 } else {
                     countChangedEndNotificationsReceived = true;
                 }
-            }
+            },
         };
     };
 
-    thisNamespace.setState = function (testDataSource, values) {
+    export function setState(testDataSource, values) {
         var items = [];
 
         for (var i = 0, length = values.length; i < length; ++i) {
             var value = values[i];
-            items.push({ key: value, data: thisNamespace.simpleItem(value) });
+            items.push({ key: value, data: TestComponents.simpleItem(value) });
         }
 
         testDataSource.testDataAdapter.replaceItems(items);
@@ -460,19 +459,19 @@ var TestComponents = TestComponents || {};
         }
     }
 
-    thisNamespace.verifyItemData = function (item, index) {
+    export function verifyItemData(item, index) {
         var data = item.data;
         LiveUnit.Assert.isTrue(data !== undefined, "Item " + index + " data is undefined, key: " + item.key);
         LiveUnit.Assert.isTrue(data !== null, "Item " + index + " data is null, key: " + item.key);
 
         if (+index === index) {
-            LiveUnit.Assert.areEqual(thisNamespace.simpleItem(index), data, "Item " + index + " data has incorrect value");
+            LiveUnit.Assert.areEqual(TestComponents.simpleItem(index), data, "Item " + index + " data has incorrect value");
             verifyItemIndex(item, index);
         }
     };
 
-    thisNamespace.simpleListNotificationHandler = function () {
-        var handler = TestComponents.defaultListNotificationHandler();
+    export function simpleListNotificationHandler() {
+        var handler:any = TestComponents.defaultListNotificationHandler();
 
         var continuationNext;
 
@@ -483,8 +482,8 @@ var TestComponents = TestComponents || {};
 
         // Add methods to build up a list
 
-        var containerHead = {},
-            containerTail = {};
+        var containerHead:any = {},
+            containerTail:any = {};
 
         containerHead.next = containerTail;
         containerTail.prev = containerHead;
@@ -520,7 +519,7 @@ var TestComponents = TestComponents || {};
         }
 
         function insertItem(itemPromise, containerPrev, containerNext) {
-            var container = insertContainer(itemPromise.handle, containerPrev, containerNext);
+            var container:any = insertContainer(itemPromise.handle, containerPrev, containerNext);
 
             itemPromise.then(function (item) {
                 container.item = item;
@@ -579,7 +578,7 @@ var TestComponents = TestComponents || {};
 
             verifyItemFetched(container, item);
 
-            thisNamespace.verifyItemData(item, index);
+            TestComponents.verifyItemData(item, index);
         };
 
         handler.verifyState = function (values, testDataSource, nullKeysPossible) {
@@ -693,8 +692,8 @@ var TestComponents = TestComponents || {};
         return handler;
     };
 
-    thisNamespace.stressListNotificationHandler = function () {
-        var handler = {};
+    export function stressListNotificationHandler() {
+        var handler:any = {};
 
         var count;
 
@@ -876,7 +875,7 @@ var TestComponents = TestComponents || {};
             }
         }
 
-        function releaseItem(container, mergeAdjacent) {
+        function releaseItem(container, mergeAdjacent?) {
             if (container.item) {
                 delete handleToKeyMap[container.itemPromise.handle];
                 delete keyToHandleMap[container.item.key];
@@ -897,7 +896,7 @@ var TestComponents = TestComponents || {};
             var keys = Object.keys(handleMap);
             
             if (keys.length > 0) {
-                var handle = keys[thisNamespace.pseudorandom(keys.length)];
+                var handle = keys[TestComponents.pseudorandom(keys.length)];
 
                 LiveUnit.Assert.isTrue(!!handle, "Invalid handle in map");
 
@@ -906,7 +905,7 @@ var TestComponents = TestComponents || {};
 
                 var releaseMax = 20;
 
-                var releaseBefore = thisNamespace.pseudorandom(releaseMax),
+                var releaseBefore = TestComponents.pseudorandom(releaseMax),
                     containerBefore = container.prev;
                 for (i = 0; containerBefore && i < releaseBefore; i++) {
                     var containerPrev = containerBefore.prev;
@@ -916,7 +915,7 @@ var TestComponents = TestComponents || {};
                     containerBefore = containerPrev;
                 }
 
-                var releaseAfter = thisNamespace.pseudorandom(releaseMax),
+                var releaseAfter = TestComponents.pseudorandom(releaseMax),
                     containerAfter = container.next;
                 for (i = 0; containerAfter && i < releaseAfter; i++) {
                     var containerNext = containerAfter.next;
@@ -980,7 +979,7 @@ var TestComponents = TestComponents || {};
 
             verifyItemFetched(container, item);
 
-            thisNamespace.verifyItemData(item, index);
+            TestComponents.verifyItemData(item, index);
         };
 
         handler.verifyFinalState = function (itemArray) {
@@ -1106,4 +1105,4 @@ var TestComponents = TestComponents || {};
         return handler;
     };
 
-})(TestComponents);
+}

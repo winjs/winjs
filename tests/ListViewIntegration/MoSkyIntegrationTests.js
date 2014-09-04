@@ -8,7 +8,7 @@
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="../TestLib/listviewutils.js"/>
 /// <reference path="listviewverify.js"/>
-/// <reference path="../TestLib/TestDataSource.js"/>
+/// <reference path="../TestLib/TestDataSource.ts"/>
 /// <deploy src="../TestData/" />
 
 var WinJSTests = WinJSTests || {};

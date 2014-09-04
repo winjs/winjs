@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // <!-- saved from url=(0014)about:internet -->
-/// <reference path="../TestLib/util.js" />
+/// <reference path="../TestLib/util.ts" />
 
 var SearchBoxTests = SearchBoxTests || {};
 

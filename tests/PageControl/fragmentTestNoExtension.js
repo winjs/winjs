@@ -2,7 +2,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/util.js" />
+/// <reference path="../TestLib/util.ts" />
 /// <deploy src="../TestData/" />
 
 var CorsicaTests = CorsicaTests || {};
@@ -10,10 +10,10 @@ var CorsicaTests = CorsicaTests || {};
 CorsicaTests.FragmentTestNoExtension = function () {
     "use strict";
     // tests in this file use the "FragmentNoFileExtension" which causes problems trying to debug inside VS
-    // since this fragment is only deployed for tests that use testdata.  Tests that don't use test data won't 
+    // since this fragment is only deployed for tests that use testdata.  Tests that don't use test data won't
     // deploy "FragmentNoFileExtension" and the webunit*.wwaproj file doesn't include it.
     //
-    // If you want to debug this in VS, you'll need to explicitly add "FragmentNoFileExtension" to the 
+    // If you want to debug this in VS, you'll need to explicitly add "FragmentNoFileExtension" to the
     // VS project before deploying APPX via VS.
 
     this.xtestFragmentNoFileExtension = function (complete) {
@@ -31,7 +31,7 @@ CorsicaTests.FragmentTestNoExtension = function () {
             }).
             then(null, unhandledTestError).
             then(complete);
-    }    
+    }
 
 };
 
