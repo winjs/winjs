@@ -32,6 +32,11 @@ declare module WinJS {
 
         var _browserStyleEquivalents: IStyleEquivalentsMap;
 
+        function _setActive(element: HTMLElement, scroller?: HTMLElement);
+        function _trySetActive(element: HTMLElement, scroller?: HTMLElement);
+        function _setActiveFirstFocusableElement(rootEl: HTMLElement, scroller?: HTMLElement);
+        function _setActiveLastFocusableElement(rootEl: HTMLElement, scroller?: HTMLElement);
+
         function _traceAsyncOperationStarting();
         function _traceAsyncOperationCompleted();
         function _traceAsyncCallbackStarting();
@@ -39,7 +44,13 @@ declare module WinJS {
 
         function _require(deps: string[], callback);
         function _uniqueID(e: HTMLElement):string;
-        function _isDOMElement(e: HTMLElement):boolean;
+        function _isDOMElement(e: HTMLElement): boolean;
+
+        function _yieldForEvents(handler: Function);
+
+        class _PointerEventProxy {
+            constructor(eventObject, overrideProperties);
+        }
 
     }
 
@@ -51,5 +62,24 @@ declare module WinJS {
     module Application {
         var _terminateApp: (data: any, e: any) => void;
         function _loadState(e: any);
+    }
+
+    module UI {
+        var _optionsLexer;
+        var optionsParser;
+        var _optionsParser;
+        var _CallExpression;
+        var _IdentifierExpression;
+
+        class _ParallelWorkQueue {
+            constructor(maxRunning: number);
+            sort(sortFunc: (a: any, b: any) => number);
+            queue(f:()=>WinJS.Promise<any>, data?:any, first?:boolean);
+        }
+
+        class PrivateTabContainer extends WinJS.UI.TabContainer {
+            _elementTabHelper;
+            _hasMoreElementsInTabOrder;
+        }
     }
 }
