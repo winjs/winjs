@@ -226,7 +226,7 @@ define([
                     /// The DOM element, or ID of a DOM element,  to anchor the Menu. This parameter overrides the anchor property for this method call only.
                     /// </param>
                     /// <param name="placement" type="object" domElement="false" locid="WinJS.UI.Menu.show_p:placement">
-                    /// The placement of the Menu to the anchor: 'auto' (default), 'top', 'bottom', 'left', or 'right'. This parameter overrides the placement
+                    /// The placement of the Menu to the anchor: 'auto' (default), 'autohorizontal', 'autovertical', 'top', 'bottom', 'left', or 'right'. This parameter overrides the placement
                     /// property for this method call only.
                     /// </param>
                     /// <param name="alignment" type="object" domElement="false" locid="WinJS.UI.Menu.show_p:alignment">

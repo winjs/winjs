@@ -138,7 +138,9 @@ CorsicaTests.FlyoutTests = function () {
         testGoodInitOption("placement", "left");
         testGoodInitOption("placement", "right");
         testGoodInitOption("placement", "auto");
-        var badPlacement = "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', or 'auto'.";
+        testGoodInitOption("placement", "autohorizontal");
+        testGoodInitOption("placement", "autovertical");
+        var badPlacement = "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', or 'auto', 'autohorizontal', 'autovertical'.";
         testBadInitOption("placement", "fred", "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", -1, "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", 12, "WinJS.UI.Flyout.BadPlacement", badPlacement);
@@ -364,6 +366,65 @@ CorsicaTests.FlyoutTests = function () {
             var actualDistance = flyoutRect.left - anchorRect.right;
 
             LiveUnit.LoggingCore.logComment("Flyout should be to the right of the anchor")
+            LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
+            LiveUnit.LoggingCore.logComment("expected: " + expectedDistanceFromAnchor);
+
+            LiveUnit.Assert.isTrue(Math.abs(expectedDistanceFromAnchor - actualDistance) < 1, "Flyout is not in the right location");
+            document.body.removeChild(anchor);
+            complete();
+        }, false);
+    };
+
+    this.testAutoHorizontalPlacement = function (complete) {
+        var anchor = document.createElement("DIV");
+        anchor.style.cssText = anchorStyling;
+        document.body.appendChild(anchor);
+
+        var flyout = new WinJS.UI.Flyout(that._element);
+
+        // By default, based on the configuration, this  flyout would be shown to the top of the anchor,
+        // but we are going to restrict it to only horizontal positions, so it will be shown at the left.
+        flyout.show(anchor, "autohorizontal");
+
+        flyout.addEventListener('aftershow', function () {
+            var anchorRect = anchor.getBoundingClientRect();
+            var flyoutRect = flyout.element.getBoundingClientRect();
+
+            // In High DPI scenarios the actual distance may be within 1px of the expected distance.
+            var actualDistance = anchorRect.left - flyoutRect.right;
+
+            LiveUnit.LoggingCore.logComment("Flyout should be on the left of the anchor")
+            LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
+            LiveUnit.LoggingCore.logComment("expected: " + expectedDistanceFromAnchor);
+
+            LiveUnit.Assert.isTrue(Math.abs(expectedDistanceFromAnchor - actualDistance) < 1, "Flyout is not in the right location");
+            document.body.removeChild(anchor);
+            complete();
+        }, false);
+    };
+
+    this.testAutoVerticalPlacement = function (complete) {
+        var anchor = document.createElement("DIV");
+        anchor.style.cssText = anchorStyling;
+        document.body.appendChild(anchor);
+        that._element.style.height = "90%";
+        that._element.style.width = "100px";
+        that._element.style.backgroundColor = "red";
+
+        var flyout = new WinJS.UI.Flyout(that._element);
+
+        // By default, based on the configuration, this tall flyout would be shown to the left side of the anchor,
+        // but we are going to restrict it to only vertical positions, so it will be shown at the top.
+        flyout.show(anchor, "autovertical");
+
+        flyout.addEventListener('aftershow', function () {
+            var anchorRect = anchor.getBoundingClientRect();
+            var flyoutRect = flyout.element.getBoundingClientRect();
+
+            // In High DPI scenarios the actual distance may be within 1px of the expected distance.
+            var actualDistance = anchorRect.top - flyoutRect.bottom;
+
+            LiveUnit.LoggingCore.logComment("Flyout should be on the top of the anchor")
             LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
             LiveUnit.LoggingCore.logComment("expected: " + expectedDistanceFromAnchor);
 

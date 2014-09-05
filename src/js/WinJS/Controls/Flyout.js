@@ -49,7 +49,7 @@ define([
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/flyoutAriaLabel").value; },
                 get noAnchor() { return "Invalid argument: Showing flyout requires a DOM element as its parameter."; },
-                get badPlacement() { return "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', or 'auto'."; },
+                get badPlacement() { return "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', 'auto', 'autohorizontal', or 'autovertical'."; },
                 get badAlignment() { return "Invalid argument: Flyout alignment should be 'center' (default), 'left', or 'right'."; }
             };
 
@@ -158,7 +158,7 @@ define([
                         return this._placement;
                     },
                     set: function (value) {
-                        if (value !== "top" && value !== "bottom" && value !== "left" && value !== "right" && value !== "auto") {
+                        if (value !== "top" && value !== "bottom" && value !== "left" && value !== "right" && value !== "auto" && value !== "autohorizontal" && value !== "autovertical") {
                             // Not a legal placement value
                             throw new _ErrorFromName("WinJS.UI.Flyout.BadPlacement", strings.badPlacement);
                         }
@@ -453,21 +453,23 @@ define([
                     }
                 },
 
-                // This determines our positioning.  We have 5 modes, the 1st four are explicit, the last is automatic:
+                // This determines our positioning.  We have 7 modes, the 1st four are explicit, the last three are automatic:
                 // * top - position explicitly on the top of the anchor, shrinking and adding scrollbar as needed.
                 // * bottom - position explicitly below the anchor, shrinking and adding scrollbar as needed.
                 // * left - position left of the anchor, shrinking and adding a vertical scrollbar as needed.
                 // * right - position right of the anchor, shrinking and adding a vertical scroolbar as needed.
                 // * auto - Automatic placement.
+                // * autohorizontal - Automatic placement (only left or right).
+                // * autovertical - Automatic placement (only top or bottom).
                 // Auto tests the height of the anchor and the flyout.  For consistency in orientation, we imagine
                 // that the anchor is placed in the vertical center of the display.  If the flyout would fit above
                 // that centered anchor, then we will place the flyout vertically in relation to the anchor, otherwise
                 // placement will be horizontal.
-                // Vertical auto placement will be positioned on top of the anchor if room, otherwise below the anchor.
+                // Vertical auto or autovertical placement will be positioned on top of the anchor if room, otherwise below the anchor.
                 //   - this is because touch users would be more likely to obscure flyouts below the anchor.
-                // Horizontal auto placement will be positioned to the left of the anchor if room, otherwise to the right.
+                // Horizontal auto or autohorizontal placement will be positioned to the left of the anchor if room, otherwise to the right.
                 //   - this is because right handed users would be more likely to obscure a flyout on the right of the anchor.
-                // Auto placement will add a vertical scrollbar if necessary.
+                // All three auto placements will add a vertical scrollbar if necessary.
                 _getTopLeft: function Flyout_getTopLeft() {
                     var anchorRawRectangle = this._currentAnchor.getBoundingClientRect(),
                         flyout = {},
@@ -525,6 +527,26 @@ define([
                             }
                             this._centerVertically(anchor, flyout);
                             break;
+                        case "autovertical":
+                            if (!this._fitTop(anchor, flyout)) {
+                                // Didn't fit above (preferred), so go below.
+                                if (!this._fitBottom(anchor, flyout)) {
+                                    // Didn't fit, needs scrollbar
+                                    this._configureVerticalWithScroll(anchor);
+                                }
+                            }
+                            this._centerHorizontally(anchor, flyout, this._currentAlignment);
+                            break;
+                        case "autohorizontal":
+                            if (!this._fitLeft(anchor, flyout)) {
+                                // Didn't fit left (preferred), so go right.
+                                if (!this._fitRight(anchor, flyout)) {
+                                    // Didn't fit,just shove it to edge
+                                    this._nextLeft = -1;
+                                }
+                            }
+                            this._centerVertically(anchor, flyout);
+                            break;
                         case "auto":
                             // Auto, if the anchor was in the vertical center of the display would we fit above it?
                             if (this._sometimesFitsAbove(anchor, flyout)) {
@@ -538,16 +560,8 @@ define([
                                 // Won't fit above or below, try a side
                                 if (!this._fitLeft(anchor, flyout) &&
                                     !this._fitRight(anchor, flyout)) {
-                                    // Didn't fit left or right either, is top or bottom bigger?
-                                    if (this._topHasMoreRoom(anchor)) {
-                                        // Top, won't fit, needs scrollbar
-                                        this._nextTop = _Overlay._Overlay._keyboardInfo._visibleDocTop;
-                                        this._nextHeight = anchor.top - _Overlay._Overlay._keyboardInfo._visibleDocTop - this._nextMarginPadding;
-                                    } else {
-                                        // Bottom, won't fit, needs scrollbar
-                                        this._nextTop = -1;
-                                        this._nextHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - (anchor.bottom - _Overlay._Overlay._keyboardInfo._visibleDocTop) - this._nextMarginPadding;
-                                    }
+                                    // Didn't fit left or right either
+                                    this._configureVerticalWithScroll(anchor);
                                     this._centerHorizontally(anchor, flyout, this._currentAlignment);
                                 } else {
                                     this._centerVertically(anchor, flyout);
@@ -561,6 +575,18 @@ define([
 
                     // Remember "bottom" in case we need to consider keyboard later, only tested for top-pinned bars
                     this._nextBottom = this._nextTop + flyout.height;
+                },
+
+                _configureVerticalWithScroll: function (anchor) {
+                    if (this._topHasMoreRoom(anchor)) {
+                        // Top, won't fit, needs scrollbar
+                        this._nextTop = _Overlay._Overlay._keyboardInfo._visibleDocTop;
+                        this._nextHeight = anchor.top - _Overlay._Overlay._keyboardInfo._visibleDocTop - this._nextMarginPadding;
+                    } else {
+                        // Bottom, won't fit, needs scrollbar
+                        this._nextTop = -1;
+                        this._nextHeight = _Overlay._Overlay._keyboardInfo._visibleDocHeight - (anchor.bottom - _Overlay._Overlay._keyboardInfo._visibleDocTop) - this._nextMarginPadding;
+                    }
                 },
 
                 // If the anchor is centered vertically, would the flyout fit above it?

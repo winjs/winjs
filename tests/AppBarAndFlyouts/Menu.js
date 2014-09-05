@@ -149,7 +149,9 @@ CorsicaTests.MenuTests = function () {
         testGoodInitOption("placement", "left");
         testGoodInitOption("placement", "right");
         testGoodInitOption("placement", "auto");
-        var badPlacement = "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', or 'auto'.";
+        testGoodInitOption("placement", "autohorizontal");
+        testGoodInitOption("placement", "autovertical");
+        var badPlacement = "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', or 'auto', 'autohorizontal', 'autovertical'.";
         testBadInitOption("placement", "fred", "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", -1, "WinJS.UI.Flyout.BadPlacement", badPlacement);
         testBadInitOption("placement", 12, "WinJS.UI.Flyout.BadPlacement", badPlacement);
