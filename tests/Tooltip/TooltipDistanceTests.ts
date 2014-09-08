@@ -1,38 +1,25 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
-//
-//  Abstract:
-//
 //  Distance Tests for the tooltip.  When we display tooltips, they should not appear off-screen and should appear a
 //  certain distance from the "anchor element" depending on whether touch, keyboard, or mouse triggered it.
-//
-//  Author: evanwi
-//
-//-----------------------------------------------------------------------------
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="TooltipUtils.js"/>
-/// <reference path="Tooltip.css"/>
 
-TooltipDistanceTests = function () {
-    var tooltipUtils = new TooltipUtils();
+//-----------------------------------------------------------------------------
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="TooltipUtils.ts"/>
+// <reference path="Tooltip.css"/>
+
+module WinJSTests {
+    'use strict';
+
+    var tooltipUtils = TooltipUtils;
     var commonUtils = CommonUtilities;
 
     // Since distances can be off due to rounding errors, use this tolerance for our comparisons.
     var DISTANCE_TOLERANCE = 1;
-
-    this.setUp = function () {
-        tooltipUtils.setUp();
-    };
-
-    this.tearDown = function () {
-        tooltipUtils.cleanUp();
-    };
-
-    //-----------------------------------------------------------------------------------
 
     // Verify the tooltip appears at the specified distance from the element and not off-screen.
     function testTooltip_VerifyDistance(signalTestCaseCompleted, elementPlacement, tooltipPlacement, inputMethod) {
@@ -90,7 +77,7 @@ TooltipDistanceTests = function () {
                             distance = tooltipUtils.OFFSET_PROGRAMMATIC_TOUCH;
                             break;
                         default:
-                            LiveUnit.Assert.Fail("Unknown inputMethod " + inputMethod);
+                            LiveUnit.Assert.fail("Unknown inputMethod " + inputMethod);
                             break;
                     }
                     var actualDistance = tooltipUtils.getTooltipDistanceFromElement(tooltip,
@@ -108,27 +95,38 @@ TooltipDistanceTests = function () {
             }
         }
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
-    };
+    }
 
+    export class TooltipDistanceTests {
+        
 
-    var that = this;
+        setUp() {
+            tooltipUtils.setUp();
+        }
+
+        tearDown() {
+            tooltipUtils.cleanUp();
+        }
+
+        
+    }
+
     Helper.pairwise({
         elementPlacement: ['center', 'top right', 'top left', 'bottom right', 'bottom left'],
         tooltipPlacement: ['top', 'right', 'bottom', 'left'],
         inputMethod: ['mouse', 'keyboard', 'touch', 'mouseoverProgrammatic', 'keyboardProgrammatic', 'touchProgrammatic']
-    }).forEach(function(testCase) {
+    }).forEach(function (testCase) {
 
-        var testNameParts = ["testTooltip_Distance"];
-        testNameParts.push(testCase.elementPlacement.replace(/ /g, '_'));
-        testNameParts.push(testCase.tooltipPlacement);
-        testNameParts.push(testCase.inputMethod);
-        var testName = testNameParts.join('');
-        that[testName] = function(signalTestCaseCompleted) {
-            testTooltip_VerifyDistance(signalTestCaseCompleted, testCase.elementPlacement, testCase.tooltipPlacement, testCase.inputMethod);
-        }
+            var testNameParts = ["testTooltip_Distance"];
+            testNameParts.push(testCase.elementPlacement.replace(/ /g, '_'));
+            testNameParts.push(testCase.tooltipPlacement);
+            testNameParts.push(testCase.inputMethod);
+            var testName = testNameParts.join('');
+            TooltipDistanceTests.prototype[testName] = function (signalTestCaseCompleted) {
+                testTooltip_VerifyDistance(signalTestCaseCompleted, testCase.elementPlacement, testCase.tooltipPlacement, testCase.inputMethod);
+            }
 
     });
-};
-
+}
 // Register the object as a test class by passing in the name
-LiveUnit.registerTestClass("TooltipDistanceTests");
+LiveUnit.registerTestClass("WinJSTests.TooltipDistanceTests");

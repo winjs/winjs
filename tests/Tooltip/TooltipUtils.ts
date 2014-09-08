@@ -1,58 +1,49 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-//-----------------------------------------------------------------------------
-//
-//  Abstract:
-//
-//      Various utilities used by the JavaScript Tooltip Control tests.
-//
-//  Author: evanwi
-//
-//-----------------------------------------------------------------------------
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="TooltipUtils.js"/>
-/// <reference path="Tooltip.css"/>
+// <reference path="Tooltip.css"/>
 
-function TooltipUtils() {
-}
-TooltipUtils.prototype = (function () {
+
+module TooltipUtils {
+    "use strict";
+
     var commonUtils = CommonUtilities;
 
-    // Public functions
-    return {
-        // Constants just for our tests.
-        defaultElementID: "elementID",
-        TIMEOUT_DIDNT_RECEIVE_EVENTS: 30000,
-        pointerOutSupported: window.PointerEvent || window.MSPointerEvent,
-        pointerOverSupported: window.PointerEvent || window.MSPointerEvent,
+
+    // Constants just for our tests.
+    export var defaultElementID = "elementID";
+    export var TIMEOUT_DIDNT_RECEIVE_EVENTS = 30000;
+    var global: any = window;
+    export var pointerOutSupported = global.PointerEvent || global.MSPointerEvent;
+    export var pointerOverSupported = global.PointerEvent || global.MSPointerEvent;
+
+    //-----------------------------------------------------------------------------------
+    // Default/constant values for tooltip.  We could get these dynamically from the tooltip, but
+    // we don't want to in case there's a bug in the tooltip (this would be rare).  The downside
+    // of copying them here is in case there's a valid change in the tooltip, we'd have to change our
+    // code here, but that's a decent tradeoff.
+    export var OFFSET_KEYBOARD = 12;
+    export var OFFSET_MOUSE = 20;
+    export var OFFSET_TOUCH = 45;
+    export var OFFSET_PROGRAMMATIC_TOUCH = 20;
+    export var OFFSET_PROGRAMMATIC_NONTOUCH = 12;
+    export var DEFAULT_PLACEMENT = "top";
+    export var DEFAULT_INFOTIP = false;
+    export var DELAY_INITIAL_TOUCH_SHORT = (<any>WinJS.UI.Tooltip)._DELAY_INITIAL_TOUCH_SHORT;
+    export var DELAY_INITIAL_TOUCH_LONG = (<any>WinJS.UI.Tooltip)._DELAY_INITIAL_TOUCH_LONG;
+    export var DEFAULT_MOUSE_HOVER_TIME = (<any>WinJS.UI.Tooltip)._DEFAULT_MOUSE_HOVER_TIME;
+    export var DEFAULT_MESSAGE_DURATION = (<any>WinJS.UI.Tooltip)._DEFAULT_MESSAGE_DURATION;
+    export var DELAY_RESHOW_NONINFOTIP_TOUCH = (<any>WinJS.UI.Tooltip)._DELAY_RESHOW_NONINFOTIP_TOUCH;
+    export var DELAY_RESHOW_NONINFOTIP_NONTOUCH = (<any>WinJS.UI.Tooltip)._DELAY_RESHOW_NONINFOTIP_NONTOUCH;
+    export var DELAY_RESHOW_INFOTIP_TOUCH = (<any>WinJS.UI.Tooltip)._DELAY_RESHOW_INFOTIP_TOUCH;
+    export var DELAY_RESHOW_INFOTIP_NONTOUCH = (<any>WinJS.UI.Tooltip)._DELAY_RESHOW_INFOTIP_NONTOUCH;
+    export var RESHOW_THRESHOLD = (<any>WinJS.UI.Tooltip)._RESHOW_THRESHOLD;
 
         //-----------------------------------------------------------------------------------
-        // Default/constant values for tooltip.  We could get these dynamically from the tooltip, but
-        // we don't want to in case there's a bug in the tooltip (this would be rare).  The downside
-        // of copying them here is in case there's a valid change in the tooltip, we'd have to change our
-        // code here, but that's a decent tradeoff.
-        OFFSET_KEYBOARD: 12,
-        OFFSET_MOUSE: 20,
-        OFFSET_TOUCH: 45,
-        OFFSET_PROGRAMMATIC_TOUCH: 20,
-        OFFSET_PROGRAMMATIC_NONTOUCH: 12,
-        DEFAULT_PLACEMENT: "top",
-        DEFAULT_INFOTIP: false,
-        get DELAY_INITIAL_TOUCH_SHORT() { return WinJS.UI.Tooltip._DELAY_INITIAL_TOUCH_SHORT; },
-        get DELAY_INITIAL_TOUCH_LONG() { return WinJS.UI.Tooltip._DELAY_INITIAL_TOUCH_LONG; },
-        get DEFAULT_MOUSE_HOVER_TIME() { return WinJS.UI.Tooltip._DEFAULT_MOUSE_HOVER_TIME; },
-        get DEFAULT_MESSAGE_DURATION() { return WinJS.UI.Tooltip._DEFAULT_MESSAGE_DURATION; },
-        get DELAY_RESHOW_NONINFOTIP_TOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_NONINFOTIP_TOUCH; },
-        get DELAY_RESHOW_NONINFOTIP_NONTOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_NONINFOTIP_NONTOUCH; },
-        get DELAY_RESHOW_INFOTIP_TOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_INFOTIP_TOUCH; },
-        get DELAY_RESHOW_INFOTIP_NONTOUCH() { return WinJS.UI.Tooltip._DELAY_RESHOW_INFOTIP_NONTOUCH; },
-        get RESHOW_THRESHOLD() { return WinJS.UI.Tooltip._RESHOW_THRESHOLD; },
-
-        //-----------------------------------------------------------------------------------
-        setUp: function () {
+        export function setUp() {
             /// <summary>
             ///  Test setup to run prior to every test case.
             /// </summary>
@@ -71,14 +62,14 @@ TooltipUtils.prototype = (function () {
             element.style.border = "solid 1px";
 
             // Make it tabbable to be easier to repro keyboard bugs manually.  Add another span due to bug 518083.
-            element.tabIndex = "0";
+            element.tabIndex = 0;
             commonUtils.addTag("span", "temp");
             var element = document.getElementById("temp");
-            element.tabIndex = "1";
-        },
+            element.tabIndex = 1;
+        }
 
         //-----------------------------------------------------------------------------------
-        cleanUp: function (id) {
+        export function cleanUp(id?) {
             /// <summary>
             ///  Test cleanup to run prior to every test case.
             /// </summary>
@@ -86,12 +77,6 @@ TooltipUtils.prototype = (function () {
             ///  String specifying id of element to remove.
             /// </param>
             LiveUnit.LoggingCore.logComment("In cleanUp");
-
-            // This timer should already be disabled, but call this just in case.
-            if (window.timerForTimeout) {
-                clearTimeout(window.timerForTimeout);
-            }
-            window.timerForTimeout = null;
 
             commonUtils.removeElementById(id ? id : this.defaultElementID);
             // Due to bug 266432, sometimes the tooltip doesn't get removed from the screen, so get rid of any leftover tooltips
@@ -111,10 +96,10 @@ TooltipUtils.prototype = (function () {
                     allPhantomTooltips[n].parentNode.removeChild(allPhantomTooltips[n]);
                 }
             }
-        },
+        }
 
         //-----------------------------------------------------------------------------------
-        addTag: function (tagName, tagId, attributes) {
+        export function addTag(tagName, tagId, attributes) {
             /// <summary>
             ///  Add a tag of type tagName to the document with id set to tagId and other HTML attributes set to attributes
             /// </summary>
@@ -128,10 +113,10 @@ TooltipUtils.prototype = (function () {
             ///  JavaScript object containing list of attributes to set on HTML tag (note that tagId takes precedence for "id" attribute)
             /// </param>
             return commonUtils.addTag(tagName, tagId, attributes);
-        },
+        }
 
         //-----------------------------------------------------------------------------------
-        instantiate: function (elementId, options) {
+        export function instantiate(elementId, options?) {
             /// <summary>
             ///  Instantiate a tooltip control out of the element specified by elementId with given options.
             /// </summary>
@@ -143,17 +128,8 @@ TooltipUtils.prototype = (function () {
             /// </param>
             /// <returns type="object" />
 
-            // Build a string representation of the input options for debugging purposes.
-            var optString = "";
-            for (var opt in options) {
-                if (optString !== "") {
-                    optString += ", ";
-                }
-                optString += opt + ": " + ((typeof (options[opt]) === "string") ? ("\"" + options[opt] + "\"") : options[opt]);
-            }
-            optString = "{" + optString + "}";
 
-            LiveUnit.LoggingCore.logComment("Instantiating tooltip on element '" + elementId + "' with options = \"" + optString + "\"");
+            LiveUnit.LoggingCore.logComment("Instantiating tooltip on element '" + elementId + "' with options = \"" + JSON.stringify(options) + "\"");
 
             var tooltipElement = document.getElementById(elementId);
             var tooltip = null;
@@ -176,9 +152,9 @@ TooltipUtils.prototype = (function () {
             }
 
             return tooltip;
-        },
+        }
 
-        isTooltipFullyVisible: function(tooltip) {
+        export function isTooltipFullyVisible(tooltip) {
             /// <summary>
             ///  Returns whether the tooltip is fully visible.  We need a function for this in case the dev code changes
             ///  on how the tooltip gets displayed (z-order, display property, opacity, etc.).  I tried using getElementFromPoint, but
@@ -221,9 +197,9 @@ TooltipUtils.prototype = (function () {
             LiveUnit.LoggingCore.logComment("Tooltip visible: " + visible);
 
             return visible;
-        },
+        }
 
-        logTooltipInformation: function (tooltip) {
+        export function logTooltipInformation(tooltip) {
             /// <summary>
             ///  Helper function that logs information about the tooltip and its anchor element
             /// </summary>
@@ -260,9 +236,9 @@ TooltipUtils.prototype = (function () {
                         tooltip._anchorElement.offsetHeight + "h");
                 }
             }
-        },
+        }
 
-        getTooltipPlacementFromElement: function (tooltip) {
+        export function getTooltipPlacementFromElement(tooltip) {
             /// <summary>
             ///  Returns where the tooltip appeared in relation to center of the element.
             /// </summary>
@@ -291,9 +267,9 @@ TooltipUtils.prototype = (function () {
             LiveUnit.LoggingCore.logComment("Tooltip appeared at: " + placement);
 
             return placement;
-        },
+        }
 
-        getTooltipAlignmentFromElement: function (tooltip) {
+        export function getTooltipAlignmentFromElement(tooltip) {
             /// <summary>
             ///  Returns how the tooltip is aligned to the element (right now the only return
             ///  values are "vertical center", "horizontal center", or "none").  Win8 bug 257553.
@@ -322,9 +298,9 @@ TooltipUtils.prototype = (function () {
             LiveUnit.LoggingCore.logComment("Tooltip alignment: " + alignment);
 
             return alignment;
-        },
+        }
 
-        getTooltipDistanceFromElement: function (tooltip, position) {
+        export function getTooltipDistanceFromElement(tooltip, position = "center") {
             /// <summary>
             ///  Returns the distance from where the tooltip appeared in relation to the edge or center of the element.
             /// </summary>
@@ -361,9 +337,9 @@ TooltipUtils.prototype = (function () {
             LiveUnit.LoggingCore.logComment("Tooltip distance from element " + position + " was: " + distance + "px");
 
             return distance;
-        },
+        }
 
-        getTooltipDistanceFromWindow: function (tooltip) {
+        export function getTooltipDistanceFromWindow(tooltip) {
             /// <summary>
             ///  Returns the distance from where the tooltip appeared in relation to the edge of the window.
             /// </summary>
@@ -382,9 +358,9 @@ TooltipUtils.prototype = (function () {
 
             LiveUnit.LoggingCore.logComment("Tooltip distance from window edge was: " + smallestDistance + "px");
             return smallestDistance;
-        },
+        }
 
-        positionElement: function (element, screenPosition) {
+        export function positionElement(element, screenPosition) {
             /// <summary>
             ///  Moves the element which the tooltip is attached to, to either the center or one of the edges
             ///  of the screen.
@@ -437,10 +413,10 @@ TooltipUtils.prototype = (function () {
             LiveUnit.LoggingCore.logComment("Element actual size: " + elementRect.width + "w " + elementRect.height + "h");
             LiveUnit.LoggingCore.logComment("Window actual size: " + window.innerWidth + "w " + window.innerHeight + "h");
             LiveUnit.LoggingCore.logComment("To position element at " + screenPosition + " styles set to:" + element.style.left + " " + element.style.top);
-        },
+        }
 
         // Triggers the tooltip to display.
-        displayTooltip: function (inputMethod, element, tooltip) {
+        export function displayTooltip(inputMethod, element, tooltip) {
             LiveUnit.LoggingCore.logComment("Triggering tooltip using " + inputMethod);
             switch (inputMethod) {
                 case "touch":
@@ -475,17 +451,17 @@ TooltipUtils.prototype = (function () {
                     LiveUnit.Assert.fail("Unknown inputMethod" + inputMethod);
                     break;
             }
-        },
+        }
 
-        fireTriggerEvent: function (tooltipEventListener) {
+        export function fireTriggerEvent(tooltipEventListener) {
             // Trigger the tooltip after a short delay since LiveUnit runs all the tests in the same HTML page.
             // If we don't have a delay, we trigger the "reshow time" for the tooltip,
             // which displays the tooltip quicker and with no animation, and this can cause our tests to fail.
             tooltipEventListener({type:'trigger'});
-        },
+        }
 
         // Common setup most of our tests use.
-        setupTooltipListener: function (tooltip, tooltipEventListener) {
+        export function setupTooltipListener(tooltip, tooltipEventListener) {
             tooltip.addEventListener("beforeopen", LiveUnit.GetWrappedCallback(tooltipEventListener));
             tooltip.addEventListener("opened", LiveUnit.GetWrappedCallback(tooltipEventListener));
             tooltip.addEventListener("beforeclose", LiveUnit.GetWrappedCallback(tooltipEventListener));
@@ -493,5 +469,5 @@ TooltipUtils.prototype = (function () {
 
             this.fireTriggerEvent(tooltipEventListener);
         }
-    };
-})();
+ 
+}

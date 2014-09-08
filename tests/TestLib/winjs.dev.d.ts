@@ -87,5 +87,20 @@ declare module WinJS {
             _elementTabHelper;
             _hasMoreElementsInTabOrder;
         }
+
+        class PrivateTooltip extends WinJS.UI.Tooltip {
+            _disposed: boolean;
+            _domElement: HTMLElement;
+
+            static _DELAY_INITIAL_TOUCH_SHORT: number;
+            static _DELAY_INITIAL_TOUCH_LONG: number;
+            static _DEFAULT_MOUSE_HOVER_TIME: number;
+            static _DEFAULT_MESSAGE_DURATION: number;
+            static _DELAY_RESHOW_NONINFOTIP_TOUCH: number;
+            static _DELAY_RESHOW_NONINFOTIP_NONTOUCH: number;
+            static _DELAY_RESHOW_INFOTIP_TOUCH: number;
+            static _DELAY_RESHOW_INFOTIP_NONTOUCH: number;
+            static _RESHOW_THRESHOLD: number;
+        }
     }
 }

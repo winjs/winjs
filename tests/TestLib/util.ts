@@ -285,7 +285,7 @@ module Helper {
     }
 
     function makeNormalizedCssValueAssertion(assertionFunction, attributeName) {
-        return function (expected, actual, message) {
+        return function (expected, actual, message?) {
             assertionFunction(
                 normalizedCssValue(attributeName, expected),
                 normalizedCssValue(attributeName, actual),
@@ -321,7 +321,7 @@ module Helper {
         // returned by getComputedStyle. Specifically, they can look like this:
         // - "rgb(10, 24, 215)"
         // - "rgba(10, 24, 215, 0.25)"
-        export function areColorsEqual(expectedColorString, actualColorString, message) {
+        export function areColorsEqual(expectedColorString, actualColorString, message?) {
             var expectedColor = Helper.parseColor(expectedColorString);
             var actualColor = Helper.parseColor(actualColorString);
             // Verify red, green, blue
@@ -539,7 +539,7 @@ module Helper {
     // [ {rtl: true, layout: 'list'}, {rtl: true, layout: 'grid'}, ...]
     // The second argument provides an array of solutions that *must* be included in the output
     // more info: http://msdn.microsoft.com/en-us/library/cc150619.aspx
-    export function pairwise(inputs, include) {
+    export function pairwise(inputs, include?) {
         var results = [];
         var inputKeys = Object.keys(inputs);
 

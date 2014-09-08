@@ -1,36 +1,19 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-//-----------------------------------------------------------------------------
-//
-//  Abstract:
-//
-//  Infotip tests for the tooltip.
-//
-//  Author: evanwi
-//
-//-----------------------------------------------------------------------------
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="TooltipUtils.js"/>
-/// <reference path="Tooltip.css"/>
+/// <reference path="TooltipUtils.ts"/>
+// <reference path="Tooltip.css"/>
 
-TooltipInfotipTests = function () {
-    var tooltipUtils = new TooltipUtils();
+module WinJSTests {
+    'use strict';
+
+    var tooltipUtils = TooltipUtils;
     var commonUtils = CommonUtilities;
 
-    this.setUp = function () {
-        tooltipUtils.setUp();
-    };
-
-    this.tearDown = function () {
-        tooltipUtils.cleanUp();
-    };
-
-    //-----------------------------------------------------------------------------------
-
-    testTooltip_Infotip = function (signalTestCaseCompleted, showInfotip, useTouch, toleranceDisplayTime, toleranceInvokeTime) {
+    function testTooltip_Infotip(signalTestCaseCompleted, showInfotip, useTouch, toleranceDisplayTime, toleranceInvokeTime) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
 
         // Set up the anchor/trigger element.
@@ -55,7 +38,7 @@ TooltipInfotipTests = function () {
             // so use "tolerance" to make sure the events are fired within a reasonable amount of time.
             switch (event.type) {
                 case "trigger":
-                    tooltipUtils.displayTooltip((useTouch ? "touch" : "mouse"), element);
+                    tooltipUtils.displayTooltip((useTouch ? "touch" : "mouse"), element, tooltip);
                     triggerTime = (new Date()).getTime();
                     break;
                 case "beforeopen":
@@ -130,86 +113,51 @@ TooltipInfotipTests = function () {
         tooltipUtils.setupTooltipListener(tooltip, tooltipEventListener);
     }
 
-    this.testTooltip_InfotipTrue = function (signalTestCaseCompleted) {
-        testTooltip_Infotip(signalTestCaseCompleted, true, false, 5000, 500);
+    export class TooltipInfotipTests {
+
+        setUp() {
+            tooltipUtils.setUp();
+        }
+
+        tearDown() {
+            tooltipUtils.cleanUp();
+        }
+
+        
+
+    testTooltip_InfotipTrue(signalTestCaseCompleted) {
+            testTooltip_Infotip(signalTestCaseCompleted, true, false, 5000, 500);
+        }
+
+        testTooltip_InfotipFalse(signalTestCaseCompleted) {
+            testTooltip_Infotip(signalTestCaseCompleted, false, false, 5000, 500);
+        }
+
+        testTooltip_InfotipTrueUsingTouch(signalTestCaseCompleted) {
+            testTooltip_Infotip(signalTestCaseCompleted, true, true, 5000, 500);
+        }
+
+        testTooltip_InfotipFalseUsingTouch(signalTestCaseCompleted) {
+            testTooltip_Infotip(signalTestCaseCompleted, false, true, 5000, 500);
+        }
+
+
+        testTooltip_InfotipTrueIDX(signalTestCaseCompleted) {
+            testTooltip_Infotip(signalTestCaseCompleted, true, false, 1000, 150);
+        }
+
+        testTooltip_InfotipFalseIDX(signalTestCaseCompleted) {
+            testTooltip_Infotip(signalTestCaseCompleted, false, false, 1000, 150);
+        }
+
+        testTooltip_InfotipTrueUsingTouchIDX(signalTestCaseCompleted) {
+            testTooltip_Infotip(signalTestCaseCompleted, true, true, 1000, 150);
+        }
+
+        testTooltip_InfotipFalseUsingTouchIDX(signalTestCaseCompleted) {
+            testTooltip_Infotip(signalTestCaseCompleted, false, true, 1000, 150);
+        }
     };
-
-
-
-
-
-    this.testTooltip_InfotipTrue.timeout = 30000;
-
-    this.testTooltip_InfotipFalse = function (signalTestCaseCompleted) {
-        testTooltip_Infotip(signalTestCaseCompleted, false, false, 5000, 500);
-    };
-
-
-
-
-
-    this.testTooltip_InfotipFalse.timeout = 30000;
-
-    this.testTooltip_InfotipTrueUsingTouch = function (signalTestCaseCompleted) {
-        testTooltip_Infotip(signalTestCaseCompleted, true, true, 5000, 500);
-    };
-
-
-
-
-
-    this.testTooltip_InfotipTrueUsingTouch.timeout = 30000;
-
-    this.testTooltip_InfotipFalseUsingTouch = function (signalTestCaseCompleted) {
-        testTooltip_Infotip(signalTestCaseCompleted, false, true, 5000, 500);
-    };
-
-
-
-
-
-    this.testTooltip_InfotipFalseUsingTouch.timeout = 30000;
-
-    this.testTooltip_InfotipTrueIDX = function (signalTestCaseCompleted) {
-        testTooltip_Infotip(signalTestCaseCompleted, true, false, 1000, 150);
-    };
-
-
-
-
-
-    this.testTooltip_InfotipTrueIDX.timeout = 30000;
-
-    this.testTooltip_InfotipFalseIDX = function (signalTestCaseCompleted) {
-        testTooltip_Infotip(signalTestCaseCompleted, false, false, 1000, 150);
-    };
-
-
-
-
-
-    this.testTooltip_InfotipFalseIDX.timeout = 30000;
-
-    this.testTooltip_InfotipTrueUsingTouchIDX = function (signalTestCaseCompleted) {
-        testTooltip_Infotip(signalTestCaseCompleted, true, true, 1000, 150);
-    };
-
-
-
-
-
-    this.testTooltip_InfotipTrueUsingTouchIDX.timeout = 30000;
-
-    this.testTooltip_InfotipFalseUsingTouchIDX = function (signalTestCaseCompleted) {
-        testTooltip_Infotip(signalTestCaseCompleted, false, true, 1000, 150);
-    };
-
-
-
-
-
-    this.testTooltip_InfotipFalseUsingTouchIDX.timeout = 30000;
-};
-
+}
 // Register the object as a test class by passing in the name
-LiveUnit.registerTestClass("TooltipInfotipTests");
+LiveUnit.registerTestClass("WinJSTests.TooltipInfotipTests");

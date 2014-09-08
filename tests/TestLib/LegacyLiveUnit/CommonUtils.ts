@@ -76,7 +76,7 @@ module CommonUtilities {
         return s && s.substring(s.length - suffix.length) === suffix;
     }
 
-    export function addTag(tagName, tagId, attributes) {
+    export function addTag(tagName, tagId, attributes?) {
         /// <summary>
         ///  Add a tag of type tagName to the document with id set to tagId and other HTML attributes set to attributes
         /// </summary>
@@ -816,7 +816,7 @@ module CommonUtilities {
         }
     }
 
-    export function keydown(element, keyCode, locale) {
+    export function keydown(element, keyCode, locale?) {
         /// <summary>
         ///  Throw keydown event from element.
         /// </summary>
@@ -841,7 +841,7 @@ module CommonUtilities {
         }
     }
 
-    export function keyup(element, keyCode, locale) {
+    export function keyup(element, keyCode, locale?) {
         /// <summary>
         ///  Throw keyup event from element.
         /// </summary>
