@@ -32,12 +32,6 @@ module WinJSTests {
     // Generate test combinations of init options to toggle
     var testCases = Helper.pairwise(possibleInputs, interestingInputs);
 
-    declare class PrivateToggleSwitch extends WinJS.UI.ToggleSwitch {
-        _pointerDownHandler(ev: any);
-        _pointerUpHandler(ev: any);
-        _pointerMoveHandler(ev: any);
-    }
-
     export class ToggleSwitchTests {
 
         setUp() {
@@ -191,7 +185,7 @@ module WinJSTests {
                     container.setAttribute('lang', 'ar');
                 }
 
-                var toggle = <PrivateToggleSwitch>new WinJS.UI.ToggleSwitch(null, testCase);
+                var toggle = <WinJS.UI.PrivateToggleSwitch>new WinJS.UI.ToggleSwitch(null, testCase);
                 container.appendChild(toggle.element);
                 var toggleThumb = <HTMLElement>toggle.element.querySelector('.win-toggleswitch-thumb');
                 var toggleClickRegion = <HTMLElement>toggle.element.querySelector('.win-toggleswitch-clickregion');

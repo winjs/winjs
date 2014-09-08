@@ -77,6 +77,12 @@ declare module WinJS {
             queue(f:()=>WinJS.Promise<any>, data?:any, first?:boolean);
         }
 
+        class PrivateToggleSwitch extends WinJS.UI.ToggleSwitch {
+            _pointerDownHandler(ev: any);
+            _pointerUpHandler(ev: any);
+            _pointerMoveHandler(ev: any);
+        }
+
         class PrivateTabContainer extends WinJS.UI.TabContainer {
             _elementTabHelper;
             _hasMoreElementsInTabOrder;
