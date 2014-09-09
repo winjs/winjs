@@ -52,6 +52,17 @@ declare module WinJS {
             constructor(eventObject, overrideProperties);
         }
 
+        function _linkedListMixin(name: string);
+
+        module Scheduler {
+            var _usingWwaScheduler: boolean;
+            var _MSApp;
+            var _isEmpty;
+            var _TIME_SLICE: number;
+        }
+
+        function _now();
+
     }
 
     module Resources {
