@@ -149,5 +149,18 @@ declare module WinJS {
             var _maxTimePerCreateContainers;
         }
 
+        class PrivateSearchBox extends WinJS.UI.SearchBox {
+            _disposed: boolean;
+            static _sortAndMergeHits(hitsProvided?);
+            static _EventName: {
+                querychanged;
+                querysubmitted;
+                resultsuggestionchosen;
+                suggestionsrequested;
+                receivingfocusonkeyboardinput;
+            };
+
+        }
+
     }
 }
