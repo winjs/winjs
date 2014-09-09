@@ -102,5 +102,22 @@ declare module WinJS {
             static _DELAY_RESHOW_INFOTIP_NONTOUCH: number;
             static _RESHOW_THRESHOLD: number;
         }
+
+        interface ISelect {
+            value;
+            index: number;
+            _domElement;
+        }
+
+        interface ITimePicker extends WinJS.UI.TimePicker {
+            _domElement: HTMLElement;
+            _disposed: boolean;
+            _ampmControl: ISelect;
+            _ampmElement: HTMLSelectElement;
+            _hourControl: ISelect;
+            _hourElement: HTMLSelectElement;
+            _minuteControl: ISelect;
+            _minuteElement: HTMLSelectElement;
+        }
     }
 }
