@@ -27,6 +27,7 @@ define([
         /// <icon src="ui_winjs.ui.appbarcommand.12x12.png" width="12" height="12" />
         /// <icon src="ui_winjs.ui.appbarcommand.16x16.png" width="16" height="16" />
         /// <htmlSnippet><![CDATA[<button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type:'button',label:'Button'}"></button>]]></htmlSnippet>
+        /// <event name="commandvisibilitychanged" locid="WinJS.UI.AppBarCommand_e:commandvisibilitychanged">Raised after the hidden property has been programmatically changed.</event>
         /// <part name="appBarCommand" class="win-command" locid="WinJS.UI.AppBarCommand_part:appBarCommand">The AppBarCommand control itself.</part>
         /// <part name="appBarCommandIcon" class="win-commandicon" locid="WinJS.UI.AppBarCommand_part:appBarCommandIcon">The AppBarCommand's icon box.</part>
         /// <part name="appBarCommandImage" class="win-commandimage" locid="WinJS.UI.AppBarCommand_part:appBarCommandImage">The AppBarCommand's icon's image formatting.</part>
@@ -45,11 +46,6 @@ define([
                     if (command._type === _Constants.typeToggle) {
                         command.selected = !command.selected;
                     } else if (command._type === _Constants.typeFlyout && command._flyout) {
-                        var parentAppBar = _Overlay._Overlay._getParentControlUsingClassName(this, _Constants.appBarClass);
-                        var placement = "top";
-                        if (parentAppBar && parentAppBar.placement === "top") {
-                            placement = "bottom";
-                        }
                         var flyout = command._flyout;
                         // Flyout may not have processAll'd, so this may be a DOM object
                         if (typeof flyout === "string") {
@@ -59,7 +55,7 @@ define([
                             flyout = flyout.winControl;
                         }
                         if (flyout && flyout.show) {
-                            flyout.show(this, placement);
+                            flyout.show(this, "autovertical");
                         }
                     }
                     if (command.onclick) {
@@ -401,17 +397,14 @@ define([
                         return this._element.style.visibility === "hidden";
                     },
                     set: function (value) {
-                        var appbarControl = _Overlay._Overlay._getParentControlUsingClassName(this._element, _Constants.appBarClass);
-                        if (appbarControl && !appbarControl.hidden) {
-                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.CannotChangeHiddenProperty", _Resources._formatString(_Overlay._Overlay.commonstrings.cannotChangeHiddenProperty, "AppBar"));
-                        }
-
                         if (value === this.hidden) {
                             // No changes to make.
                             return;
                         }
 
                         var style = this._element.style;
+                        var originalVisibility = style.visibility;
+                        var originalDisplay = style.display;
 
                         if (value) {
                             style.visibility = "hidden";
@@ -420,8 +413,11 @@ define([
                             style.visibility = "";
                             style.display = "inline-block";
                         }
-                        if (appbarControl) {
-                            appbarControl._commandsUpdated();
+
+                        if (!this._sendEvent(_Constants.commandVisibilityChanged)) {
+                            style.visibility = originalVisibility;
+                            style.display = originalDisplay;
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.CannotChangeHiddenProperty", _Resources._formatString(_Overlay._Overlay.commonstrings.cannotChangeHiddenProperty, ""));
                         }
                     }
                 },
@@ -642,6 +638,15 @@ define([
                 _isFocusable: function AppBarCommand_isFocusable() {
                     return (!this.hidden && this._type !== _Constants.typeSeparator && !this.element.disabled &&
                         (this.firstElementFocus.tabIndex >= 0 || this.lastElementFocus.tabIndex >= 0));
+                },
+
+                _sendEvent: function AppBarCommand_sendEvent(eventName, detail) {
+                    if (this._disposed) {
+                        return;
+                    }
+                    var event = _Global.document.createEvent("CustomEvent");
+                    event.initEvent(eventName, true, true, (detail || {}));
+                    return this._element.dispatchEvent(event);
                 },
             });
         })

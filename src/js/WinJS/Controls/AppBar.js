@@ -398,6 +398,17 @@ define([
 
                 _Control.setOptions(this, options);
 
+                var commandsUpdatedBound = this._commandsUpdated.bind(this);
+                this._element.addEventListener(_Constants.commandVisibilityChanged, function (ev) {
+                    if (that._disposed) {
+                        return;
+                    }
+                    if (!that.hidden) {
+                        ev.preventDefault();
+                    }
+                    commandsUpdatedBound();
+                });
+
                 this._initializing = false;
 
                 // Make a click eating div
@@ -520,12 +531,6 @@ define([
                         } else {
                             // Custom layout uses Base AppBar Layout class.
                             this._layout = new _Layouts._AppBarBaseLayout();
-                        }
-                        this._layout.connect(this._element);
-
-                        if (commands && commands.length) {
-                            // Reset AppBar since layout changed.
-                            this._layoutCommands(commands);
                         }
                         this._layout.connect(this._element);
 

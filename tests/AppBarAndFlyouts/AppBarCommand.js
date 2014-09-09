@@ -246,10 +246,16 @@ CorsicaTests.AppBarCommandTests = function () {
         var AppBar = new WinJS.UI.AppBar(AppBarElement, { commands: { type: 'separator', id: 'sep' } });
         LiveUnit.LoggingCore.logComment("set commands");
         AppBar.commands = [{ id: 'cmdA', label: 'One', icon: 'back', section: 'global', tooltip: 'Test glyph by name' }];
+        var commandVisibilityChangedCount = 0;
+        AppBarElement.addEventListener("commandvisibilitychanged", function() {
+            commandVisibilityChangedCount++;
+        });
         AppBar.hide();
         var cmd = AppBar.getCommandById("cmdA");
         cmd.hidden = true;
         LiveUnit.Assert.areEqual(true, cmd.hidden, "verify the command is now hidden");
+        LiveUnit.Assert.areEqual(1, commandVisibilityChangedCount, "commandvisibilitychanged event should have been fired");
+
         AppBar.show();
         var result = false;
         try {
@@ -258,7 +264,9 @@ CorsicaTests.AppBarCommandTests = function () {
             // we throw
             result = true;
         } finally {
+            LiveUnit.Assert.areEqual(true, cmd.hidden, "verify that hidden property did not change");
             LiveUnit.Assert.areEqual(true, result, "verify the hidden property throw the exception");
+            LiveUnit.Assert.areEqual(2, commandVisibilityChangedCount, "commandvisibilitychanged event should have been fired");
             AppBar.hide();
             document.body.removeChild(AppBarElement);
         }

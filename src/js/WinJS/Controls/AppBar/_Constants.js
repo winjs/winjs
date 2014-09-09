@@ -69,5 +69,8 @@ define([
         _clickEatingAppBarClass: "win-appbarclickeater",
         _clickEatingFlyoutClass: "win-flyoutmenuclickeater",
         _visualViewportClass: "win-visualviewport-space",
+
+        // Event names
+        commandVisibilityChanged: "commandvisibilitychanged",
     });
 });
