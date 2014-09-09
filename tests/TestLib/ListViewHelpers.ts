@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 ///<reference path="LegacyLiveUnit/CommonUtils.ts" />
 
-if (typeof (WinJS) !== "undefined") {
+
     "use strict";
     var utilities = WinJS.Utilities,
         constants = {
@@ -45,20 +45,15 @@ if (typeof (WinJS) !== "undefined") {
             };
         };
 
-    _ASSERT = function (condition) {
+    function _ASSERT(condition) {
         LiveUnit.Assert.isTrue(!!condition);
-    };
+    }
 
-    _TRACE = function (text) {
+    function _TRACE(text) {
         LiveUnit.LoggingCore.logComment(text);
-    };
+    }
 
-    // This should be included by unit tests. It adds GetWrappedCallback to setTimeout which is needed to report exceptions in LiveUnit
-    WinJS.UI._setTimeout = function (callback, delay) {
-        return window.setTimeout(LiveUnit.GetWrappedCallback(callback), delay);
-    };
-
-    WinJS.UI.ListDataSource = WinJS.Class.derive(WinJS.UI.VirtualizedDataSource, function (listDataAdapter) {
+    WinJS.UI['ListDataSource'] = WinJS.Class.derive(WinJS.UI.VirtualizedDataSource, function (listDataAdapter) {
         this._baseDataSourceConstructor(listDataAdapter);
     });
 
@@ -145,9 +140,9 @@ if (typeof (WinJS) !== "undefined") {
         }
     }
 
-    function waitForReady(listView, delay) {
+    function waitForReady(listView, delay?) {
         if (listView.winControl) { listView = listView.winControl; }
-        return function (x) {
+        return function (x?) {
             return new WinJS.Promise(function (c, e, p) {
                 function waitForReady_handler() {
                     LiveUnit.LoggingCore.logComment("waitForReady_handler, listView.loadingState:" + listView.loadingState);
@@ -286,7 +281,7 @@ if (typeof (WinJS) !== "undefined") {
     }
 
     function createAsyncRenderer(templateId, width, height, targetId, delay) {
-        var templateElement = document.getElementById(templateId).cloneNode(true);
+        var templateElement = <HTMLElement>document.getElementById(templateId).cloneNode(true);
         templateElement.id = "";
         var templateText = templateElement.innerHTML;
 
@@ -299,7 +294,7 @@ if (typeof (WinJS) !== "undefined") {
         }
 
         return function renderer(itemPromise) {
-            var element = templateElement.cloneNode(false);
+            var element = <HTMLElement>templateElement.cloneNode(false);
             element.style.width = width + "px";
             element.style.height = height + "px";
             element.style.display = "block";
@@ -319,7 +314,7 @@ if (typeof (WinJS) !== "undefined") {
     }
 
     function createRenderer(templateId, targetId) {
-        var element = document.getElementById(templateId).cloneNode(true);
+        var element = <HTMLElement>document.getElementById(templateId).cloneNode(true);
         element.id = "";
         var temp = element.outerHTML;
         return function renderer(itemPromise) {
@@ -329,9 +324,9 @@ if (typeof (WinJS) !== "undefined") {
                     var value = item.data[field];
                     return value !== undefined ? value : str;
                 });
-                var element = document.createElement("div");
+                var element:HTMLElement = document.createElement("div");
                 element.innerHTML = text;
-                element = element.firstChild;
+                element = <HTMLElement>element.firstChild;
                 element.style.display = "block";
                 if (targetId) {
                     element.id = targetId + item.index;
@@ -542,8 +537,8 @@ if (typeof (WinJS) !== "undefined") {
     }
 
     function offsetRightFromSurface(listView, element) {
-        var surfacePos = WinJS.Utilities.getPosition(listView._canvas),
-            elementPos = WinJS.Utilities.getPosition(element);
+        var surfacePos:any = WinJS.Utilities.getPosition(listView._canvas),
+            elementPos:any = WinJS.Utilities.getPosition(element);
         surfacePos.right = surfacePos.left + surfacePos.width;
         elementPos.right = elementPos.left + elementPos.width;
         return surfacePos.right - elementPos.right;
@@ -559,7 +554,7 @@ if (typeof (WinJS) !== "undefined") {
         bVal = ((bVal || 0) % 16).toString(16);
         return "#" + rVal + rVal + gVal + gVal + bVal + bVal;
     }
-    function getBasicDataSource(itemsCount, grouped, itemsPerGroup) {
+    function getBasicDataSource(itemsCount, grouped, itemsPerGroup):WinJS.Binding.ListBaseWithMutators<any> {
         var rawData = [];
         for (var i = 0; i < itemsCount; i++) {
             rawData.push({ index: i });
@@ -656,6 +651,8 @@ if (typeof (WinJS) !== "undefined") {
                     absoluteIndex: currentAbsoluteIndex,
                     left: (options.horizontal ? expectedStart : (options.canvasMargins.top + itemLayoutLocation.slot * options.totalItemWidth + (options.grouped && !options.headersInline ? options.headerSize : 0))),
                     top: (!options.horizontal ? expectedStart : (options.canvasMargins[options.rtl ? "right" : "left"] + itemLayoutLocation.slot * options.totalItemHeight + (options.grouped && !options.headersInline ? options.headerSize : 0))),
+                    itemWidth: null,
+                    itemHeight: null
                 };
                 itemDetails.left += options.itemMargins.left;
                 itemDetails.top += options.itemMargins.top;
@@ -696,8 +693,10 @@ if (typeof (WinJS) !== "undefined") {
             rules.push(rootClass + " .win-vertical .win-groupleader {margin-top: " + options.groupLeaderOffset + "px;}");
         }
 
+
+        var sheet = <CSSStyleSheet>styleElement.sheet;
         for (var i = 0; i < rules.length; i++) {
-            styleElement.sheet.insertRule(rules[i], styleElement.sheet.cssRules.length);
+            sheet.insertRule(rules[i], sheet.cssRules.length);
         }
 
         return styleElement;
@@ -806,11 +805,11 @@ if (typeof (WinJS) !== "undefined") {
         var layoutInfo = computeExpectedLayoutInformation(options);
         var styleElement = addStylesForView(root, options);
         root.style.direction = options.rtl ? "rtl" : "ltr";
-        var bindingList = getBasicDataSource(options.itemsCount, options.grouped, options.itemsPerGroup);
-        var layoutOptions = {
+        var bindingList = <WinJS.Binding.GroupedSortedListProjection<any>> getBasicDataSource(options.itemsCount, options.grouped, options.itemsPerGroup);
+        var layoutOptions:any = {
             orientation: options.orientation
         };
-        var viewOptions = {
+        var viewOptions:any = {
             itemDataSource: bindingList.dataSource,
             itemTemplate: options.itemTemplate,
         };
@@ -841,4 +840,3 @@ if (typeof (WinJS) !== "undefined") {
             }
         });
     }
-}

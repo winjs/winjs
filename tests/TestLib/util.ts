@@ -376,20 +376,16 @@ module Helper {
 
     // Creates a binding list out of the provided array (data) or
     // creates a new data array of specified size
-    export function createBindingList(size, data) {
+    export function createBindingList(size, data?) {
         return (data ? new WinJS.Binding.List(data) : new WinJS.Binding.List(Helper.createData(size)));
     };
 
     // Creates a VDS out of the provided array (data) or
     // creates a new data array of specified size
-    export function createTestDataSource(size, data, isSynchronous) {
+    export function createTestDataSource(size, data?, isSynchronous = true) {
         // Populate a data array
         if (!data) {
             data = Helper.createData(size);
-        }
-        // isSynchronous defaults to true
-        if (isSynchronous === undefined) {
-            isSynchronous = true;
         }
 
         // Create the datasource

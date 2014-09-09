@@ -1,46 +1,23 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/ListViewHelpers.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts" />
 /// <reference path="../TestLib/TestDataSource.ts"/>
 /// <reference path="../TestLib/util.ts" />
-/// <reference path="../TestData/ListView.less.css" />
+// <reference path="../TestData/ListView.less.css" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.SemanticZoomTests = function () {
     "use strict";
 
     var testRootEl;
 
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-
-        testRootEl = document.createElement("div");
-        testRootEl.className = "file-listview-css";
-
-        var newNode = document.createElement("div");
-        newNode.id = "SemanticZoomTests";
-        newNode.innerHTML =
-            "<div id='sezoDiv' style='width:500px; height:500px'><div id='child1'></div><div id='child2'></div></div>";
-        testRootEl.appendChild(newNode);
-        document.body.appendChild(testRootEl);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        WinJS.Utilities.disposeSubTree(testRootEl);
-        document.body.removeChild(testRootEl);
-    };
-
-    var that = this;
-
-    function createSezo(layoutOptions, gids, gds, sezoOptions) {
+    function createSezo(layoutOptions, gids, gds, sezoOptions?) {
         var sezoDiv = document.getElementById("sezoDiv"),
-            listDiv1 = sezoDiv.children[0],
-            listDiv2 = sezoDiv.children[1],
+            listDiv1 = <HTMLElement>sezoDiv.children[0],
+            listDiv2 = <HTMLElement>sezoDiv.children[1],
             layoutName = layoutOptions.type,
             orientation = layoutOptions.orientation,
             list1 = new WinJS.UI.ListView(listDiv1, {
@@ -55,16 +32,16 @@ WinJSTests.SemanticZoomTests = function () {
                 itemTemplate: Helper.syncJSTemplate,
                 layout: new WinJS.UI[layoutName]({ orientation: orientation })
             }),
-            sezo = new WinJS.UI.SemanticZoom(sezoDiv, (sezoOptions ? sezoOptions : {}));
+            sezo = <WinJS.UI.ISemanticZoom> new WinJS.UI.SemanticZoom(sezoDiv, (sezoOptions ? sezoOptions : {}));
 
         // Verify accessibility
         var checkAttribute = function (element, attribute, expectedValue) {
             var values = element.getAttribute(attribute).match(expectedValue),
-            value = values ? values[0] : null;
+                value = values ? values[0] : null;
 
             LiveUnit.LoggingCore.logComment("Expected " + attribute + ": " + expectedValue + " Actual: " + value);
             LiveUnit.Assert.areEqual(value, expectedValue, "Expected " + attribute + ": " + expectedValue +
-                    " Actual: " + value);
+                " Actual: " + value);
         };
 
         checkAttribute(sezo.element, "role", "ms-semanticzoomcontainer");
@@ -77,7 +54,7 @@ WinJSTests.SemanticZoomTests = function () {
         return sezo;
     }
 
-    function createSezoWithBindingList(layoutOptions, itemCount, sezoOptions) {
+    function createSezoWithBindingList(layoutOptions, itemCount, sezoOptions?) {
         var bl = Helper.createBindingList(itemCount),
             groupBL = bl.createGrouped(Helper.groupKey, Helper.groupData),
             sezo = createSezo(layoutOptions, groupBL.dataSource, groupBL.groups.dataSource, sezoOptions);
@@ -116,9 +93,9 @@ WinJSTests.SemanticZoomTests = function () {
                     centerY = list1._viewport.scrollTop + parseInt(style.height, 10) / 2,
                     centerItemIndex = -1;
 
-                centerItemIndex = list1.layout.hitTest(centerX, centerY);
-                if (+centerItemIndex.index === centerItemIndex.index) {
-                    centerItemIndex = centerItemIndex.index;
+                var hitTest = list1.layout.hitTest(centerX, centerY);
+                if (+hitTest.index === hitTest.index) {
+                    centerItemIndex = hitTest.index;
                 }
 
                 LiveUnit.Assert.isTrue(centerItemIndex >= 0, "Hit test failed. Index of item at viewport center: " + centerItemIndex);
@@ -154,7 +131,7 @@ WinJSTests.SemanticZoomTests = function () {
                 });
             }).
             then(waitForReady(list2)).
-            then(function (currentItem) {
+            then(function (currentItem: any) {
                 // currentItem in the zoomed out view should be a group item.
                 // zoomItem should be belonging to this group.
 
@@ -224,7 +201,7 @@ WinJSTests.SemanticZoomTests = function () {
                     sezo._onKeyDown(eventObj);
                 });
             }).
-            then(function (currentItem) {
+            then(function (currentItem: any) {
                 // currentItem in the zoomed out view should be a group item.
                 // zoomItem should be belonging to this group.
 
@@ -241,6 +218,200 @@ WinJSTests.SemanticZoomTests = function () {
                 VerifyIsVisible(list2, currentItem.item.index);
             });
     }
+
+    export class SemanticZoomTests {
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+
+            var newNode = document.createElement("div");
+            newNode.id = "SemanticZoomTests";
+            newNode.innerHTML =
+            "<div id='sezoDiv' style='width:500px; height:500px'><div id='child1'></div><div id='child2'></div></div>";
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
+        }
+
+
+
+
+
+        testSezoButtonVisibilityOnLock(complete) {
+            var sezo = createSezoWithBindingList({ type: "GridLayout", orientation: WinJS.UI.Orientation.horizontal }, 500),
+                listDiv1 = document.getElementById("child1"),
+                listDiv2 = document.getElementById("child2"),
+                buttonClass = "win-semanticzoom-button";
+            if (WinJS.Utilities.isPhone) {
+                complete();
+            } else {
+                waitForReady(listDiv1.winControl)().
+                    then(function () {
+                        // Button is shown only on mouse move and pen hover
+                        // Ensure the button is visible
+                        var button = <HTMLElement>document.getElementsByClassName(buttonClass)[0];
+                        sezo._showSemanticZoomButton();
+
+                        // Lock the sezo
+                        sezo.locked = true;
+
+                        // Wait for the fadeOut animation to finish before checking the visibility again
+                        return WinJS.Promise.timeout(500).then(function () {
+                            LiveUnit.Assert.areEqual("hidden", button.style.visibility, "Button should be hidden");
+                        });
+                    }).
+                    done(complete, function (er) {
+                        throw er;
+                    });
+            }
+        }
+
+
+
+        testOutOfBoundsGridLayout(complete) {
+            var sezoDiv = document.getElementById("sezoDiv"),
+                listDiv1 = document.getElementById("child1"),
+                listDiv2 = document.getElementById("child2");
+            function simpleRenderer(itemPromise) {
+                var el = document.createElement("div");
+                el.style.width = "50px";
+                el.style.height = "50px";
+                return {
+                    element: el,
+                    renderComplete: itemPromise.then(function (d) {
+                        el.textContent = d.data;
+                    })
+                };
+            }
+            var inView = new WinJS.UI.ListView(listDiv1, {
+                itemDataSource: new WinJS.Binding.List([1, 2, 3]).dataSource,
+                itemTemplate: simpleRenderer,
+                layout: new WinJS.UI.GridLayout()
+            });
+            var outView = new WinJS.UI.ListView(listDiv2, {
+                itemDataSource: new WinJS.Binding.List([1, 2, 3]).dataSource,
+                itemTemplate: simpleRenderer,
+                layout: new WinJS.UI.GridLayout()
+            });
+            function doNothingMappingFunction(item) {
+                return {
+                    groupIndexHint: 0,
+                    firstItemIndexHint: 0,
+                };
+            }
+            var sezoRect = sezoDiv.getBoundingClientRect();
+            var fakeEventObject: any = {
+                clientX: sezoRect.left + sezoDiv.offsetWidth - 100,
+                clientY: sezoRect.top + 50,
+                preventDefault: function () { },
+                stopPropagation: function () { },
+                srcElement: sezoDiv,
+                ctrlKey: true
+            };
+            WinJS.Promise.join([waitForReady(inView)(), waitForReady(outView)()]).then(function () {
+                var sezo = <WinJS.UI.ISemanticZoom> new WinJS.UI.SemanticZoom(sezoDiv, {
+                    zoomedInItem: doNothingMappingFunction,
+                    zoomedOutItem: doNothingMappingFunction
+                });
+
+                function onZoomedOut() {
+                    sezo.removeEventListener("zoomchanged", onZoomedOut);
+                    sezo.addEventListener("zoomchanged", onZoomedIn);
+                    fakeEventObject.wheelDelta = 1;
+                    sezo._onMouseWheel(fakeEventObject);
+                }
+                function onZoomedIn() {
+                    sezo.removeEventListener("zoomchanged", onZoomedIn);
+                    WinJS.Utilities._setImmediate(complete);
+                }
+                sezo.addEventListener("zoomchanged", onZoomedOut);
+                fakeEventObject.wheelDelta = -1;
+                sezo._onMouseWheel(fakeEventObject);
+            });
+        }
+
+        testSezoSizeTruncation(complete) {
+            var width = "1000.4px";
+            var height = "800.3px";
+
+            var lv1 = new WinJS.UI.ListView();
+            var lv2 = new WinJS.UI.ListView();
+
+            var sezoDiv = document.createElement("div");
+            sezoDiv.style.width = width;
+            sezoDiv.style.height = height;
+            testRootEl.appendChild(sezoDiv);
+            sezoDiv.appendChild(lv1.element);
+            sezoDiv.appendChild(lv2.element);
+
+            var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
+
+            WinJS.Utilities._setImmediate(function () {
+                var csSezo = getComputedStyle(sezoDiv);
+                var csLv1 = getComputedStyle(lv1.element);
+                var csLv2 = getComputedStyle(lv2.element);
+
+                LiveUnit.Assert.areEqual(csSezo.width, csLv1.width);
+                LiveUnit.Assert.areEqual(csSezo.width, csLv2.width);
+
+                LiveUnit.Assert.areEqual(csSezo.height, csLv1.height);
+                LiveUnit.Assert.areEqual(csSezo.height, csLv2.height);
+
+                complete();
+            });
+        }
+
+        testSezoPinching() {
+            var sezoDiv = document.getElementById("sezoDiv"),
+                childDiv1 = document.getElementById("child1"),
+                childDiv2 = document.getElementById("child2");
+
+            childDiv1.winControl = {
+                zoomableView: {
+                    pinching: false,
+                    getPanAxis: function () {
+                        return "horizontal";
+                    },
+                    configureForZoom: function () {
+                        //noop
+                    }
+                }
+            }
+
+        childDiv2.winControl = {
+                zoomableView: {
+                    pinching: false,
+                    getPanAxis: function () {
+                        return "horizontal";
+                    },
+                    configureForZoom: function () {
+                        //noop
+                    }
+                }
+            }
+
+        var sezo = <WinJS.UI.ISemanticZoom> new WinJS.UI.SemanticZoom(sezoDiv);
+
+            LiveUnit.Assert.areEqual(false, childDiv1.winControl.zoomableView.pinching);
+            LiveUnit.Assert.areEqual(false, childDiv2.winControl.zoomableView.pinching);
+
+            sezo._pinching = true;
+            LiveUnit.Assert.areEqual(true, childDiv1.winControl.zoomableView.pinching);
+            LiveUnit.Assert.areEqual(true, childDiv2.winControl.zoomableView.pinching);
+
+            sezo._pinching = false;
+            LiveUnit.Assert.areEqual(false, childDiv1.winControl.zoomableView.pinching);
+            LiveUnit.Assert.areEqual(false, childDiv2.winControl.zoomableView.pinching);
+        }
+    };
 
     (function () {
         function generateTest(input) {
@@ -266,7 +437,7 @@ WinJSTests.SemanticZoomTests = function () {
                                             return keyboardZoomAndVerify(sezo, index);
                                             break;
 
-                                            // TODO: add tests for touch inputs
+                                        // TODO: add tests for touch inputs
                                         default:
                                     }
                                 }).
@@ -277,14 +448,14 @@ WinJSTests.SemanticZoomTests = function () {
                     }
 
                     // These tests verify the API zoom feature
-                    that["test" + input + "ZoomFromStartBindingList_" + layoutName + "_" + orientation] = generateTest1(createSezoWithBindingList, 0);
-                    that["test" + input + "ZoomFromMiddleBindingList_" + layoutName + "_" + orientation] = generateTest1(createSezoWithBindingList, 500);
-                    that["test" + input + "ZoomFromEndBindingList_" + layoutName + "_" + orientation] = generateTest1(createSezoWithBindingList, 999);
-                    that["test" + input + "ZoomFromStartVDS_" + layoutName + "_" + orientation] = generateTest1(createSezoWithVDS, 0);
-                    that["test" + input + "ZoomFromMiddleVDS_" + layoutName + "_" + orientation] = generateTest1(createSezoWithVDS, 500);
-                    that["test" + input + "ZoomFromEndVDS_" + layoutName + "_" + orientation] = generateTest1(createSezoWithVDS, 999);
-                }.bind(this));
-            }.bind(this));
+                    SemanticZoomTests.prototype["test" + input + "ZoomFromStartBindingList_" + layoutName + "_" + orientation] = generateTest1(createSezoWithBindingList, 0);
+                    SemanticZoomTests.prototype["test" + input + "ZoomFromMiddleBindingList_" + layoutName + "_" + orientation] = generateTest1(createSezoWithBindingList, 500);
+                    SemanticZoomTests.prototype["test" + input + "ZoomFromEndBindingList_" + layoutName + "_" + orientation] = generateTest1(createSezoWithBindingList, 999);
+                    SemanticZoomTests.prototype["test" + input + "ZoomFromStartVDS_" + layoutName + "_" + orientation] = generateTest1(createSezoWithVDS, 0);
+                    SemanticZoomTests.prototype["test" + input + "ZoomFromMiddleVDS_" + layoutName + "_" + orientation] = generateTest1(createSezoWithVDS, 500);
+                    SemanticZoomTests.prototype["test" + input + "ZoomFromEndVDS_" + layoutName + "_" + orientation] = generateTest1(createSezoWithVDS, 999);
+                });
+            });
         }
 
         generateTest("Keyboard");
@@ -342,8 +513,8 @@ WinJSTests.SemanticZoomTests = function () {
             };
         }
 
-        that["testSezoOpacityAndVisibilityWithResizeGridLayout"] = generateTest("GridLayout", true);
-        that["testSezoOpacityAndVisibilityWithoutResizeGridLayout"] = generateTest("GridLayout", false);
+        SemanticZoomTests.prototype["testSezoOpacityAndVisibilityWithResizeGridLayout"] = generateTest("GridLayout", true);
+        SemanticZoomTests.prototype["testSezoOpacityAndVisibilityWithoutResizeGridLayout"] = generateTest("GridLayout", false);
     })();
 
     (function () {
@@ -372,8 +543,8 @@ WinJSTests.SemanticZoomTests = function () {
             };
         }
 
-        that["testStartZoomedOutBindingListGridLayout"] = generateTest("GridLayout", createSezoWithBindingList);
-        that["testStartZoomedOutVDSGridLayout"] = generateTest("GridLayout", createSezoWithVDS);
+        SemanticZoomTests.prototype["testStartZoomedOutBindingListGridLayout"] = generateTest("GridLayout", createSezoWithBindingList);
+        SemanticZoomTests.prototype["testStartZoomedOutVDSGridLayout"] = generateTest("GridLayout", createSezoWithVDS);
     })();
 
     (function () {
@@ -393,7 +564,7 @@ WinJSTests.SemanticZoomTests = function () {
                             LiveUnit.Assert.isNotNull(sezo.element.querySelector(".win-semanticzoom-button"), "Sezo button is not present");
 
                             // Button should be visible only on mousemove. Verify button is hidden
-                            LiveUnit.Assert.areEqual(sezo.element.querySelector(".win-semanticzoom-button").style.visibility, "hidden",
+                            LiveUnit.Assert.areEqual((<HTMLElement>sezo.element.querySelector(".win-semanticzoom-button")).style.visibility, "hidden",
                                 "Sezo button is visible when it shouldn't be");
                         } else {
                             // Verify the button is not present
@@ -407,8 +578,8 @@ WinJSTests.SemanticZoomTests = function () {
             };
         }
 
-        that["testSezoButtonEnabledGridLayout"] = generateTest("GridLayout", true);
-        that["testSezoButtonDisabledGridLayout"] = generateTest("GridLayout", false);
+        SemanticZoomTests.prototype["testSezoButtonEnabledGridLayout"] = generateTest("GridLayout", true);
+        SemanticZoomTests.prototype["testSezoButtonDisabledGridLayout"] = generateTest("GridLayout", false);
     })();
 
     (function () {
@@ -430,8 +601,8 @@ WinJSTests.SemanticZoomTests = function () {
                 };
             }
 
-            that["testWaitForAriaWorkerSezoBindingList_" + layoutName] = generateTest(layoutName, createSezoWithBindingList);
-            that["testWaitForAriaWorkerSezoVDS_" + layoutName] = generateTest(layoutName, createSezoWithVDS);
+            SemanticZoomTests.prototype["testWaitForAriaWorkerSezoBindingList_" + layoutName] = generateTest(layoutName, createSezoWithBindingList);
+            SemanticZoomTests.prototype["testWaitForAriaWorkerSezoVDS_" + layoutName] = generateTest(layoutName, createSezoWithVDS);
         });
     })();
 
@@ -462,39 +633,10 @@ WinJSTests.SemanticZoomTests = function () {
         }
 
         // WinBlue: 169137 regression test
-        that["testChangingListViewLayoutDuringZoomGridToList"] = generateTest("GridLayout", "ListLayout");
-        that["testChangingListViewLayoutDuringZoomListToGrid"] = generateTest("ListLayout", "GridLayout");
+        SemanticZoomTests.prototype["testChangingListViewLayoutDuringZoomGridToList"] = generateTest("GridLayout", "ListLayout");
+        SemanticZoomTests.prototype["testChangingListViewLayoutDuringZoomListToGrid"] = generateTest("ListLayout", "GridLayout");
 
     })();
-
-    this.testSezoButtonVisibilityOnLock = function (complete) {
-        var sezo = createSezoWithBindingList({ type: "GridLayout", orientation: WinJS.UI.Orientation.horizontal }, 500),
-            listDiv1 = document.getElementById("child1"),
-            listDiv2 = document.getElementById("child2"),
-            buttonClass = "win-semanticzoom-button";
-        if (WinJS.Utilities.isPhone) {
-            complete();
-        } else {
-            waitForReady(listDiv1.winControl)().
-                then(function () {
-                    // Button is shown only on mouse move and pen hover
-                    // Ensure the button is visible
-                    var button = document.getElementsByClassName(buttonClass)[0];
-                    sezo._showSemanticZoomButton();
-
-                    // Lock the sezo
-                    sezo.locked = true;
-
-                    // Wait for the fadeOut animation to finish before checking the visibility again
-                    return WinJS.Promise.timeout(500).then(function () {
-                        LiveUnit.Assert.areEqual("hidden", button.style.visibility, "Button should be hidden");
-                    });
-                }).
-                done(complete, function (er) {
-                    throw er;
-                });
-        }
-    };
 
     (function () {
         function generateTest(layoutName, sezoOptions) {
@@ -524,8 +666,8 @@ WinJSTests.SemanticZoomTests = function () {
         }
 
         // Test setting the locked property outside the constructor
-        that["testLockedZoomedInViewPropertyGridLayout"] = generateTest("GridLayout", { initiallyZoomedOut: false });
-        that["testLockedZoomedOutViewPropertyGridLayout"] = generateTest("GridLayout", { initiallyZoomedOut: true });
+        SemanticZoomTests.prototype["testLockedZoomedInViewPropertyGridLayout"] = generateTest("GridLayout", { initiallyZoomedOut: false });
+        SemanticZoomTests.prototype["testLockedZoomedOutViewPropertyGridLayout"] = generateTest("GridLayout", { initiallyZoomedOut: true });
     })();
 
     (function () {
@@ -556,8 +698,8 @@ WinJSTests.SemanticZoomTests = function () {
         }
 
         // Test the locked property in constructor
-        that["testLockedZoomedInViewCtorGridLayout"] = generateTest("GridLayout", { initiallyZoomedOut: false });
-        that["testLockedZoomedOutViewCtorGridLayout"] = generateTest("GridLayout", { initiallyZoomedOut: true });
+        SemanticZoomTests.prototype["testLockedZoomedInViewCtorGridLayout"] = generateTest("GridLayout", { initiallyZoomedOut: false });
+        SemanticZoomTests.prototype["testLockedZoomedOutViewCtorGridLayout"] = generateTest("GridLayout", { initiallyZoomedOut: true });
     })();
 
     (function () {
@@ -574,28 +716,28 @@ WinJSTests.SemanticZoomTests = function () {
             };
         }
 
-        that["testEmptySezoBindingListGridLayout"] = generateTest("GridLayout", createSezoWithBindingList);
-        that["testEmptySezoVDSGridLayout"] = generateTest("GridLayout", createSezoWithVDS);
+        SemanticZoomTests.prototype["testEmptySezoBindingListGridLayout"] = generateTest("GridLayout", createSezoWithBindingList);
+        SemanticZoomTests.prototype["testEmptySezoVDSGridLayout"] = generateTest("GridLayout", createSezoWithVDS);
     })();
 
-    this.generateSezoOnZoomChangedOption = function (layoutName) {
-        this["testSezoOnZoomChangedOption" + layoutName] = function (complete) {
+    function generateSezoOnZoomChangedOption(layoutName) {
+        SemanticZoomTests.prototype["testSezoOnZoomChangedOption" + layoutName] = function (complete) {
 
             function zoomChangedHandler(e) {
                 WinJS.Utilities._setImmediate(complete);
             }
 
             var sezo = createSezoWithBindingList({ type: layoutName, orientation: WinJS.UI.Orientation.horizontal }, 10, { onzoomchanged: zoomChangedHandler }),
-            listDiv1 = document.getElementById("child1"),
-            listDiv2 = document.getElementById("child2");
+                listDiv1 = document.getElementById("child1"),
+                listDiv2 = document.getElementById("child2");
 
             sezo.zoomedOut = !sezo.zoomedOut;
         };
-    };
-    this.generateSezoOnZoomChangedOption("GridLayout");
+    }
+    generateSezoOnZoomChangedOption("GridLayout");
 
-    this.generateDefaultAriaLabel = function (layoutName) {
-        this["testDefaultAriaLabel" + layoutName] = function (complete) {
+    function generateDefaultAriaLabel(layoutName) {
+        SemanticZoomTests.prototype["testDefaultAriaLabel" + layoutName] = function (complete) {
             var sezoDiv = document.getElementById("sezoDiv"),
                 listDiv1 = document.getElementById("child1"),
                 listDiv2 = document.getElementById("child2"),
@@ -605,11 +747,11 @@ WinJSTests.SemanticZoomTests = function () {
             LiveUnit.Assert.areEqual(label, "", "Default aria-label is not empty");
             complete();
         };
-    };
-    this.generateDefaultAriaLabel("GridLayout");
+    }
+    generateDefaultAriaLabel("GridLayout");
 
-    this.generateSettingAriaLabel = function (layoutName) {
-        this["testSettingAriaLabel" + layoutName] = function (complete) {
+    function generateSettingAriaLabel(layoutName) {
+        SemanticZoomTests.prototype["testSettingAriaLabel" + layoutName] = function (complete) {
             var sezoDiv = document.getElementById("sezoDiv"),
                 listDiv1 = document.getElementById("child1"),
                 listDiv2 = document.getElementById("child2"),
@@ -627,10 +769,10 @@ WinJSTests.SemanticZoomTests = function () {
             complete();
         };
     };
-    this.generateSettingAriaLabel("GridLayout");
+    generateSettingAriaLabel("GridLayout");
 
-    this.generateSezoDispose = function (layoutName) {
-        this["testDisposeSezo" + layoutName] = function (complete) {
+    function generateSezoDispose(layoutName) {
+        SemanticZoomTests.prototype["testDisposeSezo" + layoutName] = function (complete) {
             var sezoDiv = document.getElementById("sezoDiv"),
                 listDiv1 = document.getElementById("child1"),
                 listDiv2 = document.getElementById("child2"),
@@ -644,146 +786,8 @@ WinJSTests.SemanticZoomTests = function () {
             complete();
         };
     }
-    this.generateSezoDispose("GridLayout");
-
-    this.testOutOfBoundsGridLayout = function (complete) {
-        var sezoDiv = document.getElementById("sezoDiv"),
-            listDiv1 = document.getElementById("child1"),
-            listDiv2 = document.getElementById("child2");
-        function simpleRenderer(itemPromise) {
-            var el = document.createElement("div");
-            el.style.width = "50px";
-            el.style.height = "50px";
-            return {
-                element: el,
-                renderComplete: itemPromise.then(function (d) {
-                    el.textContent = d.data;
-                })
-            };
-        }
-        var inView = new WinJS.UI.ListView(listDiv1, {
-            itemDataSource: new WinJS.Binding.List([1, 2, 3]).dataSource,
-            itemTemplate: simpleRenderer,
-            layout: new WinJS.UI.GridLayout()
-        });
-        var outView = new WinJS.UI.ListView(listDiv2, {
-            itemDataSource: new WinJS.Binding.List([1, 2, 3]).dataSource,
-            itemTemplate: simpleRenderer,
-            layout: new WinJS.UI.GridLayout()
-        });
-        function doNothingMappingFunction(item) {
-            return {
-                groupIndexHint: 0,
-                firstItemIndexHint: 0,
-            };
-        }
-        var sezoRect = sezoDiv.getBoundingClientRect();
-        var fakeEventObject = {
-            clientX: sezoRect.left + sezoDiv.offsetWidth - 100,
-            clientY: sezoRect.top + 50,
-            preventDefault: function () { },
-            stopPropagation: function () { },
-            srcElement: sezoDiv,
-            ctrlKey: true
-        };
-        WinJS.Promise.join([waitForReady(inView)(), waitForReady(outView)()]).then(function () {
-            var sezo = new WinJS.UI.SemanticZoom(sezoDiv, {
-                zoomedInItem: doNothingMappingFunction,
-                zoomedOutItem: doNothingMappingFunction
-            });
-
-            function onZoomedOut() {
-                sezo.removeEventListener("zoomchanged", onZoomedOut);
-                sezo.addEventListener("zoomchanged", onZoomedIn);
-                fakeEventObject.wheelDelta = 1;
-                sezo._onMouseWheel(fakeEventObject);
-            }
-            function onZoomedIn() {
-                sezo.removeEventListener("zoomchanged", onZoomedIn);
-                WinJS.Utilities._setImmediate(complete);
-            }
-            sezo.addEventListener("zoomchanged", onZoomedOut);
-            fakeEventObject.wheelDelta = -1;
-            sezo._onMouseWheel(fakeEventObject);
-        });
-    };
-
-    this.testSezoSizeTruncation = function (complete) {
-        var width = "1000.4px";
-        var height = "800.3px";
-
-        var lv1 = new WinJS.UI.ListView();
-        var lv2 = new WinJS.UI.ListView();
-
-        var sezoDiv = document.createElement("div");
-        sezoDiv.style.width = width;
-        sezoDiv.style.height = height;
-        testRootEl.appendChild(sezoDiv);
-        sezoDiv.appendChild(lv1.element);
-        sezoDiv.appendChild(lv2.element);
-
-        var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
-
-        WinJS.Utilities._setImmediate(function () {
-            var csSezo = getComputedStyle(sezoDiv);
-            var csLv1 = getComputedStyle(lv1.element);
-            var csLv2 = getComputedStyle(lv2.element);
-
-            LiveUnit.Assert.areEqual(csSezo.width, csLv1.width);
-            LiveUnit.Assert.areEqual(csSezo.width, csLv2.width);
-
-            LiveUnit.Assert.areEqual(csSezo.height, csLv1.height);
-            LiveUnit.Assert.areEqual(csSezo.height, csLv2.height);
-
-            complete();
-        });
-    };
-
-    this.testSezoPinching = function () {
-        var sezoDiv = document.getElementById("sezoDiv"),
-            childDiv1 = document.getElementById("child1"),
-            childDiv2 = document.getElementById("child2");
-
-        childDiv1.winControl = {
-            zoomableView: {
-                pinching: false,
-                getPanAxis: function () {
-                    return "horizontal";
-                },
-                configureForZoom: function () {
-                    //noop
-                }
-            }
-        }
-
-        childDiv2.winControl = {
-            zoomableView: {
-                pinching: false,
-                getPanAxis: function () {
-                    return "horizontal";
-                },
-                configureForZoom: function () {
-                    //noop
-                }
-            }
-        }
-
-        var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
-
-        LiveUnit.Assert.areEqual(false, childDiv1.winControl.zoomableView.pinching);
-        LiveUnit.Assert.areEqual(false, childDiv2.winControl.zoomableView.pinching);
-
-        sezo._pinching = true;
-        LiveUnit.Assert.areEqual(true, childDiv1.winControl.zoomableView.pinching);
-        LiveUnit.Assert.areEqual(true, childDiv2.winControl.zoomableView.pinching);
-
-        sezo._pinching = false;
-        LiveUnit.Assert.areEqual(false, childDiv1.winControl.zoomableView.pinching);
-        LiveUnit.Assert.areEqual(false, childDiv2.winControl.zoomableView.pinching);
-    };
-};
-
-if (WinJS.UI.SemanticZoom) {
-    // register the object as a test class by passing in the name
-    LiveUnit.registerTestClass("WinJSTests.SemanticZoomTests");
+    generateSezoDispose("GridLayout");
 }
+
+
+LiveUnit.registerTestClass("WinJSTests.SemanticZoomTests");

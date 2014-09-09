@@ -119,5 +119,35 @@ declare module WinJS {
             _minuteControl: ISelect;
             _minuteElement: HTMLSelectElement;
         }
+
+        interface ISemanticZoom extends WinJS.UI.SemanticZoom {
+            _showSemanticZoomButton();
+            _onMouseWheel(evt);
+            _pinching: boolean;
+            _viewportIn;
+            _viewportOut;
+            _canvasIn;
+            _canvasOut;
+            _disposed;
+        }
+
+        var _listViewClass: string;
+        var _viewportClass: string;
+        var _horizontalClass: string;
+        var _verticalClass: string;
+        var _scrollableClass: string;
+        var _containerClass: string;
+        var _headerContainerClass: string;
+
+        module _ListViewAnimationHelper {
+            function fadeInElement(element): Promise<any>;
+            function fadeOutElement(element): Promise < any>;
+            function animateEntrance(canvas, firstEntrance): Promise<any>;
+        }
+
+        module _VirtualizeContentsView {
+            var _maxTimePerCreateContainers;
+        }
+
     }
 }

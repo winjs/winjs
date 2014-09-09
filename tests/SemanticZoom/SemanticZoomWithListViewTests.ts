@@ -1,15 +1,14 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
-/// <reference path="../TestLib/ListViewHelpers.js" />
+/// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <deploy src="../TestData/" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.SemanticZoomWithListViewTests = function () {
     "use strict";
 
     var zoomedInListViewId = "SezoLVTestsZoomedInListView";
@@ -21,45 +20,51 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
     // Even with animations disabled, these tests can take a good 5-6 seconds if each item is tested individually. We'll skip ahead by testStep instead of
     // going through each item.
     var testStep = 7;
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
 
-        function addNode(id, parent) {
-            var newNode = document.createElement("div");
-            newNode.id = id;
-            newNode.style.width = defaultWidth + "px";
-            newNode.style.height = defaultHeight + "px";
-            (parent ? parent : document.body).appendChild(newNode);
-            return newNode;
+    var _oldMaxTimePerCreateContainers;
+
+    export class SemanticZoomWithListViewTests {
+        
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+
+            function addNode(id, parent?) {
+                var newNode = document.createElement("div");
+                newNode.id = id;
+                newNode.style.width = defaultWidth + "px";
+                newNode.style.height = defaultHeight + "px";
+                (parent ? parent : document.body).appendChild(newNode);
+                return newNode;
+            }
+            var root = addNode(sezoRootId);
+            addNode(zoomedInListViewId, root);
+            addNode(zoomedOutListViewId, root);
+            removeListviewAnimations();
+
+            //WinBlue: 298587
+            _oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
+            WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
         }
-        var root = addNode(sezoRootId);
-        addNode(zoomedInListViewId, root);
-        addNode(zoomedOutListViewId, root);
-        removeListviewAnimations();
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
 
-        //WinBlue: 298587
-        this._oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
-        WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
+            WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = _oldMaxTimePerCreateContainers;
+            function removeNode(id) {
+                var element = document.getElementById(id);
+                element.parentNode.removeChild(element);
+            }
+            removeNode(zoomedOutListViewId);
+            removeNode(zoomedInListViewId);
+            removeNode(sezoRootId);
+            restoreListviewAnimations();
+        }
+    
     };
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
 
-        WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = this._oldMaxTimePerCreateContainers;
-        function removeNode(id) {
-            var element = document.getElementById(id);
-            element.parentNode.removeChild(element);
-        }
-        removeNode(zoomedOutListViewId);
-        removeNode(zoomedInListViewId);
-        removeNode(sezoRootId);
-        restoreListviewAnimations();
-    }
-
-
-    this.generate = function (name, disableAnimations, testFunction) {
-        function generateTest(that, direction, grouped, headersAbove, rtl, layoutName) {
+    function generate(name, disableAnimations, testFunction) {
+        function generateTest(direction, grouped, headersAbove, rtl, layoutName) {
             var fullName = name + layoutName + "_" + direction + (grouped ? "_grouped_" + (headersAbove ? "headersOnTop_" : "headersOnLeft_") : "_") + (rtl ? "rtl" : "ltr");
-            that[fullName] = function (complete) {
+            SemanticZoomWithListViewTests.prototype[fullName] = function (complete) {
                 LiveUnit.LoggingCore.logComment("in " + fullName);
                 var root = document.getElementById(sezoRootId),
                     inView = document.getElementById(zoomedInListViewId),
@@ -98,8 +103,6 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
             };
         }
 
-        var that = this;
-
         // Cover all pair combinations of configurations.
         Helper.pairwise({
             direction: ["horizontal", "vertical"],
@@ -107,18 +110,18 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
             headersAbove: [true, false],
             rtl: [true, false],
             layoutName: ["ListLayout", "GridLayout"]
-        },[
-            // Some configurations are more important because they've found bugs in the past,
-            // so configure them explicitly
+        }, [
+                // Some configurations are more important because they've found bugs in the past,
+                // so configure them explicitly
 
-            // Scenario 1: Horizontal grouped grid with headers to the side (with and without RTL)
-            { direction: "horizontal", grouped: true, headersAbove: false, rtl: true, layoutName: "GridLayout"},
-            { direction: "horizontal", grouped: true, headersAbove: false, rtl: false, layoutName: "GridLayout"},
-            // Scenario 2: Vertical grouped grid with headers above
-            { direction: "vertical", grouped: true, headersAbove: true, rtl: false, layoutName: "GridLayout"}
-        ]).forEach(function(testCase) {
-            generateTest(that, testCase.direction, testCase.grouped, testCase.headersAbove, testCase.rtl, testCase.layoutName);
-        });
+                // Scenario 1: Horizontal grouped grid with headers to the side (with and without RTL)
+                { direction: "horizontal", grouped: true, headersAbove: false, rtl: true, layoutName: "GridLayout" },
+                { direction: "horizontal", grouped: true, headersAbove: false, rtl: false, layoutName: "GridLayout" },
+                // Scenario 2: Vertical grouped grid with headers above
+                { direction: "vertical", grouped: true, headersAbove: true, rtl: false, layoutName: "GridLayout" }
+            ]).forEach(function (testCase) {
+                generateTest(testCase.direction, testCase.grouped, testCase.headersAbove, testCase.rtl, testCase.layoutName);
+            });
     }
 
     var originalIsAnimationEnabled = null;
@@ -137,7 +140,7 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
         }
     }
 
-    function generateMouseWheelEventInSezo(sezo, targetElement, zoomIn, rtl, offset) {
+    function generateMouseWheelEventInSezo(sezo, targetElement, zoomIn, rtl, offset?) {
         offset = offset || { x: 5, y: 5 };
         var elementRect = targetElement.getBoundingClientRect();
         var fakeEventObject = {
@@ -170,7 +173,7 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
         return signal.promise;
     }
 
-    this.generate("testZoomInOutMapping", true, function (sezo, inViewDetails, outViewDetails, rtl, complete) {
+    generate("testZoomInOutMapping", true, function (sezo, inViewDetails, outViewDetails, rtl, complete) {
         var inListView = inViewDetails.listView,
             outListView = outViewDetails.listView;
 
@@ -210,7 +213,7 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
         var middleGroup = Math.floor(outViewDetails.layoutInfo.itemsCount / 3);
         var lastGroup = outViewDetails.layoutInfo.itemsCount - 1;
         var zoomedInIndicies = [
-            // first group
+        // first group
             0,
             zoomedInItemsPerZoomedOutItem - 1,
             // middleGroup group
@@ -240,7 +243,7 @@ WinJSTests.SemanticZoomWithListViewTests = function () {
 
         testNextItem();
     });
-};
-if (WinJS.UI.SemanticZoom) {
-    LiveUnit.registerTestClass("WinJSTests.SemanticZoomWithListViewTests");
+
 }
+
+LiveUnit.registerTestClass("WinJSTests.SemanticZoomWithListViewTests");
