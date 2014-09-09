@@ -112,7 +112,7 @@ define([
                     set: function (value) {
                         // Render again even if it is equal to itself.
                         this._header = value;
-                        this._parentPivot && this._parentPivot._renderHeaders();
+                        this._parentPivot && this._parentPivot._headersState.handleHeaderChanged(this);
                     }
                 },
                 _parentPivot: {
