@@ -821,8 +821,7 @@ define([
                     if (this._disposed) {
                         return;
                     }
-                    this._headersState.render();
-                    headersStates.common.refreshHeadersState(this, true);
+                    this._resizeHandler();
                 },
 
                 /// <field type="Function" locid="WinJS.UI.Pivot.onselectionchanged" helpKeyword="WinJS.UI.Pivot.onselectionchanged">
@@ -1488,7 +1487,8 @@ define([
                         }
                     }
 
-                    this.forceLayout();
+                    this._headersState.render();
+                    headersStates.common.refreshHeadersState(this, true);
                 },
 
                 _handleItemInserted: function pivot_handleItemInserted(ev) {
@@ -1521,7 +1521,8 @@ define([
                         this.selectedIndex = 0;
                     }
 
-                    this.forceLayout();
+                    this._headersState.render();
+                    headersStates.common.refreshHeadersState(this, true);
                 },
 
                 _handleItemMoved: function pivot_handleItemMoved(ev) {
@@ -1548,7 +1549,8 @@ define([
                         this.selectedIndex = newIndex;
                     }
 
-                    this.forceLayout();
+                    this._headersState.render();
+                    headersStates.common.refreshHeadersState(this, true);
                 },
 
                 _handleItemReload: function pivot_handleItemReload() {
@@ -1575,7 +1577,8 @@ define([
                         this.selectedIndex = Math.min(this.items.length - 1, this._currentIndexOnScreen);
                     }
 
-                    this.forceLayout();
+                    this._headersState.render();
+                    headersStates.common.refreshHeadersState(this, true);
                 },
 
 

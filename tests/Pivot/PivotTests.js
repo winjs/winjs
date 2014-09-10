@@ -1287,7 +1287,7 @@ WinJSTests.PivotTests = function () {
 
             // Resize to static mode
             pivot.element.parentElement.style.width = "10000px";
-            WinJS.Utilities._resizeNotifier._handleResize();
+            pivot.forceLayout();
             return pivot._headersState._transitionAnimation;
         }).then(function () {
             // We should be in static mode, so the selected header should appear in order
@@ -1297,7 +1297,7 @@ WinJSTests.PivotTests = function () {
 
             // Resize back to overflow mode
             pivot.element.parentElement.style.width = pivotWidth + "px";
-            WinJS.Utilities._resizeNotifier._handleResize();
+            pivot.forceLayout();
             return pivot._headersState._transitionAnimation;
         }).done(function () {
             // We should be back in overflow mode, so the selected header should always be at index 1
