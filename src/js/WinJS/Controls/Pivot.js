@@ -110,7 +110,7 @@ define([
                         }
 
                         var width = 0;
-                        var leftElement = pivot._rtl ? pivot._headersContainerElement.lastElementChild : pivot._headersContainerElement.children[originalLength]
+                        var leftElement = pivot._rtl ? pivot._headersContainerElement.lastElementChild : pivot._headersContainerElement.children[originalLength];
                         var rightElement = pivot._rtl ? pivot._headersContainerElement.children[originalLength] : pivot._headersContainerElement.lastElementChild;
                         width = (rightElement.offsetLeft + rightElement.offsetWidth) - leftElement.offsetLeft;
 
@@ -182,7 +182,7 @@ define([
 
                     setActiveHeader: function headersState_setActiveHeader(newSelectedHeader, currentSelectedHeader) {
                         // Updates the selected header and clears the previously selected header if applicable
-                        var focusSelectedHeader = false
+                        var focusSelectedHeader = false;
                         if (currentSelectedHeader) {
                             currentSelectedHeader.classList.remove(Pivot._ClassName.pivotHeaderSelected);
                             currentSelectedHeader.setAttribute("aria-selected", false);
@@ -205,7 +205,6 @@ define([
 
                     if (pivot._headersContainerElement.children.length && _TransitionAnimation.isAnimationEnabled()) {
                         // We transitioned from another headers state, do transition animation
-                        var that = this;
 
                         // Calculate the offset from the selected header to where the selected header should be in static layout
                         var selectedHeader = pivot._headersContainerElement.querySelector("." + Pivot._ClassName.pivotHeaderSelected);
