@@ -23,12 +23,6 @@ module CorsicaTests {
         return true;
 
     }
-    // display descriptive error message if values don't match
-    function myAreEqual(message, expected, actual) {
-        if (expected !== actual) {
-            LiveUnit.Assert.fail(message + "; expected=" + expected + " but actual=" + actual);
-        }
-    }
 
     export class TimePicker {
 
@@ -145,9 +139,8 @@ module CorsicaTests {
                 subElements.forEach(function (subElement) {
                     if (subElement !== null) {
                         stylesToVerify.forEach(function (testStyle) {
-                            myAreEqual("testing subElement=" + subElement.getAttribute("class") + ", style=" + testStyle,
-                                getComputedStyle(selectElement)[testStyle],
-                                getComputedStyle(subElement)[testStyle]);
+                            LiveUnit.Assert.areEqual(getComputedStyle(selectElement)[testStyle], getComputedStyle(subElement)[testStyle],
+                                  "testing subElement=" + subElement.getAttribute("class") + ", style=" + testStyle);
                         });
                     }
                 });
