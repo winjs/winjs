@@ -63,6 +63,10 @@ declare module WinJS {
 
         function _now();
 
+        function _setHasWinRT(value: boolean);
+        var _selectionPartsSelector;
+        var _supportsTouchActionCrossSlide;
+
     }
 
     module Resources {
@@ -172,6 +176,27 @@ declare module WinJS {
             };
 
         }
+
+        class PrivateItemContainer extends WinJS.UI.ItemContainer {
+            _selectionMode: WinJS.UI.SelectionMode;
+            _onFocusIn();
+            _onFocusOut();
+            _onKeyDown(e);
+            _itemEventsHandler;
+            _itemBox;
+            _disposed: boolean;
+            static _ClassName;
+        }
+
+        var _ItemEventsHandler;
+        var _LEFT_MSPOINTER_BUTTON;
+        var _RIGHT_MSPOINTER_BUTTON;
+        var _selectedClass;
+        var _keyboardSeenLast;
+        var _swipeableClass;
+        var _itemFocusOutlineClass;
+        var _itemBoxClass;
+        var _itemClass;
 
     }
 }
