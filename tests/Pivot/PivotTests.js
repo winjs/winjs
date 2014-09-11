@@ -1330,6 +1330,38 @@ WinJSTests.PivotTests = function () {
         });
     };
 
+    this.testAnimationDirectionInStaticMode = function (complete) {
+        pivotWrapperEl.style.width = "10000px";
+        var pivot = createAndAppendPivotWithItems(5);
+
+        var goPreviousExpected = false;
+        var headers;
+        waitForNextItemAnimationEnd(pivot).then(function () {
+            monkeyPatch(pivot._headersState, "handleNavigation", function (goPrevious, index, oldIndex) {
+                LiveUnit.Assert.areEqual(goPreviousExpected, goPrevious);
+            });
+
+            headers = document.querySelectorAll(".win-pivot-header");
+            headers[1].click();
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            goPreviousExpected = true;
+            headers[0].click();
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            goPreviousExpected = false;
+            headers[4].click();
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            goPreviousExpected = true;
+            headers[0].click();
+            return waitForNextItemAnimationEnd(pivot);
+        }).done(function () {
+            complete();
+        });
+    };
+    this.testAnimationDirectionInStaticMode.skipWideTest = true;
+
     var that = this;
     Object.keys(this).forEach(function (key) {
         if (key.indexOf("test") !== 0) {

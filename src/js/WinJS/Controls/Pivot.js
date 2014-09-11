@@ -146,6 +146,7 @@ define([
                         var headerContainerEl = _Global.document.createElement("BUTTON");
                         _ElementUtilities.addClass(headerContainerEl, Pivot._ClassName.pivotHeader);
                         headerContainerEl._item = item;
+                        headerContainerEl._pivotItemIndex = index;
                         template(item, headerContainerEl);
 
                         function ariaSelectedMutated() {
@@ -269,7 +270,6 @@ define([
                             for (var i = 0; i < pivot.items.length; i++) {
                                 var header = headersStates.common.renderHeader(pivot, i, true);
                                 pivot._headersContainerElement.appendChild(header);
-                                pivot._pivotItemIndex = i;
 
                                 if (i === pivot.selectedIndex) {
                                     header.classList.add(Pivot._ClassName.pivotHeaderSelected);
@@ -284,6 +284,7 @@ define([
                     activateHeader: function staticState_activateHeader(headerElement) {
                         var currentActiveHeader = this.pivot._headersContainerElement.children[this.pivot.selectedIndex];
                         headersStates.common.setActiveHeader(headerElement, currentActiveHeader);
+                        this.pivot._animateToPrevious = headerElement._pivotItemIndex < this.pivot.selectedIndex;
                         this.pivot.selectedIndex = headerElement._pivotItemIndex;
                     },
 
@@ -379,7 +380,6 @@ define([
                         if (pivot._items.length === 1) {
                             var header = headersStates.common.renderHeader(pivot, 0, true);
                             header.classList.add(Pivot._ClassName.pivotHeaderSelected);
-                            header._pivotItemIndex = 0;
                             pivot._headersContainerElement.appendChild(header);
 
                             pivot._viewportElement.style.overflow = "hidden";
@@ -405,7 +405,6 @@ define([
 
                                 var header = headersStates.common.renderHeader(pivot, indexToRender, true);
                                 header.style.maxWidth = maxHeaderWidth;
-                                header._pivotItemIndex = indexToRender;
                                 pivot._headersContainerElement.appendChild(header);
                                 if (indexToRender === pivot.selectedIndex) {
                                     header.classList.add(Pivot._ClassName.pivotHeaderSelected);
