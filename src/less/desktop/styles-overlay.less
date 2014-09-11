@@ -276,7 +276,7 @@ AppBar
         min-width: 0px;
         display: none;
         // Setting explicit z-index here works around draw ordering issue that occurs in IE when other positioned elements are present in a custom AppBar.
-        z-index: 1; 
+        z-index: 1;
 
         .win-appbar-ellipsis {
             width: 56px;
@@ -528,14 +528,14 @@ Flyout control.
     z-index: 1008;
     position: fixed;
     position: -ms-device-fixed;
-    padding: 25px 20px 20px 20px;
+    padding: 12px;
     border-style: solid;
     border-width: 2px;
     margin: 5px;
-    min-width: 26px; /* 70px - padding - border = 26px */
-    max-width: 466px; /* 510px - padding - border = 466px */
-    min-height: 5px; /* 54px - padding - border = 5px */
-    max-height: ~"calc(100% - 59px)"; /* 768px - margin - padding - border = 709px */
+    min-width: 68px; /* 96px - padding - border */
+    max-width: 404; /* 432px - padding - border */
+    min-height: 16px; /* 44px - padding - border */
+    max-height: 492px; /* 520px - padding - border */
     width: auto;
     height: auto;
     word-wrap: break-word;
@@ -679,7 +679,7 @@ Settings Pane
     top: 0;
     right: 0;
     height: 100%;
-    width: 345px; /* 346px - border (1px) */
+    width: 319px; /* 320px - border (1px) */
 }
 
 .win-settingsflyout {
@@ -718,8 +718,8 @@ Settings Pane
 
 .win-settingsflyout .win-content {
     overflow: auto;
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 12px;
+    padding-right: 12px;
     padding-top: 33px;
     height: ~"calc(100% - 112px)";
 }

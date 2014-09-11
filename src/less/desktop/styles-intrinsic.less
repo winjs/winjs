@@ -80,7 +80,7 @@ input[type=tel], input[type=url], input[type=search] {
     border-style: solid;
     border-width: 2px;
     margin: 4px 0px;
-    width: 260px;
+    width: 292px;
     min-width: 64px;
     min-height: 28px;
     background-clip: border-box;
@@ -97,8 +97,8 @@ input::-ms-value {
 // Radio and check
 //
 input[type=radio] {
-    width: 23px;
-    height: 23px;
+    width: 20px;
+    height: 20px;
     margin-left: -1px;
     margin-right: 4px;
     margin-bottom: -2px;
@@ -109,12 +109,14 @@ input[type=radio] {
     });
 }
 input[type=checkbox] {
-    width: 21px;
-    height: 21px;
-    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    margin-top: 12px;
+    margin-bottom: 12px;
 
     .RTL({
-        margin-left: 5px;
+        margin-left: 8px;
         margin-right: 0px;
     });
 }
@@ -158,7 +160,7 @@ button, input[type=button], input[type=reset], input[type=submit], button[type=s
     background-clip: padding-box;
     margin: 0px;
     min-height: 32px;
-    min-width: 90px;
+    min-width: 120px;
     padding: 4px 8px;
     border-width: 2px;
     .win-type-large-internal();
@@ -252,11 +254,11 @@ select {
 //
 progress {
     width: 180px;
-    height: 6px;
+    height: 4px;
     border-style: none;
 
     &.win-medium {
-        width: 280px;
+        width: 296px;
     }
 
     &.win-large {
@@ -317,7 +319,7 @@ progress {
 //
 input[type=range] {
     width: 280px;
-    height: auto;
+    height: 32px;
     padding: 17px 0px 32px 0px;
     -webkit-appearance: none;
 
@@ -328,34 +330,34 @@ input[type=range] {
     &::-ms-track {
         padding: 0px;
         width: auto;
-        height: 11px;
+        height: 12px;
         border-style: none;
     }
 
     &::-webkit-slider-runnable-track {
-        height: 11px;
+        height: 12px;
     }
 
     &::-moz-range-track {
-        height: 11px;
+        height: 12px;
         border: none;
     }
 
     &::-ms-thumb {
-        width: 11px;
-        height: 11px;
+        width: 12px;
+        height: 32px;
         border-style: none;
     }
 
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        height: 11px;
-        width: 11px;
+        height: 32px;
+        width: 12px;
     }
 
     &::-moz-range-thumb {
-        width: 11px;
-        height: 11px;
+        width: 12px;
+        height: 32px;
         border-radius: 0;
         border: none;
     }
@@ -393,14 +395,20 @@ input[type=range] {
 // Vertical slider
 //
 input[type=range].win-vertical {
-    width: auto;
+    width: 32px;
     height: 191px;
     padding: 0px 17px;
     writing-mode: bt-lr;
 
     &::-ms-track {
-        width: 11px;
+        width: 12px;
         height: auto;
+    }
+
+    &::-ms-thumb {
+        width: 32px;
+        height: 11px;
+        border-style: none;
     }
 
     &:disabled::-ms-fill-lower {
@@ -441,7 +449,7 @@ input[type=range].win-vertical {
 //
 a {
     text-decoration: none;
-    cursor: default;
+    cursor: pointer;
 }
 
 //

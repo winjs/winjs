@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 .win-toggleswitch {
-    @trackWidth: 50px;
-    @trackHeight: 19px;
+    @trackWidth: 40px;
+    @trackHeight: 20px;
     @thumbWidth: 12px;
+    @thumbHeight: 24px;
     @fillWidth: @trackWidth - @thumbWidth - 3px;
 
     .calculateFillSizes(@isRTL) when (@isRTL = false) {
@@ -57,8 +58,8 @@
         max-width: 470px;
         font-size: 12pt;
         width: 22em;
-        margin-bottom: 7px;
-        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-top: 22px;
         font-weight: @win_font_weight_small;
     }
     .win-toggleswitch-values {
@@ -115,11 +116,11 @@
     .win-toggleswitch-thumb {
         position: absolute;
         top: 0;
-        margin-top: -2px;
+        margin-top: -4px;
         margin-left: -2px;
         display: inline-block;
         width: 12px;
-        height: @trackHeight;
+        height: @thumbHeight;
         -webkit-transition: left 0.1s;
         transition: left 0.1s;
     }
