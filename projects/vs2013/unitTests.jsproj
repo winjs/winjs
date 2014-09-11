@@ -40,7 +40,7 @@
     <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TypeScriptOutDir>$(MSBuildStartupDirectory)\..\..\bin\tests\</TypeScriptOutDir>
+    <TypeScriptOutDir>$(MSBuildProjectDirectory)\..\..\bin\tests\</TypeScriptOutDir>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptCompileOnSaveEnabled>true</TypeScriptCompileOnSaveEnabled>
   </PropertyGroup>
