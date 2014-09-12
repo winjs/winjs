@@ -68,6 +68,8 @@ define(['require'], function (req) {
             '@inverseTheme: ' + inverseTheme + ';'
         ].join('\n');
         var colors = [
+            '.Colors(@theme) {}',
+            '.ColorsHover(@theme) {}',
             '.Colors(@theme);',
             'html.win-hoverable {',
             '   .ColorsHover(@theme);',
