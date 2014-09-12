@@ -67,6 +67,8 @@ declare module WinJS {
         var _selectionPartsSelector;
         var _supportsTouchActionCrossSlide;
 
+        function _writeProfilerMark(mark: string);
+
     }
 
     module Resources {
@@ -197,6 +199,12 @@ declare module WinJS {
         var _itemFocusOutlineClass;
         var _itemBoxClass;
         var _itemClass;
+
+        var _seenUrlsMaxSize: number;
+        var _seenUrlsMRUMaxSize: number;
+        function _seenUrl(url:string);
+        function _getSeenUrlsMRU(): string[];
+        function _getSeenUrls(): string[];
 
     }
 }

@@ -1,32 +1,15 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.ts" />
 /// <reference path="../TestLib/UnitTestsCommon.ts" />
-/// <reference path="vds-tracing.js" />
+/// <reference path="vds-tracing.ts" />
 
-var EditingTests = function () {
+module WinJSTests {
+
     "use strict";
-
     var previousTracingOptions;
-
-    this.setUp = function () {
-        previousTracingOptions = VDSLogging.options;
-        VDSLogging.options = {
-            log: function (message) { LiveUnit.Assert.fail(message); },
-            include: /createListBinding|_retainItem|_releaseItem|release/,
-            handleTracking: true,
-            logVDS: true,
-            stackTraceLimit: 0 // set this to 100 to get good stack traces if you run into a failure.
-        };
-        VDSLogging.on();
-    }
-
-    this.tearDown = function () {
-        VDSLogging.off();
-        VDSLogging.options = previousTracingOptions;
-    }
 
     // Store edit result, use "recordEditSuccess" callback, clear it before.
     var editSucceeded = false;
@@ -130,7 +113,7 @@ var EditingTests = function () {
                                 "changed",
                                 "endNotifications"
                             ]
-                        );
+                            );
 
                         if (item2) {
                             LiveUnit.Assert.isTrue(typeof item.key === "string");
@@ -198,7 +181,7 @@ var EditingTests = function () {
                                         "changed",
                                         "endNotifications"
                                     ]
-                                );
+                                    );
 
                                 // Don't have to tolerate null keys now
                                 handler.verifyState(state2);
@@ -259,7 +242,7 @@ var EditingTests = function () {
                                                 "changed",
                                                 "endNotifications"
                                             ]
-                                        );
+                                            );
 
                                         handler.verifyState(state3);
 
@@ -281,228 +264,249 @@ var EditingTests = function () {
         });
     }
 
-    this.testEditingAsynchronous = function (signalTestCaseCompleted) {
-        testEditing(signalTestCaseCompleted, false);
-    };
+    export class EditingTests {
 
-    this.testEditingSynchronous = function (signalTestCaseCompleted) {
-        testEditing(signalTestCaseCompleted, true);
-    };
+        setUp() {
+            previousTracingOptions = VDSLogging.options;
+            VDSLogging.options = {
+                log: function (message) { LiveUnit.Assert.fail(message); },
+                include: /createListBinding|_retainItem|_releaseItem|release/,
+                handleTracking: true,
+                logVDS: true,
+                stackTraceLimit: 0 // set this to 100 to get good stack traces if you run into a failure.
+            };
+            VDSLogging.on();
+        }
+
+        tearDown() {
+            VDSLogging.off();
+            VDSLogging.options = previousTracingOptions;
+        }
 
 
-    // this test will verify the edit error code(notPermitted) by simulating readOnly data source
-    this.testEditErrorCodes_NotPermitted= function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-           handler = TestComponents.simpleListNotificationHandler(),
-           listBinding = dataSource.createListBinding(handler);
-        dataSource.testDataAdapter.setProperty("readOnly", true);
 
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+        testEditingAsynchronous(signalTestCaseCompleted) {
+            testEditing(signalTestCaseCompleted, false);
+        }
 
-        // Fetch the first item
-        var itemPromise = listBinding.first();
+        testEditingSynchronous(signalTestCaseCompleted) {
+            testEditing(signalTestCaseCompleted, true);
+        }
 
-        itemPromise.then(itemPromiseHandler);
 
-        function itemPromiseHandler(item){
+        // this test will verify the edit error code(notPermitted) by simulating readOnly data source
+        testEditErrorCodes_NotPermitted(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
+            dataSource.testDataAdapter.setProperty("readOnly", true);
 
-            TestComponents.verifyItemData(item, 0);
-            TestComponents.setImmediate(function () {
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+
+            // Fetch the first item
+            var itemPromise = listBinding.first();
+
+            itemPromise.then(itemPromiseHandler);
+
+            function itemPromiseHandler(item) {
+
+                TestComponents.verifyItemData(item, 0);
+                TestComponents.setImmediate(function () {
+                    handler.verifyExpectedNotifications([
+                        "beginNotifications",
+                        "countChanged",
+                        "endNotifications"
+                    ]);
+                });
+
+                clearLastEdit();
+                var newData = "NewData0"
+            dataSource.change("0", newData).then(editSuccess, editError);
+
+
+                function editSuccess() {
+                    recordEditSuccess();
+                    LiveUnit.Assert.fail("Expecting an exception when trying to edit a read only data source..");
+
+                }
+
+                function editError(e) {
+                    LiveUnit.Assert.areEqual("notPermitted", e.name, "Expecting error message while trying to edit a read only data source");
+                    // Change the data source to allow edits now.
+                    dataSource.testDataAdapter.setProperty("readOnly", false);
+                    dataSource.change("0", newData).then(
+                        function () {
+                            LiveUnit.LoggingCore.logComment("edit is successful after data source is made editable at run time");
+                            signalTestCaseCompleted();
+                        },
+
+                        function (error) {
+                            LiveUnit.Assert.fail("Edit unsuccessful:" + error.name);
+                            signalTestCaseCompleted();
+                        }
+                        );
+                }
+            };
+
+        }//end of test function
+
+
+        // Testing the edit error code: noLongerMeaningful by changing the deleted item
+
+        testEditErrorCodes_NoLongerMeaningful(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
+
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            // Fetch the first item
+            var itemPromise = listBinding.first();
+            itemPromise.then(function (item) {
+                TestComponents.verifyItemData(item, 0);
                 handler.verifyExpectedNotifications([
                     "beginNotifications",
                     "countChanged",
                     "endNotifications"
                 ]);
-            });
+                clearLastEdit();
+                var newData = "NewData0"
+            dataSource.remove("0").then(editSuccess, removeError);
 
-            clearLastEdit();
-            var newData = "NewData0"
+                function removeError(error) {
+                    LiveUnit.Assert.fail("Remove operation failed:" + error.name);
+                }
+
+                function editSuccess() {
+                    recordEditSuccess();
+                    dataSource.testDataAdapter.setProperty("notMeaningfulEdit", true);
+                    dataSource.change("0", newData).then(
+                        function () {
+                            LiveUnit.Assert.fail("Exception is expected for noLongerMeaningful edits");
+                        },
+                        function (e) {
+                            LiveUnit.Assert.areEqual("noLongerMeaningful", e.name, "Expected exception is thrown from VDS");
+                            signalTestCaseCompleted();
+                        }
+                        );
+                } //end editSuccess
+
+            });
+        }//end of test function
+
+        // this test will verify the edit error code(noResponse) by simulating DS communication Failure
+        testEditErrorCodes_NoResponse(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
+
+
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+
+            // Fetch the first item
+            var itemPromise = listBinding.first();
+            itemPromise.then(function (item) {
+                TestComponents.verifyItemData(item, 0);
+                handler.verifyExpectedNotifications([
+                    "beginNotifications",
+                    "countChanged",
+                    "endNotifications"
+                ]);
+
+                // This will caue the data adapter to return the error when trying to edit the data.
+                dataSource.testDataAdapter.setProperty("communicationFailure", true);
+                clearLastEdit();
+                var newData = "NewData0"
             dataSource.change("0", newData).then(editSuccess, editError);
 
+                function editSuccess() {
+                    recordEditSuccess();
+                    LiveUnit.Assert.fail("Expecting an exception when trying to edit a data source  while communication failure occurs");
+                }
 
-            function editSuccess() {
-                recordEditSuccess();
-                LiveUnit.Assert.fail("Expecting an exception when trying to edit a read only data source..");
+                function editError(e) {
+                    LiveUnit.Assert.areEqual("noResponse", e.name, "Expecting error message while trying to edit a data source when communication to data fails");
 
-            }
-
-            function editError(e) {
-                LiveUnit.Assert.areEqual("notPermitted", e.name, "Expecting error message while trying to edit a read only data source");
-                // Change the data source to allow edits now.
-                dataSource.testDataAdapter.setProperty("readOnly", false);
-                dataSource.change("0", newData).then(
-                    function () {
+                    // Reestablish data source connection
+                    dataSource.testDataAdapter.setProperty("communicationFailure", false);
+                    dataSource.change("0", newData).then(function () {
                         LiveUnit.LoggingCore.logComment("edit is successful after data source is made editable at run time");
                         signalTestCaseCompleted();
                     },
 
-                    function (error) {
-                        LiveUnit.Assert.fail("Edit unsuccessful:" + error.name);
-                        signalTestCaseCompleted();
-                    }
-                );
-            }
-        };
-
-    };//end of test function
+                        function (error) {
+                            LiveUnit.Assert.fail("Edit unsuccessful:" + error.name);
+                        });
+                }
+            });
+        }//end of test function noresponse
 
 
-    // Testing the edit error code: noLongerMeaningful by changing the deleted item
+        xtestCountError_NoResponse(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
 
-    this.testEditErrorCodes_NoLongerMeaningful = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-           handler = TestComponents.simpleListNotificationHandler(),
-           listBinding = dataSource.createListBinding(handler);
+            // track how mnay times countChanged notification is thrown
+            var countChanged = 0;
 
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
-        // Fetch the first item
-        var itemPromise = listBinding.first();
-        itemPromise.then(function (item) {
-            TestComponents.verifyItemData(item, 0);
-            handler.verifyExpectedNotifications([
-                    "beginNotifications",
-                    "countChanged",
-                    "endNotifications"
-            ]);
-            clearLastEdit();
-            var newData = "NewData0"
-            dataSource.remove("0").then(editSuccess, removeError);
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            dataSource.testDataAdapter.setProperty("count_NoResponse", true);
 
-            function removeError(error) {
-                LiveUnit.Assert.fail("Remove operation failed:" + error.name);
+            handler.countChanged = function (newCount, oldCount) {
+                countChanged++;
+                LiveUnit.Assert.fail("CountChanged Handler should not be thrown when count is not returned from the data source as DS cannot be communicated");
+            };
+            dataSource.getCount().then(countSuccess, countError);
+
+            function countSuccess(count) {
+                LiveUnit.Assert.fail("countSuccess handler should not be called when error is returned from the data adapter");
             }
 
-            function editSuccess() {
-                recordEditSuccess();
-                dataSource.testDataAdapter.setProperty("notMeaningfulEdit", true);
-                dataSource.change("0", newData).then(
-                    function () {
-                        LiveUnit.Assert.fail("Exception is expected for noLongerMeaningful edits");
-                    },
-                    function (e) {
-                        LiveUnit.Assert.areEqual("noLongerMeaningful", e.name, "Expected exception is thrown from VDS");
-                        signalTestCaseCompleted();
-                    }
-                );
-            } //end editSuccess
-
-        });
-    };//end of test function
-
-    // this test will verify the edit error code(noResponse) by simulating DS communication Failure
-    this.testEditErrorCodes_NoResponse = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-            handler = TestComponents.simpleListNotificationHandler(),
-            listBinding = dataSource.createListBinding(handler);
-
-
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
-
-        // Fetch the first item
-        var itemPromise = listBinding.first();
-        itemPromise.then(function (item) {
-            TestComponents.verifyItemData(item, 0);
-            handler.verifyExpectedNotifications([
-                    "beginNotifications",
-                    "countChanged",
-                    "endNotifications"
-            ]);
-
-            // This will caue the data adapter to return the error when trying to edit the data.
-            dataSource.testDataAdapter.setProperty("communicationFailure", true);
-            clearLastEdit();
-            var newData = "NewData0"
-            dataSource.change("0", newData).then(editSuccess, editError);
-
-            function editSuccess() {
-                recordEditSuccess();
-                LiveUnit.Assert.fail("Expecting an exception when trying to edit a data source  while communication failure occurs");
-            }
-
-            function editError(e) {
-                LiveUnit.Assert.areEqual("noResponse", e.name, "Expecting error message while trying to edit a data source when communication to data fails");
-
-                // Reestablish data source connection
-                dataSource.testDataAdapter.setProperty("communicationFailure", false);
-                dataSource.change("0", newData).then(function () {
-                    LiveUnit.LoggingCore.logComment("edit is successful after data source is made editable at run time");
+            function countError(e) {
+                LiveUnit.Assert.areEqual("noResponse", e.name, "Wrong  Error code.");
+                LiveUnit.Assert.areEqual(0, countChanged, "countChanged notification should not be thrown");
+                setTimeout(function () {
                     signalTestCaseCompleted();
-                },
-
-                function (error) {
-                    LiveUnit.Assert.fail("Edit unsuccessful:" + error.name);
-                });
+                }, 2000);
             }
-        });
-    };//end of test function noresponse
+
+        }//end of test function fetch-noresponse
 
 
-    this.xtestCountError_NoResponse = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-            handler = TestComponents.simpleListNotificationHandler(),
-            listBinding = dataSource.createListBinding(handler);
+        testCountError_Unknown(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
 
-        // track how mnay times countChanged notification is thrown
-        var countChanged = 0;
+            // track how mnay times countChanged notification is thrown
+            var countChanged = 0;
 
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
-        dataSource.testDataAdapter.setProperty("count_NoResponse", true);
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            dataSource.testDataAdapter.setProperty("countUnknown", true);
 
-        handler.countChanged = function (newCount, oldCount) {
-            countChanged++;
-            LiveUnit.Assert.fail("CountChanged Handler should not be thrown when count is not returned from the data source as DS cannot be communicated");
-        };
-        dataSource.getCount().then(countSuccess, countError);
+            handler.countChanged = function (newCount, oldCount) {
+                countChanged++;
+                LiveUnit.Assert.fail("CountChanged Handler should not be thrown when unknown count is returned");
 
-        function countSuccess(count) {
-            LiveUnit.Assert.fail("countSuccess handler should not be called when error is returned from the data adapter");
-        }
+            };
 
-        function countError(e) {
-            LiveUnit.Assert.areEqual("noResponse", e.name, "Wrong  Error code.");
-            LiveUnit.Assert.areEqual(0, countChanged, "countChanged notification should not be thrown");
-            setTimeout(function () {
-                signalTestCaseCompleted();
-            }, 2000);
-        }
+            dataSource.getCount().then(countSuccess, countError);
 
-    };//end of test function fetch-noresponse
+            function countSuccess(count) {
+                LiveUnit.Assert.fail("countSuccess handler should not be called when error is returned from the data adapter");
+            }
 
+            function countError(e) {
+                LiveUnit.Assert.areEqual("unknown", e.name, "Wrong  Error code.");
+                LiveUnit.Assert.areEqual(0, countChanged, "countChanged notification should not be thrown");
+                setTimeout(function () {
+                    signalTestCaseCompleted();
+                }, 2000);
+            }
 
-    this.testCountError_Unknown = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-            handler = TestComponents.simpleListNotificationHandler(),
-            listBinding = dataSource.createListBinding(handler);
+        }//end of test function fetch-noresponse
 
-        // track how mnay times countChanged notification is thrown
-        var countChanged = 0;
-
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
-        dataSource.testDataAdapter.setProperty("countUnknown", true);
-
-        handler.countChanged = function (newCount, oldCount) {
-            countChanged++;
-            LiveUnit.Assert.fail("CountChanged Handler should not be thrown when unknown count is returned" );
-
-        };
-
-        dataSource.getCount().then(countSuccess, countError);
-
-        function countSuccess(count) {
-            LiveUnit.Assert.fail("countSuccess handler should not be called when error is returned from the data adapter");
-        }
-
-        function countError(e) {
-            LiveUnit.Assert.areEqual("unknown", e.name, "Wrong  Error code.");
-            LiveUnit.Assert.areEqual(0, countChanged, "countChanged notification should not be thrown");
-            setTimeout(function () {
-                signalTestCaseCompleted();
-            }, 2000);
-        }
-
-    };//end of test function fetch-noresponse
-
-};
-
+    };
+}
 // Register the object as a test class by passing in the name
-LiveUnit.registerTestClass("EditingTests");
+LiveUnit.registerTestClass("WinJSTests.EditingTests");

@@ -1,33 +1,17 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <reference path="../TestLib/TestDataSource.ts" />
 /// <reference path="../TestLib/UnitTestsCommon.ts" />
-/// <reference path="vds-tracing.js" />
+/// <reference path="vds-tracing.ts" />
 
-var EnumerationTests = function () {
+module WinJSTests {
+
     "use strict";
 
     var previousTracingOptions;
-
-    this.setUp = function () {
-        previousTracingOptions = VDSLogging.options;
-        VDSLogging.options = {
-            log: function (message) { LiveUnit.Assert.fail(message); },
-            include: /createListBinding|_retainItem|_releaseItem|release/,
-            handleTracking: true,
-            logVDS: true,
-            stackTraceLimit: 0 // set this to 100 to get good stack traces if you run into a failure.
-        };
-        VDSLogging.on();
-    }
-
-    this.tearDown = function () {
-        VDSLogging.off();
-        VDSLogging.options = previousTracingOptions;
-    }
 
     function testAsynchronousRandomEnumerationOnce(complete) {
         var count = 200,
@@ -48,7 +32,7 @@ var EnumerationTests = function () {
         var dataSource = TestComponents.simpleAsynchronousDataSource(count),
             listBinding = dataSource.createListBinding(dummyHandler);
 
-        function requestItem(itemPromise, index) {
+        function requestItem(itemPromise, index?) {
             requests++;
 
             var handleCount = handleCounts[itemPromise.handle];
@@ -81,7 +65,7 @@ var EnumerationTests = function () {
             });
         }
 
-        function localWalk(itemPromise, index) {
+        function localWalk(itemPromise, index?) {
             var walkMax = 10;
 
             requestItem(itemPromise, index);
@@ -138,128 +122,6 @@ var EnumerationTests = function () {
         })();
     }
 
-    this.testAsynchronousRandomEnumeration = function (signalTestCaseCompleted) {
-        TestComponents.runStressTest(testAsynchronousRandomEnumerationOnce, 5, signalTestCaseCompleted);
-    };
-
-    this.testDirectFetching = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(100);
-
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
-
-        var index1 = 42,
-            index2 = 56,
-            index3 = 64;
-
-        dataSource.itemFromIndex(index1).then(function (itemWithIndex) {
-            TestComponents.verifyItemData(itemWithIndex, index1);
-
-            dataSource.itemFromKey("" + index2).then(function (itemWithKey) {
-                TestComponents.verifyItemData(itemWithKey, index2);
-
-                dataSource.itemFromDescription("" + index3).then(function (itemWithDescription) {
-                    TestComponents.verifyItemData(itemWithDescription, index3);
-
-                    signalTestCaseCompleted();
-                });
-            });
-        });
-    };
-
-    this.testDescriptionFetching = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(0),
-            handler = TestComponents.simpleListNotificationHandler(),
-            listBinding = dataSource.createListBinding(handler);
-
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
-
-        var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-        TestComponents.setState(dataSource, state0);
-
-        // Fetch an item near the end using just its description
-        var testIndex1 = 8,
-            itemPromise = listBinding.fromDescription("" + testIndex1),
-            handle1 = itemPromise.handle;
-
-        itemPromise.retain().then(function (itemWithDescription1) {
-            LiveUnit.Assert.areEqual(handle1, itemWithDescription1.handle);
-            TestComponents.verifyItemData(itemWithDescription1, testIndex1);
-
-            var promises = [],
-                handles = [];
-
-            // Now fetch all the items using simple enumeration
-            itemPromise = listBinding.first();
-            for (var i = 0; i < state0.length; i++) {
-                handles[i] = itemPromise.handle;
-                (function (i) {
-                    promises.push(itemPromise.retain().then(function (item) {
-                        TestComponents.verifyItemData(item, i);
-
-                        LiveUnit.Assert.areEqual(handles[i], item.handle);
-                    }));
-                })(i);
-                itemPromise = listBinding.next();
-            }
-            itemPromise.then(function (item) {
-                LiveUnit.Assert.isNull(item, "Request for item after last item did not return null");
-            });
-
-            // The handles should match
-            LiveUnit.Assert.isTrue(handle1, handles[testIndex1]);
-
-            WinJS.Promise.join(promises).then(function () {
-                // Next, fetch another item using its description
-                var testIndex2 = 0;
-
-                itemPromise = listBinding.fromDescription("" + testIndex2);
-
-                var handle2 = itemPromise.handle;
-
-                // This time, we expect a different handle
-                LiveUnit.Assert.isTrue(handle2 !== handle1);
-
-                itemPromise.retain().then(function (itemWithDescription2) {
-                    // This item should be null, since we asked for the same item in two different ways from the same ListBinding
-                    LiveUnit.Assert.isNull(itemWithDescription2);
-
-                    // Try from a different ListBinding
-                    var handler2 = TestComponents.simpleListNotificationHandler(),
-                        listBinding2 = dataSource.createListBinding(handler);
-
-                    var testIndex3 = testIndex2;
-
-                    itemPromise = listBinding2.fromDescription("" + testIndex3);
-
-                    var handle3 = itemPromise.handle;
-
-                    // Again, we expect a different handle
-                    LiveUnit.Assert.isTrue(itemPromise.handle !== handle1);
-                    LiveUnit.Assert.isTrue(itemPromise.handle !== handle2);
-
-                    itemPromise.retain().then(function (itemWithDescription3) {
-                        // This time the fetch should have succeeded
-                        LiveUnit.Assert.areEqual(handle3, itemWithDescription3.handle);
-                        TestComponents.verifyItemData(itemWithDescription3, testIndex3);
-
-                        // Finally, verify that a direct fetch also succeeds
-                        var testIndex4 = 5;
-
-                        itemPromise = dataSource.itemFromDescription("" + testIndex4);
-
-                        itemPromise.then(function (itemWithDescription4) {
-                            // Again, the fetch should have succeeded
-                            TestComponents.verifyItemData(itemWithDescription4, testIndex4);
-
-                            signalTestCaseCompleted();
-                        });
-                    });
-                });
-            });
-        });
-    };
-
     function testKeyBasedFetching(signalTestCaseCompleted, synchronous) {
         var count = 1000,
             index1 = 900,
@@ -306,60 +168,6 @@ var EnumerationTests = function () {
         });
     };
 
-    this.testKeyBasedFetchingAsynchronous = function (signalTestCaseCompleted) {
-        testKeyBasedFetching(signalTestCaseCompleted, false);
-    };
-
-    this.testKeyBasedFetchingSynchronous = function (signalTestCaseCompleted) {
-        testKeyBasedFetching(signalTestCaseCompleted, true);
-    };
-
-    this.testSeenUrls = function (signalTestCaseCompleted) {
-        var seenUrlsMaxSize = WinJS.UI._seenUrlsMaxSize;
-        var seenUrlsMRUMaxSize = WinJS.UI._seenUrlsMRUMaxSize;
-        var seenUrl = WinJS.UI._seenUrl;
-        var seenUrlsMRU = WinJS.UI._getSeenUrlsMRU();
-        var seenUrls = WinJS.UI._getSeenUrls();
-
-        // Ensure we don't cache blob: urls
-        seenUrl("blob:12345");
-        LiveUnit.Assert.isTrue(seenUrlsMRU.length === 0);
-        LiveUnit.Assert.isTrue(!seenUrls["blob:12345"]);
-
-        // Ensure adding one item is keep added to the seenUrls and seenUrlsMRU
-        seenUrl("0");
-        LiveUnit.Assert.isTrue(seenUrlsMRU.length === 1);
-        LiveUnit.Assert.isTrue(seenUrls["0"]);
-
-        //Ensure we can add the first seenUrlsMaxSize and keep them in the cache
-        for (var i = 1; i < seenUrlsMaxSize + 1; i++) {
-            seenUrl(i.toString());
-        }
-        LiveUnit.Assert.isTrue(seenUrls["1"]);
-        LiveUnit.Assert.isTrue(seenUrls[seenUrlsMaxSize.toString()]);
-        LiveUnit.Assert.isTrue(!seenUrls[(seenUrlsMaxSize + 1).toString()]);
-
-        // Ensure we can add up to seenUrlsMRUMaxSize to the cache
-        LiveUnit.Assert.isTrue(seenUrlsMRU.length === seenUrlsMaxSize + 1);
-        for (var i = seenUrlsMaxSize + 1; i < seenUrlsMRUMaxSize; i++) {
-            seenUrl(i.toString());
-        }
-        LiveUnit.Assert.isTrue(seenUrlsMRU.length === seenUrlsMRUMaxSize);
-
-        // Ensure that exceeding seenUrlsMRUMaxSize clears seenUrlsMRU and keeps only up to seenUrlsMaxSize
-        // most recent urls.
-        seenUrl(seenUrlsMRUMaxSize.toString());
-        seenUrlsMRU = WinJS.UI._getSeenUrlsMRU();
-        seenUrls = WinJS.UI._getSeenUrls();
-        LiveUnit.Assert.isTrue(seenUrlsMRU.length === 0);
-        LiveUnit.Assert.isTrue(!seenUrls["1"]);
-        LiveUnit.Assert.isTrue(!seenUrls[(seenUrlsMRUMaxSize - seenUrlsMaxSize).toString()]);
-        LiveUnit.Assert.isTrue(seenUrls[(seenUrlsMRUMaxSize - seenUrlsMaxSize + 1).toString()]);
-        LiveUnit.Assert.isTrue(seenUrls[seenUrlsMRUMaxSize.toString()]);
-
-        signalTestCaseCompleted();
-    };
-
     function testBackwardTraversal(signalTestCaseCompleted, synchronous) {
 
         var index = 100;
@@ -390,14 +198,6 @@ var EnumerationTests = function () {
                 signalTestCaseCompleted();
             }
         });
-    };
-
-    this.testBackwardTraversalAsynchronous = function (signalTestCaseCompleted) {
-        testBackwardTraversal(signalTestCaseCompleted, false);
-    };
-
-    this.testBackwardTraversalSynchronous = function (signalTestCaseCompleted) {
-        testBackwardTraversal(signalTestCaseCompleted, true);
     };
 
     // This test verfies next() and previous() functions on the listBinding. The scenario under test is to perform a forward traversal,
@@ -488,16 +288,6 @@ var EnumerationTests = function () {
         });
     };
 
-
-    this.testRandomTraversalAsynchronous = function (signalTestCaseCompleted) {
-        testRandomTraversal(signalTestCaseCompleted, false);
-    };
-
-    this.testRandomTraversalSynchronous = function (signalTestCaseCompleted) {
-        testRandomTraversal(signalTestCaseCompleted, true);
-    };
-
-
     // this test release and regain the binding and verify prevois binding has no effect on new binding
     function testReleaseBinding(signalTestCaseCompleted, synchronous) {
         var dataSource = TestComponents.simpleAsynchronousDataSource(100),
@@ -526,7 +316,7 @@ var EnumerationTests = function () {
 
                 }
                 else {
-                    currentItemData = "Item".concat(index - 1).toString();
+                    currentItemData = ("Item" + (index - 1).toString());
                     verifyCurrent();
                 }
             });
@@ -551,16 +341,6 @@ var EnumerationTests = function () {
         }
 
     };
-
-
-    this.testReleaseBindingAsynchronous = function (signalTestCaseCompleted, synchroous) {
-        testReleaseBinding(signalTestCaseCompleted, false);
-    };
-
-    this.testReleaseBindingSynchronous = function (signalTestCaseCompleted, synchroous) {
-        testReleaseBinding(signalTestCaseCompleted, true);
-    };
-
 
     // This test verify growing/shrinking data source
     function testChangingDataSource(signalTestCaseCompleted, synchronous) {
@@ -598,16 +378,16 @@ var EnumerationTests = function () {
                 dataSource.testDataAdapter.setProperty("returnCount", 9);
                 return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
             })
-                .then(function handleItem() {
-                    return dataSource.itemFromIndex(8);
-                })
-                .then(function handleItem(item) {
-                    LiveUnit.Assert.areEqual(8, item.index, "Wrong item returned when returnCount = 9: expecting item 8, item " + item.index.toString() + " returned.");
+            .then(function handleItem() {
+                return dataSource.itemFromIndex(8);
+            })
+            .then(function handleItem(item) {
+                LiveUnit.Assert.areEqual(8, item.index, "Wrong item returned when returnCount = 9: expecting item 8, item " + item.index.toString() + " returned.");
 
-                    //DataSource shrinking. 7 items available. Fetching item 8 should return null.
-                    dataSource.testDataAdapter.setProperty("returnCount", 7);
-                    return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
-                })
+                //DataSource shrinking. 7 items available. Fetching item 8 should return null.
+                dataSource.testDataAdapter.setProperty("returnCount", 7);
+                return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
+            })
             .then(function handleItem() {
                 return dataSource.itemFromIndex(8);
             })
@@ -632,14 +412,6 @@ var EnumerationTests = function () {
                 LiveUnit.Assert.areEqual(3, item.index, "Wrong item returned when returnCount = 5: expecting item 3, item " + item.index.toString() + " returned.");
                 signalTestCaseCompleted();
             });
-    };
-
-    this.testChangingDataSourceAsynchronous = function (signalTestCaseCompleted) {
-        testChangingDataSource(signalTestCaseCompleted, false);
-    };
-
-    this.testChangingDataSourceSynchronous = function (signalTestCaseCompleted) {
-        testChangingDataSource(signalTestCaseCompleted, true);
     };
 
     // This test verify growing/shrinking data source with listbinding
@@ -682,16 +454,16 @@ var EnumerationTests = function () {
                 dataSource.testDataAdapter.setProperty("returnCount", 9);
                 return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
             })
-                .then(function handleItem() {
-                    return listBinding.fromIndex(8);
-                })
-                .then(function handleItem(item) {
-                    LiveUnit.Assert.areEqual(8, item.index, "Wrong item returned when returnCount = 9: expecting item 8, item " + item.index.toString() + " returned.");
+            .then(function handleItem() {
+                return listBinding.fromIndex(8);
+            })
+            .then(function handleItem(item) {
+                LiveUnit.Assert.areEqual(8, item.index, "Wrong item returned when returnCount = 9: expecting item 8, item " + item.index.toString() + " returned.");
 
-                    //DataSource shrinking. 7 items available. Fetching item 8 should return null.
-                    dataSource.testDataAdapter.setProperty("returnCount", 7);
-                    return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
-                })
+                //DataSource shrinking. 7 items available. Fetching item 8 should return null.
+                dataSource.testDataAdapter.setProperty("returnCount", 7);
+                return dataSource.invalidateAll(); // use invalidateAll to update the cache in VDS
+            })
             .then(function handleItem() {
                 return listBinding.fromIndex(8);
             })
@@ -718,14 +490,245 @@ var EnumerationTests = function () {
             });
     };
 
-    this.testChangingDataSourceListBindingAsynchronous = function (signalTestCaseCompleted) {
-        testChangingDataSourceListBinding(signalTestCaseCompleted, false);
-    };
+    export class EnumerationTests {
 
-    this.testChangingDataSourceListBindingSynchronous = function (signalTestCaseCompleted) {
-        testChangingDataSourceListBinding(signalTestCaseCompleted, true);
+
+        setUp() {
+            previousTracingOptions = VDSLogging.options;
+            VDSLogging.options = {
+                log: function (message) { LiveUnit.Assert.fail(message); },
+                include: /createListBinding|_retainItem|_releaseItem|release/,
+                handleTracking: true,
+                logVDS: true,
+                stackTraceLimit: 0 // set this to 100 to get good stack traces if you run into a failure.
+            };
+            VDSLogging.on();
+        }
+
+        tearDown() {
+            VDSLogging.off();
+            VDSLogging.options = previousTracingOptions;
+        }
+
+
+
+        testAsynchronousRandomEnumeration(signalTestCaseCompleted) {
+            TestComponents.runStressTest(testAsynchronousRandomEnumerationOnce, 5, signalTestCaseCompleted);
+        }
+
+        testDirectFetching(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(100);
+
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+
+            var index1 = 42,
+                index2 = 56,
+                index3 = 64;
+
+            dataSource.itemFromIndex(index1).then(function (itemWithIndex) {
+                TestComponents.verifyItemData(itemWithIndex, index1);
+
+                dataSource.itemFromKey("" + index2).then(function (itemWithKey) {
+                    TestComponents.verifyItemData(itemWithKey, index2);
+
+                    dataSource.itemFromDescription("" + index3).then(function (itemWithDescription) {
+                        TestComponents.verifyItemData(itemWithDescription, index3);
+
+                        signalTestCaseCompleted();
+                    });
+                });
+            });
+        }
+
+        testDescriptionFetching(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(0),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
+
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+
+            var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+            TestComponents.setState(dataSource, state0);
+
+            // Fetch an item near the end using just its description
+            var testIndex1 = 8,
+                itemPromise = listBinding.fromDescription("" + testIndex1),
+                handle1 = itemPromise.handle;
+
+            itemPromise.retain().then(function (itemWithDescription1) {
+                LiveUnit.Assert.areEqual(handle1, itemWithDescription1.handle);
+                TestComponents.verifyItemData(itemWithDescription1, testIndex1);
+
+                var promises = [],
+                    handles = [];
+
+                // Now fetch all the items using simple enumeration
+                itemPromise = listBinding.first();
+                for (var i = 0; i < state0.length; i++) {
+                    handles[i] = itemPromise.handle;
+                    (function (i) {
+                        promises.push(itemPromise.retain().then(function (item) {
+                            TestComponents.verifyItemData(item, i);
+
+                            LiveUnit.Assert.areEqual(handles[i], item.handle);
+                        }));
+                    })(i);
+                    itemPromise = listBinding.next();
+                }
+                itemPromise.then(function (item) {
+                    LiveUnit.Assert.isNull(item, "Request for item after last item did not return null");
+                });
+
+                // The handles should match
+                LiveUnit.Assert.isTrue(handle1, handles[testIndex1]);
+
+                WinJS.Promise.join(promises).then(function () {
+                    // Next, fetch another item using its description
+                    var testIndex2 = 0;
+
+                    itemPromise = listBinding.fromDescription("" + testIndex2);
+
+                    var handle2 = itemPromise.handle;
+
+                    // This time, we expect a different handle
+                    LiveUnit.Assert.isTrue(handle2 !== handle1);
+
+                    itemPromise.retain().then(function (itemWithDescription2) {
+                        // This item should be null, since we asked for the same item in two different ways from the same ListBinding
+                        LiveUnit.Assert.isNull(itemWithDescription2);
+
+                        // Try from a different ListBinding
+                        var handler2 = TestComponents.simpleListNotificationHandler(),
+                            listBinding2 = dataSource.createListBinding(handler);
+
+                        var testIndex3 = testIndex2;
+
+                        itemPromise = listBinding2.fromDescription("" + testIndex3);
+
+                        var handle3 = itemPromise.handle;
+
+                        // Again, we expect a different handle
+                        LiveUnit.Assert.isTrue(itemPromise.handle !== handle1);
+                        LiveUnit.Assert.isTrue(itemPromise.handle !== handle2);
+
+                        itemPromise.retain().then(function (itemWithDescription3) {
+                            // This time the fetch should have succeeded
+                            LiveUnit.Assert.areEqual(handle3, itemWithDescription3.handle);
+                            TestComponents.verifyItemData(itemWithDescription3, testIndex3);
+
+                            // Finally, verify that a direct fetch also succeeds
+                            var testIndex4 = 5;
+
+                            itemPromise = dataSource.itemFromDescription("" + testIndex4);
+
+                            itemPromise.then(function (itemWithDescription4) {
+                                // Again, the fetch should have succeeded
+                                TestComponents.verifyItemData(itemWithDescription4, testIndex4);
+
+                                signalTestCaseCompleted();
+                            });
+                        });
+                    });
+                });
+            });
+        }
+
+        testKeyBasedFetchingAsynchronous(signalTestCaseCompleted) {
+            testKeyBasedFetching(signalTestCaseCompleted, false);
+        }
+
+        testKeyBasedFetchingSynchronous(signalTestCaseCompleted) {
+            testKeyBasedFetching(signalTestCaseCompleted, true);
+        }
+
+        testSeenUrls(signalTestCaseCompleted) {
+            var seenUrlsMaxSize = WinJS.UI._seenUrlsMaxSize;
+            var seenUrlsMRUMaxSize = WinJS.UI._seenUrlsMRUMaxSize;
+            var seenUrl = WinJS.UI._seenUrl;
+            var seenUrlsMRU = WinJS.UI._getSeenUrlsMRU();
+            var seenUrls = WinJS.UI._getSeenUrls();
+
+            // Ensure we don't cache blob: urls
+            seenUrl("blob:12345");
+            LiveUnit.Assert.isTrue(seenUrlsMRU.length === 0);
+            LiveUnit.Assert.isTrue(!seenUrls["blob:12345"]);
+
+            // Ensure adding one item is keep added to the seenUrls and seenUrlsMRU
+            seenUrl("0");
+            LiveUnit.Assert.isTrue(seenUrlsMRU.length === 1);
+            LiveUnit.Assert.isTrue(seenUrls["0"]);
+
+            //Ensure we can add the first seenUrlsMaxSize and keep them in the cache
+            for (var i = 1; i < seenUrlsMaxSize + 1; i++) {
+                seenUrl(i.toString());
+            }
+            LiveUnit.Assert.isTrue(seenUrls["1"]);
+            LiveUnit.Assert.isTrue(seenUrls[seenUrlsMaxSize.toString()]);
+            LiveUnit.Assert.isTrue(!seenUrls[(seenUrlsMaxSize + 1).toString()]);
+
+            // Ensure we can add up to seenUrlsMRUMaxSize to the cache
+            LiveUnit.Assert.isTrue(seenUrlsMRU.length === seenUrlsMaxSize + 1);
+            for (var i = seenUrlsMaxSize + 1; i < seenUrlsMRUMaxSize; i++) {
+                seenUrl(i.toString());
+            }
+            LiveUnit.Assert.isTrue(seenUrlsMRU.length === seenUrlsMRUMaxSize);
+
+            // Ensure that exceeding seenUrlsMRUMaxSize clears seenUrlsMRU and keeps only up to seenUrlsMaxSize
+            // most recent urls.
+            seenUrl(seenUrlsMRUMaxSize.toString());
+            seenUrlsMRU = WinJS.UI._getSeenUrlsMRU();
+            seenUrls = WinJS.UI._getSeenUrls();
+            LiveUnit.Assert.isTrue(seenUrlsMRU.length === 0);
+            LiveUnit.Assert.isTrue(!seenUrls["1"]);
+            LiveUnit.Assert.isTrue(!seenUrls[(seenUrlsMRUMaxSize - seenUrlsMaxSize).toString()]);
+            LiveUnit.Assert.isTrue(seenUrls[(seenUrlsMRUMaxSize - seenUrlsMaxSize + 1).toString()]);
+            LiveUnit.Assert.isTrue(seenUrls[seenUrlsMRUMaxSize.toString()]);
+
+            signalTestCaseCompleted();
+        }
+
+        testBackwardTraversalAsynchronous(signalTestCaseCompleted) {
+            testBackwardTraversal(signalTestCaseCompleted, false);
+        }
+
+        testBackwardTraversalSynchronous(signalTestCaseCompleted) {
+            testBackwardTraversal(signalTestCaseCompleted, true);
+        }
+
+        testRandomTraversalAsynchronous(signalTestCaseCompleted) {
+            testRandomTraversal(signalTestCaseCompleted, false);
+        }
+
+        testRandomTraversalSynchronous(signalTestCaseCompleted) {
+            testRandomTraversal(signalTestCaseCompleted, true);
+        }
+
+        testReleaseBindingAsynchronous(signalTestCaseCompleted) {
+            testReleaseBinding(signalTestCaseCompleted, false);
+        }
+
+        testReleaseBindingSynchronous(signalTestCaseCompleted) {
+            testReleaseBinding(signalTestCaseCompleted, true);
+        }
+
+        testChangingDataSourceAsynchronous(signalTestCaseCompleted) {
+            testChangingDataSource(signalTestCaseCompleted, false);
+        }
+
+        testChangingDataSourceSynchronous(signalTestCaseCompleted) {
+            testChangingDataSource(signalTestCaseCompleted, true);
+        }
+
+        testChangingDataSourceListBindingAsynchronous(signalTestCaseCompleted) {
+            testChangingDataSourceListBinding(signalTestCaseCompleted, false);
+        }
+
+        testChangingDataSourceListBindingSynchronous(signalTestCaseCompleted) {
+            testChangingDataSourceListBinding(signalTestCaseCompleted, true);
+        }
     };
-};
+}
 
 // Register the object as a test class by passing in the name
-LiveUnit.registerTestClass("EnumerationTests");
+LiveUnit.registerTestClass("WinJSTests.EnumerationTests");

@@ -459,7 +459,7 @@ module TestComponents {
         }
     }
 
-    export function verifyItemData(item, index) {
+    export function verifyItemData(item, index?) {
         var data = item.data;
         LiveUnit.Assert.isTrue(data !== undefined, "Item " + index + " data is undefined, key: " + item.key);
         LiveUnit.Assert.isTrue(data !== null, "Item " + index + " data is null, key: " + item.key);

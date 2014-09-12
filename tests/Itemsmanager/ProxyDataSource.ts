@@ -1,20 +1,19 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Proxy Data Source
 
-(function (global) {
+module DatasourceTestComponents {
     "use strict";
-    if (typeof (WinJS) !== "undefined") {
         var UI = WinJS.UI;
         var Promise = WinJS.Promise;
 
         // Private statics
 
         var errorDoesNotExist = function errorDoesNotExist () {
-            return Promise.wrapError(new WinJS.ErrorFromName(UI.FetchError.doesNotExist));
+            return Promise.wrapError(new WinJS.ErrorFromName(UI.FetchError.doesNotExist.toString()));
         };
 
         var errorNoLongerMeaningful = function errorNoLongerMeaningful () {
-            return Promise.wrapError(new WinJS.ErrorFromName(UI.EditError.noLongerMeaningful));
+            return Promise.wrapError(new WinJS.ErrorFromName(UI.EditError.noLongerMeaningful.toString()));
         };
 
         var ProxyDataAdapter = WinJS.Class.define(function (array, keyOf) {
@@ -280,25 +279,27 @@
             }
         });
 
-        // Public definition
+    // Public definition
 
-        WinJS.Namespace.define("DatasourceTestComponents", {
 
-            /// <summary>
-            /// A data source that wraps a given array.  The array may be manipulated directly, in which case plausible change
-            /// notifications will be generated when an inconsistency is detected or the data source is invalidated.
-            /// </summary>
-            /// <param name="array" type="Array">
-            /// The array to wrap.
-            /// </param>
-            /// <param name="keyOf" type="Function">
-            /// A callback that returns a unique and invariant string to serve as the key for the array element passed to it.
-            /// </param>
-            ProxyDataSource: WinJS.Class.derive(UI.VirtualizedDataSource, function (array, keyOf) {
-                this._baseDataSourceConstructor(new ProxyDataAdapter(array, keyOf));
-            })
+    /// <summary>
+    /// A data source that wraps a given array.  The array may be manipulated directly, in which case plausible change
+    /// notifications will be generated when an inconsistency is detected or the data source is invalidated.
+    /// </summary>
+    /// <param name="array" type="Array">
+    /// The array to wrap.
+    /// </param>
+    /// <param name="keyOf" type="Function">
+    /// A callback that returns a unique and invariant string to serve as the key for the array element passed to it.
+    /// </param>
+    export var ProxyDataSource = WinJS.Class.derive(UI.VirtualizedDataSource, function (array, keyOf) {
+        this._baseDataSourceConstructor(new ProxyDataAdapter(array, keyOf));
+    });
 
-        });
-    }
-})();
+       
+
+           
+      
+
+}
 

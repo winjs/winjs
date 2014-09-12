@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.ts" />
 /// <reference path="../TestLib/UnitTestsCommon.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 
-(function (global) {
+module WinJSTests {
     "use strict";
 
     // @TODO, need tests for release/retain
@@ -24,75 +24,91 @@
         } catch (ex) { }
     }
 
-    function LoggingNotificationHandler(retain) {
+    class LoggingNotificationHandler<T> implements WinJS.UI.IListNotificationHandler<T> {
 
-        var expected = [];
-        var log = null;
+        expected = [];
+        log = null;
+
+        beginNotifications;
+        changed;
+        endNotifications;
+        inserted;
+        indexChanged;
+        countChanged;
+        moved;
+        removed;
+        reload;
+
+        constructor(retain = false) {
+
+            this.beginNotifications = this.assert.bind(this, "beginNotifications");
+            this.changed = this.assert.bind(this, "changed");
+            this.endNotifications = this.assert.bind(this, "endNotifications");
+            if (retain) {
+                this.inserted = function (itemPromise) {
+                    itemPromise.retain();
+                    this.assert("inserted");
+                };
+            } else {
+                this.inserted = this.assert.bind(this, "inserted");
+            }
+            this.indexChanged = this.assert.bind(this, "indexChanged");
+            this.countChanged = this.assert.bind(this, "countChanged");
+            this.moved = this.assert.bind(this, "moved");
+            this.removed = this.assert.bind(this, "removed");
+            this.reload = this.assert.bind(this, "reload");
+        }
 
         // Used for developing tests / debugging
-        this.startLogging = function () {
-            log = [];
+        startLogging = function () {
+            this.log = [];
         }
-        this.stopLogging = function () {
-            var l = log;
-            log = null;
+        stopLogging() {
+            var l = this.log;
+            this.log = null;
             return l;
         }
 
-        this.setExpected = function (list) {
-            expected = list;
+        setExpected(list) {
+            this.expected = list;
             return this;
-        };
-        this.appendExpected = function () {
-            for (var i = 0; i < arguments.length; i++) {
-                expected.push(arguments[i]);
-            }
-            return this;
-        };
-        this.appendExpectedN = function (entry, n) {
-            n = n || 1;
-            for (var i = 0; i < n; i++) {
-                expected.push(entry);
-            }
-            return this;
-        };
-
-        this.assertEmpty = function (comment) {
-            LiveUnit.Assert.areEqual(0, expected.length, "All expected notifications should be fired: " + comment);
         }
-        this.assertEmptyAsync = function (comment) {
-            var that = this;
-            return WinJS.Utilities.Scheduler.schedulePromiseHigh(null, "BindingListTests.assertEmptyAsync").then(function () {
-                        that.assertEmpty(comment);
-            });
-        };
+        appendExpected(...args) {
+            args.forEach((arg) => {
+                this.expected.push(arg);
+            })
+            return this;
+        }
+        appendExpectedN(entry, n = 1) {
+            for (var i = 0; i < n; i++) {
+                this.expected.push(entry);
+            }
+            return this;
+        }
 
-        function assert(name) {
-            var entry = expected.shift();
+        assertEmpty(comment?) {
+            LiveUnit.Assert.areEqual(0, this.expected.length, "All expected notifications should be fired: " + comment);
+        }
+        assertEmptyAsync(comment?) {
+            return WinJS.Utilities.Scheduler.schedulePromiseHigh(null, "BindingListTests.assertEmptyAsync").then(() => {
+                this.assertEmpty(comment);
+            });
+        }
+
+        assert(name) {
+            var entry = this.expected.shift();
             if (entry) {
                 LiveUnit.Assert.areEqual(entry, name, "Recieved event doesn't match expected event");
             }
-            if (log) {
-                log.push(name);
+            if (this.log) {
+                this.log.push(name);
             }
         }
 
-        this.beginNotifications = assert.bind(this, "beginNotifications");
-        this.changed = assert.bind(this, "changed");
-        this.endNotifications = assert.bind(this, "endNotifications");
-        if (retain) {
-            this.inserted = function (itemPromise) {
-                itemPromise.retain();
-                assert("inserted");
-            }
-        } else {
-            this.inserted = assert.bind(this, "inserted");
+        itemAvailable(item) {
         }
-        this.indexChanged = assert.bind(this, "indexChanged");
-        this.countChanged = assert.bind(this, "countChanged");
-        this.moved = assert.bind(this, "moved");
-        this.removed = assert.bind(this, "removed");
-        this.reload = assert.bind(this, "reload");
+
+
     }
 
     function CountingNotificationHandler() {
@@ -124,50 +140,40 @@
         this.reload = increment;
     }
 
-    function simpleItem(i) {
-        return "Item" + i;
-    }
-
-    function listSortedAndFilteredToEvens (count, options) {
+    function listSortedAndFilteredToEvens(count, options) {
         // Creating a sorted even number list
-        var list = new WinJS.Binding.List([], options);
+        var list = new WinJS.Binding.List<number>([], options);
         for (var i = 0; i < count; ++i) {
-            list.push(simpleItem(i));
+            list.push(i);
         }
-        var sorted = list.createSorted(function (l, r){ return l - r;});
-        return sorted.createFiltered(function (num){ return Math.abs(num) % 2 === 0;});
+        var sorted = list.createSorted(function (l, r) { return l - r; });
+        return sorted.createFiltered(function (num) { return Math.abs(num) % 2 === 0; });
     }
 
-    function listGroupedByOddAndEven(count) {
-        var list = new WinJS.Binding.List();
-        var compare = function (num){ return (num % 2 === 0) ? "even" : "odd"; };
-        var sort = function (l, r){ return l.length - r.length; };
+    function listGroupedByOddAndEven(count = 0) {
+        var list = new WinJS.Binding.List<number>();
+        var compare = function (num) { return (num % 2 === 0) ? "even" : "odd"; };
+        var sort = function (l, r) { return l.length - r.length; };
         for (var i = 0; i < count; ++i) {
             list.push(i);
         }
         return list.createGrouped(compare, compare, sort);
     }
 
-    function sortedList(count){
-        var list = new WinJS.Binding.List();
-        for (var i = 0; i < count; ++i) {
-            list.push(simpleItem(i));
-        }
+    function sortedList() {
+        var list = new WinJS.Binding.List<number>();
         return list.createSorted(function (l, r) { return (l - r); });
 
     }
 
-    function oddListFilter(count) {
-        var list = new WinJS.Binding.List();
-        for (var i = 0; i < count; ++i) {
-            list.push(simpleItem(i));
-        }
-        return list.createFiltered(function (num) { return (num % 2); });
+    function oddListFilter() {
+        var list = new WinJS.Binding.List<number>();
+        return list.createFiltered(function (num) { return !!(num % 2); });
     }
 
-    global.BindingListTests = function () {
+    export class BindingListTests {
 
-        this.testBindingListDecreasingTheLenghtNotifications = function (complete) {
+        testBindingListDecreasingTheLenghtNotifications(complete) {
 
             var logger = new LoggingNotificationHandler(true);
             var list = new WinJS.Binding.List();
@@ -191,12 +197,12 @@
             logger.assertEmptyAsync()
                 .then(null, errorHandler)
                 .then(complete);
-        };
+        }
 
-        this.testReloadNotificationsInListBinding = function () {
+        testReloadNotificationsInListBinding() {
 
             var logger = new LoggingNotificationHandler(true);
-            var list = new WinJS.Binding.List();
+            var list = new WinJS.Binding.List<number>();
             var dataSource = list.dataSource;
             var listBinding = dataSource.createListBinding(logger);
 
@@ -217,14 +223,14 @@
             logger.assertEmpty();
         }
 
-        this.testBindingListEditingNotifications = function (complete) {
+        testBindingListEditingNotifications(complete) {
 
             var logger = new LoggingNotificationHandler(true);
             var list = new WinJS.Binding.List();
             var dataSource = list.dataSource;
             var listBinding = dataSource.createListBinding(logger);
 
-            WinJS.Promise.as()
+            WinJS.Promise.wrap()
                 .then(function () {
                     logger.setExpected([
                         "beginNotifications",
@@ -265,8 +271,8 @@
                     ]).
                         appendExpectedN("indexChanged", list.length - 1).
                         appendExpected(
-                            "countChanged",
-                            "endNotifications"
+                        "countChanged",
+                        "endNotifications"
                         );
                     list.shift();
                     return logger.assertEmptyAsync("checking correct shift");
@@ -278,8 +284,8 @@
                     ]).
                         appendExpectedN("indexChanged", list.length).
                         appendExpected(
-                            "countChanged",
-                            "endNotifications"
+                        "countChanged",
+                        "endNotifications"
                         );
                     list.unshift(300);
                     return logger.assertEmptyAsync("checking correct unshift");
@@ -319,7 +325,7 @@
                 .then(complete);
         }
 
-        this.testBindingListEditingNotificationsWithExplicitBatching = function () {
+        testBindingListEditingNotificationsWithExplicitBatching() {
 
             var logger = new LoggingNotificationHandler(true);
             var list = new WinJS.Binding.List();
@@ -387,19 +393,38 @@
             logger.assertEmpty("checking correct shift");
 
             logger.setExpected([]).
-            appendExpectedN("indexChanged", list.length - 1).
-            appendExpected(
+                appendExpectedN("indexChanged", list.length).
+                appendExpected(
                 "countChanged",
                 "endNotifications"
-            );
+                );
             dataSource.endEdits();
             logger.assertEmpty();
         }
-    };
+    }
 
-    global.BindingListFilteredProjectionTests = function () {
+    function verifyListContent(list, expected) {
+        for (var i = 0, len = list.length; i < len; i++) {
+            if (list.getAt(i) !== expected[i]) {
+                return false;
+            }
 
-        this.testBindingListFiltersDecreasingTheLenghtNotifications = function () {
+        }
+        return list.length === expected.length;
+    }
+
+    function scanFor(listBinding, value) {
+        return function scan(item) {
+            if (item.data === value) {
+                return item;
+            }
+            return listBinding.next().then(scan);
+        };
+    }
+
+    export class BindingListFilteredProjectionTests {
+
+        testBindingListFiltersDecreasingTheLenghtNotifications() {
 
             var logger = new LoggingNotificationHandler(true);
             var list = oddListFilter();
@@ -423,7 +448,7 @@
             logger.assertEmpty("checking correct decreasing length of the list");
         }
 
-        this.testBindingListFiltersDecreasingTheLenghtNotificationsAutoBatching = function (complete) {
+        testBindingListFiltersDecreasingTheLenghtNotificationsAutoBatching(complete) {
 
             var logger = new LoggingNotificationHandler(true);
             var list = oddListFilter();
@@ -448,14 +473,14 @@
                 .then(complete);
         }
 
-        this.testBindingListFiltersEditingNotifications = function (complete) {
+        testBindingListFiltersEditingNotifications(complete) {
 
             var logger = new LoggingNotificationHandler(true);
             var list = oddListFilter();
             var dataSource = list.dataSource;
             var listBinding = dataSource.createListBinding(logger);
 
-            WinJS.Promise.as()
+            WinJS.Promise.wrap()
                 .then(function () {
                     logger.setExpected([
                         "beginNotifications",
@@ -515,8 +540,8 @@
                     ]).
                         appendExpectedN("indexChanged", list.length - 1).
                         appendExpected(
-                            "countChanged",
-                            "endNotifications"
+                        "countChanged",
+                        "endNotifications"
                         );
                     list.shift();
                     return logger.assertEmptyAsync("checking correct shift");
@@ -533,8 +558,8 @@
                     ]).
                         appendExpectedN("indexChanged", list.length).
                         appendExpected(
-                            "countChanged",
-                            "endNotifications"
+                        "countChanged",
+                        "endNotifications"
                         );
                     list.unshift(17);
                     return logger.assertEmptyAsync("checking correct unshift element with true predicate");
@@ -544,11 +569,11 @@
                         "beginNotifications",
                         "removed"
                     ]).
-                    appendExpectedN("indexChanged", list.length - 1).
-                    appendExpected(
+                        appendExpectedN("indexChanged", list.length - 1).
+                        appendExpected(
                         "countChanged",
                         "endNotifications"
-                    );
+                        );
                     list.setAt(0, 100);
                     return logger.assertEmptyAsync("checking correct setAt to false predicate");
                 })
@@ -586,7 +611,7 @@
                 .then(complete);
         }
 
-        this.testBindingListSortedDecreasingTheLenghtNotifications = function () {
+        testBindingListSortedDecreasingTheLenghtNotifications() {
 
             var logger = new LoggingNotificationHandler(true);
             var list = sortedList();
@@ -610,7 +635,7 @@
             logger.assertEmpty("checking correct decreasing length of the list");
         }
 
-        this.testBindingListSortedProjectionUnshiftFunction = function () {
+        testBindingListSortedProjectionUnshiftFunction() {
 
             var logger = new LoggingNotificationHandler(true);
             var list = sortedList();
@@ -690,8 +715,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.unshift(1);
@@ -728,7 +753,7 @@
             ]).
                 appendExpectedN("indexChanged", list.length - 1).
                 appendExpected(
-                    "endNotifications"
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.setAt(0, 100);
@@ -736,7 +761,7 @@
             logger.assertEmpty("checking correct setAt to false predicate");
         }
 
-        this.testBindingListSortedProjectionSetAtFunction = function () {
+        testBindingListSortedProjectionSetAtFunction() {
             var logger = new LoggingNotificationHandler(true);
             var list = sortedList();
             var dataSource = list.dataSource;
@@ -820,7 +845,7 @@
             ]).
                 appendExpectedN("indexChanged", list.length - 1).
                 appendExpected(
-                    "endNotifications"
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.setAt(0, 100);
@@ -847,7 +872,7 @@
             logger.assertEmpty("checking correct splice to delete");
         }
 
-        this.testBindingListSortedProjectionMutationFunction = function () {
+        testBindingListSortedProjectionMutationFunction() {
 
             var logger = new LoggingNotificationHandler(true);
             var list = sortedList();
@@ -932,7 +957,7 @@
             logger.assertEmpty("checking correct splice at the end");
         }
 
-        this.testBindingListSortedProjectionSplice = function () {
+        testBindingListSortedProjectionSplice() {
             var logger = new LoggingNotificationHandler(true);
             var list = sortedList();
             var dataSource = list.dataSource;
@@ -1046,8 +1071,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.splice(list.length - 3, 0, -2);
@@ -1055,7 +1080,7 @@
             logger.assertEmpty("checking correct splice to insert in the begining of the list");
         }
 
-        this.testBindingListSortedWithShift = function () {
+        testBindingListSortedWithShift() {
             var logger = new LoggingNotificationHandler(true);
             var list = sortedList();
             var dataSource = list.dataSource;
@@ -1135,8 +1160,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length - 1).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.shift();
@@ -1144,7 +1169,7 @@
             logger.assertEmpty("checking correct shift");
         }
 
-        this.testBindingListDecreasingTheLenghInGroupSorted = function () {
+        testBindingListDecreasingTheLenghInGroupSorted() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1168,7 +1193,7 @@
 
         }
 
-        this.testBindingListDataSourcePushInGroupSorted = function () {
+        testBindingListDataSourcePushInGroupSorted() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1189,7 +1214,7 @@
             logger.assertEmpty("checking correct push in groupSortedProjection");
         }
 
-        this.testBindingListDataSourcePopInGroupSorted = function () {
+        testBindingListDataSourcePopInGroupSorted() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1216,7 +1241,7 @@
             logger.assertEmpty("checking correct pop in groupSortedProjection");
         }
 
-        this.testBindingListDataSourceMoveInGroupSorted = function () {
+        testBindingListDataSourceMoveInGroupSorted() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1247,7 +1272,7 @@
             dataSource.endEdits();
         }
 
-        this.testBindingListDataSourceShiftInGroupSorted = function () {
+        testBindingListDataSourceShiftInGroupSorted() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1263,8 +1288,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length - 1).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.shift();
@@ -1273,7 +1298,7 @@
 
         }
 
-        this.testBindingListDataSourceUnShiftInGroupSorted = function () {
+        testBindingListDataSourceUnShiftInGroupSorted() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1289,8 +1314,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.unshift(11);
@@ -1313,8 +1338,8 @@
             ]).
                 appendExpectedN("indexChanged", numOfEvens).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.unshift(6);
@@ -1322,7 +1347,7 @@
             logger.assertEmpty("checking correct unshift in groupSorted");
         }
 
-        this.testBindingListDataSourceSpliceInGroupSortedWithSpeicalStableInsert = function () {
+        testBindingListDataSourceSpliceInGroupSortedWithSpeicalStableInsert() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1339,8 +1364,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length - 1).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.splice(0, 1);
@@ -1354,8 +1379,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length - ind).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
 
             dataSource.beginEdits();
@@ -1371,8 +1396,8 @@
             ]).
                 appendExpectedN("indexChanged", 3).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
 
             dataSource.beginEdits();
@@ -1383,7 +1408,7 @@
             logger.assertEmpty("checking deleting elements using splice");
         }
 
-        this.testBindingListDataSourceSpliceInGroupSorted = function () {
+        testBindingListDataSourceSpliceInGroupSorted() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1400,8 +1425,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length - 1).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.splice(0, 1);
@@ -1415,8 +1440,8 @@
             ]).
                 appendExpectedN("indexChanged", list.length - ind).
                 appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
 
             dataSource.beginEdits();
@@ -1428,7 +1453,7 @@
 
         }
 
-        this.testBindingListDataSourceSetAtInGroupSorted = function () {
+        testBindingListDataSourceSetAtInGroupSorted() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -1445,7 +1470,7 @@
             ]).
                 appendExpectedN("indexChanged", 4).
                 appendExpected(
-                    "endNotifications"
+                "endNotifications"
                 );
             //before setAt: 1, 3, 5, 7, 9, 2, 4, 8, 10
             //After setAt: 3, 5, 7, 9, 6, 2, 4, 8, 10
@@ -1455,7 +1480,7 @@
             logger.assertEmpty("checking the correctness of setAt in GroupSorted");
         }
 
-        this.testBindingListDataSourceFilterOfFilter = function () {
+        testBindingListDataSourceFilterOfFilter() {
             var options = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
             for (var i = 0; i < options.length; i++) {
                 var logger = new LoggingNotificationHandler(true);
@@ -1463,7 +1488,7 @@
                 var dataSource = list.dataSource;
                 var listBinding = dataSource.createListBinding(logger);
 
-                var sorted = list._list;
+                var sorted = (<any>list)._list;
                 dataSource.beginEdits();
                 list.push(10, 8, 7, 12, 3, 4, -1, 0, -2, 11);
                 dataSource.endEdits();
@@ -1476,8 +1501,8 @@
                 ]).
                     appendExpectedN("indexChanged", 4).
                     appendExpected(
-                        "countChanged",
-                        "endNotifications"
+                    "countChanged",
+                    "endNotifications"
                     );
                 dataSource.beginEdits();
                 list.push(13, 15, 7, 2, 21);
@@ -1489,8 +1514,8 @@
                 ]).
                     appendExpectedN("indexChanged", list.length - 1).
                     appendExpected(
-                        "countChanged",
-                        "endNotifications"
+                    "countChanged",
+                    "endNotifications"
                     );
                 dataSource.beginEdits();
                 list.setAt(0, 1);
@@ -1523,8 +1548,8 @@
                 ]).
                     appendExpectedN("indexChanged", list.length).
                     appendExpected(
-                        "countChanged",
-                        "endNotifications"
+                    "countChanged",
+                    "endNotifications"
                     );
                 dataSource.beginEdits();
                 sorted.setAt(sorted.length - 1, -12);
@@ -1552,8 +1577,8 @@
                 ]).
                     appendExpectedN("indexChanged", list.length - 1).
                     appendExpected(
-                        "countChanged",
-                        "endNotifications"
+                    "countChanged",
+                    "endNotifications"
                     );
                 dataSource.beginEdits();
                 list.shift();
@@ -1572,8 +1597,8 @@
                 ]).
                     appendExpectedN("indexChanged", list.length + 1).
                     appendExpected(
-                        "countChanged",
-                        "endNotifications"
+                    "countChanged",
+                    "endNotifications"
                     );
                 dataSource.beginEdits();
                 list.unshift(-52);
@@ -1590,8 +1615,8 @@
                 ]).
                     appendExpectedN("indexChanged", list.length).
                     appendExpected(
-                        "countChanged",
-                        "endNotifications"
+                    "countChanged",
+                    "endNotifications"
                     );
                 dataSource.beginEdits();
                 list.splice(0, 1);
@@ -1604,26 +1629,7 @@
             }
         }
 
-        function verifyListContent(list, expected) {
-            for (var i = 0, len = list.length; i < len; i++) {
-                if (list.getAt(i) !== expected[i]) {
-                    return false;
-                }
-
-            }
-            return list.length === expected.length;
-        }
-
-        function scanFor(listBinding, value) {
-            return function scan(item) {
-                if (item.data === value) {
-                    return item;
-                }
-                return listBinding.next().then(scan);
-            }
-        }
-
-        this.testBindingListDataSourceMutationFunction = function (complete) {
+        testBindingListDataSourceMutationFunction(complete) {
             var logger = new LoggingNotificationHandler();
             var list = new WinJS.Binding.List();
             var dataSource = list.dataSource;
@@ -1685,7 +1691,7 @@
 
                     return listBinding.previous();
                 })
-                .then(function (item) {
+                .then<any>(function (item) {
                     dataSource.remove(item.key);
                     LiveUnit.Assert.isTrue(verifyListContent(list, [70, 80, 100]), "checking the correctness of remove");
                     dataSource.insertAtStart(null, 50);
@@ -1712,7 +1718,8 @@
                 .then(null, errorHandler)
                 .then(complete);
         }
-        this.testBindingListMoveBeforeAndAFterWithSameKey = function (complete) {
+
+        testBindingListMoveBeforeAndAFterWithSameKey(complete) {
             var logger = new LoggingNotificationHandler();
             var list = new WinJS.Binding.List();
             var dataSource = list.dataSource;
@@ -1757,7 +1764,7 @@
                 .then(null, errorHandler)
                 .then(complete);
         }
-        this.testBindingFilteredListDataSourceMutationFunction = function (complete) {
+        testBindingFilteredListDataSourceMutationFunction(complete) {
 
             var logger = new LoggingNotificationHandler(true);
             var list = oddListFilter();
@@ -1828,7 +1835,7 @@
 
                     return listBinding.previous();
                 })
-                .then(function (item) {
+                .then<any>(function (item) {
                     dataSource.remove(item.key);
                     LiveUnit.Assert.isTrue(verifyListContent(list, [71, 81, 101]), "checking the correctness of remove");
                     dataSource.insertAtStart(null, 51);
@@ -1851,7 +1858,7 @@
                 .then(complete);
         }
 
-        this.testBindingSortedListDataSourceMutationFunction = function (complete) {
+        testBindingSortedListDataSourceMutationFunction(complete) {
 
             var logger = new LoggingNotificationHandler(true);
             var list = sortedList();
@@ -1910,7 +1917,6 @@
                     dataSource.insertAtStart(null, 50);
                     dataSource.insertAtStart(null, 40);
                     LiveUnit.Assert.isTrue(verifyListContent(list, [-100, 40, 50, 60, 81, 91, 101]), "checking the correctness of insertion after multiple mutations");
-
                     return WinJS.Promise.join({
                         current: listBinding.current(),
                         next: listBinding.next(),
@@ -1932,7 +1938,7 @@
                 .then(complete);
         }
 
-        this.testBindingListInGroupSorted = function () {
+        testBindingListInGroupSorted() {
 
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
@@ -1969,8 +1975,8 @@
             ])
                 .appendExpectedN("indexChanged", list.length - 2)
                 .appendExpected(
-                    "countChanged",
-                    "endNotifications"
+                "countChanged",
+                "endNotifications"
                 );
             dataSource.beginEdits();
             list.splice(0, 2);
@@ -2002,7 +2008,7 @@
             logger.assertEmpty();
         }
 
-        this.testBindingGroupSortedListDataSourceMutationFunction = function () {
+        testBindingGroupSortedListDataSourceMutationFunction() {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven();
             var dataSource = list.dataSource;
@@ -2033,7 +2039,7 @@
             LiveUnit.Assert.isTrue(verifyListContent(list, [81, 101, 80, 90]));
         }
 
-        this.testBindingGroupSortedListDataSourceMutationFunction2 = function (complete) {
+        testBindingGroupSortedListDataSourceMutationFunction2(complete) {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven(5);
             var dataSource = list.dataSource;
@@ -2078,7 +2084,7 @@
                 .then(complete);
         }
 
-        this.testBindingGroupSortedListDataSourceMutationFunction3 = function (complete) {
+        testBindingGroupSortedListDataSourceMutationFunction3(complete) {
             var logger = new LoggingNotificationHandler(true);
             var list = listGroupedByOddAndEven(5);
             var dataSource = list.dataSource;
@@ -2109,7 +2115,7 @@
 
                     return listBinding.previous();
                 })
-                .then(function (item) {
+                .then<any>(function (item) {
                     dataSource.moveToEnd(item.key);
                     LiveUnit.Assert.isTrue(verifyListContent(list, [75, 3, 101, 1, 0, 2, 60, 4, 90]), "checking the correctness of moveToEnd");
 
@@ -2137,7 +2143,7 @@
                 .then(complete);
         }
 
-        this.testBindingGroupSortedListMutatingGroup = function (complete) {
+        testBindingGroupSortedListMutatingGroup(complete) {
 
             function groupKeySelector(item) {
                 return item.group.key;
@@ -2149,7 +2155,7 @@
                 }
             }
 
-            var list = new WinJS.Binding.List();
+            var list = new WinJS.Binding.List<{ group: { key: string }; title: string }>();
             var groupedItems = list.createGrouped(groupKeySelector, groupDataSelector);
             var logger = new LoggingNotificationHandler(true);
             var dataSource = groupedItems.dataSource;
@@ -2202,14 +2208,14 @@
                     LiveUnit.Assert.areEqual("2", item.groupKey);
                 });
             var assertGroups = groupsListBinding.next()
-                .then(function (group) {
+                .then(function (group: any) {
                     LiveUnit.Assert.areEqual("1", group.data.title);
                     LiveUnit.Assert.areEqual(1, group.groupSize);
                     LiveUnit.Assert.areEqual(0, group.firstItemIndexHint);
                     LiveUnit.Assert.areEqual(list.getItem(2).key, group.firstItemKey);
                     return groupsListBinding.next();
                 })
-                .then(function (group) {
+                .then(function (group: any) {
                     LiveUnit.Assert.areEqual("2", group.data.title);
                     LiveUnit.Assert.areEqual(3, group.groupSize);
                     LiveUnit.Assert.areEqual(1, group.firstItemIndexHint);
@@ -2222,7 +2228,7 @@
 
         }
 
-        this.testBindingListDirectAccess = function (complete) {
+        testBindingListDirectAccess(complete) {
 
             var testArray = [10, 20, 30, 40, 50],
                 testIndex = 2;
@@ -2242,18 +2248,18 @@
                 })
                 .then(complete);
 
-        };
-
-    };
-
-    global.BindingListWithListViewTests = function () {
-
-        function parent(element) {
-            document.body.appendChild(element);
-            return function () { document.body.removeChild(element); };
         }
 
-        this.testListViewInstantiation = function (complete) {
+    }
+
+    function parent(element) {
+        document.body.appendChild(element);
+        return function () { document.body.removeChild(element); };
+    }
+
+    export class BindingListWithListViewTests {
+
+        testListViewInstantiation(complete) {
             var div = document.createElement("DIV");
             var cleanup = parent(div);
 
@@ -2267,13 +2273,13 @@
                 .then(null, errorHandler)
                 .then(cleanup)
                 .done(complete);
-        };
+        }
 
     };
 
     // Register the object as a test class by passing in the name
-    LiveUnit.registerTestClass("BindingListTests");
-    LiveUnit.registerTestClass("BindingListFilteredProjectionTests");
-    LiveUnit.registerTestClass("BindingListWithListViewTests");
+    LiveUnit.registerTestClass("WinJSTests.BindingListTests");
+    LiveUnit.registerTestClass("WinJSTests.BindingListFilteredProjectionTests");
+    LiveUnit.registerTestClass("WinJSTests.BindingListWithListViewTests");
 
-}(this));
+}
