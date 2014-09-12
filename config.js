@@ -11,7 +11,7 @@
     config.buildDateString = config.buildDate.getFullYear() + "." + config.month + "." + config.buildDate.getDate();
     config.localeFolder = "en-US";
     config.outputFolder = "bin/";
-    config.copyright = '/*! Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */';
+    config.copyright = '/*! Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See https://github.com/winjs/winjs/blob/master/License.txt for license information. */';
 
     config.testsOutput = "";
 

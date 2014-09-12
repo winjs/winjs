@@ -5,7 +5,8 @@
     var config = require("../../config.js");
     module.exports = {
         options: {
-            sourceMap: true
+            sourceMap: true,
+            banner: config.copyright
         },
         baseDesktop: {
             src: [config.desktopOutput + "js/base.js"],
