@@ -18,6 +18,7 @@ define([
     'WinJS/Controls/Flyout',
     'WinJS/Controls/AppBar',
     'WinJS/Controls/Menu',
+    'WinJS/Controls/AutoSuggestBox',
     'WinJS/Controls/SearchBox',
     'WinJS/Controls/SettingsFlyout',
     'WinJS/Controls/NavBar',
