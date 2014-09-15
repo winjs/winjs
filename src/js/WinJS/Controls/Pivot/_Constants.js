@@ -21,6 +21,7 @@ define([
             pivotShowNavButtons: "win-pivot-shownavbuttons",
             pivotInputTypeMouse: "win-pivot-mouse",
             pivotInputTypeTouch: "win-pivot-touch",
+            pivotDisableContentSwipeNavigation: "win-pivot-disablecontentswipenavigation"
         }
     };
 

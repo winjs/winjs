@@ -628,10 +628,10 @@ define([
                 this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
                 this._element.appendChild(this._headersContainerElement);
                 this._element.addEventListener('click', this._elementClickedHandler.bind(this));
+                _ElementUtilities._addEventListener(this._element, "pointerdown", this._elementPointerDownHandler.bind(this));
+                _ElementUtilities._addEventListener(this._element, "pointerup", this._elementPointerUpHandler.bind(this));
                 _ElementUtilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
                 _ElementUtilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
-                _ElementUtilities._addEventListener(this._headersContainerElement, "pointerdown", this._headersPointerDownHandler.bind(this));
-                _ElementUtilities._addEventListener(this._headersContainerElement, "pointerup", this._headersPointerUpHandler.bind(this));
 
                 this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headersContainerElement);
                 this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
@@ -922,10 +922,9 @@ define([
                     this._firstLoad = true;
                     this._cachedRTL = _Global.getComputedStyle(this._element, null).direction === "rtl";
 
-                    headersStates.common.refreshHeadersState(this, true);
-
                     var that = this;
                     ready.done(function () {
+                        headersStates.common.refreshHeadersState(that, true);
                         if (!supportsSnap) {
                             _ElementUtilities.addClass(that.element, Pivot._ClassName.pivotNoSnap);
                         }
@@ -986,7 +985,7 @@ define([
                 },
 
                 _resizeHandler: function pivot_resizeHandler() {
-                    if (this._disposed) {
+                    if (this._disposed || this._pendingRefresh) {
                         return;
                     }
 
@@ -1067,7 +1066,6 @@ define([
                     // Get next item
                     var item = this._items.getAt(index);
                     this._currentItem = item;
-
 
                     if (goPrevious) {
                         this._offsetFromCenter--;
@@ -1393,29 +1391,54 @@ define([
                     }
                 },
 
-                _headersPointerDownHandler: function pivot_headersPointerDownHandler(e) {
-                    // This prevents Chrome's history navigation swipe gestures.
-                    e.preventDefault();
-
-                    this._headersPointerDownPoint = { x: e.clientX, y: e.clientY, type: e.pointerType || "mouse" };
-                },
-
-                _headersPointerUpHandler: function pivot_headersPointerUpHandler(e) {
-                    if (!this._headersPointerDownPoint || this.locked) {
-                        this._headersPointerDownPoint = null;
+                _elementPointerDownHandler: function pivot_elementPointerDownHandler(e) {
+                    if (supportsSnap) {
                         return;
                     }
 
-                    var dx = e.clientX - this._headersPointerDownPoint.x;
-                    dx = this._rtl ? -dx : dx;
+                    // This prevents Chrome's history navigation swipe gestures.
+                    e.preventDefault();
+
+                    this._elementPointerDownPoint = { x: e.clientX, y: e.clientY, type: e.pointerType || "mouse", time: Date.now(), inHeaders: this._headersContainerElement.contains(e.target) };
+                },
+
+                _elementPointerUpHandler: function pivot_elementPointerUpHandler(e) {
+                    if (!this._elementPointerDownPoint || this.locked) {
+                        this._elementPointerDownPoint = null;
+                        return;
+                    }
+
+                    var filterDistance = 32;
+                    var dyDxThresholdRatio = 0.4;
+
+                    var dy = Math.abs(e.clientY - this._elementPointerDownPoint.y);
+                    var dx = e.clientX - this._elementPointerDownPoint.x;
+                    var thresholdY = Math.abs(dx * dyDxThresholdRatio);
+
+                    var doSwipeDetection =
+                        // Check vertical threshold to prevent accidental swipe detection during vertical pan
+                        dy < thresholdY
+                        // Check horizontal threshold to prevent accidental swipe detection when tapping
+                        && Math.abs(dx) > filterDistance
+                        // Check that input type is Touch, however, if touch detection is not supported then we do detection for any input type
+                        && (!_ElementUtilities._supportsTouchDetection || (this._elementPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH))
+                        // Check if content swipe navigation is disabled, if it is we still run swipe detection if both the up and down points are in the headers container element
+                        && (!this.element.classList.contains(_Constants._ClassName.pivotDisableContentSwipeNavigation) || (this._elementPointerDownPoint.inHeaders && this._headersContainerElement.contains(e.target)));
+
                     this._navigationHandled = false;
-                    if ((!_ElementUtilities._supportsTouchDetection || (this._headersPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH))) {
-                        // Header swipe navigation detection
-                        // If touch detection is not supported then we will detect swipe gestures for any pointer type.
-                        if (dx < -Pivot._headerSwipeTriggerDistance) {
+                    if (doSwipeDetection) {
+                        // Swipe navigation detection
+
+                        // Simulate inertia by multiplying dx by a polynomial function of dt
+                        var dt = Date.now() - this._elementPointerDownPoint.time;
+                        dx *= Math.max(1, Math.pow(350 / dt, 2));
+                        dx = this._rtl ? -dx : dx;
+
+                        var vwDiv4 = this._viewportWidth / 4;
+                        if (dx < -vwDiv4) {
                             this._goNext();
                             this._navigationHandled = true;
-                        } else if (dx > Pivot._headerSwipeTriggerDistance) {
+                        } else if (dx > vwDiv4) {
                             this._goPrevious();
                             this._navigationHandled = true;
                         }
@@ -1624,8 +1647,6 @@ define([
                 _invalidViewportWidth: -1,
 
                 _headerSlideAnimationDuration: 250,
-
-                _headerSwipeTriggerDistance: 50,
 
                 // Names of classes used by the Pivot.
                 _ClassName: _Constants._ClassName,

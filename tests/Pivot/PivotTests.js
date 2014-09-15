@@ -268,6 +268,7 @@ WinJSTests.PivotTests = function () {
         LiveUnit.Assert.areEqual("none", getComputedStyle(pivot.element.querySelector("." + WinJS.UI.Pivot._ClassName.pivotTitle)).display, "Title display");
         complete();
     };
+    this.testTitle.skipWideTest = true;
 
     this.testRemovals = function testRemovals(complete) {
         var pivotItemCount = 5;
@@ -1019,6 +1020,63 @@ WinJSTests.PivotTests = function () {
         this.runHeaderTrackSwipeNavigation(complete, true);
     };
 
+    this.runContentSwipeNavigation = function runContentSwipeNavigation(complete, rtl) {
+        var itemCount = 3;
+        var pivot = createAndAppendPivotWithItems(itemCount);
+
+        if (!pivot.element.classList.contains(WinJS.UI.Pivot._ClassName.pivotNoSnap)) {
+            LiveUnit.LoggingCore.logComment("Header swipe gesture detection only supported in no-snap mode.");
+            complete();
+            return;
+        }
+
+        if (rtl) {
+            pivot.element.style.direction = "rtl";
+        }
+
+        waitForNextItemAnimationEnd(pivot).then(function () {
+            LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+
+            simulatePointerDown(pivot.element, 100, 10, PT_TOUCH);
+            return WinJS.Promise.timeout();
+        }).then(function () {
+            simulatePointerUp(pivot.element, 10, 30, PT_TOUCH);
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            LiveUnit.Assert.areEqual((rtl ? (itemCount - 1) : 1), pivot.selectedIndex);
+
+            simulatePointerDown(pivot.element, 100, 30, PT_TOUCH);
+            return WinJS.Promise.timeout();
+        }).then(function () {
+            simulatePointerUp(pivot.element, 200, 10, PT_TOUCH);
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+
+            // Now set the opt-out class on pivot and navigation should no longer occur
+            pivot.element.classList.add("win-pivot-disablecontentswipenavigation");
+            simulatePointerDown(pivot.element, 100, 10, PT_TOUCH);
+            return WinJS.Promise.timeout();
+        }).then(function () {
+            pivot._headersState.handleNavigation = function () {
+                LiveUnit.Assert.fail("Navigation should not occur with content swipe disabled.");
+            };
+
+            simulatePointerUp(pivot.element, 10, 30, PT_TOUCH);
+            return WinJS.Promise.timeout(100);
+        }).dome(function() {
+            complete();
+        });
+    };
+
+    this.testContentSwipeNavigationLTR = function testContentSwipeNavigationLTR(complete) {
+        this.runContentSwipeNavigation(complete, false);
+    };
+
+    this.testContentSwipeNavigationRTL = function testContentSwipeNavigationRTL(complete) {
+        this.runContentSwipeNavigation(complete, true);
+    };
+
     this.testHeaderTrackSwipeNavigationWhileLocked = function testHeaderTrackSwipeNavigationWhileLocked(complete) {
         var pivot = createAndAppendPivotWithItems(3);
         pivot.locked = true;
@@ -1356,6 +1414,35 @@ WinJSTests.PivotTests = function () {
             goPreviousExpected = true;
             headers[0].click();
             return waitForNextItemAnimationEnd(pivot);
+        }).done(function () {
+            complete();
+        });
+    };
+    this.testAnimationDirectionInStaticMode.skipWideTest = true;
+
+    this.testFractionalControlSizeDoesNotCauseInfiniteNavigation = function (complete) {
+        if (!supportsSnap) {
+            LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
+            complete();
+            return;
+        }
+
+        var pivot = new WinJS.UI.Pivot(undefined, {
+            items: new WinJS.Binding.List(getPivotItemsProgrammatically(5))
+        });
+        pivotWrapperEl.style.width = (pivotWidth + 0.21) + "px";
+        pivotWrapperEl.appendChild(pivot.element);
+
+        waitForNextItemAnimationEnd(pivot).then(function () {
+            var headers = document.querySelectorAll("." + WinJS.UI.Pivot._ClassName.pivotHeader);
+            pivot._viewportElement.msZoomTo({ contentX: pivot._viewportElement.scrollLeft + 100 });
+
+            return waitForNextSelectionChanged(pivot);
+        }).then(function () {
+            pivot._headersState.handleNavigation = function () {
+                LiveUnit.Assert.fail("Navigation should not occur with content swipe disabled.");
+            };
+            return WinJS.Promise.timeout(500);
         }).done(function () {
             complete();
         });
