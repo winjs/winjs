@@ -25,27 +25,19 @@
     right: -2px;
     max-height: 272px;
     overflow: auto;
-    -ms-scroll-chaining:none;
-    touch-action:none;
+    -ms-scroll-chaining: none;
+    touch-action: none;
 }
 
 .win-autosuggestbox input {
     height: 100%;
     border-style: none;
     margin: 0px;
-    padding-right: 28px;
     width: 100%;
     font-size: 11pt;
     -ms-ime-align: after;
     line-height: 20px;
     box-sizing: border-box;
-}
-
-.win-autosuggestbox input {
-    .RTL({
-        padding-right: 0;
-        padding-left: 28px;
-    });
 }
 
 /*
@@ -107,12 +99,14 @@ Hide clear button in search box control.
 }
 
 .win-searchbox-suggestion-result img {
-    .RTL({
+    .RTL( {
         margin-right: 0;
         margin-left: auto;
         padding-left: 10px;
         padding-right: 0;
-    });
+    }
+
+    );
 }
 
 .win-searchbox-suggestion-query {
@@ -141,10 +135,12 @@ Hide clear button in search box control.
 }
 
 .win-searchbox-suggestion-separator hr {
-    .RTL({
+    .RTL( {
         margin-right: 10px;
         margin-left: auto;
-    });
+    }
+
+    );
 }
 
 .win-searchbox-suggestion-separator div {
@@ -158,16 +154,53 @@ Hide clear button in search box control.
 }
 
 .win-searchbox-suggestion-separator div {
-    .RTL({
+    .RTL( {
         margin-left: 10px;
         margin-right: auto;
-    });
+    }
+
+    );
 }
 
 /*
 Search box control animations
 */
-@keyframes WinJS-flyoutBelowSearchBox-showPopup { from { transform: translateY(0px); } to { transform: none; } }
-@keyframes WinJS-flyoutAboveSearchBox-showPopup { from { transform: translateY(0px); } to { transform: none; } }
-@-webkit-keyframes -webkit-WinJS-flyoutBelowSearchBox-showPopup { from { -webkit-transform: translateY(0px); } to { -webkit-transform: none; } }
-@-webkit-keyframes -webkit-WinJS-flyoutAboveSearchBox-showPopup { from { -webkit-transform: translateY(0px); } to { -webkit-transform: none; } }
+@keyframes WinJS-flyoutBelowSearchBox-showPopup {
+    from {
+        transform: translateY(0px);
+    }
+
+    to {
+        transform: none;
+    }
+}
+
+@keyframes WinJS-flyoutAboveSearchBox-showPopup {
+    from {
+        transform: translateY(0px);
+    }
+
+    to {
+        transform: none;
+    }
+}
+
+@-webkit-keyframes -webkit-WinJS-flyoutBelowSearchBox-showPopup {
+    from {
+        -webkit-transform: translateY(0px);
+    }
+
+    to {
+        -webkit-transform: none;
+    }
+}
+
+@-webkit-keyframes -webkit-WinJS-flyoutAboveSearchBox-showPopup {
+    from {
+        -webkit-transform: translateY(0px);
+    }
+
+    to {
+        -webkit-transform: none;
+    }
+}
