@@ -1454,7 +1454,7 @@ define([
                             this._navigationHandled = true;
                         }
                     }
-                    this._headersPointerDownPoint = null;
+                    this._elementPointerDownPoint = null;
                 },
 
                 _hideNavButtons: function pivot_hideNavButtons(e) {
