@@ -1,90 +1,17 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-(function (global, undefined) {
+module VDSLogging {
     "use strict";
 
     var Promise = WinJS.Promise;
     var UI = WinJS.UI;
-
-    var Printer = WinJS.Class.define(function (options) {
-        options = options || {};
-        this.indent = options.indent || 0;
-        this.padding = options.padding || "   ";
-        this.result = "";
-    }, {
-
-        pad: function () {
-            var n = this.indent;
-            var s = "";
-            while (n--) {
-                s += this.padding;
-            }
-            return s;
-        },
-
-        print: function (o, tail) {
-            tail = tail || "";
-            var that = this;
-            switch (typeof o) {
-                case "object":
-                    if (o) {
-                        var isArray = Array.isArray(o);
-                        this.writeLine(isArray ? "[" : "{");
-                        this.indent++;
-                        Object.keys(o).forEach(function (key) {
-                            if (!isArray) {
-                                that.write(key + ": ");
-                            }
-                            that.print(o[key], ",");
-                        });
-                        this.indent--;
-                        this.writeLine((isArray ? "]" : "}") + tail);
-                    } else {
-                        this.writeLine("null" + tail);
-                    }
-                    break;
-
-                case "function":
-                    throw "Not supported";
-
-                case "boolean":
-                case "number":
-                case "string":
-                case "undefined":
-                default:
-                    this.writeLines(o + tail);
-                    break;
-            }
-            return this.result;
-        },
-
-        write: function (string) {
-            this.deferred = this.deferred || this.pad();
-            this.deferred += string;
-        },
-
-        writeLine: function (string) {
-            if (this.deferred) {
-                this.result += (this.deferred + string) + "\n";
-                this.deferred = null;
-            } else {
-                this.result += (this.pad() + string) + "\n";
-            }
-        },
-
-        writeLines: function (string) {
-            var that = this;
-            string.split("\n").forEach(function (s) { that.writeLine(s); });
-        }
-
-    });
 
     function logGetStack() {
         var newLimit = currentOptions().stackTraceLimit;
         if (newLimit <= 0) {
             return "Stack tracing is currently turned off, to turn it on set VDSLogger.options.stackTraceLimit to a value > 0.";
         }
-        var oldLimit = Error.stackTraceLimit;
-        Error.stackTraceLimit = newLimit || oldLimit;
+        var oldLimit = Error['stackTraceLimit'];
+        Error['stackTraceLimit'] = newLimit || oldLimit;
         try {
             try {
                 throw new Error();
@@ -92,10 +19,11 @@
                 return e.stack;
             }
         } finally {
-            Error.stackTraceLimit = oldLimit;
+            Error['stackTraceLimit'] = oldLimit;
         }
     }
-    function ASSERT(condition, message, data) {
+
+    function ASSERT(condition, message, data?) {
         if (!condition) {
             var terminationArg = {
                 stack: logGetStack(),
@@ -105,29 +33,40 @@
                 },
                 number: 0,
             };
-            var p = new Printer();
             var log = currentOptions().log || console.log.bind(console);
-            log("ASSERT FAILURE: " + message + "\n\nAbout to call MSApp.terminateApp with: " + p.print(terminationArg));
+            log("ASSERT FAILURE: " + message + "\n\nAbout to call MSApp.terminateApp with: " + JSON.stringify(terminationArg));
             debugger;
             MSApp.terminateApp(terminationArg);
         }
     }
 
-    var nopArgProcessor = function () { return ""; }
+    var nopArgProcessor = function (args) { return ""; }
     var timingIds = 0;
 
-    var Logger = WinJS.Class.define(function (className, options, object) {
-        this.className = className;
-        this.timing = options.timing;
-        this.entry = options.entry;
-        this.exit = options.exit;
-        this.log = options.log || console.log.bind(console);
-        this.handleTracking = options.handleTracking;
-        this.include = options.include || /.*/;
-        this.object = object
-    }, {
 
-        wrap: function (name, argProcessor, resultProcessor, entryTracker, resultLogger) {
+    class Logger {
+
+        className;
+        timing;
+        entry;
+        exit;
+        log;
+        handleTracking;
+        include;
+        object;
+
+        constructor(className, options, object) {
+            this.className = className;
+            this.timing = options.timing;
+            this.entry = options.entry;
+            this.exit = options.exit;
+            this.log = options.log || console.log.bind(console);
+            this.handleTracking = options.handleTracking;
+            this.include = options.include || /.*/;
+            this.object = object
+        }
+
+        wrap(name, argProcessor = nopArgProcessor, resultProcessor?, entryTracker?, resultLogger?) {
             if (!this.include.test(name)) {
                 return;
             }
@@ -144,13 +83,12 @@
             var message = function () {
                 return fullName;
             };
-            var argProcessor = argProcessor || nopArgProcessor;
             if (this.timing) {
                 var logStopAfterPromise;
                 var timingTarget = v;
                 v = function logTiming() {
                     var timingId = " (id:" + (++timingIds) + ")";
-                    var prefix = fullName + (argProcessor ? argProcessor(arguments) : "");
+                    var prefix = fullName + argProcessor(arguments);
                     WinJS.Utilities._writeProfilerMark(prefix + timingId + ",StartTM");
                     try {
                         var result = timingTarget.apply(this, arguments);
@@ -173,7 +111,7 @@
                 var logEntry = this.entry;
                 var logExit = this.exit;
                 v = function logEnterOrExit() {
-                    var message = fullName + (argProcessor ? argProcessor(arguments) : "");
+                    var message = fullName +  argProcessor(arguments);
                     logEntry && log(message + (logExit ? ", Entry" : ""));
                     var result = entryExitTarget.apply(this, arguments);
                     logExit && log(message + (logEntry ? ", Exit" : ""));
@@ -204,9 +142,9 @@
                 }
             }
             this.object[name] = v;
-        },
+        }
 
-    });
+    }
 
     // ListBinding / Handle ref-counting table
 
@@ -328,9 +266,8 @@
         return typeof h === "string" ? handle(h) : item(h);
     }
 
-    function sig() {
+    function sig(...f) {
         var s = function (def, v) { return typeof def === "function" ? def(v) : def; }
-        var f = Array.prototype.slice.call(arguments, 0, arguments.length);
         switch (f.length) {
             case 0:
                 return function () { return ""; };
@@ -345,10 +282,10 @@
             case 5:
                 return function (args) { return s(f[0], args[0]) + ", " + s(f[1], args[1]) + ", " + s(f[2], args[2]) + ", " + s(f[3], args[3]) + ", " + s(f[4], args[4]); }
             default:
-                return function () {
-                    var result = [];
+                return function (args) {
+                    var results = [];
                     for (var i = 0, len = args.length; i < len; i++) {
-                        result.push(s(args[i], arguments[i]));
+                        results.push(s(args[i], arguments[i]));
                     }
                     return results.join(", ");
                 };
@@ -499,80 +436,87 @@
         return result;
     };
 
-    function currentOptions() {
+    function currentOptions():IOptions {
         return VDSLogging.options || defaultOptions;
     }
 
     // We have to start somewhere, in this case we start at the _baseDataSourceConstructor member
-    var _baseDataSourceConstructor = WinJS.UI.VirtualizedDataSource.prototype._baseDataSourceConstructor;
+    var _baseDataSourceConstructor = WinJS.UI.VirtualizedDataSource.prototype['_baseDataSourceConstructor'];
 
-    WinJS.Namespace.define("VDSLogging", {
+    export interface IOptions {
+        entry?: boolean;
+        exit?: boolean;
+        timing?: boolean;
+        log?: (msg) => void;
+        handleTracking: boolean;
+        include: RegExp;
+        logVDS: boolean;
+        logAdapter?: boolean;
+        logNotifications?: boolean;
+        stackTraceLimit: number;
+    }
+    // Options are:
+    //
+    //  entry: <boolean>            whether to log upon entry to the functions
+    //  exit: <boolean>             whether to log upon exit from the functions
+    //  timing: <boolean>           whether to log WinJS.Utilities._writeProfilerMark StartTM/StopTM pairs for the functions
+    //  log: <function>             log function to be written to, default is console.log
+    //  handleTracking: <boolean>   whether to track item handle ref-counts, requires include to be a superset of /createListBinding|_retainItem|_releaseItem|release/
+    //  include: <regex>            functions to apply the above options to, applied against function name
+    //  logVDS: <boolean>           whether to log methods on the VirtualizedDataSource
+    //  logAdapter: <boolean>       whether to log methods on the ListDataAdapter which is passed to the VDS
+    //  logNotifications: <boolean> whether to log notifications from the VDS or Data Adapter
+    //  stackTraceLimit: <number>   maximum stack frames to capture in logging which captures stacks (handle table)
+    //
+    // For instance, here is the options object which just does handle-tracking (which happens to be the default):
+    //
+    //  VDSLogging.options = {
+    //      entry: true,
+    //      log: function () { },
+    //      include: /createListBinding|_retainItem|_releaseItem|release/,
+    //      handleTracking: true,
+    //      logVDS: true,
+    //      stackTraceLimit: 100
+    //  };
+    //
+    // Or here is the options object which just does logging of calls to the ListDataAdapter's itemsFrom* methods with timing:
+    //
+    //  VDSLogging.options = {
+    //      timing: true,
+    //      logAdapter: true,
+    //      include: /itemsFrom.*/
+    //  };
+    //
+    // Or here is the version which shows all the entry calls for everything it knows how to log:
+    //
+    //  VDSLogging.options = {
+    //      entry: true,
+    //      log: console.log.bind(console),
+    //      logVDS: true,
+    //      logNotifications: true,
+    //      logAdapter: true,
+    //      stackTraceLimit: 0,
+    //      include: /.*/
+    //  };
+    //
+    export var options: IOptions;
 
-        // Options are:
-        //
-        //  entry: <boolean>            whether to log upon entry to the functions
-        //  exit: <boolean>             whether to log upon exit from the functions
-        //  timing: <boolean>           whether to log WinJS.Utilities._writeProfilerMark StartTM/StopTM pairs for the functions
-        //  log: <function>             log function to be written to, default is console.log
-        //  handleTracking: <boolean>   whether to track item handle ref-counts, requires include to be a superset of /createListBinding|_retainItem|_releaseItem|release/
-        //  include: <regex>            functions to apply the above options to, applied against function name
-        //  logVDS: <boolean>           whether to log methods on the VirtualizedDataSource
-        //  logAdapter: <boolean>       whether to log methods on the ListDataAdapter which is passed to the VDS
-        //  logNotifications: <boolean> whether to log notifications from the VDS or Data Adapter
-        //  stackTraceLimit: <number>   maximum stack frames to capture in logging which captures stacks (handle table)
-        //
-        // For instance, here is the options object which just does handle-tracking (which happens to be the default):
-        //
-        //  VDSLogging.options = {
-        //      entry: true,
-        //      log: function () { },
-        //      include: /createListBinding|_retainItem|_releaseItem|release/,
-        //      handleTracking: true,
-        //      logVDS: true,
-        //      stackTraceLimit: 100
-        //  };
-        //
-        // Or here is the options object which just does logging of calls to the ListDataAdapter's itemsFrom* methods with timing:
-        //
-        //  VDSLogging.options = {
-        //      timing: true,
-        //      logAdapter: true,
-        //      include: /itemsFrom.*/
-        //  };
-        //
-        // Or here is the version which shows all the entry calls for everything it knows how to log:
-        //
-        //  VDSLogging.options = {
-        //      entry: true,
-        //      log: console.log.bind(console),
-        //      logVDS: true,
-        //      logNotifications: true,
-        //      logAdapter: true,
-        //      stackTraceLimit: 0,
-        //      include: /.*/
-        //  };
-        //
-
-        options: null,
-
-        on: function () {
-            if (WinJS.UI.VirtualizedDataSource.prototype._baseDataSourceConstructor === _baseDataSourceConstructor) {
-                var options = VDSLogging.options || defaultOptions;
-                var l = new Logger("VDS", {}, WinJS.UI.VirtualizedDataSource.prototype);
-                l.wrap(
-                    "_baseDataSourceConstructor",
-                    null,
-                    wrapVirtualizedDataSource,
-                    wrapDataAdapter
+    export function on() {
+        if (WinJS.UI.VirtualizedDataSource.prototype['_baseDataSourceConstructor'] === _baseDataSourceConstructor) {
+            var options = VDSLogging.options || defaultOptions;
+            var l = new Logger("VDS", {}, WinJS.UI.VirtualizedDataSource.prototype);
+            l.wrap(
+                "_baseDataSourceConstructor",
+                null,
+                wrapVirtualizedDataSource,
+                wrapDataAdapter
                 );
-            }
-        },
+        }
+        }
 
-        off: function () {
-            bindings = [];
-            WinJS.UI.VirtualizedDataSource.prototype._baseDataSourceConstructor = _baseDataSourceConstructor;
-        },
+    export function off() {
+        bindings = [];
+        WinJS.UI.VirtualizedDataSource.prototype['_baseDataSourceConstructor'] = _baseDataSourceConstructor;
+    }
 
-    });
-
-}(this));
+}

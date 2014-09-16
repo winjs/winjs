@@ -16,7 +16,7 @@ define([
     './Flyout/_Overlay',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
+], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -131,8 +131,8 @@ define([
                     this._currentAnimateIn = this._flyoutAnimateIn;
                     this._currentAnimateOut = this._flyoutAnimateOut;
 
-                    // Make sure _Overlay event handlers are hooked up
-                    this._addOverlayEventHandlers(true);
+                    // Make sure additional _Overlay event handlers are hooked up
+                    this._handleOverlayEventsForFlyoutOrSettingsFlyout();
                 },
 
                 /// <field type="String" locid="WinJS.UI.Flyout.anchor" helpKeyword="WinJS.UI.Flyout.anchor">
@@ -390,6 +390,12 @@ define([
                     } else {
                         // Make sure the menu has focus, but don't show a focus rect
                         _Overlay._Overlay._trySetActive(this._element);
+                    }
+                },
+
+                _lightDismiss: function Flyout_lightDismiss() {
+                    if (this._isLightDismissible()) {
+                        _Overlay._Overlay._lightDismissFlyouts();
                     }
                 },
 
@@ -789,7 +795,7 @@ define([
                         this._element.style.top = "auto";
                     } else {
                         // Normal, attach to top
-                        this._element.style.top =  _Overlay._Overlay._keyboardInfo._visibleDocTop + "px";
+                        this._element.style.top = _Overlay._Overlay._keyboardInfo._visibleDocTop + "px";
                         this._element.style.bottom = "auto";
                     }
                 },

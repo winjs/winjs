@@ -1,92 +1,22 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.ts" />
 /// <reference path="../TestLib/UnitTestsCommon.ts" />
-/// <reference path="vds-tracing.js" />
+/// <reference path="vds-tracing.ts" />
 
-var NotificationTests = function () {
+module WinJSTests {
+
     "use strict";
 
     var previousTracingOptions;
-
-    this.setUp = function () {
-        previousTracingOptions = VDSLogging.options;
-        VDSLogging.options = {
-            log: function (message) { LiveUnit.Assert.fail(message); },
-            include: /createListBinding|_retainItem|_releaseItem|release/,
-            handleTracking: true,
-            logVDS: true,
-            stackTraceLimit: 0 // set this to 100 to get good stack traces if you run into a failure.
-        };
-        VDSLogging.on();
-    }
-
-    this.tearDown = function () {
-        VDSLogging.off();
-        VDSLogging.options = previousTracingOptions;
-    }
+    var step: number;
+    var iteration: number;
 
     function errorHandler(e) {
-        // Currently we're just using this to suppress application termination. I believe there
-        //  are cases where these tests aren't valid but am not going to fix them all at the moment.
-        //
-        //LiveUnit.Assert.fail("Should not be in this error handler with error: " + e);
+        // Currently we're just using this to suppress application termination.
     }
-
-    this.testEmptyListNotifications = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(0),
-            handler = TestComponents.simpleListNotificationHandler(),
-            listBinding = dataSource.createListBinding(handler);
-
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
-
-        // Fetch the first item, which should return a placeholder
-        var itemPromise = listBinding.first();
-        handler.appendItemPromise(itemPromise);
-
-        // Wait for the fetch to discover that the item doesn't exist
-        itemPromise.then(function (item) {
-            LiveUnit.Assert.isNull(item, "First item in list known to be empty not null");
-            TestComponents.verifyRequestCount(dataSource, 0);
-
-            // This will actually be called from the refresh - wait for it to complete
-            TestComponents.setImmediate(function () {
-                TestComponents.verifyRequestCount(dataSource, 0);
-
-                // The notifications will have been sent after the promise completed, so verify them now
-                handler.verifyExpectedNotifications([
-                    "beginNotifications",
-                    "removed",
-                    "countChanged",
-                    "endNotifications"
-                ]);
-
-                // Fetch the last item, which should return null synchronously
-                var synchronous = false;
-                listBinding.last().then(function (item2) {
-                    synchronous = true;
-                    LiveUnit.Assert.isNull(item2, "Last item in list known to be empty not null");
-                });
-                LiveUnit.Assert.isTrue(synchronous, "Fetching last item did not complete synchronously");
-
-                // Fetch the first item again, which should return null synchronously this time
-                synchronous = false;
-                listBinding.first().then(function (item2) {
-                    synchronous = true;
-                    LiveUnit.Assert.isNull(item2, "First item in list known to be empty not null");
-                });
-                LiveUnit.Assert.isTrue(synchronous, "Fetching first item did not complete synchronously");
-
-                // We don't expect there to be any outstanding requests, or to have received any notifications
-                TestComponents.verifyRequestCount(dataSource, 0);
-                handler.verifyExpectedNotifications([]);
-
-                signalTestCaseCompleted();
-            });
-        });
-    };
 
     function testSimpleNotifications(signalTestCaseCompleted, synchronous) {
         var dataSource = TestComponents.simpleAsynchronousDataSource(0),
@@ -205,132 +135,6 @@ var NotificationTests = function () {
         });
     }
 
-    this.testSimpleNotificationsAsynchronous = function (signalTestCaseCompleted) {
-        testSimpleNotifications(signalTestCaseCompleted, false);
-    };
-
-    this.testSimpleNotificationsSynchronous = function (signalTestCaseCompleted) {
-        testSimpleNotifications(signalTestCaseCompleted, true);
-    };
-
-    this.testInsertNotifications = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(5),
-            handler = TestComponents.simpleListNotificationHandler(),
-            listBinding = dataSource.createListBinding(handler);
-
-        dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
-
-        var state0 = [0, 1, 2, 3, 4];
-        TestComponents.setState(dataSource, state0);
-
-        var promises = [];
-
-        // Fetch just the first three items
-        var itemPromise = listBinding.first();
-        for (var i = 0; ; i++) {
-            handler.appendItemPromise(itemPromise);
-            (function (i) {
-                promises.push(itemPromise.then(function (item) {
-                    handler.updateItem(item);
-                    handler.verifyItem(item, i);
-                }));
-            })(i);
-
-            if (i === 2) {
-                break;
-            }
-
-            itemPromise = listBinding.next();
-        }
-
-        WinJS.Promise.join(promises).then(function () {
-            handler.verifyExpectedNotifications([
-                "beginNotifications",
-                "countChanged",
-                "endNotifications"
-            ]);
-
-            // Append three items directly to the data source
-            var state1 = [0, 1, 2, 3, 4, 5, 6, 7];
-            TestComponents.setState(dataSource, state1);
-
-            // Force a refresh and wait for it to complete
-            dataSource.invalidateAll().then(function () {
-                // We should have received countChanged, but no inserted notifications
-                handler.verifyExpectedNotifications([
-                    "beginNotifications",
-                    "countChanged",
-                    "endNotifications"
-                ]);
-
-                // Don't verify state here, since only a portion of the list has been read
-
-                signalTestCaseCompleted();
-            });
-        });
-    };
-
-    this.testInsertAtEndNotifications = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(5),
-            handler = TestComponents.simpleListNotificationHandler(),
-            listBinding = dataSource.createListBinding(handler);
-
-        dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
-
-        var state0 = [0, 1, 2, 3, 4];
-        TestComponents.setState(dataSource, state0);
-
-        var promises = [];
-
-        // Fetch all the items
-        var itemPromise = listBinding.first();
-        for (var i = 0; ; i++) {
-            handler.appendItemPromise(itemPromise);
-            (function (i) {
-                promises.push(itemPromise.then(function (item) {
-                    handler.updateItem(item);
-                    handler.verifyItem(item, i);
-                }));
-            })(i);
-
-            if (i === state0.length - 1) {
-                break;
-            }
-
-            itemPromise = listBinding.next();
-        }
-
-        WinJS.Promise.join(promises).then(function () {
-            handler.verifyExpectedNotifications([
-                "beginNotifications",
-                "countChanged",
-                "endNotifications"
-            ]);
-
-            // Append three items directly to the data source
-            var state1 = [0, 1, 2, 3, 4, 5, 6, 7];
-            TestComponents.setState(dataSource, state1);
-
-            // Force a refresh and wait for it to complete
-            dataSource.invalidateAll().then(function () {
-                // Because we'd "observed" the end of the list, we should have received three inserted notifications,
-                // plus countChanged.
-                handler.verifyExpectedNotifications([
-                    "beginNotifications",
-                    "inserted",
-                    "inserted",
-                    "inserted",
-                    "countChanged",
-                    "endNotifications"
-                ]);
-
-                // Don't verify state here, since only a portion of the list has been read
-
-                signalTestCaseCompleted();
-            });
-        });
-    };
-
     function testInsertAfterClearNotifications(signalTestCaseCompleted, synchronous) {
         var dataSource = TestComponents.simpleAsynchronousDataSource(5),
             handler = TestComponents.simpleListNotificationHandler(),
@@ -393,79 +197,6 @@ var NotificationTests = function () {
         });
     }
 
-    this.testInsertAfterClearNotificationsAsynchronous = function (signalTestCaseCompleted) {
-        testInsertAfterClearNotifications(signalTestCaseCompleted, false);
-    };
-
-    this.testInsertAfterClearNotificationsSynchronous = function (signalTestCaseCompleted) {
-        testInsertAfterClearNotifications(signalTestCaseCompleted, true);
-    };
-
-    this.testRefreshWithTwoListBindings = function (signalTestCaseCompleted) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(0),
-            handler1 = TestComponents.simpleListNotificationHandler(),
-            listBinding1 = dataSource.createListBinding(handler1),
-            handler2 = TestComponents.simpleListNotificationHandler(),
-            listBinding2 = dataSource.createListBinding(handler2);
-
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
-
-        var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-        TestComponents.setState(dataSource, state0);
-
-        var promises = [];
-
-        // Fetch the first three items using one ListBinding
-        var itemPromise = listBinding1.first();
-        for (var i = 0; ; i++) {
-            handler1.appendItemPromise(itemPromise);
-            (function (i) {
-                promises.push(itemPromise.then(function (item) {
-                    handler1.updateItem(item);
-                    handler1.verifyItem(item, i);
-                }));
-            })(i);
-
-            if (i === 2) {
-                break;
-            }
-
-            itemPromise = listBinding1.next();
-        }
-
-        WinJS.Promise.join(promises).then(function () {
-            handler1.verifyExpectedNotifications([
-                "beginNotifications",
-                "countChanged",
-                "endNotifications"
-            ]);
-            handler2.verifyExpectedNotifications([
-                "beginNotifications",
-                "countChanged",
-                "endNotifications"
-            ]);
-
-            // Now have the other ListBinding request some items by key
-            handler2.appendItemPromise(listBinding2.fromKey("2"));
-            handler2.appendItemPromise(listBinding2.fromKey("7"));
-
-            // Before the data source gets a chance to respond, cause a refresh
-            dataSource.invalidateAll().then(function () {
-                // Since there were no mirages and nothing actually changed in the data, the only notification received
-                // should be an indexChanged when the index for item "7" was determined.
-                handler1.verifyExpectedNotifications([]);
-                handler2.verifyExpectedNotifications([
-                    "beginNotifications",
-                    "indexChanged",
-                    "endNotifications"
-                ]);
-
-                signalTestCaseCompleted();
-            });
-        });
-    };
-
     var rand = TestComponents.pseudorandom;
 
     function occurs(probability) {
@@ -484,6 +215,8 @@ var NotificationTests = function () {
 
         return listBinding;
     }
+
+
 
     // Stress tests the VirtualizedDataSource by attempting various random operations
     //
@@ -533,7 +266,7 @@ var NotificationTests = function () {
             changeCountMax = 10,
             changeSizeMax = 30;
 
-        function localWalk(listBinding, itemPromise, index) {
+        function localWalk(listBinding, itemPromise, index?) {
             listBinding.handler.requestItem(itemPromise, index);
 
             var handlePrev = itemPromise.handle;
@@ -561,16 +294,16 @@ var NotificationTests = function () {
         }
 
         var newItemID = 0;
-        function newData(change) {
+        function newData(change?) {
             return "New item " + newItemID++ + (change ? " (change)" : " (edit)");
         }
 
         var changedItemID = 0;
-        function changedData(change) {
+        function changedData(change?) {
             return "Changed item " + changedItemID++ + (change ? " (change)" : " (edit)");
         }
 
-        function randomIndex(changeSize) {
+        function randomIndex(changeSize?) {
             return rand(testDataAdapter.currentCount() - (changeSize ? changeSize - 1 : 0));
         }
 
@@ -625,7 +358,7 @@ var NotificationTests = function () {
 
         var stepCount = 70; //5000;
 
-        NotificationTests.step = 0;
+        step = 0;
 
         (function stepOnce() {
             var index;
@@ -791,7 +524,7 @@ var NotificationTests = function () {
             var extraIterations = 0;
 
             // See if it's time to wrap up and wait for everything to complete
-            if (++NotificationTests.step < stepCount) {
+            if (++step < stepCount) {
                 WinJS.Utilities._setImmediate(stepOnce);
             } else {
                 // Refresh one last time in case there were errors and fetching stopped
@@ -829,13 +562,13 @@ var NotificationTests = function () {
     function testRandomUsage(indices, asynchronous, failures, changes, notifications, signalTestCaseCompleted) {
         var iterationCount = 5 * TestComponents.stressLevel;
 
-        NotificationTests.iteration = 0;
+        iteration = 0;
 
         (function continueTest() {
-            LiveUnit.LoggingCore.logComment("Test " + NotificationTests.iteration + " of " + iterationCount);
-            TestComponents.seedPseudorandom(NotificationTests.iteration);
+            LiveUnit.LoggingCore.logComment("Test " + iteration + " of " + iterationCount);
+            TestComponents.seedPseudorandom(iteration);
             testRandomUsageOnce(indices, asynchronous, failures, changes, notifications, function () {
-                if (++NotificationTests.iteration < iterationCount) {
+                if (++iteration < iterationCount) {
                     WinJS.Utilities._setImmediate(continueTest);
                 } else {
                     signalTestCaseCompleted();
@@ -844,46 +577,13 @@ var NotificationTests = function () {
         })();
     }
 
-    this.testRandomUsageWithoutIndependentChanges = function (signalTestCaseCompleted) {
-        testRandomUsage(
-            0.30,    // indices
-            0.80,    // asynchronous
-            0.02,    // failures
-            0.00,    // changes
-            0.00,    // notifications
-            signalTestCaseCompleted
-        );
-    };
-
-    this.xtestRandomUsageWithoutNotifications = function (signalTestCaseCompleted) {
-        testRandomUsage(
-            0.30,    // indices
-            0.80,    // asynchronous
-            0.02,    // failures
-            0.20,    // changes
-            0.00,    // notifications
-            signalTestCaseCompleted
-        );
-    };
-
-    this.xtestRandomUsageWithNotifications = function (signalTestCaseCompleted) {
-        testRandomUsage(
-            0.30,    // indices
-            0.80,    // asynchronous
-            0.02,    // failures
-            0.20,    // changes
-            0.30,    // notifications
-            signalTestCaseCompleted
-        );
-    };
-
     // verify the newCount and oldCount returned in countChanged handler are correct. No difference is expected in sync/async mode although testing both of them.
     function testCountChangedNotificationWithChangingDataSource(signalTestCaseCompleted, synchronous) {
         var dataSource = TestComponents.simpleAsynchronousDataSource(5),
             handler = TestComponents.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
         var newCountValue = 0;
-        var oldCountValue = 0;
+        var oldCountValue: any = 0;
         var testCount = 2; // number of countChanged should be called. Using this variable to terminate this test.
 
         handler.countChanged = function (newCount, oldCount) {
@@ -924,14 +624,318 @@ var NotificationTests = function () {
 
     }
 
-    this.testCountChangedNotificationWithChangingDataSourceAsynchronous = function (signalTestCaseCompleted) {
-        testCountChangedNotificationWithChangingDataSource(signalTestCaseCompleted, false);
-    };
+    export class NotificationTests {
 
-    this.testCountChangedNotificationWithChangingDataSourceSynchronous = function (signalTestCaseCompleted) {
-        testCountChangedNotificationWithChangingDataSource(signalTestCaseCompleted, true);
-    };
-};
+        setUp() {
+            previousTracingOptions = VDSLogging.options;
+            VDSLogging.options = {
+                log: function (message) { LiveUnit.Assert.fail(message); },
+                include: /createListBinding|_retainItem|_releaseItem|release/,
+                handleTracking: true,
+                logVDS: true,
+                stackTraceLimit: 0 // set this to 100 to get good stack traces if you run into a failure.
+            };
+            VDSLogging.on();
+        }
 
+        tearDown() {
+            VDSLogging.off();
+            VDSLogging.options = previousTracingOptions;
+        }
+
+        testEmptyListNotifications(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(0),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
+
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+
+            // Fetch the first item, which should return a placeholder
+            var itemPromise = listBinding.first();
+            handler.appendItemPromise(itemPromise);
+
+            // Wait for the fetch to discover that the item doesn't exist
+            itemPromise.then(function (item) {
+                LiveUnit.Assert.isNull(item, "First item in list known to be empty not null");
+                TestComponents.verifyRequestCount(dataSource, 0);
+
+                // This will actually be called from the refresh - wait for it to complete
+                TestComponents.setImmediate(function () {
+                    TestComponents.verifyRequestCount(dataSource, 0);
+
+                    // The notifications will have been sent after the promise completed, so verify them now
+                    handler.verifyExpectedNotifications([
+                        "beginNotifications",
+                        "removed",
+                        "countChanged",
+                        "endNotifications"
+                    ]);
+
+                    // Fetch the last item, which should return null synchronously
+                    var synchronous = false;
+                    listBinding.last().then(function (item2) {
+                        synchronous = true;
+                        LiveUnit.Assert.isNull(item2, "Last item in list known to be empty not null");
+                    });
+                    LiveUnit.Assert.isTrue(synchronous, "Fetching last item did not complete synchronously");
+
+                    // Fetch the first item again, which should return null synchronously this time
+                    synchronous = false;
+                    listBinding.first().then(function (item2) {
+                        synchronous = true;
+                        LiveUnit.Assert.isNull(item2, "First item in list known to be empty not null");
+                    });
+                    LiveUnit.Assert.isTrue(synchronous, "Fetching first item did not complete synchronously");
+
+                    // We don't expect there to be any outstanding requests, or to have received any notifications
+                    TestComponents.verifyRequestCount(dataSource, 0);
+                    handler.verifyExpectedNotifications([]);
+
+                    signalTestCaseCompleted();
+                });
+            });
+        }
+
+        testSimpleNotificationsAsynchronous(signalTestCaseCompleted) {
+            testSimpleNotifications(signalTestCaseCompleted, false);
+        }
+
+        testSimpleNotificationsSynchronous(signalTestCaseCompleted) {
+            testSimpleNotifications(signalTestCaseCompleted, true);
+        }
+
+        testInsertNotifications(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(5),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
+
+            dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
+
+            var state0 = [0, 1, 2, 3, 4];
+            TestComponents.setState(dataSource, state0);
+
+            var promises = [];
+
+            // Fetch just the first three items
+            var itemPromise = listBinding.first();
+            for (var i = 0; ; i++) {
+                handler.appendItemPromise(itemPromise);
+                (function (i) {
+                    promises.push(itemPromise.then(function (item) {
+                        handler.updateItem(item);
+                        handler.verifyItem(item, i);
+                    }));
+                })(i);
+
+                if (i === 2) {
+                    break;
+                }
+
+                itemPromise = listBinding.next();
+            }
+
+            WinJS.Promise.join(promises).then(function () {
+                handler.verifyExpectedNotifications([
+                    "beginNotifications",
+                    "countChanged",
+                    "endNotifications"
+                ]);
+
+                // Append three items directly to the data source
+                var state1 = [0, 1, 2, 3, 4, 5, 6, 7];
+                TestComponents.setState(dataSource, state1);
+
+                // Force a refresh and wait for it to complete
+                dataSource.invalidateAll().then(function () {
+                    // We should have received countChanged, but no inserted notifications
+                    handler.verifyExpectedNotifications([
+                        "beginNotifications",
+                        "countChanged",
+                        "endNotifications"
+                    ]);
+
+                    // Don't verify state here, since only a portion of the list has been read
+
+                    signalTestCaseCompleted();
+                });
+            });
+        }
+
+        testInsertAtEndNotifications(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(5),
+                handler = TestComponents.simpleListNotificationHandler(),
+                listBinding = dataSource.createListBinding(handler);
+
+            dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
+
+            var state0 = [0, 1, 2, 3, 4];
+            TestComponents.setState(dataSource, state0);
+
+            var promises = [];
+
+            // Fetch all the items
+            var itemPromise = listBinding.first();
+            for (var i = 0; ; i++) {
+                handler.appendItemPromise(itemPromise);
+                (function (i) {
+                    promises.push(itemPromise.then(function (item) {
+                        handler.updateItem(item);
+                        handler.verifyItem(item, i);
+                    }));
+                })(i);
+
+                if (i === state0.length - 1) {
+                    break;
+                }
+
+                itemPromise = listBinding.next();
+            }
+
+            WinJS.Promise.join(promises).then(function () {
+                handler.verifyExpectedNotifications([
+                    "beginNotifications",
+                    "countChanged",
+                    "endNotifications"
+                ]);
+
+                // Append three items directly to the data source
+                var state1 = [0, 1, 2, 3, 4, 5, 6, 7];
+                TestComponents.setState(dataSource, state1);
+
+                // Force a refresh and wait for it to complete
+                dataSource.invalidateAll().then(function () {
+                    // Because we'd "observed" the end of the list, we should have received three inserted notifications,
+                    // plus countChanged.
+                    handler.verifyExpectedNotifications([
+                        "beginNotifications",
+                        "inserted",
+                        "inserted",
+                        "inserted",
+                        "countChanged",
+                        "endNotifications"
+                    ]);
+
+                    // Don't verify state here, since only a portion of the list has been read
+
+                    signalTestCaseCompleted();
+                });
+            });
+        }
+
+        testInsertAfterClearNotificationsAsynchronous(signalTestCaseCompleted) {
+            testInsertAfterClearNotifications(signalTestCaseCompleted, false);
+        }
+
+        testInsertAfterClearNotificationsSynchronous(signalTestCaseCompleted) {
+            testInsertAfterClearNotifications(signalTestCaseCompleted, true);
+        }
+
+        testRefreshWithTwoListBindings(signalTestCaseCompleted) {
+            var dataSource = TestComponents.simpleAsynchronousDataSource(0),
+                handler1 = TestComponents.simpleListNotificationHandler(),
+                listBinding1 = dataSource.createListBinding(handler1),
+                handler2 = TestComponents.simpleListNotificationHandler(),
+                listBinding2 = dataSource.createListBinding(handler2);
+
+            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+
+            var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+            TestComponents.setState(dataSource, state0);
+
+            var promises = [];
+
+            // Fetch the first three items using one ListBinding
+            var itemPromise = listBinding1.first();
+            for (var i = 0; ; i++) {
+                handler1.appendItemPromise(itemPromise);
+                (function (i) {
+                    promises.push(itemPromise.then(function (item) {
+                        handler1.updateItem(item);
+                        handler1.verifyItem(item, i);
+                    }));
+                })(i);
+
+                if (i === 2) {
+                    break;
+                }
+
+                itemPromise = listBinding1.next();
+            }
+
+            WinJS.Promise.join(promises).then(function () {
+                handler1.verifyExpectedNotifications([
+                    "beginNotifications",
+                    "countChanged",
+                    "endNotifications"
+                ]);
+                handler2.verifyExpectedNotifications([
+                    "beginNotifications",
+                    "countChanged",
+                    "endNotifications"
+                ]);
+
+                // Now have the other ListBinding request some items by key
+                handler2.appendItemPromise(listBinding2.fromKey("2"));
+                handler2.appendItemPromise(listBinding2.fromKey("7"));
+
+                // Before the data source gets a chance to respond, cause a refresh
+                dataSource.invalidateAll().then(function () {
+                    // Since there were no mirages and nothing actually changed in the data, the only notification received
+                    // should be an indexChanged when the index for item "7" was determined.
+                    handler1.verifyExpectedNotifications([]);
+                    handler2.verifyExpectedNotifications([
+                        "beginNotifications",
+                        "indexChanged",
+                        "endNotifications"
+                    ]);
+
+                    signalTestCaseCompleted();
+                });
+            });
+        }
+
+        testRandomUsageWithoutIndependentChanges(signalTestCaseCompleted) {
+            testRandomUsage(
+                0.30,    // indices
+                0.80,    // asynchronous
+                0.02,    // failures
+                0.00,    // changes
+                0.00,    // notifications
+                signalTestCaseCompleted
+                );
+        }
+
+        xtestRandomUsageWithoutNotifications(signalTestCaseCompleted) {
+            testRandomUsage(
+                0.30,    // indices
+                0.80,    // asynchronous
+                0.02,    // failures
+                0.20,    // changes
+                0.00,    // notifications
+                signalTestCaseCompleted
+                );
+        }
+
+        xtestRandomUsageWithNotifications(signalTestCaseCompleted) {
+            testRandomUsage(
+                0.30,    // indices
+                0.80,    // asynchronous
+                0.02,    // failures
+                0.20,    // changes
+                0.30,    // notifications
+                signalTestCaseCompleted
+                );
+        }
+
+        testCountChangedNotificationWithChangingDataSourceAsynchronous(signalTestCaseCompleted) {
+            testCountChangedNotificationWithChangingDataSource(signalTestCaseCompleted, false);
+        }
+
+        testCountChangedNotificationWithChangingDataSourceSynchronous(signalTestCaseCompleted) {
+            testCountChangedNotificationWithChangingDataSource(signalTestCaseCompleted, true);
+        }
+    };
+}
 // Register the object as a test class by passing in the name
-LiveUnit.registerTestClass("NotificationTests");
+LiveUnit.registerTestClass("WinJSTests.NotificationTests");

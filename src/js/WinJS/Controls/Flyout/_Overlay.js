@@ -11,17 +11,187 @@ define([
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
     '../../Animations',
+    '../../Application',
     '../../ControlProcessor',
     '../../Promise',
     '../../Scheduler',
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
     '../AppBar/_Constants'
-], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
+], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _Overlay: _Base.Namespace._lazy(function () {
+
+            // Helper for Global Event listeners. Invokes the specified callback member function on each _Overlay in the DOM.
+            function _allOverlaysCallback(event, nameOfFunctionCall, stopImmediatePropagationWhenHandled) {
+                var elements = _Global.document.querySelectorAll("." + _Constants.overlayClass);
+                if (elements) {
+                    var len = elements.length;
+                    for (var i = 0; i < len; i++) {
+                        var element = elements[i];
+                        var overlay = element.winControl;
+                        if (!overlay._disposed) {
+                            if (overlay) {
+                                var handled = overlay[nameOfFunctionCall](event);
+                                if (stopImmediatePropagationWhenHandled && handled) {
+                                    // The caller has indicated we should exit as soon as the event is handled.
+                                    return handled;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // _Overlay Global Events Listener Class. We hang a singleton instance of this class off of a static _Overlay property.
+            var _GlobalListener = _Base.Class.define(function _GlobalListener_ctor() {
+                this._currentState = _GlobalListener.states.off;
+
+                this._windowBlur = this._windowBlur.bind(this);
+                this._inputPaneShowing = this._inputPaneShowing.bind(this);
+                this._inputPaneHiding = this._inputPaneHiding.bind(this);
+                this._documentScroll = this._documentScroll.bind(this);
+                this._edgyStarting = this._edgyStarting.bind(this);
+                this._edgyCompleted = this._edgyCompleted.bind(this);
+                this._backClicked = this._backClicked.bind(this);
+                this._windowResized = this._windowResized.bind(this);
+            }, {
+                initialize: function _GlobalListener_initialize() {
+                    this._toggleListeners(_GlobalListener.states.on);
+                },
+                // Expose this for unit tests.
+                reset: function _GlobalListener_reset() {
+                    this._toggleListeners(_GlobalListener.states.off);
+                    this._toggleListeners(_GlobalListener.states.on);
+                },
+                _windowBlur: function _GlobalListener_windowBlur(event) {
+                    // Want to lightdismiss _Overlays on window blur.
+                    // We get blur if we click off the window, including into an iframe within our window.
+                    // Both blurs call this function, but fortunately document.hasFocus is true if either
+                    // the document window or our iframe window has focus.                            
+                    if (!_Global.document.hasFocus()) {
+                        // The document doesn't have focus, so they clicked off the app, so light dismiss.
+                        _Overlay._lightDismissOverlays(false);
+                    } else {
+                        if ((_Overlay._clickEatingFlyoutDiv &&
+                             _Overlay._clickEatingFlyoutDiv.style.display === "block") ||
+                            (_Overlay._clickEatingAppBarDiv &&
+                             _Overlay._clickEatingAppBarDiv.style.display === "block")) {
+                            // We were trying to unfocus the window, but document still has focus,
+                            // so make sure the iframe that took the focus will check for blur next time.
+                            // We don't have to do this if the click eating div is hidden because then
+                            // there would be no flyout or appbar needing light dismiss.
+                            var active = _Global.document.activeElement;
+                            if (active && active.tagName === "IFRAME" && !active.msLightDismissBlur) {
+                                // - This will go away when the IFRAME goes away, and we only create one.
+                                // - This only works in IE because other browsers don't fire focus events on iframe elements.
+                                // - Can't use WinJS.Utilities._addEventListener's focusout because it doesn't fire when an
+                                //   iframe loses focus due to changing windows.
+                                active.addEventListener("blur", globalListeners._windowBlur, false);
+                                active.msLightDismissBlur = true;
+                            }
+                        }
+                    }
+                },
+                _inputPaneShowing: function _GlobalListener_inputePaneShowing(event) {
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_showingKeyboard,StartTM");
+                    _allOverlaysCallback(event, "_showingKeyboard");
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_showingKeyboard,StopTM");
+                },
+                _inputPaneHiding: function _GlobalListener_inputPaneHiding(event) {
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_hidingKeyboard,StartTM");
+                    _allOverlaysCallback(event, "_hidingKeyboard");
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_hidingKeyboard,StopTM");
+                },
+                _documentScroll: function _GlobalListener_documentScroll(event) {
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_checkScrollPosition,StartTM");
+                    _allOverlaysCallback(event, "_checkScrollPosition");
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_checkScrollPosition,StopTM");
+                },
+                _edgyStarting: function _GlobalListener_edgyStarting(event) {
+                    _Overlay._lightDismissAllFlyouts();
+                },
+                _edgyCompleted: function _GlobalListener_edgyCompleted(event) {
+                    // Right mouse clicks in WWA will trigger the edgy "completed" event.
+                    // Flyouts and SettingsFlyouts should not light dismiss if they are the target of that right click.
+                    if (!_Overlay._containsRightMouseClick) {
+                        _Overlay._lightDismissAllFlyouts();
+                    }
+                },
+                _backClicked: function _GlobalListener_backClicked(event) {
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_backClick,StartTM");
+                    // Pass true as the 3rd parameter to _allOverlaysCallback to ensure that we stop processing once an _Overlay has handled the event. 
+                    // A failure to do so can lead to a chain reaction of light dismiss in scenarios where a SettingsFlyout or AppBar had invoked a Flyout or Menu.
+                    var handled = _allOverlaysCallback(event, "_backClick", true);
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_backClick,StopTM");
+                    return handled;
+                },
+                _windowResized: function _GlobalListener_windowResized(event) {
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_baseResize,StartTM");
+                    _allOverlaysCallback(event, "_baseResize");
+                    _WriteProfilerMark(_GlobalListener.profilerString + "_baseResize,StopTM");
+                },
+                _toggleListeners: function _GlobalListener_toggleListeners(newState) {
+                    // Add/Remove global event listeners for all _Overlays
+                    var listenerOperation;
+                    if (this._currentState !== newState) {
+                        if (newState === _GlobalListener.states.on) {
+                            listenerOperation = "addEventListener";
+                        } else if (newState === _GlobalListener.states.off) {
+                            listenerOperation = "removeEventListener";
+                        }
+
+                        // Dismiss on blur & resize
+                        // Focus handlers generally use WinJS.Utilities._addEventListener with focusout/focusin. This
+                        // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
+                        // on window.
+                        _Global[listenerOperation]("blur", this._windowBlur, false);
+
+                        // Be careful so it behaves in designer as well.
+                        if (_WinRT.Windows.UI.Input.EdgeGesture) {
+                            // Catch edgy events too
+                            var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
+                            edgy[listenerOperation]("starting", this._edgyStarting);
+                            edgy[listenerOperation]("completed", this._edgyCompleted);
+                        }
+
+                        if (_WinRT.Windows.UI.ViewManagement.InputPane) {
+                            // React to Soft Keyboard events
+                            var inputPane = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView();
+                            inputPane[listenerOperation]("showing", this._inputPaneShowing, false);
+                            inputPane[listenerOperation]("hiding", this._inputPaneHiding, false);
+
+                            _Global.document[listenerOperation]("scroll", this._documentScroll, false);
+                        }
+
+                        // React to Hardware BackButton event
+                        Application[listenerOperation]("backclick", this._backClicked, false);
+
+                        // Window resize event
+                        _Global.addEventListener("resize", this._windowResized, false);
+
+                        this._currentState = newState;
+                    }
+                },
+            }, {
+                // Statics
+                profilerString: {
+                    get: function () {
+                        return "WinJS.UI._Overlay Global Listener:"
+                    }
+                },
+                states: {
+                    get: function () {
+                        return {
+                            off: 0,
+                            on: 1,
+                        }
+                    },
+                },
+            });
+
             var createEvent = _Events._createEventProperty;
 
             // Event Names
@@ -63,30 +233,6 @@ define([
                 return realElements;
             }
 
-            // Helpers for keyboard showing related events
-            function _allOverlaysCallback(event, command) {
-                var elements = _Global.document.querySelectorAll("." + _Constants.overlayClass);
-                if (elements) {
-                    var len = elements.length;
-                    for (var i = 0; i < len; i++) {
-                        var element = elements[i];
-                        var control = element.winControl;
-                        if (!control._disposed) {
-                            if (control) {
-                                control[command](event);
-                            }
-                        }
-                    }
-                }
-            }
-
-            function _edgyMayHideFlyouts() {
-                // Flyouts and SettingsFlyouts should not light dismiss when they are the target of a right click.
-                if (!_Overlay._rightMouseMightEdgy) {
-                    _Overlay._hideAllFlyouts();
-                }
-            }
-
             var strings = {
                 get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
                 get mustContainCommands() { return "Invalid HTML: AppBars/Menus must contain only AppBarCommands/MenuCommands"; },
@@ -126,6 +272,11 @@ define([
                     if (!this._element) {
                         this._element = element;
                     }
+
+                    if (!this._element.hasAttribute("tabIndex")) {
+                        this._element.tabIndex = -1;
+                    }
+
                     this._sticky = false;
                     this._doNext = "";
 
@@ -158,6 +309,9 @@ define([
                     if (options) {
                         _Control.setOptions(this, options);
                     }
+
+                    // Make sure _Overlay event handlers are hooked up (this aids light dismiss)
+                    _Overlay._globalEventListeners.initialize();
                 },
 
                 /// <field type="HTMLElement" domElement="true" readonly="true" hidden="true" locid="WinJS.UI._Overlay.element" helpKeyword="WinJS.UI._Overlay.element">The DOM element the Overlay is attached to</field>
@@ -875,6 +1029,23 @@ define([
                     this._resize(event);
                 },
 
+                _isLightDismissible: function _Overlay_isLightDismissible() {
+                    return (!this._sticky && !this.hidden);
+                },
+
+                _lightDismiss: function _Overlay_lightDismiss(keyboardInvoked) {
+                    if (this._isLightDismissible()) {
+                        _Overlay._lightDismissOverlays(keyboardInvoked);
+                    }
+                },
+
+                _backClick: function _Overlay_backClick() {
+                    if (this._element.contains(_Global.document.activeElement) && this._isLightDismissible()) {
+                        this._lightDismiss(false); //  dismiss this transient UI control.
+                        return true; // indicate that we've handled the event to cancel its propagation.
+                    }
+                },
+
                 _hideOrDismiss: function _Overlay_hideOrDismiss() {
                     var element = this._element;
                     if (element && _ElementUtilities.hasClass(element, _Constants.settingsFlyoutClass)) {
@@ -996,68 +1167,12 @@ define([
                     }
                 },
 
-                _addOverlayEventHandlers: function _Overlay_addOverlayEventHandlers(isFlyoutOrSettingsFlyout) {
-                    // Set up global event handlers for all overlays
-                    if (!_Overlay._flyoutEdgeLightDismissEvent) {
-                        // Dismiss on blur & resize
-                        // Focus handlers generally use WinJS.Utilities._addEventListener with focusout/focusin. This
-                        // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
-                        // on window.
-                        _Global.addEventListener("blur", _Overlay._checkBlur, false);
-
-                        var that = this;
-
-                        // Be careful so it behaves in designer as well.
-                        if (_WinRT.Windows.UI.Input.EdgeGesture) {
-                            // Catch edgy events too
-                            var commandUI = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
-                            commandUI.addEventListener("starting", _Overlay._hideAllFlyouts);
-                            commandUI.addEventListener("completed", _edgyMayHideFlyouts);
-                        }
-
-                        if (_WinRT.Windows.UI.ViewManagement.InputPane) {
-                            // React to Soft Keyboard events
-                            var inputPane = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView();
-                            inputPane.addEventListener("showing", function (event) {
-                                that._writeProfilerMark("_showingKeyboard,StartTM");
-                                _allOverlaysCallback(event, "_showingKeyboard");
-                                that._writeProfilerMark("_showingKeyboard,StopTM");
-                            });
-                            inputPane.addEventListener("hiding", function (event) {
-                                that._writeProfilerMark("_hidingKeyboard,StartTM");
-                                _allOverlaysCallback(event, "_hidingKeyboard");
-                                that._writeProfilerMark("_hidingKeyboard,StopTM");
-                            });
-                            // Document scroll event
-                            _Global.document.addEventListener("scroll", function (event) {
-                                that._writeProfilerMark("_checkScrollPosition,StartTM");
-                                _allOverlaysCallback(event, "_checkScrollPosition");
-                                that._writeProfilerMark("_checkScrollPosition,StopTM");
-                            });
-                        }
-
-                        // Window resize event
-                        _Global.addEventListener("resize", function (event) {
-                            that._writeProfilerMark("_baseResize,StartTM");
-                            _allOverlaysCallback(event, "_baseResize");
-                            that._writeProfilerMark("_baseResize,StopTM");
-                        });
-
-                        _Overlay._flyoutEdgeLightDismissEvent = true;
-                    }
-
-                    // Individual handlers for Flyouts only
-                    if (isFlyoutOrSettingsFlyout) {
-                        this._handleEventsForFlyoutOrSettingsFlyout();
-                    }
-                },
-
-                _handleEventsForFlyoutOrSettingsFlyout: function _Overlay_handleEventsForFlyoutOrSettingsFlyout() {
+                _handleOverlayEventsForFlyoutOrSettingsFlyout: function _Overlay_handleOverlayEventsForFlyoutOrSettingsFlyout() {
                     var that = this;
                     // Need to hide ourselves if we lose focus
                     _ElementUtilities._addEventListener(this._element, "focusout", function (e) { _Overlay._hideIfLostFocus(that, e); }, false);
 
-                    // Attempt to flag right clicks that may turn into edgy
+                    // Need to handle right clicks that trigger edgy events in WWA
                     _ElementUtilities._addEventListener(this._element, "pointerdown", _Overlay._checkRightClickDown, true);
                     _ElementUtilities._addEventListener(this._element, "pointerup", _Overlay._checkRightClickUp, true);
                 },
@@ -1070,39 +1185,60 @@ define([
                 // Statics
                 _clickEatingAppBarDiv: false,
                 _clickEatingFlyoutDiv: false,
-                _flyoutEdgeLightDismissEvent: false,
 
-                _hideFlyouts: function (testElement, notSticky) {
-                    var elements = testElement.querySelectorAll("." + _Constants.flyoutClass);
+                _lightDismissFlyouts: function _Overlay_lightDismissFlyouts() {
+                    _Overlay._hideClickEatingDivFlyout();
+                    var elements = _Global.document.body.querySelectorAll("." + _Constants.flyoutClass);
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
                         var element = elements[i];
                         if (element.style.visibility !== "hidden") {
                             var flyout = element.winControl;
-                            if (flyout && (!notSticky || !flyout._sticky)) {
+                            if (flyout && (!flyout._sticky)) {
                                 flyout._hideOrDismiss();
                             }
                         }
                     }
                 },
 
-                _hideSettingsFlyouts: function (testElement, notSticky) {
-                    var elements = testElement.querySelectorAll("." + _Constants.settingsFlyoutClass);
+                _lightDismissSettingsFlyouts: function _Overlay_lightDismissSettingsFlyouts() {
+                    var elements = _Global.document.body.querySelectorAll("." + _Constants.settingsFlyoutClass);
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
                         var element = elements[i];
                         if (element.style.visibility !== "hidden") {
                             var settingsFlyout = element.winControl;
-                            if (settingsFlyout && (!notSticky || !settingsFlyout._sticky)) {
+                            if (settingsFlyout && (!settingsFlyout._sticky)) {
                                 settingsFlyout._hideOrDismiss();
                             }
                         }
                     }
                 },
 
-                _hideAllFlyouts: function () {
-                    _Overlay._hideFlyouts(_Global.document, true);
-                    _Overlay._hideSettingsFlyouts(_Global.document, true);
+                _lightDismissAllFlyouts: function _Overlay_lightDismissAllFlyouts() {
+                    _Overlay._lightDismissFlyouts();
+                    _Overlay._lightDismissSettingsFlyouts();
+                },
+
+                _lightDismissOverlays: function _Overlay_lightDismissOverlays(keyBoardInvoked) {
+                    // Light Dismiss All _Overlays
+                    _Overlay._lightDismissAppBars(keyBoardInvoked);
+                    _Overlay._lightDismissAllFlyouts();
+                },
+
+                _lightDismissAppBars: function _Overlay_lightDismissAppBars(keyboardInvoked) {
+                    var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
+                    var len = elements.length;
+                    var appBars = [];
+                    for (var i = 0; i < len; i++) {
+                        var appBar = elements[i].winControl;
+                        if (appBar && !appBar.sticky && !appBar.hidden) {
+                            appBars.push(appBar);
+                        }
+                    }
+
+                    _Overlay._hideAppBars(appBars, keyboardInvoked);
+                    _Overlay._hideClickEatingDivAppBar();
                 },
 
                 _createClickEatingDivTemplate: function (divClass, hideClickEatingDivFunction) {
@@ -1184,25 +1320,23 @@ define([
 
                 // If they click on a click eating div, even with a right click,
                 // touch or anything, then we want to light dismiss that layer.
-                _handleAppBarClickEatingClick: function (event) {
+                _handleAppBarClickEatingClick: function _Overlay_handleAppBarClickEatingClick(event) {
                     event.stopPropagation();
                     event.preventDefault();
 
-                    _Overlay._hideLightDismissAppBars(null, false);
-                    _Overlay._hideClickEatingDivAppBar();
-                    _Overlay._hideAllFlyouts();
+                    // Light Dismiss everything.
+                    _Overlay._lightDismissOverlays(false);
                 },
 
                 // If they click on a click eating div, even with a right click,
                 // touch or anything, then we want to light dismiss that layer.
-                _handleFlyoutClickEatingClick: function (event) {
+                _handleFlyoutClickEatingClick: function _Overlay__handleFlyoutClickEatingClick(event) {
                     event.stopPropagation();
                     event.preventDefault();
 
                     // Don't light dismiss AppBars because edgy will do that as needed,
                     // so flyouts only.
-                    _Overlay._hideClickEatingDivFlyout();
-                    _Overlay._hideFlyouts(_Global.document, true);
+                    _Overlay._lightDismissFlyouts();
                 },
 
                 _checkRightClickDown: function (event) {
@@ -1211,9 +1345,10 @@ define([
 
                 _checkRightClickUp: function (event) {
                     if (_Overlay._checkSameClickEatingPointerUp(event, false)) {
-                        // It was a right click we may want to eat.
-                        _Overlay._rightMouseMightEdgy = true;
-                        _BaseUtils._yieldForEvents(function () { _Overlay._rightMouseMightEdgy = false; });
+                        // Right clicks will trigger the edgy 'completed' event in WWA. 
+                        // Set a flag now and and process it later in our edgy event handler.
+                        _Overlay._containsRightMouseClick = true;
+                        _BaseUtils._yieldForEvents(function () { _Overlay._containsRightMouseClick = false; });
                     }
                 },
 
@@ -1289,37 +1424,6 @@ define([
                     overlay._hideOrDismiss();
                 },
 
-                // Want to hide flyouts on blur.
-                // We get blur if we click off the window, including to an iframe within our window.
-                // Both blurs call this function, but fortunately document.hasFocus is true if either
-                // the document window or our iframe window has focus.
-                _checkBlur: function () {
-                    if (!_Global.document.hasFocus()) {
-                        // The document doesn't have focus, so they clicked off the app, so light dismiss.
-                        _Overlay._hideAllFlyouts();
-                        _Overlay._hideLightDismissAppBars(null, false);
-                    } else {
-                        if ((_Overlay._clickEatingFlyoutDiv &&
-                             _Overlay._clickEatingFlyoutDiv.style.display === "block") ||
-                            (_Overlay._clickEatingAppBarDiv &&
-                             _Overlay._clickEatingAppBarDiv.style.display === "block")) {
-                            // We were trying to unfocus the window, but document still has focus,
-                            // so make sure the iframe that took the focus will check for blur next time.
-                            // We don't have to do this if the click eating div is hidden because then
-                            // there would be no flyout or appbar needing light dismiss.
-                            var active = _Global.document.activeElement;
-                            if (active && active.tagName === "IFRAME" && !active.msLightDismissBlur) {
-                                // - This will go away when the IFRAME goes away, and we only create one.
-                                // - This only works in IE because other browsers don't fire focus events on iframe elements.
-                                // - Can't use WinJS.Utilities._addEventListener's focusout because it doesn't fire when an
-                                //   iframe loses focus due to changing windows.
-                                active.addEventListener("blur", _Overlay._checkBlur, false);
-                                active.msLightDismissBlur = true;
-                            }
-                        }
-                    }
-                },
-
                 // Try to set us as active
                 _trySetActive: function (element) {
                     if (!element || !_Global.document.body || !_Global.document.body.contains(element)) {
@@ -1375,31 +1479,20 @@ define([
                     return null;
                 },
 
+                // Static controller for _Overlay global events registering/unregistering.
+                _globalEventListeners: new _GlobalListener(),
+
                 // Hide all light dismiss AppBars if what has focus is not part of a AppBar or flyout.
-                _hideIfAllAppBarsLostFocus: function _hideIfAllAppBarsLostFocus() {
+                _hideIfAllAppBarsLostFocus: function _Overlay_hideIfAllAppBarsLostFocus() {
                     if (!_Overlay._isAppBarOrChild(_Global.document.activeElement)) {
-                        _Overlay._hideLightDismissAppBars(null, false);
+                        _Overlay._lightDismissAppBars(false);
                         // Ensure that sticky appbars clear cached focus after light dismiss are dismissed, which moved focus.
                         _Overlay._ElementWithFocusPreviousToAppBar = null;
                     }
                 },
 
-                _hideLightDismissAppBars: function (event, keyboardInvoked) {
-                    var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
-                    var len = elements.length;
-                    var AppBars = [];
-                    for (var i = 0; i < len; i++) {
-                        var AppBar = elements[i].winControl;
-                        if (AppBar && !AppBar.sticky && !AppBar.hidden) {
-                            AppBars.push(AppBar);
-                        }
-                    }
-
-                    _Overlay._hideAllBars(AppBars, keyboardInvoked);
-                },
-
                 // Show/Hide all bars
-                _hideAllBars: function _Overlay_hideAllBars(bars, keyboardInvoked) {
+                _hideAppBars: function _Overlay_hideAppBars(bars, keyboardInvoked) {
                     var allBarsAnimationPromises = bars.map(function (bar) {
                         bar._keyboardInvoked = keyboardInvoked;
                         bar.hide();
@@ -1408,7 +1501,7 @@ define([
                     return Promise.join(allBarsAnimationPromises);
                 },
 
-                _showAllBars: function _Overlay_showAllBars(bars, keyboardInvoked) {
+                _showAppBars: function _Overlay_showAppBars(bars, keyboardInvoked) {
                     var allBarsAnimationPromises = bars.map(function (bar) {
                         bar._keyboardInvoked = keyboardInvoked;
                         bar._doNotFocus = false;
@@ -1445,7 +1538,7 @@ define([
                         if (_ElementUtilities.hasClass(element, "win-flyout")
                          && element !== element.winControl._previousFocus) {
                             var flyoutControl = element.winControl;
-                            // If _previousFocus was in a light dismissable AppBar, then this Flyout is considered of an extension of it and that AppBar should not hide.
+                            // If _previousFocus was in a light dismissible AppBar, then this Flyout is considered of an extension of it and that AppBar should not hide.
                             // Hook up a 'focusout' listener to this Flyout element to make sure that light dismiss AppBars hide if focus moves anywhere other than back to an AppBar.
                             var appBarElement = _Overlay._isAppBarOrChild(flyoutControl._previousFocus);
                             if (appBarElement) {

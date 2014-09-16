@@ -700,7 +700,7 @@ WinJSTests.AriaTests = function () {
 
             var tests = [
                 function () {
-                    WinJS.UI._setTimeout(function () {
+                    setTimeout(function () {
                         // Validate the roles in the initial mode (non-static)
                         LiveUnit.Assert.areEqual("none", listView.selectionMode);
                         LiveUnit.Assert.areEqual("invokeOnly", listView.tapBehavior);

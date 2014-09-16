@@ -210,8 +210,6 @@ WinJSTests.NavBarContainerTests = function () {
                 navbarContainer.data = navUtils.getNavBarCommandsData(dataSize, true);
                 LiveUnit.Assert.areEqual(1, navbarContainer._sizes.columnsPerPage);
                 LiveUnit.Assert.areEqual(dataSize, navbarContainer._sizes.rowsPerPage);
-                LiveUnit.Assert.areEqual(marginAboveBelowItems + dataSize * itemHeightWithMargins,
-                    navbarContainerEl.offsetHeight);
                 dataSize++;
             }
             navbarContainer.data = navUtils.getNavBarCommandsData(dataSize, true);

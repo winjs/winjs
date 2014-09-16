@@ -223,8 +223,6 @@ CorsicaTests.MenuTests = function () {
         menu.dispose();
     }
 
-
-
     this.testMenuShowThrows = function (complete) {
         // Get the menu element from the DOM
         var menuElement = document.createElement("div");
@@ -250,6 +248,47 @@ CorsicaTests.MenuTests = function () {
         OverlayHelpers.disposeAndRemove(menuElement);
         complete();
     }
+
+    this.testBackClickEventTriggersLightDismiss = function (complete) {
+        // Verifies that a shown Menu will handle the WinJS.Application.backclick event and light dismiss itself.
+
+        // Simulate
+        function simulateBackClick() {
+            backClickEvent = OverlayHelpers.createBackClickEvent();
+            LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
+            WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+
+            WinJS.Application.addEventListener("verification", verify, true);
+            WinJS.Application.queueEvent({ type: 'verification' });
+        };
+
+        // Verify 
+        function verify() {
+            LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "Menu should have handled the 'backclick' event");
+            LiveUnit.Assert.isTrue(menu.hidden, "Menu should be hidden after light dismiss");
+            cleanup();
+        };
+
+        // Cleanup
+        function cleanup() {
+            WinJS.Application.removeEventListener("verification", verify, true);
+            WinJS.Application.stop();
+            // Application.stop() kills all listeners on the Application object. 
+            // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
+            WinJS.UI._Overlay._globalEventListeners.reset();
+            complete();
+        }
+
+        // Setup
+        WinJS.Application.start();
+        var backClickEvent;
+
+        var menuElement = document.createElement("div");
+        document.body.appendChild(menuElement);
+        var menu = new WinJS.UI.Menu(menuElement);
+        menu.addEventListener("aftershow", simulateBackClick, false);
+        menu.show(document.body);
+    };
 }
 
 // register the object as a test class by passing in the name

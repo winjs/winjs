@@ -143,8 +143,8 @@ define([
                     this._element.setAttribute("aria-label", strings.ariaLabel);
                 }
 
-                // Make sure _Overlay event handlers are hooked up
-                this._addOverlayEventHandlers(true);
+                // Make sure additional _Overlay event handlers are hooked up.
+                this._handleOverlayEventsForFlyoutOrSettingsFlyout();
 
                 // Make sure animations are hooked up
                 this._currentAnimateIn = this._animateSlideIn;
