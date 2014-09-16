@@ -18,6 +18,13 @@
             }]
         },
 
+        testDeps: {
+            files: [{
+                src: [config.desktopOutput + "/js/base.js"],
+                dest: config.testsOutput + "Base/source/base.js"
+            }]
+        },
+
         fonts: {
             files: [{
                 expand: true,
@@ -36,15 +43,4 @@
             }]
         }
     };
-
-    // If we are outside razzle then we need to manually resolve dependencies
-    // for qunit
-    if (!config.inRazzle) {
-        module.exports.testDeps = {
-            files: [{
-                src: [config.desktopOutput + "/js/base.js"],
-                dest: config.testsOutput + "Base/source/base.js"
-            }]
-        };
-    }
 })();

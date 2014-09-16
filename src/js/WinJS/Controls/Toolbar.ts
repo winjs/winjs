@@ -243,8 +243,15 @@ export class Toolbar {
             return;
         }
 
-        this._customContentFlyout && this._customContentFlyout.dispose();
-        this._menu && this._menu.dispose();
+        if (this._customContentFlyout) {
+            this._customContentFlyout.dispose();
+            this._customContentFlyout.element.parentNode.removeChild(this._customContentFlyout.element);
+        }
+
+        if (this._menu) {
+            this._menu.dispose();
+            this._menu.element.parentNode.removeChild(this._menu.element);
+        }
 
         _Dispose.disposeSubTree(this.element);
         this._disposed = true;
@@ -317,15 +324,14 @@ export class Toolbar {
             }
             width = (command.element.style.display === "none" ? 0 : this._getCommandWidth(command));
 
-            commands.push({
+            commands.unshift({
                 command: command,
                 width: width,
                 priority: priority
             });
         }
 
-        // Return commands in the correct order
-        return commands.reverse();
+        return commands;
     }
 
     private _getPrimaryCommandsLocation(mainActionWidth: number) {

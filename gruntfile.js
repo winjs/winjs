@@ -56,7 +56,7 @@
         // Private tasks (not designed to be used from the command line)
         grunt.registerTask("_build", ["onefile:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "onefile:WinJS"]);
         grunt.registerTask("_quickBuild", ["onefile:base", "requirejs:ui"]);
-        grunt.registerTask("_copyFinal", ["copy:tests", "copy:fonts"]);
+        grunt.registerTask("_copyFinal", ["copy:tests", "copy:testDeps", "copy:fonts"]);
         grunt.registerTask("_copyToTsBuild", ["copy:srcjs"])
 
         // Other tasks
