@@ -31,12 +31,16 @@
             border-color:rgb(42, 42, 42);
             background-color:rgb(255, 255, 255);
         }
+        
+        .win-autosuggestbox-flyout-highlighttext {
+            color: rgb(70, 23, 180);
+        }
 
         .win-searchbox-suggestion-selected {
             background-color: rgb(70, 23, 180);
         }
 
-        .win-searchbox-suggestion-query,
+        .win-autosuggestbox-suggestion-query,
         .win-searchbox-suggestion-result {
             color: rgb(0, 0, 0);
         }
@@ -47,10 +51,6 @@
 
         .win-searchbox-suggestion-separator hr {
             border-color:rgb(122, 122, 122);
-        }
-
-        .win-searchbox-flyout-highlighttext {
-            color: rgb(70, 23, 180);
         }
 
         .win-searchbox-suggestion-selected .win-searchbox-flyout-highlighttext {
@@ -97,7 +97,7 @@
             background-color: rgb(70, 23, 180);
         }
 
-        .win-searchbox-suggestion-query,
+        .win-autosuggestbox-suggestion-query,
         .win-searchbox-suggestion-result {
             color: rgb(0,0,0);
         }
@@ -129,7 +129,7 @@
         }
 
         .win-searchbox-suggestion-result:hover,
-        .win-searchbox-suggestion-query:hover {
+        .win-autosuggestbox-suggestion-query:hover {
             background-color:rgb(229, 229, 229);
         }
 
@@ -144,7 +144,7 @@
         }
 
         .win-searchbox-suggestion-result:hover,
-        .win-searchbox-suggestion-query:hover {
+        .win-autosuggestbox-suggestion-query:hover {
             background-color:rgb(229,229,229);
         }
 
@@ -189,24 +189,28 @@
         border-color:ButtonText;
         background-color:ButtonFace;
     }
+    
+    .win-autosuggestbox-flyout-highlighttext {
+        color: ButtonText;
+    }
 
     html.win-hoverable .win-searchbox-suggestion-result:hover,
-    html.win-hoverable .win-searchbox-suggestion-query:hover {
+    html.win-hoverable .win-searchbox-autosuggestbox-query:hover {
         background-color:Highlight;
         color:HighlightText;
     }
 
     html.win-hoverable .win-searchbox-suggestion-result:hover .win-searchbox-flyout-highlighttext,
-    html.win-hoverable .win-searchbox-suggestion-query:hover .win-searchbox-flyout-highlighttext {
+    html.win-hoverable .win-autosuggestbox-suggestion-query:hover .win-autosuggestbox-flyout-highlighttext {
         color: HighlightText;
     }
 
-    .win-searchbox-suggestion-query,
+    .win-autosuggestbox-suggestion-query,
     .win-searchbox-suggestion-result {
         color:ButtonText;
     }
 
-    .win-searchbox-suggestion-selected {
+    .win-autosuggestbox-suggestion-selected {
         background-color:Highlight;
         color:HighlightText;
     }
@@ -219,11 +223,7 @@
         border-color:ButtonText;
     }
 
-    .win-searchbox-flyout-highlighttext {
-        color: ButtonText;
-    }
-
-    .win-searchbox-suggestion-selected .win-searchbox-flyout-highlighttext {
+    .win-autosuggestbox-suggestion-selected .win-autosuggestbox-flyout-highlighttext {
         color: HighlightText;
     }
 }
