@@ -79,13 +79,13 @@ define([
                 appbarHiddenState = "hidden";
 
             // Hook into event
-            var appBarCommandEvent = false;
+            var globalEventsInitialized = false;
             var edgyHappening = null;
 
             // Handler for the edgy starting/completed/cancelled events
             function _completedEdgy(e) {
                 // If we had a right click on a flyout, ignore it.
-                if (_Overlay._Overlay._rightMouseMightEdgy &&
+                if (_Overlay._Overlay._containsRightMouseClick &&
                     e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.mouse) {
                     return;
                 }
@@ -111,9 +111,9 @@ define([
                 // Undo whatever we were doing.
                 var bars = _getDynamicBarsForEdgy();
                 if (edgyHappening === "showing") {
-                    _Overlay._Overlay._hideAllBars(bars, false);
+                    _Overlay._Overlay._hideAppBars(bars, false);
                 } else if (edgyHappening === "hiding") {
-                    _Overlay._Overlay._showAllBars(bars, false);
+                    _Overlay._Overlay._showAppBars(bars, false);
                 }
                 edgyHappening = null;
             }
@@ -343,10 +343,6 @@ define([
                 this._id = this._element.id || _ElementUtilities._uniqueID(this._element);
                 this._writeProfilerMark("constructor,StartTM");
 
-                if (!this._element.hasAttribute("tabIndex")) {
-                    this._element.tabIndex = -1;
-                }
-
                 // Attach our css class.
                 _ElementUtilities.addClass(this._element, _Constants.appBarClass);
 
@@ -417,26 +413,23 @@ define([
                 // Handle key down (esc) and (left & right)
                 this._element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 
-                // Attach event handler
-                if (!appBarCommandEvent) {
+                // Attach global event handlers
+                if (!globalEventsInitialized) {
                     // We'll trigger on invoking.  Could also have invoked or canceled
                     // Eventually we may want click up on invoking and drop back on invoked.
                     // Check for namespace so it'll behave in the designer.
                     if (_WinRT.Windows.UI.Input.EdgeGesture) {
-                        var commandUI = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
-                        commandUI.addEventListener("starting", _startingEdgy);
-                        commandUI.addEventListener("completed", _completedEdgy);
-                        commandUI.addEventListener("canceled", _canceledEdgy);
+                        var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
+                        edgy.addEventListener("starting", _startingEdgy);
+                        edgy.addEventListener("completed", _completedEdgy);
+                        edgy.addEventListener("canceled", _canceledEdgy);
                     }
 
                     // Need to know if the IHM is done scrolling
                     _Global.document.addEventListener("MSManipulationStateChanged", _allManipulationChanged, false);
 
-                    appBarCommandEvent = true;
+                    globalEventsInitialized = true;
                 }
-
-                // Make sure _Overlay event handlers are hooked up (this aids light dismiss)
-                this._addOverlayEventHandlers(false);
 
                 // Need to store what had focus before
                 _ElementUtilities._addEventListener(this._element, "focusin", function (event) { _checkStorePreviousFocus(event); }, false);
@@ -916,12 +909,16 @@ define([
                     _Dispose.disposeSubTree(this.element);
                     this._layout.dispose();
                     this.disabled = true;
-
                 },
 
                 _disposeChildren: function AppBar_disposeChildren() {
                     // Be purposeful about what we dispose.
                     this._layout.disposeChildren();
+                },
+
+                _isLightDismissible: function AppBar_isLightDismissible() {
+                    // An AppBar is considered light dismissible if there is at least one visible non sticky AppBar.
+                    return _Overlay._Overlay.prototype._isLightDismissible.call(this) || _isThereVisibleNonStickyBar();
                 },
 
                 _handleKeyDown: function AppBar_handleKeyDown(event) {
@@ -934,8 +931,7 @@ define([
                     if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
                         event.preventDefault();
                         event.stopPropagation();
-                        _Overlay._Overlay._hideAllFlyouts();
-                        _Overlay._Overlay._hideLightDismissAppBars(null, true);
+                        this._lightDismiss(true);
                     }
 
                     // If the current active element isn't an intrinsic part of the AppBar,
@@ -1580,12 +1576,12 @@ define([
 
                     if (hiding) {
                         AppBar._appBarsSynchronizationPromise = AppBar._appBarsSynchronizationPromise.then(function () {
-                            return _Overlay._Overlay._hideAllBars(bars, keyboardInvoked);
+                            return _Overlay._Overlay._hideAppBars(bars, keyboardInvoked);
                         });
                         return "hiding";
                     } else {
                         AppBar._appBarsSynchronizationPromise = AppBar._appBarsSynchronizationPromise.then(function () {
-                            return _Overlay._Overlay._showAllBars(bars, keyboardInvoked);
+                            return _Overlay._Overlay._showAppBars(bars, keyboardInvoked);
                         });
                         return "showing";
                     }

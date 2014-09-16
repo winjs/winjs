@@ -1013,7 +1013,7 @@ CorsicaTests.AppBarTests = function () {
                 failures;
 
             verifyIsOpen(appBar);
-            verifyLightDismissable(appBar);
+            verifyLightDismissible(appBar);
 
             var shouldHaveInvokeButton = appBar.winControl.closedDisplayMode !== "none";
             if (shouldHaveInvokeButton) {
@@ -1279,7 +1279,7 @@ CorsicaTests.AppBarTests = function () {
             }
         }
 
-        function verifyLightDismissable(appBar) {
+        function verifyLightDismissible(appBar) {
             appBar = appBar.element || appBar;
 
             var msg,
@@ -1310,7 +1310,7 @@ CorsicaTests.AppBarTests = function () {
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             LiveUnit.Assert.areEqual(highestTabIndex, finalDiv.tabIndex, msg);
 
-            msg = "AppBar clickeater should have dimensions when AppBar is light dismissable";
+            msg = "AppBar clickeater should have dimensions when AppBar is light dismissible";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             failures = checkShouldBeDisplayNone(clickEater, false);
             LiveUnit.Assert.isFalse(failures.length, msg);
@@ -1364,13 +1364,13 @@ CorsicaTests.AppBarTests = function () {
         }).then(function () {
             verifyAppBarClosedMinimal(appBar);
 
-            msg = "Calling AppBar.show() on non sticky AppBar should open the AppBar and make it light dismissable.";
+            msg = "Calling AppBar.show() on non sticky AppBar should open the AppBar and make it light dismissible.";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             return waitForPositionChange(appBar, function () { appBar.show(); });
         }).then(function () {
             verifyAppBarOpenAndLightDismiss(appBar);
 
-            msg = "Changing AppBar.sticky to true, on Open Light Dismissable AppBar, should change it to an Open sticky AppBar. ";
+            msg = "Changing AppBar.sticky to true, on Open Light Dismissible AppBar, should change it to an Open sticky AppBar. ";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             appBar.sticky = true;
 
@@ -1397,7 +1397,7 @@ CorsicaTests.AppBarTests = function () {
 
         }).then(function () {
 
-            msg = "Changing AppBar.sticky to false, on Open sticky AppBar, should change it to an Open Light Dismissable AppBar. ";
+            msg = "Changing AppBar.sticky to false, on Open sticky AppBar, should change it to an Open Light Dismissible AppBar. ";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             appBar.sticky = false;
 
@@ -1494,13 +1494,13 @@ CorsicaTests.AppBarTests = function () {
     function hideAllAppBars() {
         var AppBars = document.querySelectorAll(".win-appbar");
         AppBars = Array.prototype.map.call(AppBars, function (AppBar) { return AppBar.winControl; });
-        return WinJS.UI._Overlay._hideAllBars(AppBars);
+        return WinJS.UI._Overlay._hideAppBars(AppBars);
     };
 
     function showAllAppBars() {
         var AppBars = document.querySelectorAll(".win-appbar");
         AppBars = Array.prototype.map.call(AppBars, function (AppBar) { return AppBar.winControl; });
-        return WinJS.UI._Overlay._showAllBars(AppBars);
+        return WinJS.UI._Overlay._showAppBars(AppBars);
     }
     this.testSingleAppBarLightDismissFocusWrapping = function (complete) {
         var root = document.getElementById("appBarDiv");
@@ -1636,11 +1636,11 @@ CorsicaTests.AppBarTests = function () {
             { type: 'button', section: 'selection', label: 's2' },
             { type: 'button', section: 'global', label: 'g1' },
             { type: 'button', section: 'global', label: 'g2' },
-        ];
+            ];
 
         var root = document.getElementById("appBarDiv");
-        var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: commandsArgs, closedDisplayMode: 'minimal', layout: 'commands'});
-        var bottomBar = new WinJS.UI.AppBar(null, { placement: 'bottom', commands: commandsArgs, closedDisplayMode: 'minimal', layout: 'custom'});
+        var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: commandsArgs, closedDisplayMode: 'minimal', layout: 'commands' });
+        var bottomBar = new WinJS.UI.AppBar(null, { placement: 'bottom', commands: commandsArgs, closedDisplayMode: 'minimal', layout: 'custom' });
         root.appendChild(topBar.element);
         root.appendChild(bottomBar.element);
 
@@ -1687,7 +1687,141 @@ CorsicaTests.AppBarTests = function () {
             html.dir = originalDir;
             complete();
         });
-    }
+    };
+
+    this.testBackClickEventTriggersLightDismiss = function (complete) {
+        // Verifies that a shown, non sticky AppBar containing focus, will handle the WinJS.Application.backclick event and light dismiss itself.
+
+        // Simulate
+        function simulateBackClick() {
+            backClickEvent = OverlayHelpers.createBackClickEvent();
+            LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
+            WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+
+            WinJS.Application.addEventListener("verification", verify, true);
+            WinJS.Application.queueEvent({ type: 'verification' });
+        };
+
+        // Verify 
+        function verify() {
+            LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "AppBar should have handled the 'backclick' event");
+            LiveUnit.Assert.isTrue(appbar.hidden, "AppBar should be hidden by light dismiss");
+            cleanup();
+        };
+
+        // Cleanup
+        function cleanup() {
+            WinJS.Application.removeEventListener("verification", verify, true);
+            WinJS.Application.stop();
+            // Application.stop() kills all listeners on the Application object. 
+            // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
+            WinJS.UI._Overlay._globalEventListeners.reset();
+            complete();
+        }
+
+        // Setup
+        WinJS.Application.start();
+        var backClickEvent;
+
+        var root = document.getElementById("appBarDiv");
+        var appbar = new WinJS.UI.AppBar();
+        root.appendChild(appbar.element);
+        appbar.addEventListener("aftershow", simulateBackClick, false);
+        appbar.show();
+    };
+
+    this.testLoneStickyAppBarDoesNotHandleBackClickEvent = function (complete) {
+        // Verifies that a shown, sticky AppBar containing focus, WILL NOT handle the WinJS.Application 'backclick' event. nor will it light dismiss any AppBars,
+        // if there are no light dismissible AppBars shown.
+
+        // Simulate
+        function simulateBackClick() {
+            backClickEvent = OverlayHelpers.createBackClickEvent();
+            LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
+            WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+
+            WinJS.Application.addEventListener("verification", verify, true);
+            WinJS.Application.queueEvent({ type: 'verification' });
+        };
+
+        // Verify 
+        function verify() {
+            LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled, "A sticky AppBar by itself, should not handle the 'backclick' event.");
+            LiveUnit.Assert.isFalse(stickyBar.hidden, "Sticky AppBar should not light dismiss");
+            cleanup();
+        };
+
+        // Cleanup
+        function cleanup() {
+            WinJS.Application.removeEventListener("verification", verify, true);
+            WinJS.Application.stop();
+            // Application.stop() kills all listeners on the Application object. 
+            // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
+            WinJS.UI._Overlay._globalEventListeners.reset();
+            complete();
+        }
+
+        // Setup
+        WinJS.Application.start();
+        var backClickEvent;
+
+        var root = document.getElementById("appBarDiv");
+        var stickyBar = new WinJS.UI.AppBar(null, { sticky: true });
+        root.appendChild(stickyBar.element);
+
+        stickyBar.addEventListener("aftershow", simulateBackClick, false);
+        stickyBar.show();
+    };
+
+    this.testStickyAppBarDoesLightDismissOtherAppBarsWhenBackClickHappens = function (complete) {
+        // Verifies that a shown, sticky AppBar containing focus, WILL handle the WinJS.Application 'backclick' event and light dismiss AppBars, 
+        // if there is at least one non-sticky AppBar shown.
+
+        // Simulate
+        function simulateBackClick() {
+            backClickEvent = OverlayHelpers.createBackClickEvent();
+            LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
+            WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+
+            WinJS.Application.addEventListener("verification", verify, true);
+            WinJS.Application.queueEvent({ type: 'verification' });
+        };
+
+        // Verify 
+        function verify() {
+
+            LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "A shown, sticky AppBar contaning focus, should handle the 'backclick' event, if at least one non sticky AppBar was also shown.");
+            LiveUnit.Assert.isFalse(stickyBar.hidden, "Sticky AppBar should not light dismiss");
+            LiveUnit.Assert.isTrue(lightDismissibleBar.hidden, "non sticky AppBars should be hidden by light dismissal");
+            cleanup();
+        };
+
+        // Cleanup
+        function cleanup() {
+            WinJS.Application.removeEventListener("verification", verify, true);
+            WinJS.Application.stop();
+            // Application.stop() kills all listeners on the Application object.
+            // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
+            WinJS.UI._Overlay._globalEventListeners.reset();
+            complete();
+        }
+
+        // Setup
+        WinJS.Application.start();
+        var backClickEvent;
+
+        var root = document.getElementById("appBarDiv");
+        var stickyBar = new WinJS.UI.AppBar(null, { sticky: true });
+        var lightDismissibleBar = new WinJS.UI.AppBar(null);
+        root.appendChild(stickyBar.element);
+        root.appendChild(lightDismissibleBar.element);
+
+        showAllAppBars().then(function () {
+            stickyBar.element.focus();
+            simulateBackClick();
+        });
+
+    };
 };
 
 // register the object as a test class by passing in the name

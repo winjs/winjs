@@ -22,6 +22,11 @@
             }
         },
 
+        createBackClickEvent: function createBackClickEvent() {
+            var fakeWinRTBackPressedEvent = { handled: false };
+            return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
+        },
+
         Assert: {
             dismissesWhenLosingFocus: function dismissesWhenLosingFocus(options) {
                 return new WinJS.Promise(function (complete) {

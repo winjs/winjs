@@ -194,6 +194,47 @@ CorsicaTests.SettingsFlyoutTests = function () {
             }, WinJS.Utilities.Scheduler.Priority.idle);
         });
     };
+
+    this.testBackClickEventTriggersSettingsLightDismiss = function (complete) {
+        // Verifies that a shown SettingsFlyout will handle the WinJS.Application.backclick event and light dismiss itself.
+
+        // Simulate
+        function simulateBackClick() {
+            backClickEvent = OverlayHelpers.createBackClickEvent();
+            LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
+            WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+
+            WinJS.Application.addEventListener("verification", verify, true);
+            WinJS.Application.queueEvent({ type: 'verification' });
+        };
+
+        // Verify 
+        function verify() {
+            LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "SettingsFlyout should have handled the 'backclick' event");
+            LiveUnit.Assert.isTrue(settingsFlyout.hidden, "SettingsFlyout should be hidden after light dismiss");
+            cleanup();
+        };
+
+        // Cleanup
+        function cleanup() {
+            WinJS.Application.removeEventListener("verification", verify, true);
+            WinJS.Application.stop();
+            // Application.stop() kills all listeners on the Application object. 
+            // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
+            WinJS.UI._Overlay._globalEventListeners.reset();
+            complete();
+        }
+
+        // Setup
+        WinJS.Application.start();
+        var backClickEvent;
+
+        var settingsElement = document.createElement("div");
+        document.body.appendChild(settingsElement);
+        var settingsFlyout = new WinJS.UI.SettingsFlyout(settingsElement);
+        settingsFlyout.addEventListener("aftershow", simulateBackClick, false);
+        settingsFlyout.show();
+    };
 };
 
 // register the object as a test class by passing in the name
