@@ -20,11 +20,11 @@
     }, {
         browserName: "firefox",
         platform: "Win8.1",
-        version: "30"
+        version: "31"
     }, {
         browserName: "googlechrome",
         platform: "Win8.1",
-        version: "36"
+        version: "37"
     }, {
         browserName: "iPhone",
         platform: "OS X 10.9",
