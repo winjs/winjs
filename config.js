@@ -30,6 +30,7 @@
     config.desktopOutput = config.outputFolder + config.desktopFramework + "/";
     config.phoneOutput = config.outputFolder + config.phoneFramework + "/";
     config.modulesOutput = config.outputFolder + "modules/";
+    config.compiledTsOutput = config.outputFolder + "tsbuild/";
 
     config.uiStringsFiles = [
         "src/js/" + config.localeFolder + "/ui.prefix.js",

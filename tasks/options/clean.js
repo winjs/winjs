@@ -11,7 +11,8 @@
         all: [
             config.desktopOutput,
             config.phoneOutput,
-            config.modulesOutput
+            config.modulesOutput,
+            config.compiledTsOutput
         ],
         base: [
             config.desktopOutput + "js/base.js",

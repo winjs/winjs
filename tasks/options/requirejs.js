@@ -16,7 +16,7 @@
 
     function generatePublicModules() {
         var moduleConfig = [];
-        var dependencies = madge('./src/js/', { format: 'amd' }).tree;
+        var dependencies = madge(config.compiledTsOutput, { format: 'amd' }).tree;
 
         Object.keys(dependencies).forEach(function (module) {
             // filter for only public modules
@@ -136,13 +136,21 @@
     var rootPath = path.resolve();
     var realFileNames = [];
 
-    grunt.file.recurse('src', function (abspath) {
-        realFileNames.push(path.join(rootPath, abspath));
-    });
+    function ensureRealNames() {
+        if (realFileNames.length === 0) {
+            grunt.file.recurse(config.compiledTsOutput, function (abspath) {
+                realFileNames.push(path.join(rootPath, abspath));
+            });
 
-    grunt.file.recurse('tasks/utilities', function (abspath) {
-        realFileNames.push(path.join(rootPath, abspath));
-    });
+            grunt.file.recurse('tasks/utilities', function (abspath) {
+                realFileNames.push(path.join(rootPath, abspath));
+            });
+
+            grunt.file.recurse('src/less', function (abspath) {
+                realFileNames.push(path.join(rootPath, abspath));
+            });
+        }
+    }
 
     function checkDuplicates(bundle1, bundle2, bundle2Name) {
         bundle1.forEach(function (file) {
@@ -192,6 +200,7 @@
             return path.normalize(line.replace("require-style!", ""));
         });
 
+        ensureRealNames();
         lines.forEach(function (line) {
             if (realFileNames.indexOf(line) === -1) {
                 grunt.fail.warn("Source file in build is not in filesystem:" + line + ". Check casing of filename.");
@@ -289,7 +298,7 @@
         buildConfig = buildConfig || {};
         var options = buildConfig.options = buildConfig.options || {};
 
-        options.baseUrl = "./src/js";
+        options.baseUrl = config.compiledTsOutput;
         options.platform = options.platform || "desktop";
         options.useStrict = true;
         options.optimize = "none"; // uglify2 is run seperately
@@ -307,7 +316,7 @@
             case "desktop":
                 outputBase = config.desktopOutput + "js/";
                 options.paths = {
-                    "less": "../less",
+                    "less": "../../src/less",
                     "less/phone": "empty:",
                     "require-json": "../../tasks/utilities/require-json",
                     "require-style": "../../tasks/utilities/require-style"
@@ -316,7 +325,7 @@
             case "phone":
                 outputBase = config.phoneOutput + "js/";
                 options.paths = {
-                    "less": "../less",
+                    "less": "../../src/less",
                     "less/desktop": "empty:",
                     "require-json": "../../tasks/utilities/require-json",
                     "require-style": "../../tasks/utilities/require-style"

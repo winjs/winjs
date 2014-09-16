@@ -93,8 +93,7 @@ CorsicaTests.AppBarCommandTests = function () {
             try {
                 new WinJS.UI.AppBarCommand(null, options);
                 LiveUnit.Assert.fail("Expected creating AppBarCommand with " + paramName + "=" + value + " to throw an exception");
-            } catch (e) {
-                exception = e;
+            } catch (exception) {
                 LiveUnit.LoggingCore.logComment(exception.message);
                 LiveUnit.Assert.isTrue(exception !== null);
                 LiveUnit.Assert.isTrue(exception.name === expectedName);
@@ -129,6 +128,17 @@ CorsicaTests.AppBarCommandTests = function () {
         testGoodInitOption("icon", -1);
         testGoodInitOption("icon", 12);
         testGoodInitOption("icon", {});
+
+        var priorityExceptionName = "WinJS.UI.AppBarCommand.BadPriority";
+        var priorityExceptionMessage = "Invalid argument: the priority of an AppBarCommand must be a non-negative integer";
+        LiveUnit.LoggingCore.logComment("Testing priority");
+        testBadInitOption("priority", "test", priorityExceptionName, priorityExceptionMessage);
+        testBadInitOption("priority", "", priorityExceptionName, priorityExceptionMessage);
+        testBadInitOption("priority", -1, priorityExceptionName, priorityExceptionMessage);
+        testBadInitOption("priority", {}, priorityExceptionName, priorityExceptionMessage);
+        testGoodInitOption("priority", undefined);
+        testGoodInitOption("priority", 0);
+        testGoodInitOption("priority", 12);
 
         LiveUnit.LoggingCore.logComment("Testing tooltip");
         testGoodInitOption("tooltip", "test");
@@ -247,7 +257,7 @@ CorsicaTests.AppBarCommandTests = function () {
         LiveUnit.LoggingCore.logComment("set commands");
         AppBar.commands = [{ id: 'cmdA', label: 'One', icon: 'back', section: 'global', tooltip: 'Test glyph by name' }];
         var commandVisibilityChangedCount = 0;
-        AppBarElement.addEventListener("commandvisibilitychanged", function() {
+        AppBarElement.addEventListener("commandvisibilitychanged", function () {
             commandVisibilityChangedCount++;
         });
         AppBar.hide();
@@ -314,8 +324,8 @@ CorsicaTests.AppBarCommandTests = function () {
             "<button id=\"button1\"><button>" +
             "<button id=\"button2\"><button>" +
             "<button id=\"button3\"><button>;"
-        element.innerHTML =  HTMLString;
-        var contentCommand = new WinJS.UI.AppBarCommand(element, {id:"contentCommand", type: "content" });
+        element.innerHTML = HTMLString;
+        var contentCommand = new WinJS.UI.AppBarCommand(element, { id: "contentCommand", type: "content" });
 
         document.body.appendChild(contentCommand.element);
 

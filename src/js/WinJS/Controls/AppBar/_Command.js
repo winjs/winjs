@@ -70,7 +70,8 @@ define([
                 get badClick() { return "Invalid argument: The onclick property for an {0} must be a function"; },
                 get badDivElement() { return "Invalid argument: For a content command, the element must be null or a div element"; },
                 get badHrElement() { return "Invalid argument: For a separator, the element must be null or an hr element"; },
-                get badButtonElement() { return "Invalid argument: For a button, toggle, or flyout command, the element must be null or a button element"; }
+                get badButtonElement() { return "Invalid argument: For a button, toggle, or flyout command, the element must be null or a button element"; },
+                get badPriority() { return "Invalid argument: the priority of an {0} must be a non-negative integer"; }
             };
 
             return _Base.Class.define(function AppBarCommand_ctor(element, options) {
@@ -271,6 +272,23 @@ define([
                             throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadClick", _Resources._formatString(strings.badClick, "AppBarCommand"));
                         }
                         this._onclick = value;
+                    }
+                },
+
+                /// <field type="Number" locid="WinJS.UI.AppBarCommand.priority" helpKeyword="WinJS.UI.AppBarCommand.priority">
+                /// Gets or sets the priority of the command
+                /// </field>
+                priority: {
+                    get: function () {
+                        return this._priority;
+                    },
+                    set: function (value) {
+                        if (value === undefined || (typeof value === "number" && value >= 0)) {
+                            this._priority = value; 
+                        } else {
+                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadPriority", _Resources._formatString(strings.badPriority, "AppBarCommand"));
+                        }
+                        
                     }
                 },
 
@@ -652,4 +670,7 @@ define([
         })
     });
 
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
+        Command: _Base.Namespace._lazy(function () { return exports.AppBarCommand; })
+    });
 });

@@ -1,5 +1,9 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+interface Object {
+    [key: string]: any;
+}
+
 interface IStyleEquivalents {
     cssName: string;
     scriptName: string;
@@ -173,5 +177,58 @@ declare module WinJS {
 
         }
 
+        class PrivateToolbar extends WinJS.UI.Toolbar {
+            _disposed: boolean;
+            _primaryCommands: ICommand[];
+            _secondaryCommands: ICommand[];
+            _overflowButton: HTMLButtonElement;
+            _mainActionArea: HTMLElement;
+            _menu: WinJS.UI.Menu;
+            _separatorWidth: number;
+            _standardCommandWidth: number;
+            _overflowButtonWidth: number;
+            _getCommandWidth(command: ICommand): number;
+            _customContentFlyout: WinJS.UI.Flyout;
+            _customContentContainer: HTMLElement;
+            _selectedCustomCommand: ICommand;
+        }
+
+        class PrivateCommand extends WinJS.UI.AppBarCommand implements ICommand {
+            priority: number;
+            winControl: ICommand
+        }
+
+        // Move to WinJS.d.ts after the Toolbar API review
+        export interface ICommand {
+            addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            dispose(): void;
+            removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            disabled: boolean;
+            element: HTMLElement;
+            extraClass: string;
+            firstElementFocus: HTMLElement;
+            flyout: WinJS.UI.Flyout;
+            hidden: boolean;
+            icon: string;
+            id: string;
+            label: string;
+            lastElementFocus: HTMLElement;
+            onclick: Function;
+            section: string;
+            selected: boolean;
+            tooltip: string;
+            type: string;
+            priority: number;
+            winControl: ICommand
+        }
+
+        class Toolbar {
+            public element: HTMLElement;
+            public overflowMode: string;
+            public data: WinJS.Binding.List<ICommand>;
+            constructor(element?: HTMLElement, options?: any);
+            public dispose(): void;
+            public forceLayout(): void;
+        }
     }
 }

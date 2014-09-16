@@ -47,14 +47,17 @@
         grunt.loadTasks("tasks/");
 
         // Tasks that drop things in bin/ (should have "add-bom" as the last task)
-        grunt.registerTask("default", ["clean", "check-file-names", "tsd", "ts", "build-qunit", "less", "concat", "_build", "copy", "replace", "add-bom"]);
-        grunt.registerTask("quick", ["clean", "less", "concat", "_quickBuild", "add-bom"]);
+        grunt.registerTask("default", ["clean", "check-file-names", "tsd", "ts", "build-qunit", "less", "concat", "_copyToTsBuild", "_build", "_copyFinal", "replace", "add-bom"]);
+        grunt.registerTask("quick", ["clean", "tsd", "ts", "less", "concat",  "_copyToTsBuild", "_quickBuild", "add-bom"]);
+
         grunt.registerTask("release", ["lint", "default", "uglify", "add-bom"]);
         grunt.registerTask("minify", ["uglify", "add-bom"]);
 
         // Private tasks (not designed to be used from the command line)
         grunt.registerTask("_build", ["onefile:base", "requirejs:basePhone", "requirejs:ui", "requirejs:uiPhone", "onefile:WinJS"]);
         grunt.registerTask("_quickBuild", ["onefile:base", "requirejs:ui"]);
+        grunt.registerTask("_copyFinal", ["copy:tests", "copy:fonts"]);
+        grunt.registerTask("_copyToTsBuild", ["copy:srcjs"])
 
         // Other tasks
         grunt.registerTask("modules", ["clean:modules", "requirejs:publicModules", "replace:base"]);

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|AnyCPU">
       <Configuration>Debug</Configuration>
@@ -36,6 +37,15 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>be81311b-f7c5-42b2-8f8c-e459543a9dc9</ProjectGuid>
+    <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TypeScriptNoImplicitAny>true</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>amd</TypeScriptModuleKind>
+    <TypeScriptGeneratesDeclarations>false</TypeScriptGeneratesDeclarations>
+    <TypeScriptOutDir>$(MSBuildProjectDirectory)\..\..\bin\tsbuild\</TypeScriptOutDir>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+    <TypeScriptCompileOnSaveEnabled>true</TypeScriptCompileOnSaveEnabled>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0'">
@@ -55,6 +65,9 @@
     <Content Include="..\..\src\js\**\*.js">
       <Link>js\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Content>
+    <TypeScriptCompile Include="..\..\src\js\**\*.ts">
+      <Link>js\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </TypeScriptCompile>
     <Content Include="..\..\src\less\**\*.less">
       <Link>less\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Content>
@@ -70,6 +83,8 @@
     </AppxManifest>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.jsproj.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.jsproj.targets')" />
   <Target Name="BeforeBuild">
     <Exec Command="grunt --no-color" IgnoreExitCode="true" />
   </Target>

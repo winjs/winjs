@@ -1,0 +1,70 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+.win-toolbar {
+    width:100%;
+
+    .win-toolbar-actionarea {
+        width: 100%;
+        #flex > .display-inline-flex();
+        #flex > .justify-content(flex-end;);
+    }
+
+    .win-toolbar-actionarea .win-command,
+    .win-toolbar-actionarea .win-toolbar-overflowbutton {
+      #flex > .flex(@grow: 0; @shrink: 0);
+    }
+
+    &.win-toolbar-attached {
+        .win-toolbar-overflowarea {
+            #flex > .display-flex();
+            #flex > .flex-direction(column);
+        }
+
+        .win-toolbar-overflowbutton {
+            display: none;
+        }
+    }
+
+    &.win-toolbar-detached > .win-toolbar-overflowarea {
+        display:none;
+    }
+
+    &.win-toolbar-empty {
+        .win-toolbar-overflowbutton {
+            display:none;
+        }
+    }
+
+    .win-toolbar-overflowbutton {
+        width: 60px;
+        height: 80px;
+        margin: 0px;
+        padding: 0px;
+        border: none;
+        min-width: 0px;
+        position: relative;
+
+        .win-toolbar-ellipsis {
+            width: 60px;
+            right: 0px;
+            top:20px;
+            position: absolute;
+            display: inline-block;
+            font-size: 19px;
+            text-align: center;
+            font-family: "Segoe UI Symbol", "Symbols";
+
+            &::before {
+                content: "\E10C";
+                position: relative;
+            }
+        }
+    }
+
+    .RTL({
+        .win-toolbar-overflowbutton .win-toolbar-ellipsis {
+            right: auto;
+            left: 0px;
+        }
+    });
+}

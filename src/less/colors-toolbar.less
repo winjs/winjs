@@ -1,0 +1,77 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+.Colors(@theme) {
+    .mixin(dark) {
+        &.win-toolbar, .win-toolbar {
+            button.win-toolbar-overflowbutton.win-toolbar-overflowbutton {
+                background-color: transparent;
+
+                .win-toolbar-ellipsis {
+                    border-color: transparent;
+                }
+
+                &:enabled {
+                    &:-ms-keyboard-active {
+                        // Override intrinsic button element styles
+                        background-color: transparent;
+                    }
+
+                    .win-toolbar-ellipsis {
+                        color: rgb(255, 255, 255);
+                    }
+                }
+            }
+
+            button.win-toolbar-overflowbutton {
+                outline: none;
+            }
+        }
+    }
+
+    .mixin(light) {
+        &.win-toolbar, .win-toolbar {
+            button.win-toolbar-overflowbutton.win-toolbar-overflowbutton {
+                background-color: transparent;
+
+                .win-toolbar-ellipsis {
+                    border-color: transparent;
+                }
+
+                &:enabled {
+                    &:-ms-keyboard-active {
+                        // Override intrinsic button element styles
+                        background-color: transparent;
+                    }
+
+                    .win-toolbar-ellipsis {
+                        color: rgb(0, 0, 0);
+                    }
+                }
+            }
+
+            button.win-toolbar-overflowbutton {
+                outline: none;
+            }
+        }
+    }
+    .mixin(@theme);
+}
+
+@media (-ms-high-contrast) {
+    .win-toolbar {
+        button.win-toolbar-overflowbutton {
+            background-color: transparent;
+
+            &:enabled {
+                &:-ms-keyboard-active {
+                    // Override intrinsic button element styles
+                    background-color: transparent;
+                }
+
+                .win-toolbar-ellipsis {
+                    color: ButtonText;
+                }
+            }
+        }
+    }
+}

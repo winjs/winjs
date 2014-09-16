@@ -2228,6 +2228,15 @@ define([
             return highestTabIndex;
         },
 
+        _reparentChildren: function (originalParent, destinationParent) {
+            var child = originalParent.firstChild;
+            while (child) {
+                var sibling = child.nextSibling;
+                destinationParent.appendChild(child);
+                child = sibling;
+            }
+        },
+
         _trySetActive: function Utilities_trySetActive(elem, scroller) {
             return this._tryFocus(elem, true, scroller);
         },

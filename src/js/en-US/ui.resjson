@@ -36,6 +36,8 @@
     "settingsFlyoutAriaLabel": "Settings Flyout",
     "tentativeRating": "Tentative Rating",
     "timePicker": "Time Picker",
+    "toolbarAriaLabel": "Toolbar",
+    "toolbarOverflowButtonAriaLabel": "View more",
     "unrated": "Unrated",
     "userRating": "User Rating",
     // AppBar Icons follow, the format of the ui.js and ui.resjson differ for

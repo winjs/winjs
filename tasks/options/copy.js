@@ -25,6 +25,15 @@
                 src: ["**.ttf"],
                 dest: config.desktopOutput + "fonts/"
             }]
+        },
+
+        srcjs: {
+            files: [{
+                expand: true,
+                cwd: "src/js",
+                src: ["**/*.js", "**/*.resjson"],
+                dest: config.compiledTsOutput
+            }]
         }
     };
 

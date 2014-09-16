@@ -54,6 +54,11 @@ var define;
             if (depName === 'exports') {
                 return exports;
             }
+
+            if (depName === 'require') {
+                return require;
+            }
+
             var dep = defined[depName];
             if (!dep) {
                 throw new Error("Undefined dependency: " + depName);

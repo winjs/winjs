@@ -2,6 +2,7 @@
 // Menu
 /// <dictionary>Menu,Menus,Flyout,Flyouts,Statics</dictionary>
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
@@ -16,10 +17,10 @@ define([
     './Menu/_Command',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function menuInit(_Global,_Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _ElementUtilities, _Hoverable, _Constants, Flyout, _Overlay, _Command) {
+    ], function menuInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _ElementUtilities, _Hoverable, _Constants, Flyout, _Overlay, _Command) {
     "use strict";
 
-    _Base.Namespace.define("WinJS.UI", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.Menu">Represents a menu flyout for displaying commands.</summary>
         /// <compatibleWith platform="Windows" minVersion="8.0"/>

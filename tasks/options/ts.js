@@ -15,6 +15,18 @@
                 declaration: false,
                 removeComments: false
             }
-        }
+        },
+        src: {
+            src: ["src/js/**/*.ts"],
+            outDir: config.compiledTsOutput ,
+            options: {
+                target: 'ES5',
+                module: 'amd',
+                sourceMap: true,
+                noImplicitAny: true,
+                declaration: false,
+                removeComments: false
+            }
+        },
     };
 })();
