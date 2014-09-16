@@ -70,7 +70,7 @@ define([
                     // Want to lightdismiss _Overlays on window blur.
                     // We get blur if we click off the window, including into an iframe within our window.
                     // Both blurs call this function, but fortunately document.hasFocus is true if either
-                    // the document window or our iframe window has focus.                            
+                    // the document window or our iframe window has focus.
                     if (!_Global.document.hasFocus()) {
                         // The document doesn't have focus, so they clicked off the app, so light dismiss.
                         _Overlay._lightDismissOverlays(false);
@@ -89,7 +89,7 @@ define([
                                 // - This only works in IE because other browsers don't fire focus events on iframe elements.
                                 // - Can't use WinJS.Utilities._addEventListener's focusout because it doesn't fire when an
                                 //   iframe loses focus due to changing windows.
-                                active.addEventListener("blur", globalListeners._windowBlur, false);
+                                active.addEventListener("blur", this._windowBlur, false);
                                 active.msLightDismissBlur = true;
                             }
                         }
@@ -179,7 +179,7 @@ define([
                 // Statics
                 profilerString: {
                     get: function () {
-                        return "WinJS.UI._Overlay Global Listener:"
+                        return "WinJS.UI._Overlay Global Listener:";
                     }
                 },
                 states: {
@@ -187,7 +187,7 @@ define([
                         return {
                             off: 0,
                             on: 1,
-                        }
+                        };
                     },
                 },
             });
