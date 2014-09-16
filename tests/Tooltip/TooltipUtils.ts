@@ -4,6 +4,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts" />
 // <reference path="Tooltip.css"/>
 
 
@@ -129,7 +130,7 @@ module TooltipUtils {
             /// <returns type="object" />
 
 
-            LiveUnit.LoggingCore.logComment("Instantiating tooltip on element '" + elementId + "' with options = \"" + JSON.stringify(options) + "\"");
+            LiveUnit.LoggingCore.logComment("Instantiating tooltip on element '" + elementId + "' with options = \"" + Helper.stringify(options) + "\"");
 
             var tooltipElement = document.getElementById(elementId);
             var tooltip = null;

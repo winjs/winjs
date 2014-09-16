@@ -679,4 +679,36 @@ module Helper {
         return results;
     }
 
+    // a helper that allows JSON.stringify to handle recursive links in object graphs
+    export function stringify(obj) {
+        var str;
+        try {
+            var seenObjects = [];
+            str = JSON.stringify(obj, function (key, value) {
+                if (value === window) {
+                    return "[window]";
+                } else if (value instanceof HTMLElement) {
+                    return "[HTMLElement]";
+                } else if (typeof value === "function") {
+                    return "[function]";
+                } else if (typeof value === "object") {
+                    if (value === null) {
+                        return value;
+                    } else if (seenObjects.indexOf(value) === -1) {
+                        seenObjects.push(value);
+                        return value;
+                    } else {
+                        return "[circular]";
+                    }
+                } else {
+                    return value;
+                }
+
+            });
+        } catch (err) {
+            str = JSON.stringify("[object]");
+        }
+        return str;
+    }
+
 }
