@@ -1,51 +1,52 @@
 {
-  "name": "winjs",
-  "title": "Windows Library for JavaScript (WinJS)",
-  "description": "WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology.",
-  "version": "3.0.0",
-  "homepage": "http://try.buildwinjs.com/",
-  "author": {
-    "name": "Microsoft Open Technologies, Inc. and other contributors",
-    "url": "https://github.com/winjs/winjs/graphs/contributors"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/winjs/winjs"
-  },
-  "licenses": [
-    {
-      "type": "Apache2",
-      "url": "https://github.com/winjs/winjs/blob/master/License.txt"
+    "name": "winjs",
+    "title": "Windows Library for JavaScript (WinJS)",
+    "description": "WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology.",
+    "version": "3.0.0",
+    "homepage": "http://try.buildwinjs.com/",
+    "author": {
+        "name": "Microsoft Open Technologies, Inc. and other contributors",
+        "url": "https://github.com/winjs/winjs/graphs/contributors"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/winjs/winjs"
+    },
+    "licenses": [
+        {
+            "type": "Apache2",
+            "url": "https://github.com/winjs/winjs/blob/master/License.txt"
+        }
+    ],
+    "bugs": "https://github.com/winjs/winjs/issues",
+    "devDependencies": {
+        "grunt": "~0.4.5",
+        "grunt-contrib-concat": "~0.5.0",
+        "grunt-replace": "~0.7.8",
+        "grunt-saucelabs": "~8.3.0",
+        "grunt-contrib-less": "~0.11.4",
+        "grunt-contrib-clean": "~0.6.0",
+        "grunt-contrib-copy": "~0.5.0",
+        "grunt-shell": "~0.7.0",
+        "load-grunt-tasks": "^0.6.0",
+        "glob": "^4.0.5",
+        "qunitjs": "~1.14.0",
+        "grunt-contrib-jshint": "~0.10.0",
+        "minimist": "0.2.0",
+        "grunt-contrib-uglify": "^0.5.1",
+        "grunt-contrib-connect": "^0.8.0",
+        "chalk": "~0.5.1",
+        "text-table": "~0.2.0",
+        "http-post": "~0.1.1",
+        "grunt-contrib-requirejs": "^0.4.4",
+        "less": "^1.7.4",
+        "madge": "^0.3.1",
+        "fs-extra": "^0.10.0",
+        "websocket": "^1.0.8",
+        "grunt-jscs": "^0.6.2",
+        "grunt-tsd": "^0.1.0",
+        "grunt-ts": "^1.11.6",
+        "typescript": "^1.0.1",
+        "grunt-contrib-cssmin": "^0.10.0"
     }
-  ],
-  "bugs": "https://github.com/winjs/winjs/issues",
-  "devDependencies": {
-    "grunt": "~0.4.5",
-    "grunt-contrib-concat": "~0.5.0",
-    "grunt-replace": "~0.7.8",
-    "grunt-saucelabs": "~8.3.0",
-    "grunt-contrib-less": "~0.11.4",
-    "grunt-contrib-clean": "~0.6.0",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-shell": "~0.7.0",
-    "load-grunt-tasks": "^0.6.0",
-    "glob": "^4.0.5",
-    "qunitjs": "~1.14.0",
-    "grunt-contrib-jshint": "~0.10.0",
-    "minimist": "0.2.0",
-    "grunt-contrib-uglify": "^0.5.1",
-    "grunt-contrib-connect": "^0.8.0",
-    "chalk": "~0.5.1",
-    "text-table": "~0.2.0",
-    "http-post": "~0.1.1",
-    "grunt-contrib-requirejs": "^0.4.4",
-    "less": "^1.7.4",
-    "madge": "^0.3.1",
-    "fs-extra": "^0.10.0",
-    "websocket": "^1.0.8",
-    "grunt-jscs": "^0.6.2",
-    "grunt-tsd": "^0.1.0",
-    "grunt-ts": "^1.11.6",
-    "typescript": "^1.0.1"
-  }
 }

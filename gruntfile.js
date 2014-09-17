@@ -50,7 +50,7 @@
         grunt.registerTask("default", ["clean", "check-file-names", "tsd", "ts", "build-qunit", "less", "concat", "_copyToTsBuild", "_build", "_copyFinal", "replace", "add-bom"]);
         grunt.registerTask("quick", ["clean", "tsd", "ts:src", "less", "concat",  "_copyToTsBuild", "_quickBuild", "add-bom"]);
 
-        grunt.registerTask("release", ["lint", "default", "uglify", "add-bom"]);
+        grunt.registerTask("release", ["lint", "default", "uglify", "cssmin", "add-bom"]);
         grunt.registerTask("minify", ["uglify", "add-bom"]);
 
         // Private tasks (not designed to be used from the command line)
