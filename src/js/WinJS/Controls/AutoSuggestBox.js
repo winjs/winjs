@@ -12,8 +12,9 @@ define([
     '../Utilities/_Hoverable',
     "../Animations",
     "../BindingList",
+    '../Promise',
     "../Controls/Repeater",
-], function autoSuggestBoxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Repeater) {
+], function autoSuggestBoxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Promise, Repeater) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -44,6 +45,8 @@ define([
 
                 //todo aria labels
                 get ariaLabel() { return _Resources._getWinJSString("ui/searchBoxAriaLabel").value; },
+                get ariaLabelInputNoPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputNoPlaceHolder").value; },
+                get ariaLabelInputPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputPlaceHolder").value; },
                 get ariaLabelQuery() { return _Resources._getWinJSString("ui/searchBoxAriaLabelQuery").value; },
             };
 
@@ -60,12 +63,14 @@ define([
                 element.classList.add(ClassNames.asb);
                 element.classList.add("win-disposable");
 
-                this._currentFocusedIndex = -1;
-                this._currentSelectedIndex = -1;
-                this._prevQueryText = "";
-
                 this._buildDOM();
                 this._wireupUserEvents();
+
+                this._currentFocusedIndex = -1;
+                this._currentSelectedIndex = -1;
+                this._flyoutOpenPromise = Promise.wrap();
+                this._prevLinguisticDetails = this._getLinguisticDetails();
+                this._prevQueryText = "";
 
                 _Control.setOptions(this, options);
 
@@ -94,10 +99,10 @@ define([
                 },
 
                 /// <field type='String' locid="WinJS.UI.AutoSuggestBox.chooseSuggestionOnEnter" helpKeyword="WinJS.UI.AutoSuggestBox.chooseSuggestionOnEnter">
-                /// Gets or sets whether the first suggestion is chosen when the user presses Enter.
-                /// When set to true, as the user types in the input box, a focus rectangle is drawn on the first suggestion
-                /// (if present and no IME composition in progress).  Pressing enter will behave the same as if clicked on the focused suggestion,
-                /// and the down arrow key press will put real focus to the second suggestion and the up arrow key will remove focus.
+                /// Gets or sets whether the first suggestion is chosen when the user presses Enter. When set to true, as the user types in the input box, a
+                /// focus rectangle is drawn on the first suggestion (if present and no IME composition in progress). Pressing enter will behave the same as
+                /// if clicked on the focused suggestion, and the down arrow key press will put real focus to the second suggestion and the up arrow key will
+                /// remove focus.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 chooseSuggestionOnEnter: {
@@ -125,10 +130,10 @@ define([
 
                         if (!value) {
                             // Enable control
-                            this.element.disabled = false;
-                            this.element.classList.remove(ClassNames.asbDisabled);
+                            this._element.disabled = false;
+                            this._element.classList.remove(ClassNames.asbDisabled);
                             this._inputElement.disabled = false;
-                            if (_Global.document.activeElement === this.element) {
+                            if (_Global.document.activeElement === this._element) {
                                 _ElementUtilities._setActive(this._inputElement);
                             }
                         } else {
@@ -136,10 +141,24 @@ define([
                             if (this._isFlyoutShown()) {
                                 this._hideFlyout();
                             }
-                            this.element.disabled = true;
-                            this.element.classList.add(ClassNames.asbDisabled);
+                            this._element.disabled = true;
+                            this._element.classList.add(ClassNames.asbDisabled);
                             this._domElement.disabled = true;
                         }
+                    }
+                },
+
+                /// <field type='String' locid="WinJS.UI.AutoSuggestBox.placeholderText" helpKeyword="WinJS.UI.AutoSuggestBox.placeholderText">
+                /// Gets or sets the placeholder text for the AutoSuggestBox. This text is displayed if there is no other text in the input box.
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </field>
+                placeholderText: {
+                    get: function () {
+                        return this._inputElement.placeholder;
+                    },
+                    set: function (value) {
+                        this._inputElement.placeholder = value;
+                        this._updateInputElementAriaLabel();
                     }
                 },
 
@@ -168,50 +187,69 @@ define([
                     }
 
                     // Cancel pending promises.
-                    if (this._flyoutOpenPromise) {
-                        this._flyoutOpenPromise.cancel();
-                    }
+                    this._flyoutOpenPromise.cancel();
 
                     this._disposed = true;
                 },
 
                 // Constructor Helpers
                 _buildDOM: function asb_buildDOM() {
-                    this.element.setAttribute("aria-label", Strings.ariaLabel);
-                    this.element.setAttribute("role", "group");
+                    // Root element
+                    if (!this._element.getAttribute("aria-label")) {
+                        this._element.setAttribute("aria-label", Strings.ariaLabel);
+                    }
+                    this._element.setAttribute("role", "group");
 
+                    // Input element
                     this._inputElement = _Global.document.createElement("input");
                     this._inputElement.type = "search";
                     this._inputElement.classList.add(ClassNames.asbInput);
                     //todo: placeholder-dependent aria label: this._inputElement.setAttribute("aria-label", ariaLabel);
                     this._inputElement.setAttribute("role", "textbox");
-                    this.element.appendChild(this._inputElement);
+                    this._updateInputElementAriaLabel();
+                    this._element.appendChild(this._inputElement);
 
+                    // Flyout element
                     this._flyoutElement = _Global.document.createElement("div");
                     this._flyoutElement.classList.add(ClassNames.asbFlyout);
-                    this.element.appendChild(this._flyoutElement);
+                    this._element.appendChild(this._flyoutElement);
 
+                    // Repeater
+                    var that = this;
+                    function repeaterTemplate(item) {
+                        var root = null;
+                        if (!item) {
+                            return root;
+                        }
+                        if (item.kind === AutoSuggestBox.SuggestionKinds.Query) {
+                            root = querySuggestionRenderer(that, item);
+                        } else if (item.kind === AutoSuggestBox.SuggestionKinds.Separator) {
+                            //root = that._separatorSuggestionRenderer(item);
+                        } else if (item.kind === AutoSuggestBox.SuggestionKinds.Result) {
+                            //root = that._resultSuggestionRenderer(item);
+                        } else {
+                            throw new _ErrorFromName("WinJS.UI.AutoSuggestBox.invalidSuggestionKind", Strings.invalidSuggestionKind);
+                        }
+                        return root;
+                    }
+                    function repeaterDataChanged() {
+                        // ms-scroll-chaining:none will still chain scroll parent element if child div does
+                        // not have a scroll bar. Prevent this by setting and updating touch action
+                        that._flyoutElement.style.touchAction = that._flyoutElement.scrollHeight > that._flyoutElement.getBoundingClientRect().height ? "pan-y" : "none";
+                        if (that._isFlyoutShown()) {
+                            that._repeaterElement.style.display = "none";
+                            that._repeaterElement.style.display = "block";
+                        }
+                    }
                     this._suggestionsData = new BindingList.List();
                     this._repeaterElement = _Global.document.createElement("div");
                     this._repeater = new Repeater.Repeater(this._repeaterElement, {
                         data: this._suggestionsData,
-                        template: function (item) {
-                            var root = null;
-                            if (!item) {
-                                return root;
-                            }
-                            if (item.kind === AutoSuggestBox.SuggestionKinds.Query) {
-                                root = querySuggestionRenderer(this, item);
-                            } else if (item.kind === AutoSuggestBox.SuggestionKinds.Separator) {
-                                //root = this._separatorSuggestionRenderer(item);
-                            } else if (item.kind === AutoSuggestBox.SuggestionKinds.Result) {
-                                //root = this._resultSuggestionRenderer(item);
-                            } else {
-                                throw new _ErrorFromName("WinJS.UI.AutoSuggestBox.invalidSuggestionKind", Strings.invalidSuggestionKind);
-                            }
-
-                            return root;
-                        }.bind(this)
+                        template: repeaterTemplate,
+                        onitemchanged: repeaterDataChanged,
+                        oniteminserted: repeaterDataChanged,
+                        onitemremoved: repeaterDataChanged,
+                        onitemsreloaded: repeaterDataChanged
                     });
                     _ElementUtilities._ensureId(this._repeaterElement);
                     this._repeaterElement.setAttribute("role", "listbox");
@@ -220,11 +258,9 @@ define([
                 },
 
                 _wireupUserEvents: function asb_wireupUserEvents() {
-                    //var inputOrImeChangeHandler = this._inputOrImeChangeHandler.bind(this);
-                    //this._inputElement.addEventListener("input", inputOrImeChangeHandler);
                     this._inputElement.addEventListener("keydown", this._keyDownHandler.bind(this));
-                    //this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));
-                    //this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
+                    this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));
+                    this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
                     this._inputElement.addEventListener("focus", this._focusHandler.bind(this));
                     this._inputElement.addEventListener("blur", this._blurHandler.bind(this));
                     //_ElementUtilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
@@ -233,9 +269,11 @@ define([
                     //_ElementUtilities._addEventListener(this._flyoutElement, "pointercancel", this._flyoutPointerReleasedHandler.bind(this));
                     //_ElementUtilities._addEventListener(this._flyoutElement, "pointerout", this._flyoutPointerReleasedHandler.bind(this));
 
-                    //this._inputElement.addEventListener("compositionstart", inputOrImeChangeHandler);
-                    //this._inputElement.addEventListener("compositionupdate", inputOrImeChangeHandler);
-                    //this._inputElement.addEventListener("compositionend", inputOrImeChangeHandler);
+                    var inputOrImeChangeHandler = this._inputOrImeChangeHandler.bind(this);
+                    this._inputElement.addEventListener("input", inputOrImeChangeHandler);
+                    this._inputElement.addEventListener("compositionstart", inputOrImeChangeHandler);
+                    this._inputElement.addEventListener("compositionupdate", inputOrImeChangeHandler);
+                    this._inputElement.addEventListener("compositionend", inputOrImeChangeHandler);
 
                     //if (this._inputElement.msGetInputContext && this._inputElement.msGetInputContext()) {
                     //    var context = this._inputElement.msGetInputContext();
@@ -271,9 +309,17 @@ define([
                     // Display above vs below - the ASB flyout always opens in the direction where there is more space
                     var spaceAbove = inputRect.top;
                     var spaceBelow = _Global.document.documentElement.clientHeight - inputRect.bottom;
-                    var flyoutTop = spaceAbove < spaceBelow ? inputRect.height : -flyoutRect.height;
-                    this._flyoutElement.style.top = flyoutTop + "px";
-                    this._flyoutBelowInput = flyoutTop > 0;
+                    this._flyoutBelowInput = spaceBelow >= spaceAbove;
+                    if (this._flyoutBelowInput) {
+                        this._flyoutElement.style.top = inputRect.height + "px";
+                        this._flyoutElement.style.bottom = "";
+                    } else {
+                        this._flyoutElement.style.top = "";
+                        this._flyoutElement.style.bottom = inputRect.height + "px";
+                    }
+
+                    // todo
+                    //this._addFlyoutIMEPaddingIfRequired();
 
                     // Align left vs right edge
                     var alignRight;
@@ -289,26 +335,16 @@ define([
                     }
 
                     if (alignRight) {
-                        this._flyoutElement.style.left = (inputRect.width - flyoutRect.width - this.element.clientLeft) + "px";
+                        this._flyoutElement.style.left = (inputRect.width - flyoutRect.width - this._element.clientLeft) + "px";
                     } else {
-                        this._flyoutElement.style.left = "-" + this.element.clientLeft + "px";
+                        this._flyoutElement.style.left = "-" + this._element.clientLeft + "px";
                     }
 
                     // ms-scroll-chaining:none will still chain scroll parent element if child div does
                     // not have a scroll bar. Prevent this by setting and updating touch action
-                    if (this._flyoutElement.scrollHeight > flyoutRect.height) {
-                        this._flyoutElement.style.touchAction = "pan-y";
-                    } else {
-                        this._flyoutElement.style.touchAction = "none";
-                    }
+                    this._flyoutElement.style.touchAction = this._flyoutElement.scrollHeight > flyoutRect.height ? "pan-y" : "none";
 
-                    // todo
-                    //this._addFlyoutIMEPaddingIfRequired();
-
-                    if (this._flyoutOpenPromise) {
-                        this._flyoutOpenPromise.cancel();
-                        this._flyoutOpenPromise = null;
-                    }
+                    this._flyoutOpenPromise.cancel();
                     var animationKeyframe = this._flyoutBelowInput ? "WinJS-flyoutBelowASB-showPopup" : "WinJS-flyoutAboveASB-showPopup";
                     this._flyoutOpenPromise = Animations.showPopup(this._flyoutElement, { top: "0px", left: "0px", keyframe: animationKeyframe });
                 },
@@ -398,7 +434,7 @@ define([
                     }
                 },
 
-                _updateFakeFocus: function SearchBox_updateFakeFocus() {
+                _updateFakeFocus: function asm_updateFakeFocus() {
                     var firstElementIndex;
                     if (this._isFlyoutShown() && (this._chooseSuggestionOnEnter)) {
                         firstElementIndex = this._findNextSuggestionElementIndex(-1);
@@ -421,7 +457,7 @@ define([
                     // Returns true if ev.preventDefault() was not called
                     var event = _Global.document.createEvent("CustomEvent");
                     event.initCustomEvent(type, true, true, detail);
-                    return this.element.dispatchEvent(event);
+                    return this._element.dispatchEvent(event);
                 },
 
                 _getLinguisticDetails: function asb_getLinguisticDetails(useCache, createFilled) { // createFilled=false always creates an empty linguistic details object, otherwise generate it or use the cache
@@ -477,6 +513,14 @@ define([
                     return linguisticDetails;
                 },
 
+                _shouldIgnoreInput: function asb_shouldIgnoreInput() {
+                    var processingIMEFocusLossKey = this._isProcessingDownKey || this._isProcessingUpKey || this._isProcessingTabKey || this._isProcessingEnterKey;
+                    var flyoutPointerDown = false; // todo
+                    var isButtonDown = false; // todo button: _ElementUtilities._matchesSelector(this._buttonElement, ":active");
+
+                    return processingIMEFocusLossKey || flyoutPointerDown || isButtonDown;
+                },
+
                 _submitQuery: function asb_submitQuery(queryText, fillLinguisticDetails, event) {
                     if (this._disposed) {
                         return;
@@ -494,18 +538,24 @@ define([
                         keyModifiers: getKeyModifiers(event)
                     });
 
-                    if (this._searchSuggestionManager) {
-                        this._searchSuggestionManager.addToHistory(this._inputElement.value, this._lastKeyPressLanguage);
-                    }
+                    //if (this._searchSuggestionManager) {
+                    //    this._searchSuggestionManager.addToHistory(this._inputElement.value, this._lastKeyPressLanguage);
+                    //}
+                },
+
+                _updateInputElementAriaLabel: function asb_updateInputElementAriaLabel() {
+                    this._inputElement.setAttribute("aria-label",
+                        this._inputElement.placeholder ? _Resources._formatString(Strings.ariaLabelInputPlaceHolder, this._inputElement.placeholder) : Strings.ariaLabelInputNoPlaceHolder
+                    );
                 },
 
                 // Event Handlers
                 _blurHandler: function asb_blurHandler(event) {
                     // Hide flyout if focus is leaving the control
-                    if (event.relatedTarget !== this.element && !this.element.contains(event.relatedTarget)) {
+                    if (event.relatedTarget !== this._element && !this._element.contains(event.relatedTarget)) {
                         this._hideFlyout();
                     }
-                    this.element.classList.remove(ClassNames.asbInputFocus);
+                    this._element.classList.remove(ClassNames.asbInputFocus);
                     // todo
                     //this._updateSearchButtonClass();
                     this._isProcessingDownKey = false;
@@ -528,7 +578,7 @@ define([
                     }
 
                     // If focus is returning to the input box from outside the control, show the flyout and refresh the suggestions
-                    if (event.target === this._inputElement && event.relatedTarget !== this.element && !this.element.contains(event.relatedTarget)) {
+                    if (event.target === this._inputElement && event.relatedTarget !== this._element && !this._element.contains(event.relatedTarget)) {
                         this._showFlyout();
                         if (this._currentFocusedIndex !== -1) {
                             // Focus is not in input
@@ -547,9 +597,69 @@ define([
                         //}
                     }
 
-                    this.element.classList.add(ClassNames.asbInputFocus);
+                    this._element.classList.add(ClassNames.asbInputFocus);
                     // todo
                     //this._updateSearchButtonClass();
+                },
+
+                _inputOrImeChangeHandler: function asb_inputImeChangeHandler() {
+                    var that = this;
+                    function hasLinguisticDetailsChanged(newLinguisticDetails) {
+                        var hasLinguisticDetailsChanged = false;
+                        if ((that._prevLinguisticDetails.queryTextCompositionStart !== newLinguisticDetails.queryTextCompositionStart) ||
+                            (that._prevLinguisticDetails.queryTextCompositionLength !== newLinguisticDetails.queryTextCompositionLength) ||
+                            (that._prevLinguisticDetails.queryTextAlternatives.length !== newLinguisticDetails.queryTextAlternatives.length)) {
+                            hasLinguisticDetailsChanged = true;
+                        }
+                        that._prevLinguisticDetails = newLinguisticDetails;
+                        return hasLinguisticDetailsChanged;
+                    }
+
+                    // swallow the IME change event that gets fired when composition is ended due to keyboarding down to the suggestion list & mouse down on the button
+                    if (!this._shouldIgnoreInput()) {
+                        var linguisticDetails = this._getLinguisticDetails(false /*useCache*/, true /*createFilled*/); // never cache on explicit user changes
+                        var hasLinguisticDetailsChanged = hasLinguisticDetailsChanged(linguisticDetails); // updates this._prevLinguisticDetails
+
+                        // Keep the previous composition cache up to date, execpt when composition ended with no text change and alternatives are kept.
+                        // In that case, we need to use the cached values to correctly generate the query prefix/suffix for substituting alternatives, but still report to the client that the composition has ended (via start & length of composition of 0)
+                        if ((this._inputElement.value !== this._prevQueryText) || (this._prevCompositionLength === 0) || (linguisticDetails.queryTextCompositionLength > 0)) {
+                            this._prevCompositionStart = linguisticDetails.queryTextCompositionStart;
+                            this._prevCompositionLength = linguisticDetails.queryTextCompositionLength;
+                        }
+
+                        if ((this._prevQueryText === this._inputElement.value) && !hasLinguisticDetailsChanged) {
+                            // Sometimes the input change is fired even if there is no change in input.
+                            // Swallow event in those cases.
+                            return;
+                        }
+                        this._prevQueryText = this._inputElement.value;
+
+                        // get the most up to date value of the input langauge from WinRT if available
+                        if (_WinRT.Windows.Globalization.Language) {
+                            this._lastKeyPressLanguage = _WinRT.Windows.Globalization.Language.currentInputMethodLanguageTag;
+                        }
+
+                        if (_WinRT.Windows.Data.Text.SemanticTextQuery) {
+                            if (this._inputElement.value !== "") {
+                                this._hitFinder = new _WinRT.Windows.Data.Text.SemanticTextQuery(this._inputElement.value, this._lastKeyPressLanguage);
+                            } else {
+                                this._hitFinder = null;
+                            }
+                        }
+
+                        this._fireEvent(EventNames.querychanged, {
+                            language: this._lastKeyPressLanguage,
+                            queryText: this._inputElement.value,
+                            linguisticDetails: linguisticDetails
+                        });
+                        //if (this._searchSuggestionManager) {
+                        //    this._searchSuggestionManager.setQuery(
+                        //        this._inputElement.value,
+                        //        this._lastKeyPressLanguage,
+                        //        linguisticDetails
+                        //        );
+                        //}
+                    }
                 },
 
                 _keyDownHandler: function asb_keyDownHandler(event) {
@@ -661,6 +771,11 @@ define([
                         this._isProcessingEnterKey = false;
                     }
                 },
+
+                _keyPressHandler: function asb_keyPressHandler(event) {
+                    this._lastKeyPressLanguage = event.locale;
+                },
+
             }, {
                 SuggestionKinds: {
                     Separator: "separator",
