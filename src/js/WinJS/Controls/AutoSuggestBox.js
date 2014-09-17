@@ -204,7 +204,6 @@ define([
                     this._inputElement = _Global.document.createElement("input");
                     this._inputElement.type = "search";
                     this._inputElement.classList.add(ClassNames.asbInput);
-                    //todo: placeholder-dependent aria label: this._inputElement.setAttribute("aria-label", ariaLabel);
                     this._inputElement.setAttribute("role", "textbox");
                     this._updateInputElementAriaLabel();
                     this._element.appendChild(this._inputElement);
@@ -263,11 +262,13 @@ define([
                     this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
                     this._inputElement.addEventListener("focus", this._focusHandler.bind(this));
                     this._inputElement.addEventListener("blur", this._blurHandler.bind(this));
-                    //_ElementUtilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
-                    //_ElementUtilities._addEventListener(this._flyoutElement, "pointerdown", this._flyoutPointerDownHandler.bind(this));
-                    //_ElementUtilities._addEventListener(this._flyoutElement, "pointerup", this._flyoutPointerReleasedHandler.bind(this));
-                    //_ElementUtilities._addEventListener(this._flyoutElement, "pointercancel", this._flyoutPointerReleasedHandler.bind(this));
-                    //_ElementUtilities._addEventListener(this._flyoutElement, "pointerout", this._flyoutPointerReleasedHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
+
+                    var flyoutPointerReleasedHandler = this._flyoutPointerReleasedHandler.bind(this);
+                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerup", flyoutPointerReleasedHandler);
+                    _ElementUtilities._addEventListener(this._flyoutElement, "pointercancel", flyoutPointerReleasedHandler);
+                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerout", flyoutPointerReleasedHandler);
+                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerdown", this._flyoutPointerDownHandler.bind(this));
 
                     var inputOrImeChangeHandler = this._inputOrImeChangeHandler.bind(this);
                     this._inputElement.addEventListener("input", inputOrImeChangeHandler);
@@ -275,11 +276,11 @@ define([
                     this._inputElement.addEventListener("compositionupdate", inputOrImeChangeHandler);
                     this._inputElement.addEventListener("compositionend", inputOrImeChangeHandler);
 
-                    //if (this._inputElement.msGetInputContext && this._inputElement.msGetInputContext()) {
-                    //    var context = this._inputElement.msGetInputContext();
-                    //    context.addEventListener("MSCandidateWindowShow", this._msCandidateWindowShowHandler.bind(this));
-                    //    context.addEventListener("MSCandidateWindowHide", this._msCandidateWindowHideHandler.bind(this));
-                    //}
+                    var context = this._inputElement.msGetInputContext && this._inputElement.msGetInputContext();
+                    if (context) {
+                        context.addEventListener("MSCandidateWindowShow", this._msCandidateWindowShowHandler.bind(this));
+                        context.addEventListener("MSCandidateWindowHide", this._msCandidateWindowHideHandler.bind(this));
+                    }
                 },
 
                 // Flyout functions
@@ -318,8 +319,7 @@ define([
                         this._flyoutElement.style.bottom = inputRect.height + "px";
                     }
 
-                    // todo
-                    //this._addFlyoutIMEPaddingIfRequired();
+                    this._addFlyoutIMEPaddingIfRequired();
 
                     // Align left vs right edge
                     var alignRight;
@@ -347,6 +347,36 @@ define([
                     this._flyoutOpenPromise.cancel();
                     var animationKeyframe = this._flyoutBelowInput ? "WinJS-flyoutBelowASB-showPopup" : "WinJS-flyoutAboveASB-showPopup";
                     this._flyoutOpenPromise = Animations.showPopup(this._flyoutElement, { top: "0px", left: "0px", keyframe: animationKeyframe });
+                },
+
+                _addFlyoutIMEPaddingIfRequired: function asb_addFlyoutIMEPaddingIfRequired() {
+                    // Check if we have InputContext APIs
+                    var context = this._inputElement.msGetInputContext && this._inputElement.msGetInputContext();
+                    if (!context) {
+                        return;
+                    }
+
+                    // Check if flyout is visible and below input
+                    if (!this._isFlyoutShown() || !this._flyoutBelowInput) {
+                        return;
+                    }
+
+                    // Check if IME is occluding flyout
+                    var flyoutRect = this._flyoutElement.getBoundingClientRect();
+                    var imeRect = context.getCandidateWindowClientRect();
+                    var inputRect = this._inputElement.getBoundingClientRect();
+                    var flyoutTop = inputRect.bottom;
+                    var flyoutBottom = inputRect.bottom + flyoutRect.height;
+                    if (((imeRect.top < flyoutTop) || (imeRect.top > flyoutBottom)) &&
+                        ((imeRect.bottom < flyoutTop) || (imeRect.bottom > flyoutBottom))) {
+                        return;
+                    }
+
+                    // Shift the flyout down
+                    var rect = context.getCandidateWindowClientRect();
+                    var animation = Animations.createRepositionAnimation(this._flyoutElement.children);
+                    this._flyoutElement.style.paddingTop = (rect.bottom - rect.top) + "px";
+                    animation.execute();
                 },
 
                 _findNextSuggestionElementIndex: function asb_findNextSuggestionElementIndex(curIndex) {
@@ -515,10 +545,9 @@ define([
 
                 _shouldIgnoreInput: function asb_shouldIgnoreInput() {
                     var processingIMEFocusLossKey = this._isProcessingDownKey || this._isProcessingUpKey || this._isProcessingTabKey || this._isProcessingEnterKey;
-                    var flyoutPointerDown = false; // todo
                     var isButtonDown = false; // todo button: _ElementUtilities._matchesSelector(this._buttonElement, ":active");
 
-                    return processingIMEFocusLossKey || flyoutPointerDown || isButtonDown;
+                    return processingIMEFocusLossKey || this._isFlyoutPointerDown || isButtonDown;
                 },
 
                 _submitQuery: function asb_submitQuery(queryText, fillLinguisticDetails, event) {
@@ -602,6 +631,47 @@ define([
                     //this._updateSearchButtonClass();
                 },
 
+                _flyoutPointerDownHandler: function asm_flyoutPointerDownHandler(ev) {
+                    var that = this;
+                    var srcElement = ev.target;
+                    function findSuggestionElementIndex() {
+                        if (srcElement) {
+                            for (var i = 0; i < that._suggestionsData.length; i++) {
+                                if (that._repeater.elementFromIndex(i) === srcElement) {
+                                    return i;
+                                }
+                            }
+                        }
+                        return -1;
+                    }
+
+                    this._isFlyoutPointerDown = true;
+                    while (srcElement && (srcElement.parentNode !== this._repeaterElement)) {
+                        srcElement = srcElement.parentNode;
+                    }
+                    var index = findSuggestionElementIndex();
+                    if ((index >= 0) && (index < this._suggestionsData.length) && (this._currentFocusedIndex !== index)) {
+                        if (this._isSuggestionSelectable(this._suggestionsData.getAt(index))) {
+                            this._currentFocusedIndex = index;
+                            this._selectSuggestionAtIndex(index);
+                            this._updateQueryTextWithSuggestionText(this._currentFocusedIndex);
+                        }
+                    }
+                    // Prevent default so focus does not leave input element.
+                    ev.preventDefault();
+                },
+
+                _flyoutPointerReleasedHandler: function asm_flyoutPointerReleasedHandler() {
+                    this._isFlyoutPointerDown = false;
+
+                    if (this._reflowImeOnPointerRelease) {
+                        this._reflowImeOnPointerRelease = false;
+                        var animation = Animations.createRepositionAnimation(this._flyoutElement.children);
+                        this._flyoutElement.style.paddingTop = "";
+                        animation.execute();
+                    }
+                },
+
                 _inputOrImeChangeHandler: function asb_inputImeChangeHandler() {
                     var that = this;
                     function hasLinguisticDetailsChanged(newLinguisticDetails) {
@@ -659,6 +729,13 @@ define([
                         //        linguisticDetails
                         //        );
                         //}
+                    }
+                },
+
+                _inputPointerDownHandler: function asb_inputPointerDownHandler() {
+                    if ((_Global.document.activeElement === this._inputElement) && (this._currentSelectedIndex !== -1)) {
+                        this._currentFocusedIndex = -1;
+                        this._selectSuggestionAtIndex(this._currentFocusedIndex);
                     }
                 },
 
@@ -776,6 +853,20 @@ define([
                     this._lastKeyPressLanguage = event.locale;
                 },
 
+                _msCandidateWindowHideHandler: function asb_msCandidateWindowHideHandler() {
+                    if (!this._isFlyoutPointerDown) {
+                        var animation = Animations.createRepositionAnimation(this._flyoutElement.children);
+                        this._flyoutElement.style.paddingTop = "";
+                        animation.execute();
+                    } else {
+                        this._reflowImeOnPointerRelease = true;
+                    }
+                },
+
+                _msCandidateWindowShowHandler: function asb_msCandidateWindowShowHandler() {
+                    this._addFlyoutIMEPaddingIfRequired();
+                    this._reflowImeOnPointerRelease = false;
+                },
             }, {
                 SuggestionKinds: {
                     Separator: "separator",
