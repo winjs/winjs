@@ -48,7 +48,7 @@
 
         // Tasks that drop things in bin/ (should have "add-bom" as the last task)
         grunt.registerTask("default", ["clean", "check-file-names", "tsd", "ts", "build-qunit", "less", "concat", "_copyToTsBuild", "_build", "_copyFinal", "replace", "add-bom"]);
-        grunt.registerTask("quick", ["clean", "tsd", "ts", "less", "concat",  "_copyToTsBuild", "_quickBuild", "add-bom"]);
+        grunt.registerTask("quick", ["clean", "tsd", "ts:src", "less", "concat",  "_copyToTsBuild", "_quickBuild", "add-bom"]);
 
         grunt.registerTask("release", ["lint", "default", "uglify", "add-bom"]);
         grunt.registerTask("minify", ["uglify", "add-bom"]);
