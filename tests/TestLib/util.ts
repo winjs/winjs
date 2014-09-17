@@ -336,6 +336,12 @@ module Helper {
 
         export var areFontFamiliesEqual = makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "fontFamily");
         export var areFontFamiliesNotEqual = makeNormalizedCssValueAssertion(LiveUnit.Assert.areNotEqual.bind(LiveUnit.Assert), "fontFamily");
+        
+        export function areFloatsEqual(expectedValue, actualValue, message = "", tolerance = 0.1) {
+            var diff = Math.abs(expectedValue - actualValue);
+            LiveUnit.Assert.isTrue(diff < tolerance, message + " (expected = " + expectedValue +
+                ", actual = " + actualValue + ", tolerance = " + tolerance + ")");
+        }
     }
 
     export module Browser {

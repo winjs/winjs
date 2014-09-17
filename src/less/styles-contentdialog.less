@@ -1,0 +1,137 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+@import "base.less";
+@import "mixins.less";
+
+.win-contentdialog {
+    /* Dialog's positioning and sizing rules:
+      - Horizontal alignment
+        - Always horizontally centered
+      - Vertical alignment
+        - If height of window < dialog max, dialog is attached to top of window
+        - Otherwise, dialog is vertically centered
+      - Width:
+        - Always stays between min and max width
+        - Sizes to width of window
+      - Height:
+        - Always stays between min and max height
+        - If window height < dialog max and dialog height > 50% of window
+          height, dialog height = window height
+        - Otherwise, dialog height sizes to its content
+     */
+    
+    &.win-contentdialog-verticalalignment {
+        z-index: 1005; /* Above AppBar and SettingsFlyout. Below Flyout. */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        
+        display: none;
+        &.win-contentdialog-visible {
+            #flex > .display-flex();
+        }	    
+        #flex > .flex-flow(column; wrap);
+        #flex > .justify-content(center); /* center on flex axis (vertically) */
+        #flex > .align-content(center); /* maintain horizontal centering when the flexbox has 2 columns */
+    }
+    
+    .win-contentdialog-dimcontent {
+        z-index: -1; /* Put dimcontent behind the dialog's body */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+    
+    .win-contentdialog-body {
+        #flex > .display-flex();
+        #flex > .flex-direction(column);
+        
+        #flex > .flex(@grow: 1; @shrink: 1);
+        
+        box-sizing: border-box;
+        padding: 12px;
+        
+        width: 100vw;
+        min-width: 320px;
+        max-width: 432px;
+    
+        min-height: 160px;
+        max-height: 520px;
+    
+        /* Center horizontally */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Purpose of this element is to control the dialog body's height based on the height
+       of the window. The dialog body's height should:
+         - Match height of window when dialog body's intrinsic height < 50% of window height.
+           In this case, .win-contentdialog-column0or1 will be in column 1 allowing
+           the dialog's body to fill the height of the window.
+         - Size to content otherwise.
+           In this case, .win-contentdialog-column0or1 will be in column 0 preventing
+           the dialog's body from growing.
+       This element works by moving between flexbox columns as the window's height changes.
+     */
+    .win-contentdialog-column0or1 {
+        height: 50vh;
+        #flex > .flex(@grow: 10000; @shrink: 0);
+        width: 0;
+    }
+    
+    @media (min-height: 520px) {
+        .win-contentdialog-body {
+            #flex > .flex(@grow: 0; @shrink: 0);
+        }
+
+        .win-contentdialog-column0or1 {
+            display: none;
+        }
+    }
+    
+    .win-contentdialog-scroller {
+        #flex > .flex(@grow: 1; @shrink: 1);
+        
+        #flex > .display-flex();
+        #flex > .flex-direction(column);
+        overflow: auto;
+    }
+    
+    .win-contentdialog-title {
+        #flex > .flex(@grow: 0; @shrink: 0);
+        overflow: hidden;
+        font-size: 20px;
+        max-height: 56px;
+    }
+    .win-contentdialog-content {
+        #flex > .flex(@grow: 1; @shrink: 0);
+        font-size: 15px;
+    }
+    
+    .win-contentdialog-commands {
+        #flex > .flex(@grow: 0; @shrink: 0);
+        #flex > .display-flex();
+        margin-right: -4px; /* Chop off margin on last command */
+    }
+    
+    .win-contentdialog-commands > button {
+        /* Each command should have the same width. Flexbox distributes widths using each
+           item's width and flex-grow as weights. Giving each command a flex-grow of 1
+           and a width of 0 causes each item to have equal weights and thus equal widths.
+         */
+        #flex > .flex(@grow: 1; @shrink: 1);
+        width: 0;
+        
+        margin-right: 4px; /* 4px of space between each command */
+        
+        white-space: nowrap;
+        padding-left: 12px;
+        padding-right: 12px;
+        font-size: 15px;
+    }
+}

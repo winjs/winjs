@@ -1,0 +1,52 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+#win-contentdialog {
+    .variableDefs(light) {
+        @baseWhite: #fff;
+        @baseBlack: #000;
+        @textHigh: fade(#000, 87%);
+        @textMid: fade(#000, 60%);
+        @pageBackground: #fff;
+        @baseLow: fade(#000, 30%);
+        @accentColor: rgb(70, 23, 180);
+        
+        @defaultButtonColor: @accentColor;
+        @restButtonColor: @baseLow;
+    }
+    
+    .styleContentDialogForTheme(@theme) {
+        .win-contentdialog {
+            #win-contentdialog > .variableDefs(@theme);
+            
+            .win-contentdialog-dimcontent {
+                background-color: @baseBlack;
+                opacity: 0.45;
+            }
+            
+            .win-contentdialog-body {
+                background-color: @pageBackground; /* ChromeColor? */
+            }
+            
+            .win-contentdialog-title {
+                color: @textHigh;
+            }
+            
+            .win-contentdialog-content {
+                color: @textHigh;
+            }
+            
+            .win-contentdialog-primarycommand {
+                color: @baseWhite;
+                background-color: @defaultButtonColor;
+            }
+            
+            .win-contentdialog-secondarycommand {
+                color: @textHigh;
+                background-color: @restButtonColor;
+            }
+        }
+    }
+}
+
+/* For now until the colors are finalized, just use the light theme's colors everywhere */
+#win-contentdialog > .styleContentDialogForTheme(light);

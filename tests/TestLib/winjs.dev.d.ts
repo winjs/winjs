@@ -52,7 +52,7 @@ declare module WinJS {
         function _isDOMElement(e: HTMLElement): boolean;
 
         function _yieldForEvents(handler: Function);
-        function _merge(a, b): any;
+        function _merge(a: any, b: any): any;
         var _isiOS;
         function _setIsiOS(isiOS: boolean);
 
@@ -141,6 +141,40 @@ declare module WinJS {
             static _DELAY_RESHOW_INFOTIP_TOUCH: number;
             static _DELAY_RESHOW_INFOTIP_NONTOUCH: number;
             static _RESHOW_THRESHOLD: number;
+        }
+        
+        interface ContentDialogHideInfo {
+            reason: string;
+        }
+        
+        interface ContentDialogHideEvent extends Event {
+            detail: ContentDialogHideInfo;
+        }
+        
+        class ContentDialog {
+            constructor(element?: HTMLElement, options?: any);
+            element: HTMLElement;
+            hidden: boolean;
+            title: string;
+            primaryCommandText: string;
+            isPrimaryCommandDisabled: boolean;
+            secondaryCommandText: string;
+            isSecondaryCommandDisabled: boolean;
+            show(): Promise<ContentDialogHideInfo>;
+            hide(reason?: any): void;
+            dispose(): void;
+            addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            onbeforeshow(eventInfo: Event): void;
+            onaftershow(eventInfo: Event): void;
+            onbeforehide(eventInfo: ContentDialogHideEvent): void;
+            onafterhide(eventInfo: ContentDialogHideEvent): void;
+        }
+        
+        class PrivateContentDialog extends WinJS.UI.ContentDialog {
+            static _ClassNames: any;
+            _playEntranceAnimation(): Promise<any>;
+            _playExitAnimation(): Promise<any>;
         }
 
         interface ISelect {

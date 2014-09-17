@@ -2193,7 +2193,40 @@ define([
                 }
             };
         },
-
+        
+        // *element* is not included in the tabIndex search
+        _getHighAndLowTabIndices: function Utilities_getHighAndLowTabIndices(element) {
+            var descendants = element.getElementsByTagName("*");
+            var lowestTabIndex = 0;
+            var highestTabIndex = 0;
+            // tabIndex=0 is the highest (considered higher than positive tab indices) so
+            // we can stop searching for a higher tab index once we find tabIndex=0.
+            var foundTabIndex0 = false;
+            for (var i = 0, len = descendants.length; i < len; i++) {
+                var tabIndexStr = descendants[i].getAttribute("tabIndex");
+                if (tabIndexStr !== null && tabIndexStr !== undefined) {
+                    var tabIndex = parseInt(tabIndexStr, 10);
+                    // Update lowest
+                    if (tabIndex > 0 && (tabIndex < lowestTabIndex || lowestTabIndex === 0)) {
+                        lowestTabIndex = tabIndex;
+                    }
+                    // Update highest
+                    if (!foundTabIndex0) {
+                        if (tabIndex === 0) {
+                            foundTabIndex0 = true;
+                            highestTabIndex = 0;
+                        } else if (tabIndex > highestTabIndex) {
+                            highestTabIndex = tabIndex;
+                        }
+                    }
+                } 
+            }
+            
+            return {
+                highest: highestTabIndex,
+                lowest: lowestTabIndex
+            };
+        },
 
         _getLowestTabIndexInList: function Utilities_getLowestTabIndexInList(elements) {
             // Returns the lowest positive tabIndex in a list of elements.

@@ -193,6 +193,57 @@ define([
         equivalents["manipulationStateChanged"] = ("MSManipulationEvent" in _Global ? "ManipulationEvent" : null);
         return equivalents;
     }
+    
+    // Returns a function which, when called, will call *fn*. However,
+    // if called multiple times, it will only call *fn* at most once every
+    // *delay* milliseconds. Multiple calls during the throttling period
+    // will be coalesced into a single call to *fn* with the arguments being
+    // the ones from the last call received during the throttling period.
+    // Note that, due to the throttling period, *fn* may be invoked asynchronously
+    // relative to the time it was called so make sure its arguments are still valid
+    // (for example, eventObjects will not be valid).
+    //
+    // Example usage. If you want your key down handler to run once every 100 ms,
+    // you could do this:
+    //   var onKeyDown = throttledFunction(function (keyCode) {
+    //     // do something with keyCode
+    //   });
+    //   element.addEventListener("keydown", function (eventObject) { onKeyDown(eventObject.keyCode); });
+    //
+    function throttledFunction(delay, fn) {
+        var throttlePromise = null;
+        var pendingCallPromise = null;
+        var nextContext = null;
+        var nextArgs = null;
+    
+        function makeThrottlePromise() {
+            return Promise.timeout(delay).then(function () {
+                throttlePromise = null;
+            });
+        }
+    
+        return function () {
+            if (pendingCallPromise) {
+                nextContext = this;
+                nextArgs = [].slice.call(arguments, 0);
+            } else if (throttlePromise) {
+                nextContext = this;
+                nextArgs = [].slice.call(arguments, 0);
+                pendingCallPromise = throttlePromise.then(function () {
+                    var context = nextContext;
+                    nextContext = null;
+                    var args = nextArgs;
+                    nextArgs = null;
+                    throttlePromise = makeThrottlePromise();
+                    pendingCallPromise = null;
+                    fn.apply(context, args);
+                });
+            } else {
+                throttlePromise = makeThrottlePromise();
+                fn.apply(this, arguments);
+            }
+        };
+    }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         // Used for mocking in tests
@@ -381,6 +432,8 @@ define([
         _yieldForDomModification: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
             _Global.setTimeout(handler, 0);
         },
+        
+        _throttledFunction: throttledFunction,
 
         _shallowCopy: function _shallowCopy(a) {
             // Shallow copy a single object.
