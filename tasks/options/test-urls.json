@@ -6,6 +6,7 @@
           "http://127.0.0.1:9999/bin/tests/Binding/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/BindingList/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/BindingTemplate/test.html?fastanimations=true&autostart=true",
+          "http://127.0.0.1:9999/bin/tests/ContentDialog/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/DateTime/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/FlipView/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/Hub/test.html?fastanimations=true&autostart=true",

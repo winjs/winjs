@@ -23,6 +23,7 @@ define([
     'WinJS/Controls/NavBar',
     'WinJS/Controls/Tooltip',
     'WinJS/Controls/ViewBox',
+    'WinJS/Controls/ContentDialog',
     'WinJS/Controls/Toolbar'
     ], function (_WinJS) {
     "use strict";
