@@ -1,29 +1,25 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="FlexboxMixins.less.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="FlexboxMixins.less.css" />
 
-var WinJSTests = WinJSTests || {};
-WinJSTests.Less = WinJSTests.Less || {};
-
-(function () {
+module WinJSTests.Less {
     "use strict";
-    
+
     // For use with standard attributes (doesn't support attribute names with vendor prefixes)
     function getDashedStandardAttribute(attribute) {
         return attribute.replace(/[A-Z]/g, function (x) { return "-" + x[0].toLowerCase(); });
     }
-    
+
     // Returns a dashed CSS class name which is a combination of *attribute* (camel case)
     // and *values* (dashed case).
     // Example: toCssTestClass("flexFlow", "column", "wrap-reverse") => flex-flow-column-wrap-reverse
     // Designed to be used with the rules in FlexboxMixins.less.
-    function toCssTestClass(attribute /*, values ... */) {
-        var values = [].slice.call(arguments, 1);
+    function toCssTestClass(attribute, ...values) {
         return getDashedStandardAttribute(attribute) + "-" + values.join("-");
     }
-    
+
     // Synonyms map from standard CSS attribute/values to alternatives implemented by browsers.
-    
+
     // CSS attribute synonyms
     // Camel case
     var attributeSynonyms = {
@@ -38,7 +34,7 @@ WinJSTests.Less = WinJSTests.Less || {};
         "flexShrink": ["msFlexNegative", "webkitFlexShrink"],
         "flexBasis": ["msFlexPreferredSize", "webkitFlexBasis"]
     };
-    
+
     // CSS value synonyms
     // Dashed case
     var valueSynonyms = {
@@ -50,17 +46,17 @@ WinJSTests.Less = WinJSTests.Less || {};
         "space-around": ["distribute"],
         "nowrap": ["none"]
     };
-    
+
     function allAlternatives(synonymMap, standard) {
         var synonyms = synonymMap[standard];
         return synonyms ? [standard].concat(synonyms) : [standard];
     }
-    
+
     function testAttribute(element, standardAttribute, standardValue) {
         var foundMatch = false;
         var attributes = allAlternatives(attributeSynonyms, standardAttribute);
         var values = allAlternatives(valueSynonyms, standardValue);
-        
+
         for (var i = 0; i < attributes.length && !foundMatch; i++) {
             var attr = attributes[i];
             for (var j = 0; j < values.length && !foundMatch; j++) {
@@ -75,12 +71,12 @@ WinJSTests.Less = WinJSTests.Less || {};
                 }
             }
         }
-        
+
         LiveUnit.Assert.isTrue(foundMatch,
             "LESS flexbox mixins don't properly support '" + standardAttribute + ": "
             + standardValue + "' in this environment");
     }
-    
+
     // Verifies the CSS style of an element with class name *className* matches
     // *attributesAndValues*. *attributesAndValues* is a map between CSS attributes and values.
     function testRule(className, attributesAndValues) {
@@ -88,14 +84,14 @@ WinJSTests.Less = WinJSTests.Less || {};
         var element = document.createElement("div");
         element.className = className;
         root.appendChild(element);
-        
+
         Object.keys(attributesAndValues).forEach(function (attribute) {
             testAttribute(element, attribute, attributesAndValues[attribute]);
         });
-        
+
         root.removeChild(element);
     }
-    
+
     // Returns a function which verifies that *attribute* works with each of *values*. Applies a CSS
     // class to an element which is a combination of the *attribute* and value and verifies that this
     // causes the element to have a particular value for its CSS *attribute*.
@@ -116,57 +112,60 @@ WinJSTests.Less = WinJSTests.Less || {};
             });
         };
     }
-    
-    WinJSTests.Less.FlexboxMixinTests = function () {
-        this.setUp = function () {
+
+    var flexWrapValues = ["nowrap", "wrap", "wrap-reverse"];
+    var flexDirectionValues = ["row", "row-reverse", "column", "column-reverse"];
+
+    export class FlexboxMixinTests {
+        setUp() {
             var newNode = document.createElement("div");
             newNode.id = "flexbox-mixin-tests";
             document.body.appendChild(newNode);
-        };
+        }
 
-        this.tearDown = function () {
+        tearDown() {
             var element = document.getElementById("flexbox-mixin-tests");
             document.body.removeChild(element);
-        };
-        
-        this.testDisplay = function () {
+        }
+
+        testDisplay = function () {
             testRule("display-flex", { display: "flex" });
             testRule("display-inline-flex", { display: "inline-flex" });
         };
-        
-        this.testAlignContent = makeTestAttributeWithValues(
+
+        testAlignContent = makeTestAttributeWithValues(
             "alignContent",
             ["stretch", "flex-start", "flex-end", "center", "space-between", "space-around"]
-        );
-        
-        this.testAlignItems = makeTestAttributeWithValues(
+            );
+
+        testAlignItems = makeTestAttributeWithValues(
             "alignItems",
             ["stretch", "flex-start", "flex-end", "center", "baseline"]
-        );
-        
-        this.testAlignSelf = makeTestAttributeWithValues(
+            );
+
+        testAlignSelf = makeTestAttributeWithValues(
             "alignSelf",
             ["flex-start", "flex-end", "center", "baseline", "stretch"]
-        );
-        
-        this.testJustifyContent = makeTestAttributeWithValues(
+            );
+
+        testJustifyContent = makeTestAttributeWithValues(
             "justifyContent",
             ["flex-start", "flex-end", "center", "space-between", "space-around"]
-        );
-        
-        var flexWrapValues = ["nowrap", "wrap", "wrap-reverse"]; 
-        this.testFlexWrap = makeTestAttributeWithValues(
+            );
+
+
+        testFlexWrap = makeTestAttributeWithValues(
             "flexWrap",
             flexWrapValues
-        );
-        
-        var flexDirectionValues = ["row", "row-reverse", "column", "column-reverse"];
-        this.testFlexDirection = makeTestAttributeWithValues(
+            );
+
+
+        testFlexDirection = makeTestAttributeWithValues(
             "flexDirection",
             flexDirectionValues
-        );
-        
-        this.testFlexFlow = function () {            
+            );
+
+        testFlexFlow = function () {
             flexDirectionValues.forEach(function (direction) {
                 var className = toCssTestClass("flexFlow", direction, "nowrap");
                 testRule(className, {
@@ -174,7 +173,7 @@ WinJSTests.Less = WinJSTests.Less || {};
                     flexWrap: "nowrap"
                 });
             });
-            
+
             flexWrapValues.forEach(function (wrap) {
                 var className = toCssTestClass("flexFlow", "row", wrap);
                 testRule(className, {
@@ -183,32 +182,32 @@ WinJSTests.Less = WinJSTests.Less || {};
                 });
             });
         };
-        
-        this.testOrder = function () {
+
+        testOrder = function () {
             testRule("order-8", { order: "8" });
         };
-        
-        this.testFlex = function () {
+
+        testFlex = function () {
             testRule("flex-grow-8", {
                 flexGrow: "8",
                 flexShrink: "1",
                 flexBasis: "auto"
-             });
+            });
             testRule("flex-shrink-4", {
                 flexGrow: "0",
                 flexShrink: "4",
                 flexBasis: "auto"
-             });
+            });
             testRule("flex-basis-2px", {
                 flexGrow: "0",
                 flexShrink: "1",
                 flexBasis: "2px"
-             });
+            });
             testRule("flex-2-3-4px", {
                 flexGrow: "2",
                 flexShrink: "3",
                 flexBasis: "4px"
-            }); 
+            });
             testRule("flex-none", {
                 flexGrow: "0",
                 flexShrink: "0",
@@ -216,7 +215,6 @@ WinJSTests.Less = WinJSTests.Less || {};
             });
         };
     };
-    
-    LiveUnit.registerTestClass("WinJSTests.Less.FlexboxMixinTests");
+}
 
-})();
+LiveUnit.registerTestClass("WinJSTests.Less.FlexboxMixinTests");
