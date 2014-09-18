@@ -73,6 +73,8 @@ declare module WinJS {
 
         function _writeProfilerMark(mark: string);
 
+        var _browserEventEquivalents: {[key:string]: string};
+
     }
 
     module Resources {
@@ -263,5 +265,7 @@ declare module WinJS {
         function _seenUrl(url:string);
         function _getSeenUrlsMRU(): string[];
         function _getSeenUrls(): string[];
+
+        function _animationTimeAdjustment(time:number);
     }
 }
