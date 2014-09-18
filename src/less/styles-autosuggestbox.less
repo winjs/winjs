@@ -7,7 +7,6 @@
     white-space: normal;
     position: relative;
     width: 266px;
-    min-width: 265px;
     height: 28px;
     border-style: solid;
     border-width: 2px;
@@ -15,6 +14,7 @@
 
 .win-autosuggestbox-flyout {
     position: absolute;
+    top: 100%;
     width: 100%;
     border-style: solid;
     border-width: 2px 2px 2px 2px;
@@ -22,10 +22,20 @@
     padding: 5px 0 10px 0;
     left: -2px;
     right: -2px;
-    max-height: 272px;
+    max-height: 454px;
     overflow: auto;
     -ms-scroll-chaining: none;
     touch-action: none;
+}
+
+.win-autosuggestbox-flyout-above {
+    bottom: 100%;
+    top: auto;
+}
+
+.win-autosuggestbox-flyout-above .win-repeater {
+    #flex > .display-flex();
+    #flex > .flex-direction(column-reverse);
 }
 
 .win-autosuggestbox input {

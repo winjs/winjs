@@ -25,11 +25,13 @@ define([
             var ClassNames = {
                 asb: "win-autosuggestbox",
                 asbFlyout: "win-autosuggestbox-flyout",
+                asbFlyoutAbove: "win-autosuggestbox-flyout-above",
                 asbBoxFlyoutHighlightText: "win-autosuggestbox-flyout-highlighttext",
                 asbHitHighlightSpan: "win-autosuggestbox-hithighlight-span",
                 asbInput: "win-autosuggestbox-input",
                 asbInputFocus: "win-autosuggestbox-input-focus",
                 asbSuggestionSelected: "win-autosuggestbox-suggestion-selected",
+                asbSuggestionSeparator: "win-searchbox-suggestion-separator",
                 asbSuggestionQuery: "win-autosuggestbox-suggestion-query",
             };
 
@@ -48,6 +50,7 @@ define([
                 get ariaLabelInputNoPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputNoPlaceHolder").value; },
                 get ariaLabelInputPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputPlaceHolder").value; },
                 get ariaLabelQuery() { return _Resources._getWinJSString("ui/searchBoxAriaLabelQuery").value; },
+                get ariaLabelSeparator() { return _Resources._getWinJSString("ui/searchBoxAriaLabelSeparator").value; },
             };
 
             var AutoSuggestBox = _Base.Class.define(function asb_ctor(element, options) {
@@ -223,7 +226,7 @@ define([
                         if (item.kind === AutoSuggestBox.SuggestionKinds.Query) {
                             root = querySuggestionRenderer(that, item);
                         } else if (item.kind === AutoSuggestBox.SuggestionKinds.Separator) {
-                            //root = that._separatorSuggestionRenderer(item);
+                            root = separatorSuggestionRenderer(item);
                         } else if (item.kind === AutoSuggestBox.SuggestionKinds.Result) {
                             //root = that._resultSuggestionRenderer(item);
                         } else {
@@ -312,11 +315,9 @@ define([
                     var spaceBelow = _Global.document.documentElement.clientHeight - inputRect.bottom;
                     this._flyoutBelowInput = spaceBelow >= spaceAbove;
                     if (this._flyoutBelowInput) {
-                        this._flyoutElement.style.top = inputRect.height + "px";
-                        this._flyoutElement.style.bottom = "";
+                        this._flyoutElement.classList.remove(ClassNames.asbFlyoutAbove);
                     } else {
-                        this._flyoutElement.style.top = "";
-                        this._flyoutElement.style.bottom = inputRect.height + "px";
+                        this._flyoutElement.classList.add(ClassNames.asbFlyoutAbove);
                     }
 
                     this._addFlyoutIMEPaddingIfRequired();
@@ -1004,6 +1005,24 @@ define([
 
                 return root;
             }
+
+            function separatorSuggestionRenderer(item) {
+                var root = _Global.document.createElement("div");
+                if (item.text.length > 0) {
+                    var textElement = _Global.document.createElement("div");
+                    textElement.textContent = item.text;
+                    textElement.title = item.text;
+                    textElement.setAttribute("aria-hidden", "true");
+                    root.appendChild(textElement);
+                }
+                root.insertAdjacentHTML("beforeend", "<hr/>");
+                _ElementUtilities.addClass(root, ClassNames.asbSuggestionSeparator);
+                root.setAttribute("role", "separator");
+                var ariaLabel = _Resources._formatString(Strings.ariaLabelSeparator, item.text);
+                root.setAttribute("aria-label", ariaLabel);
+                return root;
+            }
+
             _Base.Class.mix(AutoSuggestBox, _Control.DOMEventMixin);
             return AutoSuggestBox;
         })
