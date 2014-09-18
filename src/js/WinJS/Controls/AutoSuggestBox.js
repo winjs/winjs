@@ -374,8 +374,8 @@ define([
 
                     // Shift the flyout down
                     var rect = context.getCandidateWindowClientRect();
-                    var animation = Animations.createRepositionAnimation(this._flyoutElement.children);
-                    this._flyoutElement.style.paddingTop = (rect.bottom - rect.top) + "px";
+                    var animation = Animations.createRepositionAnimation(this._flyoutElement);
+                    this._flyoutElement.style.marginTop = (rect.bottom - rect.top + 4) + "px";
                     animation.execute();
                 },
 
@@ -666,8 +666,8 @@ define([
 
                     if (this._reflowImeOnPointerRelease) {
                         this._reflowImeOnPointerRelease = false;
-                        var animation = Animations.createRepositionAnimation(this._flyoutElement.children);
-                        this._flyoutElement.style.paddingTop = "";
+                        var animation = Animations.createRepositionAnimation(this._flyoutElement);
+                        this._flyoutElement.style.marginTop = "";
                         animation.execute();
                     }
                 },
@@ -855,8 +855,8 @@ define([
 
                 _msCandidateWindowHideHandler: function asb_msCandidateWindowHideHandler() {
                     if (!this._isFlyoutPointerDown) {
-                        var animation = Animations.createRepositionAnimation(this._flyoutElement.children);
-                        this._flyoutElement.style.paddingTop = "";
+                        var animation = Animations.createRepositionAnimation(this._flyoutElement);
+                        this._flyoutElement.style.marginTop = "";
                         animation.execute();
                     } else {
                         this._reflowImeOnPointerRelease = true;
