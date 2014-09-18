@@ -46,11 +46,6 @@ define([
                 get controlDisposed() { return "Cannot interact with the control after it has been disposed"; },
                 get contentDialogAlreadyShowing() { return "Cannot show a ContentDialog if there is already a ContentDialog that is showing"; }
             };
-            var PendingDisplayOperations = {
-                show: "show",
-                hide: "hide",
-                none: "none"
-            };
             var DismissalReasons = {
                 none: "none",
                 primary: "primary",
@@ -162,9 +157,8 @@ define([
                     name: "Init",
                     hidden: true,
                     enter: function ContentDialog_InitState_enter(dialog, reason) {
-                        dialog._pendingDisplayOperation = { type: PendingDisplayOperations.none };
                         dialog._dismissedSignal = new _Signal();
-                        dialog._setState(States.Hidden);
+                        dialog._setState(States.Hidden, false);
                     },
                     exit: _,
                     show: function ContentDialog_InitState_show(dialog) {
@@ -179,8 +173,10 @@ define([
                 Hidden: _Base.Class.define(null, {
                     name: "Hidden",
                     hidden: true,
-                    enter: function ContentDialog_HiddenState_enter(dialog) {
-                        dialog._executePendingOperation();
+                    enter: function ContentDialog_HiddenState_enter(dialog, showIsPending) {
+                        if (showIsPending) {
+                            this.show(dialog);
+                        }
                     },
                     exit: _,
                     show: function ContentDialog_HiddenState_show(dialog) {
@@ -225,9 +221,14 @@ define([
                 // An animation/event state. The dialog plays its entrance animation and fires aftershow.
                 Showing: _Base.Class.define(null, {
                     name: "Showing",
-                    hidden: false,
+                    hidden: {
+                        get: function ContentDialog_ShowingState_hidden_get() {
+                            return !!this._pendingHide;
+                        }
+                    },
                     enter: function ContentDialog_ShowingState_enter(dialog) {
                         var that = this;
+                        that._pendingHide = null;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
                             _ElementUtilities.addClass(dialog._dom.root, ClassNames._visible);
@@ -243,7 +244,7 @@ define([
                         }).then(function () {
                             return dialog._fireEvent(EventNames.afterShow);
                         }).then(function () {
-                            dialog._setState(States.Shown);
+                            dialog._setState(States.Shown, that._pendingHide);
                         });
                         promiseStoredSignal.complete();
                     },
@@ -254,7 +255,7 @@ define([
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
                     hide: function ContentDialog_ShowingState_hide(dialog, reason) {
-                        dialog._pendingDisplayOperation = { type: PendingDisplayOperations.hide, value: reason };
+                        this._pendingHide = { reason: reason };
                     },
                     onCommandClicked: _,
                     onInputPaneShown: onInputPaneShown,
@@ -264,8 +265,10 @@ define([
                 Shown: _Base.Class.define(null, {
                     name: "Shown",
                     hidden: false,
-                    enter: function ContentDialog_ShownState_enter(dialog) {
-                         dialog._executePendingOperation();
+                    enter: function ContentDialog_ShownState_enter(dialog, pendingHide) {
+                         if (pendingHide) {
+                             this.hide(dialog, pendingHide.reason);
+                         }
                     },
                     exit: _,
                     show: function ContentDialog_ShownState_show(dialog) {
@@ -293,7 +296,7 @@ define([
                             if (shouldHide) {
                                 dialog._setState(States.Hiding, reason);
                             } else {
-                                dialog._setState(States.Shown);
+                                dialog._setState(States.Shown, null);
                             }
                         });
                         promiseStoredSignal.complete();
@@ -312,9 +315,14 @@ define([
                 // An animation/event state. The dialog plays the exit animation and fires the afterhide event.
                 Hiding: _Base.Class.define(null, {
                     name: "Hiding",
-                    hidden: true,
+                    hidden: {
+                        get: function ContentDialog_HidingState_hidden_get() {
+                            return !this._showIsPending;
+                        }
+                    },
                     enter: function ContentDialog_HidingState_enter(dialog, reason) {
                         var that = this;
+                        that._showIsPending = false;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
                             dialog._removeInputPaneListeners();
@@ -326,7 +334,7 @@ define([
                             dialog._clearInputPaneRendering();
                             return dialog._fireAfterHide(reason);
                         }).then(function () {
-                            dialog._setState(States.Hidden); 
+                            dialog._setState(States.Hidden, that._showIsPending); 
                         });
                         promiseStoredSignal.complete();
                     },
@@ -334,16 +342,16 @@ define([
                         this._promise.cancel();
                     },
                     show: function ContentDialog_HidingState_show(dialog) {
-                        if (dialog._pendingDisplayOperation.type === PendingDisplayOperations.none) {
-                            dialog._pendingDisplayOperation = { type: PendingDisplayOperations.show };
-                            return dialog._dismissedSignal.promise;
-                        } else {
+                        if (this._showIsPending) {
                             return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
+                        } else {
+                            this._showIsPending = true;
+                            return dialog._dismissedSignal.promise;
                         }
                     },
                     hide: function ContentDialog_HidingState_hide(dialog, reason) {
-                        if (dialog._pendingDisplayOperation.type === PendingDisplayOperations.show) {
-                            dialog._pendingDisplayOperation = { type: PendingDisplayOperations.none };
+                        if (this._showIsPending) {
+                            this._showIsPending = false;
                             dialog._resetDismissalPromise(reason);
                         }
                     },
@@ -510,6 +518,16 @@ define([
                 hidden: {
                     get: function ContentDialog_hidden_get() {
                         return this._state.hidden;
+                    },
+                    set: function ContentDialog_hidden_set(value) {
+                        // TODO:
+                        // - Is it weird that reading hidden immediately after setting it may return a value different than the one you set (for example, show errors, beforehide is canceled).
+                        // - Would we use a value of "none" as the dismissal reason? (since the setter doesn't give you the opportunity to specify)
+                        if (value) {
+                            this.hide(DismissalReasons.none);
+                        } else {
+                            this.show();
+                        }
                     }
                 },
 
@@ -554,10 +572,7 @@ define([
                     /// by show will be fulfilled with this value.
                     /// </param>
                     /// </signature>
-                    if (reason === undefined) {
-                        reason = DismissalReasons.none;
-                    }
-                    this._state.hide(this, reason);
+                    this._state.hide(this, reason === undefined ? DismissalReasons.none : reason);
                 },
                 
                 _initializeDom: function ContentDialog_initializeDom(root) {
@@ -571,7 +586,7 @@ define([
                     root.innerHTML =
                         '<div class="' + ClassNames.dimContent + '"></div>' +
                         '<div class="' + ClassNames._tabStop + '"></div>' +
-                        '<div tabindex="-1" class="' + ClassNames.body + '">' +
+                        '<div tabindex="-1" role="dialog" class="' + ClassNames.body + '">' +
                             '<div class="' + ClassNames.title + '"></div>' +
                             '<div class="' + ClassNames._scroller + '"></div>' +
                             '<div class="' + ClassNames._commands + '">' +
@@ -595,26 +610,30 @@ define([
                     dom.commands.push(dom.commands[0].nextElementSibling);
                     dom.endBodyTab = dom.body.nextElementSibling;
                     dom.content = contentEl;
+                    this._dom = dom;
                     
+                    // Put the developer's content into the scroller
                     dom.scroller.appendChild(dom.content);
                     
-                    var contentDescendants = dom.content.getElementsByTagName("*");
-                    var lowestTabIndex = _ElementUtilities._getLowestTabIndexInList(contentDescendants);
-                    var highestTabIndex = _ElementUtilities._getHighestTabIndexInList(contentDescendants);
-                    dom.startBodyTab.tabIndex = lowestTabIndex;
-                    dom.commands[0].tabIndex = highestTabIndex;
-                    dom.commands[1].tabIndex = highestTabIndex;
-                    dom.endBodyTab.tabIndex = highestTabIndex;
-                    dom.body.setAttribute("role", "dialog");
                     _ElementUtilities._ensureId(dom.title);
                     dom.body.setAttribute("aria-labelledby", dom.title.id);
+                    this._updateTabIndices();
 
                     _ElementUtilities._addEventListener(dom.startBodyTab, "focusin", this._onStartBodyTabFocusIn.bind(this));
                     _ElementUtilities._addEventListener(dom.endBodyTab, "focusin", this._onEndBodyTabFocusIn.bind(this));
                     dom.commands[0].addEventListener("click", this._onCommandClicked.bind(this, DismissalReasons.primary));
                     dom.commands[1].addEventListener("click", this._onCommandClicked.bind(this, DismissalReasons.secondary));
-                    
-                    this._dom = dom;
+                },
+                
+                _updateTabIndices: function ContentDialog_updateTabIndices() {
+                    // TODO: Use a TreeWalker and grab min & max indices in 1 walk
+                    var contentDescendants = this._dom.content.getElementsByTagName("*");
+                    var lowestTabIndex = _ElementUtilities._getLowestTabIndexInList(contentDescendants);
+                    var highestTabIndex = _ElementUtilities._getHighestTabIndexInList(contentDescendants);
+                    this._dom.startBodyTab.tabIndex = lowestTabIndex;
+                    this._dom.commands[0].tabIndex = highestTabIndex;
+                    this._dom.commands[1].tabIndex = highestTabIndex;
+                    this._dom.endBodyTab.tabIndex = highestTabIndex;
                 },
                 
                 _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
@@ -646,16 +665,6 @@ define([
                         this._state.exit(this);
                         this._state = new NewState();
                         this._state.enter(this, arg0);
-                    }
-                },
-                
-                _executePendingOperation: function ContentDialog_executePendingOperation() {
-                    var op = this._pendingDisplayOperation;
-                    this._pendingDisplayOperation = { type: PendingDisplayOperations.none }; 
-                    if (op.type === PendingDisplayOperations.show) {
-                        this.show();
-                    } else if (op.type === PendingDisplayOperations.hide) {
-                        this.hide(op.value);
                     }
                 },
                 
