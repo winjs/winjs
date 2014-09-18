@@ -106,13 +106,15 @@ define([
                 return p;
             }
             
-            function onInputPaneShown(dialog, eventObject) {
+            function onInputPaneShown(eventObject) {
+                /*jshint validthis: true */
                 eventObject.ensuredFocusedElementInView = true;
-                dialog._renderForInputPane(eventObject.occludedRect.height);
+                this.dialog._renderForInputPane(eventObject.occludedRect.height);
             }
 
-            function onInputPaneHidden(dialog) {
-                dialog._clearInputPaneRendering();
+            function onInputPaneHidden() {
+                /*jshint validthis: true */
+                this.dialog._clearInputPaneRendering();
             }
 
             // Noop function, used in the various states to indicate that they don't support a given
@@ -139,16 +141,18 @@ define([
             //     // Debugging
             //     name: string;
             //     // State lifecycle
-            //     enter(dialog, arg0);
-            //     exit(dialog);
+            //     enter(arg0);
+            //     exit();
             //     // ContentDialog's public API surface
             //     hidden: boolean;
-            //     show(dialog);
-            //     hide(dialog, reason);
+            //     show();
+            //     hide(reason);
             //     // Events
-            //     onCommandClicked(dialog, reason);
-            //     onInputPaneShown(dialog, eventObject);
-            //     onInputPaneHidden(dialogs);
+            //     onCommandClicked(reason);
+            //     onInputPaneShown(eventObject);
+            //     onInputPaneHidden();
+            //     // Provided by _setState for use within the state
+            //     dialog: WinJS.UI.ContentDialog;
             // }
 
             var States = {
@@ -156,12 +160,12 @@ define([
                 Init: _Base.Class.define(null, {
                     name: "Init",
                     hidden: true,
-                    enter: function ContentDialog_InitState_enter(dialog, reason) {
-                        dialog._dismissedSignal = new _Signal();
-                        dialog._setState(States.Hidden, false);
+                    enter: function ContentDialog_InitState_enter(reason) {
+                        this.dialog._dismissedSignal = new _Signal();
+                        this.dialog._setState(States.Hidden, false);
                     },
                     exit: _,
-                    show: function ContentDialog_InitState_show(dialog) {
+                    show: function ContentDialog_InitState_show() {
                         throw "It's illegal to call show on the Init state";
                     },
                     hide: _,
@@ -173,18 +177,18 @@ define([
                 Hidden: _Base.Class.define(null, {
                     name: "Hidden",
                     hidden: true,
-                    enter: function ContentDialog_HiddenState_enter(dialog, showIsPending) {
+                    enter: function ContentDialog_HiddenState_enter(showIsPending) {
                         if (showIsPending) {
-                            this.show(dialog);
+                            this.show();
                         }
                     },
                     exit: _,
-                    show: function ContentDialog_HiddenState_show(dialog) {
+                    show: function ContentDialog_HiddenState_show() {
                         if (aDialogIsShowing()) {
                             return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                         } else {
-                            var dismissedPromise = dialog._dismissedSignal.promise;
-                            dialog._setState(States.BeforeShow);
+                            var dismissedPromise = this.dialog._dismissedSignal.promise;
+                            this.dialog._setState(States.BeforeShow);
                             return dismissedPromise;
                         }
                     },
@@ -197,20 +201,20 @@ define([
                 BeforeShow: _Base.Class.define(null, {
                     name: "BeforeShow",
                     hidden: true,
-                    enter: function ContentDialog_BeforeShowState_enter(dialog) {
+                    enter: function ContentDialog_BeforeShowState_enter() {
                         var that = this;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
-                            return dialog._fireEvent(EventNames.beforeShow);
+                            return that.dialog._fireEvent(EventNames.beforeShow);
                         }).then(function () {
-                            dialog._setState(States.Showing);
+                            that.dialog._setState(States.Showing);
                         });
                         promiseStoredSignal.complete();
                     },
-                    exit: function ContentDialog_BeforeShowState_exit(dialog) {
+                    exit: function ContentDialog_BeforeShowState_exit() {
                         this._promise.cancel();
                     },
-                    show: function ContentDialog_BeforeShowState_show(dialog) {
+                    show: function ContentDialog_BeforeShowState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
                     hide: _,
@@ -226,35 +230,35 @@ define([
                             return !!this._pendingHide;
                         }
                     },
-                    enter: function ContentDialog_ShowingState_enter(dialog) {
+                    enter: function ContentDialog_ShowingState_enter() {
                         var that = this;
                         that._pendingHide = null;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
-                            _ElementUtilities.addClass(dialog._dom.root, ClassNames._visible);
-                            dialog._addInputPaneListeners();
+                            _ElementUtilities.addClass(that.dialog._dom.root, ClassNames._visible);
+                            that.dialog._addInputPaneListeners();
                             if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                                 var inputPaneHeight = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
                                 if (inputPaneHeight > 0) {
-                                    dialog._renderForInputPane(inputPaneHeight);
+                                    that.dialog._renderForInputPane(inputPaneHeight);
                                 }
                             }
-                            _ElementUtilities._focusFirstFocusableElement(dialog._dom.content) || dialog._dom.body.focus();
-                            return dialog._playEntranceAnimation();
+                            _ElementUtilities._focusFirstFocusableElement(that.dialog._dom.content) || that.dialog._dom.body.focus();
+                            return that.dialog._playEntranceAnimation();
                         }).then(function () {
-                            return dialog._fireEvent(EventNames.afterShow);
+                            return that.dialog._fireEvent(EventNames.afterShow);
                         }).then(function () {
-                            dialog._setState(States.Shown, that._pendingHide);
+                            that.dialog._setState(States.Shown, that._pendingHide);
                         });
                         promiseStoredSignal.complete();
                     },
-                    exit: function ContentDialog_ShowingState_exit(dialog) {
+                    exit: function ContentDialog_ShowingState_exit() {
                         this._promise.cancel();
                     },
-                    show: function ContentDialog_ShowingState_show(dialog) {
+                    show: function ContentDialog_ShowingState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
-                    hide: function ContentDialog_ShowingState_hide(dialog, reason) {
+                    hide: function ContentDialog_ShowingState_hide(reason) {
                         this._pendingHide = { reason: reason };
                     },
                     onCommandClicked: _,
@@ -265,20 +269,20 @@ define([
                 Shown: _Base.Class.define(null, {
                     name: "Shown",
                     hidden: false,
-                    enter: function ContentDialog_ShownState_enter(dialog, pendingHide) {
+                    enter: function ContentDialog_ShownState_enter(pendingHide) {
                          if (pendingHide) {
-                             this.hide(dialog, pendingHide.reason);
+                             this.hide(pendingHide.reason);
                          }
                     },
                     exit: _,
-                    show: function ContentDialog_ShownState_show(dialog) {
+                    show: function ContentDialog_ShownState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
-                    hide: function ContentDialog_ShownState_hide(dialog, reason) {
-                        dialog._setState(States.BeforeHide, reason);
+                    hide: function ContentDialog_ShownState_hide(reason) {
+                        this.dialog._setState(States.BeforeHide, reason);
                     },
-                    onCommandClicked: function ContentDialog_ShownState_onCommandClicked(dialog, reason) {
-                        this.hide(dialog, reason);
+                    onCommandClicked: function ContentDialog_ShownState_onCommandClicked(reason) {
+                        this.hide(reason);
                     },
                     onInputPaneShown: onInputPaneShown,
                     onInputPaneHidden: onInputPaneHidden
@@ -287,24 +291,24 @@ define([
                 BeforeHide: _Base.Class.define(null, {
                     name: "BeforeHide",
                     hidden: false,
-                    enter: function ContentDialog_BeforeHideState_enter(dialog, reason) {
+                    enter: function ContentDialog_BeforeHideState_enter(reason) {
                         var that = this;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
-                            return dialog._fireBeforeHide(reason);
+                            return that.dialog._fireBeforeHide(reason);
                         }).then(function (shouldHide) {
                             if (shouldHide) {
-                                dialog._setState(States.Hiding, reason);
+                                that.dialog._setState(States.Hiding, reason);
                             } else {
-                                dialog._setState(States.Shown, null);
+                                that.dialog._setState(States.Shown, null);
                             }
                         });
                         promiseStoredSignal.complete();
                     },
-                    exit: function ContentDialog_BeforeHideState_exit(dialog) {
+                    exit: function ContentDialog_BeforeHideState_exit() {
                         this._promise.cancel();
                     },
-                    show: function ContentDialog_BeforeHideState_show(dialog) {
+                    show: function ContentDialog_BeforeHideState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
                     hide: _,
@@ -320,39 +324,39 @@ define([
                             return !this._showIsPending;
                         }
                     },
-                    enter: function ContentDialog_HidingState_enter(dialog, reason) {
+                    enter: function ContentDialog_HidingState_enter(reason) {
                         var that = this;
                         that._showIsPending = false;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
-                            dialog._removeInputPaneListeners();
-                            return dialog._resetDismissalPromise(reason);
+                            that.dialog._removeInputPaneListeners();
+                            return that.dialog._resetDismissalPromise(reason);
                         }).then(function () {
-                            return dialog._playExitAnimation();
+                            return that.dialog._playExitAnimation();
                         }).then(function () {
-                            _ElementUtilities.removeClass(dialog._dom.root, ClassNames._visible);
-                            dialog._clearInputPaneRendering();
-                            return dialog._fireAfterHide(reason);
+                            _ElementUtilities.removeClass(that.dialog._dom.root, ClassNames._visible);
+                            that.dialog._clearInputPaneRendering();
+                            return that.dialog._fireAfterHide(reason);
                         }).then(function () {
-                            dialog._setState(States.Hidden, that._showIsPending); 
+                            that.dialog._setState(States.Hidden, that._showIsPending); 
                         });
                         promiseStoredSignal.complete();
                     },
-                    exit: function ContentDialog_HidingState_exit(dialog) {
+                    exit: function ContentDialog_HidingState_exit() {
                         this._promise.cancel();
                     },
-                    show: function ContentDialog_HidingState_show(dialog) {
+                    show: function ContentDialog_HidingState_show() {
                         if (this._showIsPending) {
                             return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                         } else {
                             this._showIsPending = true;
-                            return dialog._dismissedSignal.promise;
+                            return this.dialog._dismissedSignal.promise;
                         }
                     },
-                    hide: function ContentDialog_HidingState_hide(dialog, reason) {
+                    hide: function ContentDialog_HidingState_hide(reason) {
                         if (this._showIsPending) {
                             this._showIsPending = false;
-                            dialog._resetDismissalPromise(reason);
+                            this.dialog._resetDismissalPromise(reason);
                         }
                     },
                     onCommandClicked: _,
@@ -362,12 +366,12 @@ define([
                 Disposed: _Base.Class.define(null, {
                     name: "Disposed",
                     hidden: true,
-                    enter: function ContentDialog_DisposedState_enter(dialog) {
-                        dialog._removeInputPaneListeners();
-                        dialog._dismissedSignal.error(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", Strings.controlDisposed));
+                    enter: function ContentDialog_DisposedState_enter() {
+                        this.dialog._removeInputPaneListeners();
+                        this.dialog._dismissedSignal.error(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", Strings.controlDisposed));
                     },
                     exit: _,
-                    show: function ContentDialog_DisposedState_show(dialog) {
+                    show: function ContentDialog_DisposedState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", Strings.controlDisposed));
                     },
                     hide: _,
@@ -409,8 +413,7 @@ define([
                 this._resizedForInputPane = false;
                 
                 this._initializeDom(element || _Global.document.createElement("div"));
-                this._state = new States.Init();
-                this._state.enter(this);
+                this._setState(States.Init);
                 
                 this.title = "";
                 this.primaryCommandText = "";
@@ -559,7 +562,7 @@ define([
                     /// then the return value is a promise which is in an error state.
                     /// </returns>
                     /// </signature>
-                    return this._state.show(this);
+                    return this._state.show();
                 },
                 
                 hide: function ContentDialog_hide(reason) {
@@ -572,7 +575,7 @@ define([
                     /// by show will be fulfilled with this value.
                     /// </param>
                     /// </signature>
-                    this._state.hide(this, reason === undefined ? DismissalReasons.none : reason);
+                    this._state.hide(reason === undefined ? DismissalReasons.none : reason);
                 },
                 
                 _initializeDom: function ContentDialog_initializeDom(root) {
@@ -637,7 +640,7 @@ define([
                 },
                 
                 _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
-                    this._state.onCommandClicked(this, reason);
+                    this._state.onCommandClicked(reason);
                 },
 
                 _onStartBodyTabFocusIn: function ContentDialog_onStartBodyTabFocusIn() {
@@ -649,11 +652,11 @@ define([
                 },
 
                 _onInputPaneShown: function ContentDialog_onInputPaneShown(eventObject) {
-                    this._state.onInputPaneShown(this, eventObject);
+                    this._state.onInputPaneShown(eventObject);
                 },
                 
                 _onInputPaneHidden: function ContentDialog_onInputPaneHidden() {
-                    this._state.onInputPaneHidden(this);
+                    this._state.onInputPaneHidden();
                 },
                 
                 //
@@ -662,9 +665,10 @@ define([
                 
                 _setState: function ContentDialog_setState(NewState, arg0) {
                     if (!this._disposed) {
-                        this._state.exit(this);
+                        this._state && this._state.exit();
                         this._state = new NewState();
-                        this._state.enter(this, arg0);
+                        this._state.dialog = this;
+                        this._state.enter(arg0);
                     }
                 },
                 
