@@ -41,7 +41,7 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         ContentDialog: _Base.Namespace._lazy(function () {
-            var strings = {
+            var Strings = {
                 get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
                 get controlDisposed() { return "Cannot interact with the control after it has been disposed"; },
                 get contentDialogAlreadyShowing() { return "Cannot show a ContentDialog if there is already a ContentDialog that is showing"; }
@@ -141,6 +141,8 @@ define([
             //     * -> Disposed
 
             // interface IContentDialogState {
+            //     // Debugging
+            //     name: string;
             //     // State lifecycle
             //     enter(dialog, arg0);
             //     exit(dialog);
@@ -157,14 +159,15 @@ define([
             var States = {
                 // Initial state. Initializes state on the dialog shared by the various states.
                 Init: _Base.Class.define(null, {
+                    name: "Init",
                     hidden: true,
-                    enter: function (dialog, reason) {
+                    enter: function ContentDialog_InitState_enter(dialog, reason) {
                         dialog._pendingDisplayOperation = { type: PendingDisplayOperations.none };
                         dialog._dismissedSignal = new _Signal();
                         dialog._setState(States.Hidden);
                     },
                     exit: _,
-                    show: function (dialog) {
+                    show: function ContentDialog_InitState_show(dialog) {
                         throw "It's illegal to call show on the Init state";
                     },
                     hide: _,
@@ -174,14 +177,15 @@ define([
                 }),
                 // A rest state. The dialog is hidden and is waiting for the app to call show.
                 Hidden: _Base.Class.define(null, {
+                    name: "Hidden",
                     hidden: true,
-                    enter: function (dialog) {
+                    enter: function ContentDialog_HiddenState_enter(dialog) {
                         dialog._executePendingOperation();
                     },
                     exit: _,
-                    show: function (dialog) {
+                    show: function ContentDialog_HiddenState_show(dialog) {
                         if (aDialogIsShowing()) {
-                            return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", strings.contentDialogAlreadyShowing));
+                            return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                         } else {
                             var dismissedPromise = dialog._dismissedSignal.promise;
                             dialog._setState(States.BeforeShow);
@@ -195,8 +199,9 @@ define([
                 }),
                 // An event state. The dialog fires the beforeshow event.
                 BeforeShow: _Base.Class.define(null, {
+                    name: "BeforeShow",
                     hidden: true,
-                    enter: function (dialog) {
+                    enter: function ContentDialog_BeforeShowState_enter(dialog) {
                         var that = this;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
@@ -206,11 +211,11 @@ define([
                         });
                         promiseStoredSignal.complete();
                     },
-                    exit: function (dialog) {
+                    exit: function ContentDialog_BeforeShowState_exit(dialog) {
                         this._promise.cancel();
                     },
-                    show: function (dialog) {
-                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", strings.contentDialogAlreadyShowing));
+                    show: function ContentDialog_BeforeShowState_show(dialog) {
+                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
                     hide: _,
                     onCommandClicked: _,
@@ -219,8 +224,9 @@ define([
                 }),
                 // An animation/event state. The dialog plays its entrance animation and fires aftershow.
                 Showing: _Base.Class.define(null, {
+                    name: "Showing",
                     hidden: false,
-                    enter: function (dialog) {
+                    enter: function ContentDialog_ShowingState_enter(dialog) {
                         var that = this;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
@@ -241,13 +247,13 @@ define([
                         });
                         promiseStoredSignal.complete();
                     },
-                    exit: function (dialog) {
+                    exit: function ContentDialog_ShowingState_exit(dialog) {
                         this._promise.cancel();
                     },
-                    show: function (dialog) {
-                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", strings.contentDialogAlreadyShowing));
+                    show: function ContentDialog_ShowingState_show(dialog) {
+                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
-                    hide: function (dialog, reason) {
+                    hide: function ContentDialog_ShowingState_hide(dialog, reason) {
                         dialog._pendingDisplayOperation = { type: PendingDisplayOperations.hide, value: reason };
                     },
                     onCommandClicked: _,
@@ -256,18 +262,19 @@ define([
                 }),
                 // A rest state. The dialog is shown and is waiting for the user or the app to trigger hide.
                 Shown: _Base.Class.define(null, {
+                    name: "Shown",
                     hidden: false,
-                    enter: function (dialog) {
+                    enter: function ContentDialog_ShownState_enter(dialog) {
                          dialog._executePendingOperation();
                     },
                     exit: _,
-                    show: function (dialog) {
-                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", strings.contentDialogAlreadyShowing));
+                    show: function ContentDialog_ShownState_show(dialog) {
+                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
-                    hide: function (dialog, reason) {
+                    hide: function ContentDialog_ShownState_hide(dialog, reason) {
                         dialog._setState(States.BeforeHide, reason);
                     },
-                    onCommandClicked: function (dialog, reason) {
+                    onCommandClicked: function ContentDialog_ShownState_onCommandClicked(dialog, reason) {
                         this.hide(dialog, reason);
                     },
                     onInputPaneShown: onInputPaneShown,
@@ -275,8 +282,9 @@ define([
                 }),
                 // An event state. The dialog fires the beforehide event.
                 BeforeHide: _Base.Class.define(null, {
+                    name: "BeforeHide",
                     hidden: false,
-                    enter: function (dialog, reason) {
+                    enter: function ContentDialog_BeforeHideState_enter(dialog, reason) {
                         var that = this;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
@@ -290,11 +298,11 @@ define([
                         });
                         promiseStoredSignal.complete();
                     },
-                    exit: function (dialog) {
+                    exit: function ContentDialog_BeforeHideState_exit(dialog) {
                         this._promise.cancel();
                     },
-                    show: function (dialog) {
-                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", strings.contentDialogAlreadyShowing));
+                    show: function ContentDialog_BeforeHideState_show(dialog) {
+                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
                     hide: _,
                     onCommandClicked: _,
@@ -303,8 +311,9 @@ define([
                 }),
                 // An animation/event state. The dialog plays the exit animation and fires the afterhide event.
                 Hiding: _Base.Class.define(null, {
+                    name: "Hiding",
                     hidden: true,
-                    enter: function (dialog, reason) {
+                    enter: function ContentDialog_HidingState_enter(dialog, reason) {
                         var that = this;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
@@ -321,18 +330,18 @@ define([
                         });
                         promiseStoredSignal.complete();
                     },
-                    exit: function (dialog) {
+                    exit: function ContentDialog_HidingState_exit(dialog) {
                         this._promise.cancel();
                     },
-                    show: function (dialog) {
+                    show: function ContentDialog_HidingState_show(dialog) {
                         if (dialog._pendingDisplayOperation.type === PendingDisplayOperations.none) {
                             dialog._pendingDisplayOperation = { type: PendingDisplayOperations.show };
                             return dialog._dismissedSignal.promise;
                         } else {
-                            return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", strings.contentDialogAlreadyShowing));
+                            return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                         }
                     },
-                    hide: function (dialog, reason) {
+                    hide: function ContentDialog_HidingState_hide(dialog, reason) {
                         if (dialog._pendingDisplayOperation.type === PendingDisplayOperations.show) {
                             dialog._pendingDisplayOperation = { type: PendingDisplayOperations.none };
                             dialog._resetDismissalPromise(reason);
@@ -343,14 +352,15 @@ define([
                     onInputPaneHidden: _
                 }),
                 Disposed: _Base.Class.define(null, {
+                    name: "Disposed",
                     hidden: true,
-                    enter: function (dialog) {
+                    enter: function ContentDialog_DisposedState_enter(dialog) {
                         dialog._removeInputPaneListeners();
-                        dialog._dismissedSignal.error(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", strings.controlDisposed));
+                        dialog._dismissedSignal.error(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", Strings.controlDisposed));
                     },
                     exit: _,
-                    show: function (dialog) {
-                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", strings.controlDisposed));
+                    show: function ContentDialog_DisposedState_show(dialog) {
+                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", Strings.controlDisposed));
                     },
                     hide: _,
                     onCommandClicked: _,
@@ -380,7 +390,7 @@ define([
 
                 // Check to make sure we weren't duplicated
                 if (element && element.winControl) {
-                    throw new _ErrorFromName("WinJS.UI.ContentDialog.DuplicateConstruction", strings.duplicateConstruction);
+                    throw new _ErrorFromName("WinJS.UI.ContentDialog.DuplicateConstruction", Strings.duplicateConstruction);
                 }
                 options = options || {};
                 
@@ -406,7 +416,7 @@ define([
                 /// Gets the DOM element that hosts the ContentDialog control.
                 /// </field>
                 element: {
-                    get: function () {
+                    get: function ContentDialog_element_get() {
                         return this._dom.root;
                     }
                 },
@@ -415,10 +425,10 @@ define([
                 /// The text displayed as the title of the dialog.
                 /// </field>
                 title: {
-                    get: function () {
+                    get: function ContentDialog_title_get() {
                         return this._title;
                     },
-                    set: function (value) {
+                    set: function ContentDialog_title_set(value) {
                         value = value || "";
                         if (this._title !== value) {
                             this._title = value;
@@ -432,10 +442,10 @@ define([
                 /// The text displayed on the primary command's button.
                 /// </field>
                 primaryCommandText: {
-                    get: function () {
+                    get: function ContentDialog_primaryCommandText_get() {
                         return this._primaryCommandText;
                     },
-                    set: function (value) {
+                    set: function ContentDialog_primaryCommandText_set(value) {
                         value = value || "";
                         if (this._primaryCommandText !== value) {
                             this._primaryCommandText = value;
@@ -449,10 +459,10 @@ define([
                 /// The text displayed on the secondary command's button.
                 /// </field>
                 secondaryCommandText: {
-                    get: function () {
+                    get: function ContentDialog_secondaryCommandText_get() {
                         return this._secondaryCommandText;
                     },
-                    set: function (value) {
+                    set: function ContentDialog_secondaryCommandText_set(value) {
                         value = value || "";
                         if (this._secondaryCommandText !== value) {
                             this._secondaryCommandText = value;
@@ -466,10 +476,10 @@ define([
                 /// Indicates whether the button representing the primary command is currently enabled.
                 /// </field>
                 isPrimaryCommandEnabled: {
-                    get: function () {
+                    get: function ContentDialog_isPrimaryCommandEnabled_get() {
                         return this._isPrimaryCommandEnabled;
                     },
-                    set: function (value) {
+                    set: function ContentDialog_isPrimaryCommandEnabled_set(value) {
                         value = !!value;
                         if (this._isPrimaryCommandEnabled !== value) {
                             this._isPrimaryCommandEnabled = value;
@@ -482,10 +492,10 @@ define([
                 /// Indicates whether the button representing the secondary command is currently enabled.
                 /// </field>
                 isSecondaryCommandEnabled: {
-                    get: function () {
+                    get: function ContentDialog_isSecondaryCommandEnabled_get() {
                         return this._isSecondaryCommandEnabled;
                     },
-                    set: function (value) {
+                    set: function ContentDialog_isSecondaryCommandEnabled_set(value) {
                         value = !!value;
                         if (this._isSecondaryCommandEnabled !== value) {
                             this._isSecondaryCommandEnabled = value;
@@ -498,12 +508,12 @@ define([
                 /// Read only. True if the dialog is currently not visible.
                 /// </field>
                 hidden: {
-                    get: function () {
+                    get: function ContentDialog_hidden_get() {
                         return this._state.hidden;
                     }
                 },
 
-                dispose: function () {
+                dispose: function ContentDialog_dispose() {
                     /// <signature helpKeyword="WinJS.UI.ContentDialog.dispose">
                     /// <summary locid="WinJS.UI.ContentDialog.dispose">
                     /// Disposes this control.
@@ -517,7 +527,7 @@ define([
                     _Dispose._disposeElement(this._dom.content);
                 },
                 
-                show: function () {
+                show: function ContentDialog_show() {
                     /// <signature helpKeyword="WinJS.UI.ContentDialog.show">
                     /// <summary locid="WinJS.UI.ContentDialog.show">
                     /// Shows the ContentDialog. Only one ContentDialog may be shown at a time. If another
@@ -534,7 +544,7 @@ define([
                     return this._state.show(this);
                 },
                 
-                hide: function (reason) {
+                hide: function ContentDialog_hide(reason) {
                     /// <signature helpKeyword="WinJS.UI.ContentDialog.hide">
                     /// <summary locid="WinJS.UI.ContentDialog.hide">
                     /// Hides the ContentDialog.
@@ -550,17 +560,14 @@ define([
                     this._state.hide(this, reason);
                 },
                 
-                _initializeDom: function (root) {
+                _initializeDom: function ContentDialog_initializeDom(root) {
                     // Reparent the children of the root element into the content element.
                     var contentEl = _Global.document.createElement("div");
                     contentEl.className = ClassNames._content;
-                    var childNodes = Array.prototype.slice.call(root.childNodes, 0);
-                    for (var i = 0; i < childNodes.length; i++) {
-                        contentEl.appendChild(childNodes[i]);
-                    }
+                    _ElementUtilities._reparentChildren(root, contentEl);
                     
                     root.winControl = this;
-                    root.className = ClassNames.contentDialog + " " + ClassNames._verticalAlignment;
+                    root.className = ClassNames.contentDialog + " " + ClassNames._verticalAlignment + " win-disposable";
                     root.innerHTML =
                         '<div class="' + ClassNames.dimContent + '"></div>' +
                         '<div class="' + ClassNames._tabStop + '"></div>' +
@@ -610,23 +617,23 @@ define([
                     this._dom = dom;
                 },
                 
-                _onCommandClicked: function (reason) {
+                _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
                     this._state.onCommandClicked(this, reason);
                 },
 
-                _onStartBodyTabFocusIn: function () {
+                _onStartBodyTabFocusIn: function ContentDialog_onStartBodyTabFocusIn() {
                     _ElementUtilities._focusLastFocusableElement(this._dom.body);
                 },
 
-                _onEndBodyTabFocusIn: function () {
+                _onEndBodyTabFocusIn: function ContentDialog_onEndBodyTabFocusIn() {
                     _ElementUtilities._focusFirstFocusableElement(this._dom.body);
                 },
 
-                _onInputPaneShown: function (eventObject) {
+                _onInputPaneShown: function ContentDialog_onInputPaneShown(eventObject) {
                     this._state.onInputPaneShown(this, eventObject);
                 },
                 
-                _onInputPaneHidden: function () {
+                _onInputPaneHidden: function ContentDialog_onInputPaneHidden() {
                     this._state.onInputPaneHidden(this);
                 },
                 
@@ -634,7 +641,7 @@ define([
                 // Methods called by states
                 //
                 
-                _setState: function (NewState, arg0) {
+                _setState: function ContentDialog_setState(NewState, arg0) {
                     if (!this._disposed) {
                         this._state.exit(this);
                         this._state = new NewState();
@@ -642,7 +649,7 @@ define([
                     }
                 },
                 
-                _executePendingOperation: function () {
+                _executePendingOperation: function ContentDialog_executePendingOperation() {
                     var op = this._pendingDisplayOperation;
                     this._pendingDisplayOperation = { type: PendingDisplayOperations.none }; 
                     if (op.type === PendingDisplayOperations.show) {
@@ -653,14 +660,14 @@ define([
                 },
                 
                 // Calls into arbitrary app code
-                _resetDismissalPromise: function (reason) {
+                _resetDismissalPromise: function ContentDialog_resetDismissalPromise(reason) {
                     var dismissedSignal = this._dismissedSignal;
                     this._dismissedSignal = new _Signal();
                     dismissedSignal.complete({ reason: reason });
                 },
                 
                 // Calls into arbitrary app code
-                _fireEvent: function (eventName, options) {
+                _fireEvent: function ContentDialog_fireEvent(eventName, options) {
                     options = options || {};
                     var detail = options.detail || null;
                     var cancelable = !!options.cancelable;
@@ -671,7 +678,7 @@ define([
                 },
                 
                 // Calls into arbitrary app code
-                _fireBeforeHide: function (reason) {
+                _fireBeforeHide: function ContentDialog_fireBeforeHide(reason) {
                     return this._fireEvent(EventNames.beforeHide, {
                         detail: { reason: reason },
                         cancelable: true
@@ -679,21 +686,21 @@ define([
                 },
                 
                 // Calls into arbitrary app code
-                _fireAfterHide: function (reason) {
+                _fireAfterHide: function ContentDialog_fireAfterHide(reason) {
                     return this._fireEvent(EventNames.afterHide, {
                         detail: { reason: reason }
                     });
                 },
                 
-                _playEntranceAnimation: function () {
+                _playEntranceAnimation: function ContentDialog_playEntranceAnimation() {
                     return cancelablePromise(_Animations.fadeIn(this._dom.root));
                 },
                 
-                _playExitAnimation: function () {
+                _playExitAnimation: function ContentDialog_playExitAnimation() {
                     return cancelablePromise(_Animations.fadeOut(this._dom.root));
                 },
 
-                _addInputPaneListeners: function () {
+                _addInputPaneListeners: function ContentDialog_addInputPaneListeners() {
                     if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                         var inputPane = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView();
                         inputPane.addEventListener("showing", this._onInputPaneShownBound);
@@ -701,7 +708,7 @@ define([
                     }
                 },
 
-                _removeInputPaneListeners: function () {
+                _removeInputPaneListeners: function ContentDialog_removeInputPaneListeners() {
                     if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                         var inputPane = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView();
                         inputPane.removeEventListener("showing", this._onInputPaneShownBound);
@@ -709,7 +716,7 @@ define([
                     }
                 },
 
-                _renderForInputPane: function (inputPaneHeight) {
+                _renderForInputPane: function ContentDialog_renderForInputPane(inputPaneHeight) {
                     this._clearInputPaneRendering();
 
                     var dialog = this._dom.body;
@@ -741,7 +748,7 @@ define([
                     }
                 },
 
-                _clearInputPaneRendering: function () {
+                _clearInputPaneRendering: function ContentDialog_clearInputPaneRendering() {
                     if (this._resizedForInputPane) {
                         if (this._dom.title.parentNode !== this._dom.body) {
                             // Make sure the title isn't in the scroller
