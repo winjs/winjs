@@ -774,8 +774,9 @@ define([
                     handler.refCount--;
                     if (handler.refCount === 0) {
                         exports._removeEventListener(_Global, name, handler, capture);
+                        delete handlers[name];
                     }
-                    delete handlers[name];
+
                 }
 
                 removeClass(element, this._getClassName(name, capture));
