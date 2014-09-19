@@ -17,7 +17,7 @@ define(['require'], function (req) {
 
         var fs = require.nodeRequire('fs');
         var filePath = parentRequire.toUrl(name);
-        content[name] = fs.readFileSync(filePath, "utf-8");
+        content[name] = fs.readFileSync(filePath, "utf-8").replace(/^\uFEFF/, '');
         onLoad();
     };
 
