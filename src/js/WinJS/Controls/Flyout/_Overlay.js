@@ -49,7 +49,6 @@ define([
             var _GlobalListener = _Base.Class.define(function _GlobalListener_ctor() {
                 this._currentState = _GlobalListener.states.off;
 
-                this._windowBlur = this._windowBlur.bind(this);
                 this._inputPaneShowing = this._inputPaneShowing.bind(this);
                 this._inputPaneHiding = this._inputPaneHiding.bind(this);
                 this._documentScroll = this._documentScroll.bind(this);
@@ -65,35 +64,6 @@ define([
                 reset: function _GlobalListener_reset() {
                     this._toggleListeners(_GlobalListener.states.off);
                     this._toggleListeners(_GlobalListener.states.on);
-                },
-                _windowBlur: function _GlobalListener_windowBlur(event) {
-                    // Want to lightdismiss _Overlays on window blur.
-                    // We get blur if we click off the window, including into an iframe within our window.
-                    // Both blurs call this function, but fortunately document.hasFocus is true if either
-                    // the document window or our iframe window has focus.
-                    if (!_Global.document.hasFocus()) {
-                        // The document doesn't have focus, so they clicked off the app, so light dismiss.
-                        _Overlay._lightDismissOverlays(false);
-                    } else {
-                        if ((_Overlay._clickEatingFlyoutDiv &&
-                             _Overlay._clickEatingFlyoutDiv.style.display === "block") ||
-                            (_Overlay._clickEatingAppBarDiv &&
-                             _Overlay._clickEatingAppBarDiv.style.display === "block")) {
-                            // We were trying to unfocus the window, but document still has focus,
-                            // so make sure the iframe that took the focus will check for blur next time.
-                            // We don't have to do this if the click eating div is hidden because then
-                            // there would be no flyout or appbar needing light dismiss.
-                            var active = _Global.document.activeElement;
-                            if (active && active.tagName === "IFRAME" && !active.msLightDismissBlur) {
-                                // - This will go away when the IFRAME goes away, and we only create one.
-                                // - This only works in IE because other browsers don't fire focus events on iframe elements.
-                                // - Can't use WinJS.Utilities._addEventListener's focusout because it doesn't fire when an
-                                //   iframe loses focus due to changing windows.
-                                active.addEventListener("blur", this._windowBlur, false);
-                                active.msLightDismissBlur = true;
-                            }
-                        }
-                    }
                 },
                 _inputPaneShowing: function _GlobalListener_inputePaneShowing(event) {
                     _WriteProfilerMark(_GlobalListener.profilerString + "_showingKeyboard,StartTM");
@@ -142,12 +112,6 @@ define([
                         } else if (newState === _GlobalListener.states.off) {
                             listenerOperation = "removeEventListener";
                         }
-
-                        // Dismiss on blur & resize
-                        // Focus handlers generally use WinJS.Utilities._addEventListener with focusout/focusin. This
-                        // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
-                        // on window.
-                        _Global[listenerOperation]("blur", this._windowBlur, false);
 
                         // Be careful so it behaves in designer as well.
                         if (_WinRT.Windows.UI.Input.EdgeGesture) {
@@ -585,10 +549,15 @@ define([
                         this._queuedToHide = [];
                     }
 
+                    // Do our derived classes hide stuff
+                    this._endHide();
+
                     // We're hidden now
                     if (this._doNext === "hide") {
                         this._doNext = "";
                     }
+
+
 
                     // After hiding, send our "afterHide" event
                     this._sendEvent(_Overlay.afterHide);
@@ -599,6 +568,10 @@ define([
                     // the afterHide event in case it triggers a show() and they
                     // have something to do in beforeShow that requires afterHide first.
                     Scheduler.schedule(this._checkDoNext, Scheduler.Priority.normal, this, "WinJS.UI._Overlay._checkDoNext");
+                },
+
+                _endHide: function _Overlay_endHide() {
+                    // Nothing by default
                 },
 
                 _checkDoNext: function _Overlay_checkDoNext() {
@@ -1183,11 +1156,9 @@ define([
             },
             {
                 // Statics
-                _clickEatingAppBarDiv: false,
-                _clickEatingFlyoutDiv: false,
 
                 _lightDismissFlyouts: function _Overlay_lightDismissFlyouts() {
-                    _Overlay._hideClickEatingDivFlyout();
+                    // ADCOM: lds_hidden?
                     var elements = _Global.document.body.querySelectorAll("." + _Constants.flyoutClass);
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
@@ -1238,7 +1209,7 @@ define([
                     }
 
                     _Overlay._hideAppBars(appBars, keyboardInvoked);
-                    _Overlay._hideClickEatingDivAppBar();
+                    // ADCOM: lds_hidden?
                 },
 
                 _createClickEatingDivTemplate: function (divClass, hideClickEatingDivFunction) {
@@ -1255,20 +1226,6 @@ define([
                     clickEatingDiv.setAttribute("unselectable", "on");
                     _Global.document.body.appendChild(clickEatingDiv);
                     return clickEatingDiv;
-                },
-
-                // Used by AppBar, and Settings Pane
-                _createClickEatingDivAppBar: function () {
-                    if (!_Overlay._clickEatingAppBarDiv) {
-                        _Overlay._clickEatingAppBarDiv = _Overlay._createClickEatingDivTemplate(_Constants._clickEatingAppBarClass, _Overlay._handleAppBarClickEatingClick);
-                    }
-                },
-
-                // Used by Flyout and Menu
-                _createClickEatingDivFlyout: function () {
-                    if (!_Overlay._clickEatingFlyoutDiv) {
-                        _Overlay._clickEatingFlyoutDiv = _Overlay._createClickEatingDivTemplate(_Constants._clickEatingFlyoutClass, _Overlay._handleFlyoutClickEatingClick);
-                    }
                 },
 
                 // All click-eaters eat "down" clicks so that we can still eat
@@ -1352,39 +1309,8 @@ define([
                     }
                 },
 
-                _showClickEatingDivAppBar: function () {
-                    Scheduler.schedule(function Overlay_async_showClickEatingDivAppBar() {
-                        if (_Overlay._clickEatingAppBarDiv) {
-                            _Overlay._clickEatingAppBarDiv.style.display = "block";
-                        }
-                    }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._showClickEatingDivAppBar");
-                },
-
-                _hideClickEatingDivAppBar: function () {
-                    Scheduler.schedule(function Overlay_async_hideClickEatingDivAppBar() {
-                        if (_Overlay._clickEatingAppBarDiv) {
-                            _Overlay._clickEatingAppBarDiv.style.display = "none";
-                        }
-                    }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._hideClickEatingDivAppBar");
-                },
-
-                _showClickEatingDivFlyout: function () {
-                    Scheduler.schedule(function Overlay_async_showClickEatingDivFlyout() {
-                        if (_Overlay._clickEatingFlyoutDiv) {
-                            _Overlay._clickEatingFlyoutDiv.style.display = "block";
-                        }
-                    }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._showClickEatingDivFlyout");
-                },
-
-                _hideClickEatingDivFlyout: function () {
-                    Scheduler.schedule(function Overlay_async_hideClickEatingDivFlyout() {
-                        if (_Overlay._clickEatingFlyoutDiv) {
-                            _Overlay._clickEatingFlyoutDiv.style.display = "none";
-                        }
-                    }, Scheduler.Priority.high, null, "WinJS.UI._Overlay._hideClickEatingDivFlyout");
-                },
-
                 _isFlyoutVisible: function () {
+                    // ADCOM: How should this be implemented now that there isn't a _clickEatingFlyoutDiv?
                     if (!_Overlay._clickEatingFlyoutDiv) {
                         return false;
                     }

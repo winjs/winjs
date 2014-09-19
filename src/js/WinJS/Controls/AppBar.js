@@ -407,9 +407,6 @@ define([
 
                 this._initializing = false;
 
-                // Make a click eating div
-                _Overlay._Overlay._createClickEatingDivAppBar();
-
                 // Handle key down (esc) and (left & right)
                 this._element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 
@@ -566,10 +563,10 @@ define([
                             // Ensure that the click eating div is in the correct state
                             if (this._sticky) {
                                 if (!_isThereVisibleNonStickyBar()) {
-                                    _Overlay._Overlay._hideClickEatingDivAppBar();
+                                    // ADCOM: lds_hidden?
                                 }
                             } else {
-                                _Overlay._Overlay._showClickEatingDivAppBar();
+                                // ADCOM: lds_shown?
 
                                 if (this._shouldStealFocus()) {
                                     _storePreviousFocus(_Global.document.activeElement);
@@ -784,7 +781,7 @@ define([
                         // Configure shown state for lightdismiss & sticky appbars.
                         if (!this.sticky) {
                             // Need click-eating div to be visible ASAP.
-                            _Overlay._Overlay._showClickEatingDivAppBar();
+                            // ADCOM: lds_shown?
                         }
 
                         // Clean up tabbing behavior by making sure first and final divs are correct after showing.
@@ -861,7 +858,7 @@ define([
 
                         if (!areOtherNonStickyAppBars && !areVisibleSettingsFlyouts) {
                             // Hide the click eating div because there are no other AppBars showing
-                            _Overlay._Overlay._hideClickEatingDivAppBar();
+                            // ADCOM: lds_hidden?
                         }
 
                         var that = this;

@@ -11,10 +11,9 @@ AppBar/Flyout z-index values:
 @import "../base.less";
 @import "../mixins.less";
 
-.win-appbarclickeater {
-    z-index: 1000;
+.win-click-eater {
     background-color: transparent;
-    display: none;
+    /*display: none;*/
     width: 110%;
     height: 110%;
     left: -5%;
@@ -22,20 +21,6 @@ AppBar/Flyout z-index values:
     position: fixed;
     touch-action: none;
     outline: 1px solid Purple; /*Necessary to block passthrough over webviews*/
-    -ms-high-contrast-adjust: none;
-}
-
-.win-flyoutmenuclickeater {
-    z-index: 1006;
-    background-color: transparent;
-    display: none;
-    width: 110%;
-    height: 110%;
-    left: -5%;
-    top: -5%;
-    position: fixed;
-    touch-action: none;
-    outline: 1px solid Lime; /*Necessary to block passthrough over webviews*/
     -ms-high-contrast-adjust: none;
 }
 

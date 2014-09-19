@@ -115,9 +115,6 @@ define([
                 // Handle "esc" & "tab" key presses
                 this._element.addEventListener("keydown", this._handleKeyDown, true);
 
-                // Make a click eating div
-                _Overlay._Overlay._createClickEatingDivAppBar();
-
                 // Start settings hidden
                 this._element.style.visibilty = "hidden";
                 this._element.style.display = "none";
@@ -228,7 +225,7 @@ define([
                     this._baseShow();
                     // Need click-eating div to be visible,
                     // (even if now hiding, we'll show and need click eater)
-                    _Overlay._Overlay._showClickEatingDivAppBar();
+                    // ADCOM: lds_show?
                 },
 
                 _endShow: function SettingsFlyout_endShow() {
@@ -294,7 +291,7 @@ define([
                 _hide: function SettingsFlyout_hide() {
                     if (this._baseHide()) {
                         // Need click-eating div to be hidden
-                        _Overlay._Overlay._hideClickEatingDivAppBar();
+                        // ADCOM: lds_hidden?
                     }
                 },
 

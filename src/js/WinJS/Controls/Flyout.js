@@ -14,9 +14,10 @@ define([
     '../Utilities/_Hoverable',
     './AppBar/_Constants',
     './Flyout/_Overlay',
+    '../_LightDismissService',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
+], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay, _LightDismissService) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -101,9 +102,6 @@ define([
 
                     // Call the base overlay constructor helper
                     this._baseOverlayConstructor(element, options);
-
-                    // Make a click eating div
-                    _Overlay._Overlay._createClickEatingDivFlyout();
 
                     // Start flyouts hidden
                     this._element.style.visibilty = "hidden";
@@ -276,12 +274,11 @@ define([
                         }
 
                         this._previousFocus = null;
-
-                        // Need click-eating div to be hidden if there are no other visible flyouts
-                        if (!this._isThereVisibleFlyout()) {
-                            _Overlay._Overlay._hideClickEatingDivFlyout();
-                        }
                     }
+                },
+
+                _endHide: function () {
+                    _LightDismissService.hidden(this);
                 },
 
                 _baseFlyoutShow: function Flyout_baseFlyoutShow(anchor, placement, alignment) {
@@ -325,7 +322,8 @@ define([
 
                     // Need click-eating div to be visible, no matter what
                     if (!this._sticky) {
-                        _Overlay._Overlay._showClickEatingDivFlyout();
+                        // TODO: Do sticky Flyouts need a click eater?
+                        // ADCOM: lds_shown?
                     }
 
                     // If we're animating (eg baseShow is going to fail), then don't mess up our current state.
@@ -366,7 +364,10 @@ define([
                             finalDiv.tabIndex = _ElementUtilities._getHighestTabIndexInList(_elms);
                         }
 
+                        _LightDismissService.shown(this);
+
                         // Hide all other flyouts
+                        // ADCOM: So we intentionally only show 1 flyout at a time?
                         this._hideAllOtherFlyouts(this);
 
                         // Store what had focus before showing the Flyout.
@@ -831,19 +832,6 @@ define([
                     }
                 },
 
-                // Returns true if there is a flyout in the DOM that is not hidden
-                _isThereVisibleFlyout: function Flyout_isThereVisibleFlyout() {
-                    var flyouts = _Global.document.querySelectorAll("." + _Constants.flyoutClass);
-                    for (var i = 0; i < flyouts.length; i++) {
-                        var flyoutControl = flyouts[i].winControl;
-                        if (flyoutControl && !flyoutControl.hidden) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                },
-
                 _handleKeyDown: function Flyout_handleKeyDown(event) {
                     // Escape closes flyouts but if the user has a text box with an IME candidate
                     // window open, we want to skip the ESC key event since it is handled by the IME.
@@ -906,8 +894,14 @@ define([
 
                 _writeProfilerMark: function Flyout_writeProfilerMark(text) {
                     _WriteProfilerMark("WinJS.UI.Flyout:" + this._id + ":" + text);
+                },
+
+                // ILightDismissable
+                ld_lightDismiss: function (info) {
+                    this._hide();
                 }
             });
+            _Base.Class.mix(Flyout, _LightDismissService.LightDismissableElement);
             return Flyout;
         })
     });
