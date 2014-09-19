@@ -162,7 +162,20 @@ define([
             //     // Provided by _setState for use within the state
             //     dialog: WinJS.UI.ContentDialog;
             // }
-
+            
+            function interruptible(object, workFn) {
+                object._interruptibleWorkPromises = object._interruptibleWorkPromises || [];
+                var workStoredSignal = new _Signal();
+                object._interruptibleWorkPromises.push(workFn(object, workStoredSignal.promise));
+                workStoredSignal.complete();
+            }
+            
+            function cancelInterruptibles() {
+                (this._interruptibleWorkPromises || []).forEach(function (workPromise) {
+                    workPromise.cancel();
+                });
+            }
+            
             var States = {
                 // Initial state. Initializes state on the dialog shared by the various states.
                 Init: _Base.Class.define(null, {
@@ -210,18 +223,15 @@ define([
                     name: "BeforeShow",
                     hidden: true,
                     enter: function ContentDialog_BeforeShowState_enter() {
-                        var that = this;
-                        var promiseStoredSignal = new _Signal();
-                        that._promise = promiseStoredSignal.promise.then(function () {
-                            return that.dialog._fireEvent(EventNames.beforeShow); // Give opportunity for chain to be canceled when calling into app code
-                        }).then(function () {
-                            that.dialog._setState(States.Showing);
+                        interruptible(this, function (that, ready) {
+                            return ready.then(function () {
+                                return that.dialog._fireEvent(EventNames.beforeShow); // Give opportunity for chain to be canceled when calling into app code
+                            }).then(function () {
+                                that.dialog._setState(States.Showing);
+                            });
                         });
-                        promiseStoredSignal.complete();
                     },
-                    exit: function ContentDialog_BeforeShowState_exit() {
-                        this._promise.cancel();
-                    },
+                    exit: cancelInterruptibles,
                     show: function ContentDialog_BeforeShowState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
@@ -239,30 +249,27 @@ define([
                         }
                     },
                     enter: function ContentDialog_ShowingState_enter() {
-                        var that = this;
-                        that._pendingHide = null;
-                        var promiseStoredSignal = new _Signal();
-                        that._promise = promiseStoredSignal.promise.then(function () {
-                            _ElementUtilities.addClass(that.dialog._dom.root, ClassNames._visible);
-                            that.dialog._addInputPaneListeners();
-                            if (_WinRT.Windows.UI.ViewManagement.InputPane) {
-                                var inputPaneHeight = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
-                                if (inputPaneHeight > 0) {
-                                    that.dialog._renderForInputPane(inputPaneHeight);
+                        interruptible(this, function (that, ready) {
+                            return ready.then(function () {
+                                that._pendingHide = null;
+                                _ElementUtilities.addClass(that.dialog._dom.root, ClassNames._visible);
+                                that.dialog._addInputPaneListeners();
+                                if (_WinRT.Windows.UI.ViewManagement.InputPane) {
+                                    var inputPaneHeight = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
+                                    if (inputPaneHeight > 0) {
+                                        that.dialog._renderForInputPane(inputPaneHeight);
+                                    }
                                 }
-                            }
-                            _ElementUtilities._focusFirstFocusableElement(that.dialog._dom.content) || that.dialog._dom.body.focus();
-                            return that.dialog._playEntranceAnimation();
-                        }).then(function () {
-                            return that.dialog._fireEvent(EventNames.afterShow); // Give opportunity for chain to be canceled when calling into app code
-                        }).then(function () {
-                            that.dialog._setState(States.Shown, that._pendingHide);
+                                _ElementUtilities._focusFirstFocusableElement(that.dialog._dom.content) || that.dialog._dom.body.focus();
+                                return that.dialog._playEntranceAnimation();
+                            }).then(function () {
+                                return that.dialog._fireEvent(EventNames.afterShow); // Give opportunity for chain to be canceled when calling into app code
+                            }).then(function () {
+                                that.dialog._setState(States.Shown, that._pendingHide);
+                            });
                         });
-                        promiseStoredSignal.complete();
                     },
-                    exit: function ContentDialog_ShowingState_exit() {
-                        this._promise.cancel();
-                    },
+                    exit: cancelInterruptibles,
                     show: function ContentDialog_ShowingState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
@@ -300,22 +307,19 @@ define([
                     name: "BeforeHide",
                     hidden: false,
                     enter: function ContentDialog_BeforeHideState_enter(reason) {
-                        var that = this;
-                        var promiseStoredSignal = new _Signal();
-                        that._promise = promiseStoredSignal.promise.then(function () {
-                            return that.dialog._fireBeforeHide(reason); // Give opportunity for chain to be canceled when calling into app code
-                        }).then(function (shouldHide) {
-                            if (shouldHide) {
-                                that.dialog._setState(States.Hiding, reason);
-                            } else {
-                                that.dialog._setState(States.Shown, null);
-                            }
+                        interruptible(this, function (that, ready) {
+                            return ready.then(function () {
+                                return that.dialog._fireBeforeHide(reason); // Give opportunity for chain to be canceled when calling into app code
+                            }).then(function (shouldHide) {
+                                if (shouldHide) {
+                                    that.dialog._setState(States.Hiding, reason);
+                                } else {
+                                    that.dialog._setState(States.Shown, null);
+                                }
+                            });
                         });
-                        promiseStoredSignal.complete();
                     },
-                    exit: function ContentDialog_BeforeHideState_exit() {
-                        this._promise.cancel();
-                    },
+                    exit: cancelInterruptibles,
                     show: function ContentDialog_BeforeHideState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
@@ -333,26 +337,23 @@ define([
                         }
                     },
                     enter: function ContentDialog_HidingState_enter(reason) {
-                        var that = this;
-                        that._showIsPending = false;
-                        var promiseStoredSignal = new _Signal();
-                        that._promise = promiseStoredSignal.promise.then(function () {
-                            that.dialog._removeInputPaneListeners();
-                            return that.dialog._resetDismissalPromise(reason); // Give opportunity for chain to be canceled when calling into app code
-                        }).then(function () {
-                            return that.dialog._playExitAnimation();
-                        }).then(function () {
-                            _ElementUtilities.removeClass(that.dialog._dom.root, ClassNames._visible);
-                            that.dialog._clearInputPaneRendering();
-                            return that.dialog._fireAfterHide(reason); // Give opportunity for chain to be canceled when calling into app code
-                        }).then(function () {
-                            that.dialog._setState(States.Hidden, that._showIsPending); 
+                        interruptible(this, function (that, ready) {
+                            return ready.then(function () {
+                                that._showIsPending = false;
+                                that.dialog._removeInputPaneListeners();
+                                return that.dialog._resetDismissalPromise(reason); // Give opportunity for chain to be canceled when calling into app code
+                            }).then(function () {
+                                return that.dialog._playExitAnimation();
+                            }).then(function () {
+                                _ElementUtilities.removeClass(that.dialog._dom.root, ClassNames._visible);
+                                that.dialog._clearInputPaneRendering();
+                                return that.dialog._fireAfterHide(reason); // Give opportunity for chain to be canceled when calling into app code
+                            }).then(function () {
+                                that.dialog._setState(States.Hidden, that._showIsPending); 
+                            });
                         });
-                        promiseStoredSignal.complete();
                     },
-                    exit: function ContentDialog_HidingState_exit() {
-                        this._promise.cancel();
-                    },
+                    exit: cancelInterruptibles,
                     show: function ContentDialog_HidingState_show() {
                         if (this._showIsPending) {
                             return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
