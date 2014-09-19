@@ -271,7 +271,13 @@ define([
                     },
                     exit: cancelInterruptibles,
                     show: function ContentDialog_ShowingState_show() {
-                        return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
+                        if (this._pendingHide) {
+                            var reason = this._pendingHide.reason;
+                            this._pendingHide = null;
+                            return this.dialog._resetDismissalPromise(reason).promise;
+                        } else {
+                            return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
+                        }
                     },
                     hide: function ContentDialog_ShowingState_hide(reason) {
                         this._pendingHide = { reason: reason };
@@ -341,7 +347,7 @@ define([
                             return ready.then(function () {
                                 that._showIsPending = false;
                                 that.dialog._removeInputPaneListeners();
-                                return that.dialog._resetDismissalPromise(reason); // Give opportunity for chain to be canceled when calling into app code
+                                that.dialog._resetDismissalPromise(reason); // Give opportunity for chain to be canceled when calling into app code
                             }).then(function () {
                                 return that.dialog._playExitAnimation();
                             }).then(function () {
@@ -678,8 +684,9 @@ define([
                 // Calls into arbitrary app code
                 _resetDismissalPromise: function ContentDialog_resetDismissalPromise(reason) {
                     var dismissedSignal = this._dismissedSignal;
-                    this._dismissedSignal = new _Signal();
+                    var newDismissedSignal = this._dismissedSignal = new _Signal();
                     dismissedSignal.complete({ reason: reason });
+                    return newDismissedSignal;
                 },
                 
                 // Calls into arbitrary app code
