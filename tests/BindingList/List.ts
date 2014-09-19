@@ -1,22 +1,19 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+ // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 
-var Tests = Tests || {};
 
-// @TODO, more exhaustive testing for sorting / filtering / grouping
-//
-
-(function (global, undefined) {
+module Tests {
     "use strict";
-    if (typeof (WinJS) !== "undefined") {
-        var List = WinJS.Binding.List;
+
+        var List = <typeof WinJS.Binding.PrivateList>WinJS.Binding.List;
 
         var post = function post (v) {
             return WinJS.Utilities.Scheduler.schedulePromiseNormal().
                 then(function () { return v; });
         };
+
         var errorHandler = function errorHandler (msg) {
             try {
                 LiveUnit.Assert.fail('There was an unhandled error in your test: ' + msg);
@@ -196,8 +193,9 @@ var Tests = Tests || {};
                     }
                 }
             }
-        );
-        var verifyListContent = function verifyListContent (list, arr, checked) {
+            );
+
+        function verifyListContent (list, arr, checked = false) {
             var listArray = list._getArray();
             LiveUnit.Assert.isTrue(listArray instanceof Array);
             for (var i = 0; i < list.length; i++) {
@@ -220,8 +218,9 @@ var Tests = Tests || {};
                 }
             }
             return list.length === arr.length;
-        };
-        var verifyBindableList = function verifyBindableList (list, arr) {
+        }
+
+        function verifyBindableList (list, arr) {
             if (list.length !== arr.length) {
                 return false;
             }
@@ -236,8 +235,8 @@ var Tests = Tests || {};
                 }
             }
             return true;
-        };
-        var checkArrayContent = function checkArrayContent (arr1, arr2) {
+        }
+        function checkArrayContent (arr1, arr2) {
             if (arr1.length !== arr2.length) {
                 return false;
             }
@@ -247,15 +246,15 @@ var Tests = Tests || {};
                 }
             }
             return true;
-        };
-        var createAnArrayOfObjects = function createAnArrayOfObjects (n) {
+        }
+        function createAnArrayOfObjects (n) {
             var arr = [];
             for (var i = 0; i < n ; i++) {
                 arr[i] = createAnObject(i);
             }
             return arr;
-        };
-        var createAnObject = function createAnObject (i) {
+        }
+        function createAnObject (i) {
             var arr;
             if (i % 2 === 0) {
                 arr = { a: i };
@@ -264,10 +263,54 @@ var Tests = Tests || {};
                 arr = { a: i, b: { c: i * 2 } };
             }
             return arr;
-        };
-        Tests.List = function () {
+        }
 
-            this.testBasic = function () {
+    function verifySortedArr(sorted, arr) {
+
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] !== sorted.getAt(i).a) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function verifySorted(list, asc = false) {
+        for (var i = 0; i < list.length - 1; i++) {
+            if (asc) {
+                if (list.getAt(i) > list.getAt(i + 1)) {
+                    return false;
+                }
+            }
+            else {
+                if (list.getAt(i) < list.getAt(i + 1))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    function specialPrime(num) {
+        num = Math.abs(num);
+        if (num === 0 || num === 1) {
+            return false;
+        }
+        for (var i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function testWithDifferentOptions(testFunction) {
+        var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+        for (var i = 0; i < options.length; i++) {
+            testFunction(options[i]);
+        }
+    }
+        export class ListTest {
+
+            testBasic() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -276,14 +319,14 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(2, list.getAt(1));
                 LiveUnit.Assert.areEqual(3, list.getAt(2));
                 listener.assertSameAsArray([1, 2, 3]);
-            };
+            }
 
-            this.testListWithFalsyValue = function () {
+            testListWithFalsyValue() {
                 var list = new List([0]);
                 LiveUnit.Assert.areEqual(0, list.getAt(0));
-            };
+            }
 
-            this.testPush = function () {
+            testPush() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1);
@@ -295,9 +338,9 @@ var Tests = Tests || {};
                 list.push();
                 listener.assertSameAsArray([1, 2, 3, 4]);
                 LiveUnit.Assert.areEqual(4, list.length);
-            };
+            }
 
-            this.testPop = function () {
+            testPop() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -308,9 +351,9 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(1, list.pop());
                 listener.assertSameAsArray([]);
                 LiveUnit.Assert.areEqual(0, list.length);
-            };
+            }
 
-            this.testUnshift = function () {
+            testUnshift() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.unshift(1);
@@ -322,9 +365,9 @@ var Tests = Tests || {};
                 list.unshift();
                 listener.assertSameAsArray([3, 4, 2, 1]);
                 LiveUnit.Assert.areEqual(4, list.length);
-            };
+            }
 
-            this.testShift = function () {
+            testShift() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -335,9 +378,9 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(3, list.shift());
                 listener.assertSameAsArray([]);
                 LiveUnit.Assert.areEqual(0, list.length);
-            };
+            }
 
-            this.testReverse = function () {
+            testReverse() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -350,10 +393,10 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([1, 2, 3, 4]);
                 list.reverse();
                 listener.assertSameAsArray([4, 3, 2, 1]);
-            };
+            }
 
-            this.testSort = function () {
-                var list = new List();
+            testSort() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
                 listener.assertSameAsArray([1, 2, 3]);
@@ -370,9 +413,9 @@ var Tests = Tests || {};
                 var l = list.sort();
                 LiveUnit.Assert.areEqual(l, list);
                 listener.assertSameAsArray([1, 2, 3, 5]);
-            };
+            }
 
-            this.testSplice = function () {
+            testSplice() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.splice(0, 0, 1);
@@ -385,9 +428,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([2, 7, 8, 3, 4, 1]);
                 list.splice(10, 0, 9, 10);
                 listener.assertSameAsArray([2, 7, 8, 3, 4, 1, 9, 10]);
-            };
+            }
 
-            this.testConcat = function () {
+            testConcat() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -402,9 +445,9 @@ var Tests = Tests || {};
                 var result2 = list.concat([6, 7]);
                 assertSequenceEquals([6, 7], result2);
                 assertSequenceEquals([], list.concat());
-            };
+            }
 
-            this.testJoin = function () {
+            testJoin() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -413,18 +456,16 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual("1, 2, 3", list.join(", "));
                 LiveUnit.Assert.areEqual("1,2,3", list.join());
                 LiveUnit.Assert.areEqual("11213", list.join("1"));
-                LiveUnit.Assert.areEqual("11213", list.join(1));
                 LiveUnit.Assert.areEqual("1---2---3", list.join("---"));
                 list.length = 0;
                 listener.assertSameAsArray([]);
                 LiveUnit.Assert.areEqual("", list.join(","));
                 LiveUnit.Assert.areEqual("", list.join());
                 LiveUnit.Assert.areEqual("", list.join("1"));
-                LiveUnit.Assert.areEqual("", list.join(1));
                 LiveUnit.Assert.areEqual("", list.join("---"));
-            };
+            }
 
-            this.testSlice = function () {
+            testSlice() {
                 var list = new List();
                 var listener = new ListListener(list);
                 assertSequenceEquals([], list.slice(-1));
@@ -447,9 +488,9 @@ var Tests = Tests || {};
                 assertSequenceEquals([], list.slice(-6, -8));
                 assertSequenceEquals([1, 2], list.slice(0, 2));
                 assertSequenceEquals([2], list.slice(1, 2));
-            };
+            }
 
-            this.testIndexOf = function () {
+            testIndexOf() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -463,15 +504,15 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(1, list.indexOf(2));
                 LiveUnit.Assert.areEqual(-1, list.indexOf(5));
                 LiveUnit.Assert.areEqual(3, list.indexOf(2, 2));
-            };
+            }
 
-            this.testIndexOfKeyWhereRequestedKeyIsNextKeyToBeAssigned = function () {
+            testIndexOfKeyWhereRequestedKeyIsNextKeyToBeAssigned() {
                 var list = new List([0, 1, 2, 3, 4]);
                 LiveUnit.Assert.areEqual(-1, list.indexOfKey("5"));
                 LiveUnit.Assert.areEqual(-1, list.indexOfKey("6")); //key that does not exist
             }
 
-            this.testLastIndexOf = function () {
+            testLastIndexOf() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -486,9 +527,9 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(3, list.lastIndexOf(2));
                 LiveUnit.Assert.areEqual(-1, list.lastIndexOf(5));
                 LiveUnit.Assert.areEqual(1, list.lastIndexOf(2, 2));
-            };
+            }
 
-            this.testForEach = function () {
+            testForEach() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
@@ -512,11 +553,11 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(a[index], list.getAt(index));
                 });
                 LiveUnit.Assert.areEqual(count, 4);
-            };
+            }
 
             // @TODO, test that the thisObject parameter is used correctly
             // @TODO, test that the callback arguments are passed correctly
-            this.testEvery = function () {
+            testEvery() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2);
@@ -539,21 +580,21 @@ var Tests = Tests || {};
                 list.push(7);
                 listener.assertSameAsArray(["hello", 7]);
                 LiveUnit.Assert.isFalse(list.every(function (item) { return typeof item === "number"; }));
-            };
+            }
 
             // @TODO, test map
-            this.testMap = function () {
-                var list = new List();
+            testMap() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
                 listener.assertSameAsArray([1, 2, 3]);
                 var result = list.map(function (item) { return item * 2; });
                 assertSequenceEquals([2, 4, 6], result);
-            };
+            }
 
             // @TODO, test that the thisObject parameter is used correctly
             // @TODO, test that the callback arguments are passed correctly
-            this.testSome = function () {
+            testSome() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2);
@@ -575,25 +616,25 @@ var Tests = Tests || {};
                 var count = 0;
                 LiveUnit.Assert.isTrue(list.some(function (item) { count++; return typeof item === "number"; }));
                 LiveUnit.Assert.areEqual(2, count);
-            };
+            }
 
-            this.testReduce = function () {
+            testReduce() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push("Hello ", "my ", "friend ");
                 listener.assertSameAsArray(["Hello ", "my ", "friend "]);
                 LiveUnit.Assert.areEqual("Hello my friend ", list.reduce(function (n, m) { return n + m; }, ""));
-            };
+            }
 
-            this.testReduceRight = function () {
+            testReduceRight() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push("Hello ", "my ", "friend ");
                 listener.assertSameAsArray(["Hello ", "my ", "friend "]);
                 LiveUnit.Assert.areEqual("friend my Hello ", list.reduceRight(function (n, m) { return n + m; }, ""));
-            };
+            }
 
-            this.testLength = function () {
+            testLength() {
                 var list = new List();
                 var listener = new ListListener(list);
                 // You can set the length property to truncate an array at any time. When you extend an array by
@@ -618,9 +659,9 @@ var Tests = Tests || {};
                 list.length = 1;
                 LiveUnit.Assert.areEqual(1, list.length);
                 listener.assertSameAsArray([1]);
-            };
+            }
 
-            this.testSet = function () {
+            testSet() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.setAt(0, 1);
@@ -635,18 +676,18 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([3, 2, 4, 5]);
                 list.setAt(2, 6);
                 listener.assertSameAsArray([3, 2, 6, 5]);
-            };
+            }
 
-            this.testMove = function () {
+            testMove() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(1, 2, 3);
                 listener.assertSameAsArray([1, 2, 3]);
                 list.move(0, 1);
                 listener.assertSameAsArray([2, 1, 3]);
-            };
+            }
 
-            this.testInitializeWithData = function () {
+            testInitializeWithData() {
                 var list = new List([1, 2, 3]);
                 var listener = new ListListener(list);
                 listener.assertSameAsArray([1, 2, 3]);
@@ -654,8 +695,8 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([1, 2, 3, 4]);
                 list.setAt(0, 5);
                 listener.assertSameAsArray([5, 2, 3, 4]);
-            };
-            this.testListBaseGetKey = function () {
+            }
+            testListBaseGetKey() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [0, 1, 2, 3, 4];
@@ -689,19 +730,19 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testListBaseGetFromKey = function () {
+            testListBaseGetFromKey() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [1, 2, undefined, 3, 4, 5];
                     var list = new List(arr, options[i]);
 
                     var check = function () {
-                        LiveUnit.Assert.areEqual(1, list._getFromKey(0), "making sure we are getting the correct element");
-                        LiveUnit.Assert.areEqual(2, list._getFromKey(1), "making sure we are getting the correct element");
-                        LiveUnit.Assert.areEqual(undefined, list._getFromKey(2), "making sure we are getting the correct element");
-                        LiveUnit.Assert.areEqual(3, list._getFromKey(3), "making sure we are getting the correct element");
-                        LiveUnit.Assert.areEqual(4, list._getFromKey(4), "making sure we are getting the correct element");
-                        LiveUnit.Assert.areEqual(5, list._getFromKey(5), "making sure we are getting the correct element");
+                        LiveUnit.Assert.areEqual(1, list._getFromKey("0"), "making sure we are getting the correct element");
+                        LiveUnit.Assert.areEqual(2, list._getFromKey("1"), "making sure we are getting the correct element");
+                        LiveUnit.Assert.areEqual(undefined, list._getFromKey("2"), "making sure we are getting the correct element");
+                        LiveUnit.Assert.areEqual(3, list._getFromKey("3"), "making sure we are getting the correct element");
+                        LiveUnit.Assert.areEqual(4, list._getFromKey("4"), "making sure we are getting the correct element");
+                        LiveUnit.Assert.areEqual(5, list._getFromKey("5"), "making sure we are getting the correct element");
 
                     }
                     check();
@@ -712,9 +753,9 @@ var Tests = Tests || {};
 
                 }
             }
-            this.testSparseArrayIsNotSupported = function () {
+            testSparseArrayIsNotSupported() {
                 var arr = [-1, 20, "string", , , 3, 10, 5, 1];
-                var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
+                var options:any = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
 
                 var expected = [-1, 20, "string", 3, 10, 5, 1];
                 for (var i = 0; i < options.length; i++) {
@@ -728,7 +769,7 @@ var Tests = Tests || {};
                 }
 
             }
-            this.testListBaseforEach = function () {
+            testListBaseforEach() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [-1, 20, "string", 3, 10, 5, 1];
@@ -747,7 +788,7 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testListBaseSome = function () {
+            testListBaseSome() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = ["1", "2", "3", "4", 1, "5"];
@@ -759,7 +800,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(verifyListContent(list, arr));
                 }
             }
-            this.testListBaseMap = function () {
+            testListBaseMap() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = ["1", "2", "3", "4", "5"];
@@ -775,7 +816,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(!verifyListContent(list, result));
                 }
             }
-            this.testListBaseReduce = function () {
+            testListBaseReduce() {
 
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
@@ -783,16 +824,15 @@ var Tests = Tests || {};
                     var list = new List(arr, options[i]);
                     var listener = new ListListener(list);
 
-                    var reduceToSum = function (p, v) { return p + v };
+                    var reduceToSum = function(p, v) { return p + v };
                     LiveUnit.Assert.areEqual(arr.reduce(reduceToSum), list.reduce(reduceToSum));
                     listener.assertSameAsArray(arr);
 
-                    arr = ["a", "b", "c", "d"];
-                    list = new List(arr);
-                    LiveUnit.Assert.areEqual(list.join(), list.reduce(function (p, v) { return p + "," + v; }));
+                    var list2 = new List(["a", "b", "c", "d"]);
+                    LiveUnit.Assert.areEqual(list2.join(), list2.reduce(function (p, v) { return p + "," + v; }));
                 }
             }
-            this.testListBaseReduceRight = function () {
+            testListBaseReduceRight() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [58, 52, 64, 2, 16, 23, 64, 27, 20, 11];
@@ -803,12 +843,12 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(arr.reduceRight(reduceToSum), list.reduceRight(reduceToSum));
                     listener.assertSameAsArray(arr);
 
-                    arr = ["a", "b", "c", "d"];
-                    list = new List(arr);
-                    LiveUnit.Assert.areEqual(arr.reverse().join(), list.reduceRight(function (p, v) { return p + "," + v; }));
+                    var arr2 = ["a", "b", "c", "d"];
+                    var list2 = new List(arr2);
+                    LiveUnit.Assert.areEqual(arr2.reverse().join(), list2.reduceRight(function (p, v) { return p + "," + v; }));
                 }
             }
-            this.testListBaseEvery = function () {
+            testListBaseEvery() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = ["1", "2", "3", "4", 1, "5"];
@@ -825,7 +865,7 @@ var Tests = Tests || {};
 
                 }
             }
-            this.testListBaseJoin = function () {
+            testListBaseJoin() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [-1, 20, "string", 3, 10, 5, 1];
@@ -838,7 +878,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(verifyListContent(list, arr));
                 }
             }
-            this.testListBaseSlice = function () {
+            testListBaseSlice() {
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [0, 1, 2, 3, 4, 5, 6, 7, 9];
@@ -861,7 +901,7 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testListGetItemFromKey = function () {
+            testListGetItemFromKey() {
 
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
@@ -892,8 +932,8 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testListSpliceFromKey = function () {
-                var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
+            testListSpliceFromKey() {
+                var options:any = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
                     var list = new List(arr, options[i]);
@@ -925,9 +965,9 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testIndexOfDifferentScenarios = function () {
+            testIndexOfDifferentScenarios() {
 
-                var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
+                var options:any = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
 
                     var list = new List([], options[i]);
@@ -935,7 +975,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(-1, list.indexOf(0, -1), "non existing item");
                     LiveUnit.Assert.areEqual(-1, list.indexOf(0), "non existing item");
                     var arr = [-1, -2, 100, 0, 9, -1, 7, 6, 5, 4];
-                    var list = new List(arr, options[i]);
+                    list = new List(arr, options[i]);
                     LiveUnit.Assert.areEqual(0, list.indexOf(-1, -1 * list.length), "search for existing item with -ve index");
                     LiveUnit.Assert.areEqual(1, list.indexOf(-2, 1), "search for existing item");
                     LiveUnit.Assert.areEqual(-1, list.indexOf(-2, 100), "search for existing item with wrong starting index");
@@ -959,8 +999,8 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(undefined, emptySlotList.getAt(11), "make sure undefined existes");
                 }
             }
-            this.testLastIndexOfDifferentScenarios = function () {
-                var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
+            testLastIndexOfDifferentScenarios() {
+                var options:any = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
 
                     var list = new List([], options[i]);
@@ -968,7 +1008,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(-1, list.lastIndexOf(0, -1), "non existing item");
                     LiveUnit.Assert.areEqual(-1, list.lastIndexOf(0), "non existing item");
                     var arr = [-1, -2, 100, 0, 9, 5, 7, 6, 5, 4];
-                    var list = new List(arr, options[i]);
+                    list = new List(arr, options[i]);
                     LiveUnit.Assert.areEqual(0, list.lastIndexOf(-1, list.length), "search for existing item with -ve index");
                     LiveUnit.Assert.areEqual(1, list.lastIndexOf(-2, 1), "search for existing item");
                     LiveUnit.Assert.areEqual(2, list.lastIndexOf(100), "search for existing item with wrong starting index");
@@ -995,7 +1035,7 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testSettingTheLength = function () {
+            testSettingTheLength() {
                 var list = new List([10, 20, 30, 40]);
 
                 LiveUnit.Assert.isTrue(verifyListContent(list, [10, 20, 30, 40]));
@@ -1011,7 +1051,7 @@ var Tests = Tests || {};
 
             }
 
-            this.testSameReferenceObtained = function () {
+            testSameReferenceObtained() {
                 var list = new List([0, 1, 2, 3]);
                 LiveUnit.Assert.isTrue(verifyListContent(list, [0, 1, 2, 3]));
                 var hit = 0;
@@ -1020,7 +1060,7 @@ var Tests = Tests || {};
                 }
                 LiveUnit.Assert.areEqual(1, hit, "the obtained references are incorrect");
             }
-            this.testLazyPopulate = function () {
+            testLazyPopulate() {
                 var list = new List([1, 2], { proxy: true });
                 var x = list.getItem(1);
                 var y = list.getItem(1);
@@ -1031,7 +1071,7 @@ var Tests = Tests || {};
                 }
                 LiveUnit.Assert.areEqual(1, hit, "the obtained references are incorrect with lazyPopulate");
             }
-            this.testGetAtInDifferentScenarios = function () {
+            testGetAtInDifferentScenarios() {
                 var list = new List([1, 2, 3]);
                 list.length = 10;
                 LiveUnit.Assert.areEqual(3, list.length, "list expansion is not correct");
@@ -1053,7 +1093,7 @@ var Tests = Tests || {};
 
             }
 
-            this.testGetItemInDifferentScenarios = function () {
+            testGetItemInDifferentScenarios() {
                 var list = new List([1, 2, 3]);
                 list.length = 10;
                 LiveUnit.Assert.areEqual(3, list.length, "list expansion is not correct");
@@ -1072,8 +1112,8 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(undefined, listBindable.getItem(-1), "getItem(-1) returned wrong value with binding");
                 LiveUnit.Assert.areEqual(undefined, listBindable.getItem(100), "getItem(100) returned wrong value with binding");
             }
-            this.testShiftDifferentScenarios = function () {
-                var options = [undefined, { binding: true }];
+            testShiftDifferentScenarios() {
+                var options:any = [undefined, { binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [-1, 0, 1, 2, 3];
                     var list = new List(options[i]);
@@ -1091,7 +1131,7 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testUnshiftDifferentScenarios = function () {
+            testUnshiftDifferentScenarios() {
 
                 var options = [undefined, { binding: true }];
                 for (var i = 0; i < options.length; i++) {
@@ -1112,7 +1152,7 @@ var Tests = Tests || {};
 
                 }
             }
-            this.testUnshiftDifferentScenariosWithProxy = function () {
+            testUnshiftDifferentScenariosWithProxy() {
 
                 var options = [{ proxy: true }, { proxy: true, binding: true }];
 
@@ -1134,8 +1174,8 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(13, arr.length);
                 }
             }
-            this.testPopDifferentScenarios = function () {
-                var options = [undefined, { binding: true }, { proxy: true }, { binding: true, proxy: true }];
+            testPopDifferentScenarios() {
+                var options:any = [undefined, { binding: true }, { proxy: true }, { binding: true, proxy: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [-1, 0, 1, 2];
                     var temp = [-1, 0, 1, 2];
@@ -1153,7 +1193,7 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testPopAfterSorting = function () {
+            testPopAfterSorting() {
 
                 var arr = [10, 4, 9, 100, -1, 20, 0];
                 var temp = [-1, 0, 4, 9, 10, 20, 100];
@@ -1168,14 +1208,14 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(j, sortedArr.length);
                 }
             }
-            this.testDeleteAnElementBeforeBeingAddedToKeys = function () {
+            testDeleteAnElementBeforeBeingAddedToKeys() {
 
                 var list = new List([1, 2], { proxy: true });
                 list.splice(0, 1);
                 LiveUnit.Assert.areEqual(1, list.length);
                 LiveUnit.Assert.areEqual(2, list.getAt(0));
             }
-            this.testSetLengthToNegativeValue = function () {
+            testSetLengthToNegativeValue() {
                 var hitCatch = false;
                 var list = new List([1, 2], { proxy: true });
                 try {
@@ -1189,29 +1229,29 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(1, list.getAt(0), "array is messed after setting the length to negative value");
                 LiveUnit.Assert.areEqual(2, list.getAt(1), "array is messed after setting the length to negative value");
             }
-            this.testGetItemFromKeyBeforeSettingKeys = function () {
+            testGetItemFromKeyBeforeSettingKeys() {
                 var list = new List([1, 2], { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, [1, 2]));
-                var y = list.getItemFromKey(1);
+                var y = list.getItemFromKey("1");
                 LiveUnit.Assert.areEqual(2, y.data);
             }
-            this.testRemoveElementBeforeSettingKeys = function () {
+            testRemoveElementBeforeSettingKeys() {
                 //removing an element when the keys are not set and getting the next key element
                 var list = new List([1, 2], { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, [1, 2]));
                 list.splice(0, 1);
                 LiveUnit.Assert.isTrue(verifyListContent(list, [2]));
-                var y = list.getItemFromKey(1);
+                var y = list.getItemFromKey("1");
                 LiveUnit.Assert.areEqual(2, y.data);
             }
 
-            this.testIndexOfWithNonExistingKey = function () {
+            testIndexOfWithNonExistingKey() {
                 var list = new List();
                 var k = list.indexOfKey("2");
                 LiveUnit.Assert.areEqual(-1, k, "wrong value of index returned for non existing key");
             }
 
-            this.testInvalidGetterScenarios = function () {
+            testInvalidGetterScenarios() {
 
                 var list = new List([10, 20, 30, 40]);
                 list.splice(2, 1);
@@ -1219,13 +1259,13 @@ var Tests = Tests || {};
                 list.splice(2, 0, 100);
                 LiveUnit.Assert.isTrue(verifyListContent(list, [10, 20, 100, 40]));
 
-                var t = list.getItemFromKey(2);
+                var t = list.getItemFromKey("2");
                 LiveUnit.Assert.isTrue(!t);
 
-                t = list.getItemFromKey(-1);
+                t = list.getItemFromKey("-1");
                 LiveUnit.Assert.isTrue(!t);
 
-                t = list.getItemFromKey(100);
+                t = list.getItemFromKey("100");
                 LiveUnit.Assert.isTrue(!t);
 
                 t = list.getItem(-1);
@@ -1233,7 +1273,7 @@ var Tests = Tests || {};
 
             }
 
-            this.testReverseWithoutProxy = function () {
+            testReverseWithoutProxy() {
                 var arr = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
                 var list = new List(arr);
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1245,13 +1285,13 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(9, arr[arr.length - 1]);
 
             }
-            this.testReverseEmptyList = function () {
+            testReverseEmptyList() {
                 var list = new List();
                 LiveUnit.Assert.isTrue(verifyListContent(list, []));
                 list.reverse();
                 LiveUnit.Assert.isTrue(verifyListContent(list, []));
             }
-            this.testReverseWithProxy = function () {
+            testReverseWithProxy() {
                 var arr = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
                 var list = new List(arr, { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1261,7 +1301,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1]));
 
             }
-            this.testReverseWithSparseArrayNoProxy = function () {
+            testReverseWithSparseArrayNoProxy() {
                 var arr = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
                 var list = new List(arr);
 
@@ -1274,7 +1314,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(9, arr[arr.length - 1]);
 
             }
-            this.testReverseWithSparseArrayAndProxy = function () {
+            testReverseWithSparseArrayAndProxy() {
                 var arr = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
                 var list = new List(arr, { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1284,12 +1324,12 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1]));
 
             }
-            this.testFalsyValues = function () {
+            testFalsyValues() {
                 var arr = ["", false, NaN, 0, null];
                 var list = new List(arr);
-                LiveUnit.Assert.isTrue(verifyListContent(list, arr, "1"));
+                LiveUnit.Assert.isTrue(verifyListContent(list, arr, true));
             }
-            this.testIndexOfFunctions = function () {
+            testIndexOfFunctions() {
                 var list = new List([10, 20, 30, 40]);
                 LiveUnit.Assert.isTrue(verifyListContent(list, [10, 20, 30, 40]));
                 list.splice(2, 1);
@@ -1300,22 +1340,22 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(2, l, "invalid value returned from indexOfKey");
 
             }
-            this.testShiftSpecialCaseSimpleScenario = function () {
+            testShiftSpecialCaseSimpleScenario() {
                 var list = new List();
                 var x = list.shift();
                 LiveUnit.Assert.areEqual(undefined, list.shift(), "making sure that shift returns undefined");
             }
-            this.testLastIndexOfSpecialCaseSimpleScenario = function () {
+            testLastIndexOfSpecialCaseSimpleScenario() {
                 var arr = [1, 2, 3];
                 var list = new List(arr);
                 LiveUnit.Assert.areEqual(1, list.lastIndexOf(2, 1), "making sure lastIndexOf works as ES5 arrays");
             }
-            this.testGetItemFromKeySimpleScenario = function () {
+            testGetItemFromKeySimpleScenario() {
                 var arr = [1, 2, 3, 4];
                 var list = new List(arr);
-                LiveUnit.Assert.areEqual(undefined, list.getItemFromKey(5), "making sure that getItemFromKey is working fine");
+                LiveUnit.Assert.areEqual(undefined, list.getItemFromKey("5"), "making sure that getItemFromKey is working fine");
             }
-            this.testNonExistingKeys = function () {
+            testNonExistingKeys() {
                 var list = new List();
 
                 var k = list.indexOfKey("2"); //should be -1
@@ -1328,14 +1368,14 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(-1, k3, "invalid key should return -1");
 
             }
-            this.testSortEmptyList = function () {
-                var list = new List();
+            testSortEmptyList() {
+                var list = new List<number>();
                 LiveUnit.Assert.isTrue(verifyListContent(list, []));
                 list.sort(function (l, r) { return r - l; });
                 LiveUnit.Assert.isTrue(verifyListContent(list, []));
 
             }
-            this.testSortArrayOfIntegersWithoutProxy = function () {
+            testSortArrayOfIntegersWithoutProxy() {
                 var arr = [2, 3, 4, 1, -1, 0, 5, 10, 11, 9];
                 var list = new List(arr);
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1349,7 +1389,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [11, 10, 9, 5, 4, 3, 2, 1, 0, -1]));
 
             }
-            this.testSortArrayOfIntegersWithProxy = function () {
+            testSortArrayOfIntegersWithProxy() {
                 var arr = [2, 3, 4, 1, -1, 0, 5, 10, 11, 9];
                 var list = new List(arr, { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1363,7 +1403,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [11, 10, 9, 5, 4, 3, 2, 1, 0, -1]));
 
             }
-            this.testSortArrayOfIntegersWithoutProxyWithBinding = function () {
+            testSortArrayOfIntegersWithoutProxyWithBinding() {
                 var arr = [2, 3, 4, 1, -1, 0, 5, 10, 11, 9];
                 var list = new List(arr, { binding: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1377,7 +1417,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [11, 10, 9, 5, 4, 3, 2, 1, 0, -1]));
 
             }
-            this.testSortArrayOfIntegersWithProxyWithBinding = function () {
+            testSortArrayOfIntegersWithProxyWithBinding() {
                 var arr = [2, 3, 4, 1, -1, 0, 5, 10, 11, 9];
                 var list = new List(arr, { proxy: true, binding: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1391,7 +1431,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [11, 10, 9, 5, 4, 3, 2, 1, 0, -1]));
 
             }
-            this.testSortArrayOfObjects = function () {
+            testSortArrayOfObjects() {
                 var arr = createAnArrayOfObjects(11);
                 arr[4].a = -1;
                 var list = new List(arr);
@@ -1412,7 +1452,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(-1, list.getAt(list.length - 1).a, "sorting failed");
 
             }
-            this.testSetAtDifferentScenarios = function () {
+            testSetAtDifferentScenarios() {
                 var arr = [1, 2, 3];
                 var list = new List(arr);
 
@@ -1422,7 +1462,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [4, 2, 3]));
             }
 
-            this.testSetAtDifferentScenariosWithProxy = function () {
+            testSetAtDifferentScenariosWithProxy() {
                 var arr = [1, 2, 3];
                 var list = new List(arr, { proxy: true });
 
@@ -1432,18 +1472,17 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [4, 2, 3]));
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
             }
-            this.testSetAtWithAnArrayOfObjectsAndBinding = function () {
+            testSetAtWithAnArrayOfObjectsAndBinding() {
                 var arr = [{ a: "zero" }, { a: "one" }, { a: "two" }, { a: "three" }, { a: "four" }];
                 var list = new List(arr, { binding: true });
                 list.setAt(0, { a: "newElement" });
                 LiveUnit.Assert.areEqual("newElement", list.getAt(0).a, "set with binding is not working correctly");
-                LiveUnit.Assert.areEqual("zero", list.getAt(0).a, "set with binding is not working correctly");
 
                 list.setAt(5, { a: "newElementAt5" });
                 LiveUnit.Assert.areEqual("newElementAt5", list.getAt(5).a, "set with binding is not working correctly");
                 LiveUnit.Assert.areEqual(undefined, arr[5], "set with binding is not working correctly");
             }
-            this.testSetAtWithAnArrayOfObjectsAndBindingAndProxy = function () {
+            testSetAtWithAnArrayOfObjectsAndBindingAndProxy() {
                 var arr = [{ a: "zero" }, { a: "one" }, { a: "two" }, { a: "three" }, { a: "four" }];
                 var list = new List(arr, { binding: true, proxy: true });
                 list.setAt(0, { a: "newElement" });
@@ -1454,11 +1493,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual("newElementAt5", list.getAt(5).a, "set with binding is not working correctly");
                 LiveUnit.Assert.areEqual("newElementAt5", arr[5].a, "set with binding is not working correctly");
             }
-            this.testSetAtWithAnArrayOfObjectsAndBinding = function () {
-                var arr = [{ a: "zero" }, { a: "one" }, { a: "two" }, { a: "three" }, { a: "four" }];
-                var list = new List(arr, { binding: true });
-            }
-            this.testRemoveElementsUsingSpliceDifferentScenarios = function () {
+            testRemoveElementsUsingSpliceDifferentScenarios() {
 
                 var options = [undefined, { binding: true }]
                 for (var j = 0; j < options.length; j++) {
@@ -1503,7 +1538,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(4, arr[3]);
                 }
             }
-            this.testDeleteUsingSpliceDifferentScenariosWithProxy = function () {
+            testDeleteUsingSpliceDifferentScenariosWithProxy() {
                 var options = [{ proxy: true }, { proxy: true, binding: true }];
 
                 for (var j = 0; j < options.length; j++) {
@@ -1549,7 +1584,7 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testAddingElementsUsingSplice = function () {
+            testAddingElementsUsingSplice() {
 
                 var options = [undefined, { binding: true }];
                 for (var i = 0; i < options.length; i++) {
@@ -1580,12 +1615,12 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(0, arr.length, "making sure that the array length is not changed");
 
                     list.splice(0, 0, false, "", null, NaN);
-                    LiveUnit.Assert.isTrue(verifyListContent(list, [false, "", null, NaN, undefined, "first", 10, 1, 2, 3, 4, 100, 200, 5, -1, 0], "1"), "adding falsy elements to the beginign of the array");
+                    LiveUnit.Assert.isTrue(verifyListContent(list, [false, "", null, NaN, undefined, "first", 10, 1, 2, 3, 4, 100, 200, 5, -1, 0], true), "adding falsy elements to the beginign of the array");
                     LiveUnit.Assert.areEqual(0, arr.length, "making sure that the array length is not changed");
 
                 }
             }
-            this.testAddingElementsUsingSpliceWithProxy = function () {
+            testAddingElementsUsingSpliceWithProxy() {
                 var options = [{ proxy: true }, { proxy: true, binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -1616,11 +1651,11 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(verifyListContent(list, arr), "adding elements more than the length of the array");
 
                     list.splice(0, 0, false, "", null, NaN);
-                    LiveUnit.Assert.isTrue(verifyListContent(list, [false, "", null, NaN, undefined, "first", 10, 1, 2, 3, 4, 100, 200, 5, -1, 0], "1"), "adding falsy elements to the beginign of the array");
-                    LiveUnit.Assert.isTrue(verifyListContent(list, arr, "1"), "adding elements more than the length of the array");
+                    LiveUnit.Assert.isTrue(verifyListContent(list, [false, "", null, NaN, undefined, "first", 10, 1, 2, 3, 4, 100, 200, 5, -1, 0], true), "adding falsy elements to the beginign of the array");
+                    LiveUnit.Assert.isTrue(verifyListContent(list, arr, true), "adding elements more than the length of the array");
                 }
             }
-            this.testMove1 = function () {
+            testMove1() {
                 var list = new List();
                 list.push(1);
                 list.push(2);
@@ -1634,7 +1669,7 @@ var Tests = Tests || {};
                 var x = list.indexOf(1);  //expected list.length - 1
                 LiveUnit.Assert.areEqual(0, x, "element should have moved to the end of the list");
             }
-            this.testMoveWithProxy = function () {
+            testMoveWithProxy() {
                 var arr = [1, 2, 3, 4];
                 var list = new List(arr, { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1645,7 +1680,7 @@ var Tests = Tests || {};
                 var x = list.indexOf(1);
                 LiveUnit.Assert.areEqual(0, x, "element should have moved to the end of the list");
             }
-            this.testMove3 = function () {
+            testMove3() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
                 var list = new List(arr, { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1661,7 +1696,7 @@ var Tests = Tests || {};
                 var x = list.indexOf(1);  //expected === 3
                 LiveUnit.Assert.areEqual(3, x, "incorrect value due to the move function")
             }
-            this.testMoveNonExistingToNonExisting = function () {
+            testMoveNonExistingToNonExisting() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
                 var list = new List(arr, { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1672,7 +1707,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
             }
 
-            this.testMoveObjects = function () {
+            testMoveObjects() {
                 var arr = createAnArrayOfObjects(10);
                 var list = new List(arr, { proxy: true });
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1683,7 +1718,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(0, list.getAt(5).a, "Wrong element at index 0");
 
             }
-            this.testMoveObjectsWithoutProxy = function () {
+            testMoveObjectsWithoutProxy() {
                 var arr = createAnArrayOfObjects(10);
                 var list = new List(arr);
                 LiveUnit.Assert.isTrue(verifyListContent(list, arr));
@@ -1695,7 +1730,7 @@ var Tests = Tests || {};
 
             }
 
-            this.testGetAtWithBindingAndProxy = function () {
+            testGetAtWithBindingAndProxy() {
                 var arr = [{ a: "zero" }, { a: "one" }, { a: "two" }, { a: "three" }, { a: "four" }];
                 var list = new List(arr, { binding: true, proxy: true });
 
@@ -1712,7 +1747,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual("newElement", list.getAt(5).a, "element should have changed");
                 LiveUnit.Assert.areEqual("newElement", arr[5].a, "element should have changed");
             }
-            this.testGetAtWithBindingAndNoProxy = function () {
+            testGetAtWithBindingAndNoProxy() {
 
                 var arr = [{ a: "zero" }, { a: "one" }, { a: "two" }, { a: "three" }, { a: "four" }];
                 var list = new List(arr, { binding: true });
@@ -1732,8 +1767,8 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(undefined, arr[5], "element should not exist in the array");
             }
 
-            this.testGroupingGroups = function () {
-                var list = new WinJS.Binding.List();
+            testGroupingGroups() {
+                var list = new WinJS.Binding.List<number>();
                 for (var i = 0; i < 100; i++) {
                     list.push(i);
                 }
@@ -1751,9 +1786,9 @@ var Tests = Tests || {};
 
         };
 
-        Tests.ListProxy = function () {
+        export class ListProxy {
 
-            this.testSparse = function () {
+            testSparse() {
                 var data = [1, , 2];
                 var exception;
                 try {
@@ -1764,7 +1799,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isNotNull(exception);
             }
 
-            this.testBasic = function () {
+            testBasic() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1775,9 +1810,9 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(3, list.getAt(2));
                 listener.assertSameAsArray([1, 2, 3]);
                 listener.assertSameAsArray(data);
-            };
+            }
 
-            this.testPush = function () {
+            testPush() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1794,9 +1829,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([1, 2, 3, 4]);
                 listener.assertSameAsArray(data);
                 LiveUnit.Assert.areEqual(4, list.length);
-            };
+            }
 
-            this.testPop = function () {
+            testPop() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1811,9 +1846,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([]);
                 listener.assertSameAsArray(data);
                 LiveUnit.Assert.areEqual(0, list.length);
-            };
+            }
 
-            this.testUnshift = function () {
+            testUnshift() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1830,9 +1865,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([3, 4, 2, 1]);
                 listener.assertSameAsArray(data);
                 LiveUnit.Assert.areEqual(4, list.length);
-            };
+            }
 
-            this.testShift = function () {
+            testShift() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1847,9 +1882,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([]);
                 listener.assertSameAsArray(data);
                 LiveUnit.Assert.areEqual(0, list.length);
-            };
+            }
 
-            this.testReverse = function () {
+            testReverse() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1868,9 +1903,9 @@ var Tests = Tests || {};
                 list.reverse();
                 listener.assertSameAsArray([4, 3, 2, 1]);
                 listener.assertSameAsArray(data);
-            };
+            }
 
-            this.testSort = function () {
+            testSort() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1895,9 +1930,9 @@ var Tests = Tests || {};
                 list.sort();
                 listener.assertSameAsArray([1, 2, 3, 5]);
                 listener.assertSameAsArray(data);
-            };
+            }
 
-            this.testSplice = function () {
+            testSplice() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1916,9 +1951,9 @@ var Tests = Tests || {};
                 list.splice(10, 0, 9, 10);
                 listener.assertSameAsArray([2, 7, 8, 3, 4, 1, 9, 10]);
                 listener.assertSameAsArray(data);
-            };
+            }
 
-            this.testConcat = function () {
+            testConcat() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1936,9 +1971,9 @@ var Tests = Tests || {};
                 var result2 = list.concat([6, 7]);
                 assertSequenceEquals([6, 7], result2);
                 assertSequenceEquals([], list.concat());
-            };
+            }
 
-            this.testJoin = function () {
+            testJoin() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1949,7 +1984,6 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual("1, 2, 3", list.join(", "));
                 LiveUnit.Assert.areEqual("1,2,3", list.join());
                 LiveUnit.Assert.areEqual("11213", list.join("1"));
-                LiveUnit.Assert.areEqual("11213", list.join(1));
                 LiveUnit.Assert.areEqual("1---2---3", list.join("---"));
                 list.length = 0;
                 listener.assertSameAsArray([]);
@@ -1957,11 +1991,10 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual("", list.join(","));
                 LiveUnit.Assert.areEqual("", list.join());
                 LiveUnit.Assert.areEqual("", list.join("1"));
-                LiveUnit.Assert.areEqual("", list.join(1));
                 LiveUnit.Assert.areEqual("", list.join("---"));
-            };
+            }
 
-            this.testSlice = function () {
+            testSlice() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -1987,9 +2020,9 @@ var Tests = Tests || {};
                 assertSequenceEquals([], list.slice(-6, -8));
                 assertSequenceEquals([1, 2], list.slice(0, 2));
                 assertSequenceEquals([2], list.slice(1, 2));
-            };
+            }
 
-            this.testIndexOf = function () {
+            testIndexOf() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2005,9 +2038,9 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(1, list.indexOf(2));
                 LiveUnit.Assert.areEqual(-1, list.indexOf(5));
                 LiveUnit.Assert.areEqual(3, list.indexOf(2, 2));
-            };
+            }
 
-            this.testLastIndexOf = function () {
+            testLastIndexOf() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2024,16 +2057,16 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(3, list.lastIndexOf(2));
                 LiveUnit.Assert.areEqual(-1, list.lastIndexOf(5));
                 LiveUnit.Assert.areEqual(1, list.lastIndexOf(2, 2));
-            };
+            }
 
-            this.testFilterNotify = function (complete) {
+            testFilterNotify(complete) {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
                 var filtered = list.createFiltered(function (item) { return typeof item === "number"; });
                 var filteredListener = new ListListener(filtered);
 
-                WinJS.Promise.as().then(function () {
+                WinJS.Promise.wrap().then(function () {
                     list.push(1, 2, 3);
                     listener.assertSameAsArray([1, 2, 3]);
                     listener.assertSameAsArray(data);
@@ -2085,9 +2118,9 @@ var Tests = Tests || {};
                     listener.assertSameAsArray(data);
                     filteredListener.assertSameAsArray([0, 0.5, 56]);
                 }).then(post).then(null, errorHandler).then(complete);
-            };
+            }
 
-            this.testFilter = function () {
+            testFilter() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2125,9 +2158,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([0, "begin", 0.5, 56]);
                 listener.assertSameAsArray(data);
                 filteredListener.assertSameAsArray([0, 0.5, 56]);
-            };
+            }
 
-            this.testFilter2 = function () {
+            testFilter2() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2165,9 +2198,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([0, "begin", 0.5, 56]);
                 listener.assertSameAsArray(data);
                 filteredListener.assertSameAsArray([0]);
-            };
+            }
 
-            this.testForEach = function () {
+            testForEach() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2183,11 +2216,11 @@ var Tests = Tests || {};
                     pos++;
                 });
                 LiveUnit.Assert.areEqual(pos, a.length);
-            };
+            }
 
             // @TODO, test that the thisObject parameter is used correctly
             // @TODO, test that the callback arguments are passed correctly
-            this.testEvery = function () {
+            testEvery() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2217,9 +2250,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray(["hello", 7]);
                 listener.assertSameAsArray(data);
                 LiveUnit.Assert.isFalse(list.every(function (item) { return typeof item === "number"; }));
-            };
+            }
 
-            this.testMap = function () {
+            testMap() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2228,11 +2261,11 @@ var Tests = Tests || {};
                 listener.assertSameAsArray(data);
                 var result = list.map(function (item) { return item * 2; });
                 assertSequenceEquals([2, 4, 6], result);
-            };
+            }
 
             // @TODO, test that the thisObject parameter is used correctly
             // @TODO, test that the callback arguments are passed correctly
-            this.testSome = function () {
+            testSome() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2260,9 +2293,9 @@ var Tests = Tests || {};
                 var count = 0;
                 LiveUnit.Assert.isTrue(list.some(function (item) { count++; return typeof item === "number"; }));
                 LiveUnit.Assert.areEqual(2, count);
-            };
+            }
 
-            this.testReduce = function () {
+            testReduce() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2270,9 +2303,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray(["Hello ", "my ", "friend "]);
                 listener.assertSameAsArray(data);
                 LiveUnit.Assert.areEqual("Hello my friend ", list.reduce(function (n, m) { return n + m; }, ""));
-            };
+            }
 
-            this.testReduceRight = function () {
+            testReduceRight() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2280,9 +2313,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray(["Hello ", "my ", "friend "]);
                 listener.assertSameAsArray(data);
                 LiveUnit.Assert.areEqual("friend my Hello ", list.reduceRight(function (n, m) { return n + m; }, ""));
-            };
+            }
 
-            this.testGrouped = function () {
+            testGrouped() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2317,9 +2350,9 @@ var Tests = Tests || {};
                 listener.assertSameAsArray(data);
                 groupedListener.assertSameAsArray([2, 1, 5, 3]);
                 groupsListener.assertSameAsArray(["even", "odd"]);
-            };
+            }
 
-            this.testLength = function () {
+            testLength() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2349,9 +2382,9 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(1, list.length);
                 listener.assertSameAsArray([1]);
                 listener.assertSameAsArray(data);
-            };
+            }
 
-            this.testSet = function () {
+            testSet() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2373,9 +2406,9 @@ var Tests = Tests || {};
                 list.setAt(2, 6);
                 listener.assertSameAsArray([3, 2, 6, 5]);
                 listener.assertSameAsArray(data);
-            };
+            }
 
-            this.testMove = function () {
+            testMove() {
                 var data = [];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2385,9 +2418,9 @@ var Tests = Tests || {};
                 list.move(0, 1);
                 listener.assertSameAsArray([2, 1, 3]);
                 listener.assertSameAsArray(data);
-            };
+            }
 
-            this.testInitializeWithData = function () {
+            testInitializeWithData() {
                 var data = [1, 2, 3];
                 var list = new List(data, { proxy: true });
                 var listener = new ListListener(list);
@@ -2399,21 +2432,21 @@ var Tests = Tests || {};
                 list.setAt(0, 5);
                 listener.assertSameAsArray([5, 2, 3, 4]);
                 listener.assertSameAsArray(data);
-            };
+            }
 
-            this.indexOfKeyOnEmptyList = function () {
+            testIndexOfKeyOnEmptyList() {
                 var list = new List();
-                LiveUnit.Assert.areEqual(-1, this.indexOf("2"));
-            };
-            this.testListBaseFilter = function () {
+                LiveUnit.Assert.areEqual(-1, list.indexOf("2"));
+            }
+            testListBaseFilter = function () {
 
                 var options = [undefined, { binding: true }, { proxy: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var arr = [1, "string1", 2, "string2", 3, 4, 5, "string3"];
 
-                    var list = new List(arr, options[i]);
+                    var list = new List<any>(arr, options[i]);
                     var even = list.filter(function (n) { return n % 2 === 0 });
-                    var odd = list.filter(function (n) { return n % 2 });
+                    var odd = list.filter(function (n) { return n % 2 === 1});
                     var string = list.filter(function (n) { return typeof n === "string"; });
                     var undefinedArr = list.filter(function (n) { return n === undefined });
 
@@ -2435,10 +2468,10 @@ var Tests = Tests || {};
             }
         };
 
-        Tests.ListProjections = function () {
+        export class ListProjections {
 
-            this.testPopFromEmptyGrouped = function () {
-                var list = new List();
+            testPopFromEmptyGrouped() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 var grouped = list.createGrouped(
                     function (num) {
@@ -2455,10 +2488,10 @@ var Tests = Tests || {};
                 var groupedListener = new ListListener(grouped);
                 var groupsListener = new ListListener(grouped.groups);
                 list.pop();
-            };
+            }
 
-            this.testDispose = function () {
-                var list = new List();
+            testDispose() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 var sorted = list.createSorted(function (l, r) { return l - r; });
                 var sortedListener = new ListListener(sorted);
@@ -2478,10 +2511,10 @@ var Tests = Tests || {};
                 list.splice(3, 0, 8);
                 sortedListener.assertSameAsArray([]);
                 reverseListener.assertSameAsArray([8, 7, 6, 5, 4, 3, 2, 1]);
-            };
+            }
 
-            this.testSorted = function () {
-                var list = new List();
+            testSorted() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 var sorted = list.createSorted(function (l, r) { return l - r; });
                 var sortedListener = new ListListener(sorted);
@@ -2494,20 +2527,20 @@ var Tests = Tests || {};
                 list.splice(3, 0, 7);
                 sortedListener.assertSameAsArray([1, 2, 3, 4, 5, 6, 7]);
                 reverseListener.assertSameAsArray([7, 6, 5, 4, 3, 2, 1]);
-            };
+            }
 
-            this.testSortedSimple = function () {
-                var list = new List();
+            testSortedSimple() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 var sorted = list.createSorted(function (l, r) { return l - r; });
                 var sortedListener = new ListListener(sorted);
                 list.push(1, 3, 2);
                 listener.assertSameAsArray([1, 3, 2]);
                 sortedListener.assertSameAsArray([1, 2, 3]);
-            };
+            }
 
-            this.testSortedAtCreation = function () {
-                var list = new List([1, 3, 4, 2, 6, 5]);
+            testSortedAtCreation() {
+                var list = new List<number>([1, 3, 4, 2, 6, 5]);
                 var listener = new ListListener(list);
                 var sorted = list.createSorted(function (l, r) { return l - r; });
                 var sortedListener = new ListListener(sorted);
@@ -2516,10 +2549,10 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([1, 3, 4, 2, 6, 5]);
                 sortedListener.assertSameAsArray([1, 2, 3, 4, 5, 6]);
                 reverseListener.assertSameAsArray([6, 5, 4, 3, 2, 1]);
-            };
+            }
 
-            this.testSortedRemove = function () {
-                var list = new List();
+            testSortedRemove() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 var sorted = list.createSorted(function (l, r) { return l - r; });
                 var sortedListener = new ListListener(sorted);
@@ -2534,10 +2567,10 @@ var Tests = Tests || {};
                 list.splice(0, 1);
                 listener.assertSameAsArray([3]);
                 sortedListener.assertSameAsArray([3]);
-            };
+            }
 
-            this.testGrouped = function () {
-                var list = new List();
+            testGrouped() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 var grouped = list.createGrouped(
                     function (num) {
@@ -2566,10 +2599,10 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([1, 5, 3, 2]);
                 groupedListener.assertSameAsArray([2, 1, 5, 3]);
                 groupsListener.assertSameAsArray(["even", "odd"]);
-            };
+            }
 
-            this.testGroupSorted = function () {
-                var list = new List();
+            testGroupSorted() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 var grouped = list.createGrouped(
                     function (num) {
@@ -2604,7 +2637,7 @@ var Tests = Tests || {};
                 groupsListener.assertSameAsArray(["odd", "even"]);
             }
 
-            this.testFilter = function () {
+            testFilter() {
                 var list = new List();
                 var listener = new ListListener(list);
                 var filtered = list.createFiltered(function (item) { return typeof item === "number"; });
@@ -2633,9 +2666,9 @@ var Tests = Tests || {};
                 list.setAt(3, 56);
                 listener.assertSameAsArray([0, "begin", 0.5, 56]);
                 filteredListener.assertSameAsArray([0, 0.5, 56]);
-            };
+            }
 
-            this.testFilter2 = function () {
+            testFilter2() {
                 var list = new List();
                 var listener = new ListListener(list);
                 var filtered = list.createFiltered(function (item) { return item.toString().length === 1; });
@@ -2667,10 +2700,10 @@ var Tests = Tests || {};
                 list.splice(0, 1);
                 listener.assertSameAsArray(["begin", 0.5, 56]);
                 filteredListener.assertSameAsArray([]);
-            };
+            }
 
-            this.testBindingIntegrationFilter = function (complete) {
-                var list = new List(null, { binding: true });
+            testBindingIntegrationFilter(complete) {
+                var list = new List<any>(null, { binding: true });
                 list.push({ a: 1 });
                 var item = list.getItem(0);
                 item.data.bind("a", function () {
@@ -2703,16 +2736,16 @@ var Tests = Tests || {};
                     })
                     .then(null, errorHandler)
                     .then(complete);
-            };
+            }
 
-            this.testManualBindingIntegrationFilter = function (complete) {
-                var list = new List();
+            testManualBindingIntegrationFilter(complete) {
+                var list = new List<{a:any}>();
                 var filtered = list.createFiltered(function (o) { return typeof o.a === "number"; });
                 var listListener = new ListListener(list);
                 var filteredListener = new ListListener(filtered);
                 list.push({ a: 1 });
 
-                WinJS.Promise.as().
+                WinJS.Promise.wrap().
                     then(post).then(function () {
                         listListener.assertLengthChangedCount(2);
                         filteredListener.assertLengthChangedCount(2);
@@ -2740,10 +2773,10 @@ var Tests = Tests || {};
                         LiveUnit.Assert.areEqual(1, list.length);
                         LiveUnit.Assert.areEqual(0, filtered.length);
                     }).then(null, errorHandler).then(complete);
-            };
+            }
 
-            this.testChangedFilter = function () {
-                var list = new List();
+            testChangedFilter() {
+                var list = new List<{a:any}>();
                 list.push({ a: 1 });
 
                 var filtered = list.createFiltered(function (o) { return typeof o.a === "number"; });
@@ -2763,9 +2796,9 @@ var Tests = Tests || {};
                 list.notifyMutated(0);
                 LiveUnit.Assert.areEqual(1, list.length);
                 LiveUnit.Assert.areEqual(0, filtered.length);
-            };
+            }
 
-            this.testMovedFilter = function () {
+            testMovedFilter() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(0, 1, 2);
@@ -2776,14 +2809,14 @@ var Tests = Tests || {};
                 list.move(0, 1);
                 listener.assertSameAsArray([1, 0, 2]);
                 filteredListener.assertSameAsArray([1, 0, 2]);
-            };
+            }
 
             // This is a bit of a problem for grouping because we don't know what the old
             //  group key was. Maybe grouping just shouldn't support mutation, or at least
             //  not mutation that changes the group of something?
             //
-            this.testManualBindingIntegrationGrouped = function () {
-                var list = new List();
+            testManualBindingIntegrationGrouped() {
+                var list = new List<{a:any}>();
                 list.push({ a: 1 });
 
                 var grouped = list.createGrouped(
@@ -2808,10 +2841,10 @@ var Tests = Tests || {};
                 grouped.getAt(0).a = "another string";
                 list.notifyMutated(0);
                 groupsListener.assertSameAsArray(["string"]);
-            };
+            }
 
-            this.testChangedGrouped = function () {
-                var list = new List();
+            testChangedGrouped() {
+                var list = new List<{a:any}>();
                 list.push({ a: 1 });
 
                 var grouped = list.createGrouped(
@@ -2833,10 +2866,10 @@ var Tests = Tests || {};
 
                 grouped.setAt(0, { a: "another string" });
                 groupsListener.assertSameAsArray(["string"]);
-            };
+            }
 
-            this.testChangedGroupedWithoutChangingGroups = function () {
-                var list = new List();
+            testChangedGroupedWithoutChangingGroups() {
+                var list = new List<{a:any}>();
                 list.push({ a: 1 });
 
                 var grouped = list.createGrouped(
@@ -2858,9 +2891,9 @@ var Tests = Tests || {};
 
                 grouped.setAt(0, { a: "another string" });
                 groupsListener.assertSameAsArray(["another string"]);
-            };
+            }
 
-            this.testMovedGrouped = function () {
+            testMovedGrouped() {
                 var list = new List();
                 var listener = new ListListener(list);
                 list.push(0, 1, 2);
@@ -2881,10 +2914,10 @@ var Tests = Tests || {};
                 listener.assertSameAsArray([1, 0, 2]);
                 groupedListener.assertSameAsArray([1, 0, 2]);
                 groupsListener.assertSameAsArray(["number"]);
-            };
+            }
 
-            this.testManualBindingIntegrationSorted = function () {
-                var list = new List();
+            testManualBindingIntegrationSorted() {
+                var list = new List<{a:number}>();
                 list.push({ a: 1 }, { a: 2 });
 
                 var sorted = list.createSorted(function (l, r) { return r.a - l.a; });
@@ -2906,10 +2939,10 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(list.getAt(1) === sorted.getAt(0));
                 LiveUnit.Assert.areEqual(0, sorted.getAt(1).a);
                 LiveUnit.Assert.isTrue(list.getAt(0) === sorted.getAt(1));
-            };
+            }
 
-            this.testChangedSorted = function () {
-                var list = new List();
+            testChangedSorted() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 list.push(2, 1, 3);
                 var sorted = list.createSorted(function (l, r) { return r - l; });
@@ -2925,10 +2958,10 @@ var Tests = Tests || {};
                 sorted.setAt(0, 2);
                 listener.assertSameAsArray([2, 1, 3]);
                 sortedListener.assertSameAsArray([3, 2, 1]);
-            };
+            }
 
-            this.testMovedSorted = function () {
-                var list = new List();
+            testMovedSorted() {
+                var list = new List<number>();
                 var listener = new ListListener(list);
                 list.push(0, 1, 2);
                 var sorted = list.createSorted(function (l, r) { return r - l; });
@@ -2938,9 +2971,9 @@ var Tests = Tests || {};
                 list.move(0, 1);
                 listener.assertSameAsArray([1, 0, 2]);
                 sortedListener.assertSameAsArray([2, 1, 0]);
-            };
+            }
 
-            this.testBindingWithSortedProjection = function () {
+            testBindingWithSortedProjection() {
 
                 var data = [{ a: 1, b: 2 }, { a: 2, b: 3 }, { a: -1, b: 3 }, { a: 0, b: 4 }];
                 var list = new List(data, { binding: true });
@@ -2962,16 +2995,16 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifySorted([0, 1, 2, 4]), "sorting is not correct");
                 sorted.push({ a: 0, b: 3 });
                 LiveUnit.Assert.isTrue(verifySorted([0, 0, 1, 2, 4]), "sorting is not correct");
-                LiveUnit.Assert.areEqual(3, sorted.getAt(0).b, "incorrect placement of an element");
+                LiveUnit.Assert.areEqual(4, sorted.getAt(0).b, "incorrect placement of an element");
             }
-            this.testPushInFilteredList = function () {
+            testPushInFilteredList() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
-                var list = new List(data);
+                var list = new List<number>(data);
                 var listener = new ListListener(list);
 
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
                 var eListener = new ListListener(evenFiltered);
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var oListener = new ListListener(oddFiltered);
 
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
@@ -2997,12 +3030,12 @@ var Tests = Tests || {};
                 negativeOddFiltered.push(0, -20, 21, 20, -21);
                 noListener.assertSameAsArray([-1, -3, -5, -21]);
             }
-            this.testListFilter = function () {
+            testListFilter() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
 
                 LiveUnit.Assert.areEqual(12, list.length, "list lenght is not correct");
                 LiveUnit.Assert.areEqual(6, evenFiltered.length, "list lenght is not correct");
@@ -3101,13 +3134,13 @@ var Tests = Tests || {};
                 poListener.assertSameAsArray([1, 3, 5, 101, 21, 23, 25, 27, 27]);
                 noListener.assertSameAsArray([-5, -101, -21, -23, -25, -27]);
 
-            };
-            this.testListFilterSetAt = function () {
+            }
+            testListFilterSetAt() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3144,12 +3177,12 @@ var Tests = Tests || {};
                 poListener.assertSameAsArray([101, 3, 1, 3, 201]);
                 noListener.assertSameAsArray([-3, -5]);
             }
-            this.testSpliceDifferentScenariosFilteredProjection = function () {
+            testSpliceDifferentScenariosFilteredProjection() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3196,12 +3229,12 @@ var Tests = Tests || {};
                 noListener.assertSameAsArray([-3, -5]);
 
             }
-            this.testFilteredListInvalidScenarios = function () {
+            testFilteredListInvalidScenarios() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3232,12 +3265,12 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(undefined, list.getItem(list.length), "testing Invalid value");
             }
 
-            this.testFilterIndexOfKey = function () {
+            testFilterIndexOfKey() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3260,7 +3293,7 @@ var Tests = Tests || {};
 
                 for (var i = 0; i < list.length; i++) {
 
-                    LiveUnit.Assert.areEqual(i, list.indexOfKey(i), "wrong index of key");
+                    LiveUnit.Assert.areEqual(i, list.indexOfKey(i.toString()), "wrong index of key");
                 }
                 var obj = [evenFiltered, oddFiltered, positiveEvenFiltered, negativeEvenFiltered, positiveOddFiltered, negativeOddFiltered];
                 for (var i = 0; i < obj.length; i++) {
@@ -3279,12 +3312,12 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(count, obj[i].length, "All keys are not tested correctly");
                 }
             }
-            this.testFilteredListGetItem = function () {
+            testFilteredListGetItem() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3305,7 +3338,7 @@ var Tests = Tests || {};
                 poListener.assertSameAsArray([1, 3, 5]);
                 noListener.assertSameAsArray([-1, -3, -5]);
 
-                var obj = [list, evenFiltered, oddFiltered, positiveEvenFiltered, negativeEvenFiltered, positiveOddFiltered, negativeOddFiltered];
+                var obj:any[] = [list, evenFiltered, oddFiltered, positiveEvenFiltered, negativeEvenFiltered, positiveOddFiltered, negativeOddFiltered];
                 for (var i = 0; i < obj.length; i++) {
                     for (var j = 0; j < obj[i].length; j++) {
                         LiveUnit.Assert.areEqual(obj[i].getAt(j), obj[i].getItem(j).data, "testing getItem");
@@ -3313,12 +3346,12 @@ var Tests = Tests || {};
                 }
 
             }
-            this.testListFilterDispose = function () {
+            testListFilterDispose() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3356,7 +3389,7 @@ var Tests = Tests || {};
                 noListener.assertSameAsArray([]);
             }
 
-            this.testListFilterWithProxy = function () {
+            testListFilterWithProxy() {
                 var options = [undefined, { proxy: true }];
                 var data = [-2, -4, 0, 2, 4, 6, -1, -3, -5, 1, 3, 5];
 
@@ -3364,7 +3397,7 @@ var Tests = Tests || {};
                     var list = new List(data, options[i]);
                     var listener = new ListListener(list);
                     var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                    var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                    var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                     var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                     var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                     var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3394,8 +3427,8 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testFilterWithMutationOfFilterProperty = function () {
-                var list = new WinJS.Binding.List();
+            testFilterWithMutationOfFilterProperty() {
+                var list = new List<{value:string}>();
                 var sorted = list.createSorted(function (l, r) {
                     return l.value.localeCompare(r.value);
                 });
@@ -3428,12 +3461,12 @@ var Tests = Tests || {};
                 filteredListener.assertSameAsArray([{ value: "b22" }, { value: "b44" }, { value: "b55" }, { value: "b99" }]);
             }
 
-            this.testMoveElementsToEndOfListInFilteredProjection = function () {
+            testMoveElementsToEndOfListInFilteredProjection() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3460,13 +3493,13 @@ var Tests = Tests || {};
                 poListener.assertSameAsArray([1, 3, 5]);
                 noListener.assertSameAsArray([-3, -5, -1]);
             }
-            this.testMoveElementFilteredProjection = function () {
+            testMoveElementFilteredProjection() {
 
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3493,13 +3526,13 @@ var Tests = Tests || {};
                 noListener.assertSameAsArray([-3, -5, -1]);
 
             }
-            this.testMoveElementstoBeginingInFilteredProjection = function () {
+            testMoveElementstoBeginingInFilteredProjection() {
 
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3538,13 +3571,13 @@ var Tests = Tests || {};
                 poListener.assertSameAsArray([3, 5, 1]);
                 noListener.assertSameAsArray([-5, -3, -1]);
             }
-            this.testListFilterMutationScenarios = function () {
+            testListFilterMutationScenarios() {
 
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3590,7 +3623,7 @@ var Tests = Tests || {};
                 oListener.assertSameAsArray([23, -21, -3, 1, 3, 5, 7, -1]);
                 poListener.assertSameAsArray([23, 1, 3, 5, 7]);
                 noListener.assertSameAsArray([-21, -3, -1]);
-                var reverse = function (value, index) { oddFiltered.setAt(index, -value); }
+                var reverse = function(value, index) { oddFiltered.setAt(index, -value); }
                 oddFiltered.forEach(reverse);
 
                 listener.assertSameAsArray([22, -23, -20, 21, -2, 3, -4, -1, 2, -3, 4, -5, 6, -7, 1, 0]);
@@ -3601,8 +3634,8 @@ var Tests = Tests || {};
                 noListener.assertSameAsArray([-23, -1, -3, -5, -7]);
                 poListener.assertSameAsArray([21, 3, 1]);
 
-            };
-            this.testListFilterSplice = function () {
+            }
+            testListFilterSplice() {
 
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var result = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
@@ -3610,7 +3643,7 @@ var Tests = Tests || {};
 
 
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3643,12 +3676,12 @@ var Tests = Tests || {};
                 noListener.assertSameAsArray([-1, -3, -5]);
 
             }
-            this.testListFilteredPop = function () {
+            testListFilteredPop() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -3679,7 +3712,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(3, positiveOddFiltered.pop(), "pop from pisitve Even filter");
             }
 
-            this.testSortedListProjection = function () {
+            testSortedListProjection() {
 
                 var options = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
@@ -3689,7 +3722,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(verifyListContent(asc, [-4, -1, 0, 1, 2, 3, 7, 10, 12, 56]));
                 }
             }
-            this.testBindingWithSortedProjection = function () {
+            testBindingWithSortedProjection2() {
                 var data = [{ a: 1, b: 2 }, { a: 2, b: 3 }, { a: -1, b: 3 }, { a: 0, b: 4 }];
                 var list = new List(data, { binding: true });
                 var sorted = list.createSorted(function (l, r) { return l.a - r.a; });
@@ -3707,32 +3740,10 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(4, sorted.getAt(0).b, "incorrect placement of an element");
                 LiveUnit.Assert.areEqual(3, sorted.getAt(1).b, "incorrect placement of an element");
             }
-            function verifySortedArr(sorted, arr) {
-
-                for (var i = 0; i < arr.length; i++) {
-                    if (arr[i] !== sorted.getAt(i).a) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            function verifySorted(list, asc) {
-                for (var i = 0; i < list.length - 1; i++) {
-                    if (asc) {
-                        if (list.getAt(i) > list.getAt(i + 1)) {
-                            return false;
-                        }
-                    }
-                    else {
-                        if (list.getAt(i) < list.getAt(i + 1))
-                            return false;
-                    }
-                }
-                return true;
-            }
-            this.testSortedListWithProxy = function () {
-                var data = [{ a: 1, b: 2 }, { a: 2, b: 3 }, { a: -1, b: 3 }, { a: 0, b: 4 }];
-                var list = new List(data, { proxy: true });
+            
+            testSortedListWithProxy() {
+                var data:any = [{ a: 1, b: 2 }, { a: 2, b: 3 }, { a: -1, b: 3 }, { a: 0, b: 4 }];
+                var list = new List<any>(data, { proxy: true });
                 var sorted = list.createSorted(function (l, r) { return l.a - r.a; });
 
                 LiveUnit.Assert.isTrue(verifySortedArr(sorted, [-1, 0, 1, 2]), "sorting is not correct");
@@ -3748,8 +3759,8 @@ var Tests = Tests || {};
             }
 
             //should add more testig for push and pop after fixing the bug
-            this.testBaseMutatorFunctionInSortedProjection = function () {
-                var options = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
+            testBaseMutatorFunctionInSortedProjection = function () {
+                var options:any = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var data = [-2, -1, 3, 4, 0, 10, 2];
                     var list = new List(data, options[i]);
@@ -3781,8 +3792,8 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testBaseMutatorMutationFunctionsInSortedProjection = function () {
-                var options = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
+            testBaseMutatorMutationFunctionsInSortedProjection() {
+                var options:any = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
                 for (var i = 0; i < options.length; i++) {
                     var data = [-2, -1, 3, 4, 0, 10, 2];
                     var list = new List(data, options[i]);
@@ -3817,15 +3828,15 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(13, ascSorted.length, "checking length after unshifting");
 
                     for (var j = 0; j < 13; j++) {
-                        var elem = ascSorted.getAt(j);
+                        var elem = ascSorted.getAt(0);
                         LiveUnit.Assert.areEqual(elem, ascSorted.shift(), "testing shifting in ascending sorting");
                     }
                     LiveUnit.Assert.areEqual(0, descSorted.length, "checking length after unshifting");
                     LiveUnit.Assert.areEqual(0, ascSorted.length, "checking length after unshifting");
                 }
             }
-            this.testDisposeInSortedProjection = function () {
-                var options = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
+            testDisposeInSortedProjection() {
+                var options:any = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
 
@@ -3854,11 +3865,11 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(0, ascSorted.length);
 
                     if (options[i] && options[i].proxy) {
-                        LiveUnit.Assert.isTrue(verifyListContent(list, data, "making sure that the list proxy is working correctly"));
+                        LiveUnit.Assert.isTrue(verifyListContent(list, data, true), "making sure that the list proxy is working correctly");
                     }
                 }
             }
-            this.testGetItemFromSortedProjection = function () {
+            testGetItemFromSortedProjection() {
                 var options = [undefined, { proxy: true }, { binding: true }, { proxy: true, binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -3885,7 +3896,7 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testStableSortAndInsertInSortedProjection = function () {
+            testStableSortAndInsertInSortedProjection() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -3910,7 +3921,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(sortedArr.getAt(2).a === sortedArr.getAt(3).a && sortedArr.getAt(2).b > sortedArr.getAt(3).b);
                 }
             }
-            this.testStableSortAndInsertInSortedProjectionUsingMainList = function () {
+            testStableSortAndInsertInSortedProjectionUsingMainList() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -3935,8 +3946,8 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(sortedArr.getAt(2).a === sortedArr.getAt(3).a && sortedArr.getAt(2).b > sortedArr.getAt(3).b);
                 }
             }
-            this.testMoveInSortedProjection = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testMoveInSortedProjection() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [-1, 0, 1, 2, 3, -2, 10];
@@ -3978,7 +3989,7 @@ var Tests = Tests || {};
                     aSortedListener.assertSameAsArray([-2, -1, 0, 1, 2, 3, 10]);
                     dSortedListener.assertSameAsArray([10, 3, 2, 1, 0, -1, -2]);
                     list.move(0, 100);
-                    LiveUnit.Assert.isTrue(verifySorted(ascSorted, "Asc"), "making sure that the array is still sorted");
+                    LiveUnit.Assert.isTrue(verifySorted(ascSorted, true), "making sure that the array is still sorted");
                     LiveUnit.Assert.isTrue(verifySorted(descSorted), "making sure that the array is still sorted");
                     if (options[i] && options[i].proxy) {
                         LiveUnit.Assert.isTrue(verifyListContent(list, data), "testing splice in ascending list");
@@ -3986,8 +3997,8 @@ var Tests = Tests || {};
 
                 }
             }
-            this.testBaseMutatorMutationFunctionsInSortedProjection = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testBaseMutatorMutationFunctionsInSortedProjection2() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
 
@@ -4023,7 +4034,7 @@ var Tests = Tests || {};
             }
 
             //setAt
-            this.testProjectionFunctionsInSortedProjection = function () {
+            testProjectionFunctionsInSortedProjection() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4052,26 +4063,26 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(-1, ascSorted.indexOf(-100), "checking for non existing element");
 
                     for (j = 0; j < ascSorted.length / 2; j++) {
-                        var key1 = ascSorted._getKey(ascSorted.length - j - 1);
-                        var key2 = ascSorted._getKey(j);
+                        var key1 = (<any>ascSorted)._getKey(ascSorted.length - j - 1);
+                        var key2 = (<any>ascSorted)._getKey(j);
                         var ind1 = ascSorted.indexOfKey(key1);
                         var ind2 = ascSorted.indexOfKey(key2);
                         var elem = ascSorted.getAt(ind1);
                         ascSorted.setAt(ind1, ascSorted.getItemFromKey(key2).data);
                         ascSorted.setAt(ind2, elem);
-                        LiveUnit.Assert.isTrue(verifySorted(ascSorted, "asc"));
+                        LiveUnit.Assert.isTrue(verifySorted(ascSorted, true));
                         LiveUnit.Assert.isTrue(verifySorted(descSorted));
                     }
                 }
             }
 
-            this.testIndexOfKeyInSortedProjection = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testIndexOfKeyInSortedProjection() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
 
 
-                    var list = new List(options[i]);
+                    var list = new List<number>(options[i]);
                     list.push(-1, 0, 1, 2, 3, -2, 10);
 
                     var ascSorted = list.createSorted(function (l, r) { return l - r; });
@@ -4116,7 +4127,7 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testNotifyMutatedInSortedProjection = function () {
+            testNotifyMutatedInSortedProjection() {
 
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
                 for (var i = 0; i < options.length; i++) {
@@ -4142,19 +4153,8 @@ var Tests = Tests || {};
                     LiveUnit.Assert.isTrue(verifySortedArr(descSorted, [10, 3, 2, 1, 0, -4, -5]), "making sure that array is sorted descendingly");
                 }
             }
-            function specialPrime(num) {
-                num = Math.abs(num);
-                if (num === 0 || num === 1) {
-                    return false;
-                }
-                for (var i = 2; i <= Math.sqrt(num) ; i++) {
-                    if (num % i === 0) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            this.testBaseFunctionsInSortedProjection = function () {
+            
+            testBaseFunctionsInSortedProjection() {
 
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
                 for (var i = 0; i < options.length; i++) {
@@ -4177,7 +4177,7 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(asc.join(), ascSorted.join(), "ascending sorting join");
                     LiveUnit.Assert.areEqual(desc.join(), descSorted.join(), "ascending sorting join");
 
-                    var checkLastOrIndexOf = function checkLastOrIndexOf (arr, list, nonExisting, indexOf) {
+                    var checkLastOrIndexOf = function checkLastOrIndexOf (arr, list, nonExisting, indexOf = false) {
                         for (var i = 0; i < arr.length; i++) {
                             if (indexOf) {
                                 if (i !== list.indexOf(arr[i])) {
@@ -4201,8 +4201,8 @@ var Tests = Tests || {};
                     var odd = function odd (num) { return Math.abs(num) % 2 === 1; };
 
 
-                    LiveUnit.Assert.isTrue(checkLastOrIndexOf(asc, ascSorted, 100, 1), "checking index of ascending");
-                    LiveUnit.Assert.isTrue(checkLastOrIndexOf(desc, descSorted, 100, 1), "checking index of descending");
+                    LiveUnit.Assert.isTrue(checkLastOrIndexOf(asc, ascSorted, 100, true), "checking index of ascending");
+                    LiveUnit.Assert.isTrue(checkLastOrIndexOf(desc, descSorted, 100, true), "checking index of descending");
                     LiveUnit.Assert.isTrue(checkLastOrIndexOf(asc, ascSorted, 200), "checking last index of ascending");
                     LiveUnit.Assert.isTrue(checkLastOrIndexOf(desc, descSorted, 200), "checking last index of descending");
 
@@ -4221,7 +4221,7 @@ var Tests = Tests || {};
 
                 }
             }
-            this.testBaseListFunctionsInFilteredProjections = function () {
+            testBaseListFunctionsInFilteredProjections() {
 
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
@@ -4230,14 +4230,14 @@ var Tests = Tests || {};
                     var list = new List(data, options[i]);
 
                     var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                    var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                    var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                     var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                     var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                     var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
                     var negativeOddFiltered = oddFiltered.createFiltered(function (item) { return item < 0; });
 
                     var even = function (num) { return Math.abs(num) % 2 === 0; };
-                    var odd = function (num) { return Math.abs(num) % 2; };
+                    var odd = function (num) { return Math.abs(num) % 2 === 1; };
                     var negative = function (num) { return num < 0; };
                     var positive = function (num) { return num > 0; }
 
@@ -4256,7 +4256,7 @@ var Tests = Tests || {};
                     var addFunction = function addFunction (n, m) { return n + m; };
                     LiveUnit.Assert.areEqual(oddArr.reduce(addFunction), oddFiltered.reduce(addFunction), "check reduce for filteredProjections");
 
-                    var checkLastOrIndexOf = function checkLastOrIndexOf (arr, list, nonExisting, indexOf) {
+                    var checkLastOrIndexOf = function checkLastOrIndexOf (arr, list, nonExisting, indexOf?) {
                         for (var i = 0; i < arr.length; i++) {
                             if (indexOf) {
                                 if (i !== list.indexOf(arr[i])) {
@@ -4281,12 +4281,12 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testGroupedGroupsMainFunctionality = function () {
+            testGroupedGroupsMainFunctionality() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [7, 2, -1, 0, 1, -3, 101, 253, -11];
-                    var list = new List(data, options[i]);
+                    var list = new List<any>(data, options[i]);
 
                     var listener = new ListListener(list);
                     var grouped = list.createGrouped(
@@ -4326,9 +4326,9 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(undefined, grouped.groups.getAt(2), "checking non existing item using getAt");
                     LiveUnit.Assert.areEqual(undefined, grouped.groups.getAt(-1), "checking non existing item using getAt");
                 }
-            };
+            }
             //push
-            this.testGroupSortedPushFunctionality = function () {
+            testGroupSortedPushFunctionality() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4351,7 +4351,7 @@ var Tests = Tests || {};
                 }
             }
             //Stil Missing: unshift, move, getItemFromKey, spliceFromKey, notifyMutated, baseFunctionality
-            this.testGroupSortedSetAt = function () {
+            testGroupSortedSetAt() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4376,12 +4376,12 @@ var Tests = Tests || {};
                     groupedListener.assertSameAsArray([-20, -1, 0, 1, 10, 2, 5, -3, 101]);
                 }
             }
-            this.testShiftGroupSorted = function () {
+            testShiftGroupSorted() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [7, 2, 253, -1, 0, 1, -3, 101, -11];
-                    var list = new List(data, options[i]);
+                    var list = new List<any>(data, options[i]);
 
                     var listener = new ListListener(list);
                     var grouped = list.createGrouped(
@@ -4405,12 +4405,12 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual(undefined, grouped.groups.getAt(1), "making sure that only one group exists");
                 }
             }
-            this.testSpliceGroupSorted = function () {
+            testSpliceGroupSorted() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [7, 2, 253, -1, 0, 1, -3, 101, -11];
-                    var list = new List(data, options[i]);
+                    var list = new List<any>(data, options[i]);
 
                     var listener = new ListListener(list);
                     var grouped = list.createGrouped(
@@ -4456,7 +4456,8 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual("nonPrime", grouped.groups.getAt(0).a, "making sure that one group is created");
                     LiveUnit.Assert.areEqual(undefined, grouped.groups.getAt(1), "making sure that that no second group exists");
                     groupedListener.assertSameAsArray([1]);
-                    LiveUnit.Assert.isTrue(list, [1]);
+                    LiveUnit.Assert.areEqual(list.length, 1);
+                    LiveUnit.Assert.areEqual(list.getAt(0), 1);
 
                     grouped.splice(0, 0, 2);
                     grouped.splice(0, 0, 3);
@@ -4465,11 +4466,15 @@ var Tests = Tests || {};
                     LiveUnit.Assert.areEqual("nonPrime", grouped.groups.getAt(0).a, "making sure that first group is created");
                     LiveUnit.Assert.areEqual("prime", grouped.groups.getAt(1).a, "making sure that that the second group is created");
                     groupedListener.assertSameAsArray([4, 1, 2, 3]);
-                    LiveUnit.Assert.isTrue(list, [2, 3, 4, 1]);
+                    LiveUnit.Assert.areEqual(list.length, 4);
+                    var expected = [2, 3, 4, 1];
+                    list.forEach(function (item, index) {
+                        LiveUnit.Assert.areEqual(expected[index], item);
+                    });
                 }
             }
 
-            this.testGroupSortedPopFunctionality = function () {
+            testGroupSortedPopFunctionality() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4493,7 +4498,7 @@ var Tests = Tests || {};
                     groupedListener.assertSameAsArray([253, -1, 0, 1, 7]);
                 }
             }
-            this.testUnShiftInGroupSortedList = function () {
+            testUnShiftInGroupSortedList() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4528,7 +4533,7 @@ var Tests = Tests || {};
 
                 }
             }
-            this.testMoveInGroupSortedList = function () {
+            testMoveInGroupSortedList() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4562,7 +4567,7 @@ var Tests = Tests || {};
                     groupedListener.assertSameAsArray([-4, -1, 253, 0, 1, 2, 17, 7, -3, -11, 101]);
                 }
             }
-            this.testGetItemFromKeyGroupSortedList = function () {
+            testGetItemFromKeyGroupSortedList() {
                 var options = [undefined, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4599,7 +4604,7 @@ var Tests = Tests || {};
                     checkCorrectness();
                 }
             }
-            this.testBaseFunctionsInSortedProjectionScenarios = function () {
+            testBaseFunctionsInSortedProjectionScenarios() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4618,7 +4623,7 @@ var Tests = Tests || {};
                     groupedListener.assertSameAsArray([253, -1, 0, 1, 7, 2, -3, 101, -11]);
                 }
             }
-            this.testGroupListPushThroughList = function () {
+            testGroupListPushThroughList() {
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
@@ -4641,8 +4646,8 @@ var Tests = Tests || {};
                     groupedListener.assertSameAsArray([253, -1, 0, 1, 4, 7, 2, -3, 101, -11, 17]);
                 }
             }
-            this.testGroupListPopThroughList = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testGroupListPopThroughList() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [7, 2, 253, -1, 0, 1, -3, 101, -11];
@@ -4693,8 +4698,8 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testGroupedProjectionShiftMethodUsingMainList = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testGroupedProjectionShiftMethodUsingMainList() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [7, 2, 253, -1, 0, 1, -3, 101, -11];
@@ -4747,8 +4752,8 @@ var Tests = Tests || {};
                 }
             }
 
-            this.testGroupedProjectionUnShiftMethodUsingMainList = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testGroupedProjectionUnShiftMethodUsingMainList() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [];
@@ -4810,8 +4815,8 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testPushOnSortedListUsingMainList = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testPushOnSortedListUsingMainList() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [-1, 10, 9, -2, 4, 3, 2];
@@ -4835,8 +4840,8 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testPopOnSortedListUsingMainList = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testPopOnSortedListUsingMainList() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [-1, 10, 9, -2, 4, 3, 2];
@@ -4885,8 +4890,8 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testUnshiftOnSortedListUsingMainList = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testUnshiftOnSortedListUsingMainList() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [-1, 10, 9, -2, 4, 3, 2];
@@ -4910,8 +4915,8 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testShiftOnSortedListUsingMainList = function () {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
+            testShiftOnSortedListUsingMainList() {
+                var options:any = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
 
                 for (var i = 0; i < options.length; i++) {
                     var data = [-1, 10, 9, -2, 4, 3, 2];
@@ -4960,7 +4965,7 @@ var Tests = Tests || {};
                     }
                 }
             }
-            this.testCreatingFilteredListOfSortedList = function () {
+            testCreatingFilteredListOfSortedList() {
 
                 function testScenario(options) {
                     var data = [-1, 10, -4, -10, 9, -2, 4, 3, 2];
@@ -5026,14 +5031,9 @@ var Tests = Tests || {};
 
             }
 
-            function testWithDifferentOptions(testFunction) {
-                var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
-                for (var i = 0; i < options.length; i++) {
-                    testFunction(options[i]);
-                }
-            }
+            
 
-            this.testDifferentMutationsOnFiltersOfGroups = function () {
+            testDifferentMutationsOnFiltersOfGroups() {
 
                 function testScenario(options) {
                     var data = [-4, -2, 0, 2, 4, -3, -1, 1, 3, 5, "one", "two", "three", "four"];
@@ -5084,7 +5084,7 @@ var Tests = Tests || {};
                 }
                 testWithDifferentOptions(testScenario);
             }
-            this.testCreateFiltersOutOfGroupedSortedProjection = function () {
+            testCreateFiltersOutOfGroupedSortedProjection() {
 
                 function testScenario(options) {
                     var data = [1, 2, 3, 4, 5, 6, 7, 8, 15, 12];
@@ -5124,7 +5124,7 @@ var Tests = Tests || {};
                 testWithDifferentOptions(testScenario);
             }
 
-            this.testGroupsOfGroups = function () {
+            testGroupsOfGroups() {
                 function testScenario(options) {
                     var data = [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
                     var list = new List(data, options);
@@ -5191,7 +5191,7 @@ var Tests = Tests || {};
                 testWithDifferentOptions(testScenario);
             }
 
-            this.testGroupsOfGroupsMutationThroughMainList = function () {
+            testGroupsOfGroupsMutationThroughMainList() {
                 function testScenario(options) {
                     var data = [-4, -2, 0, 2, 4, -3, -1, 1, 3, 5];
                     var list = new List(data, options);
@@ -5268,7 +5268,7 @@ var Tests = Tests || {};
                 testWithDifferentOptions(testScenario);
             }
 
-            this.testMoveMutationsOnGroupsOfGroups = function () {
+            testMoveMutationsOnGroupsOfGroups() {
                 //Neeed to add more move functions
                 function testScenario(options) {
                     var data = [-4, -2, 0, 2, 4, -3, -1, 1, 3, 5, "one", "two", "three", "four"];
@@ -5319,10 +5319,10 @@ var Tests = Tests || {};
                 testWithDifferentOptions(testScenario);
             }
 
-            this.testUnshiftMutationsOnGroupsOfGroups = function () {
+            testUnshiftMutationsOnGroupsOfGroups() {
                 function testScenario(options) {
                     var data = [-4, -2, 0, 2, 4, -3, -1, 1, 3, 5];
-                    var list = new List(data, options);
+                    var list = new List<any>(data, options);
 
                     var mainGroupSelector = function (num) {
                         if (typeof num === "string") {
@@ -5369,7 +5369,7 @@ var Tests = Tests || {};
                 testWithDifferentOptions(testScenario);
             }
 
-            this.testShiftMutationsOnGroupsOfGroups = function () {
+            testShiftMutationsOnGroupsOfGroups() {
 
                 function testScenario(options) {
                     var data = [-4, -2, 0, 2, 4, -3, -1, 1, 3, 5, "one", "two", "three"];
@@ -5447,7 +5447,7 @@ var Tests = Tests || {};
                 }
                 testWithDifferentOptions(testScenario);
             }
-            this.testSetAtOnGroupsOfGroups = function () {
+            testSetAtOnGroupsOfGroups() {
                 function testScenario(options) {
                     var data = [-4, -2, 0, 2, 4, -3, -1, 1, 3, 5, "one", "two", "three"];
                     var list = new List(data, options);
@@ -5518,14 +5518,14 @@ var Tests = Tests || {};
                 testWithDifferentOptions(testScenario);
             }
 
-            this.testListFilterWithProxyEmptyArray = function () {
+            testListFilterWithProxyEmptyArray() {
 
                 function testScenario(options) {
                     var data = [];
                     var list = new List(data, options);
                     var listener = new ListListener(list);
                     var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                    var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                    var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                     var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                     var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                     var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -5539,11 +5539,11 @@ var Tests = Tests || {};
                 }
                 testWithDifferentOptions(testScenario);
             }
-            this.testBindingInListWithMultipleProjectionsLayer = function (complete) {
+            testBindingInListWithMultipleProjectionsLayer(complete) {
                 var data = [{ index: 3, content: { groupKey: "three" } }, { index: 1, content: { groupKey: "one" } }, { index: 4, content: { groupKey: "four" } },
                     { index: 2, content: { groupKey: "two" } }, { index: 5, content: { groupKey: "five" } }, { index: 6, content: { groupKey: "six" } }];
 
-                var list = new List(data, { binding: true });
+                var list = new List<any>(data, { binding: true });
                 var hit = 0;
                 var sorted = list.createSorted(function (l, r) { return l.index - r.index; });
                 var sortedListener = new ListListener(sorted);
@@ -5586,12 +5586,12 @@ var Tests = Tests || {};
                     .then(null, errorHandler)
                     .then(complete);
             }
-            this.testBindingInListCallingAllListeners = function (complete) {
+            testBindingInListCallingAllListeners(complete) {
 
                 var data = [{ index: 3, content: { groupKey: "three" } }, { index: 1, content: { groupKey: "one" } }, { index: 4, content: { groupKey: "four" } },
                     { index: 2, content: { groupKey: "two" } }, { index: 5, content: { groupKey: "five" } }, { index: 6, content: { groupKey: "six" } }];
 
-                var list = new List(data, { binding: true });
+                var list = new List<any>(data, { binding: true });
                 var hit = 0;
                 var sorted = list.createSorted(function (l, r) { return l.index - r.index; });
 
@@ -5630,11 +5630,11 @@ var Tests = Tests || {};
                     .then(null, errorHandler)
                     .then(complete);
             }
-            this.testBindingInListCallingAllListenersAndUpdatingAll = function (complete) {
+            testBindingInListCallingAllListenersAndUpdatingAll(complete) {
                 var data = [{ index: 3, content: { groupKey: "three" } }, { index: 1, content: { groupKey: "one" } }, { index: 4, content: { groupKey: "four" } },
                     { index: 2, content: { groupKey: "two" } }, { index: 5, content: { groupKey: "five" } }, { index: 6, content: { groupKey: "six" } }];
 
-                var list = new List(data, { binding: true });
+                var list = new List<any>(data, { binding: true });
                 var hit = 0;
                 var sorted = list.createSorted(function (l, r) { return l.index - r.index; });
 
@@ -5675,13 +5675,13 @@ var Tests = Tests || {};
                 });
             }
 
-            this.testFilteredPop = function () {
+            testFilteredPop() {
 
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
 
 
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
@@ -5704,10 +5704,10 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(5, oddFiltered.pop(), "pop from pisitve Even filter");
                 LiveUnit.Assert.areEqual(3, positiveOddFiltered.pop(), "pop from pisitve Even filter");
             }
-            this.testBindingWithObjectContainingDifferentTypes = function (complete) {
+            testBindingWithObjectContainingDifferentTypes(complete) {
 
                 var data = [{ data: [1, 2, 3, 4] }, { data: new Date() }, { data: 1 }, { data: 3 }];
-                var list = new List(data, { binding: true });
+                var list = new List<any>(data, { binding: true });
 
                 var listener = new ListListener(list);
                 for (var i = 0; i < list.length; i++) {
@@ -5729,10 +5729,10 @@ var Tests = Tests || {};
                     .then(null, errorHandler)
                     .then(complete);
             }
-            this.testSetLengthOfFiltered = function () {
+            testSetLengthOfFiltered() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
-                var filtered = list.createFiltered(function (num) { return (num % 2); });
+                var filtered = list.createFiltered(function (num) { return (num % 2) === 1; });
                 LiveUnit.Assert.areEqual(10, list.length, "testing list.length");
                 LiveUnit.Assert.areEqual(5, filtered.length, "testing filtered.length");
 
@@ -5752,7 +5752,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(filtered, [1, 3]));
 
             }
-            this.testSetLengthOfSortedProjection = function () {
+            testSetLengthOfSortedProjection() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
                 var sorted = list.createSorted(function (l, r) { return r - l; });
@@ -5775,7 +5775,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(sorted, [7, 6]));
 
             }
-            this.testSetLengthOfGroupSortedProjection = function () {
+            testSetLengthOfGroupSortedProjection() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
                 function grouping(num) { return (num % 2 === 0) ? "even" : "odd"; };
@@ -5802,10 +5802,10 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(grouped, [2, 4]));
 
             }
-            this.testSetLengthOfFilteredToZero = function () {
+            testSetLengthOfFilteredToZero() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
-                var filtered = list.createFiltered(function (num) { return (num % 2); });
+                var filtered = list.createFiltered(function (num) { return (num % 2 === 1); });
                 LiveUnit.Assert.areEqual(10, list.length, "testing list.length");
                 LiveUnit.Assert.areEqual(5, filtered.length, "testing filtered.length");
 
@@ -5825,7 +5825,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(filtered, []));
 
             }
-            this.testSetLengthOfSortedProjectionToZero = function () {
+            testSetLengthOfSortedProjectionToZero() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
                 var sorted = list.createSorted(function (l, r) { return r - l; });
@@ -5848,7 +5848,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(sorted, []));
 
             }
-            this.testSetLengthOfGroupSortedProjectionToZero = function () {
+            testSetLengthOfGroupSortedProjectionToZero() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
                 function grouping(num) { return (num % 2 === 0) ? "even" : "odd"; };
@@ -5875,10 +5875,10 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(grouped, []));
 
             }
-            this.testSetLengthOfFilteredToNegative = function () {
+            testSetLengthOfFilteredToNegative() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
-                var filtered = list.createFiltered(function (num) { return (num % 2); });
+                var filtered = list.createFiltered(function (num) { return (num % 2 === 1); });
                 LiveUnit.Assert.areEqual(10, list.length, "testing list.length");
                 LiveUnit.Assert.areEqual(5, filtered.length, "testing filtered.length");
 
@@ -5905,7 +5905,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(filtered, [1, 3, 5, 7]));
 
             }
-            this.testSetLengthOfSortedProjectionToNegative = function () {
+            testSetLengthOfSortedProjectionToNegative() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
                 var sorted = list.createSorted(function (l, r) { return r - l; });
@@ -5934,7 +5934,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(list, [1, 2, 3, 4, 5, 6, 7]));
                 LiveUnit.Assert.isTrue(verifyListContent(sorted, [7, 6, 5, 4, 3, 2, 1]));
             }
-            this.testSetLengthOfGroupSortedProjectionToNegative = function () {
+            testSetLengthOfGroupSortedProjectionToNegative() {
                 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
                 var list = new List(arr);
                 function grouping(num) { return (num % 2 === 0) ? "even" : "odd"; };
@@ -5968,22 +5968,22 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(grouped, [2, 4, 1, 3, 5]));
 
             }
-            this.testSpliceAtGroupSortedInsertInWrongGroup = function () {
+            testSpliceAtGroupSortedInsertInWrongGroup() {
                 var list = new List([1, 2, 3, 4, 5, 6, 7, 8, 9]);
                 var compare = function (num) { return (num % 2 === 0) ? "even" : "odd"; };
                 var sorter = function (l, r) { return l.length - r.length; }
                 var grouped = list.createGrouped(compare, compare, sorter);
                 grouped.splice(0, 0, 4);
 
-                LiveUnit.Assert.isTrue(verifyListContent(list, [1, 3, 5, 7, 9, 4, 2, 4, 6, 8], "making sure element is correctly placed in the group"));
+                LiveUnit.Assert.isTrue(verifyListContent(list, [1, 3, 5, 7, 9, 4, 2, 4, 6, 8], true));
             }
 
-            this.testMoveElementsInFilteredProjection = function () {
+            testMoveElementsInFilteredProjection() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -6004,12 +6004,12 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(positiveOddFiltered, [1, 3, 5]));
             }
 
-            this.testMoveElementsInFilteredProjectionUsingTheMainList = function () {
+            testMoveElementsInFilteredProjectionUsingTheMainList() {
                 var data = [-1, -2, -3, -4, -5, 0, 1, 2, 3, 4, 5, 6];
                 var list = new List(data);
                 var listener = new ListListener(list);
                 var evenFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 0; });
-                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2; });
+                var oddFiltered = list.createFiltered(function (item) { return Math.abs(item) % 2 === 1; });
                 var positiveEvenFiltered = evenFiltered.createFiltered(function (item) { return item > 0; });
                 var negativeEvenFiltered = evenFiltered.createFiltered(function (item) { return item < 0; });
                 var positiveOddFiltered = oddFiltered.createFiltered(function (item) { return item > 0; });
@@ -6030,7 +6030,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.isTrue(verifyListContent(positiveOddFiltered, [1, 3, 5]));
             }
 
-            this.testMutatingGroupedItems = function () {
+            testMutatingGroupedItems() {
                 var fruits = [];
                 fruits.push({ group: { key: "1" }, title: "Banana" });
                 fruits.push({ group: { key: "2" }, title: "Peach" });
@@ -6057,7 +6057,7 @@ var Tests = Tests || {};
 
                 LiveUnit.Assert.areEqual("Blueberry,Banana,Peach,Plum", groupedItems.map(function (item) { return item.title; }).join());
             }
-            this.testBindingAsWithBindingList = function () {
+            testBindingAsWithBindingList() {
                 var obj = {
                     str: 'string',
                     integer: 1,
@@ -6069,7 +6069,7 @@ var Tests = Tests || {};
                 LiveUnit.Assert.areEqual(10, observable.myList.getAt(0), "testing the first element of the list in observable");
                 
             }
-            this.testBindingWithClassDefine = function () {
+            testBindingWithClassDefine() {
                 var someClass = WinJS.Class.define(
                                 function () {
                                     this._list = new WinJS.Binding.List();
@@ -6103,8 +6103,9 @@ var Tests = Tests || {};
             }
         };
 
-        LiveUnit.registerTestClass("Tests.List");
-        LiveUnit.registerTestClass("Tests.ListProxy");
-        LiveUnit.registerTestClass("Tests.ListProjections");
-    }
-}(this));
+      
+}
+
+LiveUnit.registerTestClass("Tests.ListTest");
+LiveUnit.registerTestClass("Tests.ListProxy");
+LiveUnit.registerTestClass("Tests.ListProjections");

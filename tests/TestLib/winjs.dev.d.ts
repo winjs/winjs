@@ -268,4 +268,13 @@ declare module WinJS {
 
         function _animationTimeAdjustment(time:number);
     }
+
+    module Binding {
+        class PrivateList<T> extends List<T> {
+            _getKey(index: number): string;
+            _getFromKey(key: string): T;
+            _spliceFromKey(key: string, howMany: number, ...items: T[]): T[];
+            _notifyMutatedFromKey(key: string);
+        }
+    }
 }
