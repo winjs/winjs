@@ -629,14 +629,11 @@ define([
                 },
                 
                 _updateTabIndices: function ContentDialog_updateTabIndices() {
-                    // TODO: Use a TreeWalker and grab min & max indices in 1 walk
-                    var contentDescendants = this._dom.content.getElementsByTagName("*");
-                    var lowestTabIndex = _ElementUtilities._getLowestTabIndexInList(contentDescendants);
-                    var highestTabIndex = _ElementUtilities._getHighestTabIndexInList(contentDescendants);
-                    this._dom.startBodyTab.tabIndex = lowestTabIndex;
-                    this._dom.commands[0].tabIndex = highestTabIndex;
-                    this._dom.commands[1].tabIndex = highestTabIndex;
-                    this._dom.endBodyTab.tabIndex = highestTabIndex;
+                    var tabIndex = _ElementUtilities._getExtremeTabIndices(this._dom.content);
+                    this._dom.startBodyTab.tabIndex = tabIndex.lowest;
+                    this._dom.commands[0].tabIndex = tabIndex.highest;
+                    this._dom.commands[1].tabIndex = tabIndex.highest;
+                    this._dom.endBodyTab.tabIndex = tabIndex.highest;
                 },
                 
                 _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
