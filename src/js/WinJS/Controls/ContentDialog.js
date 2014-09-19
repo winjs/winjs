@@ -3,6 +3,7 @@ define([
     '../Utilities/_Dispose',
     '../Promise',
     '../_Signal',
+    '../Core/_BaseUtils',
     '../Core/_Global',
     '../Core/_WinRT',
     '../Core/_Base',
@@ -15,7 +16,7 @@ define([
     '../Animations',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function contentDialogInit(_Dispose, Promise, _Signal, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
+    ], function contentDialogInit(_Dispose, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -88,22 +89,9 @@ define([
             // so that the success handler can be skipped when the animation is
             // interrupted.
             function cancelablePromise(animationPromise) {
-                var complete, error, canceled;
-                var p = new Promise(function (c, e) {
-                    complete = c;
-                    error = e;
-                }, function () {
-                    canceled = true;
+                return Promise._cancelBlocker(animationPromise, function () {
                     animationPromise.cancel();
                 });
-                animationPromise.then(function (v) {
-                    if (!canceled) {
-                        complete(v);
-                    }
-                }, function (e) {
-                    error(e);
-                });
-                return p;
             }
             
             function onInputPaneShown(eventObject) {
@@ -541,16 +529,6 @@ define([
                 hidden: {
                     get: function ContentDialog_hidden_get() {
                         return this._state.hidden;
-                    },
-                    set: function ContentDialog_hidden_set(value) {
-                        // TODO:
-                        // - Is it weird that reading hidden immediately after setting it may return a value different than the one you set (for example, show errors, beforehide is canceled).
-                        // - Would we use a value of "none" as the dismissal reason? (since the setter doesn't give you the opportunity to specify)
-                        if (value) {
-                            this.hide(DismissalReasons.none);
-                        } else {
-                            this.show();
-                        }
                     }
                 },
 
@@ -649,13 +627,13 @@ define([
                     dom.commands[1].addEventListener("click", this._onCommandClicked.bind(this, DismissalReasons.secondary));
                 },
                 
-                _updateTabIndices: function ContentDialog_updateTabIndices() {
+                _updateTabIndices: _BaseUtils._throttledFunction(100, function ContentDialog_updateTabIndices() {
                     var tabIndex = _ElementUtilities._getExtremeTabIndices(this._dom.content);
                     this._dom.startBodyTab.tabIndex = tabIndex.lowest;
                     this._dom.commands[0].tabIndex = tabIndex.highest;
                     this._dom.commands[1].tabIndex = tabIndex.highest;
                     this._dom.endBodyTab.tabIndex = tabIndex.highest;
-                },
+                }),
                 
                 _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
                     this._state.onCommandClicked(reason);

@@ -1378,7 +1378,7 @@ define([
                 }
             },
 
-            _cancelBlocker: function Promise__cancelBlocker(input) {
+            _cancelBlocker: function Promise__cancelBlocker(input, oncancel) {
                 //
                 // Returns a promise which on cancelation will still result in downstream cancelation while
                 //  protecting the promise 'input' from being  canceled which has the effect of allowing
@@ -1397,6 +1397,7 @@ define([
                     function () {
                         complete = null;
                         error = null;
+                        oncancel && oncancel();
                     }
                 );
                 input.then(
