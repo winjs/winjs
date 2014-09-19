@@ -621,7 +621,8 @@ define([
                     _ElementUtilities._ensureId(dom.title);
                     dom.body.setAttribute("aria-labelledby", dom.title.id);
                     this._updateTabIndices();
-
+                    
+                    dom.root.addEventListener("keydown", this._onKeyDown.bind(this));
                     _ElementUtilities._addEventListener(dom.startBodyTab, "focusin", this._onStartBodyTabFocusIn.bind(this));
                     _ElementUtilities._addEventListener(dom.endBodyTab, "focusin", this._onEndBodyTabFocusIn.bind(this));
                     dom.commands[0].addEventListener("click", this._onCommandClicked.bind(this, DismissalReasons.primary));
@@ -638,6 +639,12 @@ define([
                 
                 _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
                     this._state.onCommandClicked(reason);
+                },
+                
+                _onKeyDown: function ContentDialog_onKeyDown(eventObject) {
+                    if (eventObject.keyCode === _ElementUtilities.Key.tab) {
+                        this._updateTabIndices();
+                    }
                 },
 
                 _onStartBodyTabFocusIn: function ContentDialog_onStartBodyTabFocusIn() {
