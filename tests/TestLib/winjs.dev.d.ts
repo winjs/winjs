@@ -140,9 +140,9 @@ declare module WinJS {
             hidden: boolean;
             title: string;
             primaryCommandText: string;
-            isPrimaryCommandEnabled: boolean;
+            isPrimaryCommandDisabled: boolean;
             secondaryCommandText: string;
-            isSecondaryCommandEnabled: boolean;
+            isSecondaryCommandDisabled: boolean;
             show(): Promise<ContentDialogHideInfo>;
             hide(reason?: any): void;
             dispose(): void;

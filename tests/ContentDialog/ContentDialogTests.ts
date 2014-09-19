@@ -12,8 +12,8 @@ module WinJSTests {
         title: string;
         primaryCommandText: string;
         secondaryCommandText: string;
-        isPrimaryCommandEnabled: boolean;
-        isSecondaryCommandEnabled: boolean;
+        isPrimaryCommandDisabled: boolean;
+        isSecondaryCommandDisabled: boolean;
     }
     
     enum Position {center, top}
@@ -82,8 +82,8 @@ module WinJSTests {
             title: "",
             primaryCommandText: "",
             secondaryCommandText: "",
-            isPrimaryCommandEnabled: true,
-            isSecondaryCommandEnabled: true
+            isPrimaryCommandDisabled: false,
+            isSecondaryCommandDisabled: false
         };
         var validPropreties = Object.keys(defaultOptions);
         assertValidKeys(providedOptions, validPropreties);
@@ -101,7 +101,7 @@ module WinJSTests {
             "primaryCommand element has unexpected textContent");
         LiveUnit.Assert.areEqual(options.primaryCommandText !== "", isVisible(primaryCommand),
             "primaryCommand element has unexpected visibility");
-        LiveUnit.Assert.areEqual(options.isPrimaryCommandEnabled, !primaryCommand.disabled,
+        LiveUnit.Assert.areEqual(options.isPrimaryCommandDisabled, primaryCommand.disabled,
             "primaryCommand element has unexpected disabled state");
         
         var secondaryCommand = <HTMLButtonElement>dialog.element.querySelector("." + ContentDialog._ClassNames.secondaryCommand);
@@ -111,7 +111,7 @@ module WinJSTests {
             "secondaryCommand element has unexpected textContent");
         LiveUnit.Assert.areEqual(options.secondaryCommandText !== "", isVisible(secondaryCommand),
             "secondaryCommand element has unexpected visibility");
-        LiveUnit.Assert.areEqual(options.isSecondaryCommandEnabled, !secondaryCommand.disabled,
+        LiveUnit.Assert.areEqual(options.isSecondaryCommandDisabled, secondaryCommand.disabled,
             "secondaryCommand element has unexpected disabled state");
     }
     
@@ -241,8 +241,8 @@ module WinJSTests {
                 { title: "A title", primaryCommandText: "Yes!", secondaryCommandText: "Nay" },
                 {
                     title: "A title",
-                    primaryCommandText: "OK", isPrimaryCommandEnabled: false,
-                    secondaryCommandText: "Cancel", isSecondaryCommandEnabled: true
+                    primaryCommandText: "OK", isPrimaryCommandDisabled: true,
+                    secondaryCommandText: "Cancel", isSecondaryCommandDisabled: false
                 }
             ];
             
@@ -269,12 +269,12 @@ module WinJSTests {
                 { title: "My Title" },
                 { title: "" },
                 { primaryCommandText: "Yes!" },
-                { isPrimaryCommandEnabled: false },
-                { isPrimaryCommandEnabled: true },
+                { isPrimaryCommandDisabled: true },
+                { isPrimaryCommandDisabled: false },
                 { primaryCommandText: "" },
                 { secondaryCommandText: "Nay" },
-                { isSecondaryCommandEnabled: false },
-                { isSecondaryCommandEnabled: true },
+                { isSecondaryCommandDisabled: true },
+                { isSecondaryCommandDisabled: false },
                 { secondaryCommandText: "" }
             ];
             

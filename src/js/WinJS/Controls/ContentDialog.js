@@ -432,9 +432,9 @@ define([
                 
                 this.title = "";
                 this.primaryCommandText = "";
-                this.isPrimaryCommandEnabled = true;
+                this.isPrimaryCommandDisabled = false;
                 this.secondaryCommandText = "";
-                this.isSecondaryCommandEnabled = true;
+                this.isSecondaryCommandDisabled = false;
 
                 _Control.setOptions(this, options);
             }, {
@@ -498,34 +498,34 @@ define([
                     }
                 },
                 
-                /// <field type="Boolean" locid="WinJS.UI.ContentDialog.isPrimaryCommandEnabled" helpKeyword="WinJS.UI.ContentDialog.isPrimaryCommandEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.ContentDialog.isPrimaryCommandDisabled" helpKeyword="WinJS.UI.ContentDialog.isPrimaryCommandDisabled">
                 /// Indicates whether the button representing the primary command is currently enabled.
                 /// </field>
-                isPrimaryCommandEnabled: {
-                    get: function ContentDialog_isPrimaryCommandEnabled_get() {
-                        return this._isPrimaryCommandEnabled;
+                isPrimaryCommandDisabled: {
+                    get: function ContentDialog_isPrimaryCommandDisabled_get() {
+                        return this._isPrimaryCommandDisabled;
                     },
-                    set: function ContentDialog_isPrimaryCommandEnabled_set(value) {
+                    set: function ContentDialog_isPrimaryCommandDisabled_set(value) {
                         value = !!value;
-                        if (this._isPrimaryCommandEnabled !== value) {
-                            this._isPrimaryCommandEnabled = value;
-                            this._dom.commands[0].disabled = !value;
+                        if (this._isPrimaryCommandDisabled !== value) {
+                            this._isPrimaryCommandDisabled = value;
+                            this._dom.commands[0].disabled = value;
                         }
                     }
                 },
                 
-                /// <field type="Boolean" locid="WinJS.UI.ContentDialog.isSecondaryCommandEnabled" helpKeyword="WinJS.UI.ContentDialog.isSecondaryCommandEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.ContentDialog.isSecondaryCommandDisabled" helpKeyword="WinJS.UI.ContentDialog.isSecondaryCommandDisabled">
                 /// Indicates whether the button representing the secondary command is currently enabled.
                 /// </field>
-                isSecondaryCommandEnabled: {
-                    get: function ContentDialog_isSecondaryCommandEnabled_get() {
-                        return this._isSecondaryCommandEnabled;
+                isSecondaryCommandDisabled: {
+                    get: function ContentDialog_isSecondaryCommandDisabled_get() {
+                        return this._isSecondaryCommandDisabled;
                     },
-                    set: function ContentDialog_isSecondaryCommandEnabled_set(value) {
+                    set: function ContentDialog_isSecondaryCommandDisabled_set(value) {
                         value = !!value;
-                        if (this._isSecondaryCommandEnabled !== value) {
-                            this._isSecondaryCommandEnabled = value;
-                            this._dom.commands[1].disabled = !value;
+                        if (this._isSecondaryCommandDisabled !== value) {
+                            this._isSecondaryCommandDisabled = value;
+                            this._dom.commands[1].disabled = value;
                         }
                     }
                 },
