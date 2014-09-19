@@ -126,6 +126,26 @@ define([
             //   - re-entrancy while firing events
             //   - calls into the control during asynchronous operations (e.g. animations)
             //
+            // Many of the states do their "enter" work within a promise chain. The idea is that if
+            // the state is interrupted and exits, the rest of its work can be skipped by canceling
+            // the promise chain. 
+            // An interesting detail is that anytime the state may call into app code (e.g. due to
+            // firing an event), the current promise must end and a new promise must be chained off of it.
+            // This is necessary because the app code may interact with the ContentDialog and cause it to
+            // change states. If we didn't create a new promise, then the very next line of code that runs
+            // after calling into app code may not be valid because the state may have exited. Starting a
+            // new promise after each call into app code prevents us from having to worry about this
+            // problem. In this configuration, when a promise's success handler runs, it guarantees that
+            // the state hasn't exited.
+            // For similar reasons, each of the promise chains created in "enter" starts off with a _Signal
+            // which is completed at the end of the "enter" function. The reason is that we don't want any
+            // of the code in "enter" to run until the promise chain has been stored in a variable. If we
+            // didn't do this (e.g. instead, started the promise chain with Promise.wrap()), then the
+            // "enter" code could trigger the "exit" function (via app code) before the promise chain
+            // had been stored in a variable. Under these circumstances, the promise chain would be
+            // uncancelable and so the "enter" work would be unskippable. This wouldn't be good when
+            // we needed the state to exit early.  
+            //
             // Transitions:
             //   When created, the control will take the following initialization transition:
             //     Init -> Hidden
@@ -136,7 +156,7 @@ define([
             //     Shown -> BeforeHide -> Shown (when preventDefault is called on beforehide event)
             //   However, any state can be interrupted to go to the Disposed state:
             //     * -> Disposed
-
+            //
             // interface IContentDialogState {
             //     // Debugging
             //     name: string;
