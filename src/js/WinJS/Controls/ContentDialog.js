@@ -225,7 +225,7 @@ define([
                         var that = this;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
-                            return that.dialog._fireEvent(EventNames.beforeShow);
+                            return that.dialog._fireEvent(EventNames.beforeShow); // Give opportunity for chain to be canceled when calling into app code
                         }).then(function () {
                             that.dialog._setState(States.Showing);
                         });
@@ -266,7 +266,7 @@ define([
                             _ElementUtilities._focusFirstFocusableElement(that.dialog._dom.content) || that.dialog._dom.body.focus();
                             return that.dialog._playEntranceAnimation();
                         }).then(function () {
-                            return that.dialog._fireEvent(EventNames.afterShow);
+                            return that.dialog._fireEvent(EventNames.afterShow); // Give opportunity for chain to be canceled when calling into app code
                         }).then(function () {
                             that.dialog._setState(States.Shown, that._pendingHide);
                         });
@@ -315,7 +315,7 @@ define([
                         var that = this;
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
-                            return that.dialog._fireBeforeHide(reason);
+                            return that.dialog._fireBeforeHide(reason); // Give opportunity for chain to be canceled when calling into app code
                         }).then(function (shouldHide) {
                             if (shouldHide) {
                                 that.dialog._setState(States.Hiding, reason);
@@ -350,13 +350,13 @@ define([
                         var promiseStoredSignal = new _Signal();
                         that._promise = promiseStoredSignal.promise.then(function () {
                             that.dialog._removeInputPaneListeners();
-                            return that.dialog._resetDismissalPromise(reason);
+                            return that.dialog._resetDismissalPromise(reason); // Give opportunity for chain to be canceled when calling into app code
                         }).then(function () {
                             return that.dialog._playExitAnimation();
                         }).then(function () {
                             _ElementUtilities.removeClass(that.dialog._dom.root, ClassNames._visible);
                             that.dialog._clearInputPaneRendering();
-                            return that.dialog._fireAfterHide(reason);
+                            return that.dialog._fireAfterHide(reason); // Give opportunity for chain to be canceled when calling into app code
                         }).then(function () {
                             that.dialog._setState(States.Hidden, that._showIsPending); 
                         });
