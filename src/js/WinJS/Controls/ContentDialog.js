@@ -126,14 +126,31 @@ define([
             // problem. In this configuration, when a promise's success handler runs, it guarantees that
             // the state hasn't exited.
             // For similar reasons, each of the promise chains created in "enter" starts off with a _Signal
-            // which is completed at the end of the "enter" function. The reason is that we don't want any
-            // of the code in "enter" to run until the promise chain has been stored in a variable. If we
-            // didn't do this (e.g. instead, started the promise chain with Promise.wrap()), then the
-            // "enter" code could trigger the "exit" function (via app code) before the promise chain
-            // had been stored in a variable. Under these circumstances, the promise chain would be
-            // uncancelable and so the "enter" work would be unskippable. This wouldn't be good when
-            // we needed the state to exit early.  
-            //
+            // which is completed at the end of the "enter" function (this boilerplate is abstracted away by
+            // the "interruptible" function). The reason is that we don't want any of the code in "enter"
+            // to run until the promise chain has been stored in a variable. If we didn't do this (e.g. instead,
+            // started the promise chain with Promise.wrap()), then the "enter" code could trigger the "exit"
+            // function (via app code) before the promise chain had been stored in a variable. Under these
+            // circumstances, the promise chain would be uncancelable and so the "enter" work would be
+            // unskippable. This wouldn't be good when we needed the state to exit early.
+            
+            // These two functions manage interruptible work promises (one creates them the other cancels
+            // them). They communicate with each other thru the _interruptibleWorkPromises property which
+            //  "interruptible" creates on your object.
+            
+            function interruptible(object, workFn) {
+                object._interruptibleWorkPromises = object._interruptibleWorkPromises || [];
+                var workStoredSignal = new _Signal();
+                object._interruptibleWorkPromises.push(workFn(object, workStoredSignal.promise));
+                workStoredSignal.complete();
+            }
+            
+            function cancelInterruptibles() {
+                (this._interruptibleWorkPromises || []).forEach(function (workPromise) {
+                    workPromise.cancel();
+                });
+            }
+            
             // Transitions:
             //   When created, the control will take the following initialization transition:
             //     Init -> Hidden
@@ -162,19 +179,6 @@ define([
             //     // Provided by _setState for use within the state
             //     dialog: WinJS.UI.ContentDialog;
             // }
-            
-            function interruptible(object, workFn) {
-                object._interruptibleWorkPromises = object._interruptibleWorkPromises || [];
-                var workStoredSignal = new _Signal();
-                object._interruptibleWorkPromises.push(workFn(object, workStoredSignal.promise));
-                workStoredSignal.complete();
-            }
-            
-            function cancelInterruptibles() {
-                (this._interruptibleWorkPromises || []).forEach(function (workPromise) {
-                    workPromise.cancel();
-                });
-            }
             
             var States = {
                 // Initial state. Initializes state on the dialog shared by the various states.
