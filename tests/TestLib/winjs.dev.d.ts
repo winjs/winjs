@@ -82,6 +82,10 @@ declare module WinJS {
         function _getWeakRefElement(id: string): any;
         var _DOMWeakRefTable_tableSize: number;
 
+        function _matchesSelector(element, selector: string): boolean;
+
+        var _MutationObserver;
+
     }
 
     module Resources {
@@ -284,6 +288,16 @@ declare module WinJS {
             _notifyMutatedFromKey(key: string);
         }
         function _bindingParser(input, context);
-        function getValue(obj:any, path:string[]);
+        function getValue(obj: any, path: string[]);
+
+        class PrivateTemplate extends Template {
+            static _interpretAll: boolean;
+            _shouldCompile: boolean;
+            _renderImpl;
+            _compileTemplate;
+            _reset;
+        }
+
+        var _TemplateCompiler;
     }
 }

@@ -1,89 +1,98 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+///<reference path="../../bin/typings/tsd.d.ts" />
+///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
+///<reference path="../TestLib/winjs.dev.d.ts" />
 /// <deploy src="nonCompatTemplate.html" />
 
-(function () {
+
+
+module CorsicaTests {
     "use strict";
 
-    var baseContainer = WinJS.Class.define(function () { }, {
-        createControl: function baseContainer_createControl(element, bindingList, template) {
-        },
+    var Template = <typeof WinJS.Binding.PrivateTemplate> WinJS.Binding.Template;
 
-        getItemNode: function baseContainer_getItemNode(container, index) {
-        },
-        
-    });
+    export class BaseContainer {
+        createControl(element, bindingList, template) {
+        }
 
-    WinJS.Namespace.define("CorsicaTests", {
-        ListViewContainerHelper: WinJS.Class.derive(baseContainer, function () { }, {
-            createControl: function ListViewContainer_createControl(element, bindingList, template) {
-                var control = new WinJS.UI.ListView(element, {
-                    itemDataSource: bindingList.dataSource,
-                    itemTemplate: template.element
-                });
+        getItemNode(container, index) {
+        }
+    }
 
-                return {
-                    control: control,
-                    readyPromise: new WinJS.Promise(function (c, e, p) {
-                        var listView = control;
-                        function waitForReady_handler() {
-                            LiveUnit.LoggingCore.logComment("waitForReady_handler: ListView loadingState = " + listView.loadingState);
-                            if (listView.loadingState === "complete") {
-                                listView.removeEventListener("loadingstatechanged", waitForReady_handler, false);
-                                c();
-                            }
+    export class ListViewContainerHelper extends BaseContainer {
+        createControl(element, bindingList, template) {
+            var control = new WinJS.UI.ListView(element, {
+                itemDataSource: bindingList.dataSource,
+                itemTemplate: template.element
+            });
+
+            return {
+                control: control,
+                readyPromise: new WinJS.Promise(function (c, e, p) {
+                    var listView = control;
+                    function waitForReady_handler() {
+                        LiveUnit.LoggingCore.logComment("waitForReady_handler: ListView loadingState = " + listView.loadingState);
+                        if (listView.loadingState === "complete") {
+                            listView.removeEventListener("loadingstatechanged", waitForReady_handler, false);
+                            c();
                         }
+                    }
 
-                        function waitForReady_work() {
-                            LiveUnit.LoggingCore.logComment("waitForReady_work ListView loadingState = " + listView.loadingState);
-                            if (listView.loadingState !== "complete") {
-                                listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
-                            }
-                            else {
-                                c();
-                            }
+                    function waitForReady_work() {
+                        LiveUnit.LoggingCore.logComment("waitForReady_work ListView loadingState = " + listView.loadingState);
+                        if (listView.loadingState !== "complete") {
+                            listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
                         }
-                        waitForReady_work();
-                    }),
-                };
-            },
-            getItemNode: function ListViewContainer_getItemNode(container, index) {
-                var nodes = container.element.querySelectorAll(".win-item");
-                LiveUnit.Assert.isTrue(nodes.length > 0);
-                var node = nodes[index];
-                LiveUnit.Assert.isTrue(node.childNodes.length > 0);
-                return node;
-            },
-            
-        }),
+                        else {
+                            c();
+                        }
+                    }
+                    waitForReady_work();
+                }),
+            };
+        }
+        getItemNode(container, index) {
+            var nodes = container.element.querySelectorAll(".win-item");
+            LiveUnit.Assert.isTrue(nodes.length > 0);
+            var node = nodes[index];
+            LiveUnit.Assert.isTrue(node.childNodes.length > 0);
+            return node;
+        }
 
-        RepeaterContainerHelper: WinJS.Class.derive(baseContainer, function () { }, {
-            createControl: function RepeaterContainer_createControl(element, bindingList, template) {
-                var control = new WinJS.UI.Repeater(element, {
-                    data: bindingList,
-                    template: template.element
-                });
+    }
 
-                return {
-                    control: control,
-                    readyPromise: WinJS.Promise.timeout(0),
-                };
-            },
-            getItemNode: function RepeaterContainer_getItemNode(container, index) {
-                var nodes = container.element.childNodes;
-                LiveUnit.Assert.isTrue(nodes.length > 0);
-                var node = nodes[index];
-                return node;
-            },
-        }),
-    });
+    export class RepeaterContainerHelper extends BaseContainer {
+        createControl(element, bindingList, template) {
+            var control = new WinJS.UI.Repeater(element, {
+                data: bindingList,
+                template: template.element
+            });
 
-    var testClass = WinJS.Class.define(function () { }, {
-        setUp: function setUp() {
-            this._interpretAll = WinJS.Binding.Template._interpretAll;
-            WinJS.Binding.Template._interpretAll = false; // remove this while it is default
+            return {
+                control: control,
+                readyPromise: WinJS.Promise.timeout(0),
+            };
+        }
+        getItemNode(container, index) {
+            var nodes = container.element.childNodes;
+            LiveUnit.Assert.isTrue(nodes.length > 0);
+            var node = nodes[index];
+            return node;
+        }
+    }
+
+    export class TestClass {
+        _interpretAll: boolean;
+        _element;
+        _style;
+        _containerHelper;
+
+        setUp() {
+            this._interpretAll = Template._interpretAll;
+            Template._interpretAll = false; // remove this while it is default
             LiveUnit.LoggingCore.logComment("In setup");
             var newNode = document.createElement("div");
             newNode.id = "root";
@@ -93,7 +102,7 @@
             style.innerHTML = ".show{ display:block; } .hide{ display:none; } .big{ font-size:large; } .small { font-size: small; } .white{ color: #FFF; } .yellow { color: #FF0; } .border{ border: solid 1px red; } .noBorder{ border: none; }";
             document.body.appendChild(style);
             this._style = style;
-            window.NonCompatControl = WinJS.Utilities.markSupportedForProcessing(function nonCompatControl(element, options) {
+            window['NonCompatControl'] = WinJS.Utilities.markSupportedForProcessing(function nonCompatControl(element, options) {
                 if (element.className === "white") {
                     element.textContent = "White";
                 } else {
@@ -101,15 +110,15 @@
                 }
             });
 
-            window.setAttributeNotSupportedForProcessing = function setAttributeNotSupportedForProcessing(source, sourceProperties, dest, destProperties) {
+            window['setAttributeNotSupportedForProcessing'] = function setAttributeNotSupportedForProcessing(source, sourceProperties, dest, destProperties) {
                 WinJS.Binding.setAttribute(source, sourceProperties, dest, destProperties);
             };
 
-            window.setAttributeSupportedForProcessing = WinJS.Utilities.markSupportedForProcessing(function setAttributeSupportedForProcessing(source, sourceProperties, dest, destProperties) {
+            window['setAttributeSupportedForProcessing'] = WinJS.Utilities.markSupportedForProcessing(function setAttributeSupportedForProcessing(source, sourceProperties, dest, destProperties) {
                 WinJS.Binding.setAttribute(source, sourceProperties, dest, destProperties);
             });
-        },
-        tearDown: function tearDown() {
+        }
+        tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
             if (this._element) {
                 WinJS.Utilities.disposeSubTree(this._element);
@@ -123,12 +132,12 @@
                 this._style = null;
             }
 
-            window.NonCompactControl = null;
-            window.setAttributeNotSupportedForProcessing = null;
-            window.setAttributeSupportedForProcessing = null;
-            WinJS.Binding.Template._interpretAll = this._interpretAll;
-        },
-        _executeTest: function executeTest(c, templateHTML, verify, templateOptions, definedInHtml) {
+            window['NonCompactControl'] = null;
+            window['setAttributeNotSupportedForProcessing'] = null;
+            window['setAttributeSupportedForProcessing'] = null;
+            Template._interpretAll = this._interpretAll;
+        }
+        _executeTest(c, templateHTML, verify, templateOptions: any = {}, definedInHtml = false) {
             if (!this._containerHelper) {
                 LiveUnit.Assert.fail("There's no containerHelper defined for the test");
                 return;
@@ -157,7 +166,7 @@
 
             var data = [];
             for (var i = 0; i < 10; i++) {
-                var item = { id: i.toString() };
+                var item: any = { id: i.toString() };
                 item.header = "Item Header";
                 item.headerClassName = (i % 7 == 0) ? "show" : "hide";
                 item.name = "Name " + item.id;
@@ -189,8 +198,8 @@
                     return verify(control.control, data);
                 }
             }).then(c, c);
-        },
-        _verifyFirstItem: function (container, data, expectedHTML) {
+        }
+        _verifyFirstItem(container, data, expectedHTML) {
             var templateNode = this._containerHelper.getItemNode(container, 0);
             var expectedHTMLArray;
 
@@ -243,31 +252,31 @@
             else {
                 verifyChildNodes(templateNode);
             }
-        },
-        testBasicalControls_DefinedInDOM: function (c) {
+        }
+        testBasicalControls_DefinedInDOM(c) {
             var that = this;
             this._executeTest(
                 c,
                 "<div><img data-win-bind=\"src: image; alt: name; className: imageClassName\" /><a data-win-bind=\"href: link; textContent: name; className: nameClassName\"></a><div data-win-bind=\"textContent: description; className: descriptionClassName\"></div></div>",
                 "<div><img class=\"{{imageClassName}}\" alt=\"{{name}}\" src=\"{{image}}\"><a class=\"{{nameClassName}}\" href=\"{{link}}\">{{name}}</a><div class=\"{{descriptionClassName}}\">{{description}}</div></div>",
-               null,
-               true);
-        },
-        testBasicalControls_DefinedInJS: function (c) {
+                null,
+                true);
+        }
+        testBasicalControls_DefinedInJS(c) {
             var that = this;
             this._executeTest(
-              c,
-              "<div><img data-win-bind=\"src: image; alt: name; className: imageClassName\" /><a data-win-bind=\"href: link; textContent: name; className: nameClassName\"></a><div data-win-bind=\"textContent: description; className: descriptionClassName\"></div></div>",
-              "<div><img class=\"{{imageClassName}}\" alt=\"{{name}}\" src=\"{{image}}\"><a class=\"{{nameClassName}}\" href=\"{{link}}\">{{name}}</a><div class=\"{{descriptionClassName}}\">{{description}}</div></div>");
-        },
-        testNewBahavior: function (c) {
+                c,
+                "<div><img data-win-bind=\"src: image; alt: name; className: imageClassName\" /><a data-win-bind=\"href: link; textContent: name; className: nameClassName\"></a><div data-win-bind=\"textContent: description; className: descriptionClassName\"></div></div>",
+                "<div><img class=\"{{imageClassName}}\" alt=\"{{name}}\" src=\"{{image}}\"><a class=\"{{nameClassName}}\" href=\"{{link}}\">{{name}}</a><div class=\"{{descriptionClassName}}\">{{description}}</div></div>");
+        }
+        testNewBahavior(c) {
             var that = this;
             this._executeTest(
                 c,
                 "<div data-win-control=\"NonCompatControl\" data-win-bind=\"className: descriptionClassName\"></div>",
                 "<div class=\"white\">White</div>");
-        },
-        testMoreControls: function (c) {
+        }
+        testMoreControls(c) {
             if (WinJS.UI.Rating && WinJS.UI.ToggleSwitch) {
                 var that = this;
                 this._executeTest(
@@ -293,13 +302,13 @@
             } else {
                 c();
             }
-        },
-        testInitializers_setAttribute: function (c) {
+        }
+        testInitializers_setAttribute(c) {
             this._executeTest(
                 c,
                 "<div data-win-bind=\"className: descriptionClassName; property: description WinJS.Binding.setAttribute\"></div>",
                 "<div class=\"{{descriptionClassName}}\" property=\"{{description}}\"></div>");
-        },
+        }
         /*
         testInitializers_addClass:function(c){
             this._executeTest(
@@ -308,20 +317,20 @@
                 "<div class=\"existingClass {{descriptionClassName}}\"></div>");
         },
         */
-        testInitializers_defaultInitializer: function (c) {
+        testInitializers_defaultInitializer(c) {
             this._executeTest(
                 c,
                 "<div data-win-bind=\"property1: descriptionClassName; property2: description; textContent: description WinJS.Binding.oneTime\"></div>",
                 "<div property1=\"{{descriptionClassName}}\" property2=\"{{description}}\">{{description}}</div>",
                 { bindingInitializer: WinJS.Binding.setAttribute });
-        },
-        testNonExtractChild: function (c) {
+        }
+        testNonExtractChild(c) {
             var that = this;
             this._executeTest(
                 c,
                 "<div class=\"firstChild\"><div class=\"firstGrandchild\"></div></div><div class=\"secondChild\"></div>",
                 "<div class=\"firstChild\"><div class=\"firstGrandchild\"></div></div><div class=\"secondChild\"></div>");
-        },
+        }
         /*
         testExtractChild: function (c) {
             this._executeTest(
@@ -331,58 +340,64 @@
                { extractFirstChild: true });
         },
         */
-        testClassicBinding_disableOptimizedProcessing: function (c) {
+        testClassicBinding_disableOptimizedProcessing(c) {
             this._executeTest(
                 c,
                 "<div data-win-control=\"NonCompatControl\" data-win-bind=\"className: descriptionClassName\"></div>",
-                // Because this uses the interpreted path we don't end up stripping the attributes.
+            // Because this uses the interpreted path we don't end up stripping the attributes.
                 "<div class=\"white\" data-win-bind=\"className: descriptionClassName\" data-win-control=\"NonCompatControl\">Yellow</div>",
                 { disableOptimizedProcessing: true });
-        },
-        testSecurity_markSupported: function (c) {
+        }
+        testSecurity_markSupported(c) {
             this._executeTest(
                 c,
                 "<div data-win-bind=\"textContent: name setAttributeSupportedForProcessing\"></div>",
                 "<div textContent=\"{{name}}\"></div>");
-        },
-    });
-
-    WinJS.Namespace.define("CorsicaTests", {
-        ListViewTemplateOptimizerTests: WinJS.Class.derive(testClass, function () { this._containerHelper = new CorsicaTests.ListViewContainerHelper(); }, {
-            testClassicBinding_processTimeout: function (c) {
-                this._executeTest(
-                    c,
-                    "<div data-win-control=\"NonCompatControl\" data-win-bind=\"className: descriptionClassName\"></div>",
-                    "<div class=\"white\" data-win-bind=\"className: descriptionClassName\" data-win-control=\"NonCompatControl\">Yellow</div>",
-                    { processTimeout: -1 });
-            },
-            testClassicBinding_href: function (c) {
-                var that = this;
-                this._executeTest(
-                    c,
-                    null,
-                    function (container, data) {
-                        var node = that._containerHelper.getItemNode(container, 0);
-                        LiveUnit.Assert.areEqual("Yellow", node.textContent.replace(/\n/g, ''));
-                    },
-                    { href: "nonCompatTemplate.html" });
-            },
-        }),
-        RepeaterTemplateOptimizerTests: WinJS.Class.derive(testClass, function () { this._containerHelper = new CorsicaTests.RepeaterContainerHelper(); }, {
-            testNonExtractChild: function (c) {
-                var that = this;
-                this._executeTest(
-                    c,
-                    "<div class=\"firstChild\"><div class=\"firstGrandchild\"></div></div><div class=\"secondChild\"></div>",
-                    "<div class=\"firstChild\"><div class=\"firstGrandchild\"></div></div>");
-            },
-        }),
-    });
-    if (WinJS.UI.ListView) {
-        LiveUnit.registerTestClass("CorsicaTests.ListViewTemplateOptimizerTests");
+        }
     }
 
-    if (WinJS.UI.Repeater) {
-        LiveUnit.registerTestClass("CorsicaTests.RepeaterTemplateOptimizerTests");
+    export class ListViewTemplateOptimizerTests extends TestClass {
+
+        constructor() {
+            super();
+            this._containerHelper = new CorsicaTests.ListViewContainerHelper();
+        }
+        testClassicBinding_processTimeout(c) {
+            this._executeTest(
+                c,
+                "<div data-win-control=\"NonCompatControl\" data-win-bind=\"className: descriptionClassName\"></div>",
+                "<div class=\"white\" data-win-bind=\"className: descriptionClassName\" data-win-control=\"NonCompatControl\">Yellow</div>",
+                { processTimeout: -1 });
+        }
+        testClassicBinding_href(c) {
+            var that = this;
+            this._executeTest(
+                c,
+                null,
+                function (container, data) {
+                    var node = that._containerHelper.getItemNode(container, 0);
+                    LiveUnit.Assert.areEqual("Yellow", node.textContent.replace(/\n/g, ''));
+                },
+                { href: "nonCompatTemplate.html" });
+        }
     }
-})();
+
+    export class RepeaterTemplateOptimizerTests extends TestClass {
+
+        constructor() {
+            super();
+            this._containerHelper = new CorsicaTests.RepeaterContainerHelper();
+        }
+
+        testNonExtractChild(c) {
+            var that = this;
+            this._executeTest(
+                c,
+                "<div class=\"firstChild\"><div class=\"firstGrandchild\"></div></div><div class=\"secondChild\"></div>",
+                "<div class=\"firstChild\"><div class=\"firstGrandchild\"></div></div>");
+        }
+    }
+}
+
+LiveUnit.registerTestClass("CorsicaTests.ListViewTemplateOptimizerTests");
+LiveUnit.registerTestClass("CorsicaTests.RepeaterTemplateOptimizerTests");
