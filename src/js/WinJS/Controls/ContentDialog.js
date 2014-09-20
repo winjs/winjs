@@ -146,6 +146,7 @@ define([
             }
             
             function cancelInterruptibles() {
+                /*jshint validthis: true */
                 (this._interruptibleWorkPromises || []).forEach(function (workPromise) {
                     workPromise.cancel();
                 });

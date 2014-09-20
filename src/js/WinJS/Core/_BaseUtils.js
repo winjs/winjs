@@ -243,7 +243,7 @@ define([
                 fn.apply(this, arguments);
             }
         };
-    };
+    }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         // Used for mocking in tests
