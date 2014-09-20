@@ -73,7 +73,14 @@ declare module WinJS {
 
         function _writeProfilerMark(mark: string);
 
-        var _browserEventEquivalents: {[key:string]: string};
+        var _browserEventEquivalents: { [key: string]: string };
+
+        var _DOMWeakRefTable_sweepPeriod: number;
+        var _DOMWeakRefTable_timeout: number;
+        var _DOMWeakRefTable_noTimeoutUnderDebugger: boolean;
+        function _createWeakRef(element, id: string);
+        function _getWeakRefElement(id: string): any;
+        var _DOMWeakRefTable_tableSize: number;
 
     }
 
@@ -276,5 +283,7 @@ declare module WinJS {
             _spliceFromKey(key: string, howMany: number, ...items: T[]): T[];
             _notifyMutatedFromKey(key: string);
         }
+        function _bindingParser(input, context);
+        function getValue(obj:any, path:string[]);
     }
 }
