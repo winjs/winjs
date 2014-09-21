@@ -196,6 +196,14 @@ declare module WinJS {
 
         }
 
+        class PrivateDatePicker extends DatePicker {
+            _domElement;
+            _disposed: boolean;
+            static _getInformationJS;
+            static _getInformationWinRT;
+            static getInformation;
+        }
+
         class PrivateToolbar extends WinJS.UI.Toolbar {
             _disposed: boolean;
             _primaryCommands: ICommand[];
