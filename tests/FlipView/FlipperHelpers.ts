@@ -1,29 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 "use strict";
 
-var fvUnhandledErrors = {};
-
-function errorEventHandler(evt) {
-    var details = evt.detail;
-    var id = details.id;
-    if (!details.parent) {
-        fvUnhandledErrors[id] = details;
-    } else if (details.handler) {
-        delete fvUnhandledErrors[id];
-    }
-}
-
-function initUnhandledErrors() {
-    fvUnhandledErrors = {};
-    WinJS.Promise.addEventListener("error", errorEventHandler);
-}
-
-function validateUnhandledErrors() {
-    WinJS.Promise.removeEventListener("error", errorEventHandler);
-    LiveUnit.Assert.areEqual(0, Object.keys(fvUnhandledErrors).length, "Unhandled errors found");
-}
-
-function createArraySource(count, targetWidths, targetHeights, datasourceTag) {
+function createArraySource(count, targetWidths, targetHeights, datasourceTag?) {
     var data = [];
     datasourceTag = (datasourceTag ? datasourceTag : "");
 
@@ -54,36 +32,34 @@ function validateInternalBuffers(flipview) {
         }
     });
 
-    for (var i = 0, len = keys.length; i < len; i++) {
-        var key = keys[i];
+    keys.forEach(function (key) {
         var foundKey = false;
-        for (var j = 0, len2 = bufferKeys.length; j < len2; j++) {
-            if (bufferKeys[j] === key) {
+        bufferKeys.forEach(function (bufferKey) {
+            if (bufferKey === key) {
                 foundKey = true;
             }
-        }
+        });
         if (!foundKey) {
             LiveUnit.Assert.fail("Flipview buffer missing key " + key)
         }
-    }
+    });
 
-    for (var i = 0, len = bufferKeys.length; i < len; i++) {
-        var key = bufferKeys[i];
+    bufferKeys.forEach(function (key) {
         var foundKey = false;
-        for (var j = 0, len2 = keys.length; j < len2; j++) {
-            if (keys[j] === key) {
+        keys.forEach(function (_key) {
+            if (_key === key) {
                 foundKey = true;
             }
-        }
+        });
         if (!foundKey) {
             LiveUnit.Assert.fail("ItemsManager buffer missing key " + key)
         }
-    }
+    });
 }
 
 // Takes in a flipview or flipview.element and action that triggers a pagecompleted event
 // Returns a promise that fulfills when the event is fired
-function waitForFlipViewReady(flipview, action, usePageSelected) {
+function waitForFlipViewReady(flipview, action?, usePageSelected?) {
     return new WinJS.Promise(function (c, e, p) {
         var event = usePageSelected ? "pageselected" : "pagecompleted";
         LiveUnit.LoggingCore.logComment("Listening to " + event + "event");
@@ -134,7 +110,7 @@ function currentPageInView(flipView) {
     return nodeInView(flipView, flipView._pageManager._currentPage.pageRoot);
 }
 
-function basicInstantRenderer(itemPromise) {
+var basicInstantRenderer:any = function basicInstantRenderer(itemPromise) {
     var rootElement = document.createElement("div");
     rootElement.style.width = "100%";
     rootElement.style.height = "100%";
@@ -171,7 +147,7 @@ basicInstantRenderer.verifyOutput = function (renderedItem, rawData) {
     LiveUnit.Assert.isTrue(!dataElement.nextElementSibling);
 };
 
-function alternateBasicInstantRenderer(itemPromise) {
+var alternateBasicInstantRenderer:any = function alternateBasicInstantRenderer(itemPromise) {
     var rootElement = document.createElement("div");
     rootElement.style.width = "100%";
     rootElement.style.height = "100%";
@@ -214,11 +190,11 @@ alternateBasicInstantRenderer.verifyOutput = function (renderedItem, rawData) {
 };
 
 function verifyFlipViewPagePositions(flipView) {
-    var width = flipView._flipviewDiv.offsetWidth,
-        height = flipView._flipviewDiv.offsetHeight,
+    var width:number = flipView._flipviewDiv.offsetWidth,
+        height:number = flipView._flipviewDiv.offsetHeight,
         scrollPosition = WinJS.Utilities.getScrollPosition(flipView._panningDivContainer),
-        horizontal = flipView.orientation === "horizontal",
-        itemSpacing = flipView.itemSpacing,
+        horizontal:boolean = flipView.orientation === "horizontal",
+        itemSpacing:number = flipView.itemSpacing,
         pages = [],
         currentPageIndex = -1;
 
@@ -238,7 +214,7 @@ function verifyFlipViewPagePositions(flipView) {
         return;
     }
 
-    var currentPageLocation = (horizontal ? pages[currentPageIndex].pageRoot.offsetLeft : pages[currentPageIndex].pageRoot.offsetTop);
+    var currentPageLocation:number = (horizontal ? pages[currentPageIndex].pageRoot.offsetLeft : pages[currentPageIndex].pageRoot.offsetTop);
     for (var i = 0; i < currentPageIndex; i++) {
         var pageLeft = pages[i].pageRoot.offsetLeft,
             pageTop = pages[i].pageRoot.offsetTop;

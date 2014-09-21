@@ -1,37 +1,37 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="FlipperUtils.js"/>
+/// <reference path="FlipperUtils.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 
-var EventTests = null;
 
-// eventTestsObject is used to dereference methods while in callback functions.
-var eventTestsObject;
+module WinJSTests {
+    "use strict";
 
-(function() {
+    var flipperUtils = FlipperUtils;
+    var commonUtils = CommonUtilities;
 
-    // Create NavigationTests object
-    EventTests = function() {
-        var flipperUtils = new FlipperUtils();
-        var commonUtils = CommonUtilities;
-        eventTestsObject = this;
+    // This object stores validation information used to determine if the specific event test passed
+    var eventValidationObject:any = {};
 
-        // This object stores validation information used to determine if the specific event test passed
-        var eventValidationObject = {};
+    // Events
+    var pageVisibilityEvent = "pagevisibilitychanged";
+    var datasourceCountChangedEvent = "datasourcecountchanged";
+    var pageSelectedEvent = "pagecompleted";
 
-        // Events
-        var pageVisibilityEvent = "pagevisibilitychanged";
-        var datasourceCountChangedEvent = "datasourcecountchanged";
-        var pageSelectedEvent = "pagecompleted";
+    // Setup expected counts for events
+    function setExpectedIteration(pageVisible, pageInvisible, pageSelected, datasourceCountChanged) {
+        eventValidationObject.pageVisible.expectedIteration = pageVisible;
+        eventValidationObject.pageInvisible.expectedIteration = pageInvisible;
+        eventValidationObject.pageSelected.expectedIteration = pageSelected;
+        eventValidationObject.datasourceCountChanged.eventCount = datasourceCountChanged;
+    }
 
-        //
-        // Function: SetUp
-        // This is the setup function that will be called at the beginning of each test function.
-        //
-        this.setUp = function() {
+    export class EventTests  {
+
+        setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
 
             // Define and reset event test information to determine if the event test passed.
@@ -71,18 +71,16 @@ var eventTestsObject;
             flipperUtils.addFlipperDom();
         }
 
-        //
-        // Function: tearDown
-        // This is called after each test completes.
-        this.tearDown = function() {
+
+        tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
 
             // Remove event handlers
             var flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
 
-            flipperDiv.removeEventListener(pageVisibilityEvent, eventTestsObject.pageVisibilityEventHandler, false);
-            flipperDiv.removeEventListener(datasourceCountChangedEvent, eventTestsObject.datasourceCountChangedEventHandler, false);
-            flipperDiv.removeEventListener(pageSelectedEvent, eventTestsObject.pageselectedEventHandler, false);
+            flipperDiv.removeEventListener(pageVisibilityEvent, this.pageVisibilityEventHandler, false);
+            flipperDiv.removeEventListener(datasourceCountChangedEvent, this.datasourceCountChangedEventHandler, false);
+            flipperDiv.removeEventListener(pageSelectedEvent, this.pageselectedEventHandler, false);
 
             // We want to tear town the flipper element between each test so we start fresh.
             flipperUtils.removeFlipperDom();
@@ -95,7 +93,7 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsInstantiation
         //
-        this.testFlipperEventsInstantiation = function(signalTestCaseCompleted) {
+        testFlipperEventsInstantiation(signalTestCaseCompleted) {
             setExpectedIteration(1,0,1,0);
             this.setVerifyPageVisibilityInfoObject(null, "page1");
             this.setVerifyPageSelectedInfoObject("page1");
@@ -103,8 +101,8 @@ var eventTestsObject;
             var flipperDiv = document.getElementById(flipperUtils.basicFlipperID()),
                 flipper;
 
-            flipperDiv.addEventListener(pageSelectedEvent, LiveUnit.GetWrappedCallback(function (ev) {
-                eventTestsObject.verifyEventObject();
+            flipperDiv.addEventListener(pageSelectedEvent, LiveUnit.GetWrappedCallback((ev) => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
             }));
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
@@ -113,7 +111,7 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsGetControl
         //
-        this.testFlipperEventsGetControl = function(signalTestCaseCompleted) {
+        testFlipperEventsGetControl(signalTestCaseCompleted) {
             setExpectedIteration(1,0,1,0);
             LiveUnit.LoggingCore.logComment("Attaching to an existing flipper object via getControl should not fire new events.");
             this.setVerifyPageVisibilityInfoObject(null, "page1");
@@ -128,13 +126,13 @@ var eventTestsObject;
             LiveUnit.Assert.isNotNull(flipper2, "Flipper2 element should not be null when instantiated.");
 
             // Need a setTimeout to confirm that events are not fired
-            setTimeout(LiveUnit.GetWrappedCallback(function () {
-                eventTestsObject.verifyEventObject();
+            setTimeout(LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
-            }), NAVIGATION_TIMEOUT);
+            }), FlipperUtils.NAVIGATION_TIMEOUT);
         }
 
-        this.testFlipperEventsChangeTemplate = function(signalTestCaseCompleted) {
+        testFlipperEventsChangeTemplate(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("page1", "page1");
             this.setVerifyPageSelectedInfoObject("page1");
@@ -156,10 +154,10 @@ var eventTestsObject;
                 });
             };
 
-            var verify = LiveUnit.GetWrappedCallback(function () {
+            var verify = LiveUnit.GetWrappedCallback(() => {
                 flipper.removeEventListener(pageSelectedEvent, verify);
 
-                flipper.addEventListener(pageSelectedEvent, LiveUnit.GetWrappedCallback(function () {
+                flipper.addEventListener(pageSelectedEvent, LiveUnit.GetWrappedCallback(() => {
                     // Verify the new template
                     if (flipper) {
                         LiveUnit.LoggingCore.logComment("Flipper currentPage is: " + flipper.currentPage);
@@ -178,7 +176,7 @@ var eventTestsObject;
                     }
 
                     // Verify events
-                    eventTestsObject.verifyEventObject(true);
+                    this.verifyEventObject(true);
                     signalTestCaseCompleted();
                 }));
                 flipper.itemTemplate = newTemplate;
@@ -186,12 +184,12 @@ var eventTestsObject;
             flipperDiv.addEventListener(pageSelectedEvent, verify);
 
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
-        },
+        }
 
         //
         // Test: testFlipperEventsFlipToNext
         //
-        this.testFlipperEventsFlipToNext = function(signalTestCaseCompleted) {
+        testFlipperEventsFlipToNext(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("page1", "page2");
             this.setVerifyPageSelectedInfoObject("page2");
@@ -199,8 +197,8 @@ var eventTestsObject;
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
 
-            var nextCompleted = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject();
+            var nextCompleted = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
             });
 
@@ -218,7 +216,7 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsFlipToPrevious
         //
-        this.testFlipperEventsFlipToPrevious = function(signalTestCaseCompleted) {
+        testFlipperEventsFlipToPrevious(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("page3", "page2");
             this.setVerifyPageSelectedInfoObject("page2");
@@ -226,8 +224,8 @@ var eventTestsObject;
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
 
-            var previousCompleted = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject();
+            var previousCompleted = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
             });
 
@@ -245,7 +243,7 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsFlipToPage via setting currentPage
         //
-        this.testFlipperEventsFlipToPage = function(signalTestCaseCompleted) {
+        testFlipperEventsFlipToPage(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("page1", "page6");
             this.setVerifyPageSelectedInfoObject("page6");
@@ -253,8 +251,8 @@ var eventTestsObject;
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
 
-            var currentPageCompleted = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject();
+            var currentPageCompleted = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
             });
 
@@ -270,7 +268,7 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsFlipToSamePage via setting currentPage
         //
-        this.testFlipperEventsFlipToSamePage = function(signalTestCaseCompleted) {
+        testFlipperEventsFlipToSamePage(signalTestCaseCompleted) {
             setExpectedIteration(1, 0, 1, 0);
             this.setVerifyPageVisibilityInfoObject(null, "page1");
             this.setVerifyPageSelectedInfoObject("page1");
@@ -290,16 +288,16 @@ var eventTestsObject;
             flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
 
             // Need a setTimeout as we need to confirm that events are not fired
-            setTimeout(LiveUnit.GetWrappedCallback(function () {
-                eventTestsObject.verifyEventObject();
+            setTimeout(LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
-            }), NAVIGATION_TIMEOUT);
+            }), FlipperUtils.NAVIGATION_TIMEOUT);
         }
 
         //
         // Test: testFlipperEventsFlipToNextBorder
         //
-        this.testFlipperEventsFlipToNextBorder = function(signalTestCaseCompleted) {
+        testFlipperEventsFlipToNextBorder(signalTestCaseCompleted) {
             setExpectedIteration(1, 0, 1, 0);
             this.setVerifyPageVisibilityInfoObject(null, "page7");
             this.setVerifyPageSelectedInfoObject("page7");
@@ -307,8 +305,8 @@ var eventTestsObject;
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
 
-            var nextCompleted = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject();
+            var nextCompleted = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
             });
 
@@ -327,7 +325,7 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsFlipToPreviousBorder
         //
-        this.testFlipperEventsFlipToPreviousBorder = function(signalTestCaseCompleted) {
+        testFlipperEventsFlipToPreviousBorder(signalTestCaseCompleted) {
             setExpectedIteration(1, 0, 1, 0);
             this.setVerifyPageVisibilityInfoObject(null, "page1");
             this.setVerifyPageSelectedInfoObject("page1");
@@ -335,8 +333,8 @@ var eventTestsObject;
             var flipper,
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID());
 
-            var previousCompleted = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject();
+            var previousCompleted = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
             });
 
@@ -352,7 +350,7 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsInvalidFlipToPage via currentPage
         //
-        this.testFlipperEventsInvalidFlipToPage = function(signalTestCaseCompleted) {
+        testFlipperEventsInvalidFlipToPage(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("page1", "page7");
             this.setVerifyPageSelectedInfoObject("page7");
@@ -361,8 +359,8 @@ var eventTestsObject;
                 flipperDiv = document.getElementById(flipperUtils.basicFlipperID()),
                 page = 500;
 
-            var currentPageCompleted = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject();
+            var currentPageCompleted = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject();
                 signalTestCaseCompleted();
             });
 
@@ -379,12 +377,12 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsInsertAtStart
         //
-        this.testFlipperEventsInsertAtStart = function(signalTestCaseCompleted) {
+        testFlipperEventsInsertAtStart(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,1);
             this.setVerifyPageVisibilityInfoObject("Title0", "InsertAtStart");
             this.setVerifyPageSelectedInfoObject("InsertAtStart");
-            var onSuccess = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject(true);
+            var onSuccess = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject(true);
                 signalTestCaseCompleted();
             });
             var onError = LiveUnit.GetWrappedCallback(function(error) {
@@ -397,12 +395,12 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsInsertAtEnd
         //
-        this.testFlipperEventsInsertAtEnd = function(signalTestCaseCompleted) {
+        testFlipperEventsInsertAtEnd(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,1);
             this.setVerifyPageVisibilityInfoObject("Title0", "InsertAtEnd");
             this.setVerifyPageSelectedInfoObject("InsertAtEnd");
-            var onSuccess = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject(true);
+            var onSuccess = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject(true);
                 signalTestCaseCompleted();
             });
             var onError = LiveUnit.GetWrappedCallback(function(error) {
@@ -415,12 +413,12 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsInsertBefore
         //
-        this.testFlipperEventsInsertBefore = function(signalTestCaseCompleted) {
+        testFlipperEventsInsertBefore(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,1);
             this.setVerifyPageVisibilityInfoObject("Title0", "InsertBefore");
             this.setVerifyPageSelectedInfoObject("InsertBefore");
-            var onSuccess = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject(true);
+            var onSuccess = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject(true);
                 signalTestCaseCompleted();
             });
             var onError = LiveUnit.GetWrappedCallback(function(error) {
@@ -433,12 +431,12 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsInsertAfter
         //
-        this.testFlipperEventsInsertAfter = function(signalTestCaseCompleted) {
+        testFlipperEventsInsertAfter(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,1);
             this.setVerifyPageVisibilityInfoObject("Title0", "InsertAfter");
             this.setVerifyPageSelectedInfoObject("InsertAfter");
-            var onSuccess = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject(true);
+            var onSuccess = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject(true);
                 signalTestCaseCompleted();
             });
             var onError = LiveUnit.GetWrappedCallback(function(error) {
@@ -451,12 +449,12 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsMoveToStart using array data source
         //
-        this.testFlipperEventsMoveToStart = function(signalTestCaseCompleted) {
+        testFlipperEventsMoveToStart(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("Title0", "Title5");
             this.setVerifyPageSelectedInfoObject("Title5");
-            var onSuccess = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject(true);
+            var onSuccess = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject(true);
                 signalTestCaseCompleted();
             });
             var onError = LiveUnit.GetWrappedCallback(function(error) {
@@ -469,12 +467,12 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsMoveToEnd using array data source
         //
-        this.testFlipperEventsMoveToEnd = function(signalTestCaseCompleted) {
+        testFlipperEventsMoveToEnd(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("Title0", "Title5");
             this.setVerifyPageSelectedInfoObject("Title5");
-            var onSuccess = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject(true);
+            var onSuccess = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject(true);
                 signalTestCaseCompleted();
             });
             var onError = LiveUnit.GetWrappedCallback(function(error) {
@@ -487,12 +485,12 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsMoveBefore using array data source
         //
-        this.testFlipperEventsMoveBefore = function(signalTestCaseCompleted) {
+        testFlipperEventsMoveBefore(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("Title0", "Title5");
             this.setVerifyPageSelectedInfoObject("Title5");
-            var onSuccess = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject(true);
+            var onSuccess = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject(true);
                 signalTestCaseCompleted();
             });
             var onError = LiveUnit.GetWrappedCallback(function(error) {
@@ -505,12 +503,12 @@ var eventTestsObject;
         //
         // Test: testFlipperEventsMoveAfter using array data source
         //
-        this.testFlipperEventsMoveAfter = function(signalTestCaseCompleted) {
+        testFlipperEventsMoveAfter(signalTestCaseCompleted) {
             setExpectedIteration(2,1,2,0);
             this.setVerifyPageVisibilityInfoObject("Title0", "Title5");
             this.setVerifyPageSelectedInfoObject("Title5");
-            var onSuccess = LiveUnit.GetWrappedCallback(function() {
-                eventTestsObject.verifyEventObject(true);
+            var onSuccess = LiveUnit.GetWrappedCallback(() => {
+                this.verifyEventObject(true);
                 signalTestCaseCompleted();
             });
             var onError = LiveUnit.GetWrappedCallback(function(error) {
@@ -654,16 +652,8 @@ var eventTestsObject;
         // Test Helper Functions
         //---------------------------------------------------------------------
 
-        // Setup expected counts for events
-        function setExpectedIteration(pageVisible, pageInvisible, pageSelected, datasourceCountChanged) {
-            eventValidationObject.pageVisible.expectedIteration = pageVisible;
-            eventValidationObject.pageInvisible.expectedIteration = pageInvisible;
-            eventValidationObject.pageSelected.expectedIteration = pageSelected;
-            eventValidationObject.datasourceCountChanged.eventCount = datasourceCountChanged;
-        }
-
         // Setup eventValidationObject for pagevisibilitychanged event to expected results
-        this.setVerifyPageVisibilityInfoObject = function (pageInvisible, pageVisible) {
+        setVerifyPageVisibilityInfoObject = function (pageInvisible, pageVisible) {
             if (pageInvisible) {
                 eventValidationObject.pageInvisible.id = pageInvisible;
             }
@@ -676,12 +666,12 @@ var eventTestsObject;
         // Since the pageselected event only fires after 250ms after the flip occurs,
         // test need to account for this when instantiating a flipper and you set event handlers after
         // the pageselected event will still fire.
-        this.setVerifyPageSelectedInfoObject = function (page) {
+        setVerifyPageSelectedInfoObject = function (page) {
             eventValidationObject.pageSelected.id = page;
         };
 
         // Setup the Event Handlers that each test will use
-        this.setEventHandlers = function (flipperItem) {
+        setEventHandlers = (flipperItem) => {
             // Add event listener for pagevisibilitychanged and datasourceCountChanged events.
             LiveUnit.LoggingCore.logComment("Setting up event handlers for:");
             LiveUnit.LoggingCore.logComment(pageVisibilityEvent);
@@ -692,14 +682,14 @@ var eventTestsObject;
             if (typeof flipperItem === 'string') {
                 flipperItem = document.getElementById(flipperItem);
             }
-            flipperItem.addEventListener(pageVisibilityEvent, eventTestsObject.pageVisibilityEventHandler, false);
-            flipperItem.addEventListener(datasourceCountChangedEvent, eventTestsObject.datasourceCountChangedEventHandler, false);
-            flipperItem.addEventListener(pageSelectedEvent, eventTestsObject.pageselectedEventHandler, false);
+            flipperItem.addEventListener(pageVisibilityEvent, this.pageVisibilityEventHandler, false);
+            flipperItem.addEventListener(datasourceCountChangedEvent, this.datasourceCountChangedEventHandler, false);
+            flipperItem.addEventListener(pageSelectedEvent, this.pageselectedEventHandler, false);
             LiveUnit.LoggingCore.logComment("Event handlers are setup.");
-        };
+        }
 
         // Event handler for "pagevisibility" which tests that the event contains the correct information.
-        this.pageVisibilityEventHandler = function(eventInfo) {
+        pageVisibilityEventHandler = (eventInfo) => {
             var validateObject;
             LiveUnit.LoggingCore.logComment("Event detected: " + pageVisibilityEvent);
             LiveUnit.LoggingCore.logComment("Page visible: " + eventInfo.detail.visible);
@@ -709,10 +699,10 @@ var eventTestsObject;
             else {
                 validateObject = eventValidationObject.pageInvisible;
             }
-            eventTestsObject.verifyEventInfo(eventInfo, validateObject);
-        };
+            this.verifyEventInfo(eventInfo, validateObject);
+        }
 
-        this.verifyEventInfo = function(eventInfo, validateObject) {
+        verifyEventInfo(eventInfo, validateObject) {
             LiveUnit.LoggingCore.logComment("Verifying event contains correct info...");
             validateObject.event = true;
             validateObject.iteration++;
@@ -740,23 +730,23 @@ var eventTestsObject;
                 LiveUnit.LoggingCore.logComment("The srcElement from the DOM is not same as eventInfo.target");
             }
             */
-        };
+        }
 
         // Event handler for "datasourceCountChanged" which tests that the event was fired when the datasource was changed.
-        this.datasourceCountChangedEventHandler = function (eventInfo) {
+        datasourceCountChangedEventHandler(eventInfo) {
             LiveUnit.LoggingCore.logComment("Event detected: " + datasourceCountChangedEvent);
             eventValidationObject.datasourceCountChanged.callbackCount++;
-        };
+        }
 
-        this.pageselectedEventHandler = function(eventInfo) {
+        pageselectedEventHandler = (eventInfo) => {
             LiveUnit.LoggingCore.logComment("Event detected: " + pageSelectedEvent);
             LiveUnit.LoggingCore.logComment("Page selected: " + eventInfo.target.id);
             var validateObject = eventValidationObject.pageSelected;
-            eventTestsObject.verifyEventInfo(eventInfo, validateObject);
-        };
+            this.verifyEventInfo(eventInfo, validateObject);
+        }
 
         // Verify event validation objects contain expected information.
-        this.verifyEventObject = function (simpleIdCheck) {
+        verifyEventObject(simpleIdCheck?) {
             LiveUnit.LoggingCore.logComment("Verifying '" + pageVisibilityEvent + "' event...");
 
             // Validate invisible pagevisibilitychanged event.
@@ -853,9 +843,11 @@ var eventTestsObject;
             }
 
             LiveUnit.LoggingCore.logComment("Done verifying '" + pageSelectedEvent + "'  event.");
-        };
+        }
      }
 
-    // Register the object as a test class by passing in the name
-    LiveUnit.registerTestClass("EventTests");
-} ());
+    
+}
+
+// Register the object as a test class by passing in the name
+LiveUnit.registerTestClass("WinJSTests.EventTests");

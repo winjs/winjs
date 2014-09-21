@@ -1,44 +1,43 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="FlipperUtils.js"/>
+/// <reference path="FlipperUtils.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 
-var PropertyTests = null;
 
-(function() {
+module Tests {
+    "use strict";
 
     // Create PropertyTests object
-    PropertyTests = function() {
-        var flipperUtils = new FlipperUtils();
-        var commonUtils = CommonUtilities;
+    export class PropertyTests {
+
 
         //
         // Function: SetUp
         // This is the setup function that will be called at the beginning of each test function.
         //
-        this.setUp = function() {
+        setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
-            commonUtils.getIEInfo();
+            CommonUtilities.getIEInfo();
 
             // We want to recreate the flipper element between each test so we start fresh.
-            flipperUtils.addFlipperDom();
+            FlipperUtils.addFlipperDom();
         }
 
         //
         // Function: tearDown
         //
-        this.tearDown = function() {
+        tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
-            flipperUtils.removeFlipperDom();
+            FlipperUtils.removeFlipperDom();
         }
 
         //
         // Test: testFlipperCount
         //
-        this.testFlipperCount = function(signalTestCaseCompleted) {
+        testFlipperCount = function (signalTestCaseCompleted) {
             var numOfItems = 10;
             var error = false;
             var countCompleted = LiveUnit.GetWrappedCallback(function (count) {
@@ -54,20 +53,20 @@ var PropertyTests = null;
                 signalTestCaseCompleted();
             });
 
-            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), {
-                itemDataSource: commonUtils.simpleArrayDataSource(numOfItems),
-                itemTemplate: commonUtils.simpleArrayRenderer
+            var flipper = FlipperUtils.instantiate(FlipperUtils.basicFlipperID(), {
+                itemDataSource: CommonUtilities.simpleArrayDataSource(numOfItems),
+                itemTemplate: CommonUtilities.simpleArrayRenderer
             });
             flipper.count().then(countCompleted, countError).
-                            then(null, countError);
+                then(null, countError);
         }
 
 
         //
         // Test: testFlipperItemSpacingProperty
         //
-        this.testFlipperItemSpacingProperty = function() {
-            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
+        testFlipperItemSpacingProperty = function () {
+            var flipper = FlipperUtils.instantiate(FlipperUtils.basicFlipperID());
 
             // Retrieve default itemSpacing
             var amount = flipper.itemSpacing;
@@ -86,19 +85,18 @@ var PropertyTests = null;
         //
         // Test: testFlipperDataSourceProperty
         //
-        this.testFlipperDataSourceProperty = function(signalTestCaseCompleted) {
+        testFlipperDataSourceProperty = function (signalTestCaseCompleted) {
             // This function will create an array datasource with data based on text passed into it.
             function SimpleDataSource(itemText) {
                 var testData = [];
-                for (var i  = 0; i < 10; i++)
-                {
+                for (var i = 0; i < 10; i++) {
                     testData.push({ text: itemText + i });
                 }
                 return new WinJS.Binding.List(testData).dataSource;
             }
 
             function SimpleRenderer(itemPromise) {
-                return itemPromise.then(function(item) {
+                return itemPromise.then(function (item) {
                     var result = document.createElement("div");
                     result.setAttribute("id", item.data.text);
                     result.textContent = item.data.text;
@@ -110,27 +108,27 @@ var PropertyTests = null;
             var firstPage = 0;
             var secondSource = "SecondSource";
             var secondPage = 9;
-            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), {
+            var flipper = FlipperUtils.instantiate(FlipperUtils.basicFlipperID(), {
                 currentPage: firstPage,
                 itemDataSource: SimpleDataSource(firstSource),
                 itemTemplate: SimpleRenderer
             });
-            var currentPageCompleted = LiveUnit.GetWrappedCallback(function() {
+            var currentPageCompleted = LiveUnit.GetWrappedCallback(function () {
                 flipper.itemDataSource = SimpleDataSource(secondSource);
                 flipper.itemTemplate = SimpleRenderer;
-                setTimeout(LiveUnit.GetWrappedCallback(function() {
+                setTimeout(LiveUnit.GetWrappedCallback(function () {
                     VerifyCurrentPageTextFromFlipper(flipper, secondSource + firstPage);
-                    flipperUtils.ensureCurrentPage(flipper, secondPage, LiveUnit.GetWrappedCallback(function() {
-                        setTimeout(LiveUnit.GetWrappedCallback(function() {
+                    FlipperUtils.ensureCurrentPage(flipper, secondPage, LiveUnit.GetWrappedCallback(function () {
+                        setTimeout(LiveUnit.GetWrappedCallback(function () {
                             VerifyCurrentPageTextFromFlipper(flipper, secondSource + secondPage);
                             signalTestCaseCompleted();
-                        }), NAVIGATION_TIMEOUT);
+                        }), FlipperUtils.NAVIGATION_TIMEOUT);
                     }));
-                }), NAVIGATION_TIMEOUT);
+                }), FlipperUtils.NAVIGATION_TIMEOUT);
             });
 
             VerifyCurrentPageTextFromFlipper(flipper, firstSource + firstPage);
-            flipperUtils.ensureCurrentPage(flipper, secondPage, currentPageCompleted)
+            FlipperUtils.ensureCurrentPage(flipper, secondPage, currentPageCompleted)
 
             function VerifyCurrentPageTextFromFlipper(flipper, text) {
                 LiveUnit.LoggingCore.logComment("Verify that " + text + " matches the flipper's currentPage textContent.");
@@ -147,8 +145,8 @@ var PropertyTests = null;
         //
         // Test: testFlipperCurrentPageProperty
         //
-        this.testFlipperCurrentPageProperty = function() {
-            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID());
+        testFlipperCurrentPageProperty = function () {
+            var flipper = FlipperUtils.instantiate(FlipperUtils.basicFlipperID());
 
             // Retrieve default currentPage
             var amount = flipper.currentPage;
@@ -164,6 +162,8 @@ var PropertyTests = null;
         }
     }
 
-    // Register the object as a test class by passing in the name
-    LiveUnit.registerTestClass("PropertyTests");
-} ());
+
+}
+
+// Register the object as a test class by passing in the name
+LiveUnit.registerTestClass("Tests.PropertyTests");

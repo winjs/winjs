@@ -1,78 +1,20 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.ts" />
 /// <reference path="../TestLib/UnitTestsCommon.ts" />
-/// <reference path="FlipperHelpers.js" />
+/// <reference path="FlipperHelpers.ts" />
 /// <deploy src="../TestData/" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.FlipViewNavigationTests = function () {
     "use strict";
 
     var COUNT = 6;
     var JUMPSCOUNT = 10;
 
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "BasicFlipView";
-        newNode.style.width = "400px";
-        newNode.style.height = "400px";
-        document.body.appendChild(newNode);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        var element = document.getElementById("BasicFlipView");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-    }
-
-    this.generate = function (name, testFunction) {
-        function generateTest(that, orientation) {
-            that[name + "_" + orientation] = function (complete) {
-                var element = document.getElementById("BasicFlipView"),
-                    testData = createArraySource(COUNT, ["4200px"], ["4200px"]),
-                    rawData = testData.rawData,
-                    flipView;
-
-                element.style.width = "4200px";
-                element.style.height = "4200px";
-
-                flipView = new WinJS.UI.FlipView(element, { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation });
-                setupQuickAnimations(flipView);
-                testFunction(element, flipView, rawData, complete);
-            };
-        }
-
-        generateTest(this, "horizontal");
-        generateTest(this, "vertical");
-    }
-    this.generate("testFlipViewOn4KDisplay", navigationTest);
-
-    this.generate = function (name, testFunction) {
-        function generateTest(that, orientation) {
-            that[name + "_" + orientation] = function (complete) {
-                var element = document.getElementById("BasicFlipView"),
-                    testData = createArraySource(COUNT, ["400px"], ["400px"]),
-                    rawData = testData.rawData,
-                    flipView = new WinJS.UI.FlipView(element, {itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation});
-                setupQuickAnimations(flipView);
-                testFunction(element, flipView, rawData, complete);
-            };
-        }
-
-        generateTest(this, "horizontal");
-        generateTest(this, "vertical");
-    }
-    this.generate("testBasicFlipViewNavigation", navigationTest);
-    this.generate("testJumpToNavigation", jumpToTest);
-    this.generate("testScrollChangedByNarrator", narratorScrollChangedTest);
+    var FlipView = <typeof WinJS.UI.PrivateFlipView> WinJS.UI.FlipView;
 
     function narratorScrollChangedTest(element, flipview, rawData, complete) {
         var tests = [
@@ -110,7 +52,7 @@ WinJSTests.FlipViewNavigationTests = function () {
     function navigationTest(element, flipView, rawData, complete) {
         var tests = [];
         for (var i = 0; i < COUNT - 1; i++) {
-            var getWrappedNext = function getWrappedNext (targetIndex) {
+            var getWrappedNext = function getWrappedNext(targetIndex) {
                 return function () {
                     LiveUnit.LoggingCore.logComment("Should be at " + targetIndex);
                     LiveUnit.Assert.areEqual(targetIndex, flipView.currentPage);
@@ -122,7 +64,7 @@ WinJSTests.FlipViewNavigationTests = function () {
             tests.push(getWrappedNext(i));
         }
 
-        tests.push(function() {
+        tests.push(function () {
             LiveUnit.LoggingCore.logComment("Should now be at end, flipView.next should fail");
             LiveUnit.Assert.areEqual(COUNT - 1, flipView.currentPage);
             verifyDisplayedItem(flipView, rawData[COUNT - 1]);
@@ -131,7 +73,7 @@ WinJSTests.FlipViewNavigationTests = function () {
         });
 
         for (var i = COUNT - 1; i > 0; i--) {
-            var getWrappedPrevious = function getWrappedPrevious (targetIndex) {
+            var getWrappedPrevious = function getWrappedPrevious(targetIndex) {
                 return function () {
                     LiveUnit.LoggingCore.logComment("Should be at " + targetIndex);
                     LiveUnit.Assert.areEqual(targetIndex, flipView.currentPage);
@@ -143,7 +85,7 @@ WinJSTests.FlipViewNavigationTests = function () {
             tests.push(getWrappedPrevious(i));
         }
 
-        tests.push(function() {
+        tests.push(function () {
             LiveUnit.LoggingCore.logComment("Should now be at beginning, flipView.previous should fail");
             LiveUnit.Assert.areEqual(0, flipView.currentPage);
             verifyDisplayedItem(flipView, rawData[0]);
@@ -158,7 +100,7 @@ WinJSTests.FlipViewNavigationTests = function () {
         var tests = [],
             lastIndex = 0;
         for (var i = 0; i < JUMPSCOUNT; i++) {
-            var getWrappedJump = function getWrappedJump (targetIndex, lastIndex) {
+            var getWrappedJump = function getWrappedJump(targetIndex, lastIndex) {
                 return function () {
                     // Validate aria-flowto attributes
                     var curr = flipView._pageManager._currentPage;
@@ -198,21 +140,21 @@ WinJSTests.FlipViewNavigationTests = function () {
             tests.push(getWrappedJump(nextIndex, lastIndex));
             lastIndex = nextIndex;
         }
-        tests.push(function() {
+        tests.push(function () {
             if (flipView.currentPage === 0) {
                 return true;
             }
             flipView.currentPage = 0;
         });
-        tests.push(function() {
+        tests.push(function () {
             flipView.currentPage = COUNT + 1;
         });
-        tests.push(function() {
+        tests.push(function () {
             LiveUnit.Assert.areEqual(COUNT - 1, flipView.currentPage);
             verifyDisplayedItem(flipView, rawData[COUNT - 1]);
             flipView.currentPage = -9999;
         });
-        tests.push(function() {
+        tests.push(function () {
             LiveUnit.Assert.areEqual(0, flipView.currentPage);
             verifyDisplayedItem(flipView, rawData[0]);
             complete();
@@ -221,11 +163,33 @@ WinJSTests.FlipViewNavigationTests = function () {
         runFlipViewTests(flipView, tests);
     }
 
-    this.testZoombieFlipViewDuringNavigation = function (complete) {
-        var element = document.getElementById("BasicFlipView"),
-            testData = createArraySource(COUNT, ["400px"], ["400px"]),
-            rawData = testData.rawData,
-            flipView = new WinJS.UI.FlipView(element, { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer });
+    export class FlipViewNavigationTests {
+
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "BasicFlipView";
+            newNode.style.width = "400px";
+            newNode.style.height = "400px";
+            document.body.appendChild(newNode);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            var element = document.getElementById("BasicFlipView");
+            if (element) {
+                WinJS.Utilities.disposeSubTree(element);
+                document.body.removeChild(element);
+            }
+        }
+
+
+        testZoombieFlipViewDuringNavigation(complete) {
+            var element = document.getElementById("BasicFlipView"),
+                testData = createArraySource(COUNT, ["400px"], ["400px"]),
+                rawData = testData.rawData,
+                flipView = new WinJS.UI.FlipView(element, { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer });
             flipView.addEventListener("pageselected", function pageSelectedHandler() {
                 flipView.removeEventListener("pageselected", pageSelectedHandler);
                 LiveUnit.Assert.areEqual(0, flipView.currentPage);
@@ -235,41 +199,82 @@ WinJSTests.FlipViewNavigationTests = function () {
                 //Ensure that we don't get a JS exception when the animation completes
                 setTimeout(complete, WinJS.UI._animationTimeAdjustment(1000));
             });
-    }
+        }
 
-    this.testCurrentPageDuringNavigationAnimation = function (complete) {
-        var element = document.getElementById("BasicFlipView"),
-            testData = createArraySource(COUNT, ["400px"], ["400px"]),
-            rawData = testData.rawData,
-            flipView = new WinJS.UI.FlipView(element, { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer });
+        testCurrentPageDuringNavigationAnimation(complete) {
+            var element = document.getElementById("BasicFlipView"),
+                testData = createArraySource(COUNT, ["400px"], ["400px"]),
+                rawData = testData.rawData,
+                flipView = new FlipView(element, { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer });
 
-        flipView.addEventListener("pageselected", function pageSelectedHandler() {
-            flipView.removeEventListener("pageselected", pageSelectedHandler);
-            LiveUnit.Assert.areEqual(0, flipView.currentPage);
-            // Go to the next page, and while it is animating, go back to the previous page. We should
-            // end up in the first page.
-            flipView.next();
-        });
+            flipView.addEventListener("pageselected", function pageSelectedHandler() {
+                flipView.removeEventListener("pageselected", pageSelectedHandler);
+                LiveUnit.Assert.areEqual(0, flipView.currentPage);
+                // Go to the next page, and while it is animating, go back to the previous page. We should
+                // end up in the first page.
+                flipView.next();
+            });
 
-        var pageVisibleCount = 0,
-            pageInvisibleCount = 0;
-        flipView.addEventListener("pagevisibilitychanged", function pageVisibilityHandler(ev) {
-            ev.detail.visible ? pageVisibleCount++ : pageInvisibleCount++;
-            if (pageInvisibleCount === 2) {
-                LiveUnit.Assert.areEqual(0, flipView.currentPage, "Flipview did not end in the first page");
-                flipView.removeEventListener("pagevisibilitychanged", pageVisibilityHandler);
-                complete();
-            }
-            WinJS.Utilities.Scheduler.schedule(function () {
-                if (pageVisibleCount === 1) {
-                    LiveUnit.Assert.isTrue(flipView._animating);
-                    LiveUnit.Assert.areEqual(1, flipView.currentPage);
-                    LiveUnit.Assert.isTrue(flipView._animating);
-                    flipView.previous();
+            var pageVisibleCount = 0,
+                pageInvisibleCount = 0;
+            flipView.addEventListener("pagevisibilitychanged", function pageVisibilityHandler(ev) {
+                ev.detail.visible ? pageVisibleCount++ : pageInvisibleCount++;
+                if (pageInvisibleCount === 2) {
+                    LiveUnit.Assert.areEqual(0, flipView.currentPage, "Flipview did not end in the first page");
+                    flipView.removeEventListener("pagevisibilitychanged", pageVisibilityHandler);
+                    complete();
                 }
-            }, WinJS.Utilities.Scheduler.Priority.normal);
-        });
+                WinJS.Utilities.Scheduler.schedule(function () {
+                    if (pageVisibleCount === 1) {
+                        LiveUnit.Assert.isTrue(flipView._animating);
+                        LiveUnit.Assert.areEqual(1, flipView.currentPage);
+                        LiveUnit.Assert.isTrue(flipView._animating);
+                        flipView.previous();
+                    }
+                }, WinJS.Utilities.Scheduler.Priority.normal);
+            });
+        }
     };
-};
 
+    function generate(name, testFunction) {
+        function generateTest(orientation) {
+            FlipViewNavigationTests.prototype[name + "_" + orientation] = function (complete) {
+                var element = document.getElementById("BasicFlipView"),
+                    testData = createArraySource(COUNT, ["4200px"], ["4200px"]),
+                    rawData = testData.rawData,
+                    flipView;
+
+                element.style.width = "4200px";
+                element.style.height = "4200px";
+
+                flipView = new WinJS.UI.FlipView(element, { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation });
+                setupQuickAnimations(flipView);
+                testFunction(element, flipView, rawData, complete);
+            };
+        }
+
+        generateTest("horizontal");
+        generateTest("vertical");
+    }
+    generate("testFlipViewOn4KDisplay", navigationTest);
+
+    function generate2(name, testFunction) {
+        function generateTest(orientation) {
+            FlipViewNavigationTests.prototype[name + "_" + orientation] = function (complete) {
+                var element = document.getElementById("BasicFlipView"),
+                    testData = createArraySource(COUNT, ["400px"], ["400px"]),
+                    rawData = testData.rawData,
+                    flipView = new WinJS.UI.FlipView(element, { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation });
+                setupQuickAnimations(flipView);
+                testFunction(element, flipView, rawData, complete);
+            };
+        }
+
+        generateTest("horizontal");
+        generateTest("vertical");
+    }
+    generate2("testBasicFlipViewNavigation", navigationTest);
+    generate2("testJumpToNavigation", jumpToTest);
+    generate2("testScrollChangedByNarrator", narratorScrollChangedTest);
+}
 LiveUnit.registerTestClass("WinJSTests.FlipViewNavigationTests");

@@ -1,37 +1,74 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="FlipperUtils.js"/>
+/// <reference path="FlipperUtils.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 
-var LayoutTests = null;
+module WinJSTests {
 
-(function() {
+    "use strict";
+
+    var pageSelectedEvent = "pagecompleted";
+
+    function pixelToInt(val) {
+        return parseInt(val, 10);
+    }
+
+    function smallContentCentered(orientation) {
+        var smallRenderer = function (itemPromise) {
+            var renderer = basicInstantRenderer(itemPromise);
+            renderer.element.style.width = "100px";
+            renderer.element.style.height = "100px";
+            renderer.element.classList.add("rootElement");
+            return renderer;
+        }
+
+            var options = { itemTemplate: smallRenderer, orientation: orientation };
+        var flipper = FlipperUtils.instantiate(FlipperUtils.basicFlipperID(), options);
+        var element = flipper.element;
+        var templateRoot = <HTMLElement>element.querySelector(".rootElement");
+
+        var flipViewHeight = pixelToInt(getComputedStyle(element).height);
+        var flipViewWidth = pixelToInt(getComputedStyle(element).width);
+        var itemHeight = pixelToInt(getComputedStyle(templateRoot).height);
+        var itemWidth = pixelToInt(getComputedStyle(templateRoot).width);
+        var itemTop = templateRoot.offsetTop;
+        var itemLeft = templateRoot.offsetLeft;
+
+        var shorter = itemHeight < flipViewHeight;
+        var thinner = itemWidth < flipViewWidth;
+
+        LiveUnit.Assert.isTrue(shorter && thinner, "content should be smaller than the FlipView");
+
+        var centerTop = (flipViewHeight - itemHeight) / 2;
+        var centerLeft = (flipViewWidth - itemWidth) / 2;
+
+        LiveUnit.Assert.areEqual(centerTop, itemTop, "content is not vertically centered");
+        LiveUnit.Assert.areEqual(centerLeft, itemLeft, "content is not horizontally centered");
+    }
 
     // Create LayoutTests object
-    LayoutTests = function() {
-        var flipperUtils = new FlipperUtils();
-        var commonUtils = CommonUtilities;
-        var pageSelectedEvent = "pagecompleted";
+    export class LayoutTests {
+
 
         //
         // Function: SetUp
         //
-        this.setUp = function() {
+        setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
-            commonUtils.getIEInfo();
+            CommonUtilities.getIEInfo();
             // We want to recreate the flipper element between each test so we start fresh.
-            flipperUtils.addFlipperDom(200);
+            FlipperUtils.addFlipperDom("200");
         }
 
         //
         // Function: tearDown
         //
-        this.tearDown = function() {
+        tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
-            flipperUtils.removeFlipperDom();
+            FlipperUtils.removeFlipperDom();
         }
 
         //
@@ -39,49 +76,12 @@ var LayoutTests = null;
         // Ensure that the small content is centered in the flipper region.
         //
 
-        function pixelToInt(val){
-            return parseInt(val, 10);
+        testFlipperSmallContentCentered_horizontal() {
+            smallContentCentered("horizontal");
         }
 
-        this.testFlipperSmallContentCentered_horizontal = function() {
-           smallContentCentered("horizontal");
-        }
-
-        this.testFlipperSmallContentCentered_vertical = function() {
-           smallContentCentered("vertical");
-        }
-
-        function smallContentCentered(orientation){
-            var smallRenderer = function(itemPromise) {
-                var renderer = basicInstantRenderer(itemPromise);
-                renderer.element.style.width = "100px";
-                renderer.element.style.height = "100px";
-                renderer.element.classList.add("rootElement");
-                return renderer;
-            }
-
-            var options = {itemTemplate: smallRenderer, orientation: orientation};
-            var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), options);
-            var element = flipper.element;
-            var templateRoot = element.querySelector(".rootElement");
-
-            var flipViewHeight = pixelToInt(getComputedStyle(element).height);
-            var flipViewWidth = pixelToInt(getComputedStyle(element).width);
-            var itemHeight = pixelToInt(getComputedStyle(templateRoot).height);
-            var itemWidth = pixelToInt(getComputedStyle(templateRoot).width);
-            var itemTop = templateRoot.offsetTop;
-            var itemLeft = templateRoot.offsetLeft;
-
-            var shorter = itemHeight < flipViewHeight;
-            var thinner = itemWidth < flipViewWidth;
-
-            LiveUnit.Assert.isTrue(shorter && thinner, "content should be smaller than the FlipView");
-
-            var centerTop = (flipViewHeight - itemHeight) / 2;
-            var centerLeft = (flipViewWidth - itemWidth) / 2;
-
-            LiveUnit.Assert.areEqual(centerTop, itemTop, "content is not vertically centered");
-            LiveUnit.Assert.areEqual(centerLeft, itemLeft, "content is not horizontally centered");
+        testFlipperSmallContentCentered_vertical() {
+            smallContentCentered("vertical");
         }
 
         //
@@ -162,6 +162,8 @@ var LayoutTests = null;
         */
     }
 
-    // Register the object as a test class by passing in the name
-    LiveUnit.registerTestClass("LayoutTests");
-} ());
+
+}
+
+// Register the object as a test class by passing in the name
+LiveUnit.registerTestClass("WinJSTests.LayoutTests");

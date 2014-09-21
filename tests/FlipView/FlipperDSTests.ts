@@ -1,25 +1,26 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="FlipperUtils.js"/>
+/// <reference path="FlipperUtils.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 
-var DataSourceTests = null;
+module WinJSTests {
+    "use strict";
 
-(function() {
+    var flipperUtils = FlipperUtils;
+    var commonUtils = CommonUtilities;
 
     // Create NavigationTests object
-    DataSourceTests = function() {
-        var flipperUtils = new FlipperUtils();
-        var commonUtils = CommonUtilities;
+    export class DataSourceTests {
+
 
         //
         // Function: SetUp
         // This is the setup function that will be called at the beginning of each test function.
         //
-        this.setUp = function() {
+        setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
             commonUtils.getIEInfo();
             flipperUtils.addFlipperDom();
@@ -28,7 +29,7 @@ var DataSourceTests = null;
         //
         // Function: tearDown
         //
-        this.tearDown = function() {
+        tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
             flipperUtils.removeFlipperDom();
         }
@@ -36,7 +37,7 @@ var DataSourceTests = null;
         //
         // Test: Flipper instantiation using array data source
         //
-        this.testFlipperDataSourceInstantiation = function() {
+        testFlipperDataSourceInstantiation() {
             var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), {
                 itemDataSource: commonUtils.simpleArrayDataSource(10),
                 itemTemplate: commonUtils.simpleArrayRenderer
@@ -58,13 +59,13 @@ var DataSourceTests = null;
         //
         // Test: Flip to next page using array data source
         //
-        this.testFlipperFlipToNext = function(signalTestCaseCompleted) {
+        testFlipperFlipToNext(signalTestCaseCompleted) {
             var flipper = flipperUtils.instantiate(flipperUtils.basicFlipperID(), {
                 itemDataSource: commonUtils.simpleArrayDataSource(10),
                 itemTemplate: commonUtils.simpleArrayRenderer
             });
 
-            var verifyFlip = LiveUnit.GetWrappedCallback(function() {
+            var verifyFlip = LiveUnit.GetWrappedCallback(function () {
                 LiveUnit.LoggingCore.logComment("Current page after flip to next: " + flipper.currentPage);
                 LiveUnit.Assert.areEqual(currentPage + 1, flipper.currentPage,
                     "Page after flip should be one more than previous page..");
@@ -85,6 +86,6 @@ var DataSourceTests = null;
         }
     }
 
-    // Register the object as a test class by passing in the name
-    LiveUnit.registerTestClass("DataSourceTests");
-} ());
+}
+// Register the object as a test class by passing in the name
+LiveUnit.registerTestClass("WinJSTests.DataSourceTests");

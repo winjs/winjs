@@ -204,6 +204,11 @@ declare module WinJS {
             static getInformation;
         }
 
+        class PrivateFlipView<T> extends FlipView<T> {
+            _pageManager;
+            _animating: boolean;
+        }
+
         class PrivateToolbar extends WinJS.UI.Toolbar {
             _disposed: boolean;
             _primaryCommands: ICommand[];

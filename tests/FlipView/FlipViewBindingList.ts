@@ -1,214 +1,207 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
-/// <reference path="../FlipView/FlipperHelpers.js"/>
+/// <reference path="../FlipView/FlipperHelpers.ts"/>
 
-
-var Tests = Tests || {};
-
-(function (global, undefined) {
+module Tests {
     "use strict";
 
-    Tests.FlipViewIntegrationTestingWithBindingList = function () {
+    var List = WinJS.Binding.List;
+    var join = WinJS.Promise.join;
 
-        var List = WinJS.Binding.List;
-        var join = WinJS.Promise.join;
+    function post(v) {
+        return WinJS.Promise.timeout().
+            then(function () { return v; });
+    }
+    function errorHandler(msg) {
+        try {
+            LiveUnit.Assert.fail('There was an unhandled error in your test: ' + msg);
+        } catch (ex) { }
+    }
 
-        function post(v) {
-            return WinJS.Promise.timeout().
-                then(function () { return v; });
+    function range(l, h) {
+        var res = [];
+        for (; l < h; l++) {
+            res.push(l);
         }
-        function errorHandler(msg) {
-            try {
-                LiveUnit.Assert.fail('There was an unhandled error in your test: ' + msg);
-            } catch (ex) { }
-        }
+        return res;
+    }
 
-        function range(l, h) {
-            var res = [];
-            for (; l < h; l++) {
-                res.push(l);
-            }
-            return res;
-        }
+    function asyncSequence(workFunctions) {
+        return workFunctions.reduce(function (p, work) {
+            return WinJS.Promise.as(p).then(function () {
+                return WinJS.Promise.as(work()).then(function () { return WinJS.Promise.timeout(); });
+            });
+        }, WinJS.Promise.wrap());
+    }
 
-        function asyncSequence(workFunctions) {
-            return workFunctions.reduce(function (p, work) {
-                return WinJS.Promise.as(p).then(function () {
-                    return WinJS.Promise.as(work()).then(function () { return WinJS.Promise.timeout(); });
-                });
-            }, WinJS.Promise.as());
-        }
+    var seed = 0;
+    function rand(nMax) {
+        seed = (seed + 0.81282849124) * 2375.238208308;
+        seed -= Math.floor(seed);
 
-        var seed = 0;
-        function rand(nMax) {
-            seed = (seed + 0.81282849124) * 2375.238208308;
-            seed -= Math.floor(seed);
+        return Math.floor(seed * nMax);
+    }
 
-            return Math.floor(seed * nMax);
+    function moveRandom(list) {
+        var target = rand(list.length);
+        var source = rand(list.length);
+        list.move(source, target);
+    }
+    function spliceRandom(list) {
+        var target = rand(list.length);
+        var element = { title: target, detail: "New Item spliced at " + target };
+        list.splice(target, 0, element);
+    }
+    function setAtRandom(list) {
+        var target = rand(list.length);
+        var oldElement = list.getAt(target);
+        var newElement = {
+            title: oldElement.title,
+            detail: oldElement.title + " additional(" + target + ")"
+        };
+        list.setAt(target, newElement);
+    }
+    function unshiftAndShiftRandom(list, order, iteration) {
+        iteration = iteration;
+        var shift = true;
+        if (order && order.length) {
+            shift = order.pop() ? false : true;
+        } else {
+            shift = rand(2) ? false : true;
         }
+        if (shift && list.length) {
+            var element = list.shift();
 
-        function moveRandom(list) {
-            var target = rand(list.length);
-            var source = rand(list.length);
-            list.move(source, target);
-        }
-        function spliceRandom(list) {
-            var target = rand(list.length);
-            var element = { title: target, detail: "New Item spliced at " + target };
-            list.splice(target, 0, element);
-        }
-        function setAtRandom(list) {
-            var target = rand(list.length);
-            var oldElement = list.getAt(target);
+        } else {
             var newElement = {
-                title: oldElement.title,
-                detail: oldElement.title + " additional(" + target + ")"
+                title: iteration,
+                detail: "New element unshifted on, iteration: " + iteration
             };
-            list.setAt(target, newElement);
+            list.unshift(newElement);
         }
-        function unshiftAndShiftRandom(list, order, iteration) {
-            iteration = iteration;
-            var shift = true;
-            if (order && order.length) {
-                shift = order.pop() ? false : true;
-            } else {
-                shift = rand(2)  ? false : true;
-            }
-            if (shift && list.length) {
-                var element = list.shift();
-
-            } else {
-                var newElement = {
-                    title: iteration,
-                    detail: "New element unshifted on, iteration: " + iteration
-                };
-                list.unshift(newElement);
-            }
+    }
+    function pushAndPopRandom(list, order, iteration) {
+        iteration = iteration || 0;
+        var pop = true;
+        if (order && order.length) {
+            pop = order.pop() ? false : true;
+        } else {
+            pop = rand(2) ? false : true;
         }
-        function pushAndPopRandom(list, order, iteration) {
-            iteration = iteration || 0;
-            var pop = true;
-            if (order && order.length) {
-                pop = order.pop() ? false : true;
-            } else {
-                pop = rand(2) ? false : true;
-            }
-            if (pop && list.length) {
-                list.pop();
-            } else {
-                var newElement = {
-                    title: iteration,
-                    detail: "New element pushed on, iteration: " + iteration.toString()
-                };
-                list.push(newElement);
-            }
-        }
-        function setAtRandomSpecial(list) {
-            var target = rand(list.length);
-            var oldElement = list.getAt(target);
+        if (pop && list.length) {
+            list.pop();
+        } else {
             var newElement = {
-                title: list.getAt(target).title + 2,
-                detail: oldElement.title + " additional(" + target + ")"
-
+                title: iteration,
+                detail: "New element pushed on, iteration: " + iteration.toString()
             };
-            list.setAt(target, newElement);
-            list.notifyMutated(target);
+            list.push(newElement);
         }
+    }
+    function setAtRandomSpecial(list) {
+        var target = rand(list.length);
+        var oldElement = list.getAt(target);
+        var newElement = {
+            title: list.getAt(target).title + 2,
+            detail: oldElement.title + " additional(" + target + ")"
 
-        function resetSeed() {
-            seed = 0;
-        }
-        function verifyFlipView(flipView, list, obj) {
-            flipView = flipView.winControl;
-            //var length = flipView.count()._value // for length
-            var length = flipView._dataSource.getCount()._value;
-            for(var i = 0; i < length; i++){
-                var fvElement = flipView.itemDataSource.itemFromIndex(i)._value.data;
-                var listElement = list.getAt(i);
-                var objectShape = obj || listElement;
+        };
+        list.setAt(target, newElement);
+        list.notifyMutated(target);
+    }
 
-                for(var j in objectShape){
-                    LiveUnit.Assert.areEqual(listElement[j], fvElement[j], "checking the correctness of the flipView element");
-                    if (listElement[j] !== fvElement[j]){
-                        return false;
-                    }
+    function resetSeed() {
+        seed = 0;
+    }
+    function verifyFlipView(flipView, list, obj?) {
+        flipView = flipView.winControl;
+        //var length = flipView.count()._value // for length
+        var length = flipView._dataSource.getCount()._value;
+        for (var i = 0; i < length; i++) {
+            var fvElement = flipView.itemDataSource.itemFromIndex(i)._value.data;
+            var listElement = list.getAt(i);
+            var objectShape = obj || listElement;
+
+            for (var j in objectShape) {
+                LiveUnit.Assert.areEqual(listElement[j], fvElement[j], "checking the correctness of the flipView element");
+                if (listElement[j] !== fvElement[j]) {
+                    return false;
                 }
             }
-            return list.length === length;
         }
-        function parent(element) {
-            document.body.appendChild(element);
-            element.cleanup = function () {
-                WinJS.Utilities.disposeSubTree(element);
-                document.body.removeChild(element);
-            };
-            return element;
-        }
-        function createDataSource(dataSource) {
-            var holder = document.createElement("div");
-            holder.msParentSelectorScope = true;
-            holder.className = "dataSource";
-            holder.dataSource = dataSource;
-            return holder;
-        }
-        function createTemplate() {
-            var holder = document.createElement("div");
-            holder.msParentSelectorScope = true;
-            holder.id = "testTemplateWithFlipView";
-            holder.innerHTML = '<div class="sampleTemplate" data-win-control="WinJS.Binding.Template" style="display: none">' +
-                            '<div>' +
-                                '<div data-win-bind="textContent: title"  ></div>' +
-                                '<div data-win-bind="textContent: detail"></div>' +
-                            '</div>' +
-                    '</div>';
-            return holder;
-        }
-        function createTemplateWithViewBox() {
-            var holder = document.createElement("div");
-            holder.msParentSelectorScope = true;
-            holder.id = "testTemplateWithFlipView";
-            holder.innerHTML = '<div class="sampleTemplate" data-win-control="WinJS.Binding.Template" style="display: none">' +
-                            '<div data-win-control="WinJS.UI.ViewBox">' +
-                                '<div style="width:25px;height:25px" class="viewBoxInstance">' +
-                                    '<div data-win-bind="textContent: title"  ></div>' +
-                                    '<div data-win-bind="textContent: detail"></div>' +
-                                '</div>' +
-                            '</div>' +
-                    '</div>';
-            return holder;
-        }
-        function createFlipView() {
-            var holder = document.createElement("div");
-            holder.msParentSelectorScope = true;
-            holder.cssText = "height:50%;width:50%;overflow:scroll";
-            var flipView = document.createElement("div");
-            flipView.className = "flipViewExample";
-            flipView.setAttribute("data-win-control", "WinJS.UI.FlipView ");
-            flipView.setAttribute("data-win-options", "{itemDataSource : select('.dataSource').dataSource , layout:{type:WinJS.UI.ListLayout}, itemTemplate: select('.sampleTemplate') } ");
-            flipView.style.height = "200px";
-            flipView.style.width = "100px";
-            holder.appendChild(flipView);
-            return holder;
-        }
+        return list.length === length;
+    }
+    function parent(element) {
+        document.body.appendChild(element);
+        element.cleanup = function () {
+            WinJS.Utilities.disposeSubTree(element);
+            document.body.removeChild(element);
+        };
+        return element;
+    }
+    function createDataSource(dataSource) {
+        var holder: any = document.createElement("div");
+        holder.msParentSelectorScope = true;
+        holder.className = "dataSource";
+        holder.dataSource = dataSource;
+        return holder;
+    }
+    function createTemplate() {
+        var holder: any = document.createElement("div");
+        holder.msParentSelectorScope = true;
+        holder.id = "testTemplateWithFlipView";
+        holder.innerHTML = '<div class="sampleTemplate" data-win-control="WinJS.Binding.Template" style="display: none">' +
+        '<div>' +
+        '<div data-win-bind="textContent: title"  ></div>' +
+        '<div data-win-bind="textContent: detail"></div>' +
+        '</div>' +
+        '</div>';
+        return holder;
+    }
+    function createTemplateWithViewBox() {
+        var holder: any = document.createElement("div");
+        holder.msParentSelectorScope = true;
+        holder.id = "testTemplateWithFlipView";
+        holder.innerHTML = '<div class="sampleTemplate" data-win-control="WinJS.Binding.Template" style="display: none">' +
+        '<div data-win-control="WinJS.UI.ViewBox">' +
+        '<div style="width:25px;height:25px" class="viewBoxInstance">' +
+        '<div data-win-bind="textContent: title"  ></div>' +
+        '<div data-win-bind="textContent: detail"></div>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+        return holder;
+    }
+    function createFlipView() {
+        var holder: any = document.createElement("div");
+        holder.msParentSelectorScope = true;
+        holder.cssText = "height:50%;width:50%;overflow:scroll";
+        var flipView = document.createElement("div");
+        flipView.className = "flipViewExample";
+        flipView.setAttribute("data-win-control", "WinJS.UI.FlipView ");
+        flipView.setAttribute("data-win-options", "{itemDataSource : select('.dataSource').dataSource , layout:{type:WinJS.UI.ListLayout}, itemTemplate: select('.sampleTemplate') } ");
+        flipView.style.height = "200px";
+        flipView.style.width = "100px";
+        holder.appendChild(flipView);
+        return holder;
+    }
 
-        function createTestElements(dataSource, templateFactory) {
-            templateFactory = templateFactory || createTemplate;
-            var holder = document.createElement("div");
-            holder.appendChild(createDataSource(dataSource));
-            holder.appendChild(templateFactory());
-            holder.appendChild(createFlipView());
-            return holder;
-        }
+    function createTestElements(dataSource, templateFactory?) {
+        templateFactory = templateFactory || createTemplate;
+        var holder = document.createElement("div");
+        holder.appendChild(createDataSource(dataSource));
+        holder.appendChild(templateFactory());
+        holder.appendChild(createFlipView());
+        return holder;
+    }
 
-        WinJS.Promise.onerror = function (e) {
-            var x = e;
-        }
+    export class FlipViewIntegrationTestingWithBindingList {
 
-        this.testFlipWithViewBox = function (complete) {
+        testFlipWithViewBox = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Javascript Toolkit_" + i }; });
             var list = new WinJS.Binding.List(sampleDataSource);
 
@@ -233,7 +226,7 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testReversingAndSortingFlipView = function (complete) {
+        testReversingAndSortingFlipView = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Javascript Toolkit_" + i }; });
             var list = new WinJS.Binding.List(sampleDataSource);
 
@@ -249,7 +242,7 @@ var Tests = Tests || {};
                 then(post).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyFlipView(flipView, list), "checking the correctness of reverse");
-                    list.sort(function (l, r){ return l.title - r.title; });
+                    list.sort(function (l, r) { return l.title - r.title; });
                     //listView.winControl.forceLayout();
                 }).
                 then(post).
@@ -262,11 +255,11 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithEmptyFiltered = function (complete) {
+        testFlipViewWithEmptyFiltered = function (complete) {
 
             var sampleDataSource = [];
-            var sorted = new WinJS.Binding.List (sampleDataSource);
-            var list = sorted.createFiltered(function (num){ return num.title % 2 === 0 });
+            var sorted = new WinJS.Binding.List(sampleDataSource);
+            var list = sorted.createFiltered(function (num) { return num.title % 2 === 0 });
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
@@ -287,11 +280,11 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithOneElementAndThenDeletedAndThenAdded = function (complete) {
+        testFlipViewWithOneElementAndThenDeletedAndThenAdded = function (complete) {
 
             var sampleDataSource = [{ title: 3, detail: "hello world" }];
-            var sorted = new WinJS.Binding.List (sampleDataSource);
-            var list = sorted.createFiltered(function (num){ return num.title % 2 === 0 });
+            var sorted = new WinJS.Binding.List(sampleDataSource);
+            var list = sorted.createFiltered(function (num) { return num.title % 2 === 0 });
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
@@ -317,10 +310,10 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithBindingEnabledInSortedList = function (complete) {
+        testFlipViewWithBindingEnabledInSortedList = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Corsica_" + i }; });
 
-            var list = new WinJS.Binding.List (sampleDataSource, { binding: true });
+            var list = new WinJS.Binding.List(sampleDataSource, { binding: true });
             var objToCompare = { title: 1, detail: "temp" };
 
             var elements = parent(createTestElements(list.dataSource));
@@ -346,13 +339,13 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithBindingAndFiltered = function (complete) {
+        testFlipViewWithBindingAndFiltered = function (complete) {
 
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Corsica_" + i }; });
             var objToCompare = { title: 1, detail: 1 };
 
-            var sort = new WinJS.Binding.List (sampleDataSource, { binding: true });
-            var list = sort.createFiltered(function (num){ return (num.title % 2 === 0); });
+            var sort = new WinJS.Binding.List(sampleDataSource, { binding: true });
+            var list = sort.createFiltered(function (num) { return (num.title % 2 === 0); });
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
@@ -379,12 +372,12 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithBindingAndSorted = function (complete) {
+        testFlipViewWithBindingAndSorted = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Corsica_" + i }; });
             var objToCompare = { title: 1, detail: 1 };
 
-            var sort = new WinJS.Binding.List (sampleDataSource, { binding: true });
-            var list = sort.createSorted(function (l, r){ return l.title - r.title; });
+            var sort = new WinJS.Binding.List(sampleDataSource, { binding: true });
+            var list = sort.createSorted(function (l, r) { return l.title - r.title; });
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
@@ -409,7 +402,7 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewReplaceCurrentItem = function (complete) {
+        testFlipViewReplaceCurrentItem = function (complete) {
             var sampleDataSource = range(0, 3).map(function (i) { return { title: i, detail: "hello world " + i }; });
 
             var list = new WinJS.Binding.List(sampleDataSource);
@@ -433,11 +426,11 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithSortedProjectionSpecialCases = function (complete) {
+        testFlipViewWithSortedProjectionSpecialCases = function (complete) {
             var sampleDataSource = range(0, 10).map(function (i) { return { title: i, detail: "hello world " + i }; });
 
-            var sorted = new WinJS.Binding.List (sampleDataSource);
-            var list = sorted.createFiltered(function (num){ return num.title % 2 === 0 });
+            var sorted = new WinJS.Binding.List(sampleDataSource);
+            var list = sorted.createFiltered(function (num) { return num.title % 2 === 0 });
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
@@ -473,10 +466,10 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithListMutations = function (complete) {
+        testFlipViewWithListMutations = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: "Corsica_" + i, detail: "Javascript Toolkit_" + i }; });
 
-            var list = new WinJS.Binding.List (sampleDataSource);
+            var list = new WinJS.Binding.List(sampleDataSource);
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
@@ -509,11 +502,11 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithSortedListMutations = function (complete) {
+        testFlipViewWithSortedListMutations = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Corsica_" + i }; });
 
-            var sorted = new WinJS.Binding.List (sampleDataSource);
-            var list = sorted.createSorted(function (l, r){ return l.title - r.title; });
+            var sorted = new WinJS.Binding.List(sampleDataSource);
+            var list = sorted.createSorted(function (l, r) { return l.title - r.title; });
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
@@ -546,11 +539,11 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewWithFilteredListMutation = function (complete) {
+        testFlipViewWithFilteredListMutation = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Corsica_" + i }; });
 
-            var sorted = new WinJS.Binding.List (sampleDataSource);
-            var list = sorted.createFiltered(function (num){ return num.title % 2 === 0 });
+            var sorted = new WinJS.Binding.List(sampleDataSource);
+            var list = sorted.createFiltered(function (num) { return num.title % 2 === 0 });
 
             var elements = parent(createTestElements(list.dataSource));
             var flipView = elements.querySelector(".flipViewExample");
@@ -582,11 +575,11 @@ var Tests = Tests || {};
                 then(complete);
         }
 
-        this.testFlipViewUsingGroupSortedWithMutations = function (complete) {
+        testFlipViewUsingGroupSortedWithMutations = function (complete) {
             var sampleDataSource = range(0, 20).map(function (i) { return { title: i, detail: "Corsica_" + i }; });
 
-            var sorted = new WinJS.Binding.List (sampleDataSource);
-            var compare = function (num){ return (num.title % 2 === 0) ? "even" : "odd"; };
+            var sorted = new WinJS.Binding.List(sampleDataSource);
+            var compare = function (num) { return (num.title % 2 === 0) ? "even" : "odd"; };
             var list = sorted.createGrouped(compare, compare);
 
             var elements = parent(createTestElements(list.dataSource));
@@ -619,6 +612,6 @@ var Tests = Tests || {};
                 then(complete);
         }
     }
+}
 
-    LiveUnit.registerTestClass("Tests.FlipViewIntegrationTestingWithBindingList");
-}(this));
+LiveUnit.registerTestClass("Tests.FlipViewIntegrationTestingWithBindingList");

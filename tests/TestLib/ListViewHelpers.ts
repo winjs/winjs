@@ -484,39 +484,6 @@
         }
     }
 
-    var lvUnhandledErrors = {};
-
-    function errorEventHandler(evt) {
-        var details = evt.detail;
-        var id = details.id;
-        if (!details.parent) {
-            lvUnhandledErrors[id] = details;
-        } else if (details.handler) {
-            delete lvUnhandledErrors[id];
-        }
-    }
-
-    function initUnhandledErrors() {
-        lvUnhandledErrors = {};
-        WinJS.Promise.addEventListener("error", errorEventHandler);
-    }
-
-    function cleanupUnhandledErrors() {
-        WinJS.Promise.removeEventListener("error", errorEventHandler);
-        lvUnhandledErrors = {};
-    }
-
-    function validateUnhandledErrors() {
-        var currentUnhandledErrors = lvUnhandledErrors;
-        cleanupUnhandledErrors();
-        LiveUnit.Assert.areEqual(0, Object.keys(currentUnhandledErrors).length, "Unhandled errors found");
-    }
-
-    function validateUnhandledErrorsOnIdle() {
-        return WinJS.Utilities.Scheduler.requestDrain(WinJS.Utilities.Scheduler.Priority.idle).
-            then(validateUnhandledErrors.bind(this));
-    }
-
     function containerFrom(element) {
         while (element && !WinJS.Utilities.hasClass(element, WinJS.UI._containerClass)) {
             element = element.parentNode;

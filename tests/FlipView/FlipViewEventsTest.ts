@@ -1,58 +1,17 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.ts" />
 /// <reference path="../TestLib/UnitTestsCommon.ts" />
-/// <reference path="FlipperHelpers.js" />
+/// <reference path="FlipperHelpers.ts" />
 /// <deploy src="../TestData/" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.FlipViewEventsTests = function () {
     "use strict";
 
     var COUNT = 6;
-
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "BasicFlipView";
-        newNode.style.width = "400px";
-        newNode.style.height = "400px";
-        document.body.appendChild(newNode);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        var element = document.getElementById("BasicFlipView");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-    }
-
-    this.generate = function (name, testFunction) {
-        function generateTest(that, orientation, useL0DomEvent) {
-            that[name + "_" + orientation + (useL0DomEvent ? "_useL0DomEvent" : "")] = function (complete) {
-                var element = document.getElementById("BasicFlipView"),
-                    testData = createArraySource(COUNT, ["400px"], ["400px"]),
-                    rawData = testData.rawData,
-                    options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation };
-
-                var flipView = new WinJS.UI.FlipView(element, options);
-                testFunction(element, flipView, rawData, complete, useL0DomEvent);
-            };
-        }
-
-        var that = this;
-        [true, false].forEach(function(useL0DomEvent) {
-            generateTest(that, "horizontal", useL0DomEvent);
-            generateTest(that, "vertical", useL0DomEvent);
-        });
-
-    }
-    this.generate("testFlipViewPageEvents", eventsTest);
 
     function verifyDisplayedItem(flipView, rawData) {
         LiveUnit.LoggingCore.logComment("Verifying displayed page is correct");
@@ -161,6 +120,50 @@ WinJSTests.FlipViewEventsTests = function () {
 
         runFlipViewTests(flipView, tests);
     }
-};
 
+
+    export class FlipViewEventsTests {
+
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "BasicFlipView";
+            newNode.style.width = "400px";
+            newNode.style.height = "400px";
+            document.body.appendChild(newNode);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            var element = document.getElementById("BasicFlipView");
+            if (element) {
+                WinJS.Utilities.disposeSubTree(element);
+                document.body.removeChild(element);
+            }
+        }
+
+    }
+
+    function generate(name, testFunction) {
+        function generateTest(orientation, useL0DomEvent) {
+            FlipViewEventsTests.prototype[name + "_" + orientation + (useL0DomEvent ? "_useL0DomEvent" : "")] = function (complete) {
+                var element = document.getElementById("BasicFlipView"),
+                    testData = createArraySource(COUNT, ["400px"], ["400px"]),
+                    rawData = testData.rawData,
+                    options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation };
+
+                var flipView = new WinJS.UI.FlipView(element, options);
+                testFunction(element, flipView, rawData, complete, useL0DomEvent);
+            };
+        }
+
+        [true, false].forEach(function (useL0DomEvent) {
+            generateTest("horizontal", useL0DomEvent);
+            generateTest("vertical", useL0DomEvent);
+        });
+
+    }
+    generate("testFlipViewPageEvents", eventsTest);
+}
 LiveUnit.registerTestClass("WinJSTests.FlipViewEventsTests");
