@@ -1,44 +1,21 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <deploy src="../TestData/" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.ListViewAnimationTest = function () {
     "use strict";
     var ITEMS_COUNT = 5;
     var animationHelperHook = null;
-    // This is the setup function that will be called at the beginning of each test function.
-    this.setUp = function () {
+    var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
 
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "AnimationTest";
-        newNode.style.width = "500px";
-        newNode.style.height = "500px";
-        document.body.appendChild(newNode);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        if (animationHelperHook) {
-            animationHelperHook.cleanup();
-            animationHelperHook = null;
-        }
-        var element = document.getElementById("AnimationTest");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-    }
-
-    function getDataSource(count) {
+    function getDataSource(count = ITEMS_COUNT) {
         var rawData = [];
-        for (var i = 0; i < (count ? count : ITEMS_COUNT) ; i++) {
+        for (var i = 0; i < count; i++) {
             rawData.push({ itemInfo: "Tile" + i });
         }
 
@@ -58,61 +35,24 @@ WinJSTests.ListViewAnimationTest = function () {
     }
 
     function hookAnimationsHelper() {
-        var realFunctions = {};
-        realFunctions.animateEntrance = WinJS.UI._ListViewAnimationHelper.animateEntrance;
+        var realFunctions = {
+            animateEntrance: WinJS.UI._ListViewAnimationHelper.animateEntrance
+        };
 
         var animationCallsRecord = {
-            entranceAnimation: 0
-        };
-        animationCallsRecord.reset = function () {
-            animationCallsRecord.entranceAnimation = 0;
-        };
-        animationCallsRecord.cleanup = function () {
-            WinJS.UI._ListViewAnimationHelper.animateEntrance = realFunctions.animateEntrance;
+            entranceAnimation: 0,
+            reset: function () {
+                animationCallsRecord.entranceAnimation = 0;
+            },
+            cleanup: function () {
+                WinJS.UI._ListViewAnimationHelper.animateEntrance = realFunctions.animateEntrance;
+            }
         };
         WinJS.UI._ListViewAnimationHelper.animateEntrance = function (canvas, firstEntrance) {
             animationCallsRecord.entranceAnimation++;
             return realFunctions.animateEntrance(canvas, firstEntrance);
         };
         return animationCallsRecord;
-    }
-
-    this.generate = function (name, testFunction) {
-        function generateTest(that, animationsEnabled, rtl, layoutName) {
-            var fullName = name + layoutName + (animationsEnabled ? "_animationsEnabled_" : "_animationsDisabled_") + (rtl ? "rtl" : "ltr");
-            that[fullName] = function (complete) {
-                LiveUnit.LoggingCore.logComment("in " + fullName);
-
-                var animationCounts = animationHelperHook = hookAnimationsHelper();
-
-                var element = document.getElementById("AnimationTest");
-                if (layoutName === "GridLayout") {
-                    element.style.height = "150px";
-                }
-                element.style.direction = rtl ? "rtl" : "ltr";
-                animationCounts.reset();
-                var listView = new WinJS.UI.ListView(element, { itemDataSource: getDataSource(), itemTemplate: basicRenderer, layout: new WinJS.UI[layoutName]() });
-                listView._animationsDisabled = function () {
-                    return !animationsEnabled;
-                }
-
-                testFunction(listView, animationCounts, animationsEnabled, ((layoutName === "ListLayout") ? verifyListLayout : verifyGridLayout), complete);
-            };
-        }
-
-        var that = this;
-        function generateTestSuite(layoutName) {
-            generateTest(that, true, true, layoutName);
-            generateTest(that, true, false, layoutName);
-            generateTest(that, false, true, layoutName);
-            generateTest(that, false, false, layoutName);
-        }
-
-        // UNDONE
-        /*
-        generateTestSuite("ListLayout");
-        generateTestSuite("GridLayout");
-        */
     }
 
     function verifyListLayout(listView) {
@@ -152,8 +92,72 @@ WinJSTests.ListViewAnimationTest = function () {
         }
     }
 
-    this.generateDelayedEntranceAnimation = function (layoutName) {
-        this["testDelayedEntranceAnimation" + layoutName] = function (complete) {
+    export class ListViewAnimationTest {
+
+        // This is the setup function that will be called at the beginning of each test function.
+        setUp() {
+
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "AnimationTest";
+            newNode.style.width = "500px";
+            newNode.style.height = "500px";
+            document.body.appendChild(newNode);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            if (animationHelperHook) {
+                animationHelperHook.cleanup();
+                animationHelperHook = null;
+            }
+            var element = document.getElementById("AnimationTest");
+            if (element) {
+                WinJS.Utilities.disposeSubTree(element);
+                document.body.removeChild(element);
+            }
+        }
+    };
+
+    function generate(name, testFunction) {
+        function generateTest(animationsEnabled, rtl, layoutName) {
+            var fullName = name + layoutName + (animationsEnabled ? "_animationsEnabled_" : "_animationsDisabled_") + (rtl ? "rtl" : "ltr");
+            ListViewAnimationTest.prototype[fullName] = function (complete) {
+                LiveUnit.LoggingCore.logComment("in " + fullName);
+
+                var animationCounts = animationHelperHook = hookAnimationsHelper();
+
+                var element = document.getElementById("AnimationTest");
+                if (layoutName === "GridLayout") {
+                    element.style.height = "150px";
+                }
+                element.style.direction = rtl ? "rtl" : "ltr";
+                animationCounts.reset();
+                var listView = new ListView(element, { itemDataSource: getDataSource(), itemTemplate: basicRenderer, layout: new WinJS.UI[layoutName]() });
+                listView._animationsDisabled = function () {
+                    return !animationsEnabled;
+                }
+
+                testFunction(listView, animationCounts, animationsEnabled, ((layoutName === "ListLayout") ? verifyListLayout : verifyGridLayout), complete);
+            };
+        }
+
+        function generateTestSuite(layoutName) {
+            generateTest(true, true, layoutName);
+            generateTest(true, false, layoutName);
+            generateTest(false, true, layoutName);
+            generateTest(false, false, layoutName);
+        }
+
+        // UNDONE
+        /*
+        generateTestSuite("ListLayout");
+        generateTestSuite("GridLayout");
+        */
+    }
+
+    function generateDelayedEntranceAnimation(layoutName) {
+        ListViewAnimationTest.prototype["testDelayedEntranceAnimation" + layoutName] = function (complete) {
             // This test is only useful on a machine that has animations enabled.
             if (!WinJS.UI.isAnimationEnabled()) {
                 complete();
@@ -193,12 +197,9 @@ WinJSTests.ListViewAnimationTest = function () {
             listView = new WinJS.UI.ListView(element, { itemDataSource: getDataSource(), itemTemplate: basicRenderer, layout: new WinJS.UI[layoutName]() });
         };
     };
-    if (!WinJS.Utilities.isPhone) {
-        this.generateDelayedEntranceAnimation("GridLayout");
-    }
 
-    this.generateSkippedEntranceAnimation = function (layoutName) {
-        this["testSkippedEntranceAnimation" + layoutName] = function (complete) {
+    function generateSkippedEntranceAnimation(layoutName) {
+        ListViewAnimationTest.prototype["testSkippedEntranceAnimation" + layoutName] = function (complete) {
             // This test is only useful on a machine that has animations enabled.
             if (!WinJS.UI.isAnimationEnabled()) {
                 complete();
@@ -233,12 +234,9 @@ WinJSTests.ListViewAnimationTest = function () {
             listView = new WinJS.UI.ListView(element, { itemDataSource: getDataSource(), itemTemplate: basicRenderer, layout: new WinJS.UI[layoutName]() });
         };
     };
-    if (!WinJS.Utilities.isPhone) {
-        this.generateSkippedEntranceAnimation("GridLayout");
-    }
 
-    this.generateSkippedContentTransition = function (layoutName) {
-        this["testSkippedContentTransition" + layoutName] = function (complete) {
+    function generateSkippedContentTransition(layoutName) {
+        ListViewAnimationTest.prototype["testSkippedContentTransition" + layoutName] = function (complete) {
             // This test is only useful on a machine that has animations enabled.
             if (!WinJS.UI.isAnimationEnabled()) {
                 complete();
@@ -282,12 +280,9 @@ WinJSTests.ListViewAnimationTest = function () {
             runTests(listView, tests);
         };
     };
-    if (!WinJS.Utilities.isPhone) {
-        this.generateSkippedContentTransition("GridLayout");
-    }
 
-    this.generateInterruptedEntranceAnimationWithContentTransitionPlayed = function (layoutName) {
-        this["testInterruptedEntranceAnimationWithContentTransitionPlayed" + layoutName] = function (complete) {
+    function generateInterruptedEntranceAnimationWithContentTransitionPlayed(layoutName) {
+        ListViewAnimationTest.prototype["testInterruptedEntranceAnimationWithContentTransitionPlayed" + layoutName] = function (complete) {
             // This test is only useful on a machine that has animations enabled.
             if (!WinJS.UI.isAnimationEnabled()) {
                 complete();
@@ -337,12 +332,9 @@ WinJSTests.ListViewAnimationTest = function () {
             });
         };
     };
-    if (!WinJS.Utilities.isPhone) {
-        this.generateInterruptedEntranceAnimationWithContentTransitionPlayed("GridLayout");
-    }
 
-    this.generateInterruptedEntranceAnimationWithNoContentTransitionPlayed = function (layoutName) {
-        this["testInterruptedEntranceAnimationWithNoContentTransitionPlayed" + layoutName] = function (complete) {
+    function generateInterruptedEntranceAnimationWithNoContentTransitionPlayed(layoutName) {
+        ListViewAnimationTest.prototype["testInterruptedEntranceAnimationWithNoContentTransitionPlayed" + layoutName] = function (complete) {
             // This test is only useful on a machine that has animations enabled.
             if (!WinJS.UI.isAnimationEnabled()) {
                 complete();
@@ -393,12 +385,17 @@ WinJSTests.ListViewAnimationTest = function () {
             });
         };
     };
+
     if (!WinJS.Utilities.isPhone) {
-        this.generateInterruptedEntranceAnimationWithNoContentTransitionPlayed("GridLayout");
+        generateDelayedEntranceAnimation("GridLayout");
+        generateSkippedEntranceAnimation("GridLayout");
+        generateSkippedContentTransition("GridLayout");
+        generateInterruptedEntranceAnimationWithContentTransitionPlayed("GridLayout");
+        generateInterruptedEntranceAnimationWithNoContentTransitionPlayed("GridLayout");
     }
 
-    this.generateAnimationEventsWithAnimationsDisabled = function (layoutName) {
-        this["testAnimationEventsWithAnimationsDisabled" + layoutName] = function (complete) {
+    function generateAnimationEventsWithAnimationsDisabled(layoutName) {
+        ListViewAnimationTest.prototype["testAnimationEventsWithAnimationsDisabled" + layoutName] = function (complete) {
             var element = document.getElementById("AnimationTest");
             element.style.height = "150px";
             element.style.direction = "ltr";
@@ -420,7 +417,7 @@ WinJSTests.ListViewAnimationTest = function () {
             };
 
             element.addEventListener("contentanimating", animationEventHandler, false);
-            var listView = new WinJS.UI.ListView(element, { itemDataSource: getDataSource(), itemTemplate: basicRenderer, layout: new WinJS.UI[layoutName]() });
+            var listView = new ListView(element, { itemDataSource: getDataSource(), itemTemplate: basicRenderer, layout: new WinJS.UI[layoutName]() });
             listView._animationsDisabled = function () {
                 return true;
             }
@@ -443,7 +440,7 @@ WinJSTests.ListViewAnimationTest = function () {
             runTests(listView, tests);
         };
     };
-    this.generateAnimationEventsWithAnimationsDisabled("GridLayout");
-};
+    generateAnimationEventsWithAnimationsDisabled("GridLayout");
 
+}
 LiveUnit.registerTestClass("WinJSTests.ListViewAnimationTest");

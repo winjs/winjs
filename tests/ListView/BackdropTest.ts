@@ -1,24 +1,51 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
-/// <reference path="../TestData/ListView.less.css" />
+// <reference path="../TestData/ListView.less.css" />
 
-var WinJSTests = WinJSTests || {};
 
-(function () {
 
-    WinJSTests.BackdropTests = function () {
-        "use strict";
+module WinJSTests {
+    "use strict";
 
-        // This is the setup function that will be called at the beginning of each test function.
-        var testRootEl;
-        var defaultNumberOfItemsPerItemsBlock;
-        var defaultDisableCustomPagesPrefetch;
-        this.setUp = function () {
+    var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
+    var ListLayout = <typeof WinJS.UI.PrivateListLayout> WinJS.UI.ListLayout;
+
+    var testRootEl;
+    var defaultNumberOfItemsPerItemsBlock;
+    var defaultDisableCustomPagesPrefetch;
+
+    function setupListView(element, layout) {
+        var items = [];
+        for (var i = 0; i < 100; ++i) {
+            items[i] = { title: "Tile" + i };
+        }
+        var list = new WinJS.Binding.List<{ title: string }>(items);
+
+        function itemTemplate(itemPromise) {
+            return itemPromise.then(function (item) {
+                var element = document.createElement('div');
+                element.style.width = "100px";
+                element.style.height = "100px";
+                element.textContent = item.data.title;
+                return element;
+            });
+        }
+
+        return new ListView(element, {
+            itemDataSource: list.dataSource,
+            itemTemplate: itemTemplate,
+            layout: layout
+        });
+    }
+
+    export class BackdropTests {
+
+        setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
 
             testRootEl = document.createElement("div");
@@ -30,43 +57,21 @@ var WinJSTests = WinJSTests || {};
             newNode.style.height = "250px";
             testRootEl.appendChild(newNode);
             document.body.appendChild(testRootEl);
-            defaultNumberOfItemsPerItemsBlock = WinJS.UI.ListLayout._numberOfItemsPerItemsBlock;
+            defaultNumberOfItemsPerItemsBlock = ListLayout._numberOfItemsPerItemsBlock;
             defaultDisableCustomPagesPrefetch = WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch;
-        };
+        }
 
-        this.tearDown = function () {
+        tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            WinJS.UI.ListLayout._numberOfItemsPerItemsBlock = defaultNumberOfItemsPerItemsBlock;
+            ListLayout._numberOfItemsPerItemsBlock = defaultNumberOfItemsPerItemsBlock;
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = defaultDisableCustomPagesPrefetch;
-        };
-
-        function setupListView(element, layout) {
-            var items = [];
-            for (var i = 0; i < 100; ++i) {
-                items[i] = { title: "Tile" + i };
-            }
-            var list = new WinJS.Binding.List(items);
-
-            function itemTemplate(itemPromise) {
-                return itemPromise.then(function (item) {
-                    var element = document.createElement('div');
-                    element.style.width = "100px";
-                    element.style.height = "100px";
-                    element.textContent = item.data.title;
-                    return element;
-                });
-            }
-
-            return new WinJS.UI.ListView(element, {
-                itemDataSource: list.dataSource,
-                itemTemplate: itemTemplate,
-                layout: layout
-            });
         }
 
-        this.testDisableBackdrop = function (complete) {
+
+
+        testDisableBackdrop = function (complete) {
             var element = document.getElementById("BackdropTests");
 
             // We should not crash if this property is set on a layout that is not associated with a listView yet.
@@ -78,7 +83,7 @@ var WinJSTests = WinJSTests || {};
                 var disableBackDropClassPrefix = "_win-dynamic-disablebackdrop-";
                 LiveUnit.Assert.areEqual(-1, listview._canvas.className.indexOf(disableBackDropClassPrefix));
                 Helper.Assert.areColorsEqual("rgba(155, 155, 155, 0.23)", getComputedStyle(element.querySelector(".win-listview .win-container.win-backdrop")).backgroundColor);
-                listview.layout.disableBackdrop = true;
+                listview.layout['disableBackdrop'] = true;
                 LiveUnit.Assert.areNotEqual(-1, listview._canvas.className.indexOf(disableBackDropClassPrefix));
                 Helper.Assert.areColorsEqual("rgba(0, 0, 0, 0)", getComputedStyle(element.querySelector(".win-listview .win-container.win-backdrop")).backgroundColor);
 
@@ -90,7 +95,7 @@ var WinJSTests = WinJSTests || {};
             });
         };
 
-        this.testBackdropColor = function (complete) {
+        testBackdropColor = function (complete) {
             var element = document.getElementById("BackdropTests");
 
             // We should not crash if this property is set on a layout that is not associated with a listView yet.
@@ -102,7 +107,7 @@ var WinJSTests = WinJSTests || {};
                 var customBackDropClassPrefix = "_win-dynamic-backdropcolor-";
                 LiveUnit.Assert.areEqual(-1, listview._canvas.className.indexOf(customBackDropClassPrefix));
                 Helper.Assert.areColorsEqual("rgba(155, 155, 155, 0.23)", getComputedStyle(element.querySelector(".win-listview .win-container.win-backdrop")).backgroundColor);
-                listview.layout.backdropColor = "red";
+                listview.layout['backdropColor'] = "red";
                 LiveUnit.Assert.areNotEqual(-1, listview._canvas.className.indexOf(customBackDropClassPrefix));
                 Helper.Assert.areColorsEqual("rgb(255, 0, 0)", getComputedStyle(element.querySelector(".win-listview .win-container.win-backdrop")).backgroundColor);
 
@@ -116,14 +121,14 @@ var WinJSTests = WinJSTests || {};
 
         // Regression test for WinBlue:100462
         //
-        this.testBackDropAfterDeleteInListLayout = function (complete) {
-            WinJS.UI.ListLayout._numberOfItemsPerItemsBlock = 0;
+        testBackDropAfterDeleteInListLayout = function (complete) {
+            ListLayout._numberOfItemsPerItemsBlock = 0;
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.getElementById("BackdropTests");
             var listview = setupListView(element, new WinJS.UI.ListLayout());
             waitForReady(listview)().then(function () {
                 LiveUnit.Assert.areEqual(92, element.querySelectorAll(".win-container.win-backdrop").length);
-                listview.itemDataSource.list.splice(2, 1);
+                listview.itemDataSource['list'].splice(2, 1);
                 waitForReady(listview, 100)().then(function () {
                     LiveUnit.Assert.areEqual(92, element.querySelectorAll(".win-container.win-backdrop").length);
                     complete();
@@ -132,7 +137,6 @@ var WinJSTests = WinJSTests || {};
         };
     };
 
-    // register the object as a test class by passing in the name
-    LiveUnit.registerTestClass("WinJSTests.BackdropTests");
+}
 
-})();
+LiveUnit.registerTestClass("WinJSTests.BackdropTests");

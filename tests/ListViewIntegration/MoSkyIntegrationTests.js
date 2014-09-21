@@ -4,10 +4,10 @@
 /// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts"/>
-/// <reference path="globals.js"/>
+/// <reference path="globals.ts"/>
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="../TestLib/listviewutils.js"/>
-/// <reference path="listviewverify.js"/>
+/// <reference path="../TestLib/listviewutils.ts"/>
+/// <reference path="listviewverify.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 /// <deploy src="../TestData/" />
 
@@ -15,8 +15,8 @@ var WinJSTests = WinJSTests || {};
 
 WinJSTests.MoSkyIntegrationTests = function () {
     "use strict";
-    var lvUtils = new ListViewUtils();
-    var lvVerify = new ListViewVerify();
+    var lvUtils = ListViewUtils;
+    var lvVerify = ListViewVerify;
 
     /// -----------------------------------------------------------------------------------------------
     //  Setup and Teardown

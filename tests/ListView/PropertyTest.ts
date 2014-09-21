@@ -1,46 +1,15 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <deploy src="../TestData/" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.PropertyTests = function () {
     "use strict";
-
-    // This setup function will be called at the beginning of each test function.
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "PropertyTests";
-        newNode.innerHTML = "<div id='test1'></div>";
-        document.body.appendChild(newNode);
-        removeListviewAnimations();
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-
-        var element = document.getElementById("PropertyTests");
-        document.body.removeChild(element);
-        restoreListviewAnimations();
-    }
-
-    // Tests the winControl property after listView initialization
-    this.testWinControl = function (complete) {
-        LiveUnit.LoggingCore.logComment("In testWinControl");
-
-        var testElement = document.getElementById("test1"),
-            listView = new WinJS.UI.ListView(testElement);
-
-        validateListView(listView);
-        LiveUnit.Assert.isTrue(listView === testElement.winControl);
-        complete();
-    };
 
     var isPhone = WinJS.Utilities.isPhone;
     var publicProperties = {
@@ -236,19 +205,19 @@ WinJSTests.PropertyTests = function () {
         layout: {
             getValidValues: function () {
                 return (isPhone || !Helper.Browser.supportsCSSGrid) ?
-                [
-                    new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.horizontal }),
-                    new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.vertical }),
-                    new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.horizontal }),
-                    new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.vertical })
-                ] :
-                [
-                    new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.horizontal }),
-                    new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.vertical }),
-                    new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.horizontal }),
-                    new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.vertical }),
-                    new WinJS.UI.CellSpanningLayout()
-                ];
+                    [
+                        new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.horizontal }),
+                        new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.vertical }),
+                        new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.horizontal }),
+                        new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.vertical })
+                    ] :
+                    [
+                        new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.horizontal }),
+                        new WinJS.UI.ListLayout({ orientation: WinJS.UI.Orientation.vertical }),
+                        new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.horizontal }),
+                        new WinJS.UI.GridLayout({ orientation: WinJS.UI.Orientation.vertical }),
+                        new WinJS.UI.CellSpanningLayout()
+                    ];
             },
             getInvalidValues: function () {
                 return isPhone ? [] : [];
@@ -286,11 +255,44 @@ WinJSTests.PropertyTests = function () {
         }
     };
 
-    var that = this;
+    export class PropertyTests {
+
+
+        // This setup function will be called at the beginning of each test function.
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "PropertyTests";
+            newNode.innerHTML = "<div id='test1'></div>";
+            document.body.appendChild(newNode);
+            removeListviewAnimations();
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+
+            var element = document.getElementById("PropertyTests");
+            document.body.removeChild(element);
+            restoreListviewAnimations();
+        }
+
+        // Tests the winControl property after listView initialization
+        testWinControl(complete) {
+            LiveUnit.LoggingCore.logComment("In testWinControl");
+
+            var testElement = document.getElementById("test1"),
+                listView = new WinJS.UI.ListView(testElement);
+
+            validateListView(listView);
+            LiveUnit.Assert.isTrue(listView === testElement.winControl);
+            complete();
+        }
+    }
+
     (function generatePropertyTests() {
         for (var i in publicProperties) {
             (function (i) {
-                that["testGetAndSet_" + i] = function (complete) {
+                PropertyTests.prototype["testGetAndSet_" + i] = function (complete) {
                     LiveUnit.LoggingCore.logComment("isPhone: " + isPhone);
 
                     var testElement = document.getElementById("test1"),
@@ -331,7 +333,6 @@ WinJSTests.PropertyTests = function () {
             })(i);
         }
     })();
-};
-
+}
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.PropertyTests");

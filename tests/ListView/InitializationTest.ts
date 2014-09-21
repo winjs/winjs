@@ -1,61 +1,35 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <reference path="../TestLib/TestDataSource.ts"/>
-/// <reference path="../TestData/ListView.less.css" />
+// <reference path="../TestData/ListView.less.css" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.InitializationTests = function () {
     "use strict";
 
-    var that = this,
-        testRootEl,
-        groupKey = function (item) {
-            var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
-            return groupIndex.toString();
-        },
-        groupData = function (item) {
-            var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
-            var groupData = {
-                title: "group" + groupIndex,
-                index: groupIndex,
-                itemWidth: "150px",
-                itemHeight: "150px"
-            };
-            return groupData;
-        };
+    var testRootEl;
 
-    // This setup function will be called at the beginning of each test function.
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
+    var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
 
-        testRootEl = document.createElement("div");
-        testRootEl.className = "file-listview-css";
-
-        var newNode = document.createElement("div");
-        newNode.id = "InitializationTests";
-        newNode.innerHTML =
-            "<div id='test1' style='width:600px;height:400px;'></div>" +
-            "<div id='test2' style='width:600px;height:400px;'></div>";
-        testRootEl.appendChild(newNode);
-        document.body.appendChild(testRootEl);
-        removeListviewAnimations();
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-
-        WinJS.Utilities.disposeSubTree(testRootEl);
-        document.body.removeChild(testRootEl);
-        restoreListviewAnimations();
+    function groupKey(item) {
+        var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
+        return groupIndex.toString();
     }
 
-    // Test methods
-    // Any child objects that start with "test" are automatically test methods
+    function groupData(item) {
+        var groupIndex = Math.floor(item.data ? (item.data.index / 10) : (item.index / 10));
+        var groupData = {
+            title: "group" + groupIndex,
+            index: groupIndex,
+            itemWidth: "150px",
+            itemHeight: "150px"
+        };
+        return groupData;
+    }
 
     function createData(size) {
         var data = [];
@@ -65,11 +39,11 @@ WinJSTests.InitializationTests = function () {
         return data;
     }
 
-    function createBindingList(size, data) {
+    function createBindingList(size, data?) {
         return (data ? new WinJS.Binding.List(data) : new WinJS.Binding.List(createData(size)));
     }
 
-    function createTestDataSource(size, data) {
+    function createTestDataSource(size, data?) {
         // Populate a data array
         if (!data) {
             data = createData(size);
@@ -113,6 +87,114 @@ WinJSTests.InitializationTests = function () {
         return TestComponents.createTestDataSource(data, controller, abilities);
     }
 
+    function testLayout(layoutName) {
+        var placeholder1 = document.getElementById("test1"),
+            placeholder2 = document.getElementById("test2"),
+            expectedLayout = WinJS.UI[layoutName],
+            listView1 = new ListView(placeholder1, { layout: { type: expectedLayout } }),
+            listView2 = new ListView(placeholder2, { layout: new expectedLayout() });
+
+        validateListView(listView1);
+        validateListView(listView2);
+        LiveUnit.Assert.isTrue(listView1.layout instanceof expectedLayout);
+        LiveUnit.Assert.isTrue(listView2.layout instanceof expectedLayout);
+        LiveUnit.Assert.isTrue(listView1._horizontal() === (layoutName.indexOf("GridLayout") == 0));
+        LiveUnit.Assert.isTrue(listView2._horizontal() === (layoutName.indexOf("GridLayout") == 0));
+    }
+
+    export class InitializationTests {
+
+
+        // This setup function will be called at the beginning of each test function.
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+
+            var newNode = document.createElement("div");
+            newNode.id = "InitializationTests";
+            newNode.innerHTML =
+            "<div id='test1' style='width:600px;height:400px;'></div>" +
+            "<div id='test2' style='width:600px;height:400px;'></div>";
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
+            removeListviewAnimations();
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
+            restoreListviewAnimations();
+        }
+
+        // Test listView initialization with an invalid element like H1
+
+
+        // Tests listView initialization with grid layout
+        testGridLayout = function (complete) {
+            LiveUnit.LoggingCore.logComment("In testGridLayout");
+            testLayout("GridLayout");
+            complete();
+        }
+
+        // Tests listView initialization with list layout
+        testListLayout = function (complete) {
+            LiveUnit.LoggingCore.logComment("In testListLayout");
+            testLayout("ListLayout");
+            complete();
+        };
+
+        // Tests default values of listView properties after initialization
+        testInitializationDefaults = function (complete) {
+            LiveUnit.LoggingCore.logComment("In testInitializationDefaults");
+
+            var testElement = document.getElementById("test1"),
+                listView = new WinJS.UI.ListView(testElement),
+                defaults = defaultOptions();
+
+            LiveUnit.Assert.isTrue(listView.layout instanceof WinJS.UI.GridLayout);
+            for (var param in defaults) {
+                LiveUnit.Assert.isTrue(listView[param] === defaults[param]);
+            }
+            complete();
+        };
+
+        // Regression test for WinBlue: 104695
+        //
+        testPassLayoutInConstructorOptionsDifferentFromDefault = function (complete) {
+            var bl = createBindingList(400),
+                groupBl = bl.createGrouped(groupKey, groupData),
+                updateLayoutCalledCount = 0,
+                oldUpdateLayout = ListView.prototype._updateLayout;
+
+            ListView.prototype._updateLayout = function () {
+                updateLayoutCalledCount++;
+                oldUpdateLayout.call(this);
+            };
+
+            var element = document.getElementById("test1"),
+                listView = new WinJS.UI.ListView(element, {
+                    itemDataSource: groupBl.dataSource,
+                    itemTemplate: templates.syncJSTemplate,
+                    groupDataSource: groupBl.groups.dataSource,
+                    groupHeaderTemplate: templates.syncJSTemplate,
+                    layout: new WinJS.UI.ListLayout()
+                });
+
+            waitForReady(listView)().
+                then(function () {
+                    LiveUnit.Assert.areEqual(1, updateLayoutCalledCount, "ListView_updateLayout should be called only once when a layout is passed it the constructor options");
+                    ListView.prototype._updateLayout = oldUpdateLayout;
+                }).
+                done(complete, function (er) {
+                    throw er;
+                });
+        };
+    }
+
     (function () {
         function generateTest(gids, gds, layout, testPrefix) {
             function generateTest1(action) {
@@ -137,7 +219,7 @@ WinJSTests.InitializationTests = function () {
                 };
             }
 
-            that["test" + testPrefix + "SetItemDataSource"] = generateTest1(function () {
+            InitializationTests.prototype["test" + testPrefix + "SetItemDataSource"] = generateTest1(function () {
                 var elem = document.getElementById("test1"),
                     lv = elem.winControl;
 
@@ -147,7 +229,7 @@ WinJSTests.InitializationTests = function () {
                     LiveUnit.Assert.fail("ItemDataSource is not set");
                 }
             });
-            that["test" + testPrefix + "SetItemTemplate"] = generateTest1(function () {
+            InitializationTests.prototype["test" + testPrefix + "SetItemTemplate"] = generateTest1(function () {
                 var elem = document.getElementById("test1"),
                     lv = elem.winControl;
 
@@ -157,7 +239,7 @@ WinJSTests.InitializationTests = function () {
                     LiveUnit.Assert.fail("ItemTemplate is not set");
                 }
             });
-            that["test" + testPrefix + "SetGroupHeaderTemplate"] = generateTest1(function () {
+            InitializationTests.prototype["test" + testPrefix + "SetGroupHeaderTemplate"] = generateTest1(function () {
                 var elem = document.getElementById("test1"),
                     lv = elem.winControl;
 
@@ -165,7 +247,7 @@ WinJSTests.InitializationTests = function () {
                     lv.groupHeaderTemplate = lv.groupHeaderTemplate;
                 }
             });
-            that["test" + testPrefix + "SetGroupDataSource"] = generateTest1(function () {
+            InitializationTests.prototype["test" + testPrefix + "SetGroupDataSource"] = generateTest1(function () {
                 var elem = document.getElementById("test1"),
                     lv = elem.winControl;
 
@@ -173,7 +255,7 @@ WinJSTests.InitializationTests = function () {
                     lv.groupDataSource = lv.groupDataSource;
                 }
             });
-            that["test" + testPrefix + "SetLayout"] = generateTest1(function () {
+            InitializationTests.prototype["test" + testPrefix + "SetLayout"] = generateTest1(function () {
                 var elem = document.getElementById("test1"),
                     lv = elem.winControl;
 
@@ -208,8 +290,8 @@ WinJSTests.InitializationTests = function () {
     })();
 
 
-    this.generateWithoutElement = function (layoutName) {
-        this["testWithoutElement" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
+    function generateWithoutElement(layoutName) {
+        InitializationTests.prototype["testWithoutElement" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
             function checkTile(listview, index, left, top) {
                 var tile = listview.elementFromIndex(index),
                     container = containerFrom(tile);
@@ -256,58 +338,11 @@ WinJSTests.InitializationTests = function () {
             ]);
         };
     };
-    this.generateWithoutElement("GridLayout");
-
-    // Test listView initialization with an invalid element like H1
-    // TODO: Add test after we have decided on validation story
-
-    function testLayout(layoutName) {
-        var placeholder1 = document.getElementById("test1"),
-            placeholder2 = document.getElementById("test2"),
-            expectedLayout = WinJS.UI[layoutName],
-            listView1 = new WinJS.UI.ListView(placeholder1, { layout: { type: expectedLayout } }),
-            listView2 = new WinJS.UI.ListView(placeholder2, { layout: new expectedLayout() });
-
-        validateListView(listView1);
-        validateListView(listView2);
-        LiveUnit.Assert.isTrue(listView1.layout instanceof expectedLayout);
-        LiveUnit.Assert.isTrue(listView2.layout instanceof expectedLayout);
-        LiveUnit.Assert.isTrue(listView1._horizontal() === (layoutName.indexOf("GridLayout") == 0));
-        LiveUnit.Assert.isTrue(listView2._horizontal() === (layoutName.indexOf("GridLayout") == 0));
-    }
-
-    // Tests listView initialization with grid layout
-    this.testGridLayout = function (complete) {
-        LiveUnit.LoggingCore.logComment("In testGridLayout");
-        testLayout("GridLayout");
-        complete();
-    };
-
-    // Tests listView initialization with list layout
-    this.testListLayout = function (complete) {
-        LiveUnit.LoggingCore.logComment("In testListLayout");
-        testLayout("ListLayout");
-        complete();
-    };
-
-    // Tests default values of listView properties after initialization
-    this.testInitializationDefaults = function (complete) {
-        LiveUnit.LoggingCore.logComment("In testInitializationDefaults");
-
-        var testElement = document.getElementById("test1"),
-            listView = new WinJS.UI.ListView(testElement),
-            defaults = defaultOptions();
-
-        LiveUnit.Assert.isTrue(listView.layout instanceof WinJS.UI.GridLayout);
-        for (var param in defaults) {
-            LiveUnit.Assert.isTrue(listView[param] === defaults[param]);
-        }
-        complete();
-    };
+    generateWithoutElement("GridLayout");
 
     // Tests listView initialization with empty datasource
-    this.generateEmptyDataSource = function (layoutName) {
-        this["testEmptyDataSource" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
+    function generateEmptyDataSource(layoutName) {
+        InitializationTests.prototype["testEmptyDataSource" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
             LiveUnit.LoggingCore.logComment("In testEmptyDataSource");
 
             var testElement = document.getElementById("test1"),
@@ -317,10 +352,10 @@ WinJSTests.InitializationTests = function () {
             complete();
         };
     };
-    this.generateEmptyDataSource("GridLayout");
+    generateEmptyDataSource("GridLayout");
 
-    this.generateItemsAccess = function (layoutName) {
-        this["testItemsAccess" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
+    function generateItemsAccess(layoutName) {
+        InitializationTests.prototype["testItemsAccess" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
             LiveUnit.LoggingCore.logComment("In testItemsAccess");
 
             var element = document.getElementById("test1"),
@@ -357,10 +392,10 @@ WinJSTests.InitializationTests = function () {
             listView.itemDataSource.getCount().then(LiveUnit.GetWrappedCallback(countAvailable));
         };
     };
-    this.generateItemsAccess("GridLayout");
+    generateItemsAccess("GridLayout");
 
-    this.generateEventHandlers = function (layoutName) {
-        this["testEventHandlers" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
+    function generateEventHandlers(layoutName) {
+        InitializationTests.prototype["testEventHandlers" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
             var myData = [];
             for (var i = 0; i < 10; ++i) {
                 myData.push({ title: "Tile" + i });
@@ -392,16 +427,16 @@ WinJSTests.InitializationTests = function () {
             ]);
         };
     };
-    this.generateEventHandlers("GridLayout");
+    generateEventHandlers("GridLayout");
 
-    this.generateRendererValidations = function (layoutName) {
-        this["testRendererValidation" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
+    function generateRendererValidations(layoutName) {
+        InitializationTests.prototype["testRendererValidation" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
             var element = document.createElement("div");
             testRootEl.appendChild(element);
 
             // The order of controls is invalid. Template is instantiated after ListView.
             element.innerHTML = '<div class="rendererValidationListView" data-win-control="WinJS.UI.ListView" data-win-options="{ itemTemplate: select(' + "'" + '.rendererValidationTemplate' + "'" + '), layout: {type: WinJS.UI.' + layoutName + '}}" ></div>' +
-                                '<div class="rendererValidationTemplate" data-win-control="WinJS.Binding.Template"><div data-win-bind="textContent: title"></div></div>';
+            '<div class="rendererValidationTemplate" data-win-control="WinJS.Binding.Template"><div data-win-bind="textContent: title"></div></div>';
 
             var originalValidation = WinJS.validation;
             WinJS.validation = true;
@@ -413,24 +448,20 @@ WinJSTests.InitializationTests = function () {
 
             WinJS.UI.processAll(element).done(
                 function () {
-                    var myData = [];
-                    for (var i = 0; i < 10; ++i) {
-                        myData.push({ title: "Tile" + i });
-                    }
-                    newNode.querySelector(".rendererValidationListView").winControl.itemDataSource = (new WinJS.Binding.List(myData)).dataSource;
+                    LiveUnit.Assert.fail("ProcessAll shouldn't succeed");
                 },
                 function (error) {
                     LiveUnit.Assert.areEqual("WinJS.UI.ListView.invalidTemplate", error.name);
                     cleanup();
                     complete();
                 }
-            );
+                );
         };
     };
-    this.generateRendererValidations("GridLayout");
+    generateRendererValidations("GridLayout");
 
-    this.generateKeysValidation = function (layoutName) {
-        this["testKeysValidation" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
+    function generateKeysValidation(layoutName) {
+        InitializationTests.prototype["testKeysValidation" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
             var element = document.createElement("div");
             element.style.width = "300px";
             element.style.height = "300px";
@@ -498,10 +529,10 @@ WinJSTests.InitializationTests = function () {
             var listView = new WinJS.UI.ListView(element, { layout: new WinJS.UI[layoutName](), itemDataSource: createDataSource() });
         };
     };
-    this.generateKeysValidation("GridLayout");
+    generateKeysValidation("GridLayout");
 
-    this.generateSwitchingDataSourceDuringGetCount = function (layoutName) {
-        this["testSwitchingDataSourceDuringGetCount" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
+    function generateSwitchingDataSourceDuringGetCount(layoutName) {
+        InitializationTests.prototype["testSwitchingDataSourceDuringGetCount" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
             function createDataSource() {
                 var count = 1000;
 
@@ -569,40 +600,7 @@ WinJSTests.InitializationTests = function () {
                 });
         };
     };
-    this.generateSwitchingDataSourceDuringGetCount("GridLayout");
-
-    // Regression test for WinBlue: 104695
-    //
-    this.testPassLayoutInConstructorOptionsDifferentFromDefault = function (complete) {
-        var bl = createBindingList(400),
-            groupBl = bl.createGrouped(groupKey, groupData),
-            updateLayoutCalledCount = 0,
-            oldUpdateLayout = WinJS.UI.ListView.prototype._updateLayout;
-
-        WinJS.UI.ListView.prototype._updateLayout = function () {
-            updateLayoutCalledCount++;
-            oldUpdateLayout.call(this);
-        };
-
-        var element = document.getElementById("test1"),
-            listView = new WinJS.UI.ListView(element, {
-                itemDataSource: groupBl.dataSource,
-                itemTemplate: templates.syncJSTemplate,
-                groupDataSource: groupBl.groups.dataSource,
-                groupHeaderTemplate: templates.syncJSTemplate,
-                layout: new WinJS.UI.ListLayout()
-            });
-
-        waitForReady(listView)().
-            then(function () {
-                LiveUnit.Assert.areEqual(1, updateLayoutCalledCount, "ListView_updateLayout should be called only once when a layout is passed it the constructor options");
-                WinJS.UI.ListView.prototype._updateLayout = oldUpdateLayout;
-            }).
-            done(complete, function (er) {
-                throw er;
-            });
-    };
-};
-
+    generateSwitchingDataSourceDuringGetCount("GridLayout");
+}
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.InitializationTests");

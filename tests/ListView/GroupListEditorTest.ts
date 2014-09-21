@@ -1,58 +1,22 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <reference path="../TestLib/TestDataSource.ts" />
-/// <reference path="../TestData/ListView.less.css" />
+// <reference path="../TestData/ListView.less.css" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.GroupListEditorTest = function () {
     "use strict";
 
     var testRootEl;
     var ITEMS_COUNT = 10;
+    var _oldMaxTimePerCreateContainers;
 
-    // This is the setup function that will be called at the beginning of each test function.
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-
-        testRootEl = document.createElement("div");
-        testRootEl.className = "file-listview-css";
-
-        var newNode = document.createElement("div");
-        newNode.id = "groupListEditorTest";
-        newNode.style.height = "200px";
-        newNode.style.width = "1024px";
-        newNode.innerHTML =
-            "<div id='listEditorTest'></div>" +
-            "<div id='simpleHeaderTemplate' class='listEditorTestClass' style='display: none; width:100px; height:100px'>" +
-            "   <div>{{title}}</div>" +
-            "</div>" +
-            "<div id='simpleTemplate' class='{{className}}' style='display: none;'>" +
-            "   <div>{{title}}</div>" +
-            "</div>";
-        testRootEl.appendChild(newNode);
-        document.body.appendChild(testRootEl);
-
-        //WinBlue: 298587
-        this._oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
-        WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-
-        WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = this._oldMaxTimePerCreateContainers;
-
-        WinJS.Utilities.disposeSubTree(testRootEl);
-        document.body.removeChild(testRootEl);
-    }
-
-    function getDataObject(pattern, counter, title) {
-        var object = {
+    function getDataObject(pattern, counter, title?) {
+        var object: any = {
             enableCellSpanning: true,
             group: counter % 5,
             title: (title ? title : "Tile" + counter),
@@ -86,12 +50,12 @@ WinJSTests.GroupListEditorTest = function () {
             }
         },
             // Data adapter abilities
-        abilities = null;
+            abilities = null;
 
         return TestComponents.createTestDataSource(items, controller, abilities);
     }
 
-    function setupListView(element, layout, multisizeMode, items, bindingList) {
+    function setupListView(element, layout, multisizeMode, items?, bindingList?) {
         function groupKey(item) {
             return (item.data ? item.data.group.toString() : item.group.toString());
         }
@@ -123,7 +87,7 @@ WinJSTests.GroupListEditorTest = function () {
             testDataSrcGroups = testDataSrc.groups;
         }
 
-        var layoutOptions = {};
+        var layoutOptions: any = {};
 
         if (multisizeMode) {
             layoutOptions.groupInfo = {
@@ -156,36 +120,6 @@ WinJSTests.GroupListEditorTest = function () {
             groupHeaderTemplate: createRenderer("simpleHeaderTemplate", "groupListEditorTest_groupheader_"),
             layout: new WinJS.UI[layout](layoutOptions)
         });
-    }
-
-    this.generate = function (name, testFunction, items) {
-        function generateTest(that, layout, multisize, bindingList, newLayout) {
-            var fullName = name + "_" + (multisize ? "multisize_grouped_grid" : "normal_grouped_grid")
-                    + (bindingList ? "_BindingList" : "_TestDataSource") + (layout == "GridLayout" ? "" : "_" + layout);
-
-            that[fullName] = function (complete) {
-                LiveUnit.LoggingCore.logComment("in " + fullName);
-
-                var element = document.getElementById("listEditorTest");
-                var listview = setupListView(element, layout, multisize, items, bindingList, newLayout);
-
-                testFunction(listview, complete);
-            };
-        }
-
-        //normal grouped with test data source
-        generateTest(this, "GridLayout", false, false);
-
-        //normal grouped with Binding.List
-        generateTest(this, "GridLayout", false, true);
-
-        if (Helper.Browser.supportsCSSGrid) {
-            //grouped multisize with test data source
-            generateTest(this, "GridLayout", true, false);
-
-            //grouped multisize with Binding.List
-            generateTest(this, "GridLayout", true, true);
-        }
     }
 
     function checkTile(listview, index, left, top, tileType, title) {
@@ -225,7 +159,78 @@ WinJSTests.GroupListEditorTest = function () {
         LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listView, container));
     }
 
-    this.generate("testInsertBefore", function (listView, complete) {
+    export class GroupListEditorTest {
+
+
+        // This is the setup function that will be called at the beginning of each test function.
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+
+            var newNode = document.createElement("div");
+            newNode.id = "groupListEditorTest";
+            newNode.style.height = "200px";
+            newNode.style.width = "1024px";
+            newNode.innerHTML =
+            "<div id='listEditorTest'></div>" +
+            "<div id='simpleHeaderTemplate' class='listEditorTestClass' style='display: none; width:100px; height:100px'>" +
+            "   <div>{{title}}</div>" +
+            "</div>" +
+            "<div id='simpleTemplate' class='{{className}}' style='display: none;'>" +
+            "   <div>{{title}}</div>" +
+            "</div>";
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
+
+            //WinBlue: 298587
+            _oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
+            WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+
+            WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = _oldMaxTimePerCreateContainers;
+
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
+        }
+    }
+
+
+    function generate(name, testFunction, items?) {
+        function generateTest(layout, multisize, bindingList) {
+            var fullName = name + "_" + (multisize ? "multisize_grouped_grid" : "normal_grouped_grid")
+                + (bindingList ? "_BindingList" : "_TestDataSource") + (layout == "GridLayout" ? "" : "_" + layout);
+
+            GroupListEditorTest.prototype[fullName] = function (complete) {
+                LiveUnit.LoggingCore.logComment("in " + fullName);
+
+                var element = document.getElementById("listEditorTest");
+                var listview = setupListView(element, layout, multisize, items, bindingList);
+
+                testFunction(listview, complete);
+            };
+        }
+
+        //normal grouped with test data source
+        generateTest("GridLayout", false, false);
+
+        //normal grouped with Binding.List
+        generateTest("GridLayout", false, true);
+
+        if (Helper.Browser.supportsCSSGrid) {
+            //grouped multisize with test data source
+            generateTest("GridLayout", true, false);
+
+            //grouped multisize with Binding.List
+            generateTest("GridLayout", true, true);
+        }
+    }
+
+    generate("testInsertBefore", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertBefore");
 
         waitForReady(listView, -1)().
@@ -256,7 +261,7 @@ WinJSTests.GroupListEditorTest = function () {
             then(complete);
     });
 
-    this.generate("testInsertAtStart", function (listView, complete) {
+    generate("testInsertAtStart", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertAtStart");
 
         waitForReady(listView, -1)().
@@ -288,7 +293,7 @@ WinJSTests.GroupListEditorTest = function () {
             then(complete);
     });
 
-    this.generate("testInsertAfter", function (listView, complete) {
+    generate("testInsertAfter", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertAfter");
 
         waitForReady(listView, -1)().
@@ -325,7 +330,7 @@ WinJSTests.GroupListEditorTest = function () {
             then(complete);
     });
 
-    this.generate("testInsertAtEnd", function (listView, complete) {
+    generate("testInsertAtEnd", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertAtEnd");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -376,20 +381,20 @@ WinJSTests.GroupListEditorTest = function () {
     }
     bigDataSet.sort(function (a, b) { return a.group - b.group; });
 
-    this.generate("testInsertOutsideOfRealizedRange", function (listView, complete) {
+    generate("testInsertOutsideOfRealizedRange", function (listView, complete) {
         waitForReady(listView, -1)().then(function () {
             listView.itemDataSource.insertAtEnd(null, getDataObject('m', 4, "NewTile"))
             return waitForReady(listView, -1)();
         }).then(function () {
-            return listView.itemDataSource.getCount();
-        }).then(function (count) {
-            LiveUnit.Assert.areEqual(101, count);
-            LiveUnit.Assert.areEqual(101, listView._view.containers.length);
-            complete();
-        });
+                return listView.itemDataSource.getCount();
+            }).then(function (count) {
+                LiveUnit.Assert.areEqual(101, count);
+                LiveUnit.Assert.areEqual(101, listView._view.containers.length);
+                complete();
+            });
     }, bigDataSet);
 
-    this.generate("testInsertToEmpty", function (listView, complete) {
+    generate("testInsertToEmpty", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertToEmpty");
 
         waitForReady(listView, -1)().
@@ -413,7 +418,7 @@ WinJSTests.GroupListEditorTest = function () {
     }, []);
 
     /// removes first two items which eliminates group 0
-    this.generate("testRemoveFirstItem", function (listView, complete) {
+    generate("testRemoveFirstItem", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testRemoveFirstItem");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -460,7 +465,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Removes from end of group 0 and start of group 1
-    this.generate("testRemoveAtGroupBoundary", function (listView, complete) {
+    generate("testRemoveAtGroupBoundary", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testRemoveAtGroupBoundary");
 
         waitForReady(listView, -1)().
@@ -494,7 +499,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Removes last two items in group 4, which eliminates it
-    this.generate("testRemoveLastItem", function (listView, complete) {
+    generate("testRemoveLastItem", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testRemoveLastItem");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -537,7 +542,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Moves from end of group 0 to start
-    this.generate("testMoveToStart", function (listView, complete) {
+    generate("testMoveToStart", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testMoveToStart");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -580,7 +585,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Moves from end of group 0 to before item 0
-    this.generate("testMoveBefore", function (listView, complete) {
+    generate("testMoveBefore", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testMoveBefore");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -623,7 +628,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Moves from start of group 0 to after item 1
-    this.generate("testMoveAfter", function (listView, complete) {
+    generate("testMoveAfter", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testMoveAfter");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -666,7 +671,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Moves from start of group 4 to after item 9
-    this.generate("testMoveToEnd", function (listView, complete) {
+    generate("testMoveToEnd", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testMoveToEnd");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -710,7 +715,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Changes first item in group 0
-    this.generate("testChangeFirstItem", function (listView, complete) {
+    generate("testChangeFirstItem", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testChangeFirstItem");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -753,7 +758,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Changes items at boundary
-    this.generate("testChangeAtGroupBoundary", function (listView, complete) {
+    generate("testChangeAtGroupBoundary", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testChangeAtGroupBoundary");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -799,7 +804,7 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     /// Changes the last item in group 4
-    this.generate("testChangeLastItem", function (listView, complete) {
+    generate("testChangeLastItem", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testChangeLastItem");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
@@ -841,10 +846,9 @@ WinJSTests.GroupListEditorTest = function () {
     });
 
     if (!Helper.Browser.isIE11) {
-        Helper.disableTest(this, "testInsertToEmpty_normal_grouped_grid_BindingList");
-        Helper.disableTest(this, "testInsertToEmpty_normal_grouped_grid_TestDataSource");
+        Helper.disableTest(GroupListEditorTest, "testInsertToEmpty_normal_grouped_grid_BindingList");
+        Helper.disableTest(GroupListEditorTest, "testInsertToEmpty_normal_grouped_grid_TestDataSource");
     }
-};
-
+}
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.GroupListEditorTest");

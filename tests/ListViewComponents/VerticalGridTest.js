@@ -5,7 +5,7 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts" />
-/// <reference path="../TestLib/listviewutils.js" />
+/// <reference path="../TestLib/listviewutils.ts" />
 
 var WinJSTests = WinJSTests || {};
 
@@ -22,7 +22,7 @@ WinJSTests.VerticalGridTests = function () {
         document.body.appendChild(newNode);
         testHost = newNode;
         this.lv = null;
-        this.lvUtils = new ListViewUtils();
+        this.lvUtils = ListViewUtils;
     };
 
     this.tearDown = function () {

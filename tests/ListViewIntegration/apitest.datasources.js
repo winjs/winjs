@@ -13,18 +13,18 @@
 /// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts"/>
-/// <reference path="globals.js"/>
+/// <reference path="globals.ts"/>
 /// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="../TestLib/listviewutils.js"/>
-/// <reference path="listviewverify.js"/>
+/// <reference path="../TestLib/listviewutils.ts"/>
+/// <reference path="listviewverify.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 /// <deploy src="../TestData/" />
 
 // Tests for ListView Api
 var ListViewDSTestClass = function () {
     "use strict";
-    var lvUtils = new ListViewUtils();
-    var lvVerify = new ListViewVerify();
+    var lvUtils = ListViewUtils;
+    var lvVerify = ListViewVerify;
 
     /// -----------------------------------------------------------------------------------------------
     //  Setup and Teardown

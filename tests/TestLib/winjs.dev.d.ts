@@ -46,11 +46,13 @@ declare module WinJS {
         function _traceAsyncCallbackStarting();
         function _traceAsyncCallbackCompleted();
 
+        function _require(dep: string, callback);
         function _require(deps: string[], callback);
         function _uniqueID(e: HTMLElement):string;
         function _isDOMElement(e: HTMLElement): boolean;
 
         function _yieldForEvents(handler: Function);
+        function _merge(a, b): any;
 
         class _PointerEventProxy {
             constructor(eventObject, overrideProperties);
@@ -85,6 +87,7 @@ declare module WinJS {
         function _matchesSelector(element, selector: string): boolean;
 
         var _MutationObserver;
+        function _isSelectionRendered(itemBox): boolean;
 
     }
 
@@ -104,6 +107,7 @@ declare module WinJS {
         var _optionsParser;
         var _CallExpression;
         var _IdentifierExpression;
+        var _GroupFocusCache;
 
         class _ParallelWorkQueue {
             constructor(maxRunning: number);
@@ -172,6 +176,7 @@ declare module WinJS {
         var _scrollableClass: string;
         var _containerClass: string;
         var _headerContainerClass: string;
+        var _listViewSupportsCrossSlideClass: string;
 
         module _ListViewAnimationHelper {
             function fadeInElement(element): Promise<any>;
@@ -181,6 +186,9 @@ declare module WinJS {
 
         module _VirtualizeContentsView {
             var _maxTimePerCreateContainers;
+            var _chunkSize;
+            var _disableCustomPagesPrefetch;
+            var _pagesToPrefetch;
         }
 
         class PrivateSearchBox extends WinJS.UI.SearchBox {
@@ -207,6 +215,56 @@ declare module WinJS {
         class PrivateFlipView<T> extends FlipView<T> {
             _pageManager;
             _animating: boolean;
+        }
+
+        interface IPrivateSelection<T> extends ISelection<T> {
+            _isIncluded(i: number): boolean;
+            _pivot;
+        }
+
+        interface IPrivateListDataSource<T> extends IListDataSource<T> {
+            list?: WinJS.Binding.List<T>;
+            _list?: WinJS.Binding.List<T>;
+        }
+
+        interface IListViewEntity {
+            type: WinJS.UI.ObjectType;
+            index: number;
+        }
+
+        class PrivateListView<T> extends ListView<T> {
+            _onMSElementResize();
+            _animationsDisabled;
+            _view;
+            _ariaStartMarker;
+            _ariaEndMarker;
+            selection: IPrivateSelection<T>
+            itemDataSource: IPrivateListDataSource<T>;
+            _canvas;
+            _viewport;
+            _getViewportLength;
+            _groups;
+            _raiseViewLoading;
+            _element;
+            _horizontal(): boolean;
+            _updateLayout;
+            _affectedRange;
+            _onFocusOut;
+            _onFocusIn;
+            _selection;
+            _tabManager;
+            _layout;
+            _deleteWrapper;
+            _mode;
+            _itemsManager;
+            _raiseViewComplete;
+
+            ensureVisible(itemIndex: number): void;
+            ensureVisible(itemIndex: IListViewEntity): void;
+        }
+
+        class PrivateListLayout extends ListLayout {
+            static _numberOfItemsPerItemsBlock: number;
         }
 
         class PrivateToolbar extends WinJS.UI.Toolbar {
@@ -283,6 +341,9 @@ declare module WinJS {
         var _itemFocusOutlineClass;
         var _itemBoxClass;
         var _itemClass;
+        var _headerClass;
+        var _itemFocusClass;
+        var _INVALID_INDEX;
 
         var _seenUrlsMaxSize: number;
         var _seenUrlsMRUMaxSize: number;
@@ -290,7 +351,12 @@ declare module WinJS {
         function _getSeenUrlsMRU(): string[];
         function _getSeenUrls(): string[];
 
-        function _animationTimeAdjustment(time:number);
+        function _animationTimeAdjustment(time: number);
+
+        function _rotationTransform3d(angle, axis);
+        function _tiltTransform(clickX, clickY, elementRect);
+
+        var ListDataSource;
     }
 
     module Binding {

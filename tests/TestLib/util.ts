@@ -520,10 +520,19 @@ module Helper {
     //
     // Example usage: disableTest(WinJSTests.ConfigurationTests, "testDatasourceChange_incrementalGridLayout");
     export function disableTest(testObj, testName) {
+
+        if (!testObj) {
+            return;
+        }
+
         var disabledName = "x" + testName;
 
-        testObj[disabledName] = testObj[testName];
-        delete testObj[testName];
+        if (testObj.hasOwnProperty(testName)) {
+            testObj[disabledName] = testObj[testName];
+            delete testObj[testName];
+        } else {
+            disableTest(Object.getPrototypeOf(testObj), testName);
+        }
     };
 
     // Useful for when you have a large number of configurations but don't want to

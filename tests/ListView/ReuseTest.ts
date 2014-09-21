@@ -1,20 +1,21 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
-/// <reference path="../TestData/ListView.less.css" />
+// <reference path="../TestData/ListView.less.css" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.ReuseTests = function () {
     "use strict";
     var testRootEl,
         newItems,
         disposedItemsCount,
         disposedItems,
         actionHistory = {};      // Stores dispose/render history for each item
+
+    var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
 
     function pushAction(item, action) {
         if (!actionHistory[item.index]) {
@@ -25,39 +26,6 @@ WinJSTests.ReuseTests = function () {
 
     function checkDisposeBeforeRender(index) {
         elementsEqual(["dispose", "render"], actionHistory[index]);
-    }
-
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-
-        testRootEl = document.createElement("div");
-        testRootEl.className = "file-listview-css";
-
-        var newNode = document.createElement("div");
-        newNode.id = "ReuseTests";
-        newNode.innerHTML =
-            "<div id='reuseTestPlaceholder'></div>" +
-            "<div id='reuseTestTemplate' class='reuseTemplateClass'>" +
-            "   <div></div>" +
-            "</div>" +
-            "<div id='reuseGroupTestTemplate' class='reuseGroupTemplateClass'>" +
-            "   <div></div>" +
-            "</div>"
-        testRootEl.appendChild(newNode);
-        document.body.appendChild(testRootEl);
-
-        newItems = 0;
-        disposedItemsCount = 0;
-        disposedItems = [];
-        removeListviewAnimations();
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-
-        WinJS.Utilities.disposeSubTree(testRootEl);
-        document.body.removeChild(testRootEl);
-        restoreListviewAnimations();
     }
 
     function setupListView(element, layoutName) {
@@ -87,7 +55,7 @@ WinJSTests.ReuseTests = function () {
         }
         var list = new WinJS.Binding.List(items).createGrouped(groupKey, groupData);
 
-        return new WinJS.UI.ListView(element, {
+        return new ListView(element, {
             layout: new WinJS.UI[layoutName](),
             itemDataSource: list.dataSource,
             itemTemplate: createRenderer(),
@@ -96,23 +64,23 @@ WinJSTests.ReuseTests = function () {
         });
     }
 
-    function itemRenderer(id, async) {
-        var source = document.getElementById(id).cloneNode(true);
+    function itemRenderer(id, async?) {
+        var source: any = document.getElementById(id).cloneNode(true);
         source.id = "";
-        return function itemRenderer(itemPromise) {
+        return function itemRenderer(itemPromise): any {
             newItems++;
             var element = source.cloneNode(true);
             element.msRendererPromise =
-                itemPromise.
-                    then(function (item) {
-                        WinJS.Utilities.markDisposable(element, function () {
-                            pushAction(item, "dispose");
-                            disposedItems.push(item.data.title);
-                        });
-                        pushAction(item, "render");
-                        element.myDataConnectionExpando = item.data.id;
-                        element.children[0].textContent = item.data.title;
+            itemPromise.
+                then(function (item) {
+                    WinJS.Utilities.markDisposable(element, function () {
+                        pushAction(item, "dispose");
+                        disposedItems.push(item.data.title);
                     });
+                    pushAction(item, "render");
+                    element.myDataConnectionExpando = item.data.id;
+                    element.children[0].textContent = item.data.title;
+                });
             if (async) {
                 return WinJS.Promise.timeout(Math.floor(Math.random() * 1000)).then(function () {
                     return element;
@@ -212,15 +180,109 @@ WinJSTests.ReuseTests = function () {
         runTests(listview, tests);
     };
 
-    // Ensures dispose is called due to the following data source changes:
-    // - Item changed
-    // - Item removed
-    this.testDispose_GridLayout = function (complete) {
-        testDispose("GridLayout", complete, false);
-    };
+    // Check that items, group headers, and grouping elements are not leaked in the DOM
+    // after the user scrolls. For example, check that there isn't a win-item in the DOM
+    // which isn't associated with any of the realized items.
+    function domCleanupAfterScrollingTest(layoutName, complete) {
+        function expectedNumberOfItemsInDom() {
+            var count = 0;
+            listView._view.items.each(function (index, itemElement, itemData) {
+                count++;
+            });
+            return count;
+        }
 
-    this.generateChangeSelected = function (layoutName) {
-        this["testChangeSelected" + layoutName] = function (complete) {
+        function expectedNumberOfGroupsInDom() {
+            return listView._groups.groups.reduce(function (count, group) {
+                return group.elements || group.header ? count + 1 : count;
+            }, 0);
+        }
+
+        var newNode = document.createElement("div");
+        newNode.style.width = "300px";
+        newNode.style.height = "300px";
+        testRootEl.appendChild(newNode);
+        var listView = setupListView(newNode, layoutName);
+
+        var tests = [
+            function () {
+                listView.ensureVisible(99);
+                return true;
+            },
+            function () {
+                listView.ensureVisible(0);
+                return true;
+            },
+            function () {
+                // Wait 1 second for the ARIA attributes to be set. Then we can find the
+                // grouping elements in the DOM by their role.
+                setTimeout(function () {
+                    LiveUnit.Assert.areEqual(expectedNumberOfItemsInDom(),
+                        listView._canvas.querySelectorAll(".win-item").length,
+                        "Incorrect number of items in the DOM");
+                    LiveUnit.Assert.areEqual(expectedNumberOfGroupsInDom(),
+                        listView._canvas.querySelectorAll(".win-groupheader").length,
+                        "Incorrect number of group headers in the DOM");
+
+                    testRootEl.removeChild(newNode);
+                    complete();
+                }, 1000);
+            },
+        ];
+        runTests(listView, tests);
+    }
+
+    export class ReuseTests {
+
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+
+            var newNode = document.createElement("div");
+            newNode.id = "ReuseTests";
+            newNode.innerHTML =
+            "<div id='reuseTestPlaceholder'></div>" +
+            "<div id='reuseTestTemplate' class='reuseTemplateClass'>" +
+            "   <div></div>" +
+            "</div>" +
+            "<div id='reuseGroupTestTemplate' class='reuseGroupTemplateClass'>" +
+            "   <div></div>" +
+            "</div>"
+        testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
+
+            newItems = 0;
+            disposedItemsCount = 0;
+            disposedItems = [];
+            removeListviewAnimations();
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
+            restoreListviewAnimations();
+        }
+
+        // Ensures dispose is called due to the following data source changes:
+        // - Item changed
+        // - Item removed
+        testDispose_GridLayout(complete) {
+            testDispose("GridLayout", complete);
+        }
+
+
+        testDomCleanupAfterScrolling_GridLayout(complete) {
+            domCleanupAfterScrollingTest("GridLayout", complete);
+        }
+    }
+
+    function generateChangeSelected(layoutName) {
+        ReuseTests.prototype["testChangeSelected" + layoutName] = function (complete) {
             var items = [];
             for (var i = 0; i < 100; i++) {
                 items.push({ title: "Tile" + i });
@@ -276,10 +338,10 @@ WinJSTests.ReuseTests = function () {
             runTests(listView, tests);
         };
     };
-    this.generateChangeSelected("ListLayout");
+    generateChangeSelected("ListLayout");
 
-    this.generateAriaCleanup = function (layoutName) {
-        this["testAriaCleanup" + layoutName] = function (complete) {
+    function generateAriaCleanup(layoutName) {
+        ReuseTests.prototype["testAriaCleanup" + layoutName] = function (complete) {
             var items = [];
             for (var i = 0; i < 100; i++) {
                 items.push({ title: "Tile" + i });
@@ -313,73 +375,17 @@ WinJSTests.ReuseTests = function () {
                 listView.ensureVisible(99);
                 return waitForDeferredAction(listView)();
             }).then(function () {
-                LiveUnit.Assert.areEqual(0, newNode.querySelectorAll("[aria-selected='true']").length);
-                listView.ensureVisible(0);
-                return waitForDeferredAction(listView)();
-            }).then(function () {
-                LiveUnit.Assert.areEqual(4, newNode.querySelectorAll("[aria-selected='true']").length);
-                testRootEl.removeChild(newNode);
-                complete();
-            })
-        };
-    };
-    this.generateAriaCleanup("GridLayout");
-
-    // Check that items, group headers, and grouping elements are not leaked in the DOM
-    // after the user scrolls. For example, check that there isn't a win-item in the DOM
-    // which isn't associated with any of the realized items.
-    function domCleanupAfterScrollingTest(layoutName, complete) {
-        function expectedNumberOfItemsInDom() {
-            var count = 0;
-            listView._view.items.each(function (index, itemElement, itemData) {
-                count++;
-            });
-            return count;
-        }
-
-        function expectedNumberOfGroupsInDom() {
-            return listView._groups.groups.reduce(function (count, group) {
-                return group.elements || group.header ? count + 1 : count;
-            }, 0);
-        }
-
-        var newNode = document.createElement("div");
-        newNode.style.width = "300px";
-        newNode.style.height = "300px";
-        testRootEl.appendChild(newNode);
-        var listView = setupListView(newNode, layoutName);
-
-        var tests = [
-            function () {
-                listView.ensureVisible(99);
-                return true;
-            },
-            function () {
-                listView.ensureVisible(0);
-                return true;
-            },
-            function () {
-                // Wait 1 second for the ARIA attributes to be set. Then we can find the
-                // grouping elements in the DOM by their role.
-                setTimeout(function () {
-                    LiveUnit.Assert.areEqual(expectedNumberOfItemsInDom(),
-                        listView._canvas.querySelectorAll(".win-item").length,
-                        "Incorrect number of items in the DOM");
-                    LiveUnit.Assert.areEqual(expectedNumberOfGroupsInDom(),
-                        listView._canvas.querySelectorAll(".win-groupheader").length,
-                        "Incorrect number of group headers in the DOM");
-
+                    LiveUnit.Assert.areEqual(0, newNode.querySelectorAll("[aria-selected='true']").length);
+                    listView.ensureVisible(0);
+                    return waitForDeferredAction(listView)();
+                }).then(function () {
+                    LiveUnit.Assert.areEqual(4, newNode.querySelectorAll("[aria-selected='true']").length);
                     testRootEl.removeChild(newNode);
                     complete();
-                }, 1000);
-            },
-        ];
-        runTests(listView, tests);
-    }
-    this.testDomCleanupAfterScrolling_GridLayout = function (complete) {
-        domCleanupAfterScrollingTest("GridLayout", complete);
+                })
+        };
     };
-};
-
+    generateAriaCleanup("GridLayout");
+}
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.ReuseTests");
