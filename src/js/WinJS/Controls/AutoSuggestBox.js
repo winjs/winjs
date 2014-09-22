@@ -12,9 +12,10 @@ define([
     '../Utilities/_Hoverable',
     "../Animations",
     "../BindingList",
-    '../Promise',
-    "../Controls/Repeater",
-], function autoSuggestBoxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Promise, Repeater) {
+    "../Promise",
+    "./Repeater",
+    "./AutoSuggestBox/_SearchSuggestionManagerShim",
+], function autoSuggestBoxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Promise, Repeater, _SuggestionManagerShim) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -31,14 +32,15 @@ define([
                 asbInput: "win-autosuggestbox-input",
                 asbInputFocus: "win-autosuggestbox-input-focus",
                 asbSuggestionSelected: "win-autosuggestbox-suggestion-selected",
-                asbSuggestionSeparator: "win-searchbox-suggestion-separator",
+                asbSuggestionSeparator: "win-autosuggestbox-suggestion-separator",
                 asbSuggestionQuery: "win-autosuggestbox-suggestion-query",
             };
 
             var EventNames = {
                 querychanged: "querychanged",
                 querysubmitted: "querysubmitted",
-                //resultsuggestionchosen: "resultsuggestionchosen",
+                resultsuggestionchosen: "resultsuggestionchosen",
+                suggestionsrequested: "suggestionsrequested"
             };
 
             var Strings = {
@@ -61,17 +63,21 @@ define([
                     throw new _ErrorFromName("WinJS.UI.AutoSuggestBox.DuplicateConstruction", Strings.duplicateConstruction);
                 }
 
+                this._suggestionsChangedHandler = this._suggestionsChangedHandler.bind(this);
+                this._suggestionsRequestedHandler = this._suggestionsRequestedHandler.bind(this);
+
                 this._element = element;
                 element.winControl = this;
                 element.classList.add(ClassNames.asb);
                 element.classList.add("win-disposable");
 
-                this._buildDOM();
-                this._wireupUserEvents();
+                this._setupDOM();
+                this._setupSSM();
 
                 this._currentFocusedIndex = -1;
                 this._currentSelectedIndex = -1;
                 this._flyoutOpenPromise = Promise.wrap();
+                this._lastKeyPressLanguage = "";
                 this._prevLinguisticDetails = this._getLinguisticDetails();
                 this._prevQueryText = "";
 
@@ -178,6 +184,35 @@ define([
                     }
                 },
 
+                /// <field type='bool' locid="WinJS.UI.AutoSuggestBox.searchHistoryDisabled" helpKeyword="WinJS.UI.AutoSuggestBox.searchHistoryDisabled">
+                /// Gets or sets a value that specifies whether history is disabled for the AutoSuggestBox. The default value is false.
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </field>
+                searchHistoryDisabled: {
+                    get: function () {
+                        return !this._suggestionManager.searchHistoryEnabled;
+                    },
+                    set: function (value) {
+                        this._suggestionManager.searchHistoryEnabled = !value;
+                    }
+                },
+
+                /// <field type='String' locid="WinJS.UI.AutoSuggestBox.searchHistoryContext" helpKeyword="WinJS.UI.AutoSuggestBox.searchHistoryContext">
+                /// Gets or sets the search history context for the AutoSuggestBox. The search history context string is used as a secondary key for storing search history.
+                /// (The primary key is the AppId.) An app can use the search history context string to store different search histories based on the context of the application.
+                /// If you don't set this property, the system assumes that all searches in your app occur in the same context.
+                /// If you update this property while the search pane is open with suggestions showing, the changes won't take effect until the user enters the next character.
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </field>
+                searchHistoryContext: {
+                    get: function () {
+                        return this._suggestionManager.searchHistoryContext;
+                    },
+                    set: function (value) {
+                        this._suggestionManager.searchHistoryContext = value;
+                    }
+                },
+
                 dispose: function asb_dispose() {
                     /// <signature helpKeyword="WinJS.UI.AutoSuggestBox.dispose">
                     /// <summary locid="WinJS.UI.AutoSuggestBox.dispose">
@@ -192,11 +227,20 @@ define([
                     // Cancel pending promises.
                     this._flyoutOpenPromise.cancel();
 
+                    this._suggestions.removeEventListener("vectorchanged", this._suggestionsChangedHandler);
+                    this._suggestionManager.removeEventListener("suggestionsrequested", this._suggestionsRequestedHandler);
+
+                    this._suggestionManager = null;
+                    this._suggestions = null;
+
                     this._disposed = true;
                 },
 
                 // Constructor Helpers
-                _buildDOM: function asb_buildDOM() {
+                _setupDOM: function asb_setupDOM() {
+                    var flyoutPointerReleasedHandler = this._flyoutPointerReleasedHandler.bind(this);
+                    var inputOrImeChangeHandler = this._inputOrImeChangeHandler.bind(this);
+
                     // Root element
                     if (!this._element.getAttribute("aria-label")) {
                         this._element.setAttribute("aria-label", Strings.ariaLabel);
@@ -208,12 +252,32 @@ define([
                     this._inputElement.type = "search";
                     this._inputElement.classList.add(ClassNames.asbInput);
                     this._inputElement.setAttribute("role", "textbox");
+                    this._inputElement.addEventListener("keydown", this._keyDownHandler.bind(this));
+                    this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));
+                    this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
+                    this._inputElement.addEventListener("focus", this._focusHandler.bind(this));
+                    this._inputElement.addEventListener("blur", this._inputBlurHandler.bind(this));
+                    this._inputElement.addEventListener("input", inputOrImeChangeHandler);
+                    this._inputElement.addEventListener("compositionstart", inputOrImeChangeHandler);
+                    this._inputElement.addEventListener("compositionupdate", inputOrImeChangeHandler);
+                    this._inputElement.addEventListener("compositionend", inputOrImeChangeHandler);
+                    _ElementUtilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
                     this._updateInputElementAriaLabel();
                     this._element.appendChild(this._inputElement);
+                    var context = this._inputElement.msGetInputContext && this._inputElement.msGetInputContext();
+                    if (context) {
+                        context.addEventListener("MSCandidateWindowShow", this._msCandidateWindowShowHandler.bind(this));
+                        context.addEventListener("MSCandidateWindowHide", this._msCandidateWindowHideHandler.bind(this));
+                    }
 
                     // Flyout element
                     this._flyoutElement = _Global.document.createElement("div");
                     this._flyoutElement.classList.add(ClassNames.asbFlyout);
+                    this._flyoutElement.addEventListener("blur", this._flyoutBlurHandler.bind(this));
+                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerup", flyoutPointerReleasedHandler);
+                    _ElementUtilities._addEventListener(this._flyoutElement, "pointercancel", flyoutPointerReleasedHandler);
+                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerout", flyoutPointerReleasedHandler);
+                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerdown", this._flyoutPointerDownHandler.bind(this));
                     this._element.appendChild(this._flyoutElement);
 
                     // Repeater
@@ -223,35 +287,22 @@ define([
                         if (!item) {
                             return root;
                         }
-                        if (item.kind === AutoSuggestBox.SuggestionKinds.Query) {
+                        if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Query) {
                             root = querySuggestionRenderer(that, item);
-                        } else if (item.kind === AutoSuggestBox.SuggestionKinds.Separator) {
+                        } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Separator) {
                             root = separatorSuggestionRenderer(item);
-                        } else if (item.kind === AutoSuggestBox.SuggestionKinds.Result) {
+                        } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Result) {
                             //root = that._resultSuggestionRenderer(item);
                         } else {
                             throw new _ErrorFromName("WinJS.UI.AutoSuggestBox.invalidSuggestionKind", Strings.invalidSuggestionKind);
                         }
                         return root;
                     }
-                    function repeaterDataChanged() {
-                        // ms-scroll-chaining:none will still chain scroll parent element if child div does
-                        // not have a scroll bar. Prevent this by setting and updating touch action
-                        that._flyoutElement.style.touchAction = that._flyoutElement.scrollHeight > that._flyoutElement.getBoundingClientRect().height ? "pan-y" : "none";
-                        if (that._isFlyoutShown()) {
-                            that._repeaterElement.style.display = "none";
-                            that._repeaterElement.style.display = "block";
-                        }
-                    }
                     this._suggestionsData = new BindingList.List();
                     this._repeaterElement = _Global.document.createElement("div");
                     this._repeater = new Repeater.Repeater(this._repeaterElement, {
                         data: this._suggestionsData,
                         template: repeaterTemplate,
-                        onitemchanged: repeaterDataChanged,
-                        oniteminserted: repeaterDataChanged,
-                        onitemremoved: repeaterDataChanged,
-                        onitemsreloaded: repeaterDataChanged
                     });
                     _ElementUtilities._ensureId(this._repeaterElement);
                     this._repeaterElement.setAttribute("role", "listbox");
@@ -259,31 +310,17 @@ define([
                     this._flyoutElement.appendChild(this._repeaterElement);
                 },
 
-                _wireupUserEvents: function asb_wireupUserEvents() {
-                    this._inputElement.addEventListener("keydown", this._keyDownHandler.bind(this));
-                    this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));
-                    this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
-                    this._inputElement.addEventListener("focus", this._focusHandler.bind(this));
-                    this._inputElement.addEventListener("blur", this._blurHandler.bind(this));
-                    _ElementUtilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
-
-                    var flyoutPointerReleasedHandler = this._flyoutPointerReleasedHandler.bind(this);
-                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerup", flyoutPointerReleasedHandler);
-                    _ElementUtilities._addEventListener(this._flyoutElement, "pointercancel", flyoutPointerReleasedHandler);
-                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerout", flyoutPointerReleasedHandler);
-                    _ElementUtilities._addEventListener(this._flyoutElement, "pointerdown", this._flyoutPointerDownHandler.bind(this));
-
-                    var inputOrImeChangeHandler = this._inputOrImeChangeHandler.bind(this);
-                    this._inputElement.addEventListener("input", inputOrImeChangeHandler);
-                    this._inputElement.addEventListener("compositionstart", inputOrImeChangeHandler);
-                    this._inputElement.addEventListener("compositionupdate", inputOrImeChangeHandler);
-                    this._inputElement.addEventListener("compositionend", inputOrImeChangeHandler);
-
-                    var context = this._inputElement.msGetInputContext && this._inputElement.msGetInputContext();
-                    if (context) {
-                        context.addEventListener("MSCandidateWindowShow", this._msCandidateWindowShowHandler.bind(this));
-                        context.addEventListener("MSCandidateWindowHide", this._msCandidateWindowHideHandler.bind(this));
+                _setupSSM: function asb_setupSSM() {
+                    // Get the search suggestion provider if it is available
+                    if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
+                        this._suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
+                    } else {
+                        this._suggestionManager = new _SuggestionManagerShim._SearchSuggestionManagerShim();
                     }
+                    this._suggestions = this._suggestionManager.suggestions;
+
+                    this._suggestions.addEventListener("vectorchanged", this._suggestionsChangedHandler);
+                    this._suggestionManager.addEventListener("suggestionsrequested", this._suggestionsRequestedHandler);
                 },
 
                 // Flyout functions
@@ -316,8 +353,10 @@ define([
                     this._flyoutBelowInput = spaceBelow >= spaceAbove;
                     if (this._flyoutBelowInput) {
                         this._flyoutElement.classList.remove(ClassNames.asbFlyoutAbove);
+                        this._flyoutElement.scrollTop = 0;
                     } else {
                         this._flyoutElement.classList.add(ClassNames.asbFlyoutAbove);
+                        this._flyoutElement.scrollTop = this._flyoutElement.scrollHeight - this._flyoutElement.clientHeight;
                     }
 
                     this._addFlyoutIMEPaddingIfRequired();
@@ -409,16 +448,16 @@ define([
                 },
 
                 _isSuggestionSelectable: function asb_isSuggestionSelectable(suggestion) {
-                    return ((suggestion.kind === AutoSuggestBox.SuggestionKinds.Query) ||
-                            (suggestion.kind === AutoSuggestBox.SuggestionKinds.Result));
+                    return ((suggestion.kind === _SuggestionManagerShim._SearchSuggestionKind.Query) ||
+                            (suggestion.kind === _SuggestionManagerShim._SearchSuggestionKind.Result));
                 },
 
                 _processSuggestionChosen: function asb_processSuggestionChosen(item, event) {
                     this.queryText = item.text;
-                    if (item.kind === AutoSuggestBox.SuggestionKinds.Query) {
+                    if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Query) {
                         this._submitQuery(item.text, false /*fillLinguisticDetails*/, event); // force empty linguistic details since explicitly chosen suggestion from list
                     }
-                    //else if (item.kind === AutoSuggestBox.SearchSuggestionKinds.Result) {
+                    //else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Result) {
                     //    this._fireEvent(EventNames.resultsuggestionchosen, {
                     //        tag: item.tag,
                     //        keyModifiers: getKeyModifiers(event),
@@ -568,9 +607,9 @@ define([
                         keyModifiers: getKeyModifiers(event)
                     });
 
-                    //if (this._searchSuggestionManager) {
-                    //    this._searchSuggestionManager.addToHistory(this._inputElement.value, this._lastKeyPressLanguage);
-                    //}
+                    if (this._suggestionManager) {
+                        this._suggestionManager.addToHistory(this._inputElement.value, this._lastKeyPressLanguage);
+                    }
                 },
 
                 _updateInputElementAriaLabel: function asb_updateInputElementAriaLabel() {
@@ -580,18 +619,8 @@ define([
                 },
 
                 // Event Handlers
-                _blurHandler: function asb_blurHandler(event) {
-                    // Hide flyout if focus is leaving the control
-                    if (event.relatedTarget !== this._element && !this._element.contains(event.relatedTarget)) {
-                        this._hideFlyout();
-                    }
-                    this._element.classList.remove(ClassNames.asbInputFocus);
-                    // todo
-                    //this._updateSearchButtonClass();
-                    this._isProcessingDownKey = false;
-                    this._isProcessingUpKey = false;
-                    this._isProcessingTabKey = false;
-                    this._isProcessingEnterKey = false;
+                _flyoutBlurHandler: function asb_flyoutBlurHandler(event) {
+                    this._hideFlyout();
                 },
 
                 _focusHandler: function asb_focusHandler(event) {
@@ -617,14 +646,11 @@ define([
                             this._updateFakeFocus();
                         }
 
-                        // todo
-                        //if (this._searchSuggestionManager) {
-                        //    this._searchSuggestionManager.setQuery(
-                        //        this._inputElement.value,
-                        //        this._lastKeyPressLanguage,
-                        //        this._getLinguisticDetails(true /*useCache*/, true /*createFilled*/)
-                        //        );
-                        //}
+                        this._suggestionManager.setQuery(
+                            this._inputElement.value,
+                            this._lastKeyPressLanguage,
+                            this._getLinguisticDetails(true /*useCache*/, true /*createFilled*/)
+                        );
                     }
 
                     this._element.classList.add(ClassNames.asbInputFocus);
@@ -671,6 +697,20 @@ define([
                         this._flyoutElement.style.marginTop = "";
                         animation.execute();
                     }
+                },
+
+                _inputBlurHandler: function asb_inputBlurHandler(event) {
+                    // Hide flyout if focus is leaving the control
+                    if (event.relatedTarget !== _Global.document.activeElement && !this._element.contains(_Global.document.activeElement)) {
+                        this._hideFlyout();
+                    }
+                    this._element.classList.remove(ClassNames.asbInputFocus);
+                    // todo
+                    //this._updateSearchButtonClass();
+                    this._isProcessingDownKey = false;
+                    this._isProcessingUpKey = false;
+                    this._isProcessingTabKey = false;
+                    this._isProcessingEnterKey = false;
                 },
 
                 _inputOrImeChangeHandler: function asb_inputImeChangeHandler() {
@@ -723,13 +763,12 @@ define([
                             queryText: this._inputElement.value,
                             linguisticDetails: linguisticDetails
                         });
-                        //if (this._searchSuggestionManager) {
-                        //    this._searchSuggestionManager.setQuery(
-                        //        this._inputElement.value,
-                        //        this._lastKeyPressLanguage,
-                        //        linguisticDetails
-                        //        );
-                        //}
+
+                        this._suggestionManager.setQuery(
+                            this._inputElement.value,
+                            this._lastKeyPressLanguage,
+                            linguisticDetails
+                        );
                     }
                 },
 
@@ -868,11 +907,78 @@ define([
                     this._addFlyoutIMEPaddingIfRequired();
                     this._reflowImeOnPointerRelease = false;
                 },
+
+                _suggestionsChangedHandler: function asb_suggestionsChangedHandler(event) {
+                    var collectionChange = event.collectionChange || event.detail.collectionChange;
+                    var changeIndex = (+event.index === event.index) ? event.index : event.detail.index;
+                    var ChangeEnum = _SuggestionManagerShim._CollectionChange;
+                    if (collectionChange === ChangeEnum.reset) {
+                        if (this._isFlyoutShown()) {
+                            this._hideFlyout();
+                        }
+                        this._suggestionsData.splice(0, this._suggestionsData.length);
+                    } else if (collectionChange === ChangeEnum.itemInserted) {
+                        var suggestion = this._suggestions[changeIndex];
+                        this._suggestionsData.splice(changeIndex, 0, suggestion);
+
+                        this._showFlyout();
+
+                    } else if (collectionChange === ChangeEnum.itemRemoved) {
+                        if ((this._suggestionsData.length === 1)) {
+                            _ElementUtilities._setActive(this._inputElement);
+
+                            this._hideFlyout();
+                        }
+                        this._suggestionsData.splice(changeIndex, 1);
+                    } else if (collectionChange === ChangeEnum.itemChanged) {
+                        var suggestion = this._suggestions[changeIndex];
+                        if (suggestion !== this._suggestionsData.getAt(changeIndex)) {
+                            this._suggestionsData.setAt(changeIndex, suggestion);
+                        } else {
+                            // If the suggestions manager gives us an identical item, it means that only the hit highlighted text has changed.
+                            var existingElement = this._repeater.elementFromIndex(changeIndex);
+                            if (_ElementUtilities.hasClass(existingElement, ClassNames.asbSuggestionQuery)) {
+                                this._addHitHighlightedText(existingElement, suggestion, suggestion.text);
+                            } else {
+                                var resultSuggestionDiv = existingElement.querySelector("." + ClassNames.searchBoxSuggestionResultText);
+                                if (resultSuggestionDiv) {
+                                    this._addHitHighlightedText(resultSuggestionDiv, suggestion, suggestion.text);
+                                    var resultSuggestionDetailDiv = existingElement.querySelector("." + ClassNames.searchBoxSuggestionResultDetailedText);
+                                    if (resultSuggestionDetailDiv) {
+                                        this._addHitHighlightedText(resultSuggestionDetailDiv, suggestion, suggestion.detailText);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (_Global.document.activeElement === this._inputElement) {
+                        this._updateFakeFocus();
+                    }
+                },
+
+                _suggestionsRequestedHandler: function asb_suggestionsRequestedHandler(event) {
+                    // get the most up to date value of the input langauge from WinRT if available
+                    if (_WinRT.Windows.Globalization.Language) {
+                        this._lastKeyPressLanguage = _WinRT.Windows.Globalization.Language.currentInputMethodLanguageTag;
+                    }
+
+                    var request = event.request || event.detail.request;
+                    var deferral;
+                    this._fireEvent(EventNames.suggestionsrequested, {
+                        setPromise: function (promise) {
+                            deferral = request.getDeferral();
+                            promise.then(function () {
+                                deferral.complete();
+                            });
+                        },
+                        searchSuggestionCollection: request.searchSuggestionCollection,
+                        language: this._lastKeyPressLanguage,
+                        linguisticDetails: this._getLinguisticDetails(true /*useCache*/, true /*createFilled*/),
+                        queryText: this._inputElement.value
+                    });
+                },
             }, {
-                SuggestionKinds: {
-                    Separator: "separator",
-                    Query: "query",
-                }
             });
 
             function addHitHighlightedText(element, item, text, hitFinder) {
@@ -938,7 +1044,7 @@ define([
                     var firstChild = element.firstChild;
 
                     var hitsProvided = item.hits;
-                    if ((!hitsProvided) && (hitFinder) && (item.kind !== AutoSuggestBox.SuggestionKinds.Separator)) {
+                    if ((!hitsProvided) && (hitFinder) && (item.kind !== _SuggestionManagerShim._SearchSuggestionKind.Separator)) {
                         hitsProvided = hitFinder.find(text);
                     }
 

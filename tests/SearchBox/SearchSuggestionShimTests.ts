@@ -3,7 +3,7 @@
 
 module SearchBoxTests {
 
-    var SSM = Helper.require("WinJS/Controls/SearchBox/_SearchSuggestionManagerShim");
+    var SSM = Helper.require("WinJS/Controls/AutoSuggestBox/_SearchSuggestionManagerShim");
 
     function createSSM(suggestionsRequestedCallback?, vectorChangedCallback?) {
         var ssm = new SSM._SearchSuggestionManagerShim();
