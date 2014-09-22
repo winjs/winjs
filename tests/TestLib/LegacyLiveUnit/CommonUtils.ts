@@ -891,7 +891,7 @@ module CommonUtilities {
         }
     }
 
-    export function waitForEvent(element, eventName, action) {
+    export function waitForEvent(element, eventName, action?) {
         /// <summary>
         /// Returns a promise that fulfills when the given event is fired on the element.
         /// It optionally takes a function that is executed and causes the event to fire

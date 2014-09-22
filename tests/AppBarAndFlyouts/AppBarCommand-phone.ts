@@ -1,18 +1,19 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <!-- saved from url=(0014)about:internet -->
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <deploy src="../TestData/microsoft-sdk.png" />
 
-if (WinJS.Utilities.isPhone) {
-    var CorsicaTests = CorsicaTests || {};
 
-    CorsicaTests.AppBarCommandTests = function () {
-        "use strict";
+module CorsicaTests {
+
+    "use strict";
+
+    export class AppBarCommandTestsPhone {
+
         // Test AppBarCommand Instantiation
-        this.testAppBarCommandInstantiation = function () {
+        testAppBarCommandInstantiation = function () {
             // Get the AppBarCommand element from the DOM
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBarCommand element");
             var AppBarCommandElement = document.createElement('button');
@@ -25,32 +26,32 @@ if (WinJS.Utilities.isPhone) {
 
             document.body.removeChild(AppBarCommandElement);
         }
-        
-        
-        
+
+
+
 
         // Test AppBarCommand Instantiation with null element
-        this.testAppBarCommandNullInstantiation = function () {
+        testAppBarCommandNullInstantiation = function () {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBarCommand with null element");
             var AppBarCommand = new WinJS.UI.AppBarCommand(null, { type: 'button' });
             LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand instantiation was null when sent a null AppBarCommand element.");
         }
-        
-        
-        
+
+
+
 
         // Test AppBarCommand Instantiation with no options
-        this.testAppBarCommandEmptyInstantiation = function () {
+        testAppBarCommandEmptyInstantiation = function () {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBarCommand with empty constructor");
             var AppBarCommand = new WinJS.UI.AppBarCommand();
             LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand instantiation was null when sent a Empty AppBarCommand element.");
         }
-        
-        
-        
+
+
+
 
         // Test multiple instantiation of the same AppBarCommand DOM element
-        this.testAppBarCommandMultipleInstantiation = function () {
+        testAppBarCommandMultipleInstantiation = function () {
             // Get the AppBarCommand element from the DOM
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBarCommand element");
             var AppBarCommandElement = document.createElement('button');
@@ -71,7 +72,7 @@ if (WinJS.Utilities.isPhone) {
         }
 
         // Test AppBarCommand parameters
-        this.testAppBarCommandParams = function () {
+        testAppBarCommandParams = function () {
             function testGoodInitOption(paramName, value) {
                 LiveUnit.LoggingCore.logComment("Testing creating a AppBarCommand using good parameter " + paramName + "=" + value);
                 var options = { type: 'button', label: 'test', icon: 'test.png' };
@@ -88,11 +89,10 @@ if (WinJS.Utilities.isPhone) {
                     new WinJS.UI.AppBarCommand(null, options);
                     LiveUnit.Assert.fail("Expected creating AppBarCommand with " + paramName + "=" + value + " to throw an exception");
                 } catch (e) {
-                    exception = e;
-                    LiveUnit.LoggingCore.logComment(exception.message);
-                    LiveUnit.Assert.isTrue(exception !== null);
-                    LiveUnit.Assert.isTrue(exception.name === expectedName);
-                    LiveUnit.Assert.isTrue(exception.message === expectedMessage);
+                    LiveUnit.LoggingCore.logComment(e.message);
+                    LiveUnit.Assert.isTrue(e !== null);
+                    LiveUnit.Assert.isTrue(e.name === expectedName);
+                    LiveUnit.Assert.isTrue(e.message === expectedMessage);
                 }
             }
 
@@ -145,15 +145,15 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.LoggingCore.logComment("Testing element");
         }
-        
-        
-        
+
+
+
 
         // Disabled for Windows Phone blue bug # 216095
-        this.testDefaultAppBarCommandParameters = function () {
+        testDefaultAppBarCommandParameters = function () {
             // Test Default Button 
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Button AppBarCommand element");
-            var abc1 = new WinJS.UI.AppBarCommand(null, { label: 'test', icon: 'test.png' });
+            var abc1 = <WinJS.UI.PrivateCommand>new WinJS.UI.AppBarCommand(null, { label: 'test', icon: 'test.png' });
             LiveUnit.LoggingCore.logComment("abc1 has been instantiated.");
             LiveUnit.Assert.isNotNull(abc1, "abc1 element should not be null when instantiated.");
 
@@ -175,7 +175,7 @@ if (WinJS.Utilities.isPhone) {
 
             // Test Default Toggle Button
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Toggle Button AppBarCommand element");
-            var abc2 = new WinJS.UI.AppBarCommand(null, { label: 'test', icon: 'test.png', type: 'toggle' });
+            var abc2 = <WinJS.UI.PrivateCommand>new WinJS.UI.AppBarCommand(null, { label: 'test', icon: 'test.png', type: 'toggle' });
             LiveUnit.LoggingCore.logComment("abc2 has been instantiated.");
             LiveUnit.Assert.isNotNull(abc1, "abc2 element should not be null when instantiated.");
 
@@ -198,7 +198,7 @@ if (WinJS.Utilities.isPhone) {
         }
 
         // Simple Property tests
-        this.testSimpleAppBarCommandProperties = function () {
+        testSimpleAppBarCommandProperties = function () {
             // Get the AppBarCommand element from the DOM
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBarCommand element");
             var appBarCommand = new WinJS.UI.AppBarCommand(null, { label: 'test', icon: 'test.png', type: 'toggle', extraClass: 'extra' });
@@ -222,18 +222,18 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.areEqual("another", appBarCommand.extraClass, "Verifying that extraClass is 'another'");
             LiveUnit.Assert.isTrue(appBarCommand.element.classList.contains("another"), "Verifying that className is 'another'");
         }
-        
-        
-        
+
+
+
 
 
         // Hidden Property tests
-        this.testHiddenProperty = function () {
+        testHiddenProperty = function () {
             LiveUnit.LoggingCore.logComment("Attempt to test hidden property on appbarcommand");
             var AppBarElement = document.createElement("div");
             document.body.appendChild(AppBarElement);
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBar element");
-            var AppBar = new WinJS.UI.AppBar(AppBarElement, { commands: { type: 'toggle', id: 'sep' } });
+            var AppBar = <WinJS.UI.PrivateAppBar>new WinJS.UI.AppBar(AppBarElement, { commands: { type: 'toggle', id: 'sep' } });
             LiveUnit.LoggingCore.logComment("set commands");
             AppBar.commands = [{ id: 'cmdA', label: 'One', icon: 'back', section: 'global' }];
             AppBar.hide();
@@ -253,17 +253,17 @@ if (WinJS.Utilities.isPhone) {
                 document.body.removeChild(AppBarElement);
             }
         }
-        
-        
-        
-        
+
+
+
+
 
         // Test symbol and image icons
-        this.testIconProperty = function (complete) {
+        testIconProperty = function (complete) {
 
             LiveUnit.LoggingCore.logComment("Test Symbol Icons");
-            var abc1 = new WinJS.UI.AppBarCommand(null, { icon: '\uE182' });
-            var abc2 = new WinJS.UI.AppBarCommand(null, { icon: 'priority' });
+            var abc1 = <WinJS.UI.PrivateCommand>new WinJS.UI.AppBarCommand(null, { icon: '\uE182' });
+            var abc2 = <WinJS.UI.PrivateCommand>new WinJS.UI.AppBarCommand(null, { icon: 'priority' });
 
             // Verify that the same character icon was generated by both commands.
             LiveUnit.Assert.areEqual(abc1.icon, abc2.icon)
@@ -278,18 +278,13 @@ if (WinJS.Utilities.isPhone) {
 
             LiveUnit.Assert.areEqual(pathName, abc1._commandBarIconButton.icon.uri.path, "images should project into the icon.uri property");
             LiveUnit.Assert.areEqual(pathName, abc2._commandBarIconButton.icon.uri.path, "images should project into the icon.uri property");
-
-            LiveUnit.LoggingCore.logComment("Test Invalid Icon strings");
-            abc1.icon = 123;
-            abc2.icon = pathName;
-            // We didn't crash.
             complete();
         };
 
         // Tests for dispose members and requirements
-        this.testAppBarCommandDispose = function () {
+        testAppBarCommandDispose = function () {
             var button = document.createElement("button");
-            var abc = new WinJS.UI.AppBarCommand(button);
+            var abc = <WinJS.UI.PrivateCommand>new WinJS.UI.AppBarCommand(button);
             LiveUnit.Assert.isTrue(abc.dispose);
             LiveUnit.Assert.isTrue(abc.element.classList.contains("win-disposable"));
             LiveUnit.Assert.isFalse(abc._disposed);
@@ -298,10 +293,10 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.isTrue(abc._disposed);
             abc.dispose();
         };
-        this.testAppBarCommandDispose["Description"] = "AppBarCommand dispose test";
+        //testAppBarCommandDispose["Description"] = "AppBarCommand dispose test";
 
         /// Tests that previous innerHTML is cleared when we instantiate a new button.
-        this.testAppBarCommandButtonsRemoveOldInnerHTML = function () {
+        testAppBarCommandButtonsRemoveOldInnerHTML = function () {
             var button = document.createElement("button");
             button.innerHTML = "<div id='testAppBarCommandButtonsRemoveOldInnerHTML'>";
             LiveUnit.Assert.isTrue(button.querySelector("#testAppBarCommandButtonsRemoveOldInnerHTML"));
@@ -309,10 +304,13 @@ if (WinJS.Utilities.isPhone) {
             LiveUnit.Assert.isFalse(button.querySelector("#testAppBarCommandButtonsRemoveOldInnerHTML"), "AppBarCommand buttons should lose previous innerHTML on control Instantiation");
 
         }
-        
-        
+
+
     }
 
+}
+
+if (WinJS.Utilities.isPhone) {
     // register the object as a test class by passing in the name
-    LiveUnit.registerTestClass("CorsicaTests.AppBarCommandTests");
+    LiveUnit.registerTestClass("CorsicaTests.AppBarCommandTestsPhone");
 }

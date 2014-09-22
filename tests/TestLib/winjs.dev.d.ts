@@ -90,6 +90,8 @@ declare module WinJS {
 
         var _MutationObserver;
         function _isSelectionRendered(itemBox): boolean;
+        var _getHighestTabIndexInList;
+        var _getLowestTabIndexInList;
 
     }
 
@@ -372,7 +374,11 @@ declare module WinJS {
 
         class PrivateCommand extends WinJS.UI.AppBarCommand implements ICommand {
             priority: number;
-            winControl: ICommand
+            winControl: ICommand;
+            _commandBarIconButton;
+            _disposed;
+            _tooltipControl;
+            _lastElementFocus;
         }
 
         // Move to WinJS.d.ts after the Toolbar API review
@@ -397,6 +403,42 @@ declare module WinJS {
             type: string;
             priority: number;
             winControl: ICommand
+        }
+
+        class PrivateAppBar extends AppBar {
+            getCommandById(id: string): PrivateCommand;
+            showCommands(commands: any[], immediate?: boolean): void;
+            showCommands(commands: any, immediate?: boolean): void;
+            hideCommands(commands: any[], immediate?: boolean): void;
+            hideCommands(commands: any, immediate?: boolean): void;
+            showOnlyCommands(commands: any[], immediate?: boolean): void;
+            showOnlyCommands(commands: any, immediate?: boolean): void;
+            commands: any[];
+            _disposed;
+            _getCommands;
+            _uniqueId;
+            _updateFirstAndFinalDiv;
+            _layout;
+            _visiblePosition;
+
+            static _currentAppBarId;
+            static _appBarsSynchronizationPromise;
+        }
+
+        class PrivateFlyout extends Flyout {
+            _disposed;
+        }
+
+        class PrivateMenuCommand extends MenuCommand {
+            _disposed;
+        }
+
+        class PrivateMenu extends Menu {
+            _disposed;
+        }
+
+        class PrivateSettingsFlyout extends SettingsFlyout {
+            _disposed;
         }
 
         class Toolbar {
@@ -467,6 +509,8 @@ declare module WinJS {
         var _Selection;
         var _LayoutCommon;
         var _LISTVIEW_PROGRESS_DELAY;
+        var _Overlay;
+        var _AppBarCommandsLayout;
     }
 
     module Binding {
