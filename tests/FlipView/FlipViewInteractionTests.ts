@@ -60,7 +60,7 @@ module WinJSTests {
 
 
     export class FlipViewInteractionTests {
-    
+
 
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
@@ -89,7 +89,7 @@ module WinJSTests {
             mouseTest(element, flipView, complete);
         }
 
-     testFlipViewMouseEvents_vertical = function (complete) {
+        testFlipViewMouseEvents_vertical = function (complete) {
             var element = document.getElementById("BasicFlipView"),
                 testData = createArraySource(COUNT, ["400px"], ["400px"]),
                 options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: "vertical" };

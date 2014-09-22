@@ -963,29 +963,6 @@ module CorsicaTests {
                 .then(complete, complete);
         };
 
-        xtestSetCurrentFromString = function (complete) {
-            // bug #426214 - resolved as won't fix
-            createPickerWithAppend({ calendar: 'GregorianCalendar' }).then(function (picker) {
-                picker.winControl.current = "7/28/2011 1:30:57 PM";
-                verifyDate(picker, { day: 28, month: 7, year: 2011 });
-            })
-                .then(null, unhandledTestError)
-                .then(cleanupDatePicker)
-                .then(complete, complete);
-        };
-
-        xtestSetCurrentFromString2 = function (complete) {
-            // bug #426214 - resolved as won't fix
-            // "27/7/2010T1:30:00" is valid for Date() constructor, yields Tue Mar 6 10:30:00 PST 2012
-            createPickerWithAppend({ calendar: 'GregorianCalendar' }).then(function (picker) {
-                picker.winControl.current = "27/7/2010T1:30:00";
-                verifyDate(picker, { day: 6, month: 3, year: 2012 });
-            })
-                .then(null, unhandledTestError)
-                .then(cleanupDatePicker)
-                .then(complete, complete);
-        };
-
 
         testDisabled1 = function (complete) {
             // create initial control in disabled state
@@ -2773,28 +2750,6 @@ module CorsicaTests {
                     .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
                     .then(cleanupDatePicker)
                     .then(complete, unhandledTestError);
-            }
-            else {
-                complete();
-            }
-        };
-
-        xtestCountNumberOfCalls = function (complete) {
-            //BugID: 558269 -  resolved as won't fix
-            if (!isWinRTEnabled()) {
-                numofCalls = 0;
-                var cleanup;
-                DatePicker.getInformation = getInformationJS;
-                createPickerWithAppend({ current: new Date(2011, 11, 31) }).then(function (picker) {
-
-                    LiveUnit.Assert.areEqual(1, numofCalls, "number of calls should be 1");
-                    numofCalls = 0;
-                })
-                    .then(null, unhandledTestError)
-                    .then(cleanup) //placed after the error handler to make sure it gets removed even if the test case failed
-                    .then(cleanupDatePicker)
-                    .then(complete, unhandledTestError);
-
             }
             else {
                 complete();
