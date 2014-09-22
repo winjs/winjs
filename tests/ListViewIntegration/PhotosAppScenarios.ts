@@ -1,37 +1,17 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <reference path="../TestLib/TestDataSource.ts"/>
 /// <reference path="../TestLib/util.ts" />
 /// <deploy src="../TestData/" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.PhotosAppScenarios = function () {
     "use strict";
-    var that = this;
 
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "PhotosAppScenarios";
-        newNode.innerHTML =
-            "<div id='listViewSelection' style='width:500px; height:500px'></div>" +
-            "<div id='SemanticZoomMapping' style='width:500px; height:500px'><div id='child1'></div><div id='child2'></div></div>" +
-            "<div id='templateContentSwap' style='width:500px; height:500px'></div>" +
-            "<div id='batchInsert' style='width:500px; height:500px'></div>";
-        document.body.appendChild(newNode);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        var element = document.getElementById("PhotosAppScenarios");
-        if (element) {
-            document.body.removeChild(element);
-        }
-    };
+    var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
 
     function compareArrays(expected, actual) {
         LiveUnit.Assert.areEqual(expected.length, actual.length);
@@ -41,11 +21,14 @@ WinJSTests.PhotosAppScenarios = function () {
     }
 
     function checkTileSelection(listView, index, selected) {
-        var tile = listView.elementFromIndex(index).parentNode;
-        LiveUnit.Assert.areEqual(selected, utilities.hasClass(tile, WinJS.UI._selectedClass));
+        var element = listView.elementFromIndex(index);
+        if (element) {
+            var tile = element.parentNode;
+            LiveUnit.Assert.areEqual(selected, utilities.hasClass(tile, WinJS.UI._selectedClass));
+        }
     }
 
-    function createTestDataSource(size, data) {
+    function createTestDataSource(size, data?) {
         // Populate a data array
         if (!data) {
             data = [];
@@ -94,8 +77,68 @@ WinJSTests.PhotosAppScenarios = function () {
         return TestComponents.createTestDataSource(data, controller, abilities);
     }
 
-    this.generateListViewSelection = function (layoutName) {
-        this["testListViewSelection" + layoutName] = function (complete) {
+    export class PhotosAppScenarios {
+
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "PhotosAppScenarios";
+            newNode.innerHTML =
+            "<div id='listViewSelection' style='width:500px; height:500px'></div>" +
+            "<div id='SemanticZoomMapping' style='width:500px; height:500px'><div id='child1'></div><div id='child2'></div></div>" +
+            "<div id='templateContentSwap' style='width:500px; height:500px'></div>" +
+            "<div id='batchInsert' style='width:500px; height:500px'></div>";
+            document.body.appendChild(newNode);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            var element = document.getElementById("PhotosAppScenarios");
+            if (element) {
+                document.body.removeChild(element);
+            }
+        }
+
+        testFlipViewBatchInsert(complete) {
+            var element = document.getElementById("batchInsert"),
+                dsCount = 100,
+                finalCount = 200,
+                flipView,
+                ds = createTestDataSource(dsCount);
+
+            var dsCountChanged = function (ev) {
+                flipView.count().then(function (c) {
+                    LiveUnit.Assert.areEqual(c, dsCount, "FlipView count: " + c + " is not equal to the expected count: " + dsCount);
+                });
+            };
+            element.addEventListener("datasourcecountchanged", dsCountChanged);
+
+            flipView = new WinJS.UI.FlipView(element, {
+                itemDataSource: ds,
+                itemTemplate: Helper.syncJSTemplate
+            });
+
+            function addItems() {
+                for (var i = 0; i < 25; i++, dsCount++) {
+                    ds.testDataAdapter.insertAtIndex({
+                        title: "title",
+                        index: dsCount,
+                        itemWidth: "80px",
+                        itemHeight: "80px"
+                    }, dsCount);
+                }
+
+                // Add items at an interval of 100 ms
+                (dsCount < finalCount) ? setTimeout(addItems, 100) : complete();
+            }
+
+            // Don't wait for pageselected to add items
+            WinJS.Utilities._setImmediate(addItems);
+        }
+    }
+    var generateListViewSelection = function (layoutName) {
+        PhotosAppScenarios.prototype["testListViewSelection" + layoutName] = function (complete) {
             var element = document.getElementById("listViewSelection"),
                 dsCount = 100,
                 ds = createTestDataSource(dsCount);
@@ -119,12 +162,12 @@ WinJSTests.PhotosAppScenarios = function () {
                     compareArrays(selected.sort(), actualSelected);
 
                     // Check no extra items are selected
-                    for (var i = 0; i < dsCount.length; i++) {
+                    for (var i = 0; i < dsCount; i++) {
                         if (-1 === selected.indexOf(i)) {
-                            checkTileSelection(listView, data[i], false);
+                            checkTileSelection(listView, i, false);
                         }
                         else {
-                            checkTileSelection(listView, data[i], true);
+                            checkTileSelection(listView, i, true);
                         }
                     }
 
@@ -134,7 +177,7 @@ WinJSTests.PhotosAppScenarios = function () {
                 });
         };
     };
-    this.generateListViewSelection("GridLayout");
+    generateListViewSelection("GridLayout");
 
     (function () {
         function generateTest(startIndex, layoutName) {
@@ -146,13 +189,13 @@ WinJSTests.PhotosAppScenarios = function () {
                     zoomItem,
                     ds = createTestDataSource(dsCount);
 
-                var list1 = new WinJS.UI.ListView(listDiv1, {
+                var list1 = new ListView(<HTMLElement>listDiv1, {
                     layout: new WinJS.UI[layoutName](),
                     itemTemplate: Helper.syncJSTemplate,
                     itemDataSource: ds,
                 });
 
-                var list2 = new WinJS.UI.ListView(listDiv2, {
+                var list2 = new ListView(<HTMLElement>listDiv2, {
                     layout: new WinJS.UI[layoutName](),
                     itemTemplate: Helper.syncJSTemplate,
                     itemDataSource: ds,
@@ -221,7 +264,7 @@ WinJSTests.PhotosAppScenarios = function () {
                     then(function () {
                         return list2.zoomableView.getCurrentItem();
                     }).
-                    then(function (currentItem) {
+                    then(function (currentItem: any) {
                         // Verify currentItem of zoomed out view
                         LiveUnit.Assert.areEqual(currentItem.item.key, zoomItem.key, "Zoomed out of the wrong item");
                         LiveUnit.Assert.areEqual(JSON.stringify(currentItem.item.data), JSON.stringify(zoomItem.data),
@@ -241,14 +284,14 @@ WinJSTests.PhotosAppScenarios = function () {
         }
 
         if (WinJS.UI.SemanticZoom) {
-            that["testSemanticZoomMappingStartGridLayout"] = generateTest(0, "GridLayout");
-            that["testSemanticZoomMappingMiddleGridLayout"] = generateTest(500, "GridLayout");
-            that["testSemanticZoomMappingEndGridLayout"] = generateTest(999, "GridLayout");
+            PhotosAppScenarios.prototype["testSemanticZoomMappingStartGridLayout"] = generateTest(0, "GridLayout");
+            PhotosAppScenarios.prototype["testSemanticZoomMappingMiddleGridLayout"] = generateTest(500, "GridLayout");
+            PhotosAppScenarios.prototype["testSemanticZoomMappingEndGridLayout"] = generateTest(999, "GridLayout");
         }
     })();
 
-    (function generateTemplateTests () {
-        function foo (control) {
+    (function generateTemplateTests() {
+        function foo(control) {
             return function (complete) {
                 var element = document.getElementById("templateContentSwap"),
                     templateItems = {},
@@ -258,11 +301,11 @@ WinJSTests.PhotosAppScenarios = function () {
                 var template = function (itemPromise) {
                     return itemPromise.then(function (item) {
                         var templateDiv = document.createElement("div"),
-                        div = document.createElement("div");
+                            div = document.createElement("div");
 
                         templateDiv.style.width = "450px";
                         templateDiv.style.height = "450px";
-                        template.innerHTML = "OldTitle: " + item.data.title;
+                        templateDiv.innerHTML = "OldTitle: " + item.data.title;
                         templateItems[item.key] = templateDiv;
 
                         div.appendChild(templateDiv);
@@ -289,7 +332,7 @@ WinJSTests.PhotosAppScenarios = function () {
 
                 function updateTemplate(key) {
                     var templateDiv = templateItems[key];
-                    template.innerHTML = "NewTitle";
+                    templateDiv.innerHTML = "NewTitle";
                 }
 
                 // Don't wait till control is ready to update the DOM contents
@@ -300,47 +343,12 @@ WinJSTests.PhotosAppScenarios = function () {
             };
         }
 
-        that["testFlipViewTemplateContentSwap"] = foo(WinJS.UI.FlipView);
-        that["testListViewTemplateContentSwap"] = foo(WinJS.UI.ListView);
-    }) ();
+        PhotosAppScenarios.prototype["testFlipViewTemplateContentSwap"] = foo(WinJS.UI.FlipView);
+        PhotosAppScenarios.prototype["testListViewTemplateContentSwap"] = foo(WinJS.UI.ListView);
+    })();
 
-    this.testFlipViewBatchInsert = function (complete) {
-        var element = document.getElementById("batchInsert"),
-            dsCount = 100,
-            finalCount = 200,
-            flipView,
-            ds = createTestDataSource(dsCount);
 
-        var dsCountChanged = function (ev) {
-            flipView.count().then(function (c) {
-                LiveUnit.Assert.areEqual(c, dsCount, "FlipView count: " + c + " is not equal to the expected count: " + dsCount);
-            });
-        };
-        element.addEventListener("datasourcecountchanged", dsCountChanged);
 
-        flipView = new WinJS.UI.FlipView(element, {
-            itemDataSource: ds,
-            itemTemplate: Helper.syncJSTemplate
-        });
-
-        function addItems() {
-            for (var i = 0; i < 25; i++, dsCount++) {
-                ds.testDataAdapter.insertAtIndex({
-                    title: "title",
-                    index: dsCount,
-                    itemWidth: "80px",
-                    itemHeight: "80px"
-                }, dsCount);
-            }
-
-            // Add items at an interval of 100 ms
-            (dsCount < finalCount) ? setTimeout (addItems, 100) : complete();
-        }
-
-        // Don't wait for pageselected to add items
-        WinJS.Utilities._setImmediate(addItems);
-    };
-};
-
+}
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.PhotosAppScenarios");

@@ -276,6 +276,8 @@ declare module WinJS {
             _beginZoom;
             _endZoom;
             _versionManager;
+            _scrollLength;
+            _onPropertyChange;
 
             ensureVisible(itemIndex: number): void;
             ensureVisible(itemIndex: IListViewEntity): void;
@@ -405,6 +407,9 @@ declare module WinJS {
         var _itemsBlockClass;
         var _structuralNodesClass;
         var _progressClass;
+        var _nonDraggableClass;
+        var _nonSelectableClass;
+        var _nonSwipeableClass;
         var _INVALID_INDEX;
 
         var _seenUrlsMaxSize: number;

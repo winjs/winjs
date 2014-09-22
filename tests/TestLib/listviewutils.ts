@@ -348,12 +348,7 @@ module ListViewUtils {
         document.body.appendChild(outerTestDiv);
     }
 
-    export function resetDOM(ignoreCSS) {
-        /// <summary>
-        /// </summary>
-        /// <param name="ignoreCSS" type="Boolen">
-        ///     Optional. True if you do not need the test to clean up CSS.
-        /// </param>
+    export function resetDOM() {
         var outerTestDiv = document.getElementById(DEF_OUTERTESTDIV_ID);
         if (outerTestDiv) {
             WinJS.Utilities.disposeSubTree(outerTestDiv);

@@ -1,38 +1,22 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <deploy src="../TestData/" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.NonDragAndSelectTests = function () {
     "use strict";
 
     var ITEMS_COUNT = 5;
     var Key = WinJS.Utilities.Key;
+    var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
 
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "NonDragAndSelectTests";
-        newNode.style.width = "500px";
-        newNode.style.height = "500px";
-        document.body.appendChild(newNode);
-        removeListviewAnimations();
-    };
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        var element = document.getElementById("NonDragAndSelectTests");
-        document.body.removeChild(element);
-        restoreListviewAnimations();
-    }
-
-    function getDataSource(count) {
+    function getDataSource(count?) {
         var rawData = [];
-        for (var i = 0; i < (count ? count : ITEMS_COUNT) ; i++) {
+        for (var i = 0; i < (count ? count : ITEMS_COUNT); i++) {
             rawData.push({ itemInfo: "Tile" + i });
         }
 
@@ -55,17 +39,18 @@ WinJSTests.NonDragAndSelectTests = function () {
             })
         };
     }
-    function eventOnElement(element, useShift) {
+    function eventOnElement(element, useShift?) {
         var rect = element.getBoundingClientRect();
         return {
             target: element,
             clientX: (rect.left + rect.right) / 2,
             clientY: (rect.top + rect.bottom) / 2,
             preventDefault: function () { },
-            shiftKey: !!useShift
+            shiftKey: !!useShift,
+            button: undefined
         };
     }
-    function click(listView, index, useRight, useShift) {
+    function click(listView, index, useRight, useShift?) {
         var mode = listView._currentMode();
         var item = listView.elementFromIndex(index);
         item.scrollIntoView(true);
@@ -92,19 +77,40 @@ WinJSTests.NonDragAndSelectTests = function () {
     function changeListViewFocus(listView, focusedIndex) {
         listView._selection._setFocused({ type: "item", index: focusedIndex }, false);
     }
-    this.generate = function (name, undraggableIndices, unselectableIndicies, testFunction) {
-        this[name] = function (complete) {
+
+    export class NonDragAndSelectTests {
+
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "NonDragAndSelectTests";
+            newNode.style.width = "500px";
+            newNode.style.height = "500px";
+            document.body.appendChild(newNode);
+            removeListviewAnimations();
+        }
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            var element = document.getElementById("NonDragAndSelectTests");
+            document.body.removeChild(element);
+            restoreListviewAnimations();
+        }
+
+    }
+    function generate(name, undraggableIndices, unselectableIndicies, testFunction) {
+        NonDragAndSelectTests.prototype[name] = function (complete) {
             LiveUnit.LoggingCore.logComment("in " + name);
             var element = document.getElementById("NonDragAndSelectTests");
             var data = getDataSource();
-            var list = data._list;
+            var list = data['_list'];
             for (var i in undraggableIndices) {
                 list.getItem(undraggableIndices[i]).data.markUndraggable = true;
             }
             for (var i in unselectableIndicies) {
                 list.getItem(unselectableIndicies[i]).data.markUnselectable = true;
             }
-            var listView = new WinJS.UI.ListView(element, {
+            var listView = new ListView(element, {
                 itemTemplate: basicRenderer,
                 itemDataSource: data
             });
@@ -123,7 +129,7 @@ WinJSTests.NonDragAndSelectTests = function () {
     }
 
     if (!utilities.isPhone) {
-        this.generate("testNonSwipeableClass", [0, 2], [1, 2], function (listView, complete) {
+        generate("testNonSwipeableClass", [0, 2], [1, 2], function (listView, complete) {
             listView.selectionMode = WinJS.UI.SelectionMode.none;
             listView.itemsDraggable = false;
             listView.itemsReorderable = false;
@@ -183,7 +189,7 @@ WinJSTests.NonDragAndSelectTests = function () {
         });
     }
 
-    this.generate("testSelectAllWithNonSelectableItems", [], [1, 2], function (listView, complete) {
+    generate("testSelectAllWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         listView.selectionMode = WinJS.UI.SelectionMode.multi;
         generateKeyEventInListView(listView, Key.a, true, false, false);
         LiveUnit.Assert.isTrue(listView.selection._isIncluded(0));
@@ -194,7 +200,7 @@ WinJSTests.NonDragAndSelectTests = function () {
         complete();
     });
 
-    this.generate("testRangeSelectionViaKeyboardWithNonSelectableItems", [], [1, 2], function (listView, complete) {
+    generate("testRangeSelectionViaKeyboardWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         listView.selectionMode = WinJS.UI.SelectionMode.multi;
         changeListViewFocus(listView, 0);
         generateKeyEventInListView(listView, Key.pageDown, false, false, true);
@@ -206,7 +212,7 @@ WinJSTests.NonDragAndSelectTests = function () {
         complete();
     });
 
-    this.generate("testRangeSelectionViaMouseWithNonSelectableItems", [], [1, 2], function (listView, complete) {
+    generate("testRangeSelectionViaMouseWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         listView.selectionMode = WinJS.UI.SelectionMode.multi;
         listView.tapBehavior = WinJS.UI.TapBehavior.toggleSelect;
         click(listView, 0, false, false);
@@ -226,7 +232,7 @@ WinJSTests.NonDragAndSelectTests = function () {
         complete();
     });
 
-    this.generate("testSelectionViaKeyboardWithNonSelectableItems", [], [1, 2], function (listView, complete) {
+    generate("testSelectionViaKeyboardWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         listView.selectionMode = WinJS.UI.SelectionMode.multi;
         changeListViewFocus(listView, 0);
         generateKeyEventInListView(listView, Key.space, false, false, false);
@@ -250,7 +256,7 @@ WinJSTests.NonDragAndSelectTests = function () {
         complete();
     });
 
-    this.generate("testSelectionViaMouseWithNonSelectableItems", [], [1, 2], function (listView, complete) {
+    generate("testSelectionViaMouseWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         listView.selectionMode = WinJS.UI.SelectionMode.multi;
         click(listView, 0, true);
         LiveUnit.Assert.isTrue(listView.selection._isIncluded(0));
@@ -270,7 +276,7 @@ WinJSTests.NonDragAndSelectTests = function () {
         complete();
     });
 
-    this.generate("testSelectionViaAriaWithNonSelectableItems", [], [1, 2], function (listView, complete) {
+    generate("testSelectionViaAriaWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         function setAriaSelected(index, selected) {
             listView.elementFromIndex(index).setAttribute("aria-selected", selected);
         }
@@ -302,46 +308,46 @@ WinJSTests.NonDragAndSelectTests = function () {
             setAriaSelected(0, true);
             return WinJS.Promise.timeout();
         }).then(function () {
-            verifySelection([0]);
+                verifySelection([0]);
 
-            setAriaSelected(1, true);
-            return WinJS.Promise.timeout();
-        }).then(function () {
-            verifySelection([0]);
+                setAriaSelected(1, true);
+                return WinJS.Promise.timeout();
+            }).then(function () {
+                verifySelection([0]);
 
-            setAriaSelected(2, true);
-            return WinJS.Promise.timeout();
-        }).then(function () {
-            verifySelection([0]);
+                setAriaSelected(2, true);
+                return WinJS.Promise.timeout();
+            }).then(function () {
+                verifySelection([0]);
 
-            setAriaSelected(3, true);
-            return WinJS.Promise.timeout();
-        }).then(function () {
-            verifySelection([0, 3]);
+                setAriaSelected(3, true);
+                return WinJS.Promise.timeout();
+            }).then(function () {
+                verifySelection([0, 3]);
 
-            // Simulate UIA SelectionItem.Select on item 4
-            setAriaSelected(0, false);
-            setAriaSelected(3, false);
-            setAriaSelected(4, true);
-            return WinJS.Promise.timeout();
-        }).then(function () {
-            verifySelection([4]);
+                // Simulate UIA SelectionItem.Select on item 4
+                setAriaSelected(0, false);
+                setAriaSelected(3, false);
+                setAriaSelected(4, true);
+                return WinJS.Promise.timeout();
+            }).then(function () {
+                verifySelection([4]);
 
-            // Verify that for a bulk selection change, selectable items get updated
-            // while unselectable items are reverted back to their old aria-selected values
-            setAriaSelected(0, true);
-            setAriaSelected(1, true);
-            setAriaSelected(2, true);
-            setAriaSelected(3, true);
-            setAriaSelected(4, false);
-            return WinJS.Promise.timeout();
-        }).then(function () {
-            verifySelection([0, 3]);
-            complete();
-        });
+                // Verify that for a bulk selection change, selectable items get updated
+                // while unselectable items are reverted back to their old aria-selected values
+                setAriaSelected(0, true);
+                setAriaSelected(1, true);
+                setAriaSelected(2, true);
+                setAriaSelected(3, true);
+                setAriaSelected(4, false);
+                return WinJS.Promise.timeout();
+            }).then(function () {
+                verifySelection([0, 3]);
+                complete();
+            });
     });
 
-    this.generate("testSingleSelectionModeWithNonSelectableItems", [], [1, 2], function (listView, complete) {
+    generate("testSingleSelectionModeWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         listView.selectionMode = WinJS.UI.SelectionMode.single;
         changeListViewFocus(listView, 0);
         generateKeyEventInListView(listView, Key.space, false, false, false);
@@ -357,5 +363,6 @@ WinJSTests.NonDragAndSelectTests = function () {
 
         complete();
     });
-};
+
+}
 LiveUnit.registerTestClass("WinJSTests.NonDragAndSelectTests");

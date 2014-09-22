@@ -16,7 +16,7 @@ module ListViewVerify {
     // Public Functions
     // ---------------------------------------------------------------------------------------------------------
 
-    export function verifyGetOptions(placeholderId, controlType, expectedOptions, variableSize) {
+    export function verifyGetOptions(placeholderId, controlType, expectedOptions) {
         /// <summary>
         ///     Verifies the options() function retreives the expected option properties. All parameters are required
         /// </summary>

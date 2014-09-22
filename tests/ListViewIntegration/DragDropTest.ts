@@ -1,58 +1,38 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/TestDataSource.ts" />
-/// <reference path="../TestData/ListView.less.css" />
+// <reference path="../TestData/ListView.less.css" />
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.ListViewDragDropTest = function () {
     "use strict";
+
+    var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
     var Key = WinJS.Utilities.Key;
     var testRootEl;
     var ITEMS_COUNT = 10;
     var ddEventsList = ["itemdragstart",
-                    "itemdragenter",
-                    "itemdragend",
-                    "itemdragbetween",
-                    "itemdragleave",
-                    "itemdragchanged",
-                    "itemdragdrop"];
+        "itemdragenter",
+        "itemdragend",
+        "itemdragbetween",
+        "itemdragleave",
+        "itemdragchanged",
+        "itemdragdrop"];
 
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-
-        testRootEl = document.createElement("div");
-        testRootEl.className = "file-listview-css";
-
-        var newNode = document.createElement("div");
-        newNode.id = "DragDropTest";
-        newNode.style.width = "200px";
-        newNode.style.height = "300px";
-        testRootEl.appendChild(newNode);
-        document.body.appendChild(testRootEl);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-
-        WinJS.Utilities.disposeSubTree(testRootEl);
-        document.body.removeChild(testRootEl);
-    }
-
-    function getRawData(count) {
+    function getRawData(count?) {
         var rawData = [];
-        for (var i = 0; i < (count ? count : ITEMS_COUNT) ; i++) {
+        for (var i = 0; i < (count ? count : ITEMS_COUNT); i++) {
             rawData.push({ itemInfo: "Tile" + i });
         }
         return rawData;
     }
 
-    function getDataSource(count) {
+    function getDataSource(count?) {
         var rawData = getRawData(count);
         return new WinJS.Binding.List(rawData).dataSource;
     }
@@ -80,7 +60,7 @@ WinJSTests.ListViewDragDropTest = function () {
         };
     }
 
-    function generateEventInElement(listView, name, element, rtl, offset) {
+    function generateEventInElement(listView, name, element, rtl, offset?) {
         var elementRect = element.getBoundingClientRect();
         if (!offset) {
             offset = {
@@ -92,7 +72,7 @@ WinJSTests.ListViewDragDropTest = function () {
             clientX: elementRect[rtl ? "right" : "left"] + (rtl ? -offset.x : offset.x),
             clientY: elementRect.top + offset.y,
             preventDefault: function () { },
-            dataTransfer: { setData: function () { }},
+            dataTransfer: { setData: function () { } },
             target: element
         };
 
@@ -120,7 +100,7 @@ WinJSTests.ListViewDragDropTest = function () {
 
     // Creates a VDS out of the provided array (data) or
     // creates a new data array of specified size
-    function createDragDropVDSDataSource(size, data, isSynchronous) {
+    function createDragDropVDSDataSource(size?, data?, isSynchronous?) {
         // Populate a data array
         if (!data) {
             data = getRawData(size);
@@ -168,48 +148,6 @@ WinJSTests.ListViewDragDropTest = function () {
         }
     }
 
-    this.generate = function (name, testFunction, itemsCount, layoutIndependent) {
-        function generateTest(that, layout, dataSource, rtl) {
-            var fullName = name + layout + dataSource + (rtl ? "_rtl" : "_ltr");
-
-            that[fullName] = function (complete) {
-                LiveUnit.LoggingCore.logComment("in " + fullName);
-
-                if (dataSource === "VDS") {
-                    dataSource = createDragDropVDSDataSource(itemsCount, getRawData(itemsCount), true/*sync*/)
-                } else if (dataSource === "BindingList") {
-                    dataSource = getDataSource(itemsCount)
-                }
-                var element = document.getElementById("DragDropTest");
-                element.style.direction = rtl ? "rtl" : "ltr";
-                var listView = new WinJS.UI.ListView(element, { itemDataSource: dataSource, itemTemplate: basicRenderer, layout: new WinJS.UI[layout]() });
-                var ready = false;
-                listView._animationsDisabled = function () {
-                    return true;
-                };
-                // Autoscroll stops dragBetween events from triggering. None of these tests need autoscroll, so we'll disable it here so it doesn't start during a test
-                listView._currentMode()._checkAutoScroll = function () {
-                    return;
-                };
-                listView.addEventListener("loadingstatechanged", function (e) {
-                    if (listView.loadingState === "complete" && !ready) {
-                        ready = true;
-                        testFunction(listView, rtl, complete);
-                    }
-                });
-            };
-            that[fullName].timeout = 30000;
-        }
-
-        var that = this;
-        generateTest(that, "ListLayout", "BindingList");
-        if (!layoutIndependent) {
-            generateTest(that, "GridLayout", "BindingList");
-            generateTest(that, "ListLayout", "VDS", true);
-            generateTest(that, "GridLayout", "VDS", true);
-        }
-    }
-
     function getEventHandlerCallbacks(listview) {
         var eventHandler = {};
         for (var i = 0; i < ddEventsList.length; i++) {
@@ -226,7 +164,203 @@ WinJSTests.ListViewDragDropTest = function () {
         return eventHandler;
     }
 
-    this.generate("testDraggableAttribute", function (listView, rtl, complete) {
+    function failTestIfCalled(e, eventName) {
+        LiveUnit.Assert.fail(eventName + " was called unexpectedly");
+    }
+
+    function collectItemData(listView) {
+        var data = [],
+            list = listView.itemDataSource._list || listView.itemDataSource.testDataAdapter.getItems();
+        for (var i = 0; i < list.length; i++) {
+            data.push(nabItem(listView, i).data.itemInfo);
+        }
+
+        return data;
+    }
+
+    function compareData(originalData, actual, expectedSwaps) {
+        LiveUnit.Assert.areEqual(originalData.length, actual.length);
+        for (var i = 0; i < originalData.length; i++) {
+            var swapAtIndex = null;
+            for (var j = 0; j < expectedSwaps.length; j++) {
+                if (expectedSwaps[j].start === i) {
+                    swapAtIndex = expectedSwaps[j];
+                    break;
+                }
+            }
+            if (swapAtIndex) {
+                LiveUnit.Assert.areEqual(originalData[i], actual[swapAtIndex.end]);
+            } else {
+                LiveUnit.Assert.areEqual(originalData[i], actual[i]);
+            }
+
+        }
+    }
+    function compareSelection(listView, expected) {
+        var indicesSelected = listView.selection.getIndices();
+        LiveUnit.Assert.areEqual(expected.length, indicesSelected.length, "Wrong number of items selected");
+        for (var i = 0; i < expected.length; i++) {
+            var foundExpected = false;
+            for (var j = 0; j < indicesSelected.length; j++) {
+                if (indicesSelected[j] === expected[i]) {
+                    ;
+                    foundExpected = true;
+                    break;
+                }
+            }
+            LiveUnit.Assert.isTrue(foundExpected, "An item wasn't selected when we expected it to be");
+        }
+    }
+    function ensureSelectionContiguous(listView) {
+        var indicesSelected = listView.selection.getIndices();
+        for (var i = 0; i < indicesSelected.length - 1; i++) {
+            LiveUnit.Assert.isTrue((indicesSelected[i] === (indicesSelected[i + 1] - 1)));
+        }
+    }
+
+    export class ListViewDragDropTest {
+
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+
+            testRootEl = document.createElement("div");
+            testRootEl.className = "file-listview-css";
+
+            var newNode = document.createElement("div");
+            newNode.id = "DragDropTest";
+            newNode.style.width = "200px";
+            newNode.style.height = "300px";
+            testRootEl.appendChild(newNode);
+            document.body.appendChild(testRootEl);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+
+            WinJS.Utilities.disposeSubTree(testRootEl);
+            document.body.removeChild(testRootEl);
+        }
+
+        testGridLayoutHitTest(complete) {
+            var largeListView = document.createElement("div");
+            largeListView.id = "GridLayoutHitTest";
+            testRootEl.appendChild(largeListView);
+            var listView = new WinJS.UI.ListView(largeListView, { itemDataSource: getDataSource(10), itemTemplate: basicRenderer, layout: new WinJS.UI.GridLayout() });
+            listView.addEventListener("loadingstatechanged", function onloadingstatechanged(e) {
+                // This grid uses 50px X 50px items, with large (400px) margins to the left, top, and bottom of the surface.
+                // The grid should be laid out as such:
+                // Column 0: Contains items 0 - 3, starting at 400, 400 and ending at 400, 600
+                // Column 1: Contains items 4 - 7, starting at 450, 400 and ending at 450, 600
+                // Column 2: Contains items 8 and 9, starting at 500, 400 and ending at 500, 500
+                if (listView.loadingState === "complete") {
+                    var layout = listView.layout;
+                    // Test everything to the left of column 0
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(0, 0).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(100, 100).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(200, 200).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(300, 300).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(300, 800).insertAfterIndex);
+
+                    // Test above column 0
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 0).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 100).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 200).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 300).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 400).insertAfterIndex);
+
+                    // Test below column 0
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(425, 600).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(425, 700).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(425, 800).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(425, 900).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(425, 1000).insertAfterIndex);
+
+                    // Test above column 1
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(475, 0).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(475, 100).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(475, 200).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(475, 300).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(3, layout.hitTest(475, 400).insertAfterIndex);
+
+                    // Test below column 1
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(475, 600).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(475, 700).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(475, 800).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(475, 900).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(475, 1000).insertAfterIndex);
+
+                    // Test above column 2
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(525, 0).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(525, 100).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(525, 200).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(525, 300).insertAfterIndex);
+                    LiveUnit.Assert.areEqual(7, layout.hitTest(525, 400).insertAfterIndex);
+
+                    // Test below column 2
+                    LiveUnit.Assert.isTrue(layout.hitTest(525, 500).insertAfterIndex >= 9);
+                    LiveUnit.Assert.isTrue(layout.hitTest(525, 700).insertAfterIndex >= 9);
+                    LiveUnit.Assert.isTrue(layout.hitTest(525, 800).insertAfterIndex >= 9);
+                    LiveUnit.Assert.isTrue(layout.hitTest(525, 900).insertAfterIndex >= 9);
+                    LiveUnit.Assert.isTrue(layout.hitTest(525, 1000).insertAfterIndex >= 9);
+
+                    // Test right of column 2
+                    LiveUnit.Assert.isTrue(layout.hitTest(575, 500).insertAfterIndex >= 9);
+                    LiveUnit.Assert.isTrue(layout.hitTest(675, 700).insertAfterIndex >= 9);
+                    LiveUnit.Assert.isTrue(layout.hitTest(775, 800).insertAfterIndex >= 9);
+                    LiveUnit.Assert.isTrue(layout.hitTest(550, 900).insertAfterIndex >= 9);
+
+                    listView.removeEventListener("loadingstatechanged", onloadingstatechanged);
+                    WinJS.Utilities.disposeSubTree(largeListView);
+                    testRootEl.removeChild(largeListView);
+                    complete();
+                }
+            });
+        }
+    }
+    function generate(name, testFunction, itemsCount?, layoutIndependent?) {
+        function generateTest(layout, dataSource, rtl?) {
+            var fullName = name + layout + dataSource + (rtl ? "_rtl" : "_ltr");
+
+            ListViewDragDropTest.prototype[fullName] = function (complete) {
+                LiveUnit.LoggingCore.logComment("in " + fullName);
+
+                if (dataSource === "VDS") {
+                    dataSource = createDragDropVDSDataSource(itemsCount, getRawData(itemsCount), true/*sync*/)
+                } else if (dataSource === "BindingList") {
+                    dataSource = getDataSource(itemsCount)
+                }
+                var element = document.getElementById("DragDropTest");
+                element.style.direction = rtl ? "rtl" : "ltr";
+                var listView = new ListView(element, { itemDataSource: dataSource, itemTemplate: basicRenderer, layout: new WinJS.UI[layout]() });
+                var ready = false;
+                listView._animationsDisabled = function () {
+                    return true;
+                };
+                // Autoscroll stops dragBetween events from triggering. None of these tests need autoscroll, so we'll disable it here so it doesn't start during a test
+                listView._currentMode()._checkAutoScroll = function () {
+                    return;
+                };
+                listView.addEventListener("loadingstatechanged", function (e) {
+                    if (listView.loadingState === "complete" && !ready) {
+                        ready = true;
+                        testFunction(listView, rtl, complete);
+                    }
+                });
+            };
+        }
+
+        generateTest("ListLayout", "BindingList");
+        if (!layoutIndependent) {
+            generateTest("GridLayout", "BindingList");
+            generateTest("ListLayout", "VDS", true);
+            generateTest("GridLayout", "VDS", true);
+        }
+    }
+
+
+
+    generate("testDraggableAttribute", function (listView, rtl, complete) {
         listView.itemsDraggable = false;
         listView.itemsReorderable = false;
         LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("[draggable=true]").length);
@@ -278,11 +412,9 @@ WinJSTests.ListViewDragDropTest = function () {
         runTests(listView, tests);
     }, null, true);
 
-    function failTestIfCalled(e, eventName) {
-        LiveUnit.Assert.fail(eventName + " was called unexpectedly");
-    }
 
-    this.generate("testDragEnterUnpreventedNotReorderable", function (listView, rtl, complete) {
+
+    generate("testDragEnterUnpreventedNotReorderable", function (listView, rtl, complete) {
         // When a ListView's items are reorderable and draggable, dragEnter/leave should be fired, but with dragEnter not handled,
         // nothing else should be fired.
         var handlers = getEventHandlerCallbacks(listView);
@@ -314,7 +446,7 @@ WinJSTests.ListViewDragDropTest = function () {
         complete();
     }, null, true);
 
-    this.generate("testDragEnterInReorderableSource", function (listView, rtl, complete) {
+    generate("testDragEnterInReorderableSource", function (listView, rtl, complete) {
         // When a ListView's items are reorderable and draggable, dragEnter/leave/between should be fired even if we don't handle itemDragEnter
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
@@ -357,7 +489,7 @@ WinJSTests.ListViewDragDropTest = function () {
         };
     }, null, true);
 
-    this.generate("testDragEnterFromExternalSource", function (listView, rtl, complete) {
+    generate("testDragEnterFromExternalSource", function (listView, rtl, complete) {
         // Drag from an external source that isn't handled shouldn't raise anything other than enter/leave events
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
@@ -385,7 +517,7 @@ WinJSTests.ListViewDragDropTest = function () {
         };
     }, null, true);
 
-    this.generate("testDragLeave", function (listView, rtl, complete) {
+    generate("testDragLeave", function (listView, rtl, complete) {
         // Drag from an external source that isn't handled shouldn't raise anything other than enter/leave events
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
@@ -431,7 +563,7 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragLeave", listView.elementFromIndex(4), rtl);
     }, null, true);
 
-    this.generate("testDragUnselected", function (listView, rtl, complete) {
+    generate("testDragUnselected", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
         listView.itemsReorderable = true;
@@ -467,7 +599,7 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragEnd", listView.elementFromIndex(3), rtl);
     }, null, true);
 
-    this.generate("testDragSelected", function (listView, rtl, complete) {
+    generate("testDragSelected", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
         listView.itemsReorderable = true;
@@ -503,7 +635,7 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragEnd", listView.elementFromIndex(3), rtl);
     }, null, true);
 
-    this.generate("testDragEnd", function (listView, rtl, complete) {
+    generate("testDragEnd", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
         listView.itemsReorderable = true;
@@ -529,7 +661,7 @@ WinJSTests.ListViewDragDropTest = function () {
         });
     }, null, true);
 
-    this.generate("testDragBetween", function (listView, rtl, complete) {
+    generate("testDragBetween", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
         listView.itemsReorderable = true;
@@ -755,7 +887,7 @@ WinJSTests.ListViewDragDropTest = function () {
         testNextSet();
     });
 
-    this.generate("testDisabledDragBetween", function (listView, rtl, complete) {
+    generate("testDisabledDragBetween", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
         listView.itemsReorderable = true;
@@ -802,7 +934,7 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragOver", element2, rtl, cursorOffset);
     }, null, true);
 
-    this.generate("testReorderOutOfBounds", function (listView, rtl, complete) {
+    generate("testReorderOutOfBounds", function (listView, rtl, complete) {
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = true;
         listView.itemsReorderable = true;
@@ -855,7 +987,7 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragOver", listView._viewport, rtl, cursorOffset);
     }, 3);
 
-    this.generate("testSelectionAfterReorder", function (listView, rtl, complete) {
+    generate("testSelectionAfterReorder", function (listView, rtl, complete) {
         // This test verifies that selection via a range isn't lost after a reorder.
 
         var handlers = getEventHandlerCallbacks(listView);
@@ -915,132 +1047,11 @@ WinJSTests.ListViewDragDropTest = function () {
         generateEventInElement(listView, "onDragOver", targetElement, rtl, cursorOffset);
     });
 
-    this.testGridLayoutHitTest = function (complete) {
-        var largeListView = document.createElement("div");
-        largeListView.id = "GridLayoutHitTest";
-        testRootEl.appendChild(largeListView);
-        var listView = new WinJS.UI.ListView(largeListView, { itemDataSource: getDataSource(10), itemTemplate: basicRenderer, layout: new WinJS.UI.GridLayout() });
-        listView.addEventListener("loadingstatechanged", function onloadingstatechanged(e) {
-            // This grid uses 50px X 50px items, with large (400px) margins to the left, top, and bottom of the surface.
-            // The grid should be laid out as such:
-            // Column 0: Contains items 0 - 3, starting at 400, 400 and ending at 400, 600
-            // Column 1: Contains items 4 - 7, starting at 450, 400 and ending at 450, 600
-            // Column 2: Contains items 8 and 9, starting at 500, 400 and ending at 500, 500
-            if (listView.loadingState === "complete") {
-                var layout = listView.layout;
-                // Test everything to the left of column 0
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(0, 0).insertAfterIndex);
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(100, 100).insertAfterIndex);
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(200, 200).insertAfterIndex);
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(300, 300).insertAfterIndex);
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(300, 800).insertAfterIndex);
 
-                // Test above column 0
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 0).insertAfterIndex);
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 100).insertAfterIndex);
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 200).insertAfterIndex);
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 300).insertAfterIndex);
-                LiveUnit.Assert.areEqual(-1, layout.hitTest(425, 400).insertAfterIndex);
 
-                // Test below column 0
-                LiveUnit.Assert.areEqual(3, layout.hitTest(425, 600).insertAfterIndex);
-                LiveUnit.Assert.areEqual(3, layout.hitTest(425, 700).insertAfterIndex);
-                LiveUnit.Assert.areEqual(3, layout.hitTest(425, 800).insertAfterIndex);
-                LiveUnit.Assert.areEqual(3, layout.hitTest(425, 900).insertAfterIndex);
-                LiveUnit.Assert.areEqual(3, layout.hitTest(425, 1000).insertAfterIndex);
 
-                // Test above column 1
-                LiveUnit.Assert.areEqual(3, layout.hitTest(475, 0).insertAfterIndex);
-                LiveUnit.Assert.areEqual(3, layout.hitTest(475, 100).insertAfterIndex);
-                LiveUnit.Assert.areEqual(3, layout.hitTest(475, 200).insertAfterIndex);
-                LiveUnit.Assert.areEqual(3, layout.hitTest(475, 300).insertAfterIndex);
-                LiveUnit.Assert.areEqual(3, layout.hitTest(475, 400).insertAfterIndex);
 
-                // Test below column 1
-                LiveUnit.Assert.areEqual(7, layout.hitTest(475, 600).insertAfterIndex);
-                LiveUnit.Assert.areEqual(7, layout.hitTest(475, 700).insertAfterIndex);
-                LiveUnit.Assert.areEqual(7, layout.hitTest(475, 800).insertAfterIndex);
-                LiveUnit.Assert.areEqual(7, layout.hitTest(475, 900).insertAfterIndex);
-                LiveUnit.Assert.areEqual(7, layout.hitTest(475, 1000).insertAfterIndex);
-
-                // Test above column 2
-                LiveUnit.Assert.areEqual(7, layout.hitTest(525, 0).insertAfterIndex);
-                LiveUnit.Assert.areEqual(7, layout.hitTest(525, 100).insertAfterIndex);
-                LiveUnit.Assert.areEqual(7, layout.hitTest(525, 200).insertAfterIndex);
-                LiveUnit.Assert.areEqual(7, layout.hitTest(525, 300).insertAfterIndex);
-                LiveUnit.Assert.areEqual(7, layout.hitTest(525, 400).insertAfterIndex);
-
-                // Test below column 2
-                LiveUnit.Assert.isTrue(layout.hitTest(525, 500).insertAfterIndex >= 9);
-                LiveUnit.Assert.isTrue(layout.hitTest(525, 700).insertAfterIndex >= 9);
-                LiveUnit.Assert.isTrue(layout.hitTest(525, 800).insertAfterIndex >= 9);
-                LiveUnit.Assert.isTrue(layout.hitTest(525, 900).insertAfterIndex >= 9);
-                LiveUnit.Assert.isTrue(layout.hitTest(525, 1000).insertAfterIndex >= 9);
-
-                // Test right of column 2
-                LiveUnit.Assert.isTrue(layout.hitTest(575, 500).insertAfterIndex >= 9);
-                LiveUnit.Assert.isTrue(layout.hitTest(675, 700).insertAfterIndex >= 9);
-                LiveUnit.Assert.isTrue(layout.hitTest(775, 800).insertAfterIndex >= 9);
-                LiveUnit.Assert.isTrue(layout.hitTest(550, 900).insertAfterIndex >= 9);
-
-                listView.removeEventListener("loadingstatechanged", onloadingstatechanged);
-                WinJS.Utilities.disposeSubTree(largeListView);
-                testRootEl.removeChild(largeListView);
-                complete();
-            }
-        });
-    };
-
-    function collectItemData(listView) {
-        var data = [],
-            list = listView.itemDataSource._list || listView.itemDataSource.testDataAdapter.getItems();
-        for (var i = 0; i < list.length; i++) {
-            data.push(nabItem(listView, i).data.itemInfo);
-        }
-
-        return data;
-    }
-
-    function compareData(originalData, actual, expectedSwaps) {
-        LiveUnit.Assert.areEqual(originalData.length, actual.length);
-        for (var i = 0; i < originalData.length; i++) {
-            var swapAtIndex = null;
-            for (var j = 0; j < expectedSwaps.length; j++) {
-                if (expectedSwaps[j].start === i) {
-                    swapAtIndex = expectedSwaps[j];
-                    break;
-                }
-            }
-            if (swapAtIndex) {
-                LiveUnit.Assert.areEqual(originalData[i], actual[swapAtIndex.end]);
-            } else {
-                LiveUnit.Assert.areEqual(originalData[i], actual[i]);
-            }
-
-        }
-    }
-    function compareSelection(listView, expected) {
-        var indicesSelected = listView.selection.getIndices();
-        LiveUnit.Assert.areEqual(expected.length, indicesSelected.length, "Wrong number of items selected");
-        for (var i = 0; i < expected.length; i++) {
-            var foundExpected = false;
-            for (var j = 0; j < indicesSelected.length; j++) {
-                if (indicesSelected[j] === expected[i]) {;
-                    foundExpected = true;
-                    break;
-                }
-            }
-            LiveUnit.Assert.isTrue(foundExpected, "An item wasn't selected when we expected it to be");
-        }
-    }
-    function ensureSelectionContiguous(listView) {
-        var indicesSelected = listView.selection.getIndices();
-        for (var i = 0; i < indicesSelected.length - 1; i++) {
-            LiveUnit.Assert.isTrue((indicesSelected[i] === (indicesSelected[i + 1] - 1)));
-        }
-    }
-
-    this.generate("testUnselectedKeyboardReorder", function (listView, rtl, complete) {
+    generate("testUnselectedKeyboardReorder", function (listView, rtl, complete) {
         var adjustedKeys = getAdjustedKeys(rtl);
         listView.itemsReorderable = true;
         var originalListData = collectItemData(listView);
@@ -1127,7 +1138,7 @@ WinJSTests.ListViewDragDropTest = function () {
         runTests(listView, tests);
     });
 
-    this.generate("testUnselectedKeyboardReorderNonDraggable", function (listView, rtl, complete) {
+    generate("testUnselectedKeyboardReorderNonDraggable", function (listView, rtl, complete) {
         var adjustedKeys = getAdjustedKeys(rtl);
         listView.itemsReorderable = true;
         var originalListData = collectItemData(listView);
@@ -1149,7 +1160,7 @@ WinJSTests.ListViewDragDropTest = function () {
         runTests(listView, tests);
     });
 
-    this.generate("testSingleSelectionKeyboardReorder", function (listView, rtl, complete) {
+    generate("testSingleSelectionKeyboardReorder", function (listView, rtl, complete) {
         var adjustedKeys = getAdjustedKeys(rtl);
         listView.itemsReorderable = true;
         var originalListData = collectItemData(listView);
@@ -1237,7 +1248,7 @@ WinJSTests.ListViewDragDropTest = function () {
         runTests(listView, tests);
     });
 
-    this.generate("testContiguousSelectionReorder", function (listView, rtl, complete) {
+    generate("testContiguousSelectionReorder", function (listView, rtl, complete) {
         var adjustedKeys = getAdjustedKeys(rtl);
         listView.itemsReorderable = true;
         var originalListData = collectItemData(listView);
@@ -1381,7 +1392,7 @@ WinJSTests.ListViewDragDropTest = function () {
         runTests(listView, tests);
     });
 
-    this.generate("testUncontiguousSelectionReorder", function (listView, rtl, complete) {
+    generate("testUncontiguousSelectionReorder", function (listView, rtl, complete) {
         listView.itemsReorderable = true;
         var adjustedKeys = getAdjustedKeys(rtl);
         var originalListData;
@@ -1553,7 +1564,7 @@ WinJSTests.ListViewDragDropTest = function () {
         runTests(listView, tests);
     });
 
-    this.generate("testKeyboardWhenNotReorderable", function (listView, rtl, complete) {
+    generate("testKeyboardWhenNotReorderable", function (listView, rtl, complete) {
         var adjustedKeys = getAdjustedKeys(rtl);
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsDraggable = false;
@@ -1595,7 +1606,7 @@ WinJSTests.ListViewDragDropTest = function () {
 
         runTests(listView, tests);
     }, null, true);
-    this.generate("testCanceledKeyboardReorder", function (listView, rtl, complete) {
+    generate("testCanceledKeyboardReorder", function (listView, rtl, complete) {
         var adjustedKeys = getAdjustedKeys(rtl);
         var handlers = getEventHandlerCallbacks(listView);
         listView.itemsReorderable = true;
@@ -1646,8 +1657,8 @@ WinJSTests.ListViewDragDropTest = function () {
 
         runTests(listView, tests);
     }, null, true);
-};
 
+}
 if (!utilities.isPhone) {
     LiveUnit.registerTestClass("WinJSTests.ListViewDragDropTest");
 }

@@ -1,16 +1,8 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-//-----------------------------------------------------------------------------
-//
-// Abstract:
-//
-//   API test cases for List View with various data source changes.
-//
-// Filename: apitest.datasources.js
-//-----------------------------------------------------------------------------
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts"/>
 /// <reference path="globals.ts"/>
@@ -20,33 +12,11 @@
 /// <reference path="../TestLib/TestDataSource.ts"/>
 /// <deploy src="../TestData/" />
 
-// Tests for ListView Api
-var ListViewDSTestClass = function () {
+module WinJSTests {
+
     "use strict";
-    var lvUtils = ListViewUtils;
-    var lvVerify = ListViewVerify;
 
-    /// -----------------------------------------------------------------------------------------------
-    //  Setup and Teardown
-    /// -----------------------------------------------------------------------------------------------
-
-    // Setup function to create HTML page hosting a listview
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("Create Test Page...");
-        lvUtils.initializeDOM();
-    };
-
-    // Teardown function
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("Test Tear Down...");
-        lvUtils.resetDOM();
-    };
-
-    /// -----------------------------------------------------------------------------------------------
-    //  Test Methods
-    /// -----------------------------------------------------------------------------------------------
-
-    function AddRemoveFromAdapterItemTest(listView, signalTestCaseCompleted, grouped) {
+    function AddRemoveFromAdapterItemTest(listView, signalTestCaseCompleted) {
         ///
         // This test inserts 1 item, validates the insertion, then removes
         // the item and validates the final count
@@ -63,9 +33,9 @@ var ListViewDSTestClass = function () {
             }).
             then(function (c) {
                 count = c;
-                lvUtils.logTestComment("Initial count: " + count);
+                ListViewUtils.logTestComment("Initial count: " + count);
 
-                lvUtils.logTestComment("Insert an item into empty ListView in grid layout.");
+                ListViewUtils.logTestComment("Insert an item into empty ListView in grid layout.");
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 count++;
@@ -76,12 +46,12 @@ var ListViewDSTestClass = function () {
 
                 // verification
                 var newItem = listView.elementFromIndex(0);
-                lvVerify.verifyItemContents(newItem, DEF_ITEM_DATA, testRenderer);
+                ListViewVerify.verifyItemContents(newItem, DEF_ITEM_DATA, testRenderer);
                 return verifyCount(listView, count);
             }).
             then(function () {
-                lvUtils.logTestComment("Delete an item from ListView, leaving in empty state.");
-                lvUtils.logTestComment("Removing item at index: 0");
+                ListViewUtils.logTestComment("Delete an item from ListView, leaving in empty state.");
+                ListViewUtils.logTestComment("Removing item at index: 0");
                 listView.itemDataSource.testDataAdapter.removeAtIndex(0);
                 listView.itemDataSource.testDataAdapter.removeAtIndex(0);
                 count--;
@@ -98,25 +68,25 @@ var ListViewDSTestClass = function () {
             });
     }
 
-    function SelectionTest(listView, signalTestCaseCompleted, grouped) {
+    function SelectionTest(listView, signalTestCaseCompleted) {
         ///
         // This test inserts 1 item, validates the insertion, then removes
         // the item and validates the final count
         ///
 
         waitForReady(listView, -1)().
-            then(listView.itemDataSource.getCount).
+            then<number>(listView.itemDataSource.getCount).
             then(function (count) {
 
                 // Check test precondition - Initial count > 0
-                lvUtils.logTestComment("Initial count: " + count);
+                ListViewUtils.logTestComment("Initial count: " + count);
                 LiveUnit.Assert.isTrue(count > 0, "Cannot run selection test with an empty dataSource");
                 return count;
             }).
             then(function (count) {
 
                 // Test 1 - API Selection
-                lvUtils.logTestComment("Selection test");
+                ListViewUtils.logTestComment("Selection test");
 
                 // Build array of indices for selection test
                 var selectionTestIndices = [0, Math.floor(count / 2), count - 1];
@@ -128,7 +98,7 @@ var ListViewDSTestClass = function () {
                     selectionPromise = selectionPromise.then(function () {
 
                         // make selection
-                        lvUtils.logTestComment("Selection test - Next index: " + i);
+                        ListViewUtils.logTestComment("Selection test - Next index: " + i);
                         currentSelection.push(i);
                         if (currentSelection.length > 1) {
 
@@ -140,11 +110,11 @@ var ListViewDSTestClass = function () {
                             return listView.selection.set(i);
                         }
                     }).
-                    then(function () {
+                        then(function () {
 
-                        // Validation
-                        return verifySelection(listView, currentSelection);
-                    });
+                            // Validation
+                            return verifySelection(listView, currentSelection);
+                        });
                 });
 
                 return selectionPromise.then(function () {
@@ -154,7 +124,7 @@ var ListViewDSTestClass = function () {
             then(function (currentSelection) {
 
                 // Test 2 - API Deselection
-                lvUtils.logTestComment("Deselection test");
+                ListViewUtils.logTestComment("Deselection test");
                 var selectionPromise = WinJS.Promise.wrap();
                 for (var i = currentSelection.length; i > 0; i--) {
 
@@ -163,11 +133,11 @@ var ListViewDSTestClass = function () {
                         var index = currentSelection.pop();
                         return listView.selection.remove(index);
                     }).
-                    then(function () {
+                        then(function () {
 
-                        // Validation
-                        return verifySelection(listView, currentSelection);
-                    });
+                            // Validation
+                            return verifySelection(listView, currentSelection);
+                        });
                 }
 
                 return selectionPromise;
@@ -177,7 +147,7 @@ var ListViewDSTestClass = function () {
             });
     }
 
-    function EnsureVisibleTest(listView, signalTestCaseCompleted, grouped) {
+    function EnsureVisibleTest(listView, signalTestCaseCompleted) {
         ///
         // This test inserts 1 item, validates the insertion, then removes
         // the item and validates the final count
@@ -187,17 +157,17 @@ var ListViewDSTestClass = function () {
         function validateEnsureVisible(listView, previousState) {
 
             // Validation
-            lvUtils.logTestComment('validateEnsureVisible');
+            ListViewUtils.logTestComment('validateEnsureVisible');
             var currentLastVisible = listView.indexOfLastVisible;
             var currentFirstVisible = listView.indexOfFirstVisible;
             var currentScrollPos = listView.scrollPosition;
 
             LiveUnit.Assert.isTrue(previousState.desiredIndex >= currentFirstVisible && previousState.desiredIndex <= currentLastVisible,
-                    'EnsureVisibleTest - desiredIndex: ' + previousState.desiredIndex + ' firstVisible: ' +
-                    currentFirstVisible + ' lastVisible: ' + currentLastVisible);
+                'EnsureVisibleTest - desiredIndex: ' + previousState.desiredIndex + ' firstVisible: ' +
+                currentFirstVisible + ' lastVisible: ' + currentLastVisible);
 
             LiveUnit.Assert.isFalse(currentScrollPos === previousState.scrollPos,
-                    'currentScrollPos: ' + currentScrollPos + ' previousScrollPos: ' + previousState.scrollPos);
+                'currentScrollPos: ' + currentScrollPos + ' previousScrollPos: ' + previousState.scrollPos);
 
             return true;
         }
@@ -211,7 +181,7 @@ var ListViewDSTestClass = function () {
             then(function () {
 
                 // Test 1 - EnsureVisible on an item off screen
-                lvUtils.logTestComment('EnsureVisibleTest');
+                ListViewUtils.logTestComment('EnsureVisibleTest');
 
                 // find an index off screen
                 var initialLastVisible = listView.indexOfLastVisible;
@@ -225,10 +195,10 @@ var ListViewDSTestClass = function () {
 
                 // store the scroll position and log initial conditions
                 var scrollPos = listView.scrollPosition;
-                lvUtils.logTestComment("EnsureVisibleTest - Initial First: " + initialFirstVisible
+                ListViewUtils.logTestComment("EnsureVisibleTest - Initial First: " + initialFirstVisible
                     + " Initial Last: " + initialLastVisible
                     + " Initial Scroll: " + scrollPos);
-                lvUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
+                ListViewUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
 
                 // call ensure visible
                 listView.ensureVisible(desiredIndex);
@@ -246,7 +216,7 @@ var ListViewDSTestClass = function () {
                 var desiredIndex = 0;
                 var scrollPos = listView.scrollPosition;
 
-                lvUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
+                ListViewUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
                 listView.ensureVisible(desiredIndex);
 
                 return { desiredIndex: desiredIndex, scrollPos: scrollPos };
@@ -262,15 +232,15 @@ var ListViewDSTestClass = function () {
             var desiredIndex = count - 1;
             var scrollPos = listView.scrollPosition;
 
-            lvUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
+            ListViewUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
             listView.ensureVisible(desiredIndex);
 
             return { desiredIndex: desiredIndex, scrollPos: scrollPos };
         }).
-        then(waitForReady(listView, -1)).
-        then(function (previousState) {
-            validateEnsureVisible(listView, previousState);
-        });
+            then(waitForReady(listView, -1)).
+            then(function (previousState) {
+                validateEnsureVisible(listView, previousState);
+            });
 
         testPromise.done(signalTestCaseCompleted, function (e) {
             throw Error(e);
@@ -294,14 +264,14 @@ var ListViewDSTestClass = function () {
             then(function () {
 
                 // Test 0 - Set data adapter to one with items
-                lvUtils.logTestComment("ReplaceAdapterObjectsTest - Replacing data adapter objects with new objects");
+                ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Replacing data adapter objects with new objects");
                 listView.itemDataSource.testDataAdapter.replaceItems(getNewObjects(DEF_TOTAL_ITEMS));
 
                 if (!useReload) {
-                    lvUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.invalidateAll()");
+                    ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.invalidateAll()");
                     listView.itemDataSource.testDataAdapter.invalidateAll();
                 } else {
-                    lvUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.reload()");
+                    ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.reload()");
                     listView.itemDataSource.testDataAdapter.reload();
                 }
             }).
@@ -313,19 +283,19 @@ var ListViewDSTestClass = function () {
 
                 // Validate the contents of one item
                 var firstVisibleElement = listView.elementFromIndex(listView.indexOfFirstVisible);
-                lvVerify.verifyItemContents(firstVisibleElement, DEF_ITEM_DATA, testRenderer);
+                ListViewVerify.verifyItemContents(firstVisibleElement, DEF_ITEM_DATA, testRenderer);
             }).
             then(function () {
 
                 // Test 1 - Set data adapter to an empty one
-                lvUtils.logTestComment("ReplaceAdapterObjectsTest - Replacing data adapter objects with empty array and calling invalidateAll()");
+                ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Replacing data adapter objects with empty array and calling invalidateAll()");
                 listView.itemDataSource.testDataAdapter.replaceItems([]);
 
                 if (!useReload) {
-                    lvUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.invalidateAll()");
+                    ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.invalidateAll()");
                     listView.itemDataSource.testDataAdapter.invalidateAll();
                 } else {
-                    lvUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.reload()");
+                    ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.reload()");
                     listView.itemDataSource.testDataAdapter.reload();
                 }
             }).
@@ -339,7 +309,7 @@ var ListViewDSTestClass = function () {
                 var winContainerCount = listView.element.querySelectorAll('.' + Expected.ClassName.Container).length;
                 LiveUnit.Assert.isTrue(winContainerCount === 0, 'winContainerCount: ' + winContainerCount + ' expecting: 0');
 
-                lvUtils.logTestComment("Insert an item into empty ListView in grid layout.");
+                ListViewUtils.logTestComment("Insert an item into empty ListView in grid layout.");
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
             }).
@@ -348,14 +318,14 @@ var ListViewDSTestClass = function () {
 
                 // verification
                 var newItem = listView.elementFromIndex(0);
-                lvVerify.verifyItemContents(newItem, DEF_ITEM_DATA, testRenderer);
+                ListViewVerify.verifyItemContents(newItem, DEF_ITEM_DATA, testRenderer);
                 return verifyCount(listView, 2);
             }).
             done(
-                signalTestCaseCompleted,
-                function (e) {
-                    throw Error(e);
-                }
+            signalTestCaseCompleted,
+            function (e) {
+                throw Error(e);
+            }
             );
     }
 
@@ -364,7 +334,7 @@ var ListViewDSTestClass = function () {
         waitForReady(listView, -1)().
             then(function () {
                 // Test 1 - Set data source to a new one
-                lvUtils.logTestComment('ReplaceDataSourceTest - Replacing data source with a new one with ' + DEF_TOTAL_ITEMS + ' items');
+                ListViewUtils.logTestComment('ReplaceDataSourceTest - Replacing data source with a new one with ' + DEF_TOTAL_ITEMS + ' items');
                 listView.itemDataSource = createTestDataSource(DEF_TOTAL_ITEMS);
             }).
             then(waitForReady(listView, -1)).
@@ -375,7 +345,7 @@ var ListViewDSTestClass = function () {
 
                 // Validate the contents of one item
                 var firstVisibleElement = listView.elementFromIndex(listView.indexOfFirstVisible);
-                lvVerify.verifyItemContents(firstVisibleElement, DEF_ITEM_DATA, testRenderer);
+                ListViewVerify.verifyItemContents(firstVisibleElement, DEF_ITEM_DATA, testRenderer);
 
                 // Validate that there are items on the screen
                 var winContainerCount = listView.element.querySelectorAll('.' + Expected.ClassName.Container).length;
@@ -384,7 +354,7 @@ var ListViewDSTestClass = function () {
             then(function () {
 
                 // Test 2 - Set data source to an empty one
-                lvUtils.logTestComment("ReplaceDataSourceTest - Replacing data source with a new empty one");
+                ListViewUtils.logTestComment("ReplaceDataSourceTest - Replacing data source with a new empty one");
                 listView.itemDataSource = createTestDataSource(0);
             }).
             then(waitForReady(listView, -1)).
@@ -397,7 +367,7 @@ var ListViewDSTestClass = function () {
                 var winContainerCount = listView.element.querySelectorAll('.' + Expected.ClassName.Container).length;
                 LiveUnit.Assert.areEqual(0, winContainerCount, 'winContainerCount: ' + winContainerCount + ' expecting: 0');
 
-                lvUtils.logTestComment("Insert an item into empty ListView in grid layout.");
+                ListViewUtils.logTestComment("Insert an item into empty ListView in grid layout.");
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
             }).
@@ -406,14 +376,14 @@ var ListViewDSTestClass = function () {
 
                 // verification
                 var newItem = listView.elementFromIndex(0);
-                lvVerify.verifyItemContents(newItem, DEF_ITEM_DATA, testRenderer);
+                ListViewVerify.verifyItemContents(newItem, DEF_ITEM_DATA, testRenderer);
                 return verifyCount(listView, 2);
             }).
             done(
-                signalTestCaseCompleted,
-                function (e) {
-                    throw Error(e);
-                }
+            signalTestCaseCompleted,
+            function (e) {
+                throw Error(e);
+            }
             );
     }
 
@@ -489,7 +459,7 @@ var ListViewDSTestClass = function () {
     }
 
     function verifyCount(listView, expectedCount) {
-        lvUtils.logTestComment("Verifying ListView Count");
+        ListViewUtils.logTestComment("Verifying ListView Count");
         return listView.itemDataSource.getCount().
             then(function (c) {
                 LiveUnit.Assert.areEqual(expectedCount, c, "verifyCount - expected: " + expectedCount + " got: " + c);
@@ -497,7 +467,7 @@ var ListViewDSTestClass = function () {
     }
 
     function verifySelection(listView, expectedSelectionArray) {
-        lvUtils.logTestComment("verifySelection - expected: " + expectedSelectionArray.toString());
+        ListViewUtils.logTestComment("verifySelection - expected: " + expectedSelectionArray.toString());
 
         function iterateByPage(count, index) {
             listView.indexOfFirstVisible = index;
@@ -506,7 +476,7 @@ var ListViewDSTestClass = function () {
                     var firstVisible = listView.indexOfFirstVisible;
                     var lastVisible = listView.indexOfLastVisible;
 
-                    lvUtils.logTestComment("verifySelection - firstVisible: " + firstVisible + " - lastVisible: " + lastVisible);
+                    ListViewUtils.logTestComment("verifySelection - firstVisible: " + firstVisible + " - lastVisible: " + lastVisible);
                     for (var i = firstVisible; i <= lastVisible; i++) {
                         var currentElement = listView.elementFromIndex(i).parentNode;
                         var actualClassName = currentElement.className;
@@ -538,7 +508,7 @@ var ListViewDSTestClass = function () {
             });
     }
 
-    function createTestDataSource(size, data) {
+    function createTestDataSource(size, data?) {
 
         // Populate a data array
         if (!data) {
@@ -589,16 +559,41 @@ var ListViewDSTestClass = function () {
         return TestComponents.createTestDataSource(data, controller, abilities); // (objects, controller, abilities)
     }
 
+    export class ListViewDSTestClass {
+
+
+        /// -----------------------------------------------------------------------------------------------
+        //  Setup and Teardown
+        /// -----------------------------------------------------------------------------------------------
+
+        // Setup function to create HTML page hosting a listview
+        setUp() {
+            LiveUnit.LoggingCore.logComment("Create Test Page...");
+            ListViewUtils.initializeDOM();
+        }
+
+        // Teardown function
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("Test Tear Down...");
+            ListViewUtils.resetDOM();
+        }
+
+        /// -----------------------------------------------------------------------------------------------
+        //  Test Methods
+        /// -----------------------------------------------------------------------------------------------
+    }
+
+
     ///
     //  testNoKeyDSAddRemoveList
     ///
-    this.generateNoKeyDSAddRemove = function (layout) {
-        this["testNokeyDSAddRemove" + layout] = function (signalTestCaseCompleted) {
+    var generateNoKeyDSAddRemove = function (layout) {
+        ListViewDSTestClass.prototype["testNokeyDSAddRemove" + layout] = function (signalTestCaseCompleted) {
             /// <summary>
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = lvUtils.createItemRenderer();
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -610,27 +605,27 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            lvUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
-            lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
+            ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
 
             AddRemoveFromAdapterItemTest(listView, signalTestCaseCompleted);
         };
     };
-    this.generateNoKeyDSAddRemove("ListLayout");
+    generateNoKeyDSAddRemove("ListLayout");
 
     ///
     //  testNoKeyDSSelectionList
     ///
-    this.generateNoKeyDSSelection = function (layout) {
-        this["testNoKeyDSSelection" + layout] = function (signalTestCaseCompleted) {
+    var generateNoKeyDSSelection = function (layout) {
+        ListViewDSTestClass.prototype["testNoKeyDSSelection" + layout] = function (signalTestCaseCompleted) {
             /// <summary>
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = lvUtils.createItemRenderer();
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -642,27 +637,27 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            lvUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
-            lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
+            ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
 
             SelectionTest(listView, signalTestCaseCompleted);
         };
     };
-    this.generateNoKeyDSSelection("ListLayout");
+    generateNoKeyDSSelection("ListLayout");
 
     ///
     //  testNoKeyDSEnsureVisibleList
     ///
-    this.generateNoKeyDSEnsureVisible = function (layout) {
-        this["testNoKeyDSEnsureVisible" + layout] = function (signalTestCaseCompleted) {
+    var generateNoKeyDSEnsureVisible = function (layout) {
+        ListViewDSTestClass.prototype["testNoKeyDSEnsureVisible" + layout] = function (signalTestCaseCompleted) {
             /// <summary>
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = lvUtils.createItemRenderer();
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -674,27 +669,27 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            lvUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
-            lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
+            ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
 
             EnsureVisibleTest(listView, signalTestCaseCompleted);
         };
     };
-    this.generateNoKeyDSEnsureVisible("ListLayout");
+    generateNoKeyDSEnsureVisible("ListLayout");
 
     ///
     //  testNoKeyDSReplaceAdapterObjectsList
     ///
-    this.generateNoKeyDSReplaceAdapterObjects = function (layout) {
-        this["testNoKeyDSReplaceAdapterObjects" + layout] = function (signalTestCaseCompleted) {
+    var generateNoKeyDSReplaceAdapterObjects = function (layout) {
+        ListViewDSTestClass.prototype["testNoKeyDSReplaceAdapterObjects" + layout] = function (signalTestCaseCompleted) {
             /// <summary>
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = lvUtils.createItemRenderer();
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -706,27 +701,27 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            lvUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
-            lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
+            ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
 
             ReplaceAdapterObjectsTest(listView, signalTestCaseCompleted, false);
         };
     };
-    this.generateNoKeyDSReplaceAdapterObjects("ListLayout");
+    generateNoKeyDSReplaceAdapterObjects("ListLayout");
 
     ///
     //  testNoKeyDSReplaceAdapterObjects2List
     ///
-    this.generateNoKeyDSReplaceAdapterObjects2 = function (layout) {
-        this["testNoKeyDSReplaceAdapterObjects2" + layout] = function (signalTestCaseCompleted) {
+    var generateNoKeyDSReplaceAdapterObjects2 = function (layout) {
+        ListViewDSTestClass.prototype["testNoKeyDSReplaceAdapterObjects2" + layout] = function (signalTestCaseCompleted) {
             /// <summary>
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = lvUtils.createItemRenderer();
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -738,27 +733,27 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            lvUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
-            lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
+            ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
 
             ReplaceAdapterObjectsTest(listView, signalTestCaseCompleted, true);
         };
     };
-    this.generateNoKeyDSReplaceAdapterObjects2("ListLayout");
+    generateNoKeyDSReplaceAdapterObjects2("ListLayout");
 
     ///
     //  testNoKeyDSReplaceDSList
     ///
-    this.generateNoKeyDSReplaceDS = function (layout) {
-        this["testNoKeyDSReplaceDS" + layout] = function (signalTestCaseCompleted) {
+    var generateNoKeyDSReplaceDS = function (layout) {
+        ListViewDSTestClass.prototype["testNoKeyDSReplaceDS" + layout] = function (signalTestCaseCompleted) {
             /// <summary>
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = lvUtils.createItemRenderer();
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -770,27 +765,27 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            lvUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
-            lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
+            ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
 
             ReplaceDataSourceTest(listView, signalTestCaseCompleted);
         };
     };
-    this.generateNoKeyDSReplaceDS("ListLayout");
+    generateNoKeyDSReplaceDS("ListLayout");
 
     ///
     //  testNoKeyDSRehydration
     ///
-    this.generateNoKeyDSRehydration = function (layout) {
-        this["testNoKeyDSRehydration" + layout] = function (signalTestCaseCompleted) {
+    var generateNoKeyDSRehydration = function (layout) {
+        ListViewDSTestClass.prototype["testNoKeyDSRehydration" + layout] = function (signalTestCaseCompleted) {
             /// <summary>
             ///     Rehydrate the ListView synchronously upon creation
             /// </summary>
 
-            var testRenderer = lvUtils.createItemRenderer();
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -802,27 +797,27 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            lvUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
-            lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
+            ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
 
             RehydrationTest(listView, signalTestCaseCompleted);
         };
     };
-    this.generateNoKeyDSRehydration("ListLayout");
+    generateNoKeyDSRehydration("ListLayout");
 
     ///
     //  testNoKeyDSSimulateLiveMailSend
     ///
-    this.generateNoKeyDSSimulateLiveMailSend = function (layout) {
-        this["testNoKeyDSSimulateLiveMailSend" + layout] = function (signalTestCaseCompleted) {
+    var generateNoKeyDSSimulateLiveMailSend = function (layout) {
+        ListViewDSTestClass.prototype["testNoKeyDSSimulateLiveMailSend" + layout] = function (signalTestCaseCompleted) {
             /// <summary>
             ///     Simulate how Live Mail manipulates the ListView when composing an email
             /// </summary>
 
-            var testRenderer = lvUtils.createItemRenderer();
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -834,20 +829,20 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            lvUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
-            lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
+            ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
 
             simulateLiveMailSend(listView, signalTestCaseCompleted);
         };
     };
-    this.generateNoKeyDSSimulateLiveMailSend("ListLayout");
+    generateNoKeyDSSimulateLiveMailSend("ListLayout");
 
-    this.generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange = function (layout) {
-        this["testDataSourceChangeSetFocusOnInvalidIndexAndHeightChange" + layout] = function (signalTestCaseCompleted) {
-            var testRenderer = lvUtils.createItemRenderer();
+    var generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange = function (layout) {
+        ListViewDSTestClass.prototype["testDataSourceChangeSetFocusOnInvalidIndexAndHeightChange" + layout] = function (signalTestCaseCompleted) {
+            var testRenderer = ListViewUtils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -859,7 +854,7 @@ var ListViewDSTestClass = function () {
                 itemTemplate: testRenderer
             };
 
-            var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             waitForReady(listView, -1)().then(function () {
                 var newItemTitle = "New List Item 0";
@@ -876,13 +871,13 @@ var ListViewDSTestClass = function () {
             });
         };
     };
-    this.generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("ListLayout");
-    this.generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("GridLayout");
+    generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("ListLayout");
+    generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("GridLayout");
 
     if (!Helper.Browser.isIE11) {
-        Helper.disableTest(this, "testNoKeyDSSimulateLiveMailSendListLayout");
+        Helper.disableTest(ListViewDSTestClass, "testNoKeyDSSimulateLiveMailSendListLayout");
     }
-};
 
+}
 // register the object as a test class by passing in the fully qualified name
-LiveUnit.registerTestClass("ListViewDSTestClass");
+LiveUnit.registerTestClass("WinJSTests.ListViewDSTestClass");
