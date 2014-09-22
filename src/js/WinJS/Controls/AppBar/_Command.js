@@ -305,7 +305,7 @@ define([
                             flyout = _Global.document.getElementById(flyout);
                         }
                         // If it doesn't have a .element, then we need to getControl on it
-                        if (flyout && !flyout.element) {
+                        if (flyout && !flyout.element && flyout.winControl) {
                             flyout = flyout.winControl;
                         }
 

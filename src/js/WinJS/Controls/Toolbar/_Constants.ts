@@ -6,11 +6,13 @@ export var actionAreaCssClass = "win-toolbar-actionarea";
 export var overflowButtonCssClass = "win-toolbar-overflowbutton";
 export var ellipsisCssClass = "win-toolbar-ellipsis";
 export var overflowAreaCssClass = "win-toolbar-overflowarea";
+export var overflowAreaWithMixCommandsCssClass = "win-toobar-overflowarea-mixed"
 export var overflowContentFlyoutCssClass = "win-toolbar-contentflyout";
 export var detachedModeCssClass = "win-toolbar-detached";
 export var attachedModeCssClass = "win-toolbar-attached";
 export var emptyToolbarCssClass = "win-toolbar-empty";
 export var menuCssClass = "win-menu";
+export var menuToggleClass = "win-menu-toggle";
 
 // Toolbar overflowModes
 export var overflowModeAttached = "attached";
@@ -24,4 +26,3 @@ export var typeContent = "content";
 export var typeButton = "button";
 export var typeToggle = "toggle";
 export var typeFlyout = "flyout";
-

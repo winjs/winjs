@@ -196,7 +196,7 @@ declare module WinJS {
             _getCommandWidth(command: ICommand): number;
             _customContentFlyout: WinJS.UI.Flyout;
             _customContentContainer: HTMLElement;
-            _selectedCustomCommand: ICommand;
+            _attachedOverflowArea: HTMLElement;
         }
 
         class PrivateCommand extends WinJS.UI.AppBarCommand implements ICommand {

@@ -41,6 +41,30 @@ export declare class MenuCommand {
     **/
     removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
+
+    /**
+     * Handles the menu click event
+    **/
+    _handleMenuClick(event: any): void;
+
+
+    /**
+     * Handles the menu mouse over event
+    **/
+    _handleMouseOver(): void;
+
+
+    /**
+     * Handles the menu mouse move event
+    **/
+    _handleMouseMove(): void;
+
+
+    /**
+     * Handles the menu mouse out event
+    **/
+    _handleMouseOut(): void;
+
     //#endregion Methods
 
     //#region Properties

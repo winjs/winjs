@@ -2,9 +2,11 @@
 
 .win-toolbar {
     width:100%;
+    outline: none;
 
     .win-toolbar-actionarea {
         width: 100%;
+        min-height: 24px;
         #flex > .display-inline-flex();
         #flex > .justify-content(flex-end;);
     }
@@ -14,19 +16,50 @@
       #flex > .flex(@grow: 0; @shrink: 0);
     }
 
-    &.win-toolbar-attached {
-        .win-toolbar-overflowarea {
-            #flex > .display-flex();
-            #flex > .flex-direction(column);
-        }
+    &.win-toolbar-detached {
+        min-width: 100px; /* enough for one primary command */
 
-        .win-toolbar-overflowbutton {
-            display: none;
+        > .win-toolbar-overflowarea {
+            display:none;
         }
     }
 
-    &.win-toolbar-detached > .win-toolbar-overflowarea {
-        display:none;
+    &.win-toolbar-attached {
+        min-width: 320px;
+
+        .win-toolbar-overflowarea {
+            #flex > .display-flex();
+            #flex > .flex-direction(column);
+            min-width: 320px;
+            min-height: 0;
+            max-height: 198px; /* 4.5 * 44px */
+            overflow-y: auto;
+            padding: 0;
+
+            &.win-toobar-overflowarea-mixed {
+                max-height: 210px; /*  4.5 * 44px + 12px separator space */
+            }
+
+            button.win-command {
+                #flex > .flex(@grow: 0; @shrink: 0);
+                border: 1px dotted;
+                padding: 10px 11px 12px 11px;
+                .win-type-large-internal(@lineHeight: 20px); /* 44px - 10px top padding - 12px bottom padding - 2px border */
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            hr.win-command {
+                #flex > .flex(@grow: 0; @shrink: 0);
+                height: 2px;
+                margin: 6px 12px 4px 12px;
+            }
+        }
+
+        .win-toolbar-overflowbutton {
+            height: 24px;
+            min-height: 24px;
+        }
     }
 
     &.win-toolbar-empty {
@@ -36,16 +69,17 @@
     }
 
     .win-toolbar-overflowbutton {
-        width: 60px;
-        height: 80px;
+        width: 32px; /* 30px + 2px border */
+        height: 80px; /* 78px + 2px border */
         margin: 0px;
         padding: 0px;
-        border: none;
+        border: 1px dotted transparent;
         min-width: 0px;
         position: relative;
+        outline:none;
 
         .win-toolbar-ellipsis {
-            width: 60px;
+            width: 32px;
             right: 0px;
             top:20px;
             position: absolute;

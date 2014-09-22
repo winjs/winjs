@@ -46,9 +46,9 @@ button.win-command {
     background: none;
     background-clip: border-box;
     height: auto; /* height is 80px (label) or 60px (no label) */
-    padding: 8px 0; /* bottom dependent on label/img, 2px margin */
+    padding: 9px 0; /* bottom dependent on label/img, 1px margin */
     margin: 0;
-    border: 2px solid; /* reserve focus rect */
+    border: 1px dotted; /* reserve focus rect */
     min-width: 40px;
     text-align: center;
     font-size: 9pt;
@@ -74,7 +74,7 @@ Command button icons.
 */
 .win-commandicon {
     display: inline-block;
-    margin: 0 28px; /* padding for command buttons, 2px/side for focus */
+    margin: 0 29px; /* padding for command buttons, 1px/side for focus */
     min-width: 0;
     min-height: 0;
     padding: 0;
@@ -218,8 +218,8 @@ div.win-command {
     display: inline-block;
     min-width: 0;
     min-height: 0;
-    padding: 8px 30px;
-    border: 2px solid; /* reserve focus rect */
+    padding: 9px 31px;
+    border: 1px dotted; /* reserve focus rect */
     text-align: center;
     font-size: 9pt;
     line-height: 16px;
@@ -279,12 +279,12 @@ AppBar
         z-index: 1;
 
         .win-appbar-ellipsis {
-            width: 56px;
-            height: 21px; /* 21px + 4px of border === the height of the closed minimal AppBar.*/
+            width: 58px; /* 58px + 2px border = 60px */
+            height: 23px; /* 23px + 2px of border === the height of the closed minimal AppBar.*/
             right: 0px;
             position: absolute;
             display: inline-block;
-            border: solid 2px;
+            border: dotted 1px;
             font-size: 19px;
             text-align: center;
             font-family: "Segoe UI Symbol", "Symbols";
@@ -296,7 +296,7 @@ AppBar
         }
 
         &:focus .win-appbar-ellipsis {
-            border: solid 2px;
+            border: dotted 1px;
         }
     }
 
@@ -404,7 +404,7 @@ AppBar commands layout
 }
 
 .win-reduced button.win-command .win-commandicon {
-    margin: 0 8px; /* 2px margin for focus */
+    margin: 0 9px; /* 1px margin for focus */
 }
 
 /* Narrow Separators */
@@ -479,12 +479,12 @@ High contrast AppBar needs a border
 
     .win-appbar.win-top button.win-command,
     .win-appbar.win-top div.win-command {
-        padding-bottom: 6px;
+        padding-bottom: 7px; /* 7px - 2px smaller to account for the high-constrast appbar border */
     }
 
     .win-appbar.win-bottom button.win-command,
     .win-appbar.win-bottom div.win-command {
-        padding-top: 6px;
+        padding-top: 7px; /* 7px - 2px smaller to account for the high-constrast appbar border */
     }
 
     .win-appbar.win-top hr.win-command {

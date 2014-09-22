@@ -3,6 +3,19 @@
 .Colors(@theme) {
     .mixin(dark) {
         &.win-toolbar, .win-toolbar {
+            &.win-toolbar-attached {
+                .win-toolbar-overflowarea {
+                    button.win-command {
+                        border-color: transparent;
+                    }
+
+                    button.win-command:focus {
+                        background-color: transparent;
+                        border-color: rgb(255, 255, 255);
+                    }
+                }
+            }
+
             button.win-toolbar-overflowbutton.win-toolbar-overflowbutton {
                 background-color: transparent;
 
@@ -22,14 +35,27 @@
                 }
             }
 
-            button.win-toolbar-overflowbutton {
-                outline: none;
+            button.win-toolbar-overflowbutton:focus {
+                border-color:rgb(255, 255, 255);
             }
         }
     }
 
     .mixin(light) {
         &.win-toolbar, .win-toolbar {
+            &.win-toolbar-attached {
+                .win-toolbar-overflowarea {
+                    button.win-command {
+                        border-color: transparent;
+                    }
+
+                    button.win-command:focus {
+                        background-color: transparent;
+                        border-color: rgb(0, 0, 0);
+                    }
+                }
+            }
+
             button.win-toolbar-overflowbutton.win-toolbar-overflowbutton {
                 background-color: transparent;
 
@@ -49,8 +75,35 @@
                 }
             }
 
-            button.win-toolbar-overflowbutton {
-                outline: none;
+            button.win-toolbar-overflowbutton:focus {
+                border-color:rgb(0, 0, 0);
+            }
+        }
+    }
+    .mixin(@theme);
+}
+
+.ColorsHover(@theme) {
+    .mixin(dark) {
+        &.win-toolbar, .win-toolbar {
+            &.win-toolbar-attached {
+                .win-toolbar-overflowarea {
+                    button.win-command:hover {
+                        background-color: rgb(222, 222, 222);
+                    }
+                }
+            }
+        }
+    }
+
+    .mixin(light) {
+        &.win-toolbar, .win-toolbar {
+            &.win-toolbar-attached {
+                .win-toolbar-overflowarea {
+                    button.win-command:hover {
+                        background-color: rgb(222, 222, 222);
+                    }
+                }
             }
         }
     }
