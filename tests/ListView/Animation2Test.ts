@@ -508,7 +508,7 @@ module WinJSTests {
         testGridGroupAnimations = function (complete) {
             //WPBlue: 317490 - This test is not stable on the phone due to dropped animations, so limiting to desktop.
             if (WinJS.Utilities.isPhone) {
-                complete();
+                return complete();
             }
             var bindingList = getBindingList(100);
             var groupProjection = bindingList.createGrouped(groupKey, groupData);
