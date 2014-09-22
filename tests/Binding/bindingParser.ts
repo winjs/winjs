@@ -67,13 +67,12 @@ module CorsicaTests {
     interface IParserTest {
         name: string;
         input: string;
-        result: any[];
+        result?: any[];
         context?: any;
         error?: string;
     }
 
-    //https://github.com/Microsoft/TypeScript/issues/716
-    var parserTests: any[] = [
+    var parserTests: IParserTest[] = [
         {
             name: "thisAlone",
             input: "this:this c",
