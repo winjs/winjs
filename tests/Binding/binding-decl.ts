@@ -2085,7 +2085,7 @@ module CorsicaTests {
                 then(complete, errorHandler);
 
             function cleanup() {
-                window['test'] = null;
+                delete window['test'];
             }
         };
 
