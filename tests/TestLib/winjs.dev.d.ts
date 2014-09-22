@@ -53,6 +53,8 @@ declare module WinJS {
 
         function _yieldForEvents(handler: Function);
         function _merge(a, b): any;
+        var _isiOS;
+        function _setIsiOS(isiOS: boolean);
 
         class _PointerEventProxy {
             constructor(eventObject, overrideProperties);
@@ -189,6 +191,10 @@ declare module WinJS {
             var _chunkSize;
             var _disableCustomPagesPrefetch;
             var _pagesToPrefetch;
+            var _createContainersJobTimeslice;
+            var _startupChunkSize;
+            var _customPagesToPrefetchMax;
+            var _customPagesToPrefetchMin;
         }
 
         class PrivateSearchBox extends WinJS.UI.SearchBox {
@@ -217,9 +223,13 @@ declare module WinJS {
             _animating: boolean;
         }
 
+        class PrivateSemanticZoom extends SemanticZoom {
+        }
+
         interface IPrivateSelection<T> extends ISelection<T> {
             _isIncluded(i: number): boolean;
             _pivot;
+            _selected;
         }
 
         interface IPrivateListDataSource<T> extends IListDataSource<T> {
@@ -258,6 +268,14 @@ declare module WinJS {
             _mode;
             _itemsManager;
             _raiseViewComplete;
+            _changeFocus;
+            _keyboardFocusInbound: boolean;
+            _currentMode;
+            _dispose;
+            _onMSManipulationStateChanged;
+            _beginZoom;
+            _endZoom;
+            _versionManager;
 
             ensureVisible(itemIndex: number): void;
             ensureVisible(itemIndex: IListViewEntity): void;
@@ -265,6 +283,39 @@ declare module WinJS {
 
         class PrivateListLayout extends ListLayout {
             static _numberOfItemsPerItemsBlock: number;
+            _itemsPerBar;
+            initialize();
+            initialize(layout, groupsEnabled);
+            layout(tree: any, changedRange: any, modifiedItems: any, modifiedGroups: any): any;
+            itemsFromRange(firstPixel: number, lastPixel: number): any;
+            _measuringPromise;
+            _envInfo;
+            _sizes;
+        }
+
+        class PrivateGridLayout extends GridLayout {
+            initialize();
+            initialize(layout, groupsEnabled);
+            layout(tree: any, changedRange: any, modifiedItems: any, modifiedGroups: any): any;
+            itemsFromRange(firstPixel: number, lastPixel: number): any;
+            _itemsPerBar;
+            _measuringPromise;
+            _envInfo;
+            _sizes;
+            _lastItemFromRange;
+            _firstItemFromRange;
+            _measureElements;
+        }
+
+        class PrivateCellSpanningLayout extends CellSpanningLayout {
+            initialize();
+            initialize(layout, groupsEnabled);
+            layout(tree: any, changedRange: any, modifiedItems: any, modifiedGroups: any): any;
+            itemsFromRange(firstPixel: number, lastPixel: number): any;
+            _itemsPerBar;
+            _measuringPromise;
+            _envInfo;
+            _sizes;
         }
 
         class PrivateToolbar extends WinJS.UI.Toolbar {
@@ -343,6 +394,17 @@ declare module WinJS {
         var _itemClass;
         var _headerClass;
         var _itemFocusClass;
+        var _pressedClass;
+        var _itemsContainerClass;
+        var _laidOutClass;
+        var _cellSpanningGridLayoutClass;
+        var _listLayoutClass;
+        var _gridLayoutClass;
+        var _uniformGridLayoutClass;
+        var _selectionModeClass;
+        var _itemsBlockClass;
+        var _structuralNodesClass;
+        var _progressClass;
         var _INVALID_INDEX;
 
         var _seenUrlsMaxSize: number;
@@ -357,6 +419,15 @@ declare module WinJS {
         function _tiltTransform(clickX, clickY, elementRect);
 
         var ListDataSource;
+        var _SelectionMode;
+        var _SelectionManager;
+        var _NoGroups;
+        var _VersionManager;
+        var _getMargins;
+        var _ItemSet;
+        var _Selection;
+        var _LayoutCommon;
+        var _LISTVIEW_PROGRESS_DELAY;
     }
 
     module Binding {

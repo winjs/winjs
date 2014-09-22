@@ -142,7 +142,7 @@
 
     function waitForReady(listView, delay?) {
         if (listView.winControl) { listView = listView.winControl; }
-        return function (x?) {
+        return function (x?):WinJS.Promise<any> {
             return new WinJS.Promise(function (c, e, p) {
                 function waitForReady_handler() {
                     LiveUnit.LoggingCore.logComment("waitForReady_handler, listView.loadingState:" + listView.loadingState);

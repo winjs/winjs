@@ -1,40 +1,42 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <deploy src="../TestData/" />
 
-var WinJSTests = WinJSTests || {};
-
-WinJSTests.CommonListViewLayoutTests = function () {
+module WinJSTests {
     "use strict";
 
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "CommonLayoutTests";
-        document.body.appendChild(newNode);
-        removeListviewAnimations();
-    };
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        var element = document.getElementById("CommonLayoutTests");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
+    export class CommonListViewLayoutTests {
+
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "CommonLayoutTests";
+            document.body.appendChild(newNode);
+            removeListviewAnimations();
         }
-        restoreListviewAnimations();
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            var element = document.getElementById("CommonLayoutTests");
+            if (element) {
+                WinJS.Utilities.disposeSubTree(element);
+                document.body.removeChild(element);
+            }
+            restoreListviewAnimations();
+        }
     }
 
-    this.generate = function (name, testFunction) {
-        function generateTest(that, direction, grouped, headersAbove, rtl, layoutName, forceOneItemPerBar) {
+    function generate(name, testFunction) {
+        function generateTest(direction, grouped, headersAbove, rtl, layoutName, forceOneItemPerBar) {
             var fullName = name + layoutName + "_" + direction + (grouped ? "_grouped_" + (headersAbove ? "headersOnTop_" : "headersOnLeft_") : "_") + (rtl ? "rtl" : "ltr");
             if (forceOneItemPerBar) {
                 fullName += "(OneRow/Col)";
             }
-            that[fullName] = function (complete) {
+            CommonListViewLayoutTests.prototype[fullName] = function (complete) {
                 LiveUnit.LoggingCore.logComment("in " + fullName);
                 var element = document.getElementById("CommonLayoutTests");
                 var lvDetails = buildGenericListView(element, {
@@ -51,15 +53,15 @@ WinJSTests.CommonListViewLayoutTests = function () {
                 });
             };
         }
-        var that = this;
-        function generateTestSuite(layoutName, forceOneItemPerBar) {
+
+        function generateTestSuite(layoutName, forceOneItemPerBar?) {
             function generateTestsForOrientation(o) {
-                generateTest(that, o, false, false, false, layoutName, forceOneItemPerBar);
-                generateTest(that, o, false, false, true, layoutName, forceOneItemPerBar);
-                generateTest(that, o, true, false, false, layoutName, forceOneItemPerBar);
-                generateTest(that, o, true, false, true, layoutName, forceOneItemPerBar);
-                generateTest(that, o, true, true, false, layoutName, forceOneItemPerBar);
-                generateTest(that, o, true, true, true, layoutName, forceOneItemPerBar);
+                generateTest(o, false, false, false, layoutName, forceOneItemPerBar);
+                generateTest(o, false, false, true, layoutName, forceOneItemPerBar);
+                generateTest(o, true, false, false, layoutName, forceOneItemPerBar);
+                generateTest(o, true, false, true, layoutName, forceOneItemPerBar);
+                generateTest(o, true, true, false, layoutName, forceOneItemPerBar);
+                generateTest(o, true, true, true, layoutName, forceOneItemPerBar);
             }
             generateTestsForOrientation("horizontal");
             generateTestsForOrientation("vertical");
@@ -69,7 +71,7 @@ WinJSTests.CommonListViewLayoutTests = function () {
         generateTestSuite("GridLayout", true);
     }
 
-    this.generate("testFirstLastVisible", function (listView, layoutDetails, rtl, complete) {
+    generate("testFirstLastVisible", function (listView, layoutDetails, rtl, complete) {
         var layout = listView.layout;
         var groupsCount = layoutDetails.groupsInfo.length;
         for (var i = 0; i < groupsCount; i++) {
@@ -119,7 +121,7 @@ WinJSTests.CommonListViewLayoutTests = function () {
         return keyInfo;
     }
 
-    this.generate("testKeyboardArrows", function (listView, layoutDetails, rtl, complete) {
+    generate("testKeyboardArrows", function (listView, layoutDetails, rtl, complete) {
         var layout = listView.layout;
         var keyHelper = getKeysForConfiguration(layoutDetails.horizontal, rtl);
         var groupsCount = layoutDetails.groupsInfo.length;
@@ -173,19 +175,23 @@ WinJSTests.CommonListViewLayoutTests = function () {
         var positions = {
             topLeft: {
                 x: itemInfo.left + (itemInfo.itemWidth / 3),
-                y: itemInfo.top + (itemInfo.itemHeight / 3)
+                y: itemInfo.top + (itemInfo.itemHeight / 3),
+                expectedInsertAfter: undefined
             },
             topRight: {
                 x: itemInfo.left + 2 * (itemInfo.itemWidth / 3),
-                y: itemInfo.top + (itemInfo.itemHeight / 3)
+                y: itemInfo.top + (itemInfo.itemHeight / 3),
+                expectedInsertAfter: undefined
             },
             bottomLeft: {
                 x: itemInfo.left + (itemInfo.itemWidth / 3),
-                y: itemInfo.top + 2 * (itemInfo.itemHeight / 3)
+                y: itemInfo.top + 2 * (itemInfo.itemHeight / 3),
+                expectedInsertAfter: undefined
             },
             bottomRight: {
                 x: itemInfo.left + 2 * (itemInfo.itemWidth / 3),
-                y: itemInfo.top + 2 * (itemInfo.itemHeight / 3)
+                y: itemInfo.top + 2 * (itemInfo.itemHeight / 3),
+                expectedInsertAfter: undefined
             }
         };
 
@@ -218,7 +224,7 @@ WinJSTests.CommonListViewLayoutTests = function () {
         }
         return positions;
     }
-    this.generate("testHitTest", function (listView, layoutDetails, rtl, complete) {
+    generate("testHitTest", function (listView, layoutDetails, rtl, complete) {
         var layout = listView.layout;
         var keyHelper = getKeysForConfiguration(layoutDetails.horizontal, rtl);
         var groupsCount = layoutDetails.groupsInfo.length;
@@ -243,5 +249,6 @@ WinJSTests.CommonListViewLayoutTests = function () {
         }
         complete();
     });
-};
+
+}
 LiveUnit.registerTestClass("WinJSTests.CommonListViewLayoutTests");
