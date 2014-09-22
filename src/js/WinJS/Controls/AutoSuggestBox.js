@@ -31,6 +31,9 @@ define([
                 asbHitHighlightSpan: "win-autosuggestbox-hithighlight-span",
                 asbInput: "win-autosuggestbox-input",
                 asbInputFocus: "win-autosuggestbox-input-focus",
+                asbSuggestionResult: "win-autosuggestbox-suggestion-result",
+                asbSuggestionResultText: "win-autosuggestbox-suggestion-result-text",
+                asbSuggestionResultDetailedText: "win-autosuggestbox-suggestion-result-detailed-text",
                 asbSuggestionSelected: "win-autosuggestbox-suggestion-selected",
                 asbSuggestionSeparator: "win-autosuggestbox-suggestion-separator",
                 asbSuggestionQuery: "win-autosuggestbox-suggestion-query",
@@ -52,6 +55,7 @@ define([
                 get ariaLabelInputNoPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputNoPlaceHolder").value; },
                 get ariaLabelInputPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputPlaceHolder").value; },
                 get ariaLabelQuery() { return _Resources._getWinJSString("ui/searchBoxAriaLabelQuery").value; },
+                get ariaLabelResult() { return _Resources._getWinJSString("ui/searchBoxAriaLabelResult").value; },
                 get ariaLabelSeparator() { return _Resources._getWinJSString("ui/searchBoxAriaLabelSeparator").value; },
             };
 
@@ -85,6 +89,12 @@ define([
 
                 this._hideFlyout();
             }, {
+                /// <field type="Function" locid="WinJS.UI.AutoSuggestBox.onresultsuggestionchosen" helpKeyword="WinJS.UI.AutoSuggestBox.onresultsuggestionchosen">
+                /// Raised when user clicks on one of the suggestions displayed.
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </field>
+                onresultsuggestionchosen: _Events._createEventProperty(EventNames.resultsuggestionchosen),
+
                 /// <field type="Function" locid="WinJS.UI.AutoSuggestBox.onquerychanged" helpKeyword="WinJS.UI.AutoSuggestBox.onquerychanged">
                 /// Raised when user or app changes the query text.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
@@ -96,6 +106,12 @@ define([
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 onquerysubmitted: _Events._createEventProperty(EventNames.querysubmitted),
+
+                /// <field type="Function" locid="WinJS.UI.AutoSuggestBox.onsuggestionsrequested" helpKeyword="WinJS.UI.AutoSuggestBox.onsuggestionsrequested">
+                /// Raised when Windows requests search suggestions from the app.
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </field>
+                onsuggestionsrequested: _Events._createEventProperty(EventNames.suggestionsrequested),
 
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.AutoSuggestBox.element" helpKeyword="WinJS.UI.AutoSuggestBox.element">
                 /// Gets the DOM element that hosts the AutoSuggestBox.
@@ -292,7 +308,7 @@ define([
                         } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Separator) {
                             root = separatorSuggestionRenderer(item);
                         } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Result) {
-                            //root = that._resultSuggestionRenderer(item);
+                            root = resultSuggestionRenderer(that, item);
                         } else {
                             throw new _ErrorFromName("WinJS.UI.AutoSuggestBox.invalidSuggestionKind", Strings.invalidSuggestionKind);
                         }
@@ -456,14 +472,13 @@ define([
                     this.queryText = item.text;
                     if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Query) {
                         this._submitQuery(item.text, false /*fillLinguisticDetails*/, event); // force empty linguistic details since explicitly chosen suggestion from list
+                    } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Result) {
+                        this._fireEvent(EventNames.resultsuggestionchosen, {
+                            tag: item.tag,
+                            keyModifiers: getKeyModifiers(event),
+                            storageFile: null
+                        });
                     }
-                    //else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Result) {
-                    //    this._fireEvent(EventNames.resultsuggestionchosen, {
-                    //        tag: item.tag,
-                    //        keyModifiers: getKeyModifiers(event),
-                    //        storageFile: null
-                    //    });
-                    //}
                     this._hideFlyout();
                 },
 
@@ -940,10 +955,10 @@ define([
                             if (_ElementUtilities.hasClass(existingElement, ClassNames.asbSuggestionQuery)) {
                                 this._addHitHighlightedText(existingElement, suggestion, suggestion.text);
                             } else {
-                                var resultSuggestionDiv = existingElement.querySelector("." + ClassNames.searchBoxSuggestionResultText);
+                                var resultSuggestionDiv = existingElement.querySelector("." + ClassNames.asbSuggestionResultText);
                                 if (resultSuggestionDiv) {
                                     this._addHitHighlightedText(resultSuggestionDiv, suggestion, suggestion.text);
-                                    var resultSuggestionDetailDiv = existingElement.querySelector("." + ClassNames.searchBoxSuggestionResultDetailedText);
+                                    var resultSuggestionDetailDiv = existingElement.querySelector("." + ClassNames.asbSuggestionResultDetailedText);
                                     if (resultSuggestionDetailDiv) {
                                         this._addHitHighlightedText(resultSuggestionDetailDiv, suggestion, suggestion.detailText);
                                     }
@@ -979,6 +994,21 @@ define([
                     });
                 },
             }, {
+                createResultSuggestionImage: function asb_createResultSuggestionImage(url) {
+                    /// <signature helpKeyword="WinJS.UI.AutoSuggestBox.createResultSuggestionImage">
+                    /// <summary locid="WinJS.UI.AutoSuggestBox.createResultSuggestionImage">
+                    /// Creates the image argument for SearchSuggestionCollection.appendResultSuggestion.
+                    /// </summary>
+                    /// <param name="url" type="string" locid="WinJS.UI.AutoSuggestBox.asb_createResultSuggestionImage_p:url">
+                    /// The url of the image.
+                    /// </param>
+                    /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                    /// </signature>
+                    if (_WinRT.Windows.Foundation.Uri && _WinRT.Windows.Storage.Streams.RandomAccessStreamReference) {
+                        return _WinRT.Windows.Storage.Streams.RandomAccessStreamReference.createFromUri(new _WinRT.Windows.Foundation.Uri(url));
+                    }
+                    return url;
+                },
             });
 
             function addHitHighlightedText(element, item, text, hitFinder) {
@@ -1090,6 +1120,61 @@ define([
                     keyModifiers |= VirtualKeys.shiftKey;
                 }
                 return keyModifiers;
+            }
+            
+            function resultSuggestionRenderer(asb, item) {
+                var root = _Global.document.createElement("div");
+                var image = new _Global.Image();
+                image.style.opacity = 0;
+                var loadImage = function (url) {
+                    function onload() {
+                        image.removeEventListener("load", onload, false);
+                        Animations.fadeIn(image);
+                    }
+                    image.addEventListener("load", onload, false);
+                    image.src = url;
+                };
+
+                if (item.image !== null) {
+                    item.image.openReadAsync().then(function (streamWithContentType) {
+                        if (streamWithContentType !== null) {
+                            loadImage(_Global.URL.createObjectURL(streamWithContentType, { oneTimeOnly: true }));
+                        }
+                    });
+                } else if (item.imageUrl !== null) {
+                    loadImage(item.imageUrl);
+                }
+                image.setAttribute("aria-hidden", "true");
+                root.appendChild(image);
+
+                var divElement = _Global.document.createElement("div");
+                _ElementUtilities.addClass(divElement, ClassNames.asbSuggestionResultText);
+                addHitHighlightedText(divElement, item, item.text);
+                divElement.title = item.text;
+                divElement.setAttribute("aria-hidden", "true");
+                root.appendChild(divElement);
+
+                var brElement = _Global.document.createElement("br");
+                divElement.appendChild(brElement);
+
+                var divDetailElement = _Global.document.createElement("span");
+                _ElementUtilities.addClass(divDetailElement, ClassNames.asbSuggestionResultDetailedText);
+                addHitHighlightedText(divDetailElement, item, item.detailText);
+                divDetailElement.title = item.detailText;
+                divDetailElement.setAttribute("aria-hidden", "true");
+                divElement.appendChild(divDetailElement);
+
+                _ElementUtilities.addClass(root, ClassNames.asbSuggestionResult);
+
+                _ElementUtilities._addEventListener(root, "pointerup", function (ev) {
+                    asb._inputElement.focus();
+                    asb._processSuggestionChosen(item, ev);
+                });
+
+                root.setAttribute("role", "option");
+                var ariaLabel = _Resources._formatString(Strings.ariaLabelResult, item.text, item.detailText);
+                root.setAttribute("aria-label", ariaLabel);
+                return root;
             }
 
             function querySuggestionRenderer(asb, item) {
