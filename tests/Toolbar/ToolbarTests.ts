@@ -3,6 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 ///<reference path="../../bin/typings/tsd.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
@@ -650,19 +651,18 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("custom 1", toolbar._customContentContainer.textContent, "The custom content flyout has invalid content");
 
             var testSecondCommandClick = () => {
+                toolbar._customContentFlyout.removeEventListener("afterhide", testSecondCommandClick);
+
                 // Click on the second menu item
                 toolbar._menu.show(toolbar._overflowButton, "autovertical", "right");
                 menuCommand = (<HTMLElement> toolbar._menu.element.children[1]);
                 menuCommand.click();
                 LiveUnit.Assert.areEqual("custom 2", toolbar._customContentContainer.textContent, "The custom content flyout has invalid content");
+
+                complete();
             };
 
-            toolbar._customContentFlyout.addEventListener("afterhide", () => {
-                toolbar._customContentFlyout.removeEventListener("afterhide", testSecondCommandClick);
-                testSecondCommandClick();
-                complete();
-            });
-
+            toolbar._customContentFlyout.addEventListener("afterhide", testSecondCommandClick);
             toolbar._customContentFlyout.hide();
         }
 
@@ -877,6 +877,168 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("hidden", getComputedStyle(toolbar._overflowButton).visibility, "Overflow button should not be visible in attached mode");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should still take space in attached mode");
             LiveUnit.Assert.areEqual(24, WinJS.Utilities.getTotalHeight(toolbar._overflowButton), "Overflow button has an invalid height");
+        }
+
+        testKeyboardingAttached(complete) {
+            var Key = WinJS.Utilities.Key;
+            var firstEL = document.createElement("button");
+            var data = new WinJS.Binding.List([
+                new Command(firstEL, { type: Constants.typeButton, label: "1" }),
+                new Command(null, { type: Constants.typeButton, label: "2" }),
+                new Command(null, { type: Constants.typeButton, label: "3", hidden: true }),
+                new Command(null, { type: Constants.typeButton, label: "4" }),
+                new Command(null, { type: Constants.typeButton, label: "s1", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s2", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s3", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s4", section: Constants.secondaryCommandSection }),
+            ]);
+            this._element.style.width = "320px";
+            var toolbar = new Toolbar(this._element, {
+                overflowMode: Constants.overflowModeAttached,
+                data: data
+            });
+
+            toolbar.element.focus();
+            setTimeout(function () {
+                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual(firstEL, document.activeElement);
+                LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.end);
+                LiveUnit.Assert.areEqual("s4", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.home);
+                LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual("2", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.downArrow);
+                LiveUnit.Assert.areEqual("4", document.activeElement.textContent, "Down arrow should skip '3' because that command is hidden");
+
+                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.downArrow);
+                LiveUnit.Assert.areEqual("s2", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.leftArrow);
+                LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.upArrow);
+                LiveUnit.Assert.areEqual("4", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.upArrow);
+                LiveUnit.Assert.areEqual("2", document.activeElement.textContent, "Up arrow should skip '3' because that command is hidden");
+                complete();
+            });
+        }
+
+        testKeyboardingDetached(complete) {
+            var Key = WinJS.Utilities.Key;
+            var firstEL = document.createElement("button");
+            var data = new WinJS.Binding.List([
+                new Command(firstEL, { type: Constants.typeButton, label: "1" }),
+                new Command(null, { type: Constants.typeButton, label: "2", disabled: true }),
+                new Command(null, { type: Constants.typeButton, label: "3" }),
+                new Command(null, { type: Constants.typeButton, label: "4" }),
+                new Command(null, { type: Constants.typeButton, label: "s1", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s2", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s3", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s4", section: Constants.secondaryCommandSection }),
+            ]);
+            this._element.style.width = "10px";
+            var toolbar = new Toolbar(this._element, {
+                overflowMode: Constants.overflowModeDetached,
+                data: data
+            });
+
+            this._element.style.width = (3 * toolbar._standardCommandWidth) + toolbar._overflowButtonWidth + "px";
+            toolbar.forceLayout();
+
+            // The main action area should only show | 1 | 2 (disabled) | 3  | ... |
+            toolbar.element.focus();
+            setTimeout(function () {
+                CommonUtilities.keydown(toolbar.element, Key.downArrow);
+                LiveUnit.Assert.areEqual(firstEL, document.activeElement);
+                LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.end);
+                LiveUnit.Assert.areEqual("3", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement);
+
+                CommonUtilities.keydown(toolbar.element, Key.home);
+                LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual("3", document.activeElement.textContent, "Right arrow, should skip '2' because that command is disabled");
+
+                CommonUtilities.keydown(toolbar.element, Key.downArrow);
+                LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement);
+
+                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement);
+
+                CommonUtilities.keydown(toolbar.element, Key.leftArrow);
+                LiveUnit.Assert.areEqual("3", document.activeElement.textContent);
+
+                CommonUtilities.keydown(toolbar.element, Key.upArrow);
+                LiveUnit.Assert.areEqual("1", document.activeElement.textContent, "Up arrow, should skip '2' because that command is disabled");
+                complete();
+            });
+        }
+
+        testKeyboardingWithCustomContent(complete) {
+            var Key = WinJS.Utilities.Key;
+            var firstEL = document.createElement("button");
+            var customEl = document.createElement("div");
+            var firstCheckBox = document.createElement("input");
+            firstCheckBox.type = "checkbox";
+            var secondCheckBox = document.createElement("input");
+            secondCheckBox.type = "checkbox";
+            customEl.appendChild(firstCheckBox);
+            customEl.appendChild(secondCheckBox);
+            var lastEl = document.createElement("button");
+            var data = new WinJS.Binding.List([
+                new Command(firstEL, { type: Constants.typeButton, label: "1" }),
+                new Command(customEl, { type: Constants.typeContent, label: "2", firstElementFocus: firstCheckBox, lastElementFocus: secondCheckBox }),
+                new Command(lastEl, { type: Constants.typeButton, label: "3" }),
+            ]);
+            this._element.style.width = "10px";
+            var toolbar = new Toolbar(this._element, {
+                overflowMode: Constants.overflowModeDetached,
+                data: data
+            });
+
+            var customContentWidth = toolbar._getCommandWidth(data.getAt(1));
+            this._element.style.width = (2 * toolbar._standardCommandWidth) + customContentWidth + "px";
+            toolbar.forceLayout();
+
+            // The main action area should show | 1 | 2 (custom) | 3 | 
+
+            toolbar.element.focus();
+            setTimeout(function () {
+                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual(firstEL, document.activeElement);
+
+                CommonUtilities.keydown(toolbar.element, Key.end);
+                LiveUnit.Assert.areEqual(lastEl, document.activeElement);
+
+                CommonUtilities.keydown(toolbar.element, Key.leftArrow);
+                LiveUnit.Assert.areEqual(secondCheckBox, document.activeElement);
+
+                CommonUtilities.keydown(toolbar.element, Key.leftArrow);
+                LiveUnit.Assert.areEqual(firstEL, document.activeElement);
+
+                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual(firstCheckBox, document.activeElement);
+
+                CommonUtilities.keydown(toolbar.element, Key.home);
+                LiveUnit.Assert.areEqual(firstEL, document.activeElement);
+                complete();
+            });
         }
     }
 }

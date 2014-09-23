@@ -907,3 +907,5 @@ export declare module _resizeNotifier {
 
 export declare function _addInsertedNotifier(element: HTMLElement): void;
 export declare function _reparentChildren(originalParent: HTMLElement, destinationParent: HTMLElement): void;
+export declare function _matchesSelector(element:HTMLElement, selectors: string): boolean;
+export declare function _addEventListener(element: HTMLElement, type: string, listener: EventListener, useCapture?: boolean): void;

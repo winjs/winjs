@@ -13,6 +13,7 @@ import _ErrorFromName = require("../Core/_ErrorFromName");
 import _Flyout = require("../Controls/Flyout");
 import _Global = require("../Core/_Global");
 import _Hoverable = require("../Utilities/_Hoverable");
+import _KeyboardBehavior = require("../Utilities/_KeyboardBehavior");
 import Menu = require("../Controls/Menu");
 import _MenuCommand = require("./Menu/_Command");
 import _Resources = require("../Core/_Resources");
@@ -30,6 +31,11 @@ interface ICommandInfo {
 interface ICommandWithType {
     element: HTMLElement;
     type: string;
+}
+
+interface IFocusableElementsInfo {
+    elements: HTMLElement[];
+    focusedIndex: number;
 }
 
 var strings = {
@@ -78,7 +84,8 @@ export class Toolbar {
     private _initializing = true;
     private _attachedOverflowArea: HTMLElement;
     private _hoverable = _Hoverable.isHoverable; /* force dependency on hoverable module */
-    
+    private _winKeyboard: _KeyboardBehavior._WinKeyboard;
+
     // <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.element" helpKeyword="WinJS.UI.Toolbar.element">
     /// Gets the DOM element that hosts the Toolbar.
     /// </field>
@@ -238,6 +245,9 @@ export class Toolbar {
             this._element.addEventListener("WinJSNodeInserted", nodeInsertedHandler, false);
         }
 
+        this.element.addEventListener('keydown', this._keyDownHandler.bind(this));
+        this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this.element);
+
         this._initializing = false;
 
         this._writeProfilerMark("constructor,StopTM");
@@ -307,6 +317,119 @@ export class Toolbar {
             this._menu.show(this._overflowButton, "autovertical", isRTL ? "left" : "right");
         });
         this._overflowButtonWidth = _ElementUtilities.getTotalWidth(this._overflowButton);
+    }
+
+    private _getFocusableElementsInfo(): IFocusableElementsInfo {
+        var focusableCommandsInfo: IFocusableElementsInfo = {
+            elements: [],
+            focusedIndex: -1
+        };
+        var elementsInReach = Array.prototype.slice.call(this._mainActionArea.children);
+        if (this._isAttachedMode()) {
+            elementsInReach = elementsInReach.concat(Array.prototype.slice.call(this._attachedOverflowArea.children));
+        }
+
+        elementsInReach.forEach((element: HTMLElement) => {
+            if (this._isElementFocusable(element)) {
+                focusableCommandsInfo.elements.push(element);
+                if (element.contains(<HTMLElement>_Global.document.activeElement)) {
+                    focusableCommandsInfo.focusedIndex = focusableCommandsInfo.elements.length - 1;
+                }
+            }
+        });
+
+        return focusableCommandsInfo;
+    }
+
+    private _isElementFocusable(element: HTMLElement): boolean {
+        var focusable = false;
+        if (element) {
+            var command = element["winControl"];
+            if (command) {
+                focusable = command.element.style.display !== "none" &&
+                    command.type !== _Constants.typeSeparator &&
+                    !command.hidden &&
+                    !command.disabled &&
+                    (!command.firstElementFocus || command.firstElementFocus.tabIndex >= 0 || command.lastElementFocus.tabIndex >= 0);
+            } else {
+                // e.g. the overflow button
+                focusable = element.style.display !== "none" &&
+                    getComputedStyle(element).visibility !== "hidden" &&
+                    element.tabIndex >= 0;
+            }
+        }
+        return focusable;
+    }
+
+    private _isMainActionCommand(element: HTMLElement) {
+        // Returns true if the element is a command in the main action area, false otherwise
+        return element && element["winControl"] && element.parentElement === this._mainActionArea;
+    }
+
+    private _getLastElementFocus(element: HTMLElement) {
+        if (this._isMainActionCommand(element)) {
+            // Only commands in the main action area support lastElementFocus
+            return element["winControl"].lastElementFocus;
+        } else {
+            return element;
+        }
+    }
+
+    private _getFirstElementFocus(element: HTMLElement) {
+        if (this._isMainActionCommand(element)) {
+            // Only commands in the main action area support firstElementFocus
+            return element["winControl"].firstElementFocus;
+        } else {
+            return element;
+        }
+    }
+
+    private _keyDownHandler(ev: any) {
+        if (!ev.altKey) {
+            if (_ElementUtilities._matchesSelector(ev.target, ".win-interactive, .win-interactive *")) {
+                return;
+            }
+            var Key = _ElementUtilities.Key;
+            var rtl = _Global.getComputedStyle(this._element).direction === "rtl";
+            var focusableElementsInfo = this._getFocusableElementsInfo();
+            var targetCommand: HTMLElement;
+
+            if (focusableElementsInfo.elements.length) {
+                switch (ev.keyCode) {
+                    case (rtl ? Key.rightArrow : Key.leftArrow):
+                    case Key.upArrow:
+                        var index = Math.max(0, focusableElementsInfo.focusedIndex - 1);
+                        targetCommand = this._getLastElementFocus(focusableElementsInfo.elements[index % focusableElementsInfo.elements.length]);
+                        break;
+
+                    case (rtl ? Key.leftArrow : Key.rightArrow):
+                    case Key.downArrow:
+                        var index = Math.min(focusableElementsInfo.focusedIndex + 1, focusableElementsInfo.elements.length - 1);
+                        targetCommand = this._getFirstElementFocus(focusableElementsInfo.elements[index]);
+                        break;
+
+                    case Key.home:
+                        var index = 0;
+                        targetCommand = this._getFirstElementFocus(focusableElementsInfo.elements[index]);
+                        break;
+
+                    case Key.end:
+                        var index = focusableElementsInfo.elements.length - 1;
+                        if (!this._isAttachedMode() && this._isElementFocusable(this._overflowButton)) {
+                            // In detached mode, the end key goes to the last command, not the overflow button,
+                            // which is the last element when it is visible.
+                            index = Math.max(0, index - 1);
+                        }
+                        targetCommand = this._getLastElementFocus(focusableElementsInfo.elements[index]);
+                        break;
+                }
+            }
+
+            if (targetCommand) {
+                targetCommand.focus();
+                ev.preventDefault();
+            }
+        }
     }
 
     private _getDataFromDOMElements(): BindingList.List<_Command.ICommand> {

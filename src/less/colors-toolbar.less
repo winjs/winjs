@@ -1,130 +1,122 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#win-toolbar {
+    .variableDefs(dark) {
+        @backgroundColor:rgb(43, 43, 43);
+        @commandDefaultBorderColor: transparent;
+        @commandFocusBorderColor: rgb(255, 255, 255);
+        @overflowButtonEllipsisColor: rgb(255, 255, 255);
+        @overflowButtonEllipsisHoverBackground: transparent;
+        @overflowButtonBackground: transparent;
+        @inlineMenuCommandHoverBackground: rgb(222, 222, 222);
+        @inlineMenuCommandFocusBackground: transparent;
+        @inlineMenuCommandActiveBackground: rgb(255, 255, 255);
+    }
+
+    .variableDefs(light) {
+        @backgroundColor:rgb(230, 230, 230);
+        @commandDefaultBorderColor: transparent;
+        @commandFocusBorderColor: rgb(0, 0, 0);
+        @overflowButtonEllipsisColor: rgb(0, 0, 0);
+        @overflowButtonEllipsisHoverBackground: transparent;
+        @overflowButtonBackground: transparent;
+        @inlineMenuCommandHoverBackground: rgb(222, 222, 222);
+        @inlineMenuCommandFocusBackground: transparent;
+        @inlineMenuCommandActiveBackground:  rgb(0, 0, 0);
+    }
+
+    .variableDefs(highcontrast) {
+        @backgroundColor:ButtonFace;
+        @commandDefaultBorderColor: ButtonFace;
+        @commandFocusBorderColor: ButtonText;
+        @overflowButtonEllipsisColor: ButtonText;
+        @overflowButtonEllipsisHoverBackground: Highlight;
+        @overflowButtonBackground: ButtonFace;
+        @inlineMenuCommandHoverBackground: Highlight;
+        @inlineMenuCommandFocusBackground: ButtonFace;
+        @inlineMenuCommandActiveBackground: ButtonText;
+    }
+
+    .stylesForTheme(@theme) {
+        &.win-toolbar, .win-toolbar {
+
+            #win-toolbar > .variableDefs(@theme);
+
+            background-color: @backgroundColor;
+
+            div.win-command.win-command:focus,
+            div.win-command.win-command,
+            button:enabled.win-command.win-command:focus,
+            button:enabled.win-command.win-command {
+                border-color: @commandDefaultBorderColor;
+            }
+
+            div.win-command:focus.win-keyboard,
+            button:enabled.win-command:focus.win-keyboard {
+                border-color: @commandFocusBorderColor;
+            }
+
+            button.win-toolbar-overflowbutton {
+                background-color: @overflowButtonBackground;
+                border-color: @commandDefaultBorderColor;
+
+                &:enabled {
+                    &:-ms-keyboard-active {
+                        // Override intrinsic button element styles
+                        background-color: @overflowButtonBackground;
+                    }
+
+                    .win-toolbar-ellipsis {
+                        color: @overflowButtonEllipsisColor;
+                    }
+                }
+
+                &.win-keyboard:focus {
+                    border-color: @commandFocusBorderColor;
+                }
+            }
+
+            .win-toolbar-overflowarea {
+                button:enabled.win-command {
+                    &:focus {
+                        background-color: @inlineMenuCommandFocusBackground
+                    }
+                    &:hover:active {
+                        background-color: @inlineMenuCommandActiveBackground;
+                    }
+                }
+            }
+        }
+    }
+
+    .stylesForThemeHover(@theme) {
+        &.win-toolbar, .win-toolbar {
+
+            #win-toolbar > .variableDefs(@theme);
+
+            button.win-toolbar-overflowbutton:hover {
+                background-color: @overflowButtonEllipsisHoverBackground;
+            }
+
+            .win-toolbar-overflowarea button.win-command:hover {
+                background-color: @inlineMenuCommandHoverBackground;
+            }
+        }
+    }
+}
+
 .Colors(@theme) {
-    .mixin(dark) {
-        &.win-toolbar, .win-toolbar {
-            &.win-toolbar-attached {
-                .win-toolbar-overflowarea {
-                    button.win-command {
-                        border-color: transparent;
-                    }
-
-                    button.win-command:focus {
-                        background-color: transparent;
-                        border-color: rgb(255, 255, 255);
-                    }
-                }
-            }
-
-            button.win-toolbar-overflowbutton.win-toolbar-overflowbutton {
-                background-color: transparent;
-
-                .win-toolbar-ellipsis {
-                    border-color: transparent;
-                }
-
-                &:enabled {
-                    &:-ms-keyboard-active {
-                        // Override intrinsic button element styles
-                        background-color: transparent;
-                    }
-
-                    .win-toolbar-ellipsis {
-                        color: rgb(255, 255, 255);
-                    }
-                }
-            }
-
-            button.win-toolbar-overflowbutton:focus {
-                border-color:rgb(255, 255, 255);
-            }
-        }
-    }
-
-    .mixin(light) {
-        &.win-toolbar, .win-toolbar {
-            &.win-toolbar-attached {
-                .win-toolbar-overflowarea {
-                    button.win-command {
-                        border-color: transparent;
-                    }
-
-                    button.win-command:focus {
-                        background-color: transparent;
-                        border-color: rgb(0, 0, 0);
-                    }
-                }
-            }
-
-            button.win-toolbar-overflowbutton.win-toolbar-overflowbutton {
-                background-color: transparent;
-
-                .win-toolbar-ellipsis {
-                    border-color: transparent;
-                }
-
-                &:enabled {
-                    &:-ms-keyboard-active {
-                        // Override intrinsic button element styles
-                        background-color: transparent;
-                    }
-
-                    .win-toolbar-ellipsis {
-                        color: rgb(0, 0, 0);
-                    }
-                }
-            }
-
-            button.win-toolbar-overflowbutton:focus {
-                border-color:rgb(0, 0, 0);
-            }
-        }
-    }
-    .mixin(@theme);
+    #win-toolbar > .stylesForTheme(@theme);
 }
 
 .ColorsHover(@theme) {
-    .mixin(dark) {
-        &.win-toolbar, .win-toolbar {
-            &.win-toolbar-attached {
-                .win-toolbar-overflowarea {
-                    button.win-command:hover {
-                        background-color: rgb(222, 222, 222);
-                    }
-                }
-            }
-        }
-    }
-
-    .mixin(light) {
-        &.win-toolbar, .win-toolbar {
-            &.win-toolbar-attached {
-                .win-toolbar-overflowarea {
-                    button.win-command:hover {
-                        background-color: rgb(222, 222, 222);
-                    }
-                }
-            }
-        }
-    }
-    .mixin(@theme);
+    #win-toolbar > .stylesForThemeHover(@theme);
 }
 
-@media (-ms-high-contrast) {
-    .win-toolbar {
-        button.win-toolbar-overflowbutton {
-            background-color: transparent;
+.HighContrast() {
+    #win-toolbar > .stylesForTheme(highcontrast);
+}
 
-            &:enabled {
-                &:-ms-keyboard-active {
-                    // Override intrinsic button element styles
-                    background-color: transparent;
-                }
-
-                .win-toolbar-ellipsis {
-                    color: ButtonText;
-                }
-            }
-        }
-    }
+.HighContrastHover() {
+    #win-toolbar > .stylesForThemeHover(highcontrast);
 }
