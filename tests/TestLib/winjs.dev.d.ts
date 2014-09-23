@@ -441,6 +441,27 @@ declare module WinJS {
             _disposed;
         }
 
+        class PrivateNavBar extends NavBar {
+            _disposed;
+        }
+
+        class PrivateNavBarCommand extends NavBarCommand {
+            _buttonEl;
+            _disposed;
+            _splitButtonEl;
+            static _EventName;
+        }
+
+        class PrivateNavBarContainer extends NavBarContainer {
+            _surfaceEl;
+            _measured;
+            _scrollPosition
+            _sizes;
+            _disposed;
+
+            static _EventName;
+        }
+
         class Toolbar {
             public element: HTMLElement;
             public overflowMode: string;
