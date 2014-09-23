@@ -462,6 +462,25 @@ declare module WinJS {
             static _EventName;
         }
 
+        class PrivateHub extends Hub {
+            sections: WinJS.Binding.List<PrivateHubSection>;
+            _viewportElement;
+
+            static _EventName;
+            static _ClassName;
+            static LoadingState;
+            static AnimationType;
+        }
+
+        class PrivateHubSection extends HubSection {
+            _headerContentElement;
+            _setHeaderTemplate;
+            _headerTabStopElement;
+
+            static _ClassName;
+            static _Constants;
+        }
+
         class Toolbar {
             public element: HTMLElement;
             public overflowMode: string;

@@ -1,44 +1,24 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
-/// <reference path="HubUtils.js" />
-/// <reference path="HubUtils.css" />
+/// <reference path="HubUtils.ts" />
+// <reference path="HubUtils.css" />
 
-var HubTests = HubTests || {};
+module HubTests {
 
-HubTests.BasicTests = function () {
     "use strict";
+
+    var HubSection = <typeof WinJS.UI.PrivateHubSection>WinJS.UI.HubSection;
+    var Hub = <typeof WinJS.UI.PrivateHub>WinJS.UI.Hub;
 
     // This is the setup function that will be called at the beginning of each test function.
     var hostId = "HubTests";
     var hostSelector = "#" + hostId;
     var HubUtils = HubTests.Utilities;
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
 
-        var newNode = document.createElement("div");
-        newNode.id = hostId;
-        newNode.style.minHeight = "1024px";
-        newNode.style.minWidth = "768px";
-        newNode.style.height = "100%";
-        newNode.style.width = "100%";
-        document.body.appendChild(newNode);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-
-        var element = document.getElementById(hostId);
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-    }
-
-    // Test functions
     function InitTest(testHost, config) {
         var control = testHost.querySelector(".win-hub").winControl;
         LiveUnit.LoggingCore.logComment("Waiting for control...");
@@ -58,25 +38,25 @@ HubTests.BasicTests = function () {
         var sectionsLoadedIndex = i;
         var completeIndex = i;
         var loadingIndex = i;
-        LiveUnit.Assert.areEqual(WinJS.UI.Hub.LoadingState.loading, control.loadingState, "Loading state should start in loading");
+        LiveUnit.Assert.areEqual(Hub.LoadingState.loading, control.loadingState, "Loading state should start in loading");
         i++;
         return HubUtils.waitForReady(control)().
             then(function () {
                 completeIndex = i;
                 LiveUnit.Assert.isTrue(completeIndex > sectionsLoadedIndex, "Expecting complete to fire after sectionsLoaded event");
-                LiveUnit.Assert.areEqual(WinJS.UI.Hub.LoadingState.complete, control.loadingState, "Loading state should finish in complete");
+                LiveUnit.Assert.areEqual(Hub.LoadingState.complete, control.loadingState, "Loading state should finish in complete");
             }, function () {
                 LiveUnit.Assert.fail("An error was reported by waitForReady");
             }, function () {
-                if (control.loadingState === WinJS.UI.Hub.LoadingState.sectionsLoaded) {
+                if (control.loadingState === Hub.LoadingState.sectionsLoaded) {
                     sectionsLoadedIndex = i;
                     LiveUnit.Assert.isTrue(sectionsLoadedIndex > loadingIndex, "Sections loaded Event should fire after loading event");
                     i++;
-                } else if (control.loadingState === WinJS.UI.Hub.LoadingState.loading) {
+                } else if (control.loadingState === Hub.LoadingState.loading) {
                     loadingIndex = i;
                     i++;
                 } else {
-                    LiveUnit.fail("Unrecognized loading state: " + control.loadingState);
+                    LiveUnit.Assert.fail("Unrecognized loading state: " + control.loadingState);
                 }
             });
     }
@@ -156,7 +136,7 @@ HubTests.BasicTests = function () {
                 if (headerElements.length > 0) {
                     var interactiveHeaderCount = 0;
 
-                    control.addEventListener(WinJS.UI.Hub._EventName.headerInvoked, function (ev) {
+                    control.addEventListener(Hub._EventName.headerInvoked, function (ev) {
                         interactiveHeaderCount--;
                         LiveUnit.Assert.isFalse(config.sectionsArray[ev.detail.index].isHeaderStatic, "Header element " + ev.detail.index + " not expected to be interactive");
                     });
@@ -195,21 +175,21 @@ HubTests.BasicTests = function () {
                 control.headerTemplate = myCustomTemplate;
                 return HubUtils.waitForReady(control)();
             }).then(function () {
-                HubUtils.verifySections(control, config.sectionsArray, myCustomTemplate);
-                control.headerTemplate = null;
+                    HubUtils.verifySections(control, config.sectionsArray, myCustomTemplate);
+                    control.headerTemplate = null;
 
-                //verify that the headerTemplate actually changes
-                LiveUnit.Assert.areNotEqual(myCustomTemplate, control.headerTemplate);
-                LiveUnit.Assert.areNotEqual(config.headerTemplate, control.headerTemplate);
+                    //verify that the headerTemplate actually changes
+                    LiveUnit.Assert.areNotEqual(myCustomTemplate, control.headerTemplate);
+                    LiveUnit.Assert.areNotEqual(config.headerTemplate, control.headerTemplate);
 
-                return HubUtils.waitForReady(control)();
-            }).done(function () {
-                HubUtils.verifySections(control, config.sectionsArray, control.headerTemplate);
+                    return HubUtils.waitForReady(control)();
+                }).done(function () {
+                    HubUtils.verifySections(control, config.sectionsArray, control.headerTemplate);
 
-                //reset the template back to match the input config
-                control.headerTemplate = oldTemplate;
-                c();
-            });
+                    //reset the template back to match the input config
+                    control.headerTemplate = oldTemplate;
+                    c();
+                });
         });
     }
 
@@ -226,7 +206,7 @@ HubTests.BasicTests = function () {
                         var scrollRange = HubUtils.getScrollRange(control);
                         var surfaceSpacers = HubUtils.getSurfaceSpacers(control);
                         var isLTR = (getComputedStyle(control.element).direction === "ltr");
-                        var sectionElement = control.element.querySelectorAll("." + WinJS.UI.HubSection._ClassName.hubSection)[expectedValue];
+                        var sectionElement = control.element.querySelectorAll("." + HubSection._ClassName.hubSection)[expectedValue];
                         var sectionElementRect = sectionElement.getBoundingClientRect();
                         var viewportRect = control._viewportElement.getBoundingClientRect();
 
@@ -324,7 +304,7 @@ HubTests.BasicTests = function () {
                 }
 
                 //loop
-                return new asyncWhile(continueCondition, loop);
+                return asyncWhile(continueCondition, loop);
             });
     }
 
@@ -341,7 +321,7 @@ HubTests.BasicTests = function () {
                 function loop() {
                     return new WinJS.Promise(function (c) {
                         currentScrollPosition = Math.min(currentScrollPosition + increment, scrollRange.max);
-                        var newPosition = {};
+                        var newPosition: any = {};
                         newPosition[scrollProperty] = currentScrollPosition;
                         WinJS.Utilities.setScrollPosition(scroller, newPosition);
 
@@ -355,7 +335,7 @@ HubTests.BasicTests = function () {
                 function continueCondition() {
                     return WinJS.Promise.wrap(currentScrollPosition < scrollRange.max);
                 }
-                return new asyncWhile(continueCondition, loop);
+                return asyncWhile(continueCondition, loop);
             });
     }
 
@@ -384,13 +364,13 @@ HubTests.BasicTests = function () {
                 function continueCondition() {
                     return WinJS.Promise.wrap(currentScrollPosition < scrollRange.max);
                 }
-                return new asyncWhile(continueCondition, loop);
+                return asyncWhile(continueCondition, loop);
             });
     }
 
     function SwapSectionsTest(testHost, config) {
         var control = testHost.querySelector(".win-hub").winControl;
-        var newSections = [new WinJS.UI.HubSection()];
+        var newSections = [new HubSection()];
         var oldSections = control.sections;
 
         return HubUtils.waitForReady(control)().
@@ -421,18 +401,46 @@ HubTests.BasicTests = function () {
             });
     }
 
-    new HubUtils.test(this, hostSelector, "Init", InitTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "LoadingStateChanged", LoadingStateChangedTest), { priority: 0 };
-    new HubUtils.test(this, hostSelector, "RemoveFromDOMTest", RemoveFromDOMTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "RehydrationTest", RehydrationTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "SwapOrientation", SwapOrientationTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "SwapHeaderTemplateTest", SwapHeaderTemplateTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "HeaderInvokedTest", HeaderInvokedTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "SetSectionOnScreenTest", SetSectionOnScreenTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "GetSectionOnScreenTest", GetSectionOnScreenTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "GetScrollPosTest", GetScrollPosTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "SetScrollPosTest", SetScrollPosTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "SwapSectionsTest", SwapSectionsTest, { priority: 0 });
-    new HubUtils.test(this, hostSelector, "DeleteAll", DeleteAllTest, { priority: 1 });
+    export class BasicTests {
+
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+
+            var newNode = document.createElement("div");
+            newNode.id = hostId;
+            newNode.style.minHeight = "1024px";
+            newNode.style.minWidth = "768px";
+            newNode.style.height = "100%";
+            newNode.style.width = "100%";
+            document.body.appendChild(newNode);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+
+            var element = document.getElementById(hostId);
+            if (element) {
+                WinJS.Utilities.disposeSubTree(element);
+                document.body.removeChild(element);
+            }
+        }
+
+        // Test functions
+    }
+
+    HubUtils.test(BasicTests, hostSelector, "Init", InitTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "LoadingStateChanged", LoadingStateChangedTest), { priority: 0 };
+    HubUtils.test(BasicTests, hostSelector, "RemoveFromDOMTest", RemoveFromDOMTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "RehydrationTest", RehydrationTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "SwapOrientation", SwapOrientationTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "SwapHeaderTemplateTest", SwapHeaderTemplateTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "HeaderInvokedTest", HeaderInvokedTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "SetSectionOnScreenTest", SetSectionOnScreenTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "GetSectionOnScreenTest", GetSectionOnScreenTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "GetScrollPosTest", GetScrollPosTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "SetScrollPosTest", SetScrollPosTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "SwapSectionsTest", SwapSectionsTest, { priority: 0 });
+    HubUtils.test(BasicTests, hostSelector, "DeleteAll", DeleteAllTest, { priority: 1 });
 };
+}
 LiveUnit.registerTestClass("HubTests.BasicTests");
