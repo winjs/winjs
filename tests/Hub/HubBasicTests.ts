@@ -441,6 +441,6 @@ module HubTests {
     HubUtils.test(BasicTests, hostSelector, "SetScrollPosTest", SetScrollPosTest, { priority: 0 });
     HubUtils.test(BasicTests, hostSelector, "SwapSectionsTest", SwapSectionsTest, { priority: 0 });
     HubUtils.test(BasicTests, hostSelector, "DeleteAll", DeleteAllTest, { priority: 1 });
-};
 }
+
 LiveUnit.registerTestClass("HubTests.BasicTests");
