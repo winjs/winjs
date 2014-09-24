@@ -10,7 +10,7 @@
 module CorsicaTests {
 
 
-    var PrivateAppBar:typeof WinJS.UI.PrivateAppBar;
+    var PrivateAppBar = <typeof WinJS.UI.PrivateAppBar>WinJS.UI.AppBar;
     var AppBarCommand = <typeof WinJS.UI.PrivateCommand>WinJS.UI.AppBarCommand;
 
     var _Constants;
@@ -105,8 +105,6 @@ module CorsicaTests {
 
 
         setUp() {
-            //  https://github.com/winjs/winjs/issues/608
-            PrivateAppBar = <typeof WinJS.UI.PrivateAppBar>WinJS.UI.AppBar;
             LiveUnit.LoggingCore.logComment("In setup");
             var AppBarElement = document.createElement('div');
             AppBarElement.id = "appBarDiv";
@@ -1705,13 +1703,13 @@ module CorsicaTests {
             function simulateBackClick() {
                 backClickEvent = OverlayHelpers.createBackClickEvent();
                 LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
-                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application
 
                 WinJS.Application.addEventListener("verification", verify, true);
                 WinJS.Application.queueEvent({ type: 'verification' });
             };
 
-            // Verify 
+            // Verify
             function verify() {
                 LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "AppBar should have handled the 'backclick' event");
                 LiveUnit.Assert.isTrue(appbar.hidden, "AppBar should be hidden by light dismiss");
@@ -1722,7 +1720,7 @@ module CorsicaTests {
             function cleanup() {
                 WinJS.Application.removeEventListener("verification", verify, true);
                 WinJS.Application.stop();
-                // Application.stop() kills all listeners on the Application object. 
+                // Application.stop() kills all listeners on the Application object.
                 // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
                 WinJS.UI._Overlay._globalEventListeners.reset();
                 complete();
@@ -1747,13 +1745,13 @@ module CorsicaTests {
             function simulateBackClick() {
                 backClickEvent = OverlayHelpers.createBackClickEvent();
                 LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
-                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application
 
                 WinJS.Application.addEventListener("verification", verify, true);
                 WinJS.Application.queueEvent({ type: 'verification' });
             };
 
-            // Verify 
+            // Verify
             function verify() {
                 LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled, "A sticky AppBar by itself, should not handle the 'backclick' event.");
                 LiveUnit.Assert.isFalse(stickyBar.hidden, "Sticky AppBar should not light dismiss");
@@ -1764,7 +1762,7 @@ module CorsicaTests {
             function cleanup() {
                 WinJS.Application.removeEventListener("verification", verify, true);
                 WinJS.Application.stop();
-                // Application.stop() kills all listeners on the Application object. 
+                // Application.stop() kills all listeners on the Application object.
                 // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
                 WinJS.UI._Overlay._globalEventListeners.reset();
                 complete();
@@ -1783,20 +1781,20 @@ module CorsicaTests {
         };
 
         testStickyAppBarDoesLightDismissOtherAppBarsWhenBackClickHappens = function (complete) {
-            // Verifies that a shown, sticky AppBar containing focus, WILL handle the WinJS.Application 'backclick' event and light dismiss AppBars, 
+            // Verifies that a shown, sticky AppBar containing focus, WILL handle the WinJS.Application 'backclick' event and light dismiss AppBars,
             // if there is at least one non-sticky AppBar shown.
 
             // Simulate
             function simulateBackClick() {
                 backClickEvent = OverlayHelpers.createBackClickEvent();
                 LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
-                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application
 
                 WinJS.Application.addEventListener("verification", verify, true);
                 WinJS.Application.queueEvent({ type: 'verification' });
             };
 
-            // Verify 
+            // Verify
             function verify() {
 
                 LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "A shown, sticky AppBar contaning focus, should handle the 'backclick' event, if at least one non sticky AppBar was also shown.");

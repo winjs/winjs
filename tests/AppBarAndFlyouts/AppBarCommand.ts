@@ -8,14 +8,10 @@
 module CorsicaTests {
     "use strict";
 
-    var PrivateAppBar:typeof WinJS.UI.PrivateAppBar;
+    var PrivateAppBar = <typeof WinJS.UI.PrivateAppBar>WinJS.UI.AppBar;
     var AppBarCommand = <typeof WinJS.UI.PrivateCommand>WinJS.UI.AppBarCommand;
 
     export class AppBarCommandTests {
-        setUp() {
-            //  https://github.com/winjs/winjs/issues/608
-            PrivateAppBar = <typeof WinJS.UI.PrivateAppBar>WinJS.UI.AppBar;
-        }
         // Test AppBarCommand Instantiation
         testAppBarCommandInstantiation = function () {
             // Get the AppBarCommand element from the DOM
