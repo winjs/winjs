@@ -555,6 +555,19 @@ declare module WinJS {
         var _LISTVIEW_PROGRESS_DELAY;
         var _Overlay;
         var _AppBarCommandsLayout;
+
+        module Pages {
+            function _remove(frag);
+            var _cacheStore;
+        }
+
+        module Fragments {
+            var _cacheStore;
+            function clearCache();
+            var _forceLocal;
+            var _getFragmentContents;
+            var _writeProfilerMark;
+        }
     }
 
     module Binding {
