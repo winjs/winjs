@@ -50,13 +50,12 @@ define([
                 get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
                 get invalidSuggestionKind() { return "Error: Invalid suggestion kind."; },
 
-                //todo aria labels
-                get ariaLabel() { return _Resources._getWinJSString("ui/searchBoxAriaLabel").value; },
-                get ariaLabelInputNoPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputNoPlaceHolder").value; },
-                get ariaLabelInputPlaceHolder() { return _Resources._getWinJSString("ui/searchBoxAriaLabelInputPlaceHolder").value; },
-                get ariaLabelQuery() { return _Resources._getWinJSString("ui/searchBoxAriaLabelQuery").value; },
-                get ariaLabelResult() { return _Resources._getWinJSString("ui/searchBoxAriaLabelResult").value; },
-                get ariaLabelSeparator() { return _Resources._getWinJSString("ui/searchBoxAriaLabelSeparator").value; },
+                get ariaLabel() { return _Resources._getWinJSString("ui/autoSuggestBoxAriaLabel").value; },
+                get ariaLabelInputNoPlaceHolder() { return _Resources._getWinJSString("ui/autoSuggestBoxAriaLabelInputNoPlaceHolder").value; },
+                get ariaLabelInputPlaceHolder() { return _Resources._getWinJSString("ui/autoSuggestBoxAriaLabelInputPlaceHolder").value; },
+                get ariaLabelQuery() { return _Resources._getWinJSString("ui/autoSuggestBoxAriaLabelQuery").value; },
+                get ariaLabelResult() { return _Resources._getWinJSString("ui/autoSuggestBoxAriaLabelResult").value; },
+                get ariaLabelSeparator() { return _Resources._getWinJSString("ui/autoSuggestBoxAriaLabelSeparator").value; },
             };
 
             var AutoSuggestBox = _Base.Class.define(function asb_ctor(element, options) {
