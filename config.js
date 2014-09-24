@@ -5,7 +5,7 @@
     var config = {};
     module.exports = config;
 
-    config.version = "3.0";
+    config.version = "3.1";
     config.buildDate = new Date();
     config.month = config.buildDate.getMonth() + 1;
     config.buildDateString = config.buildDate.getFullYear() + "." + config.month + "." + config.buildDate.getDate();
@@ -26,9 +26,7 @@
 
     config.targetName = "WinJS." + config.version;
     config.desktopFramework = "Microsoft." + config.targetName;
-    config.phoneFramework = "Microsoft.Phone." + config.targetName;
     config.desktopOutput = config.outputFolder + config.desktopFramework + "/";
-    config.phoneOutput = config.outputFolder + config.phoneFramework + "/";
     config.modulesOutput = config.outputFolder + "modules/";
     config.compiledTsOutput = config.outputFolder + "tsbuild/";
 

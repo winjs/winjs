@@ -13,13 +13,6 @@
             src: ["*.css", "!*.min.css"],
             dest: config.desktopOutput + "css/",
             ext: ".min.css"
-        },
-        phone: {
-            expand: true,
-            cwd: config.phoneOutput + "css/",
-            src: ["*.css", "!*.min.css"],
-            dest: config.phoneOutput + "css/",
-            ext: ".min.css"
         }
     };
 })();

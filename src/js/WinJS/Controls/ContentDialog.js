@@ -14,8 +14,7 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Animations',
-    'require-style!less/desktop/controls',
-    'require-style!less/phone/controls'
+    'require-style!less/desktop/controls'
     ], function contentDialogInit(_Dispose, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
     "use strict";
 
@@ -59,7 +58,7 @@ define([
                 title: "win-contentdialog-title",
                 primaryCommand: "win-contentdialog-primarycommand",
                 secondaryCommand: "win-contentdialog-secondarycommand",
-                
+
                 _verticalAlignment: "win-contentdialog-verticalalignment",
                 _scroller: "win-contentdialog-scroller",
                 _content: "win-contentdialog-content",
@@ -75,7 +74,7 @@ define([
                 afterHide: "afterhide",
             };
             var minContentHeightWithInputPane = 120;
-            
+
             function aDialogIsShowing() {
                 var visibleDialogs = Array.prototype.slice.call(_Global.document.body.querySelectorAll("." + ClassNames.contentDialog + "." + ClassNames._visible), 0);
                 return visibleDialogs.some(function (dialogEl) {
@@ -83,7 +82,7 @@ define([
                     return dialog && !dialog._disposed && !dialog.hidden;
                 });
             }
-            
+
             // WinJS animation promises always complete successfully. This
             // helper allows an animation promise to complete in the canceled state
             // so that the success handler can be skipped when the animation is
@@ -93,7 +92,7 @@ define([
                     animationPromise.cancel();
                 });
             }
-            
+
             function onInputPaneShown(eventObject) {
                 /*jshint validthis: true */
                 eventObject.ensuredFocusedElementInView = true;
@@ -109,14 +108,14 @@ define([
             // message. Named with the somewhat cute name '_' because it reads really well in the states.
 
             function _() { }
-            
+
             // Implementing the control as a state machine helps us correctly handle:
             //   - re-entrancy while firing events
             //   - calls into the control during asynchronous operations (e.g. animations)
             //
             // Many of the states do their "enter" work within a promise chain. The idea is that if
             // the state is interrupted and exits, the rest of its work can be skipped by canceling
-            // the promise chain. 
+            // the promise chain.
             // An interesting detail is that anytime the state may call into app code (e.g. due to
             // firing an event), the current promise must end and a new promise must be chained off of it.
             // This is necessary because the app code may interact with the ContentDialog and cause it to
@@ -133,25 +132,25 @@ define([
             // function (via app code) before the promise chain had been stored in a variable. Under these
             // circumstances, the promise chain would be uncancelable and so the "enter" work would be
             // unskippable. This wouldn't be good when we needed the state to exit early.
-            
+
             // These two functions manage interruptible work promises (one creates them the other cancels
             // them). They communicate with each other thru the _interruptibleWorkPromises property which
             //  "interruptible" creates on your object.
-            
+
             function interruptible(object, workFn) {
                 object._interruptibleWorkPromises = object._interruptibleWorkPromises || [];
                 var workStoredSignal = new _Signal();
                 object._interruptibleWorkPromises.push(workFn(object, workStoredSignal.promise));
                 workStoredSignal.complete();
             }
-            
+
             function cancelInterruptibles() {
                 /*jshint validthis: true */
                 (this._interruptibleWorkPromises || []).forEach(function (workPromise) {
                     workPromise.cancel();
                 });
             }
-            
+
             // Transitions:
             //   When created, the control will take the following initialization transition:
             //     Init -> Hidden
@@ -180,7 +179,7 @@ define([
             //     // Provided by _setState for use within the state
             //     dialog: WinJS.UI.ContentDialog;
             // }
-            
+
             var States = {
                 // Initial state. Initializes state on the dialog shared by the various states.
                 Init: _Base.Class.define(null, {
@@ -360,7 +359,7 @@ define([
                                 that.dialog._clearInputPaneRendering();
                                 that.dialog._fireAfterHide(reason); // Give opportunity for chain to be canceled when calling into app code
                             }).then(function () {
-                                that.dialog._setState(States.Hidden, that._showIsPending); 
+                                that.dialog._setState(States.Hidden, that._showIsPending);
                             });
                         });
                     },
@@ -425,16 +424,16 @@ define([
                     throw new _ErrorFromName("WinJS.UI.ContentDialog.DuplicateConstruction", Strings.duplicateConstruction);
                 }
                 options = options || {};
-                
+
                 this._onInputPaneShownBound = this._onInputPaneShown.bind(this);
                 this._onInputPaneHiddenBound = this._onInputPaneHidden.bind(this);
-                
+
                 this._disposed = false;
                 this._resizedForInputPane = false;
-                
+
                 this._initializeDom(element || _Global.document.createElement("div"));
                 this._setState(States.Init);
-                
+
                 this.title = "";
                 this.primaryCommandText = "";
                 this.isPrimaryCommandDisabled = false;
@@ -451,7 +450,7 @@ define([
                         return this._dom.root;
                     }
                 },
-                
+
                 /// <field type="String" locid="WinJS.UI.ContentDialog.title" helpKeyword="WinJS.UI.ContentDialog.title">
                 /// The text displayed as the title of the dialog.
                 /// </field>
@@ -468,7 +467,7 @@ define([
                         }
                     }
                 },
-                
+
                 /// <field type="String" locid="WinJS.UI.ContentDialog.primaryCommandText" helpKeyword="WinJS.UI.ContentDialog.primaryCommandText">
                 /// The text displayed on the primary command's button.
                 /// </field>
@@ -485,7 +484,7 @@ define([
                         }
                     }
                 },
-                
+
                 /// <field type="String" locid="WinJS.UI.ContentDialog.secondaryCommandText" helpKeyword="WinJS.UI.ContentDialog.secondaryCommandText">
                 /// The text displayed on the secondary command's button.
                 /// </field>
@@ -502,7 +501,7 @@ define([
                         }
                     }
                 },
-                
+
                 /// <field type="Boolean" locid="WinJS.UI.ContentDialog.isPrimaryCommandDisabled" helpKeyword="WinJS.UI.ContentDialog.isPrimaryCommandDisabled">
                 /// Indicates whether the button representing the primary command is currently enabled.
                 /// </field>
@@ -518,7 +517,7 @@ define([
                         }
                     }
                 },
-                
+
                 /// <field type="Boolean" locid="WinJS.UI.ContentDialog.isSecondaryCommandDisabled" helpKeyword="WinJS.UI.ContentDialog.isSecondaryCommandDisabled">
                 /// Indicates whether the button representing the secondary command is currently enabled.
                 /// </field>
@@ -557,7 +556,7 @@ define([
                     this._setState(States.Disposed);
                     _Dispose._disposeElement(this._dom.content);
                 },
-                
+
                 show: function ContentDialog_show() {
                     /// <signature helpKeyword="WinJS.UI.ContentDialog.show">
                     /// <summary locid="WinJS.UI.ContentDialog.show">
@@ -574,7 +573,7 @@ define([
                     /// </signature>
                     return this._state.show();
                 },
-                
+
                 hide: function ContentDialog_hide(reason) {
                     /// <signature helpKeyword="WinJS.UI.ContentDialog.hide">
                     /// <summary locid="WinJS.UI.ContentDialog.hide">
@@ -587,13 +586,13 @@ define([
                     /// </signature>
                     this._state.hide(reason === undefined ? DismissalReasons.none : reason);
                 },
-                
+
                 _initializeDom: function ContentDialog_initializeDom(root) {
                     // Reparent the children of the root element into the content element.
                     var contentEl = _Global.document.createElement("div");
                     contentEl.className = ClassNames._content;
                     _ElementUtilities._reparentChildren(root, contentEl);
-                    
+
                     root.winControl = this;
                     root.className = ClassNames.contentDialog + " " + ClassNames._verticalAlignment + " win-disposable";
                     root.innerHTML =
@@ -609,7 +608,7 @@ define([
                         '</div>' +
                         '<div class="' + ClassNames._tabStop + '"></div>' +
                         '<div class="' + ClassNames._column0or1 + '"></div>';
-                    
+
                     var dom = {};
                     dom.root = root;
                     dom.dimContent = dom.root.firstElementChild;
@@ -624,21 +623,21 @@ define([
                     dom.endBodyTab = dom.body.nextElementSibling;
                     dom.content = contentEl;
                     this._dom = dom;
-                    
+
                     // Put the developer's content into the scroller
                     dom.scroller.appendChild(dom.content);
-                    
+
                     _ElementUtilities._ensureId(dom.title);
                     dom.body.setAttribute("aria-labelledby", dom.title.id);
                     this._updateTabIndices();
-                    
+
                     dom.root.addEventListener("keydown", this._onKeyDown.bind(this));
                     _ElementUtilities._addEventListener(dom.startBodyTab, "focusin", this._onStartBodyTabFocusIn.bind(this));
                     _ElementUtilities._addEventListener(dom.endBodyTab, "focusin", this._onEndBodyTabFocusIn.bind(this));
                     dom.commands[0].addEventListener("click", this._onCommandClicked.bind(this, DismissalReasons.primary));
                     dom.commands[1].addEventListener("click", this._onCommandClicked.bind(this, DismissalReasons.secondary));
                 },
-                
+
                 _updateTabIndices: _BaseUtils._throttledFunction(100, function ContentDialog_updateTabIndices() {
                     var tabIndex = _ElementUtilities._getHighAndLowTabIndices(this._dom.content);
                     this._dom.startBodyTab.tabIndex = tabIndex.lowest;
@@ -646,11 +645,11 @@ define([
                     this._dom.commands[1].tabIndex = tabIndex.highest;
                     this._dom.endBodyTab.tabIndex = tabIndex.highest;
                 }),
-                
+
                 _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
                     this._state.onCommandClicked(reason);
                 },
-                
+
                 _onKeyDown: function ContentDialog_onKeyDown(eventObject) {
                     if (eventObject.keyCode === _ElementUtilities.Key.tab) {
                         this._updateTabIndices();
@@ -668,15 +667,15 @@ define([
                 _onInputPaneShown: function ContentDialog_onInputPaneShown(eventObject) {
                     this._state.onInputPaneShown(eventObject);
                 },
-                
+
                 _onInputPaneHidden: function ContentDialog_onInputPaneHidden() {
                     this._state.onInputPaneHidden();
                 },
-                
+
                 //
                 // Methods called by states
                 //
-                
+
                 _setState: function ContentDialog_setState(NewState, arg0) {
                     if (!this._disposed) {
                         this._state && this._state.exit();
@@ -685,7 +684,7 @@ define([
                         this._state.enter(arg0);
                     }
                 },
-                
+
                 // Calls into arbitrary app code
                 _resetDismissalPromise: function ContentDialog_resetDismissalPromise(reason) {
                     var dismissedSignal = this._dismissedSignal;
@@ -693,18 +692,18 @@ define([
                     dismissedSignal.complete({ reason: reason });
                     return newDismissedSignal;
                 },
-                
+
                 // Calls into arbitrary app code
                 _fireEvent: function ContentDialog_fireEvent(eventName, options) {
                     options = options || {};
                     var detail = options.detail || null;
                     var cancelable = !!options.cancelable;
-                    
+
                     var eventObject = _Global.document.createEvent("CustomEvent");
                     eventObject.initCustomEvent(eventName, true, cancelable, detail);
                     return this._dom.root.dispatchEvent(eventObject);
                 },
-                
+
                 // Calls into arbitrary app code
                 _fireBeforeHide: function ContentDialog_fireBeforeHide(reason) {
                     return this._fireEvent(EventNames.beforeHide, {
@@ -712,18 +711,18 @@ define([
                         cancelable: true
                     });
                 },
-                
+
                 // Calls into arbitrary app code
                 _fireAfterHide: function ContentDialog_fireAfterHide(reason) {
                     this._fireEvent(EventNames.afterHide, {
                         detail: { reason: reason }
                     });
                 },
-                
+
                 _playEntranceAnimation: function ContentDialog_playEntranceAnimation() {
                     return cancelablePromise(_Animations.fadeIn(this._dom.root));
                 },
-                
+
                 _playExitAnimation: function ContentDialog_playExitAnimation() {
                     return cancelablePromise(_Animations.fadeOut(this._dom.root));
                 },
@@ -756,21 +755,21 @@ define([
                     var visibleBottom = this._dom.root.offsetHeight - inputPaneHeight;
                     var titleHeight = _ElementUtilities.getTotalHeight(this._dom.title);
                     var commandsHeight = _ElementUtilities.getTotalHeight(this._dom.commandContainer);
-            
+
                     if (bottom > visibleBottom) {
                         var newHeight = height - (bottom - visibleBottom);
                         if (newHeight - titleHeight - commandsHeight < minContentHeightWithInputPane) {
                             // Put title into scroller so there's more screen real estate for the content
                             this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
                         }
-            
+
                         this._dom.root.style.display = "block";
                         style.height = newHeight + "px";
                         style.position = "absolute";
                         style.left = left + "px";
                         style.top = top + "px";
                         style.minHeight = 0;
-                            
+
                         this._resizedForInputPane = true;
                         _Global.document.activeElement.focus(); // Ensure activeElement is scrolled into view
                     }
@@ -782,7 +781,7 @@ define([
                             // Make sure the title isn't in the scroller
                             this._dom.body.insertBefore(this._dom.title, this._dom.scroller);
                         }
-            
+
                         var style = this._dom.body.style;
                         this._dom.root.style.display = "";
                         style.height = "";

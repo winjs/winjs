@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Custom RequireJS plugin to handle style dependencies from Javascript modules
 // Has special WinJS-specific behavior that wasn't achievable with libraries like require-less
-// Requires the 'platform' key to exist in the RequireJS config, with a value of 'desktop' or 'phone'
 define(['require'], function (req) {
     "use strict";
 
@@ -63,7 +62,7 @@ define(['require'], function (req) {
         // Build a custom LESS file that imports every resource
         // with platform and theme defines at the top
         var defines = [
-            '@platform: ' + configData.platform + ';',
+            '@platform: desktop;',
             '@theme: ' + theme + ';',
             '@inverseTheme: ' + inverseTheme + ';'
         ].join('\n');

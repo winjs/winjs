@@ -20,8 +20,7 @@ define([
     '../Utilities/_UI',
     './FlipView/_Constants',
     './FlipView/_PageManager',
-    'require-style!less/desktop/controls',
-    'require-style!less/phone/controls'
+    'require-style!less/desktop/controls'
     ], function flipperInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _UI, _Constants, _PageManager) {
     "use strict";
 

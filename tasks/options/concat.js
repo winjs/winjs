@@ -9,11 +9,6 @@
             src: config.uiStringsFiles,
             dest: config.desktopOutput + "js/" + config.localeFolder + "/ui.strings.js",
             nonull: true
-        },
-        uiStringsPhone: {
-            src: config.uiStringsFiles,
-            dest: config.phoneOutput + "js/" + config.localeFolder + "/ui.strings.js",
-            nonull: true
         }
     };
 })();

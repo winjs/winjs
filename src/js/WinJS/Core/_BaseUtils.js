@@ -19,7 +19,6 @@ define([
     var requestAnimationWorker;
     var requestAnimationId = 0;
     var requestAnimationHandlers = {};
-    var isPhone = false;
     var validation = false;
     var platform = _Global.navigator.platform;
     var isiOS = platform === "iPhone" || platform === "iPad" || platform === "iPod";
@@ -193,7 +192,7 @@ define([
         equivalents["manipulationStateChanged"] = ("MSManipulationEvent" in _Global ? "ManipulationEvent" : null);
         return equivalents;
     }
-    
+
     // Returns a function which, when called, will call *fn*. However,
     // if called multiple times, it will only call *fn* at most once every
     // *delay* milliseconds. Multiple calls during the throttling period
@@ -215,13 +214,13 @@ define([
         var pendingCallPromise = null;
         var nextContext = null;
         var nextArgs = null;
-    
+
         function makeThrottlePromise() {
             return Promise.timeout(delay).then(function () {
                 throttlePromise = null;
             });
         }
-    
+
         return function () {
             if (pendingCallPromise) {
                 nextContext = this;
@@ -432,7 +431,7 @@ define([
         _yieldForDomModification: _Global.setImmediate ? _Global.setImmediate.bind(_Global) : function (handler) {
             _Global.setTimeout(handler, 0);
         },
-        
+
         _throttledFunction: throttledFunction,
 
         _shallowCopy: function _shallowCopy(a) {
@@ -474,19 +473,7 @@ define([
         _traceAsyncOperationStarting: _Trace._traceAsyncOperationStarting,
         _traceAsyncOperationCompleted: _Trace._traceAsyncOperationCompleted,
         _traceAsyncCallbackStarting: _Trace._traceAsyncCallbackStarting,
-        _traceAsyncCallbackCompleted: _Trace._traceAsyncCallbackCompleted,
-
-        /// <field type="Boolean" locid="WinJS.Utilities.isPhone" helpKeyword="WinJS.Utilities.isPhone">Determine if we are currently running in the Phone.</field>
-        isPhone: {
-            get: function () { return isPhone; },
-            configurable: false,
-            enumerable: true
-        },
-        _setIsPhone: {
-            set: function (value) {
-                isPhone = value;
-            }
-        }
+        _traceAsyncCallbackCompleted: _Trace._traceAsyncCallbackCompleted
     });
 
     _Base.Namespace._moduleDefine(exports, "WinJS", {

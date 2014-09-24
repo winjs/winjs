@@ -12,8 +12,7 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
-    'require-style!less/desktop/controls',
-    'require-style!less/phone/controls'
+    'require-style!less/desktop/controls'
     ], function tooltipInit(exports, _Global, _WinRT, _Base, _BaseUtils, _Events, Animations, _TransitionAnimation, _Control, _Dispose, _ElementUtilities, _Hoverable) {
     "use strict";
 

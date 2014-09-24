@@ -2,8 +2,6 @@
 define([
     '../Utilities/_Hoverable',
     'require-style!less/desktop/styles-intrinsic',
-    'require-style!less/desktop/colors-intrinsic',
-    'require-style!less/phone/styles-intrinsic',
-    'require-style!less/phone/colors-intrinsic'
+    'require-style!less/desktop/colors-intrinsic'
     ], function (_Hoverable) {
 });

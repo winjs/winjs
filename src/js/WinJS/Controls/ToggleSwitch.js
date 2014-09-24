@@ -7,8 +7,7 @@ define([
     '../Core/_Resources',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
-    'require-style!less/desktop/controls',
-    'require-style!less/phone/controls'
+    'require-style!less/desktop/controls'
     ],
     function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities) {
         "use strict";

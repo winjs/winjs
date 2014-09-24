@@ -12,17 +12,9 @@
             src: [config.desktopOutput + "js/base.js"],
             dest: config.desktopOutput + "js/base.min.js"
         },
-        basePhone: {
-            src: [config.phoneOutput + "js/base.js"],
-            dest: config.phoneOutput + "js/base.min.js"
-        },
         uiDesktop: {
             src: [config.desktopOutput + "js/ui.js"],
             dest: config.desktopOutput + "js/ui.min.js"
-        },
-        uiPhone: {
-            src: [config.phoneOutput + "js/ui.js"],
-            dest: config.phoneOutput + "js/ui.min.js"
         },
         singleFile: {
             src: [config.desktopOutput + "js/WinJS.js"],

@@ -8,9 +8,7 @@
     var grunt = config.grunt;
 
     var desktopBase = config.desktopOutput + "js/base.js";
-    var phoneBase = config.phoneOutput + "js/base.js";
     var desktopUI = config.desktopOutput + "js/ui.js";
-    var phoneUI = config.phoneOutput + "js/ui.js";
 
     var bundles = {};
 
@@ -119,7 +117,6 @@
                 "require-style": pkgRoot + "require-style",
                 "require-json": pkgRoot + "require-json",
                 "WinJS": pkgRoot + "WinJS",
-                "less-phone": "empty:",
                 "less-desktop": "empty:"
             },
             bundles: bundles
@@ -131,7 +128,6 @@
     }
 
     var desktopBaseFiles = [];
-    var phoneBaseFiles = [];
 
     var rootPath = path.resolve();
     var realFileNames = [];
@@ -188,12 +184,8 @@
 
         if (endsWith(bundle, desktopBase)) {
             desktopBaseFiles = lines;
-        } else if (endsWith(bundle, phoneBase)) {
-            phoneBaseFiles = lines;
         } else if (endsWith(bundle, desktopUI)) {
             checkDuplicates(desktopBaseFiles, lines, bundle);
-        } else if (endsWith(bundle, phoneUI)) {
-            checkDuplicates(phoneBaseFiles, lines, bundle);
         }
 
         lines = lines.map(function (line) {
@@ -263,29 +255,12 @@
             }
         },
 
-        // Phone configs
-        basePhone: {
-            options: {
-                platform: "phone",
-                name: 'base',
-                include: ['WinJS/Core/_BaseUtilsPhone'],
-            }
-        },
-        uiPhone: {
-            options: {
-                platform: "phone",
-                name: 'ui-phone',
-                target: 'ui', // because ui-phone actually is built to ui.js
-                exclude: ['./base'],
-            }
-        },
-
         // Modules built for people who want to use custom builds
         publicModules: {
             options: {
                 skipDirOptimize: true,
                 removeCombined: true,
-                fileExclusionRegExp: /^(library|base.js|ui.js|ui-phone.js|\w+\.(md|htm|txt))$/i,
+                fileExclusionRegExp: /^(library|base.js|ui.js|\w+\.(md|htm|txt))$/i,
                 dir: config.modulesOutput,
                 modules: publicModules,
                 done: moduleDone
@@ -299,7 +274,6 @@
         var options = buildConfig.options = buildConfig.options || {};
 
         options.baseUrl = config.compiledTsOutput;
-        options.platform = options.platform || "desktop";
         options.useStrict = true;
         options.optimize = "none"; // uglify2 is run seperately
         options.stubModules = ["require-style", "require-json"];
@@ -311,29 +285,12 @@
             options.deps = ["amd"];
         }
 
-        var outputBase;
-        switch (options.platform) {
-            case "desktop":
-                outputBase = config.desktopOutput + "js/";
-                options.paths = {
-                    "less": "../../src/less",
-                    "less/phone": "empty:",
-                    "require-json": "../../tasks/utilities/require-json",
-                    "require-style": "../../tasks/utilities/require-style"
-                };
-                break;
-            case "phone":
-                outputBase = config.phoneOutput + "js/";
-                options.paths = {
-                    "less": "../../src/less",
-                    "less/desktop": "empty:",
-                    "require-json": "../../tasks/utilities/require-json",
-                    "require-style": "../../tasks/utilities/require-style"
-                };
-                break;
-            default:
-                throw "NYI";
-        }
+        var outputBase = config.desktopOutput + "js/";
+        options.paths = {
+            "less": "../../src/less",
+            "require-json": "../../tasks/utilities/require-json",
+            "require-style": "../../tasks/utilities/require-style"
+        };
 
         // The modules build generates a require configuration with this
         if (!options.dir) {
