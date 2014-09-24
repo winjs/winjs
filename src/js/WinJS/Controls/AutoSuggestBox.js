@@ -25,6 +25,7 @@ define([
 
             var ClassNames = {
                 asb: "win-autosuggestbox",
+                asbDisabled: "win-autosuggestbox-disabled",
                 asbFlyout: "win-autosuggestbox-flyout",
                 asbFlyoutAbove: "win-autosuggestbox-flyout-above",
                 asbBoxFlyoutHighlightText: "win-autosuggestbox-flyout-highlighttext",
@@ -270,7 +271,7 @@ define([
                     this._inputElement.addEventListener("keydown", this._keyDownHandler.bind(this));
                     this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));
                     this._inputElement.addEventListener("keyup", this._keyUpHandler.bind(this));
-                    this._inputElement.addEventListener("focus", this._focusHandler.bind(this));
+                    this._inputElement.addEventListener("focus", this._inputFocusHandler.bind(this));
                     this._inputElement.addEventListener("blur", this._inputBlurHandler.bind(this));
                     this._inputElement.addEventListener("input", inputOrImeChangeHandler);
                     this._inputElement.addEventListener("compositionstart", inputOrImeChangeHandler);
@@ -597,6 +598,10 @@ define([
                     return linguisticDetails;
                 },
 
+                _isElementInSearchControl: function asb_isElementInSearchControl(targetElement) {
+                    return this.element.contains(targetElement) || (this.element === targetElement);
+                },
+
                 _shouldIgnoreInput: function asb_shouldIgnoreInput() {
                     var processingIMEFocusLossKey = this._isProcessingDownKey || this._isProcessingUpKey || this._isProcessingTabKey || this._isProcessingEnterKey;
                     var isButtonDown = false; // todo button: _ElementUtilities._matchesSelector(this._buttonElement, ":active");
@@ -634,42 +639,11 @@ define([
 
                 // Event Handlers
                 _flyoutBlurHandler: function asb_flyoutBlurHandler(event) {
-                    this._hideFlyout();
-                },
-
-                _focusHandler: function asb_focusHandler(event) {
-                    // Refresh hit highlighting if text has changed since focus was present
-                    // This can happen if the user committed a suggestion previously.
-                    if (this._inputElement.value !== this._prevQueryText) {
-                        if (_WinRT.Windows.Data.Text.SemanticTextQuery) {
-                            if (this._inputElement.value !== "") {
-                                this._hitFinder = new _WinRT.Windows.Data.Text.SemanticTextQuery(this._inputElement.value, this._inputElement.lang);
-                            } else {
-                                this._hitFinder = null;
-                            }
-                        }
+                    if (this._isElementInSearchControl(_Global.document.activeElement)) {
+                        this._internalFocusMove = true;
+                    } else {
+                        this._hideFlyout();
                     }
-
-                    // If focus is returning to the input box from outside the control, show the flyout and refresh the suggestions
-                    if (event.target === this._inputElement && event.relatedTarget !== this._element && !this._element.contains(event.relatedTarget)) {
-                        this._showFlyout();
-                        if (this._currentFocusedIndex !== -1) {
-                            // Focus is not in input
-                            this._selectSuggestionAtIndex(this._currentFocusedIndex);
-                        } else {
-                            this._updateFakeFocus();
-                        }
-
-                        this._suggestionManager.setQuery(
-                            this._inputElement.value,
-                            this._lastKeyPressLanguage,
-                            this._getLinguisticDetails(true /*useCache*/, true /*createFilled*/)
-                        );
-                    }
-
-                    this._element.classList.add(ClassNames.asbInputFocus);
-                    // todo
-                    //this._updateSearchButtonClass();
                 },
 
                 _flyoutPointerDownHandler: function asm_flyoutPointerDownHandler(ev) {
@@ -715,7 +689,7 @@ define([
 
                 _inputBlurHandler: function asb_inputBlurHandler(event) {
                     // Hide flyout if focus is leaving the control
-                    if (event.relatedTarget !== _Global.document.activeElement && !this._element.contains(_Global.document.activeElement)) {
+                    if (!this._isElementInSearchControl(_Global.document.activeElement)) {
                         this._hideFlyout();
                     }
                     this._element.classList.remove(ClassNames.asbInputFocus);
@@ -725,6 +699,42 @@ define([
                     this._isProcessingUpKey = false;
                     this._isProcessingTabKey = false;
                     this._isProcessingEnterKey = false;
+                },
+
+                _inputFocusHandler: function asb_inputFocusHandler(event) {
+                    // Refresh hit highlighting if text has changed since focus was present
+                    // This can happen if the user committed a suggestion previously.
+                    if (this._inputElement.value !== this._prevQueryText) {
+                        if (_WinRT.Windows.Data.Text.SemanticTextQuery) {
+                            if (this._inputElement.value !== "") {
+                                this._hitFinder = new _WinRT.Windows.Data.Text.SemanticTextQuery(this._inputElement.value, this._inputElement.lang);
+                            } else {
+                                this._hitFinder = null;
+                            }
+                        }
+                    }
+
+                    // If focus is returning to the input box from outside the control, show the flyout and refresh the suggestions
+                    if (event.target === this._inputElement && !this._internalFocusMove) {
+                        this._showFlyout();
+                        if (this._currentFocusedIndex !== -1) {
+                            // Focus is not in input
+                            this._selectSuggestionAtIndex(this._currentFocusedIndex);
+                        } else {
+                            this._updateFakeFocus();
+                        }
+
+                        this._suggestionManager.setQuery(
+                            this._inputElement.value,
+                            this._lastKeyPressLanguage,
+                            this._getLinguisticDetails(true /*useCache*/, true /*createFilled*/)
+                        );
+                    }
+
+                    this._internalFocusMove = false;
+                    this._element.classList.add(ClassNames.asbInputFocus);
+                    // todo
+                    //this._updateSearchButtonClass();
                 },
 
                 _inputOrImeChangeHandler: function asb_inputImeChangeHandler() {
