@@ -92,6 +92,9 @@ declare module WinJS {
         function _isSelectionRendered(itemBox): boolean;
         var _getHighestTabIndexInList;
         var _getLowestTabIndexInList;
+        var _MSPointerEvent;
+        var _detectSnapPointsSupport;
+        var _supportsZoomTo;
 
     }
 
@@ -489,6 +492,27 @@ declare module WinJS {
             _ensureTooltips;
             _toolTips;
             _disposed;
+        }
+
+        class PrivatePivot extends Pivot {
+
+            _viewportElement;
+            _goNext;
+            _goPrevious;
+            _headersContainerElement;
+            _headersState;
+            forceLayout();
+            _navMode;
+            _currentScrollTargetLocation;
+            _viewportWidth;
+
+            static _ClassName;
+            static _EventName;
+            static _NavigationModes;
+        }
+
+        class PrivatePivotItem extends PivotItem {
+            static _ClassName;
         }
 
         class Toolbar {
