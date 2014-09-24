@@ -78,6 +78,7 @@ define([
                 this._setupDOM();
                 this._setupSSM();
 
+                this._chooseSuggestionOnEnter = false;
                 this._currentFocusedIndex = -1;
                 this._currentSelectedIndex = -1;
                 this._flyoutOpenPromise = Promise.wrap();
@@ -168,7 +169,7 @@ define([
                             }
                             this._element.disabled = true;
                             this._element.classList.add(ClassNames.asbDisabled);
-                            this._domElement.disabled = true;
+                            this._inputElement.disabled = true;
                         }
                     }
                 },
@@ -1018,19 +1019,10 @@ define([
                     }
                     return url;
                 },
-            });
 
-            function addHitHighlightedText(element, item, text, hitFinder) {
-                function addNewSpan(element, textContent, insertBefore) {
-                    // Adds new span element with specified inner text as child to element, placed before insertBefore
-                    var spanElement = _Global.document.createElement("span");
-                    spanElement.textContent = textContent;
-                    spanElement.setAttribute("aria-hidden", "true");
-                    spanElement.classList.add(ClassNames.asbHitHighlightSpan);
-                    element.insertBefore(spanElement, insertBefore);
-                    return spanElement;
-                }
-                function sortAndMergeHits(hitsProvided) {
+                _EventNames: EventNames,
+
+                _sortAndMergeHits: function asb_sortAndMergeHits(hitsProvided) {
                     function hitStartPositionAscendingSorter(firstHit, secondHit) {
                         var returnValue = 0;
                         if (firstHit.startPosition < secondHit.startPosition) {
@@ -1072,6 +1064,18 @@ define([
                     }
                     return reducedHits;
                 }
+            });
+
+            function addHitHighlightedText(element, item, text, hitFinder) {
+                function addNewSpan(element, textContent, insertBefore) {
+                    // Adds new span element with specified inner text as child to element, placed before insertBefore
+                    var spanElement = _Global.document.createElement("span");
+                    spanElement.textContent = textContent;
+                    spanElement.setAttribute("aria-hidden", "true");
+                    spanElement.classList.add(ClassNames.asbHitHighlightSpan);
+                    element.insertBefore(spanElement, insertBefore);
+                    return spanElement;
+                }
 
                 if (text) {
                     // Remove any existing hit highlighted text spans
@@ -1087,19 +1091,19 @@ define([
                         hitsProvided = hitFinder.find(text);
                     }
 
-                    var hits = sortAndMergeHits(hitsProvided);
+                    var hits = AutoSuggestBox._sortAndMergeHits(hitsProvided);
 
                     var lastPosition = 0;
                     for (var i = 0; i < hits.length; i++) {
                         var hit = hits[i];
 
                         // Add previous normal text
-                        this._addNewSpan(element, text.substring(lastPosition, hit.startPosition), firstChild);
+                        addNewSpan(element, text.substring(lastPosition, hit.startPosition), firstChild);
 
                         lastPosition = hit.startPosition + hit.length;
 
                         // Add hit highlighted text
-                        var spanHitHighlightedText = this._addNewSpan(element, text.substring(hit.startPosition, lastPosition), firstChild);
+                        var spanHitHighlightedText = addNewSpan(element, text.substring(hit.startPosition, lastPosition), firstChild);
                         _ElementUtilities.addClass(spanHitHighlightedText, ClassNames.asbBoxFlyoutHighlightText);
                     }
 
@@ -1197,7 +1201,7 @@ define([
                 _ElementUtilities._addEventListener(root, "pointerup", function (ev) {
                     asb._inputElement.focus();
                     asb._processSuggestionChosen(item, ev);
-                }.bind(this));
+                });
 
                 var ariaLabel = _Resources._formatString(Strings.ariaLabelQuery, item.text);
                 root.setAttribute("role", "option");
