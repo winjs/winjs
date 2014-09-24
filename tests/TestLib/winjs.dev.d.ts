@@ -481,6 +481,10 @@ declare module WinJS {
             static _Constants;
         }
 
+        class PrivateBackButton extends BackButton {
+            static _getReferenceCount(): number;
+        }
+
         class Toolbar {
             public element: HTMLElement;
             public overflowMode: string;

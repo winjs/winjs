@@ -17,7 +17,7 @@
             var pageInfo = element.querySelector("#pageIndex");
             pageInfo.textContent = pageIndex.toString();
 
-            var nextPage = element.querySelector("#nextPage");
+            var nextPage = <HTMLElement>element.querySelector("#nextPage");
             if (pageIndex < MAX_PAGE_COUNT_SEQUENCIAL - 1) {
                 nextPage.addEventListener("click", function () {
                     WinJS.Navigation.navigate("page.html", { pageIndex: pageIndex + 1 });
