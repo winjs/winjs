@@ -183,7 +183,7 @@ declare module WinJS {
 
 
         /**
-         * A rich input box that provides search suggestions as the user types.
+         * A rich input box that provides suggestions as the user types.
         **/
         class AutoSuggestBox {
             //#region Constructors

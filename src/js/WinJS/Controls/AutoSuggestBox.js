@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
+    "exports",
     "../Core/_Global",
     "../Core/_WinRT",
     "../Core/_Base",
@@ -15,11 +16,33 @@ define([
     "../Promise",
     "./Repeater",
     "./AutoSuggestBox/_SearchSuggestionManagerShim",
-], function autoSuggestBoxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Promise, Repeater, _SuggestionManagerShim) {
+], function autoSuggestBoxInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Promise, Repeater, _SuggestionManagerShim) {
     "use strict";
 
-    _Base.Namespace.define("WinJS.UI", {
-
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
+        /// <field>
+        /// <summary locid="WinJS.UI.AutoSuggestBox">
+        /// A rich input box that provides suggestions as the user types.
+        /// </summary>
+        /// <compatibleWith platform="Windows" minVersion="8.1"/>
+        /// </field>
+        /// <icon src="ui_winjs.ui.autosuggest.12x12.png" width="12" height="12" />
+        /// <icon src="ui_winjs.ui.autosuggest.16x16.png" width="16" height="16" />
+        /// <htmlSnippet><![CDATA[<div data-win-control="WinJS.UI.AutoSuggestBox"></div>]]></htmlSnippet>
+        /// <event name="querychanged" bubbles="true" locid="WinJS.UI.AutoSuggestBox:querychanged">Raised when user or app changes the query text.</event>
+        /// <event name="querysubmitted" bubbles="true" locid="WinJS.UI.AutoSuggestBox:querysubmitted">Raised when user presses Enter.</event>
+        /// <event name="resultsuggestionchosen" bubbles="true" locid="WinJS.UI.AutoSuggestBox:resultsuggestionchosen">Raised when user clicks  one of the displayed suggestions.</event>
+        /// <event name="suggestionsrequested" bubbles="true" locid="WinJS.UI.AutoSuggestBox:suggestionsrequested">Raised when the system requests suggestions from this app.</event>
+        /// <part name="autosuggestbox" class="win-autosuggestbox" locid="WinJS.UI.AutoSuggestBox:autosuggest">Styles the entire Auto Suggest Box control.</part>
+        /// <part name="autosuggestbox-input" class="win-autosuggestbox-input" locid="WinJS.UI.AutoSuggestBox_part:Input">Styles the query input box.</part>
+        /// <part name="autosuggestbox-flyout" class="win-autosuggestbox-flyout" locid="WinJS.UI.AutoSuggestBox_part:Flyout">Styles the result suggestions flyout.</part>
+        /// <part name="autosuggestbox-suggestion-query" class="win-autosuggestbox-suggestion-query" locid="WinJS.UI.AutoSuggestBox_part:Suggestion_Query">Styles the query type suggestion.</part>
+        /// <part name="autosuggestbox-suggestion-result" class="win-autosuggestbox-suggestion-result" locid="WinJS.UI.AutoSuggestBox_part:Suggestion_Result">Styles the result type suggestion.</part>
+        /// <part name="autosuggestbox-suggestion-selected" class="win-autosuggestbox-suggestion-selected" locid="WinJS.UI.AutoSuggestBox_part:Suggestion_Selected">Styles the currently selected suggestion.</part>
+        /// <part name="autosuggestbox-suggestion-separator" class="win-autosuggestbox-suggestion-separator" locid="WinJS.UI.AutoSuggestBox_part:Suggestion_Separator">Styles the separator type suggestion.</part>
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AutoSuggestBox: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
 
@@ -32,12 +55,12 @@ define([
                 asbHitHighlightSpan: "win-autosuggestbox-hithighlight-span",
                 asbInput: "win-autosuggestbox-input",
                 asbInputFocus: "win-autosuggestbox-input-focus",
+                asbSuggestionQuery: "win-autosuggestbox-suggestion-query",
                 asbSuggestionResult: "win-autosuggestbox-suggestion-result",
                 asbSuggestionResultText: "win-autosuggestbox-suggestion-result-text",
                 asbSuggestionResultDetailedText: "win-autosuggestbox-suggestion-result-detailed-text",
                 asbSuggestionSelected: "win-autosuggestbox-suggestion-selected",
                 asbSuggestionSeparator: "win-autosuggestbox-suggestion-separator",
-                asbSuggestionQuery: "win-autosuggestbox-suggestion-query",
             };
 
             var EventNames = {
@@ -60,6 +83,25 @@ define([
             };
 
             var AutoSuggestBox = _Base.Class.define(function asb_ctor(element, options) {
+                /// <signature helpKeyword="WinJS.UI.AutoSuggestBox.AutoSuggestBox">
+                /// <summary locid="WinJS.UI.AutoSuggestBox.constructor">
+                /// Creates a new AutoSuggestBox.
+                /// </summary>
+                /// <param name="element" domElement="true" locid="WinJS.UI.AutoSuggestBox.constructor_p:element">
+                /// The DOM element that hosts the AutoSuggestBox.
+                /// </param>
+                /// <param name="options" type="Object" locid="WinJS.UI.AutoSuggestBox.constructor_p:options">
+                /// An object that contains one or more property/value pairs to apply to the new control.
+                /// Each property of the options object corresponds to one of the control's properties or events.
+                /// Event names must begin with "on". For example, to provide a handler for the querychanged event,
+                /// add a property named "onquerychanged" to the options object and set its value to the event handler.
+                /// This parameter is optional.
+                /// </param>
+                /// <returns type="WinJS.UI.AutoSuggestBox" locid="WinJS.UI.AutoSuggestBox.constructor_returnValue">
+                /// The new AutoSuggestBox.
+                /// </returns>
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </signature>
                 element = element || _Global.document.createElement("div");
                 options = options || {};
 
@@ -155,21 +197,9 @@ define([
                         }
 
                         if (!value) {
-                            // Enable control
-                            this._element.disabled = false;
-                            this._element.classList.remove(ClassNames.asbDisabled);
-                            this._inputElement.disabled = false;
-                            if (_Global.document.activeElement === this._element) {
-                                _ElementUtilities._setActive(this._inputElement);
-                            }
+                            this._enableControl();
                         } else {
-                            // Disable control
-                            if (this._isFlyoutShown()) {
-                                this._hideFlyout();
-                            }
-                            this._element.disabled = true;
-                            this._element.classList.add(ClassNames.asbDisabled);
-                            this._inputElement.disabled = true;
+                            this._disableControl();
                         }
                     }
                 },
@@ -253,6 +283,20 @@ define([
                     this._disposed = true;
                 },
 
+                setLocalContentSuggestionSettings: function SearchBox_setLocalContentSuggestionSettings(settings) {
+                    /// <signature helpKeyword="WinJS.UI.AutoSuggestBox.SetLocalContentSuggestionSettings">
+                    /// <summary locid="WinJS.UI.AutoSuggestBox.SetLocalContentSuggestionSettings">
+                    /// Specifies whether suggestions based on local files are automatically displayed in the input field, and defines the criteria that
+                    /// the system uses to locate and filter these suggestions.
+                    /// </summary>
+                    /// <param name="eventName" type="Windows.ApplicationModel.Search.LocalContentSuggestionSettings" locid="WinJS.UI.AutoSuggestBox.setLocalContentSuggestionSettings_p:settings">
+                    /// The new settings for local content suggestions.
+                    /// </param>
+                    /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                    /// </signature>
+                    this._suggestionManager.setLocalContentSuggestionSettings(settings);
+                },
+
                 // Constructor Helpers
                 _setupDOM: function asb_setupDOM() {
                     var flyoutPointerReleasedHandler = this._flyoutPointerReleasedHandler.bind(this);
@@ -299,21 +343,8 @@ define([
 
                     // Repeater
                     var that = this;
-                    function repeaterTemplate(item) {
-                        var root = null;
-                        if (!item) {
-                            return root;
-                        }
-                        if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Query) {
-                            root = querySuggestionRenderer(that, item);
-                        } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Separator) {
-                            root = separatorSuggestionRenderer(item);
-                        } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Result) {
-                            root = resultSuggestionRenderer(that, item);
-                        } else {
-                            throw new _ErrorFromName("WinJS.UI.AutoSuggestBox.invalidSuggestionKind", Strings.invalidSuggestionKind);
-                        }
-                        return root;
+                    function repeaterTemplate(suggestion) {
+                        return that._renderSuggestion(suggestion);
                     }
                     this._suggestionsData = new BindingList.List();
                     this._repeaterElement = _Global.document.createElement("div");
@@ -539,6 +570,24 @@ define([
                 },
 
                 // Helpers
+                _disableControl: function asb_disableControl() {
+                    if (this._isFlyoutShown()) {
+                        this._hideFlyout();
+                    }
+                    this._element.disabled = true;
+                    this._element.classList.add(ClassNames.asbDisabled);
+                    this._inputElement.disabled = true;
+                },
+
+                _enableControl: function asb_enableControl() {
+                    this._element.disabled = false;
+                    this._element.classList.remove(ClassNames.asbDisabled);
+                    this._inputElement.disabled = false;
+                    if (_Global.document.activeElement === this._element) {
+                        _ElementUtilities._setActive(this._inputElement);
+                    }
+                },
+
                 _fireEvent: function asb_fireEvent(type, detail) {
                     // Returns true if ev.preventDefault() was not called
                     var event = _Global.document.createEvent("CustomEvent");
@@ -603,6 +652,23 @@ define([
                     return this.element.contains(targetElement) || (this.element === targetElement);
                 },
 
+                _renderSuggestion: function asb_renderSuggestion(suggestion) {
+                    var root = null;
+                    if (!suggestion) {
+                        return root;
+                    }
+                    if (suggestion.kind === _SuggestionManagerShim._SearchSuggestionKind.Query) {
+                        root = querySuggestionRenderer(this, suggestion);
+                    } else if (suggestion.kind === _SuggestionManagerShim._SearchSuggestionKind.Separator) {
+                        root = separatorSuggestionRenderer(suggestion);
+                    } else if (suggestion.kind === _SuggestionManagerShim._SearchSuggestionKind.Result) {
+                        root = resultSuggestionRenderer(this, suggestion);
+                    } else {
+                        throw new _ErrorFromName("WinJS.UI.AutoSuggestBox.invalidSuggestionKind", Strings.invalidSuggestionKind);
+                    }
+                    return root;
+                },
+
                 _shouldIgnoreInput: function asb_shouldIgnoreInput() {
                     var processingIMEFocusLossKey = this._isProcessingDownKey || this._isProcessingUpKey || this._isProcessingTabKey || this._isProcessingEnterKey;
                     var isButtonDown = false; // todo button: _ElementUtilities._matchesSelector(this._buttonElement, ":active");
@@ -643,6 +709,7 @@ define([
                     if (this._isElementInSearchControl(_Global.document.activeElement)) {
                         this._internalFocusMove = true;
                     } else {
+                        this._element.classList.remove(ClassNames.asbInputFocus);
                         this._hideFlyout();
                     }
                 },
@@ -691,9 +758,9 @@ define([
                 _inputBlurHandler: function asb_inputBlurHandler(event) {
                     // Hide flyout if focus is leaving the control
                     if (!this._isElementInSearchControl(_Global.document.activeElement)) {
+                        this._element.classList.remove(ClassNames.asbInputFocus);
                         this._hideFlyout();
                     }
-                    this._element.classList.remove(ClassNames.asbInputFocus);
                     // todo
                     //this._updateSearchButtonClass();
                     this._isProcessingDownKey = false;
@@ -1134,7 +1201,7 @@ define([
                 }
                 return keyModifiers;
             }
-            
+
             function resultSuggestionRenderer(asb, item) {
                 var root = _Global.document.createElement("div");
                 var image = new _Global.Image();

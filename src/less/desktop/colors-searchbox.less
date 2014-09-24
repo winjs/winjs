@@ -1,19 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
     .mixin(dark) {
-        .win-searchbox {
-            border-color:rgba(255, 255, 255, 0.8);
-            background-color:rgba(255, 255, 255, 0.8);
-            color:rgba(0, 0, 0, 0.6);
-        }
-
         .win-searchbox-button {
             color:rgba(0, 0, 0, 0.6);
-        }
-
-        .win-searchbox-input-focus {
-            border-color:rgb(42, 42, 42);
-            background-color:rgb(255, 255, 255);
         }
 
         .win-searchbox-button:active {
@@ -25,66 +14,10 @@
             background-color: rgb(70, 23, 180);
             color: rgb(255, 255, 255);
         }
-
-        .win-searchbox-flyout {
-            border-color:rgb(42, 42, 42);
-            background-color:rgb(255, 255, 255);
-        }
-
-        .win-searchbox-suggestion-selected {
-            background-color: rgb(70, 23, 180);
-        }
-
-        .win-searchbox-suggestion-query,
-        .win-searchbox-suggestion-result {
-            color: rgb(0, 0, 0);
-        }
-
-        .win-searchbox-suggestion-separator {
-            color:rgb(122, 122, 122);
-        }
-
-        .win-searchbox-suggestion-separator hr {
-            border-color:rgb(122, 122, 122);
-        }
-
-        .win-searchbox-flyout-highlighttext {
-            color: rgb(70, 23, 180);
-        }
-
-        .win-searchbox-disabled {
-            background-color:transparent;
-            border-color:rgba(255, 255, 255, 0.4);
-        }
-
-        .win-searchbox-disabled input[disabled] {
-            background-color:transparent;
-            color:rgba(255, 255, 255, 0.4);
-        }
-
-        .win-searchbox-disabled div {
-            background-color:transparent;
-            color:rgba(255, 255, 255, 0.4);
-        }
-
-        .win-searchbox-suggestion-selected .win-searchbox-flyout-highlighttext {
-            color: rgb(163,139,218);
-        }
-
     }
     .mixin(light) {
-        .win-searchbox {
-            border-color:rgba(0, 0, 0, 0.27);
-            background-color:rgba(255, 255, 255, 0.8);
-            color:rgba(0, 0, 0, 0.6);
-        }
-
         .win-searchbox-button {
             color:rgba(0, 0, 0, 0.6);
-        }
-
-        .win-searchbox-input-focus {
-            border-color:rgb(42, 42, 42);
         }
 
         .win-searchbox-button:active {
@@ -95,104 +28,26 @@
         .win-searchbox-button-input-focus {
             background-color: rgb(70, 23, 180);
             color: rgb(255, 255, 255);
-        }
-
-        .win-searchbox-flyout-highlighttext {
-            color: rgb(70, 23, 180);
-        }
-
-        .win-searchbox-flyout {
-            border-color:rgb(42, 42, 42);
-            background-color:rgb(255, 255, 255);
-        }
-
-        .win-searchbox-suggestion-selected {
-            background-color: rgb(70, 23, 180);
-        }
-
-        .win-searchbox-suggestion-query,
-        .win-searchbox-suggestion-result {
-            color: rgb(0,0,0);
-        }
-
-        .win-searchbox-suggestion-separator {
-            color:rgb(122,122,122);
-        }
-
-        .win-searchbox-suggestion-separator hr {
-            border-color:rgb(122,122,122);
-        }
-
-        .win-searchbox-disabled {
-            background-color:rgba(202, 202, 202, 0.4);
-            border-color:rgba(0, 0, 0, 0.15);
-        }
-
-        .win-searchbox-disabled input[disabled] {
-            background-color:rgba(202, 202, 202, 0.4);
-            color: rgba(0, 0, 0, 0.22);
-        }
-
-        .win-searchbox-disabled div {
-            background-color:rgba(202, 202, 202, 0.4);
-            color: rgba(0, 0, 0, 0.22);
-        }
-
-        .win-searchbox-suggestion-selected .win-searchbox-flyout-highlighttext {
-            color: rgb(163,139,218);
         }
     }
     .mixin(@theme);
 }
 .ColorsHover(@theme) {
     .mixin(dark) {
-        .win-searchbox[disabled=false]:hover {
-            border-color:rgba(255, 255, 255, 0.87);
-            background-color:rgba(255, 255, 255, 0.87);
-        }
-
         .win-searchbox-button[disabled=false]:hover {
             background-color: rgb(95, 55, 190);
-        }
-
-        .win-searchbox-input-focus:hover {
-            border-color:rgb(42, 42, 42);
-            background-color:rgb(255, 255, 255);
         }
 
         .win-searchbox-button-input-focus:hover {
             background-color: rgb(95, 55, 190);
         }
-
-        .win-searchbox-suggestion-result:hover,
-        .win-searchbox-suggestion-query:hover {
-            background-color:rgb(229, 229, 229);
-        }
-
-        .win-searchbox-suggestion-selected:hover {
-            background-color: rgb(95, 55, 190);
-        }
-
     }
     .mixin(light) {
-        .win-searchbox[disabled=false]:hover {
-            background-color:rgba(255, 255, 255, 0.87);
-        }
-
         .win-searchbox-button[disabled=false]:hover {
             background-color: rgb(95, 55, 190);
         }
 
         .win-searchbox-button-input-focus:hover {
-            background-color: rgb(95, 55, 190);
-        }
-
-        .win-searchbox-suggestion-result:hover,
-        .win-searchbox-suggestion-query:hover {
-            background-color:rgb(229,229,229);
-        }
-
-        .win-searchbox-suggestion-selected:hover {
             background-color: rgb(95, 55, 190);
         }
     }
@@ -201,21 +56,9 @@
 
 
 @media (-ms-high-contrast) {
-    .win-searchbox {
-        border-color:ButtonText;
-        background-color:ButtonFace;
-        color:ButtonText;
-    }
-
     .win-searchbox-button {
         background-color:ButtonFace;
         color:ButtonText;
-    }
-
-    .win-searchbox:-ms-input-placeholder,
-    .win-searchbox::-webkit-input-placeholder,
-    .win-searchbox::-moz-input-placeholder {
-        color:GrayText;
     }
 
     html.win-hoverable .win-searchbox-button[disabled=false]:hover {
@@ -238,63 +81,5 @@
     .win-searchbox-button:active {
         background-color:ButtonText;
         color:ButtonFace;
-    }
-
-    .win-searchbox-flyout {
-        border-color:ButtonText;
-        background-color:ButtonFace;
-    }
-
-    html.win-hoverable .win-searchbox-suggestion-result:hover,
-    html.win-hoverable .win-searchbox-suggestion-query:hover {
-        background-color:Highlight;
-        color:HighlightText;
-    }
-
-    html.win-hoverable .win-searchbox-suggestion-result:hover .win-searchbox-flyout-highlighttext,
-    html.win-hoverable .win-searchbox-suggestion-query:hover .win-searchbox-flyout-highlighttext {
-        color: HighlightText;
-    }
-
-    .win-searchbox-suggestion-query,
-    .win-searchbox-suggestion-result {
-        color:ButtonText;
-    }
-
-    .win-searchbox-suggestion-selected {
-        background-color:Highlight;
-        color:HighlightText;
-    }
-
-    .win-searchbox-suggestion-separator {
-        color:ButtonText;
-    }
-
-    .win-searchbox-suggestion-separator hr {
-        border-color:ButtonText;
-    }
-
-    .win-searchbox-flyout-highlighttext {
-        color: ButtonText;
-    }
-
-    .win-searchbox-disabled {
-        background-color:ButtonFace;
-        border-color: GrayText;
-    }
-
-    .win-searchbox-disabled input[disabled] {
-        background-color:ButtonFace;
-        color: GrayText;
-        border-color: GrayText;
-    }
-
-    .win-searchbox-disabled div {
-        color: GrayText;
-        background-color: ButtonFace;
-    }
-
-    .win-searchbox-suggestion-selected .win-searchbox-flyout-highlighttext {
-        color: HighlightText;
     }
 }

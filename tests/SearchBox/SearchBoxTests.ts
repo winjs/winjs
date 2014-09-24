@@ -40,23 +40,6 @@ module SearchBoxTests {
             LiveUnit.Assert.isNotNull(searchBox["_buttonElement"]);
         };
 
-        testPublicApiSurfaceFunctions() {
-            // This test only verifies the API surface. It does not test the functionality.
-            var searchBox: WinJS.UI.SearchBox = document.getElementById("SearchBoxID").winControl;
-            LiveUnit.LoggingCore.logComment("Waiting for control...");
-            LiveUnit.LoggingCore.logComment("Verifying...");
-            function verifyFunction(functionName) {
-                LiveUnit.LoggingCore.logComment("Verifying that function " + functionName + " exists");
-                if (searchBox[functionName] === undefined) {
-                    LiveUnit.Assert.fail(functionName + " missing from SearchBox");
-                }
-
-                LiveUnit.Assert.isNotNull(searchBox[functionName]);
-                LiveUnit.Assert.areEqual("function", typeof (searchBox[functionName]), functionName + " exists on SearchBox, but it isn't a function");
-            }
-            verifyFunction("setLocalContentSuggestionSettings");
-        }
-
         testPublicApiSurfaceProperties() {
             // This test only verifies the API surface. It does not test the functionality.
             var searchBox: WinJS.UI.SearchBox = document.getElementById("SearchBoxID").winControl;

@@ -145,6 +145,7 @@ module AutoSuggestBoxTests {
             verifyFunction("addEventListener");
             verifyFunction("removeEventListener");
             verifyFunction("dispose");
+            verifyFunction("setLocalContentSuggestionSettings");
         }
 
         testPublicApiSurfaceProperties() {
