@@ -451,7 +451,7 @@ module CommonUtilities {
         }
     }
 
-    export function mouseOverUsingMiP(fromElement, toElement) {
+    export function mouseOverUsingMiP(fromElement, toElement?) {
         /// <summary>
         ///  Mouse hover from one element to another.
         /// <param name="fromElement" type="object">

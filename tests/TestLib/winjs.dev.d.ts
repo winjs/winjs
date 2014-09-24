@@ -485,6 +485,12 @@ declare module WinJS {
             static _getReferenceCount(): number;
         }
 
+        class PrivateRating extends Rating {
+            _ensureTooltips;
+            _toolTips;
+            _disposed;
+        }
+
         class Toolbar {
             public element: HTMLElement;
             public overflowMode: string;
