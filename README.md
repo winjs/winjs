@@ -56,3 +56,7 @@ Refer to http://try.buildwinjs.com/#status for the current status of the unit te
 
 # Try WinJS
 Check out our online playground http://try.buildwinjs.com
+
+# Follow Us
+Twitter https://twitter.com/BuildWinJS  
+Facebook https://www.facebook.com/buildwinjs
