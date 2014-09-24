@@ -1,34 +1,12 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="repeaterUtils.js"/>
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="repeaterUtils.ts"/>
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.RepeaterSetPromiseTests = function () {
-    "use strict";
-
-    // This is the setup function that will be called at the beginning of 
-    // each test function.
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "RepeaterTests";
-        document.body.appendChild(newNode);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        var element = document.getElementById("RepeaterTests");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-    };
-
-    var that = this,
-        utils = repeaterUtils,
+    var utils = repeaterUtils,
         loadedEvent = utils.events.loadedEvent,
         insertingEvent = utils.events.insertingEvent,
         insertedEvent = utils.events.insertedEvent,
@@ -45,7 +23,30 @@ WinJSTests.RepeaterSetPromiseTests = function () {
             var root = document.createElement("div");
             root.innerHTML = '<div class="product"><div data-win-control="MyCustomControlForRepeater"></div></div></div>';
             return new WinJS.Binding.Template(root);
-        }());
+        } ());
+
+    export class RepeaterSetPromiseTests {
+        "use strict";
+
+        // This is the setup function that will be called at the beginning of 
+        // each test function.
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "RepeaterTests";
+            document.body.appendChild(newNode);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            var element = document.getElementById("RepeaterTests");
+            if (element) {
+                WinJS.Utilities.disposeSubTree(element);
+                document.body.removeChild(element);
+            }
+        }
+
+    }
 
     (function () {
         function generateTest(editType, editBeforeEvent, editAfterEvent, deferElementDisposal) {
@@ -69,10 +70,10 @@ WinJSTests.RepeaterSetPromiseTests = function () {
                     LiveUnit.LoggingCore.logComment(editAfterEvent + " event fired: " + editAfterEventFired);
                     var isElementInDOM = document.body.contains(affectedWinControl._element);
                     LiveUnit.Assert.areEqual(false, isElementInDOM,
-                                "Repeater child element should be removed from the DOM by now.");
+                        "Repeater child element should be removed from the DOM by now.");
                     var isControlDisposed = affectedWinControl._disposed;
                     LiveUnit.Assert.areEqual(false, isControlDisposed,
-                                "Repeater child element is removed from the DOM but should not be disposed yet.");
+                        "Repeater child element is removed from the DOM but should not be disposed yet.");
 
                 }
 
@@ -138,18 +139,18 @@ WinJSTests.RepeaterSetPromiseTests = function () {
                 var isControlDisposed = affectedWinControl._disposed;
                 if (deferElementDisposal) {
                     LiveUnit.Assert.areEqual(false, isControlDisposed,
-                                "Repeater's child element should not be disposed until the setPromise timeout promise is complete.");
+                        "Repeater's child element should not be disposed until the setPromise timeout promise is complete.");
 
                     WinJS.Utilities._setImmediate(function () {
                         isControlDisposed = affectedWinControl._disposed;
                         LiveUnit.Assert.areEqual(true, isControlDisposed,
-                                    "Repeater's child element should be disposed now that the setPromise timeout promise is complete.");
+                            "Repeater's child element should be disposed now that the setPromise timeout promise is complete.");
                         complete(); // Done
                     });
                 } else {
                     // verify it was already disposed
                     LiveUnit.Assert.areEqual(true, isControlDisposed,
-                                "Repeater's child element should be disposed synchronously when setPromise is not used.");
+                        "Repeater's child element should be disposed synchronously when setPromise is not used.");
                     complete(); // Done
                 }
             };
@@ -157,19 +158,18 @@ WinJSTests.RepeaterSetPromiseTests = function () {
 
         // Verify disposal of elements is not deferred for itemremoving,itemchanging and itemsreloading events
         var deferElementDisposal = false;
-        that["testElementDisposeAfterListPop"] = generateTest("pop", removingEvent, removedEvent, deferElementDisposal);
-        that["testElementDisposeAfterListSetAt"] = generateTest("setAt", changingEvent, changedEvent, deferElementDisposal);
-        that["testElementDisposeAfterListReverse"] = generateTest("reverse", reloadingEvent, reloadedEvent, deferElementDisposal);
+        RepeaterSetPromiseTests.prototype["testElementDisposeAfterListPop"] = generateTest("pop", removingEvent, removedEvent, deferElementDisposal);
+        RepeaterSetPromiseTests.prototype["testElementDisposeAfterListSetAt"] = generateTest("setAt", changingEvent, changedEvent, deferElementDisposal);
+        RepeaterSetPromiseTests.prototype["testElementDisposeAfterListReverse"] = generateTest("reverse", reloadingEvent, reloadedEvent, deferElementDisposal);
 
         // Verify disposal of elements is deferred for itemremoving,itemchanging and itemsreloading events
         deferElementDisposal = true;
-        that["testSetPromiseAfterListPop"] = generateTest("pop", removingEvent, removedEvent, deferElementDisposal);
-        that["testSetPromiseAfterListSetAt"] = generateTest("setAt", changingEvent, changedEvent, deferElementDisposal);
-        that["testSetPromiseAfterListReverse"] = generateTest("reverse", reloadingEvent, reloadedEvent, deferElementDisposal);
+        RepeaterSetPromiseTests.prototype["testSetPromiseAfterListPop"] = generateTest("pop", removingEvent, removedEvent, deferElementDisposal);
+        RepeaterSetPromiseTests.prototype["testSetPromiseAfterListSetAt"] = generateTest("setAt", changingEvent, changedEvent, deferElementDisposal);
+        RepeaterSetPromiseTests.prototype["testSetPromiseAfterListReverse"] = generateTest("reverse", reloadingEvent, reloadedEvent, deferElementDisposal);
 
 
     })();
-};
-
+}
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.RepeaterSetPromiseTests");

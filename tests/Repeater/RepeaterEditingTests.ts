@@ -1,34 +1,14 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-/// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-/// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="repeaterUtils.js"/>
+// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="repeaterUtils.ts"/>
 
-var WinJSTests = WinJSTests || {};
+module WinJSTests {
 
-WinJSTests.RepeaterEditingTests = function () {
     "use strict";
 
-    // This is the setup function that will be called at the beginning of 
-    // each test function.
-    this.setUp = function () {
-        LiveUnit.LoggingCore.logComment("In setup");
-        var newNode = document.createElement("div");
-        newNode.id = "RepeaterTests";
-        document.body.appendChild(newNode);
-    };
-
-    this.tearDown = function () {
-        LiveUnit.LoggingCore.logComment("In tearDown");
-        var element = document.getElementById("RepeaterTests");
-        if (element) {
-            WinJS.Utilities.disposeSubTree(element);
-            document.body.removeChild(element);
-        }
-    };
-
-    var that = this,
-        utils = repeaterUtils,
+    var utils = repeaterUtils,
         loadedEvent = utils.events.loadedEvent,
         insertingEvent = utils.events.insertingEvent,
         insertedEvent = utils.events.insertedEvent,
@@ -63,6 +43,150 @@ WinJSTests.RepeaterEditingTests = function () {
             LiveUnit.Assert.areEqual(item, child.textContent,
                 "The data and the DOM element don't match");
         });
+    }
+
+    export class RepeaterEditingTests {
+
+
+        // This is the setup function that will be called at the beginning of 
+        // each test function.
+        setUp() {
+            LiveUnit.LoggingCore.logComment("In setup");
+            var newNode = document.createElement("div");
+            newNode.id = "RepeaterTests";
+            document.body.appendChild(newNode);
+        }
+
+        tearDown() {
+            LiveUnit.LoggingCore.logComment("In tearDown");
+            var element = document.getElementById("RepeaterTests");
+            if (element) {
+                WinJS.Utilities.disposeSubTree(element);
+                document.body.removeChild(element);
+            }
+        }
+
+
+
+
+
+        testRandomDataEdits = function (complete) {
+            var data = utils.createMonthsList(),
+                newData = utils.createWeekdaysList(),
+                srcIndex = 0,
+                destIndex = 0,
+                editsCount = 500,
+                editType,
+                elem = document.getElementById("RepeaterTests");
+
+            LiveUnit.LoggingCore.logComment("Creating a repeater control");
+            var repeater = new WinJS.UI.Repeater(elem, {
+                data: data,
+                template: disposableRenderer
+            });
+            LiveUnit.LoggingCore.logComment("Repeater control created");
+
+            function getRandomNumberUpto(num) {
+                return Math.floor(Math.random() * num);
+            }
+
+            function getRandomItem(array) {
+                var randomIndex = getRandomNumberUpto(array.length);
+                if (array instanceof Array) {
+                    return array[randomIndex];
+                } else {
+                    return array.getAt(randomIndex);
+                }
+            }
+
+            var ops = ["push", "unshift", "pop", "shift", "setAt", "move", "reverse", "sort", "length", "splice"];
+            while (editsCount--) {
+                srcIndex = getRandomNumberUpto(data.length);
+                destIndex = getRandomNumberUpto(data.length);
+                editType = data.length === 0 ? "push" : getRandomItem(ops);
+
+                // Perform data edits
+                switch (editType) {
+                    case "push":
+                        LiveUnit.LoggingCore.logComment("Performing push operation");
+                        data.push(getRandomItem(newData));
+                        break;
+
+                    case "unshift":
+                        LiveUnit.LoggingCore.logComment("Performing unshift operation");
+                        data.unshift(getRandomItem(newData));
+                        break;
+
+                    case "pop":
+                        LiveUnit.LoggingCore.logComment("Performing pop operations");
+                        data.pop();
+                        break;
+
+                    case "shift":
+                        LiveUnit.LoggingCore.logComment("Performing shift operations");
+                        data.shift();
+                        break;
+
+                    case "setAt":
+                        LiveUnit.LoggingCore.logComment("Performing setAt operations");
+                        data.setAt(srcIndex, getRandomItem(newData));
+                        break;
+
+                    case "move":
+                        LiveUnit.LoggingCore.logComment("Performing move operation");
+                        data.move(srcIndex, destIndex);
+                        break;
+
+                    case "reverse":
+                        LiveUnit.LoggingCore.logComment("Performing reverse operation");
+                        data.reverse();
+                        break;
+
+                    case "sort":
+                        LiveUnit.LoggingCore.logComment("Performing sort operation");
+                        data.sort();
+                        break;
+
+                    case "length":
+                        LiveUnit.LoggingCore.logComment("Setting the length of the list to less than actual member");
+                        data.length = getRandomNumberUpto(data.length);
+                        break;
+
+                    case "splice":
+                        LiveUnit.LoggingCore.logComment("Performing splice operation");
+                        data.splice(srcIndex, destIndex, getRandomItem(newData));
+                        break;
+
+                    default:
+                        LiveUnit.Assert.fail("Unrecognized edit type");
+                }
+
+                // Verify DOM and events
+                verifyDOM(elem, data, ".repeater-child");
+            }
+
+            // Done
+            complete();
+        };
+
+        testAddToListUsingSetAt = function (complete) {
+            var data = utils.createMonthsList(),
+                elem = document.getElementById("RepeaterTests");
+
+            LiveUnit.LoggingCore.logComment("Creating a repeater control");
+            var repeater = new WinJS.UI.Repeater(elem, {
+                data: data,
+                template: disposableRenderer
+            });
+            LiveUnit.LoggingCore.logComment("Repeater control created");
+
+            // Binding List allows setAt() to append to the list when setting the item at (list.length) index
+            // Add an item to the end of the list by using setAt
+            data.setAt(data.length, data.getAt(0));
+
+            verifyDOM(elem, data, ".repeater-child");
+            complete();
+        };
     }
 
     (function () {
@@ -256,19 +380,19 @@ WinJSTests.RepeaterEditingTests = function () {
             };
         }
 
-        that["testListPush"] = generateTest("push", insertingEvent, insertedEvent);
-        that["testListUnshift"] = generateTest("unshift", insertingEvent, insertedEvent);
-        that["testListPop"] = generateTest("pop", removingEvent, removedEvent);
-        that["testListShift"] = generateTest("shift", removingEvent, removedEvent);
-        that["testListSetAt"] = generateTest("setAt", changingEvent, changedEvent);
-        that["testListMove"] = generateTest("move", movingEvent, movedEvent);
-        that["testListReverse"] = generateTest("reverse", reloadingEvent, reloadedEvent);
-        that["testListSort"] = generateTest("sort", reloadingEvent, reloadedEvent);
-        that["testSetListLength"] = generateTest("length", removingEvent, removedEvent);
+        RepeaterEditingTests.prototype["testListPush"] = generateTest("push", insertingEvent, insertedEvent);
+        RepeaterEditingTests.prototype["testListUnshift"] = generateTest("unshift", insertingEvent, insertedEvent);
+        RepeaterEditingTests.prototype["testListPop"] = generateTest("pop", removingEvent, removedEvent);
+        RepeaterEditingTests.prototype["testListShift"] = generateTest("shift", removingEvent, removedEvent);
+        RepeaterEditingTests.prototype["testListSetAt"] = generateTest("setAt", changingEvent, changedEvent);
+        RepeaterEditingTests.prototype["testListMove"] = generateTest("move", movingEvent, movedEvent);
+        RepeaterEditingTests.prototype["testListReverse"] = generateTest("reverse", reloadingEvent, reloadedEvent);
+        RepeaterEditingTests.prototype["testListSort"] = generateTest("sort", reloadingEvent, reloadedEvent);
+        RepeaterEditingTests.prototype["testSetListLength"] = generateTest("length", removingEvent, removedEvent);
     })();
 
     (function () {
-        function generateTest(startIndex, howMany, items) {
+        function generateTest(startIndex, howMany, items?) {
             return function (complete) {
                 var data = utils.createMonthsList(),
                     elem = document.getElementById("RepeaterTests"),
@@ -329,7 +453,7 @@ WinJSTests.RepeaterEditingTests = function () {
         for (var start = 0; start < oldDataLength; start++) {
             for (var count = 0; count <= oldDataLength; count++) {
                 newData.forEach(function (item) {
-                    that["testSpliceStartAt" + start + "Count" + count + "NewItem" + item] = generateTest(start, count, item);
+                    RepeaterEditingTests.prototype["testSpliceStartAt" + start + "Count" + count + "NewItem" + item] = generateTest(start, count, item);
                 });
             }
         }
@@ -337,137 +461,17 @@ WinJSTests.RepeaterEditingTests = function () {
         // Tests for only removes 
         for (var start = 0; start < oldDataLength; start++) {
             for (var count = 0; count <= oldDataLength; count++) {
-                that["testSpliceRemovesStartAt" + start + "Count" + count] = generateTest(start, count);
+                RepeaterEditingTests.prototype["testSpliceRemovesStartAt" + start + "Count" + count] = generateTest(start, count);
             }
         }
 
         // Tests for only inserts
         for (var start = 0; start < oldDataLength; start++) {
             newData.forEach(function (item) {
-                that["testSpliceInsertsStartAt" + start + "NewItem" + item] = generateTest(start, 0, item);
+                RepeaterEditingTests.prototype["testSpliceInsertsStartAt" + start + "NewItem" + item] = generateTest(start, 0, item);
             });
         }
     })();
-
-    this.testRandomDataEdits = function (complete) {
-        var data = utils.createMonthsList(),
-            newData = utils.createWeekdaysList(),
-            srcIndex = 0,
-            destIndex = 0,
-            editsCount = 500,
-            editType,
-            elem = document.getElementById("RepeaterTests");
-
-        LiveUnit.LoggingCore.logComment("Creating a repeater control");
-        var repeater = new WinJS.UI.Repeater(elem, {
-            data: data,
-            template: disposableRenderer
-        });
-        LiveUnit.LoggingCore.logComment("Repeater control created");
-
-        function getRandomNumberUpto(num) {
-            return Math.floor(Math.random() * num);
-        }
-
-        function getRandomItem(array) {
-            var randomIndex = getRandomNumberUpto(array.length);
-            if (array instanceof Array) {
-                return array[randomIndex];
-            } else {
-                return array.getAt(randomIndex);
-            }
-        }
-
-        var ops = ["push", "unshift", "pop", "shift", "setAt", "move", "reverse", "sort", "length", "splice"];
-        while (editsCount--) {
-            srcIndex = getRandomNumberUpto(data.length);
-            destIndex = getRandomNumberUpto(data.length);
-            editType = data.length === 0 ? "push" : getRandomItem(ops);
-
-            // Perform data edits
-            switch (editType) {
-                case "push":
-                    LiveUnit.LoggingCore.logComment("Performing push operation");
-                    data.push(getRandomItem(newData));
-                    break;
-
-                case "unshift":
-                    LiveUnit.LoggingCore.logComment("Performing unshift operation");
-                    data.unshift(getRandomItem(newData));
-                    break;
-
-                case "pop":
-                    LiveUnit.LoggingCore.logComment("Performing pop operations");
-                    data.pop();
-                    break;
-
-                case "shift":
-                    LiveUnit.LoggingCore.logComment("Performing shift operations");
-                    data.shift();
-                    break;
-
-                case "setAt":
-                    LiveUnit.LoggingCore.logComment("Performing setAt operations");
-                    data.setAt(srcIndex, getRandomItem(newData));
-                    break;
-
-                case "move":
-                    LiveUnit.LoggingCore.logComment("Performing move operation");
-                    data.move(srcIndex, destIndex);
-                    break;
-
-                case "reverse":
-                    LiveUnit.LoggingCore.logComment("Performing reverse operation");
-                    data.reverse();
-                    break;
-
-                case "sort":
-                    LiveUnit.LoggingCore.logComment("Performing sort operation");
-                    data.sort();
-                    break;
-
-                case "length":
-                    LiveUnit.LoggingCore.logComment("Setting the length of the list to less than actual member");
-                    data.length = getRandomNumberUpto(data.length);
-                    break;
-
-                case "splice":
-                    LiveUnit.LoggingCore.logComment("Performing splice operation");
-                    data.splice(srcIndex, destIndex, getRandomItem(newData));
-                    break;
-
-                default:
-                    LiveUnit.Assert.fail("Unrecognized edit type");
-            }
-
-            // Verify DOM and events
-            verifyDOM(elem, data, ".repeater-child");
-        }
-
-        // Done
-        complete();
-    };
-    this.testRandomDataEdits["timeout"] = 30000;
-
-    this.testAddToListUsingSetAt = function (complete) {
-        var data = utils.createMonthsList(),
-            elem = document.getElementById("RepeaterTests");
-
-        LiveUnit.LoggingCore.logComment("Creating a repeater control");
-        var repeater = new WinJS.UI.Repeater(elem, {
-            data: data,
-            template: disposableRenderer
-        });
-        LiveUnit.LoggingCore.logComment("Repeater control created");
-
-        // Binding List allows setAt() to append to the list when setting the item at (list.length) index
-        // Add an item to the end of the list by using setAt
-        data.setAt(data.length, data.getAt(0));
-
-        verifyDOM(elem, data, ".repeater-child");
-        complete();
-    };
 }
-
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.RepeaterEditingTests");
