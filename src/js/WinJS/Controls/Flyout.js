@@ -898,7 +898,20 @@ define([
 
                 // ILightDismissable
                 ld_lightDismiss: function (info) {
-                    this._hide();
+                    switch (info.reason) {
+                        case _LightDismissService.LightDismissalReasons.tap:
+                        case _LightDismissService.LightDismissalReasons.lostFocus:
+                            // _hide or hide?
+                            this._hide();
+                            break;
+                    }
+                    // From _Overlay.js. Used to call this when losing focus
+                    //overlay._hideOrDismiss();
+                    // From _Overlay.js. Do we need to handle this case here?
+                    //// If we're still showing we haven't really lost focus
+                    //if (overlay.hidden || overlay.element.winAnimating === "showing" || overlay._sticky) {
+                    //    return;
+                    //}
                 }
             });
             _Base.Class.mix(Flyout, _LightDismissService.LightDismissableElement);

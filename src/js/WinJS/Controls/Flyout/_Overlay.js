@@ -1142,8 +1142,6 @@ define([
 
                 _handleOverlayEventsForFlyoutOrSettingsFlyout: function _Overlay_handleOverlayEventsForFlyoutOrSettingsFlyout() {
                     var that = this;
-                    // Need to hide ourselves if we lose focus
-                    _ElementUtilities._addEventListener(this._element, "focusout", function (e) { _Overlay._hideIfLostFocus(that, e); }, false);
 
                     // Need to handle right clicks that trigger edgy events in WWA
                     _ElementUtilities._addEventListener(this._element, "pointerdown", _Overlay._checkRightClickDown, true);
@@ -1315,39 +1313,6 @@ define([
                         return false;
                     }
                     return (_Overlay._clickEatingFlyoutDiv.style.display === "block");
-                },
-
-                _hideIfLostFocus: function (overlay) {
-                    // If we're still showing we haven't really lost focus
-                    if (overlay.hidden || overlay.element.winAnimating === "showing" || overlay._sticky) {
-                        return;
-                    }
-                    // If the active thing is within our element, we haven't lost focus
-                    var active = _Global.document.activeElement;
-                    if (overlay._element && overlay._element.contains(active)) {
-                        return;
-                    }
-                    // SettingFlyouts don't dismiss if they spawned a flyout
-                    if (_ElementUtilities.hasClass(overlay._element, _Constants.settingsFlyoutClass)) {
-                        var settingsFlyout = overlay;
-                        var flyoutControl = _Overlay._getParentControlUsingClassName(active, "win-flyout");
-                        if (flyoutControl && flyoutControl._previousFocus && settingsFlyout.element.contains(flyoutControl._previousFocus)) {
-                            _ElementUtilities._addEventListener(flyoutControl.element, 'focusout', function focusOut(event) {
-                                // When the Flyout closes, hide the SetingsFlyout if it didn't regain focus.
-                                _Overlay._hideIfLostFocus(settingsFlyout, event);
-                                _ElementUtilities._removeEventListener(flyoutControl.element, 'focusout', focusOut, false);
-                            }, false);
-                            return;
-                        }
-                    }
-                    // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
-                    if (active &&
-                            (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
-                             _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
-                        return;
-                    }
-
-                    overlay._hideOrDismiss();
                 },
 
                 // Try to set us as active

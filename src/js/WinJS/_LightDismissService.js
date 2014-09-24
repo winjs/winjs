@@ -15,7 +15,8 @@ define([
         _clickEater: "win-click-eater"
     };
     var LightDismissalReasons = {
-        tap: "tap"
+        tap: "tap",
+        lostFocus: "lostFocus"
         // click (_Overlay.js: _Overlay_handleAppBarClickEatingClick, _Overlay__handleFlyoutClickEatingClick)
         // window blur (_Overlay.js: _GlobalListener_windowBlur)
         // edgy (_Overlay.js: _checkRightClickUp, _GlobalListener_edgyStarting, _GlobalListener_edgyCompleted)
@@ -30,6 +31,9 @@ define([
     var LightDismissService = _Base.Class.define(function () {
         this._clickEaterEl = this._createClickEater();
         this._clients = [];
+        this._isLive = false;
+        
+        this._onFocusInBound = this._onFocusIn.bind(this);
     }, {
         // TODO: Think about states
         // - is top level
@@ -76,18 +80,21 @@ define([
             }.bind(this));
             this._clickEaterEl.style.zIndex = BASE_ZINDEX + (this._clients.length - 1) * 2;
 
-            var inDom = !!this._clickEaterEl.parentNode;
-            if (inDom && this._clients.length === 0) {
-                _Global.document.body.removeChild(this._clickEaterEl);
-            } else if (!inDom && this._clients.length > 0) {
+            if (!this._isLive && this._clients.length > 0) {
+                _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.body.appendChild(this._clickEaterEl);
+                this._isLive = true;
+            } else if (this._isLive && this._clients.length === 0) {
+                _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+                _Global.document.body.removeChild(this._clickEaterEl);
+                this._isLive = false;
             }
         },
 
-        _dispatchLightDismiss: function (reason) {
+        _dispatchLightDismiss: function (reason, clients) {
             this._notifying = true;
             //this._saveFocus();
-            var clients = this._clients.slice(0);
+            clients = clients || this._clients.slice(0);
             var lastClient;
             var info = {
                 reason: reason,
@@ -109,6 +116,25 @@ define([
             //this._becameTopLevelIfNeeded();
             this._updateUI();
             this._notifying = false;
+        },
+
+        _onFocusIn: function (eventObject) {
+            // Commented out code is from _Overlay.js. Think if we need to handle this case in the service.
+            // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
+            //if (active &&
+            //        (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
+            //         _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
+            //    return;
+            //}
+
+            var target = eventObject.target;
+            for (var i = this._clients.length - 1; i >= 0; i--) {
+                if (this._clients[i].ld_containsElement(target)) {
+                    break;
+                }
+            }
+
+            this._dispatchLightDismiss(LightDismissalReasons.lostFocus, this._clients.slice(i + 1, this._clients.length));
         },
 
         _createClickEater: function () {
@@ -185,11 +211,16 @@ define([
 
         ld_setZIndex: function (value) {
             this.element.style.zIndex = value;
+        },
+
+        ld_containsElement: function (element) {
+            return this.element.contains(element);
         }
     };
 
     var lds = new LightDismissService();
     lds.LightDismissableElement = LightDismissableElement;
+    lds.LightDismissalReasons = LightDismissalReasons;
 
     return lds;
 });
