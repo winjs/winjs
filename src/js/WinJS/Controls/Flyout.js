@@ -368,7 +368,7 @@ define([
 
                         // Hide all other flyouts
                         // ADCOM: So we intentionally only show 1 flyout at a time?
-                        this._hideAllOtherFlyouts(this);
+                        //this._hideAllOtherFlyouts(this);
 
                         // Store what had focus before showing the Flyout.
                         // This must happen after we hide all other flyouts so that we store the correct element.
