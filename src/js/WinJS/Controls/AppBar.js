@@ -23,9 +23,10 @@ define([
     './AppBar/_Command',
     './AppBar/_Icon',
     './Flyout/_Overlay',
+    '../_LightDismissService',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay) {
+], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay, _LightDismissService) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -431,10 +432,6 @@ define([
                 // Need to store what had focus before
                 _ElementUtilities._addEventListener(this._element, "focusin", function (event) { _checkStorePreviousFocus(event); }, false);
 
-                // Need to hide ourselves if we lose focus
-                _ElementUtilities._addEventListener(this._element, "focusout", function () { _Overlay._Overlay._hideIfAllAppBarsLostFocus(); }, false);
-
-
                 if (this.closedDisplayMode === closedDisplayModes.none && this.layout === _Constants.appBarLayoutCommands) {
                     // Remove the commands layout AppBar from the layout tree at this point so we don't cause unnecessary layout costs whenever
                     // the window resizes or when CSS changes are applied to the commands layout AppBar's parent element.
@@ -782,6 +779,7 @@ define([
                         if (!this.sticky) {
                             // Need click-eating div to be visible ASAP.
                             // ADCOM: lds_shown?
+                            _LightDismissService.shown(this);
                         }
 
                         // Clean up tabbing behavior by making sure first and final divs are correct after showing.
@@ -1143,6 +1141,8 @@ define([
 
                     _ElementUtilities.removeClass(this._element, _Constants.hidingClass);
                     _ElementUtilities.addClass(this._element, _Constants.hiddenClass);
+
+                    _LightDismissService.hidden(this);
 
                     // Send our "afterHide" event
                     this._sendEvent(_Overlay._Overlay.afterHide);
@@ -1537,6 +1537,24 @@ define([
 
                 _writeProfilerMark: function AppBar_writeProfilerMark(text) {
                     _WriteProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
+                },
+
+                // ILightDismissable
+                ld_lightDismiss: function (info) {
+                    switch (info.reason) {
+                        case _LightDismissService.LightDismissalReasons.tap:
+                            if (info.topLevel) {
+                                // _hide or hide?
+                                this.hide();
+                            } else {
+                                info.stopPropagation();
+                            }
+                            break;
+                        case _LightDismissService.LightDismissalReasons.lostFocus:
+                            // _hide or hide?
+                            this.hide();
+                            break;
+                    }
                 }
             }, {
                 // Statics
@@ -1584,7 +1602,7 @@ define([
                     }
                 },
             });
-
+            _Base.Class.mix(AppBar, _LightDismissService.LightDismissableElement);
             return AppBar;
         })
     });
