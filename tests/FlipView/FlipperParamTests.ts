@@ -158,7 +158,7 @@ module WinJSTests {
                 }
             };
             // All abilities are enabled
-            var itemDataSource = TestComponents.createTestDataSource(data, controller, null);
+            var itemDataSource = Helper.ItemsManager.createTestDataSource(data, controller, null);
             itemDataSource.testDataAdapter.directives = directives;
             return itemDataSource;
         }

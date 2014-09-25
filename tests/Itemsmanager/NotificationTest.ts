@@ -19,19 +19,19 @@ module WinJSTests {
     }
 
     function testSimpleNotifications(signalTestCaseCompleted, synchronous) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(0),
-            handler = TestComponents.simpleListNotificationHandler(),
+        var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(0),
+            handler = Helper.ItemsManager.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
 
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
         var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-        TestComponents.setState(dataSource, state0);
+        Helper.ItemsManager.setState(dataSource, state0);
 
         var promises = [];
 
@@ -61,7 +61,7 @@ module WinJSTests {
 
             // Change the state of the data source, as if it had been changed by an external influence
             var state1 = [0, 1, 2, 7, 3, 4, 5, 6, 8, 9];
-            TestComponents.setState(dataSource, state1);
+            Helper.ItemsManager.setState(dataSource, state1);
 
             // Force a refresh and wait for it to complete
             dataSource.invalidateAll().then(function () {
@@ -79,7 +79,7 @@ module WinJSTests {
 
                 // Try three moves and and two insertions
                 var state2 = [9, 10, 0, 1, 2, 7, 3, 6, 8, 11, 4, 5];
-                TestComponents.setState(dataSource, state2);
+                Helper.ItemsManager.setState(dataSource, state2);
 
                 // Force a refresh and wait for it to complete
                 dataSource.invalidateAll().then(function () {
@@ -105,7 +105,7 @@ module WinJSTests {
 
                     // Try a move between two insertions and three deletions
                     var state3 = [10, 0, 1, 7, 3, 12, 2, 13, 8, 11, 4];
-                    TestComponents.setState(dataSource, state3);
+                    Helper.ItemsManager.setState(dataSource, state3);
 
                     // Force a refresh and wait for it to complete
                     dataSource.invalidateAll().then(function () {
@@ -136,19 +136,19 @@ module WinJSTests {
     }
 
     function testInsertAfterClearNotifications(signalTestCaseCompleted, synchronous) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(5),
-            handler = TestComponents.simpleListNotificationHandler(),
+        var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(5),
+            handler = Helper.ItemsManager.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
 
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
         // Clear the data source
         var state0 = [];
-        TestComponents.setState(dataSource, state0);
+        Helper.ItemsManager.setState(dataSource, state0);
 
         dataSource.invalidateAll().then(function () {
             handler.verifyExpectedNotifications([
@@ -160,7 +160,7 @@ module WinJSTests {
 
             // Append three items to the empty data source
             var state1 = [0, 1, 2];
-            TestComponents.setState(dataSource, state1);
+            Helper.ItemsManager.setState(dataSource, state1);
 
             dataSource.invalidateAll().then(function () {
                 handler.verifyExpectedNotifications([
@@ -197,7 +197,7 @@ module WinJSTests {
         });
     }
 
-    var rand = TestComponents.pseudorandom;
+    var rand = Helper.ItemsManager.pseudorandom;
 
     function occurs(probability) {
         var granularity = 1000;
@@ -206,7 +206,7 @@ module WinJSTests {
     }
 
     function createTestListBinding(dataSource) {
-        var handler = TestComponents.stressListNotificationHandler(),
+        var handler = Helper.ItemsManager.stressListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
 
         // Add handler as expando on the ListBinding
@@ -240,7 +240,7 @@ module WinJSTests {
     //   - notifications: Does the data source send synchronous change notifications?
     function testRandomUsageOnce(indices, asynchronous, failures, changes, notifications, complete) {
         var count = 300,
-            dataSource = TestComponents.simpleAsynchronousDataSource(count),
+            dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(count),
             testDataAdapter = dataSource.testDataAdapter,
             listBinding1 = createTestListBinding(dataSource),
             listBinding2 = createTestListBinding(dataSource),
@@ -560,13 +560,13 @@ module WinJSTests {
     }
 
     function testRandomUsage(indices, asynchronous, failures, changes, notifications, signalTestCaseCompleted) {
-        var iterationCount = 5 * TestComponents.stressLevel;
+        var iterationCount = 5 * Helper.ItemsManager.stressLevel;
 
         iteration = 0;
 
         (function continueTest() {
             LiveUnit.LoggingCore.logComment("Test " + iteration + " of " + iterationCount);
-            TestComponents.seedPseudorandom(iteration);
+            Helper.ItemsManager.seedPseudorandom(iteration);
             testRandomUsageOnce(indices, asynchronous, failures, changes, notifications, function () {
                 if (++iteration < iterationCount) {
                     WinJS.Utilities._setImmediate(continueTest);
@@ -579,8 +579,8 @@ module WinJSTests {
 
     // verify the newCount and oldCount returned in countChanged handler are correct. No difference is expected in sync/async mode although testing both of them.
     function testCountChangedNotificationWithChangingDataSource(signalTestCaseCompleted, synchronous) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(5),
-            handler = TestComponents.simpleListNotificationHandler(),
+        var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(5),
+            handler = Helper.ItemsManager.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
         var newCountValue = 0;
         var oldCountValue: any = 0;
@@ -599,24 +599,24 @@ module WinJSTests {
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
         var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-        TestComponents.setState(dataSource, state0);
+        Helper.ItemsManager.setState(dataSource, state0);
         newCountValue = 10;
         oldCountValue = "unknown";
 
         listBinding.first().then(function () {
             var state1 = [0, 1, 2, 3, 4];
-            TestComponents.setState(dataSource, state1);
+            Helper.ItemsManager.setState(dataSource, state1);
             oldCountValue = newCountValue;
             newCountValue = 5;
             return dataSource.invalidateAll();
         })
             .then(function () {
                 var state2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-                TestComponents.setState(dataSource, state2);
+                Helper.ItemsManager.setState(dataSource, state2);
                 oldCountValue = newCountValue;
                 newCountValue = 12;
                 return dataSource.invalidateAll();
@@ -644,11 +644,11 @@ module WinJSTests {
         }
 
         testEmptyListNotifications(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(0),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(0),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
 
             // Fetch the first item, which should return a placeholder
             var itemPromise = listBinding.first();
@@ -657,11 +657,11 @@ module WinJSTests {
             // Wait for the fetch to discover that the item doesn't exist
             itemPromise.then(function (item) {
                 LiveUnit.Assert.isNull(item, "First item in list known to be empty not null");
-                TestComponents.verifyRequestCount(dataSource, 0);
+                Helper.ItemsManager.verifyRequestCount(dataSource, 0);
 
                 // This will actually be called from the refresh - wait for it to complete
-                TestComponents.setImmediate(function () {
-                    TestComponents.verifyRequestCount(dataSource, 0);
+                Helper.ItemsManager.setImmediate(function () {
+                    Helper.ItemsManager.verifyRequestCount(dataSource, 0);
 
                     // The notifications will have been sent after the promise completed, so verify them now
                     handler.verifyExpectedNotifications([
@@ -688,7 +688,7 @@ module WinJSTests {
                     LiveUnit.Assert.isTrue(synchronous, "Fetching first item did not complete synchronously");
 
                     // We don't expect there to be any outstanding requests, or to have received any notifications
-                    TestComponents.verifyRequestCount(dataSource, 0);
+                    Helper.ItemsManager.verifyRequestCount(dataSource, 0);
                     handler.verifyExpectedNotifications([]);
 
                     signalTestCaseCompleted();
@@ -705,14 +705,14 @@ module WinJSTests {
         }
 
         testInsertNotifications(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(5),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(5),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
 
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
 
             var state0 = [0, 1, 2, 3, 4];
-            TestComponents.setState(dataSource, state0);
+            Helper.ItemsManager.setState(dataSource, state0);
 
             var promises = [];
 
@@ -743,7 +743,7 @@ module WinJSTests {
 
                 // Append three items directly to the data source
                 var state1 = [0, 1, 2, 3, 4, 5, 6, 7];
-                TestComponents.setState(dataSource, state1);
+                Helper.ItemsManager.setState(dataSource, state1);
 
                 // Force a refresh and wait for it to complete
                 dataSource.invalidateAll().then(function () {
@@ -762,14 +762,14 @@ module WinJSTests {
         }
 
         testInsertAtEndNotifications(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(5),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(5),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
 
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
 
             var state0 = [0, 1, 2, 3, 4];
-            TestComponents.setState(dataSource, state0);
+            Helper.ItemsManager.setState(dataSource, state0);
 
             var promises = [];
 
@@ -800,7 +800,7 @@ module WinJSTests {
 
                 // Append three items directly to the data source
                 var state1 = [0, 1, 2, 3, 4, 5, 6, 7];
-                TestComponents.setState(dataSource, state1);
+                Helper.ItemsManager.setState(dataSource, state1);
 
                 // Force a refresh and wait for it to complete
                 dataSource.invalidateAll().then(function () {
@@ -831,17 +831,17 @@ module WinJSTests {
         }
 
         testRefreshWithTwoListBindings(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(0),
-                handler1 = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(0),
+                handler1 = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding1 = dataSource.createListBinding(handler1),
-                handler2 = TestComponents.simpleListNotificationHandler(),
+                handler2 = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding2 = dataSource.createListBinding(handler2);
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
 
             var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-            TestComponents.setState(dataSource, state0);
+            Helper.ItemsManager.setState(dataSource, state0);
 
             var promises = [];
 

@@ -27,19 +27,19 @@ module WinJSTests {
     }
 
     function testEditing(signalTestCaseCompleted, synchronous) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(0),
-            handler = TestComponents.simpleListNotificationHandler(),
+        var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(0),
+            handler = Helper.ItemsManager.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
 
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
         var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-        TestComponents.setState(dataSource, state0);
+        Helper.ItemsManager.setState(dataSource, state0);
 
         // Fetch the first item
         var itemPromise = listBinding.first();
@@ -49,7 +49,7 @@ module WinJSTests {
             handler.updateItem(item);
             handler.verifyItem(item, 0);
 
-            TestComponents.setImmediate(function () {
+            Helper.ItemsManager.setImmediate(function () {
                 handler.verifyExpectedNotifications([
                     "beginNotifications",
                     "countChanged",
@@ -71,7 +71,7 @@ module WinJSTests {
                 }
 
                 WinJS.Promise.join(promises).then(function () {
-                    TestComponents.verifyRequestCount(dataSource, 0);
+                    Helper.ItemsManager.verifyRequestCount(dataSource, 0);
 
                     handler.verifyExpectedNotifications([]);
                     handler.verifyState(state0, dataSource);
@@ -81,7 +81,7 @@ module WinJSTests {
                     var state1 = [10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
                     clearLastEdit();
-                    var insertPromise = dataSource.insertAtStart(null, TestComponents.simpleItem(10)).then(function () {
+                    var insertPromise = dataSource.insertAtStart(null, Helper.ItemsManager.simpleItem(10)).then(function () {
                         recordEditSuccess();
                     });
 
@@ -138,7 +138,7 @@ module WinJSTests {
                             dataSource.beginEdits();
                             dataSource.remove("2");
                             dataSource.change("4", newData);
-                            dataSource.insertAtEnd(null, TestComponents.simpleItem(11));
+                            dataSource.insertAtEnd(null, Helper.ItemsManager.simpleItem(11));
 
                             handler.verifyExpectedNotifications([
                                 "beginNotifications",
@@ -162,7 +162,7 @@ module WinJSTests {
                             ]);
 
                             // Change item 4 back, so verifyState finds the expected value
-                            var changePromise = dataSource.change("4", TestComponents.simpleItem(4));
+                            var changePromise = dataSource.change("4", Helper.ItemsManager.simpleItem(4));
 
                             handler.verifyExpectedNotifications([
                                 "beginNotifications",
@@ -192,9 +192,9 @@ module WinJSTests {
                                 dataSource.beginEdits();
                                 dataSource.moveAfter("0", "6");
                                 dataSource.moveToStart("9");
-                                dataSource.insertAfter(null, TestComponents.simpleItem("12"), "1").then(function (item4) {
+                                dataSource.insertAfter(null, Helper.ItemsManager.simpleItem("12"), "1").then(function (item4) {
                                     dataSource.moveBefore("12", "9");
-                                    dataSource.insertBefore(null, TestComponents.simpleItem("13"), "12");
+                                    dataSource.insertBefore(null, Helper.ItemsManager.simpleItem("13"), "12");
                                     var movePromise = dataSource.moveToEnd("8");
                                     dataSource.endEdits();
 
@@ -296,12 +296,12 @@ module WinJSTests {
 
         // this test will verify the edit error code(notPermitted) by simulating readOnly data source
         testEditErrorCodes_NotPermitted(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(100),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
             dataSource.testDataAdapter.setProperty("readOnly", true);
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
 
             // Fetch the first item
             var itemPromise = listBinding.first();
@@ -310,8 +310,8 @@ module WinJSTests {
 
             function itemPromiseHandler(item) {
 
-                TestComponents.verifyItemData(item, 0);
-                TestComponents.setImmediate(function () {
+                Helper.ItemsManager.verifyItemData(item, 0);
+                Helper.ItemsManager.setImmediate(function () {
                     handler.verifyExpectedNotifications([
                         "beginNotifications",
                         "countChanged",
@@ -354,15 +354,15 @@ module WinJSTests {
         // Testing the edit error code: noLongerMeaningful by changing the deleted item
 
         testEditErrorCodes_NoLongerMeaningful(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(100),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
             // Fetch the first item
             var itemPromise = listBinding.first();
             itemPromise.then(function (item) {
-                TestComponents.verifyItemData(item, 0);
+                Helper.ItemsManager.verifyItemData(item, 0);
                 handler.verifyExpectedNotifications([
                     "beginNotifications",
                     "countChanged",
@@ -395,17 +395,17 @@ module WinJSTests {
 
         // this test will verify the edit error code(noResponse) by simulating DS communication Failure
         testEditErrorCodes_NoResponse(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(100),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
 
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
 
             // Fetch the first item
             var itemPromise = listBinding.first();
             itemPromise.then(function (item) {
-                TestComponents.verifyItemData(item, 0);
+                Helper.ItemsManager.verifyItemData(item, 0);
                 handler.verifyExpectedNotifications([
                     "beginNotifications",
                     "countChanged",
@@ -442,14 +442,14 @@ module WinJSTests {
 
 
         xtestCountError_NoResponse(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(100),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
 
             // track how mnay times countChanged notification is thrown
             var countChanged = 0;
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
             dataSource.testDataAdapter.setProperty("count_NoResponse", true);
 
             handler.countChanged = function (newCount, oldCount) {
@@ -474,14 +474,14 @@ module WinJSTests {
 
 
         testCountError_Unknown(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(100),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
 
             // track how mnay times countChanged notification is thrown
             var countChanged = 0;
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
             dataSource.testDataAdapter.setProperty("countUnknown", true);
 
             handler.countChanged = function (newCount, oldCount) {

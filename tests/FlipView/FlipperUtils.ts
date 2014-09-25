@@ -949,7 +949,7 @@ module FlipperUtils {
         /// </param>
         /// </summary>
         var totalItems = 10,
-            itemDataSourceObject = TestComponents.createTestDataSource(FlipperUtils.simpleArrayData(totalItems), controller, null),
+            itemDataSourceObject = Helper.ItemsManager.createTestDataSource(FlipperUtils.simpleArrayData(totalItems), controller, null),
             flipper,
             flipperDiv = document.getElementById(FlipperUtils.basicFlipperID()),
             removePosition,
@@ -1089,7 +1089,7 @@ module FlipperUtils {
         /// </param>
         /// </summary>
         var totalItems = 10,
-            itemDataSourceObject = TestComponents.createTestDataSource(FlipperUtils.simpleArrayData(totalItems), controller, null),
+            itemDataSourceObject = Helper.ItemsManager.createTestDataSource(FlipperUtils.simpleArrayData(totalItems), controller, null),
             flipper,
             flipperDiv = document.getElementById(FlipperUtils.basicFlipperID()),
             verifyPosition,

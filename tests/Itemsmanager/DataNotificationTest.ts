@@ -34,16 +34,16 @@ module WinJSTests {
         }
 
         testDataNotifications(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(0),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(0),
                 testDataAdapter = dataSource.testDataAdapter,
-                handler = TestComponents.simpleListNotificationHandler(),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
             dataSource.testDataAdapter.directives.sendChangeNotifications = true;
 
             var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-            TestComponents.setState(dataSource, state0);
+            Helper.ItemsManager.setState(dataSource, state0);
 
             // Fetch the first item
             var itemPromise = listBinding.first();
@@ -53,7 +53,7 @@ module WinJSTests {
                 handler.updateItem(item);
                 handler.verifyItem(item, 0);
 
-                TestComponents.setImmediate(function () {
+                Helper.ItemsManager.setImmediate(function () {
                     handler.verifyExpectedNotifications([
                         "beginNotifications",
                         "countChanged",
@@ -75,7 +75,7 @@ module WinJSTests {
                     }
 
                     WinJS.Promise.join(promises).then(function () {
-                        TestComponents.verifyRequestCount(dataSource, 0);
+                        Helper.ItemsManager.verifyRequestCount(dataSource, 0);
 
                         handler.verifyExpectedNotifications([]);
                         handler.verifyState(state0, dataSource);
@@ -84,7 +84,7 @@ module WinJSTests {
 
                         var state1 = [10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-                        testDataAdapter.insertAtIndex(TestComponents.simpleItem(10), 0);
+                        testDataAdapter.insertAtIndex(Helper.ItemsManager.simpleItem(10), 0);
 
                         handler.verifyExpectedNotifications([
                             "beginNotifications",
@@ -118,7 +118,7 @@ module WinJSTests {
                             testDataAdapter.beginModifications();
                             testDataAdapter.removeAtIndex(testDataAdapter.indexFromKey("2"));
                             testDataAdapter.changeAtIndex(testDataAdapter.indexFromKey("4"), newData);
-                            testDataAdapter.insertAtIndex(TestComponents.simpleItem(11), state2.length - 1);
+                            testDataAdapter.insertAtIndex(Helper.ItemsManager.simpleItem(11), state2.length - 1);
 
                             handler.verifyExpectedNotifications([
                                 "beginNotifications",
@@ -142,7 +142,7 @@ module WinJSTests {
                             ]);
 
                             // Change item 4 back, so verifyState finds the expected value
-                            testDataAdapter.changeAtIndex(testDataAdapter.indexFromKey("4"), TestComponents.simpleItem(4));
+                            testDataAdapter.changeAtIndex(testDataAdapter.indexFromKey("4"), Helper.ItemsManager.simpleItem(4));
 
                             handler.verifyExpectedNotifications([
                                 "beginNotifications",
@@ -166,9 +166,9 @@ module WinJSTests {
                             testDataAdapter.beginModifications();
                             testDataAdapter.moveToIndex(testDataAdapter.indexFromKey("0"), testDataAdapter.indexFromKey("6") + 1);  // Move "0" after "6"
                             testDataAdapter.moveToIndex(testDataAdapter.indexFromKey("9"), 0);                                      // Move "9" to start
-                            testDataAdapter.insertAtIndex(TestComponents.simpleItem("12"), testDataAdapter.indexFromKey("1"));      // Insert "12" after "1"
+                            testDataAdapter.insertAtIndex(Helper.ItemsManager.simpleItem("12"), testDataAdapter.indexFromKey("1"));      // Insert "12" after "1"
                             testDataAdapter.moveToIndex(testDataAdapter.indexFromKey("12"), testDataAdapter.indexFromKey("9"));     // Move "12" before "9"
-                            testDataAdapter.insertAtIndex(TestComponents.simpleItem("13"), testDataAdapter.indexFromKey("12"));     // Insert "13" before "12"
+                            testDataAdapter.insertAtIndex(Helper.ItemsManager.simpleItem("13"), testDataAdapter.indexFromKey("12"));     // Insert "13" before "12"
                             testDataAdapter.moveToIndex(testDataAdapter.indexFromKey("8"), state3.length);                          // Move "8" to end
                             testDataAdapter.endModifications();
 

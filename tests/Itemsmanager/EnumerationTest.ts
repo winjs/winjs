@@ -29,7 +29,7 @@ module WinJSTests {
             removed: function (handle, mirage) { }
         };
 
-        var dataSource = TestComponents.simpleAsynchronousDataSource(count),
+        var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(count),
             listBinding = dataSource.createListBinding(dummyHandler);
 
         function requestItem(itemPromise, index?) {
@@ -44,7 +44,7 @@ module WinJSTests {
             itemPromise.retain().then(function (item) {
                 if (item) {
                     LiveUnit.Assert.areEqual(itemPromise.handle, item.handle, "Handle for received item does not match that of itemPromise");
-                    TestComponents.verifyItemData(item, index);
+                    Helper.ItemsManager.verifyItemData(item, index);
 
                     LiveUnit.Assert.isTrue(!keyMap[item.key] || keyMap[item.key] === item.handle, "Different handle has already been returned for key");
                     keyMap[item.key] = item.handle;
@@ -74,14 +74,14 @@ module WinJSTests {
 
             var j;
 
-            var countBefore = TestComponents.pseudorandom(walkMax);
+            var countBefore = Helper.ItemsManager.pseudorandom(walkMax);
             for (j = 0; j < countBefore; j++) {
                 requestItem(listBinding.previous(), index - 1 - j);
             }
 
             listBinding.jumpToItem(itemPromise);
 
-            var countAfter = TestComponents.pseudorandom(walkMax);
+            var countAfter = Helper.ItemsManager.pseudorandom(walkMax);
             for (j = 0; j < countAfter; j++) {
                 requestItem(listBinding.next(), index + 1 + j);
             }
@@ -93,17 +93,17 @@ module WinJSTests {
         (function walkList() {
             // Fulfill some requests
 
-            var fulfillCount = TestComponents.pseudorandom(4);
+            var fulfillCount = Helper.ItemsManager.pseudorandom(4);
             for (var k = 0; k < fulfillCount; k++) {
                 dataSource.testDataAdapter.fulfillNextRequest();
             }
 
             // Pick a random index in the array
-            var index = TestComponents.pseudorandom(count);
+            var index = Helper.ItemsManager.pseudorandom(count);
             localWalk(listBinding.fromIndex(index), index);
 
             // Pick a random key
-            localWalk(listBinding.fromKey(TestComponents.pseudorandom(count).toString()));
+            localWalk(listBinding.fromKey(Helper.ItemsManager.pseudorandom(count).toString()));
 
             if (++walk < walkMax) {
                 WinJS.Utilities._setImmediate(walkList);
@@ -129,8 +129,8 @@ module WinJSTests {
             index3 = 450,
             index4 = 1500;
 
-        var dataSource = TestComponents.testDataSourceWithDirectives(function (controller) {
-            return TestComponents.simpleTestDataSource(controller, {
+        var dataSource = Helper.ItemsManager.testDataSourceWithDirectives(function (controller) {
+            return Helper.ItemsManager.simpleTestDataSource(controller, {
                 itemsFromStart: true,
                 itemsFromKey: true
             }, count);
@@ -139,7 +139,7 @@ module WinJSTests {
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
         // Do not return indices or the count
@@ -150,13 +150,13 @@ module WinJSTests {
         dataSource.testDataAdapter.directives.countAfterOverride = 87;
 
         dataSource.itemFromIndex(index1).then(function (itemWithIndex1) {
-            TestComponents.verifyItemData(itemWithIndex1, index1);
+            Helper.ItemsManager.verifyItemData(itemWithIndex1, index1);
 
             dataSource.itemFromIndex(index2).then(function (itemWithIndex2) {
-                TestComponents.verifyItemData(itemWithIndex2, index2);
+                Helper.ItemsManager.verifyItemData(itemWithIndex2, index2);
 
                 dataSource.itemFromIndex(index3).then(function (itemWithIndex3) {
-                    TestComponents.verifyItemData(itemWithIndex3, index3);
+                    Helper.ItemsManager.verifyItemData(itemWithIndex3, index3);
 
                     dataSource.itemFromIndex(index4).then(function (itemWithIndex4) {
                         LiveUnit.Assert.isNull(itemWithIndex4);
@@ -171,8 +171,8 @@ module WinJSTests {
     function testBackwardTraversal(signalTestCaseCompleted, synchronous) {
 
         var index = 100;
-        var dataSource = TestComponents.testDataSourceWithDirectives(function (controller) {
-            return TestComponents.simpleTestDataSource(controller, {
+        var dataSource = Helper.ItemsManager.testDataSourceWithDirectives(function (controller) {
+            return Helper.ItemsManager.simpleTestDataSource(controller, {
                 itemsFromStart: true,
                 itemsFromKey: true,
                 itemsFromEnd: true
@@ -182,7 +182,7 @@ module WinJSTests {
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
         var listBinding = dataSource.createListBinding();
@@ -190,7 +190,7 @@ module WinJSTests {
         listBinding.last().done(function handleitem(item) {
             index--;
             if (index >= 0) {
-                TestComponents.verifyItemData(item, index);
+                Helper.ItemsManager.verifyItemData(item, index);
                 listBinding.previous().then(handleitem);
             }
             else {//  If the cursor moves past the start of the list, the promise completes with a value of null.
@@ -213,7 +213,7 @@ module WinJSTests {
                 itemPromise = listBinding.next();
                 (function (index) {
                     testPromises.push(itemPromise.then(function (item) {
-                        TestComponents.verifyItemData(item, index + 1);
+                        Helper.ItemsManager.verifyItemData(item, index + 1);
                     }));
                 })(index);
 
@@ -233,7 +233,7 @@ module WinJSTests {
                 itemPromise = listBinding.previous();
                 (function (index) {
                     testPromises.push(itemPromise.then(function (item) {
-                        TestComponents.verifyItemData(item, index - 1);
+                        Helper.ItemsManager.verifyItemData(item, index - 1);
                     }));
                 })(index);
 
@@ -251,8 +251,8 @@ module WinJSTests {
         var log = VDSLogging.options.log || console.log.bind(console);
         LiveUnit.LoggingCore.logComment("Start Traversal at Index: " + firstIndex.toString());
 
-        var dataSource = TestComponents.testDataSourceWithDirectives(function (controller) {
-            return TestComponents.simpleTestDataSource(controller, {
+        var dataSource = Helper.ItemsManager.testDataSourceWithDirectives(function (controller) {
+            return Helper.ItemsManager.simpleTestDataSource(controller, {
                 itemsFromStart: true,
                 itemsFromKey: true
             }, count);
@@ -261,7 +261,7 @@ module WinJSTests {
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
         var listBinding = dataSource.createListBinding();
@@ -290,8 +290,8 @@ module WinJSTests {
 
     // this test release and regain the binding and verify prevois binding has no effect on new binding
     function testReleaseBinding(signalTestCaseCompleted, synchronous) {
-        var dataSource = TestComponents.simpleAsynchronousDataSource(100),
-            handler = TestComponents.simpleListNotificationHandler(),
+        var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(100),
+            handler = Helper.ItemsManager.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
 
         var index = 0;
@@ -300,7 +300,7 @@ module WinJSTests {
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
 
@@ -345,12 +345,12 @@ module WinJSTests {
     // This test verify growing/shrinking data source
     function testChangingDataSource(signalTestCaseCompleted, synchronous) {
 
-        var dataSource = TestComponents.simpleAsynchronousDataSource(10);
+        var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(10);
 
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
         dataSource.testDataAdapter.setProperty("returnCount", 5);
@@ -417,15 +417,15 @@ module WinJSTests {
     // This test verify growing/shrinking data source with listbinding
     function testChangingDataSourceListBinding(signalTestCaseCompleted, synchronous) {
 
-        var dataSource = TestComponents.simpleAsynchronousDataSource(10);
+        var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(10);
 
         if (synchronous) {
             dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
         } else {
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
         }
 
-        var handler = TestComponents.simpleListNotificationHandler(),
+        var handler = Helper.ItemsManager.simpleListNotificationHandler(),
             listBinding = dataSource.createListBinding(handler);
 
         dataSource.testDataAdapter.setProperty("returnCountBeforePromise", 1);
@@ -513,26 +513,26 @@ module WinJSTests {
 
 
         testAsynchronousRandomEnumeration(signalTestCaseCompleted) {
-            TestComponents.runStressTest(testAsynchronousRandomEnumerationOnce, 5, signalTestCaseCompleted);
+            Helper.ItemsManager.runStressTest(testAsynchronousRandomEnumerationOnce, 5, signalTestCaseCompleted);
         }
 
         testDirectFetching(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(100);
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(100);
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
 
             var index1 = 42,
                 index2 = 56,
                 index3 = 64;
 
             dataSource.itemFromIndex(index1).then(function (itemWithIndex) {
-                TestComponents.verifyItemData(itemWithIndex, index1);
+                Helper.ItemsManager.verifyItemData(itemWithIndex, index1);
 
                 dataSource.itemFromKey("" + index2).then(function (itemWithKey) {
-                    TestComponents.verifyItemData(itemWithKey, index2);
+                    Helper.ItemsManager.verifyItemData(itemWithKey, index2);
 
                     dataSource.itemFromDescription("" + index3).then(function (itemWithDescription) {
-                        TestComponents.verifyItemData(itemWithDescription, index3);
+                        Helper.ItemsManager.verifyItemData(itemWithDescription, index3);
 
                         signalTestCaseCompleted();
                     });
@@ -541,15 +541,15 @@ module WinJSTests {
         }
 
         testDescriptionFetching(signalTestCaseCompleted) {
-            var dataSource = TestComponents.simpleAsynchronousDataSource(0),
-                handler = TestComponents.simpleListNotificationHandler(),
+            var dataSource = Helper.ItemsManager.simpleAsynchronousDataSource(0),
+                handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = dataSource.createListBinding(handler);
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(dataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(dataSource);
 
             var state0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-            TestComponents.setState(dataSource, state0);
+            Helper.ItemsManager.setState(dataSource, state0);
 
             // Fetch an item near the end using just its description
             var testIndex1 = 8,
@@ -558,7 +558,7 @@ module WinJSTests {
 
             itemPromise.retain().then(function (itemWithDescription1) {
                 LiveUnit.Assert.areEqual(handle1, itemWithDescription1.handle);
-                TestComponents.verifyItemData(itemWithDescription1, testIndex1);
+                Helper.ItemsManager.verifyItemData(itemWithDescription1, testIndex1);
 
                 var promises = [],
                     handles = [];
@@ -569,7 +569,7 @@ module WinJSTests {
                     handles[i] = itemPromise.handle;
                     (function (i) {
                         promises.push(itemPromise.retain().then(function (item) {
-                            TestComponents.verifyItemData(item, i);
+                            Helper.ItemsManager.verifyItemData(item, i);
 
                             LiveUnit.Assert.areEqual(handles[i], item.handle);
                         }));
@@ -599,7 +599,7 @@ module WinJSTests {
                         LiveUnit.Assert.isNull(itemWithDescription2);
 
                         // Try from a different ListBinding
-                        var handler2 = TestComponents.simpleListNotificationHandler(),
+                        var handler2 = Helper.ItemsManager.simpleListNotificationHandler(),
                             listBinding2 = dataSource.createListBinding(handler);
 
                         var testIndex3 = testIndex2;
@@ -615,7 +615,7 @@ module WinJSTests {
                         itemPromise.retain().then(function (itemWithDescription3) {
                             // This time the fetch should have succeeded
                             LiveUnit.Assert.areEqual(handle3, itemWithDescription3.handle);
-                            TestComponents.verifyItemData(itemWithDescription3, testIndex3);
+                            Helper.ItemsManager.verifyItemData(itemWithDescription3, testIndex3);
 
                             // Finally, verify that a direct fetch also succeeds
                             var testIndex4 = 5;
@@ -624,7 +624,7 @@ module WinJSTests {
 
                             itemPromise.then(function (itemWithDescription4) {
                                 // Again, the fetch should have succeeded
-                                TestComponents.verifyItemData(itemWithDescription4, testIndex4);
+                                Helper.ItemsManager.verifyItemData(itemWithDescription4, testIndex4);
 
                                 signalTestCaseCompleted();
                             });

@@ -32,7 +32,7 @@ module WinJSTests {
 
         var options: any = {
             layout: new WinJS.UI[layoutName](),
-            itemDataSource: TestComponents.simpleSynchronousArrayDataSource(myData),
+            itemDataSource: Helper.ItemsManager.simpleSynchronousArrayDataSource(myData),
             itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
             selectionMode: "none"
         };

@@ -236,7 +236,7 @@ module WinJSTests {
         // This permits the first group on screen to not have any of its items' contents on
         // screen which is what triggered WinBlue#246863.
         testIndexOfFirstVisibleWithoutGroupMargins = function (complete) {
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(bigGroups);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(bigGroups);
             var listView = createListView(dataSource, {
                 layout: { type: WinJS.UI.GridLayout, groupHeaderPosition: WinJS.UI.HeaderPosition.top },
                 groupHeaderTemplate: Helper.ListView.createRenderer("smallGroupHeaderTemplate", "groupScrollTo")
@@ -271,7 +271,7 @@ module WinJSTests {
         // filled group.
         // Regression test for WinBlue#259740.
         testIndexOfLastVisibleInLastColumnOfAGroup = function (complete) {
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(bigGroups);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(bigGroups);
             var listView = createListView(dataSource, {
                 layout: { type: WinJS.UI.GridLayout, groupHeaderPosition: WinJS.UI.HeaderPosition.top },
                 groupHeaderTemplate: Helper.ListView.createRenderer("groupHeaderTemplate", "groupScrollTo")
@@ -741,7 +741,7 @@ module WinJSTests {
             addGroup("D", 4);
             addGroup("E", 10);
 
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(myData);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(myData);
             var listView = createListView(dataSource, { layout: { type: WinJS.UI[layout], groupHeaderPosition: WinJS.UI.HeaderPosition.top } }, "groupHeaderAbove");
             Helper.ListView.whenLoadingComplete(listView, function () {
                 // first group
@@ -771,7 +771,7 @@ module WinJSTests {
 
     function generateRtl(layout) {
         GroupsTests.prototype["testRtl" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(smallGroups);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(smallGroups);
             var listView = createListView(dataSource, { layout: { type: WinJS.UI[layout] } }, "groupRtlTestList", "groupRtlTestList");
             Helper.ListView.whenLoadingComplete(listView, function () {
                 // first group
@@ -794,7 +794,7 @@ module WinJSTests {
 
     function generateScrollTo(layout) {
         GroupsTests.prototype["testScrollTo" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(bigGroups);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(bigGroups);
             var listView = createListView(dataSource, {
                 layout: { type: WinJS.UI[layout] },
                 groupHeaderTemplate: Helper.ListView.createRenderer("smallGroupHeaderTemplate", "groupScrollTo")
@@ -826,7 +826,7 @@ module WinJSTests {
 
     function generateScrollLeft(layout) {
         GroupsTests.prototype["testScrollLeft" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(bigGroups);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(bigGroups);
             var listView = createListView(dataSource, {
                 layout: { type: WinJS.UI[layout] },
                 groupHeaderTemplate: Helper.ListView.createRenderer("smallGroupHeaderTemplate", "groupScrollLeft")
@@ -867,7 +867,7 @@ module WinJSTests {
     function generateAdd(layout) {
         GroupsTests.prototype["testAdd" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
             Helper.ListView.restoreListviewAnimations();
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(smallGroups);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(smallGroups);
             var listView = createListView(dataSource, { layout: { type: WinJS.UI[layout] } }, "groupAdd");
             Helper.ListView.runTests(listView, [
                 function () {
@@ -1007,7 +1007,7 @@ module WinJSTests {
             }, function (item) {
                     return { title: item.text.charAt(0) };
                 });
-            var dataSource = WinJS.UI.computeDataSourceGroups(TestComponents.simpleSynchronousArrayDataSource(getData()), function (item) {
+            var dataSource = WinJS.UI.computeDataSourceGroups(Helper.ItemsManager.simpleSynchronousArrayDataSource(getData()), function (item) {
                 return item.data.text.charAt(0);
             }, function (item) {
                     return { title: item.data.text.charAt(0) };
@@ -1035,7 +1035,7 @@ module WinJSTests {
     function generateDelete(layout) {
         GroupsTests.prototype["testDelete" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
             Helper.ListView.restoreListviewAnimations();
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(smallGroups);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(smallGroups);
             var i, listView = createListView(dataSource, { layout: { type: WinJS.UI[layout] } }, "groupDelete");
 
             Helper.ListView.waitForReady(listView, -1)().then(function () {
@@ -1154,7 +1154,7 @@ module WinJSTests {
                 });
             test(list.dataSource, list.groups.dataSource).then(function () {
 
-                var dataSource = WinJS.UI.computeDataSourceGroups(TestComponents.simpleSynchronousArrayDataSource(getData()), function (item) {
+                var dataSource = WinJS.UI.computeDataSourceGroups(Helper.ItemsManager.simpleSynchronousArrayDataSource(getData()), function (item) {
                     return item.data.text.charAt(0);
                 }, function (item) {
                         return { title: item.data.text.charAt(0) };
@@ -1194,7 +1194,7 @@ module WinJSTests {
             addGroup("A", 3);
             addGroup("B", 3);
 
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(myData);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(myData);
             var listView = createListView(dataSource, { layout: { type: WinJS.UI[layout] } }, "groupReload");
 
             var tests = [

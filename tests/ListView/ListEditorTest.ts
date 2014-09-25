@@ -31,7 +31,7 @@ module WinJSTests {
         if (useBindingList) {
             dataSource = new WinJS.Binding.List(items.slice(0)).dataSource;
         } else if (!async) {
-            dataSource = TestComponents.simpleSynchronousArrayDataSource(items.slice(0));
+            dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(items.slice(0));
         } else {
             var controller = {
                 directivesForMethod: function (method, args) {
@@ -46,7 +46,7 @@ module WinJSTests {
                     };
                 }
             };
-            dataSource = TestComponents.createTestDataSource(items.slice(0), controller, null);
+            dataSource = Helper.ItemsManager.createTestDataSource(items.slice(0), controller, null);
         }
 
         return new ListView(element, {

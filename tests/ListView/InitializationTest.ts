@@ -84,7 +84,7 @@ module WinJSTests {
             setNotificationHandler: true
         };
 
-        return TestComponents.createTestDataSource(data, controller, abilities);
+        return Helper.ItemsManager.createTestDataSource(data, controller, abilities);
     }
 
     function testLayout(layoutName) {

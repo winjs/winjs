@@ -138,7 +138,7 @@ module WinJSTests {
             }
         };
 
-        return TestComponents.createTestDataSource(array, controller, null);
+        return Helper.ItemsManager.createTestDataSource(array, controller, null);
     }
 
     function setupListView(element, layoutName, groups, pattern, async?) {

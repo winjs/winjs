@@ -2120,7 +2120,7 @@ module CorsicaTests {
                 sampleDataSource.push({ title: t, description: d });
             }
 
-            window['DataSource'] = TestComponents.simpleSynchronousArrayDataSource(sampleDataSource);
+            window['DataSource'] = Helper.ItemsManager.simpleSynchronousArrayDataSource(sampleDataSource);
 
             WinJS.UI.processAll().
                 then(function () {
@@ -2178,7 +2178,7 @@ module CorsicaTests {
                 sampleDataSource.push({ title: t, description: d });
             }
 
-            window['DataSource'] = TestComponents.simpleSynchronousArrayDataSource(sampleDataSource);
+            window['DataSource'] = Helper.ItemsManager.simpleSynchronousArrayDataSource(sampleDataSource);
 
             WinJS.UI.processAll().
                 then(function () {

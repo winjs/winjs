@@ -52,7 +52,7 @@ module WinJSTests {
             // Data adapter abilities
             abilities = null;
 
-        return TestComponents.createTestDataSource(items, controller, abilities);
+        return Helper.ItemsManager.createTestDataSource(items, controller, abilities);
     }
 
     function setupListView(element, layout, multisizeMode, items?, bindingList?) {

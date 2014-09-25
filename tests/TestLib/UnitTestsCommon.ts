@@ -7,7 +7,7 @@
 
 // Code shared by Items Manager unit tests
 
-module TestComponents {
+module Helper.ItemsManager {
     "use strict";
 
     var Scheduler = WinJS.Utilities.Scheduler;
@@ -38,11 +38,11 @@ module TestComponents {
 
     export function runStressTest(testOnce, repetitionMultiplier, signalTestCaseCompleted) {
         var test = 0,
-            testMax = repetitionMultiplier * TestComponents.stressLevel;
+            testMax = repetitionMultiplier * Helper.ItemsManager.stressLevel;
 
         (function continueTest() {
             LiveUnit.LoggingCore.logComment("Test " + test + " of " + testMax);
-            TestComponents.seedPseudorandom(test);
+            Helper.ItemsManager.seedPseudorandom(test);
             testOnce(function () {
                 if (++test < testMax) {
                     WinJS.Utilities._setImmediate(continueTest);
@@ -60,7 +60,7 @@ module TestComponents {
     function simpleItemArray(count) {
         var array = [];
         for (var i = 0; i < count; ++i) {
-            array[i] = TestComponents.simpleItem(i);
+            array[i] = Helper.ItemsManager.simpleItem(i);
         }
         return array;
     }
@@ -68,7 +68,7 @@ module TestComponents {
     function bindingList(count) {
         var list = new WinJS.Binding.List();
         for (var i = 0; i < count; ++i) {
-            list.push(TestComponents.simpleItem(i));
+            list.push(Helper.ItemsManager.simpleItem(i));
         }
         return list.dataSource;
     }
@@ -76,19 +76,19 @@ module TestComponents {
     function bindingListSimpleFilter(count) {
         var list = new WinJS.Binding.List();
         for (var i = 0; i < count; ++i) {
-            list.push(TestComponents.simpleItem(i));
+            list.push(Helper.ItemsManager.simpleItem(i));
         }
         return list.createFiltered(function () { return true; }).dataSource;
     }
 
     export function simpleTestDataSource(controller, abilities, count) {
-        return TestComponents.createTestDataSource(simpleItemArray(count), controller, abilities);
+        return Helper.ItemsManager.createTestDataSource(simpleItemArray(count), controller, abilities);
     };
 
     export var defaultLength = 80;
 
     function listLength(length) {
-        return length === undefined ? TestComponents.defaultLength : length;
+        return length === undefined ? Helper.ItemsManager.defaultLength : length;
     }
 
     export function testDataSourceWithDirectives(createTestDataSource) {
@@ -130,16 +130,16 @@ module TestComponents {
     }
 
     export function simpleAsynchronousDataSource(length) {
-        return TestComponents.testDataSourceWithDirectives(function (controller) {
+        return Helper.ItemsManager.testDataSourceWithDirectives(function (controller) {
             // All abilities are enabled
-            return TestComponents.simpleTestDataSource(controller, null, listLength(length));
+            return Helper.ItemsManager.simpleTestDataSource(controller, null, listLength(length));
         });
     };
 
     export function simpleSynchronousArrayDataSource(array) {
-        var dataSource = TestComponents.testDataSourceWithDirectives(function (controller) {
+        var dataSource = Helper.ItemsManager.testDataSourceWithDirectives(function (controller) {
             // All abilities are enabled
-            return TestComponents.createTestDataSource(array, controller, null);
+            return Helper.ItemsManager.createTestDataSource(array, controller, null);
         });
 
         dataSource.testDataAdapter.directives.callMethodsSynchronously = true;
@@ -447,7 +447,7 @@ module TestComponents {
 
         for (var i = 0, length = values.length; i < length; ++i) {
             var value = values[i];
-            items.push({ key: value, data: TestComponents.simpleItem(value) });
+            items.push({ key: value, data: Helper.ItemsManager.simpleItem(value) });
         }
 
         testDataSource.testDataAdapter.replaceItems(items);
@@ -465,13 +465,13 @@ module TestComponents {
         LiveUnit.Assert.isTrue(data !== null, "Item " + index + " data is null, key: " + item.key);
 
         if (+index === index) {
-            LiveUnit.Assert.areEqual(TestComponents.simpleItem(index), data, "Item " + index + " data has incorrect value");
+            LiveUnit.Assert.areEqual(Helper.ItemsManager.simpleItem(index), data, "Item " + index + " data has incorrect value");
             verifyItemIndex(item, index);
         }
     };
 
     export function simpleListNotificationHandler() {
-        var handler:any = TestComponents.defaultListNotificationHandler();
+        var handler:any = Helper.ItemsManager.defaultListNotificationHandler();
 
         var continuationNext;
 
@@ -578,7 +578,7 @@ module TestComponents {
 
             verifyItemFetched(container, item);
 
-            TestComponents.verifyItemData(item, index);
+            Helper.ItemsManager.verifyItemData(item, index);
         };
 
         handler.verifyState = function (values, testDataSource, nullKeysPossible) {
@@ -896,7 +896,7 @@ module TestComponents {
             var keys = Object.keys(handleMap);
             
             if (keys.length > 0) {
-                var handle = keys[TestComponents.pseudorandom(keys.length)];
+                var handle = keys[Helper.ItemsManager.pseudorandom(keys.length)];
 
                 LiveUnit.Assert.isTrue(!!handle, "Invalid handle in map");
 
@@ -905,7 +905,7 @@ module TestComponents {
 
                 var releaseMax = 20;
 
-                var releaseBefore = TestComponents.pseudorandom(releaseMax),
+                var releaseBefore = Helper.ItemsManager.pseudorandom(releaseMax),
                     containerBefore = container.prev;
                 for (i = 0; containerBefore && i < releaseBefore; i++) {
                     var containerPrev = containerBefore.prev;
@@ -915,7 +915,7 @@ module TestComponents {
                     containerBefore = containerPrev;
                 }
 
-                var releaseAfter = TestComponents.pseudorandom(releaseMax),
+                var releaseAfter = Helper.ItemsManager.pseudorandom(releaseMax),
                     containerAfter = container.next;
                 for (i = 0; containerAfter && i < releaseAfter; i++) {
                     var containerNext = containerAfter.next;
@@ -979,7 +979,7 @@ module TestComponents {
 
             verifyItemFetched(container, item);
 
-            TestComponents.verifyItemData(item, index);
+            Helper.ItemsManager.verifyItemData(item, index);
         };
 
         handler.verifyFinalState = function (itemArray) {

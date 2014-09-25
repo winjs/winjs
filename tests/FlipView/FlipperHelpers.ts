@@ -18,7 +18,7 @@ function createArraySource(count, targetWidths, targetHeights, datasourceTag?) {
     }
 
     return {
-        dataSource: TestComponents.simpleSynchronousArrayDataSource(data),
+        dataSource: Helper.ItemsManager.simpleSynchronousArrayDataSource(data),
         rawData: data
     };
 }

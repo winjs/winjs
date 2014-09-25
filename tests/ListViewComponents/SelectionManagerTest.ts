@@ -560,7 +560,7 @@ module WinJSTests {
             }
         }
         var abilities = null;
-        return TestComponents.createTestDataSource(data, controller, abilities);
+        return Helper.ItemsManager.createTestDataSource(data, controller, abilities);
     }
 
     export class SelectionManagerTest {
@@ -1495,7 +1495,7 @@ module WinJSTests {
                 });
             }
 
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(data);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(data);
             var wrapper = new VDSWrapper(dataSource);
 
             editsOutsideOfRealizedRange(layoutName, dataSource, wrapper.splice.bind(wrapper), wrapper.move.bind(wrapper)).then(complete);
@@ -1530,7 +1530,7 @@ module WinJSTests {
                 });
             }
 
-            var dataSource = TestComponents.simpleSynchronousArrayDataSource(data);
+            var dataSource = Helper.ItemsManager.simpleSynchronousArrayDataSource(data);
             var wrapper = new VDSWrapper(dataSource);
 
             editsWithSelectAll(layoutName, dataSource, wrapper.splice.bind(wrapper), wrapper.push.bind(wrapper)).then(complete);

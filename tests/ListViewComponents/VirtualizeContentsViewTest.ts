@@ -486,7 +486,7 @@ module WinJSTests {
                 };
             }
         };
-        dataSource = TestComponents.createTestDataSource(items.slice(0), controller, null);
+        dataSource = Helper.ItemsManager.createTestDataSource(items.slice(0), controller, null);
 
         return new ListView(element, {
             itemDataSource: dataSource,
@@ -3150,7 +3150,7 @@ module WinJSTests {
                     };
                 }
             };
-            var dataSource = TestComponents.createTestDataSource(items.slice(0), controller, null);
+            var dataSource = Helper.ItemsManager.createTestDataSource(items.slice(0), controller, null);
 
             var layout = new WinJS.UI.ListLayout();
             var listView = new ListView(<HTMLElement>newNode.firstElementChild, {

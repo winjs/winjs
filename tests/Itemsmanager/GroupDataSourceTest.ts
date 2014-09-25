@@ -32,8 +32,8 @@ module WinJSTests {
             };
         }
 
-        return TestComponents.testDataSourceWithDirectives(function (controller, abilities) {
-            return TestComponents.createTestDataSource(array, controller, abilities);
+        return Helper.ItemsManager.testDataSourceWithDirectives(function (controller, abilities) {
+            return Helper.ItemsManager.createTestDataSource(array, controller, abilities);
         });
     }
 
@@ -43,7 +43,7 @@ module WinJSTests {
         var itemDataSource = createItemDataSource(itemCount, groupSize),
             groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData, { groupCountEstimate: -1 }).groups;
 
-        TestComponents.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
+        Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
 
         groupDataSource.getCount().
             then(
@@ -104,7 +104,7 @@ module WinJSTests {
             var itemDataSource = createItemDataSource(itemCount, groupSize),
                 groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData).groups;
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
 
             // Pass an index as the hint
             var group1 = 5;
@@ -159,7 +159,7 @@ module WinJSTests {
             var itemDataSource = createItemDataSource(itemCount, groupSize),
                 groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData).groups;
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
 
             var group1 = 5;
             var listBinding = groupDataSource.createListBinding();
@@ -181,12 +181,12 @@ module WinJSTests {
             var itemDataSource = createItemDataSource(itemCount, groupSize),
                 groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData, { batchSize: batchSize }).groups;
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
 
             // Pass a key as the hint, near the end of a large group
             var groupStart = 3,
                 group1 = groupStart;
-            var listBinding = groupDataSource.createListBinding(TestComponents.simpleListNotificationHandler());
+            var listBinding = groupDataSource.createListBinding(Helper.ItemsManager.simpleListNotificationHandler());
             listBinding.fromKey("" + group1, { groupMemberKey: "" + ((group1 + 0.5) * groupSize) }).retain().
                 then(function getPrevious(item1) {
                     if (item1) {
@@ -223,9 +223,9 @@ module WinJSTests {
             var itemDataSource = createItemDataSource(itemCount, groupSize),
                 groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData).groups;
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
 
-            var handler = TestComponents.simpleListNotificationHandler(),
+            var handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = groupDataSource.createListBinding(handler),
                 group = 0;
             handler.appendItemPromise(listBinding.first()).
@@ -279,9 +279,9 @@ module WinJSTests {
             var itemDataSource = createItemDataSource(itemCount, groupSize),
                 groupDataSource = WinJS.UI.computeDataSourceGroups(itemDataSource, groupKey, groupData).groups;
 
-            TestComponents.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
+            Helper.ItemsManager.ensureAllAsynchronousRequestsFulfilled(itemDataSource);
 
-            var handler = TestComponents.simpleListNotificationHandler(),
+            var handler = Helper.ItemsManager.simpleListNotificationHandler(),
                 listBinding = groupDataSource.createListBinding(handler),
                 group = 0;
             handler.appendItemPromise(listBinding.first()).

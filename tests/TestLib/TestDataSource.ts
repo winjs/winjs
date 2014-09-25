@@ -7,7 +7,7 @@
 
 // Test Data Source
 
-module TestComponents {
+module Helper.ItemsManager {
     "use strict";
     var UI = WinJS.UI;
     var Scheduler = WinJS.Utilities.Scheduler;
@@ -622,7 +622,7 @@ module TestComponents {
 
             fulfillRandomRequest: function () {
                 if (requests.length > 0) {
-                    this.fulfillRequest(TestComponents.pseudorandom(requests.length));
+                    this.fulfillRequest(Helper.ItemsManager.pseudorandom(requests.length));
                 }
             },
 
