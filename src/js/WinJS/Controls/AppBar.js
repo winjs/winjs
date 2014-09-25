@@ -50,6 +50,81 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AppBar: _Base.Namespace._lazy(function () {
+            // ADCOM: Can we turn some of this into a LightDismissableLayer mixin?
+            // For example, ld_setZIndex, ld_containsElement, and ld_lightDismiss all just
+            // dispatch to the clients. Also, shown and hidden mostly just manage the clients.
+            var AppBarManagerClass = _Base.Class.define(function () {
+                this._clients = [];
+                this._zIndex = null; // ADCOM: Can we accidentally use _zIndex while it's null?
+            }, {
+                shown: function (client) {
+                    var index = this._clients.indexOf(client);
+                    if (index === -1) {
+                        this._clients.push(client);
+                        if (this._clients.length === 1) {
+                            _LightDismissService.shown(this);
+                        }
+                    }
+                },
+
+                hidden: function (client) {
+                    var dismissed = false;
+                    var index = this._clients.indexOf(client);
+                    if (index !== -1) {
+                        this._clients.splice(index, 1);
+                    }
+
+                    if (index !== -1 && this._clients.length === 0) {
+                        _LightDismissService.hidden(this);
+                    } else {
+                        // ADCOM: Make sure an AppBar or one of its Flyouts has focus
+                        //this._restoreFocus();
+                    }
+                },
+
+                //onFocus: function (d) {
+                //    this._prevFocus = d;
+                //},
+
+                //onTabExit: function (d) {
+                //    var focusTo = d;
+                //    for (var i = 0; i < this._clients.length; i++) {
+                //        if (d !== this._clients[i]) {
+                //            focusTo = this._clients[i];
+                //            break;
+                //        }
+                //    }
+                //    focusTo.element.focus();
+                //},
+
+                //_restoreFocus: function () {
+                //    var focusTo = this._prevFocus && this._clients.indexOf(this._prevFocus) !== -1 ?
+                //        this._prevFocus : this._clients[0];
+                //    focusTo.element.focus();
+                //},
+
+                // ILightDismissable
+
+                ld_setZIndex: function (value) {
+                    this._zIndex = value;
+                    this._clients.forEach(function (c) {
+                        c.ld_setZIndex(value);
+                    });
+                },
+                ld_containsElement: function (element) {
+                    return this._clients.some(function (c) {
+                        return c.ld_containsElement(element);
+                    });
+                },
+                ld_lightDismiss: function (info) {
+                    var clients = this._clients.slice(0);
+                    clients.forEach(function (c) {
+                        c.ld_lightDismiss(info);
+                    });
+                }
+            });
+            var AppBarManager = new AppBarManagerClass();
+
             var Key = _ElementUtilities.Key;
 
             // Enum of known constant pixel values for display modes.
@@ -779,7 +854,7 @@ define([
                         if (!this.sticky) {
                             // Need click-eating div to be visible ASAP.
                             // ADCOM: lds_shown?
-                            _LightDismissService.shown(this);
+                            AppBarManager.shown(this);
                         }
 
                         // Clean up tabbing behavior by making sure first and final divs are correct after showing.
@@ -824,6 +899,9 @@ define([
 
                     this._changeVisiblePosition(toPosition, hiding);
                     if (hiding) {
+                        // ADCOM: The block of code below about restoring focus seems to be a good candidate
+                        // for moving to the AppBarManager.
+
                         // Determine if there are any AppBars that are shown.
                         // Set the focus to the next shown AppBar.
                         // If there are none, set the focus to the control stored in the cache, which
@@ -1142,7 +1220,7 @@ define([
                     _ElementUtilities.removeClass(this._element, _Constants.hidingClass);
                     _ElementUtilities.addClass(this._element, _Constants.hiddenClass);
 
-                    _LightDismissService.hidden(this);
+                    AppBarManager.hidden(this);
 
                     // Send our "afterHide" event
                     this._sendEvent(_Overlay._Overlay.afterHide);
