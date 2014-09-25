@@ -109,11 +109,11 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(container, listView._view.containers[i]);
 
                 if (itemBox) {
-                    LiveUnit.Assert.isTrue(utilities.hasClass(itemBox, "win-itembox"));
-                    LiveUnit.Assert.areEqual(listView.selection._isIncluded(i), utilities.hasClass(container, "win-selected"));
-                    LiveUnit.Assert.areEqual(listView.selection._isIncluded(i), utilities.hasClass(itemBox, "win-selected"));
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(itemBox, "win-itembox"));
+                    LiveUnit.Assert.areEqual(listView.selection._isIncluded(i), WinJS.Utilities.hasClass(container, "win-selected"));
+                    LiveUnit.Assert.areEqual(listView.selection._isIncluded(i), WinJS.Utilities.hasClass(itemBox, "win-selected"));
                 } else {
-                    LiveUnit.Assert.isFalse(utilities.hasClass(container, "win-selected"));
+                    LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(container, "win-selected"));
                 }
 
                 LiveUnit.Assert.areEqual(container, listView._view.tree[0].itemsContainer.items[i]);
@@ -152,7 +152,7 @@ module WinJSTests {
 
         listView.selection.set([0, 5, 10]);
 
-        return waitForReady(listView)().then(function () {
+        return Helper.ListView.waitForReady(listView)().then(function () {
 
             validate(listView);
 
@@ -165,7 +165,7 @@ module WinJSTests {
                 group: 0
             });
 
-            return waitForReady(listView, -1)();
+            return Helper.ListView.waitForReady(listView, -1)();
         }).then(function () {
 
                 validate(listView);
@@ -177,7 +177,7 @@ module WinJSTests {
                     });
                 }
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
 
                 validate(listView);
@@ -186,7 +186,7 @@ module WinJSTests {
                     list.pop();
                 }
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
 
                 validate(listView);
@@ -196,7 +196,7 @@ module WinJSTests {
                     group: 0
                 });
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
 
                 validate(listView);
@@ -228,11 +228,11 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(container, listView._view.containers[i]);
 
                 if (itemBox) {
-                    LiveUnit.Assert.isTrue(utilities.hasClass(itemBox, "win-itembox"));
-                    LiveUnit.Assert.areEqual(listView.selection._isIncluded(i), utilities.hasClass(container, "win-selected"));
-                    LiveUnit.Assert.areEqual(listView.selection._isIncluded(i), utilities.hasClass(itemBox, "win-selected"));
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(itemBox, "win-itembox"));
+                    LiveUnit.Assert.areEqual(listView.selection._isIncluded(i), WinJS.Utilities.hasClass(container, "win-selected"));
+                    LiveUnit.Assert.areEqual(listView.selection._isIncluded(i), WinJS.Utilities.hasClass(itemBox, "win-selected"));
                 } else {
-                    LiveUnit.Assert.isFalse(utilities.hasClass(container, "win-selected"));
+                    LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(container, "win-selected"));
                 }
             }
 
@@ -290,7 +290,7 @@ module WinJSTests {
 
         listView.selection.set([0, 10, 20]);
 
-        return waitForReady(listView)().then(function () {
+        return Helper.ListView.waitForReady(listView)().then(function () {
 
             validate(listView);
 
@@ -305,7 +305,7 @@ module WinJSTests {
                 group: 0
             });
 
-            return waitForReady(listView, -1)();
+            return Helper.ListView.waitForReady(listView, -1)();
         }).then(function () {
 
                 validate(listView);
@@ -317,7 +317,7 @@ module WinJSTests {
                     });
                 }
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
 
                 validate(listView);
@@ -329,11 +329,11 @@ module WinJSTests {
                     });
                 }
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
                 listView.ensureVisible(list.length - 1);
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
 
                 validate(listView);
@@ -345,7 +345,7 @@ module WinJSTests {
                     });
                 }
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
 
                 validate(listView);
@@ -372,7 +372,7 @@ module WinJSTests {
             layout: new WinJS.UI.ListLayout()
         });
 
-        return waitForReady(listView)().then(function () {
+        return Helper.ListView.waitForReady(listView)().then(function () {
             return listView._view._creatingContainersWork ? listView._view._creatingContainersWork.promise : null;
         }).then(function () {
                 validateGroupedTree(listView, ListLayout._numberOfItemsPerItemsBlock);
@@ -417,7 +417,7 @@ module WinJSTests {
                 });
             }
         });
-        waitForReady(listView)().then(function () {
+        Helper.ListView.waitForReady(listView)().then(function () {
             LiveUnit.Assert.areEqual(45, getNumberOfItemsRealized());
 
             var oldStartAnimations = listView._view._startAnimations;
@@ -431,7 +431,7 @@ module WinJSTests {
                 list.splice(firstIndexToInsert + i, 0, { title: "title New " + i, className: "new" });
             }
 
-            waitForDeferredAction(listView)().then(function () {
+            Helper.ListView.waitForDeferredAction(listView)().then(function () {
                 LiveUnit.Assert.areEqual(45, getNumberOfItemsRealized());
                 VirtualizeContentsViewTestHost.removeChild(element);
                 complete();
@@ -491,7 +491,7 @@ module WinJSTests {
         return new ListView(element, {
             itemDataSource: dataSource,
             selectionMode: "multi",
-            itemTemplate: createRenderer("simpleTemplate"),
+            itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
             layout: new WinJS.UI.ListLayout()
         });
     }
@@ -522,7 +522,7 @@ module WinJSTests {
                 if (blocksExpectedInTree.indexOf(blockIndex) != -1) {
                     LiveUnit.Assert.isTrue(block.element.parentNode === itemsContainer.element);
                     LiveUnit.Assert.isTrue(block.element.children.length < numberOfItemsPerItemsBlock || (itemHeight * numberOfItemsPerItemsBlock) === block.element.offsetHeight);
-                    LiveUnit.Assert.areEqual(offset, offsetTopFromSurface(listView, block.element));
+                    LiveUnit.Assert.areEqual(offset, Helper.ListView.offsetTopFromSurface(listView, block.element));
 
                     children.push(block.element);
                     offset += block.element.offsetHeight;
@@ -603,8 +603,8 @@ module WinJSTests {
                     initialize: function (site, groups) {
                         refCount++;
 
-                        LiveUnit.Assert.isTrue(site.viewport === viewport(placeholder));
-                        LiveUnit.Assert.isTrue(site.surface === canvas(placeholder));
+                        LiveUnit.Assert.isTrue(site.viewport === Helper.ListView.viewport(placeholder));
+                        LiveUnit.Assert.isTrue(site.surface === Helper.ListView.canvas(placeholder));
 
                         LiveUnit.Assert.isFalse(groups);
                     },
@@ -643,7 +643,7 @@ module WinJSTests {
                     layout: newLayout
                 });
 
-                return waitForReady(listView)().then(function () {
+                return Helper.ListView.waitForReady(listView)().then(function () {
                     LiveUnit.Assert.areEqual(10, placeholder.querySelectorAll(".win-item").length);
 
                     var containers = placeholder.querySelectorAll(".win-container");
@@ -670,7 +670,7 @@ module WinJSTests {
 
             createListView("vertical").then(function (result) {
                 var element = result.listView.element,
-                    vp = viewport(element);
+                    vp = Helper.ListView.viewport(element);
 
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(vp, "win-vertical"));
                 LiveUnit.Assert.isTrue("hidden", window.getComputedStyle(vp, null).overflowX);
@@ -680,7 +680,7 @@ module WinJSTests {
                 return createListView("horizontal");
             }).then(function (result) {
                     var element = result.listView.element,
-                        vp = viewport(element);
+                        vp = Helper.ListView.viewport(element);
 
                     LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(vp, "win-horizontal"));
                     LiveUnit.Assert.isTrue("scroll", window.getComputedStyle(vp, null).overflowX);
@@ -739,7 +739,7 @@ module WinJSTests {
                 layout: newLayout
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(COUNT / 10, placeholder.querySelectorAll(".win-groupheader").length);
                 LiveUnit.Assert.areEqual(COUNT / 10, placeholder.querySelectorAll(".win-groupheadercontainer").length);
 
@@ -774,7 +774,7 @@ module WinJSTests {
                 layout: newLayout
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 LiveUnit.Assert.areEqual(COUNT, placeholder.querySelectorAll(".win-item").length);
                 LiveUnit.Assert.areEqual(COUNT, placeholder.querySelectorAll(".win-container").length);
@@ -948,15 +948,15 @@ module WinJSTests {
                 }
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 listView.ensureVisible(50);
 
-                return waitForReady(listView)();
+                return Helper.ListView.waitForReady(listView)();
 
             }).then(function () {
 
-                    LiveUnit.Assert.areEqual(4800, viewport(placeholder).scrollTop);
+                    LiveUnit.Assert.areEqual(4800, Helper.ListView.viewport(placeholder).scrollTop);
 
                     placeholder.parentNode.removeChild(placeholder);
 
@@ -989,7 +989,7 @@ module WinJSTests {
                 invokedItem = eventObject.detail.itemIndex;
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 LiveUnit.Assert.areEqual(-1, invokedItem);
 
@@ -1034,8 +1034,8 @@ module WinJSTests {
             var layoutSite;
 
             function testSite(tree) {
-                LiveUnit.Assert.areEqual(canvas(placeholder), layoutSite.surface);
-                LiveUnit.Assert.areEqual(viewport(placeholder), layoutSite.viewport);
+                LiveUnit.Assert.areEqual(Helper.ListView.canvas(placeholder), layoutSite.surface);
+                LiveUnit.Assert.areEqual(Helper.ListView.viewport(placeholder), layoutSite.viewport);
                 LiveUnit.Assert.areEqual(0, layoutSite.scrollbarPos);
                 LiveUnit.Assert.areEqual(300, layoutSite.viewportSize.width);
                 LiveUnit.Assert.areEqual(300, layoutSite.viewportSize.height);
@@ -1053,14 +1053,14 @@ module WinJSTests {
                 }).then(function (element) {
                         LiveUnit.Assert.isTrue(element instanceof HTMLElement);
                         LiveUnit.Assert.areEqual("Tile11", element.textContent);
-                        LiveUnit.Assert.isTrue(utilities.hasClass(element, "win-container"));
+                        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(element, "win-container"));
                         LiveUnit.Assert.areEqual(1, element.childElementCount);
                         var itemBox = element.firstElementChild;
-                        LiveUnit.Assert.isTrue(utilities.hasClass(itemBox, "win-itembox"));
+                        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(itemBox, "win-itembox"));
                         LiveUnit.Assert.areEqual(1, itemBox.childElementCount);
                         var itemNode = itemBox.firstElementChild;
-                        LiveUnit.Assert.isTrue(utilities.hasClass(itemNode, "win-item"));
-                        LiveUnit.Assert.isTrue(utilities.hasClass(itemNode, "myVVTestClass"));
+                        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(itemNode, "win-item"));
+                        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(itemNode, "myVVTestClass"));
 
                         var groupIndex = layoutSite.groupIndexFromItemIndex(11);
                         LiveUnit.Assert.areEqual(1, groupIndex);
@@ -1074,11 +1074,11 @@ module WinJSTests {
 
                         LiveUnit.Assert.isTrue(header instanceof HTMLElement);
                         LiveUnit.Assert.areEqual("Header1", header.textContent);
-                        LiveUnit.Assert.isTrue(utilities.hasClass(header, "win-groupheadercontainer"));
+                        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(header, "win-groupheadercontainer"));
                         LiveUnit.Assert.areEqual(1, header.childElementCount);
                         var itemNode = header.firstElementChild;
-                        LiveUnit.Assert.isTrue(utilities.hasClass(itemNode, "win-groupheader"));
-                        LiveUnit.Assert.isTrue(utilities.hasClass(itemNode, "myVVTestClass"));
+                        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(itemNode, "win-groupheader"));
+                        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(itemNode, "myVVTestClass"));
                     });
             };
 
@@ -1101,7 +1101,7 @@ module WinJSTests {
                 }
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 placeholder.parentNode.removeChild(placeholder);
 
@@ -1203,7 +1203,7 @@ module WinJSTests {
                     });
                 }
 
-                return waitForReady(listView)().then(function () {
+                return Helper.ListView.waitForReady(listView)().then(function () {
                     var containers = placeholder.querySelectorAll(".win-container");
                     for (var i = 0, len = containers.length; i < len; i++) {
                         var container = containers[i];
@@ -1231,7 +1231,7 @@ module WinJSTests {
                 LiveUnit.LoggingCore.logComment("single removal at the begining");
                 listView.itemDataSource.list.shift();
 
-                return waitForReady(listView, -1)(listView);
+                return Helper.ListView.waitForReady(listView, -1)(listView);
             }).then(function (listView) {
 
                     verifyContainers(0, ["1", "2", "3", "4"]);
@@ -1242,7 +1242,7 @@ module WinJSTests {
                     LiveUnit.LoggingCore.logComment("single removal at the end");
                     listView.itemDataSource.list.pop();
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(0, ["0", "1", "2", "3"]);
@@ -1255,7 +1255,7 @@ module WinJSTests {
                     listView.itemDataSource.list.splice(0, 1);
                     listView.itemDataSource.list.splice(4, 1);
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(0, ["1", "3", "4", "5", "7"]);
@@ -1266,7 +1266,7 @@ module WinJSTests {
                     LiveUnit.LoggingCore.logComment("removal before the realized range");
                     listView.itemDataSource.list.shift();
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(10, ["11", "12", "13", "14"]);
@@ -1280,7 +1280,7 @@ module WinJSTests {
                     listView.itemDataSource.list.splice(15, 1);
                     listView.itemDataSource.list.splice(17, 1);
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(15, ["18", "19", "21", "22"]);
@@ -1293,7 +1293,7 @@ module WinJSTests {
                         title: "New"
                     });
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(0, ["0", "1", "New", "2", "3"]);
@@ -1307,7 +1307,7 @@ module WinJSTests {
                         group: 0
                     });
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(0, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "New"]);
@@ -1326,7 +1326,7 @@ module WinJSTests {
                         title: "New"
                     });
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(0, ["New", "0", "1", "New", "2", "3", "New", "4", "5", "6"]);
@@ -1344,7 +1344,7 @@ module WinJSTests {
                     });
                     listView.itemDataSource.list.splice(5, 2);
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(0, ["1", "New", "3", "4", "New", "7", "8"]);
@@ -1360,7 +1360,7 @@ module WinJSTests {
                         title: "New"
                     });
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(10, ["8", "9", "10", "11"]);
@@ -1377,7 +1377,7 @@ module WinJSTests {
                         title: "New"
                     });
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(10, ["9", "10", "12", "13", "14", "15", "New"]);
@@ -1390,7 +1390,7 @@ module WinJSTests {
                     listView.itemDataSource.list.splice(11, 0, { title: "New", group: 1 });
                     listView.itemDataSource.list.splice(18, 0, { title: "New", group: 1 });
 
-                    return waitForReady(listView, -1)(listView);
+                    return Helper.ListView.waitForReady(listView, -1)(listView);
                 }).then(function (listView) {
 
                     verifyContainers(15, ["13", "14", "15", "New", "16"]);
@@ -1420,18 +1420,18 @@ module WinJSTests {
                     layout: Object.create({
                         initialize: function (site, groups) {
                             this.site = site;
-                            utilities.addClass(this.site.surface, "SimpleFlexBasedLayoutSurface");
+                            WinJS.Utilities.addClass(this.site.surface, "SimpleFlexBasedLayoutSurface");
                             return "horizontal";
                         },
                         layout: function (tree) {
                             for (var g = 0; g < tree.length; g++) {
                                 var group = tree[g];
                                 group.header.style.display = "none";
-                                utilities.addClass(group.itemsContainer.element, "SimpleFlexBasedLayout");
+                                WinJS.Utilities.addClass(group.itemsContainer.element, "SimpleFlexBasedLayout");
                                 var blocks = group.itemsContainer.itemsBlocks;
                                 for (var b = 0; b < blocks.length; b++) {
                                     var block = blocks[b];
-                                    utilities.addClass(block.element, "SimpleFlexBasedLayout");
+                                    WinJS.Utilities.addClass(block.element, "SimpleFlexBasedLayout");
                                     LiveUnit.Assert.isTrue((b + 1) === blocks.length || (block.items.length === expectedItemsPerBlock));
                                 }
                             }
@@ -1447,7 +1447,7 @@ module WinJSTests {
                         })
                 });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 validateGroupedTree(listView, expectedItemsPerBlock);
 
                 listView._raiseViewLoading();
@@ -1455,7 +1455,7 @@ module WinJSTests {
                 ensureResize();
                 expectedItemsPerBlock = 10;
 
-                return waitForReady(listView, 50)();
+                return Helper.ListView.waitForReady(listView, 50)();
             }).then(function () {
                     validateGroupedTree(listView, expectedItemsPerBlock);
 
@@ -1464,7 +1464,7 @@ module WinJSTests {
                     ensureResize();
                     expectedItemsPerBlock = 8;
 
-                    return waitForReady(listView, 50)();
+                    return Helper.ListView.waitForReady(listView, 50)();
                 }).done(function () {
                     validateGroupedTree(listView, expectedItemsPerBlock);
 
@@ -1515,7 +1515,7 @@ module WinJSTests {
                 return jobNode;
             };
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 LiveUnit.Assert.areEqual(1, listView._view.tree.length);
 
@@ -1529,7 +1529,7 @@ module WinJSTests {
                 ensureResize();
                 listView._raiseViewLoading();
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
 
                     LiveUnit.Assert.areEqual(1, listView._view.tree.length);
@@ -1541,7 +1541,7 @@ module WinJSTests {
 
                     jobNode.resume();
 
-                    return waitForAllContainers(listView);
+                    return Helper.ListView.waitForAllContainers(listView);
                 }).done(function () {
 
                     validateGroupedTree(listView, WinJS.UI._LayoutCommon._barsPerItemsBlock * 2);
@@ -1632,7 +1632,7 @@ module WinJSTests {
                 return;
             }
 
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
         // Verifies that when the ListView is resized such that the number of items per
@@ -1677,7 +1677,7 @@ module WinJSTests {
                 return;
             }
 
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
         testLazyFlatTreeCreation = function (complete) {
@@ -1706,7 +1706,7 @@ module WinJSTests {
                 layout: new WinJS.UI.ListLayout()
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.viewPortLoaded);
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.itemsLoaded);
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.complete);
@@ -1761,7 +1761,7 @@ module WinJSTests {
 
             var afterIdle;
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.viewPortLoaded);
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.itemsLoaded);
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.complete);
@@ -1887,7 +1887,7 @@ module WinJSTests {
 
                     var containerPromise = (result.listView._view._creatingContainersWork ? result.listView._view._creatingContainersWork.promise : WinJS.Promise.wrap());
 
-                    return WinJS.Promise.join([containerPromise, waitForReady(result.listView)()]).then(function () {
+                    return WinJS.Promise.join([containerPromise, Helper.ListView.waitForReady(result.listView)()]).then(function () {
                         return result;
                     });
                 }).then(function (result) {
@@ -1936,7 +1936,7 @@ module WinJSTests {
                 return Object.getPrototypeOf(listView._view)._scheduleLazyTreeCreation.call(listView._view);
             };
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 return listView._view._creatingContainersWork ? listView._view._creatingContainersWork.promise : null;
             }).then(function () {
                     validateGroupedTree(listView, ListLayout._numberOfItemsPerItemsBlock);
@@ -2003,7 +2003,7 @@ module WinJSTests {
                         listView.itemDataSource.list.push({ title: "New Tile 2", group: "B" });
                         listView.itemDataSource.list.push({ title: "New Tile 3", group: "B" });
 
-                        waitForAllContainers(listView).then(function () {
+                        Helper.ListView.waitForAllContainers(listView).then(function () {
                             var headerContainerHeight = 70;
                             var containerCount = element.querySelectorAll(".win-container").length;
                             var itemsContainer = <HTMLElement>element.querySelectorAll(".win-itemscontainer")[1];
@@ -2060,7 +2060,7 @@ module WinJSTests {
                 return jobNode;
             };
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(0, listView.indexOfFirstVisible);
                 LiveUnit.Assert.areEqual(WinJS.UI._VirtualizeContentsView._chunkSize - 1, listView.indexOfLastVisible);
 
@@ -2069,7 +2069,7 @@ module WinJSTests {
 
                 jobNode.resume();
 
-                return waitForReady(listView, 100)();
+                return Helper.ListView.waitForReady(listView, 100)();
             }).then(function () {
                     LiveUnit.Assert.areEqual(0, listView.indexOfFirstVisible);
                     LiveUnit.Assert.areEqual(99, listView.indexOfLastVisible);
@@ -2121,25 +2121,25 @@ module WinJSTests {
                 return jobNode;
             };
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 listView.indexOfFirstVisible = 99;
 
-                return waitForReady(listView)();
+                return Helper.ListView.waitForReady(listView)();
             }).then(function () {
                     LiveUnit.Assert.areEqual(99, listView.indexOfFirstVisible);
                     LiveUnit.Assert.areEqual(3300, listView.scrollPosition);
 
                     checkTile(listView, 99);
 
-                    listView._currentMode().onKeyDown(createEvent(utilities.Key.end, listView.elementFromIndex(100)));
-                    return waitForReady(listView)();
+                    listView._currentMode().onKeyDown(createEvent(WinJS.Utilities.Key.end, listView.elementFromIndex(100)));
+                    return Helper.ListView.waitForReady(listView)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI._VirtualizeContentsView._chunkSize - 1, listView.indexOfLastVisible);
 
                     listView.indexOfFirstVisible = 0;
 
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(0, listView.indexOfFirstVisible);
 
@@ -2147,11 +2147,11 @@ module WinJSTests {
 
                     jobNode.resume();
 
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).then(function () {
                     return listView._view._creatingContainersWork ? listView._view._creatingContainersWork.promise : null;
                 }).then(function () {
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
 
                     LiveUnit.Assert.areEqual(9999, listView.indexOfFirstVisible);
@@ -2299,7 +2299,7 @@ module WinJSTests {
             });
 
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 validateGroupedTree(listView);
 
                 callCounter = 0;
@@ -2332,7 +2332,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(3, callCounter);
                     animationSignal.complete();
 
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).then(function () {
                     validateGroupedTree(listView);
 
@@ -2352,7 +2352,7 @@ module WinJSTests {
                     updateModifiedArray(modifiedElementsPattern);
                     updateModifiedArray(modifiedGroupsPattern);
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     validateGroupedTree(listView);
 
@@ -2397,7 +2397,7 @@ module WinJSTests {
                 }
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 validateFlatTree(listView);
 
                 list.unshift({
@@ -2428,7 +2428,7 @@ module WinJSTests {
                     layoutExpected = true;
                     animationSignal.complete();
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     validateFlatTree(listView);
                     verifyTile(listView, 0, "N1");
@@ -2474,7 +2474,7 @@ module WinJSTests {
                 }
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 /*replace data source */
 
                 LiveUnit.LoggingCore.logComment("Test: replacing the data source sends a changedRange of the appropriateSize");
@@ -2484,7 +2484,7 @@ module WinJSTests {
                 listView.itemDataSource = list.dataSource;
 
                 rangeTester.expectedRange(0, list.length - 1);  // Verify the range only goes as high as the last index in the new smaller datasource.
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
 
             }).then(function () {
                     /* verify reload */
@@ -2493,7 +2493,7 @@ module WinJSTests {
                     list.reverse();
 
                     rangeTester.expectedRange(0, list.length - 1);  // Verify the range is the entire datasource.
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
@@ -2536,7 +2536,7 @@ module WinJSTests {
                 }
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 /* move from 0 to 10 -> insert at 5 */
                 LiveUnit.LoggingCore.logComment("Test: move from 0 to 10 -> insert at 5");
@@ -2548,7 +2548,7 @@ module WinJSTests {
                     title: "N0",
                     group: 0
                 }); // [start = 0, end = 12)
-                return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
             }).then(function () {
                     /* change at 98 -> remove from 50 */
                     LiveUnit.LoggingCore.logComment("Test: change at 98 -> remove from 50");
@@ -2561,7 +2561,7 @@ module WinJSTests {
 
                     // Remove item at index 50
                     list.splice(50, 1); // [start = 50, end = 98)
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* insert -> move -> insert -> change -> remove -> remove -> remove -> remove -> move -> change -> insert -> insert -> insert -> insert */
                     LiveUnit.LoggingCore.logComment("Test: batch of 'insert -> move -> insert -> change -> remove -> remove -> remove -> remove -> move -> change -> insert -> insert -> insert -> insert' operations");
@@ -2626,30 +2626,30 @@ module WinJSTests {
                         title: "N0",
                         group: 0
                     }) // [start = 4, end = 92)
-            return waitForReady(listView, -1)().then(layoutTester.testLayout);
+            return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* reload */
                     LiveUnit.LoggingCore.logComment("Test: reload");
 
                     list.reverse(); // trigger reload, make sure the range is the entire list
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* remove at index 33 */
                     LiveUnit.LoggingCore.logComment("Test: single remove at index 33");
 
                     list.splice(33, 1); // [firstIndex = 32, lastIndex = 33)
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* remove from the end */
                     LiveUnit.LoggingCore.logComment("Test: single remove from the end");
                     list.splice(list.length - 1, 1); // [firstIndex = list.length - 2, lastIndex = list.length - 2]
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* remove at index 0 */
 
                     LiveUnit.LoggingCore.logComment("Test: single remove from index 0");
                     list.splice(0, 1); // [firstIndex = 0, lastIndex = 0]
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* insert at 0 */
 
@@ -2658,7 +2658,7 @@ module WinJSTests {
                         title: "N0",
                         group: 0
                     });// [firstIndex = 0, lastIndex = 1]
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* insert at end */
 
@@ -2667,7 +2667,7 @@ module WinJSTests {
                         title: "N0",
                         group: 0
                     });// [firstIndex = list.length - 1, lastIndex = list.length]
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* insert at index 44*/
 
@@ -2676,7 +2676,7 @@ module WinJSTests {
                         title: "N0",
                         group: 0
                     });// [firstIndex = 43, lastIndex = 45]
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* change at index 60 */
 
@@ -2685,7 +2685,7 @@ module WinJSTests {
                         title: "N0",
                         group: 0
                     }); // [firstIndex = 59, lastIndex = 61]
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* change at index 0 */
 
@@ -2694,7 +2694,7 @@ module WinJSTests {
                         title: "N0",
                         group: 0
                     }); // [firstIndex = 0, lastIndex = 1]
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* change last index */
 
@@ -2703,19 +2703,19 @@ module WinJSTests {
                         title: "N0",
                         group: 0
                     }); // [firstIndex = list.length - 2, lastIndex = list.length-1]
-                    return waitForReady(listView, -1)().then(layoutTester.testLayout);
+                    return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* Move from first index to last index */
 
                     LiveUnit.LoggingCore.logComment("Test: move item from first index to last index");
                     list.move(0, list.length - 1)// [firstIndex = 0, lastIndex = list.length - 1]
-            return waitForReady(listView, -1)().then(layoutTester.testLayout);
+            return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     /* Move from last index to first index */
 
                     LiveUnit.LoggingCore.logComment("Test: move item from last index to first index");
                     list.move(list.length - 1, 0) // [firstIndex = 0, lastIndex = list.length - 1]
-            return waitForReady(listView, -1)().then(layoutTester.testLayout);
+            return Helper.ListView.waitForReady(listView, -1)().then(layoutTester.testLayout);
                 }).then(function () {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
@@ -2778,10 +2778,10 @@ module WinJSTests {
                 }
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 list.splice(0, COUNT);
                 deletedAll = true;
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).done(function () {
                     LiveUnit.Assert.isTrue(verifiedChangedRange, "Layout should have been called after deleting all of the items");
                     complete();
@@ -2825,23 +2825,23 @@ module WinJSTests {
                 var containers = placeholder.querySelectorAll("win-container");
                 for (var i = 0; i < containers.length; i++) {
                     var isRealized = i >= firstVisible && i < (firstVisible + realized);
-                    LiveUnit.Assert.areEqual(isRealized, !utilities.hasClass(<HTMLElement>containers[i], "win-backdrop"));
+                    LiveUnit.Assert.areEqual(isRealized, !WinJS.Utilities.hasClass(<HTMLElement>containers[i], "win-backdrop"));
                 }
             }
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 verifyBackdrop(0, 9 * 3);
 
                 listView.indexOfFirstVisible = 27;
 
-                return waitForDeferredAction(listView)();
+                return Helper.ListView.waitForDeferredAction(listView)();
             }).then(function () {
 
                     verifyBackdrop(0, 9 * 5);
 
                     listView.indexOfFirstVisible = 0;
 
-                    return waitForDeferredAction(listView)();
+                    return Helper.ListView.waitForDeferredAction(listView)();
                 }).then(function () {
 
                     verifyBackdrop(0, 9 * 3);
@@ -2851,14 +2851,14 @@ module WinJSTests {
                         group: 0
                     });
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
 
                     verifyBackdrop(0, 9 * 3);
 
                     list.shift();
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
 
                     // We just deleted an item, and a new one won't be realized because of the
@@ -2873,7 +2873,7 @@ module WinJSTests {
                         });
                     }
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
 
                     verifyBackdrop(0, 9 * 3);
@@ -2895,18 +2895,18 @@ module WinJSTests {
 
             var list = createBindingList(100);
             var listView = new ListView(element, { layout: new WinJS.UI.GridLayout(), itemDataSource: list.dataSource, itemTemplate: fixedSizeTemplate });
-            waitForReady(listView)().done(function () {
+            Helper.ListView.waitForReady(listView)().done(function () {
                 //Deleting one item won't cause a full realize
                 LiveUnit.Assert.areEqual(45, getNumberOfItemsRealized());
                 list.splice(0, 1);
-                waitForReady(listView, 100)().then(function () {
+                Helper.ListView.waitForReady(listView, 100)().then(function () {
                     LiveUnit.Assert.areEqual(99, list.length);
                     LiveUnit.Assert.areEqual(1, listView._view.deletesWithoutRealize);
                     LiveUnit.Assert.areEqual(44, getNumberOfItemsRealized());
 
                     // Deleting 12 more items still won't cause a full realize
                     list.splice(0, 12);
-                    waitForReady(listView, 100)().then(function () {
+                    Helper.ListView.waitForReady(listView, 100)().then(function () {
                         LiveUnit.Assert.areEqual(87, list.length);
                         LiveUnit.Assert.areEqual(13, listView._view.deletesWithoutRealize);
                         LiveUnit.Assert.areEqual(32, getNumberOfItemsRealized());
@@ -2914,7 +2914,7 @@ module WinJSTests {
                         // Deleting one more item will cause a full realize because we already lost one viewport full
                         // of data
                         list.splice(0, 1);
-                        waitForReady(listView, 100)().then(function () {
+                        Helper.ListView.waitForReady(listView, 100)().then(function () {
                             LiveUnit.Assert.areEqual(86, list.length);
                             LiveUnit.Assert.areEqual(0, listView._view.deletesWithoutRealize);
                             LiveUnit.Assert.areEqual(45, getNumberOfItemsRealized());
@@ -2935,12 +2935,12 @@ module WinJSTests {
 
             var list = createBindingList(100);
             var listView = new ListView(element, { layout: new WinJS.UI.GridLayout(), itemDataSource: list.dataSource, itemTemplate: fixedSizeTemplate });
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(45, getNumberOfItemsRealized());
                 //Deleting one item + inserting another one will cause a full realize
                 list.splice(0, 1);
                 list.splice(0, 0, { title: "title New", itemWidth: "80px", itemHeight: "80px" });
-                waitForReady(listView, 100)().then(function () {
+                Helper.ListView.waitForReady(listView, 100)().then(function () {
                     LiveUnit.Assert.areEqual(100, list.length);
                     LiveUnit.Assert.areEqual(0, listView._view.deletesWithoutRealize);
                     LiveUnit.Assert.areEqual(45, getNumberOfItemsRealized());
@@ -2977,7 +2977,7 @@ module WinJSTests {
                 itemTemplate: renderer,
                 layout: listLayout
             });
-            waitForReady(listView, -1)().then(function () {
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
                 listView.itemDataSource.list.splice(0, 2);
                 setTimeout(function () {
                     listView.itemDataSource.list.splice(0, 1);
@@ -2985,7 +2985,7 @@ module WinJSTests {
                         for (var i = 0; i < 3; i++) {
                             listView.itemDataSource.insertAtStart(null, { title: "New Title: " + i });
                         }
-                        waitForReady(listView, -1)().then(function () {
+                        Helper.ListView.waitForReady(listView, -1)().then(function () {
                             LiveUnit.Assert.areEqual("New Title: 2", listView.elementFromIndex(0).textContent);
                             LiveUnit.Assert.areEqual("New Title: 1", listView.elementFromIndex(1).textContent);
                             LiveUnit.Assert.areEqual("New Title: 0", listView.elementFromIndex(2).textContent);
@@ -3038,7 +3038,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
         testScrollAfterSkippedRealization = function (complete) {
@@ -3057,7 +3057,7 @@ module WinJSTests {
             listView.itemDataSource.itemFromIndex(0).then(function (item) {
                 key = item.key;
 
-                return waitForReady(listView)();
+                return Helper.ListView.waitForReady(listView)();
             }).then(function () {
                     listView.scrollPosition = 1850;
                     listView.itemDataSource.remove(key);
@@ -3083,7 +3083,7 @@ module WinJSTests {
             "</div>";
             VirtualizeContentsViewTestHost.appendChild(newNode);
             var listView = setupMailStyleListView();
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 // Delete a single item. This will use the defer realization on delete optimization and
                 // try to skip a full realization. However, another update will arrive to insert
                 // two items. This should force us to do a full realization.
@@ -3100,7 +3100,7 @@ module WinJSTests {
                     listView.itemDataSource.insertAtStart(null, data2);
                     listView.itemDataSource.endEdits();
                 });
-                return waitForDeferredAction(listView)();
+                return Helper.ListView.waitForDeferredAction(listView)();
             }).then(function () {
                     var initialContainersCount = 9;
 
@@ -3156,7 +3156,7 @@ module WinJSTests {
             var listView = new ListView(<HTMLElement>newNode.firstElementChild, {
                 itemDataSource: dataSource,
                 selectionMode: "multi",
-                itemTemplate: createRenderer("simpleTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
                 layout: layout
             });
             listView.addEventListener("loadingstatechanged", loadingStateChanged);
@@ -3218,7 +3218,7 @@ module WinJSTests {
                 itemTemplate: renderer
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 /* during startup order is
                  - render on screen items
                  - raise ready signal for on screen items
@@ -3226,12 +3226,12 @@ module WinJSTests {
                  - raise ready signal for off screen items
                  The item at index 0 is handled differently since it is rendered and its ready signal is raised by layout which measures it.
                  */
-                elementsEqual(["0e", "0r", "1e", "1r", "2e", "3e", "4e", "5e", "2r", "3r", "4r", "5r"], rendering);
+                Helper.ListView.elementsEqual(["0e", "0r", "1e", "1r", "2e", "3e", "4e", "5e", "2r", "3r", "4r", "5r"], rendering);
                 rendering = [];
 
                 // scroll to right
                 listView.indexOfFirstVisible = 16;
-                return waitForDeferredAction(listView)();
+                return Helper.ListView.waitForDeferredAction(listView)();
             }).then(function () {
                     /* during scrolling order is:
                      - render on screen items
@@ -3241,14 +3241,14 @@ module WinJSTests {
                      - render back off screen items
                      - raise ready signal for back off screen items
                      */
-                    elementsEqual(["16e", "17e", "18e", "19e", "20e", "21e", "16r", "17r", "18r", "19r", "20r", "21r", "15e", "14e", "13e", "12e", "15r", "14r", "13r", "12r"], rendering);
+                    Helper.ListView.elementsEqual(["16e", "17e", "18e", "19e", "20e", "21e", "16r", "17r", "18r", "19r", "20r", "21r", "15e", "14e", "13e", "12e", "15r", "14r", "13r", "12r"], rendering);
                     rendering = [];
 
                     // scroll to left
                     listView.indexOfFirstVisible = 6;
-                    return waitForDeferredAction(listView)();
+                    return Helper.ListView.waitForDeferredAction(listView)();
                 }).then(function () {
-                    elementsEqual(["7e", "6e", "5e", "4e", "3e", "2e", "7r", "6r", "5r", "4r", "3r", "2r", "8e", "9e", "10e", "11e", "8r", "9r", "10r", "11r"], rendering);
+                    Helper.ListView.elementsEqual(["7e", "6e", "5e", "4e", "3e", "2e", "7r", "6r", "5r", "4r", "3r", "2r", "8e", "9e", "10e", "11e", "8r", "9r", "10r", "11r"], rendering);
 
                     element.parentNode.removeChild(element);
                     complete();
@@ -3390,7 +3390,7 @@ module WinJSTests {
                 indexOfFirstVisible: 200
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 var expected = [];
                 for (var i = 200; i < 500; i++) {
                     expected.push(i);
@@ -3398,7 +3398,7 @@ module WinJSTests {
                 for (i = 199; i >= 0; i--) {
                     expected.push(i);
                 }
-                elementsEqual(expected, readyIndices);
+                Helper.ListView.elementsEqual(expected, readyIndices);
 
                 element.parentNode.removeChild(element);
                 complete();
@@ -3452,7 +3452,7 @@ module WinJSTests {
                 itemTemplate: renderer
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.itemsLoading);
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.viewPortLoaded);
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.itemsLoaded);
@@ -3504,7 +3504,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(2, stateChangeCounter.itemsLoaded);
                     LiveUnit.Assert.areEqual(2, stateChangeCounter.complete);
 
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(3, stateChangeCounter.itemsLoading);
                     LiveUnit.Assert.areEqual(3, stateChangeCounter.viewPortLoaded);
@@ -3660,7 +3660,7 @@ module WinJSTests {
                 return jobNode;
             };
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.viewPortLoaded);
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.itemsLoaded);
                 LiveUnit.Assert.areEqual(1, stateChangeCounter.complete);
@@ -3733,7 +3733,7 @@ module WinJSTests {
                 }
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.isTrue(layouInProgress);
 
                 list.unshift({
@@ -3741,7 +3741,7 @@ module WinJSTests {
                     group: 0
                 });
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
                     LiveUnit.Assert.isTrue(layuoutCanceled);
                     layuoutCanceled = false;
@@ -3809,12 +3809,12 @@ module WinJSTests {
                 }
             });
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.isTrue(layouInProgress);
 
                 listView.itemDataSource = list2.dataSource;
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
                     LiveUnit.Assert.isTrue(layuoutCanceled);
                     layuoutCanceled = false;
@@ -3902,7 +3902,7 @@ module WinJSTests {
                 });
             }
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 listView._onMSManipulationStateChanged({ currentState: 1 });
 
@@ -3941,7 +3941,7 @@ module WinJSTests {
                     });
                 }
             });
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(45, getNumberOfItemsRealized());
 
                 var oldExecuteAnimations = listView.layout.executeAnimations;
@@ -3953,7 +3953,7 @@ module WinJSTests {
                     list.splice(12 + i, 0, { title: "title New " + i, className: "new" });
                 }
 
-                waitForDeferredAction(listView)().then(function () {
+                Helper.ListView.waitForDeferredAction(listView)().then(function () {
                     LiveUnit.Assert.areEqual(30, getNumberOfNewItemsRealized(), "All 30 inserted items should now be realized");
                     LiveUnit.Assert.areEqual(45, getNumberOfItemsRealized());
                     VirtualizeContentsViewTestHost.removeChild(element);
@@ -4000,7 +4000,7 @@ module WinJSTests {
             }
 
             listView.ensureVisible(20);
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(51, getNumberOfItemsRealized());
 
                 var oldExecuteAnimations = listView.layout.executeAnimations;
@@ -4025,7 +4025,7 @@ module WinJSTests {
 
                 list.splice(0, 1);
 
-                waitForDeferredAction(listView)().then(function () {
+                Helper.ListView.waitForDeferredAction(listView)().then(function () {
                     // Reparenting should be all done for items before, on, after the viewport
                     LiveUnit.Assert.isTrue(getInnerHTMLForContainer(5).indexOf("title6") >= 0);
                     LiveUnit.Assert.isTrue(getInnerHTMLForContainer(6).indexOf("title7") >= 0);
@@ -4066,7 +4066,7 @@ module WinJSTests {
                 }
             });
             listView.ensureVisible(20);
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 // We start with 51 realized items
                 LiveUnit.Assert.areEqual(51, Object.keys(listView._view.items._itemData).length);
                 LiveUnit.Assert.areEqual(51, getNumberOfItemsRealized());
@@ -4087,7 +4087,7 @@ module WinJSTests {
                 // Insert one item
                 listView.itemDataSource.list.splice(7, 0, { title: "new item", itemWidth: "80px", itemHeight: "80px" });
 
-                waitForDeferredAction(listView)().then(function () {
+                Helper.ListView.waitForDeferredAction(listView)().then(function () {
                     // Eventually, we end up with only 51 realized items (as we started before the insert)
                     LiveUnit.Assert.areEqual(51, getNumberOfItemsRealized());
                     VirtualizeContentsViewTestHost.removeChild(element);
@@ -4125,7 +4125,7 @@ module WinJSTests {
                 eventObject.preventDefault();
             });
 
-            waitForDeferredAction(listView)().
+            Helper.ListView.waitForDeferredAction(listView)().
                 then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     VirtualizeContentsViewTestHost.removeChild(placeholder);
@@ -4168,7 +4168,7 @@ module WinJSTests {
                 }
             });
 
-            waitForReady(listView, -1)().then(function () {
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
                 list.shift();
 
                 return waitForItemsLoaded(listView);
@@ -4203,7 +4203,7 @@ module WinJSTests {
             var origDelay = WinJS.UI._LISTVIEW_PROGRESS_DELAY;
             WinJS.UI._LISTVIEW_PROGRESS_DELAY = 0;
 
-            waitForReady(lv, 1000)().done(function () {
+            Helper.ListView.waitForReady(lv, 1000)().done(function () {
                 LiveUnit.Assert.isFalse(VirtualizeContentsViewTestHost.querySelector("." + WinJS.UI._progressClass));
                 VirtualizeContentsViewTestHost.removeChild(lv.element);
                 WinJS.UI._LISTVIEW_PROGRESS_DELAY = origDelay;
@@ -4261,7 +4261,7 @@ module WinJSTests {
 
                 VirtualizeContentsViewTestHost.appendChild(wrapper);
 
-                waitForReady(zoomedIn, -1)().then(function () {
+                Helper.ListView.waitForReady(zoomedIn, -1)().then(function () {
                     sezo.zoomedOut = true;
                 });
             };
@@ -4294,7 +4294,7 @@ module WinJSTests {
 
             VirtualizeContentsViewTestHost.appendChild(lv.element);
 
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 LiveUnit.Assert.isTrue(VirtualizeContentsViewTestHost.querySelector(".myHeader"));
                 VirtualizeContentsViewTestHost.removeChild(lv.element);
                 lv.dispose();
@@ -4332,9 +4332,9 @@ module WinJSTests {
 
             VirtualizeContentsViewTestHost.appendChild(lv.element);
 
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 lv.scrollPosition = 2000;
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     LiveUnit.Assert.areEqual(1, VirtualizeContentsViewTestHost.querySelectorAll(".myHeader24").length);
                     VirtualizeContentsViewTestHost.removeChild(lv.element);
@@ -4377,7 +4377,7 @@ module WinJSTests {
                 return jobNode;
             };
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
 
                 var promise = listView._view._creatingContainersWork.promise;
                 jobNode.resume();
@@ -4477,14 +4477,14 @@ module WinJSTests {
             });
 
 
-            waitForReady(listView, -1)().done(function () {
+            Helper.ListView.waitForReady(listView, -1)().done(function () {
                 listView.scrollPosition = 62800;
                 placeholdersLoadedSignal.promise.then(function () {
                     WinJS.Promise.timeout(100).then(function () {
                         listView.scrollPosition = 62850;
                         WinJS.Promise.timeout(500).then(function () {
                             listView.scrollPosition = 62860;
-                            waitForDeferredAction(listView)().then(function () {
+                            Helper.ListView.waitForDeferredAction(listView)().then(function () {
                                 var firstVisible = listView.indexOfFirstVisible;
                                 var lastVisible = listView.indexOfLastVisible;
 
@@ -4522,15 +4522,15 @@ module WinJSTests {
             VirtualizeContentsViewTestHost.appendChild(lv.element);
             lv.element.focus();
 
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 var items = document.querySelectorAll(".win-item");
                 (<HTMLElement>items[items.length - 1]).focus();
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     list.splice(list.length - 1, 0, { data: "10" });
 
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     LiveUnit.Assert.isTrue(lv.element.contains(<HTMLElement>document.activeElement));
 
@@ -4562,16 +4562,16 @@ module WinJSTests {
             VirtualizeContentsViewTestHost.appendChild(lv.element);
             lv.element.focus();
 
-            waitForReady(lv, 1000)().then(function () {
+            Helper.ListView.waitForReady(lv, 1000)().then(function () {
                 var items = document.querySelectorAll(".win-item");
                 lv.currentItem = { index: 389, hasFocus: true, showFocus: true };
                 lv.ensureVisible(389);
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     list.dataSource.remove("0");
 
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     LiveUnit.Assert.isTrue(lv.element.contains(<HTMLElement>document.activeElement));
 
@@ -4678,15 +4678,15 @@ module WinJSTests {
             };
             VirtualizeContentsViewTestHost.appendChild(lv.element);
 
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 lv.currentItem = { index: 0, hasFocus: true, showFocus: true };
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     LiveUnit.Assert.isTrue(document.querySelector("." + WinJS.UI._itemFocusOutlineClass),
                         "itemFocusOutline not drawn. document.hasFocus(): " + document.hasFocus() +
                         ". document requires focus to pass");
                     list.shift();
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     LiveUnit.Assert.isTrue(document.querySelector("." + WinJS.UI._itemFocusOutlineClass),
                         "itemFocusOutline not drawn. document.hasFocus(): " + document.hasFocus() +
@@ -4712,8 +4712,8 @@ module WinJSTests {
                 layout: new WinJS.UI.GridLayout()
             });
 
-            skipFirstAnimation(listView);
-            waitForReady(listView, -1)().then(function () {
+            Helper.ListView.skipFirstAnimation(listView);
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
                 listView._versionManager.beginUpdating();
                 listView.scrollPosition = 900;
 
@@ -4721,7 +4721,7 @@ module WinJSTests {
             }).then(function () {
                     listView._versionManager.endUpdating();
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(900, listView.scrollPosition);
 
@@ -4787,14 +4787,14 @@ module WinJSTests {
                 }
             });
 
-            skipFirstAnimation(listView);
-            waitForReady(listView, -1)().then(function () {
+            Helper.ListView.skipFirstAnimation(listView);
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
                 listView.ensureVisible(10);
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
                     list.splice(5, 5);
                     count -= 5;
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     var containers = placeholder.querySelectorAll(".win-container");
                     LiveUnit.Assert.areEqual(count, containers.length);
@@ -4841,7 +4841,7 @@ module WinJSTests {
             var customMaxPages = WinJS.UI._VirtualizeContentsView._customPagesToPrefetchMax;
             var customMinPages = WinJS.UI._VirtualizeContentsView._customPagesToPrefetchMin;
 
-            waitForReady(listView, -1)().then(function () {
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
                 elementsPerPage = (listView.indexOfLastVisible - listView.indexOfFirstVisible) + 1
 
             // When we are at the top of the list (scroll:0), we should have the current viewport full of items + customMaxPages pages ahead
@@ -4851,7 +4851,7 @@ module WinJSTests {
                 // Scroll to the bottom of the current viewport
                 listView.scrollPosition = viewPortHeight;
 
-                return waitForDeferredAction(listView)();
+                return Helper.ListView.waitForDeferredAction(listView)();
             }).then(function () {
 
                     // When our scroll position = viewPortHeight, we should have the current viewport full of items + up to 1 page behind + customMaxPages pages ahead
@@ -4861,7 +4861,7 @@ module WinJSTests {
                     // Scroll down customMaxPages viewports
                     listView.scrollPosition = customMaxPages * viewPortHeight;
 
-                    return waitForDeferredAction(listView)();
+                    return Helper.ListView.waitForDeferredAction(listView)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(listView.indexOfFirstVisible, customMaxPages * elementsPerPage);
 
@@ -4883,7 +4883,7 @@ module WinJSTests {
 
             var list = createBindingList(100);
             var listView = new ListView(element, { layout: new WinJS.UI.GridLayout(), itemDataSource: list.dataSource, itemTemplate: fixedSizeTemplate });
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
 
                 var usingStructuralNodes = !!(listView._view.tree[0].itemsContainer.itemsBlocks);
 
@@ -4942,7 +4942,7 @@ module WinJSTests {
 
             VirtualizeContentsViewTestHost.appendChild(wrapper);
 
-            waitForReady(zoomedIn, -1)().then(function () {
+            Helper.ListView.waitForReady(zoomedIn, -1)().then(function () {
                 zoomedIn.scrollPosition = Number.MAX_VALUE;
                 sezo.zoomedOut = true;
             });
@@ -5011,9 +5011,9 @@ module WinJSTests {
                 });
             }
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 listView.scrollPosition = scrollbarPos;
-                return waitForDeferredAction(listView)();
+                return Helper.ListView.waitForDeferredAction(listView)();
             }).then(function () {
                     return verify(listView);
                 }).then(function () {
@@ -5092,7 +5092,7 @@ module WinJSTests {
                 return jobNode;
             };
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.isTrue(structureNodes || 100 === placeholder.querySelectorAll(".win-container").length);
                 LiveUnit.Assert.areEqual(100, listView._view.containers.length);
 
@@ -5101,14 +5101,14 @@ module WinJSTests {
                     group: 0
                 });
 
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
                     LiveUnit.Assert.isTrue(structureNodes || 101 === placeholder.querySelectorAll(".win-container").length);
                     LiveUnit.Assert.areEqual(101, listView._view.containers.length);
 
                     list.splice(0, 11);
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     LiveUnit.Assert.isTrue(structureNodes || 101 === placeholder.querySelectorAll(".win-container").length);
                     LiveUnit.Assert.areEqual(101, listView._view.containers.length);
@@ -5118,14 +5118,14 @@ module WinJSTests {
                         group: 40
                     });
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     LiveUnit.Assert.isTrue(structureNodes || 102 === placeholder.querySelectorAll(".win-container").length);
                     LiveUnit.Assert.areEqual(102, listView._view.containers.length);
 
                     list.splice(10000, 200);
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     LiveUnit.Assert.isTrue(structureNodes || 102 === placeholder.querySelectorAll(".win-container").length);
                     LiveUnit.Assert.areEqual(102, listView._view.containers.length);
@@ -5142,7 +5142,7 @@ module WinJSTests {
                         listView.itemDataSource = list.dataSource;
                     }
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     LiveUnit.Assert.isTrue(structureNodes || 100 === placeholder.querySelectorAll(".win-container").length);
                     LiveUnit.Assert.areEqual(100, listView._view.containers.length);
@@ -5152,21 +5152,21 @@ module WinJSTests {
                         group: 0
                     });
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     LiveUnit.Assert.isTrue(structureNodes || 101 === placeholder.querySelectorAll(".win-container").length);
                     LiveUnit.Assert.areEqual(101, listView._view.containers.length);
 
                     list.splice(0, 6);
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     LiveUnit.Assert.isTrue(structureNodes || 101 === placeholder.querySelectorAll(".win-container").length);
                     LiveUnit.Assert.areEqual(101, listView._view.containers.length);
 
                     list.splice(70, 5);
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).done(function () {
                     LiveUnit.Assert.isTrue(structureNodes || 101 === placeholder.querySelectorAll(".win-container").length);
                     LiveUnit.Assert.areEqual(101, listView._view.containers.length);
@@ -5196,12 +5196,12 @@ var generateNoFocusLossAfterDeleteTest = function (layout) {
         lv.itemDataSource = list.dataSource;
         VirtualizeContentsViewTestHost.appendChild(lv.element);
 
-        waitForReady(lv, 1000)().then(function () {
+        Helper.ListView.waitForReady(lv, 1000)().then(function () {
             lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 2, hasFocus: true };
-            return waitForReady(lv, -1)();
+            return Helper.ListView.waitForReady(lv, -1)();
         }).then(function () {
                 lv.itemDataSource.remove("2");
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).done(function () {
                 LiveUnit.Assert.isTrue(document.activeElement);
                 LiveUnit.Assert.isTrue((<HTMLElement>document.activeElement).classList.contains(WinJS.UI._itemClass));
@@ -5265,16 +5265,16 @@ var generateAnimationDuringSezoZoomingTests = function generateAnimationDuringSe
         var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
         VirtualizeContentsViewTestHost.appendChild(wrapper);
 
-        waitForReady(zoomedIn, -1)().then(function () {
+        Helper.ListView.waitForReady(zoomedIn, -1)().then(function () {
             if (scrollToEnd) {
                 zoomedIn.scrollPosition = Number.MAX_VALUE;
             }
-            return waitForReady(zoomedIn, -1)();
+            return Helper.ListView.waitForReady(zoomedIn, -1)();
         }).then(function () {
                 glist.dataSource[operation].apply(glist.dataSource, operationArgs);
                 sezo.zoomedOut = true;
 
-                return waitForReady(zoomedIn, -1)();
+                return Helper.ListView.waitForReady(zoomedIn, -1)();
             }).done(function () {
                 WinJS.Utilities.disposeSubTree(wrapper);
                 VirtualizeContentsViewTestHost.removeChild(wrapper);
@@ -5339,20 +5339,20 @@ generateDomTrimTest("SimpleScroll", initData(), false, 0, 30 * itemHeight, funct
 
     listView.scrollPosition = 10 * itemHeight;
 
-    return waitForDeferredAction(listView)().then(function () {
+    return Helper.ListView.waitForDeferredAction(listView)().then(function () {
         LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
 
         verifyBlockInDom(listView, [1, 2, 3]);
 
         listView.scrollPosition = 30 * itemHeight;
-        return waitForDeferredAction(listView)();
+        return Helper.ListView.waitForDeferredAction(listView)();
     }).then(function () {
             LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
 
             verifyBlockInDom(listView, [3, 4, 5]);
 
             listView.scrollPosition = 20 * itemHeight;
-            return waitForDeferredAction(listView)();
+            return Helper.ListView.waitForDeferredAction(listView)();
         }).then(function () {
             LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
 
@@ -5366,7 +5366,7 @@ generateDomTrimTest("NoGroupOverlapDuringScroll", initGroups([20, 20, 20, 20]), 
 
     listView.scrollPosition = 40 * itemHeight;
 
-    return waitForReady(listView, -1)().then(function () {
+    return Helper.ListView.waitForReady(listView, -1)().then(function () {
         LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
 
         verifyBlockInDom(listView, [4]);
@@ -5379,14 +5379,14 @@ generateDomTrimTest("GroupOverlapDuringScroll", initGroups([20, 20, 20, 20, 20])
 
     listView.scrollPosition = 30 * itemHeight;
 
-    return waitForDeferredAction(listView)().then(function () {
+    return Helper.ListView.waitForDeferredAction(listView)().then(function () {
         LiveUnit.Assert.areEqual(60, listView.element.querySelectorAll(".win-container").length);
 
         verifyBlockInDom(listView, [3, 4, 5, 6, 7, 8]);
 
         listView.scrollPosition = 10 * itemHeight;
 
-        return waitForDeferredAction(listView)();
+        return Helper.ListView.waitForDeferredAction(listView)();
     }).then(function () {
             LiveUnit.Assert.areEqual(60, listView.element.querySelectorAll(".win-container").length);
 
@@ -5400,7 +5400,7 @@ generateDomTrimTest("ensureVisibleWithoutMove", initData(), false, 500, 1000, fu
 
     listView.ensureVisible(15);
 
-    return waitForDeferredAction(listView)().then(function () {
+    return Helper.ListView.waitForDeferredAction(listView)().then(function () {
 
         LiveUnit.Assert.areEqual(20, listView.element.querySelectorAll(".win-container").length);
 

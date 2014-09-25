@@ -24,7 +24,7 @@ module WinJSTests {
             count,
             tests;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
 
                 // Test 1 - Insertion
@@ -40,7 +40,7 @@ module WinJSTests {
                 count++;
                 count++;
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
 
                 // verification
@@ -56,7 +56,7 @@ module WinJSTests {
                 count--;
                 count--;
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
 
                 //verification
@@ -73,7 +73,7 @@ module WinJSTests {
         // the item and validates the final count
         ///
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then<number>(listView.itemDataSource.getCount).
             then(function (count) {
 
@@ -171,7 +171,7 @@ module WinJSTests {
             return true;
         }
 
-        var testPromise = waitForReady(listView, -1)().
+        var testPromise = Helper.ListView.waitForReady(listView, -1)().
             then(listView.itemDataSource.getCount).
             then(function (c) {
                 count = c;
@@ -205,7 +205,7 @@ module WinJSTests {
                 // pass on the state that we care about
                 return { desiredIndex: desiredIndex, scrollPos: scrollPos };
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function (previousState) {
                 validateEnsureVisible(listView, previousState);
             }).
@@ -220,7 +220,7 @@ module WinJSTests {
 
                 return { desiredIndex: desiredIndex, scrollPos: scrollPos };
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function (previousState) {
                 validateEnsureVisible(listView, previousState);
             });
@@ -236,7 +236,7 @@ module WinJSTests {
 
             return { desiredIndex: desiredIndex, scrollPos: scrollPos };
         }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function (previousState) {
                 validateEnsureVisible(listView, previousState);
             });
@@ -259,7 +259,7 @@ module WinJSTests {
 
         var testRenderer = listView.itemTemplate;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
 
                 // Test 0 - Set data adapter to one with items
@@ -274,7 +274,7 @@ module WinJSTests {
                     listView.itemDataSource.testDataAdapter.reload();
                 }
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return verifyCount(listView, DEF_TOTAL_ITEMS);
             }).
@@ -298,7 +298,7 @@ module WinJSTests {
                     listView.itemDataSource.testDataAdapter.reload();
                 }
             }).
-            then(waitForReady(listView, 500)).
+            then(Helper.ListView.waitForReady(listView, 500)).
             then(function () {
                 return verifyCount(listView, 0);
             }).
@@ -312,7 +312,7 @@ module WinJSTests {
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
 
                 // verification
@@ -330,13 +330,13 @@ module WinJSTests {
 
     function ReplaceDataSourceTest(listView, signalTestCaseCompleted) {
         var testRenderer = listView.itemTemplate;
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 // Test 1 - Set data source to a new one
                 ListViewUtils.logTestComment('ReplaceDataSourceTest - Replacing data source with a new one with ' + DEF_TOTAL_ITEMS + ' items');
                 listView.itemDataSource = createTestDataSource(DEF_TOTAL_ITEMS);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return verifyCount(listView, DEF_TOTAL_ITEMS);
             }).
@@ -356,7 +356,7 @@ module WinJSTests {
                 ListViewUtils.logTestComment("ReplaceDataSourceTest - Replacing data source with a new empty one");
                 listView.itemDataSource = createTestDataSource(0);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return verifyCount(listView, 0);
             }).
@@ -370,7 +370,7 @@ module WinJSTests {
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
 
                 // verification
@@ -393,12 +393,12 @@ module WinJSTests {
         listView.selection.set(expectedSelection);
         listView.indexOfFirstVisible = rehydrationFirstVisible;
 
-        waitForReady(listView)().
+        Helper.ListView.waitForReady(listView)().
             then(function () {
                 LiveUnit.Assert.areEqual(listView.indexOfFirstVisible, rehydrationFirstVisible, "IndexOfFirstVisible expected " + rehydrationFirstVisible);
                 listView.indexOfFirstVisible = 0;
             }).
-            then(waitForReady(listView)).
+            then(Helper.ListView.waitForReady(listView)).
             then(function () {
                 return verifySelection(listView, expectedSelection);
             }).
@@ -418,13 +418,13 @@ module WinJSTests {
         };
 
         var expectedSelection = [0];
-        waitForReady(listView)().
+        Helper.ListView.waitForReady(listView)().
             then(function () {
                 listView.selection.set(expectedSelection); // fires simulateCompose, which hides the ListView
                 var changedItem = { title: 'Read', content: 'changed item' };
                 listView.itemDataSource.testDataAdapter.changeAtIndex(0, changedItem);
             }).
-            then(waitForReady(listView)).
+            then(Helper.ListView.waitForReady(listView)).
             then(function () {
                 var focusPromise = new WinJS.Promise(function (c, e, p) {
                     var listViewCanvas = listView.element.querySelector(".win-surface");
@@ -443,7 +443,7 @@ module WinJSTests {
                 listView.element.querySelector(".win-surface").focus();
                 return focusPromise;
             }).
-            then(waitForReady(listView)).
+            then(Helper.ListView.waitForReady(listView)).
             then(function (expectedCurrentItem) {
                 LiveUnit.Assert.areEqual(listView.currentItem.index, expectedCurrentItem.index, "expected currentItem index: " + expectedCurrentItem.index);
                 LiveUnit.Assert.areEqual(listView.currentItem.hasFocus, expectedCurrentItem.hasFocus, "expected currentItem hasFocus: " + expectedCurrentItem.hasFocus);
@@ -470,7 +470,7 @@ module WinJSTests {
 
         function iterateByPage(count, index) {
             listView.indexOfFirstVisible = index;
-            return waitForReady(listView, -1)().
+            return Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
                     var firstVisible = listView.indexOfFirstVisible;
                     var lastVisible = listView.indexOfLastVisible;
@@ -855,14 +855,14 @@ module WinJSTests {
 
             var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
-            waitForReady(listView, -1)().then(function () {
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
                 var newItemTitle = "New List Item 0";
                 var newList = new WinJS.Binding.List([{ title: newItemTitle }]);
                 listView.currentItem = { index: 1 };
                 listView.element.style.width = "2000px";
                 listView.element.style.height = "2000px";
                 listView.itemDataSource = newList.dataSource;
-                waitForReady(listView, 500)().then(function () {
+                Helper.ListView.waitForReady(listView, 500)().then(function () {
                     LiveUnit.Assert.areEqual("title: " + newItemTitle, listView.elementFromIndex(0).textContent.trim());
                     LiveUnit.Assert.areEqual(0, listView.currentItem.index);
                     signalTestCaseCompleted();

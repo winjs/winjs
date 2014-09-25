@@ -39,7 +39,7 @@ module WinJSTests {
             var root = addNode(sezoRootId);
             addNode(zoomedInListViewId, root);
             addNode(zoomedOutListViewId, root);
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
 
             //WinBlue: 298587
             _oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
@@ -56,7 +56,7 @@ module WinJSTests {
             removeNode(zoomedOutListViewId);
             removeNode(zoomedInListViewId);
             removeNode(sezoRootId);
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
         }
     
     };
@@ -71,7 +71,7 @@ module WinJSTests {
                     outView = document.getElementById(zoomedOutListViewId);
 
                 root.style.direction = rtl ? "rtl" : "ltr";
-                var inDetails = buildGenericListView(inView, {
+                var inDetails = Helper.ListView.buildGenericListView(inView, {
                     orientation: direction,
                     layout: layoutName,
                     rtl: rtl,
@@ -80,7 +80,7 @@ module WinJSTests {
                     viewHeight: defaultHeight,
                     headersAbove: headersAbove,
                 });
-                var outDetails = buildGenericListView(outView, {
+                var outDetails = Helper.ListView.buildGenericListView(outView, {
                     orientation: direction,
                     layout: layoutName,
                     rtl: rtl,

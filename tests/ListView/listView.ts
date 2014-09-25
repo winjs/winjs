@@ -195,14 +195,14 @@ module WinJSTests {
     }
 
     function completeValidator(listView) {
-        return waitForReady(listView)().then(function () {
+        return Helper.ListView.waitForReady(listView)().then(function () {
             LiveUnit.Assert.areEqual(0, document.querySelectorAll(".win-progress").length, "Progress indicator visible");
         });
     }
 
     function scrollAndCompleteValidator(scrollTo) {
         return function (listView) {
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 return listView.ensureVisible(scrollTo);
             }).then(function () {
                     LiveUnit.Assert.areEqual(0, document.querySelectorAll(".win-progress").length, "Progress indicator visible");
@@ -283,7 +283,7 @@ module WinJSTests {
                 }
             ];
 
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
 
@@ -335,7 +335,7 @@ module WinJSTests {
                 }
             ];
 
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
         testListViewDispose = function (complete) {
@@ -397,10 +397,10 @@ module WinJSTests {
             document.body.appendChild(lv.element);
             lv.ensureVisible({ type: WinJS.UI.ObjectType.item, index: 0 });
             var scrollPosition;
-            waitForReady(lv)().then(function () {
+            Helper.ListView.waitForReady(lv)().then(function () {
                 scrollPosition = lv.scrollPosition;
                 lv.ensureVisible({ type: WinJS.UI.ObjectType.item, index: 0 });
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).done(function () {
                     LiveUnit.Assert.areEqual(scrollPosition, lv.scrollPosition);
                     complete();
@@ -421,7 +421,7 @@ module WinJSTests {
             lv.itemDataSource = filtered.dataSource;
             document.body.appendChild(lv.element);
 
-            waitForReady(lv)().done(function () {
+            Helper.ListView.waitForReady(lv)().done(function () {
                 filtered.dispose();
                 document.body.removeChild(lv.element);
                 lv.dispose();
@@ -448,12 +448,12 @@ module WinJSTests {
             lv.groupDataSource = glist.groups.dataSource;
             document.body.appendChild(lv.element);
 
-            waitForReady(lv)().
+            Helper.ListView.waitForReady(lv)().
                 then(function () {
                     lv.groupDataSource = glist.groups.dataSource;
                     lv.element.focus();
 
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).
                 then(function () {
                     document.body.removeChild(lv.element);
@@ -488,13 +488,13 @@ module WinJSTests {
                 });
             };
             document.body.appendChild(lv.element);
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 (<HTMLElement>lv.element.querySelector(".win-surface")).style.margin = "20px";
                 lv.scrollPosition = 400;
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     lv.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 0 });
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     LiveUnit.Assert.areEqual(0, lv.scrollPosition);
                     complete();
@@ -521,24 +521,24 @@ module WinJSTests {
             document.body.appendChild(lv.element);
             var groupWidth;
             var scrollPosition;
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 // Add 70px because groupleaders have 70px margins
                 groupWidth = (<HTMLElement>document.body.querySelector(".win-groupheadercontainer")).offsetWidth + 70;
                 lv.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 10 });
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     lv.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 2 });
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     // The 3rd header should be left aligned and the 4th header should be partially visible
                     scrollPosition = lv.scrollPosition;
                     lv.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 3 });
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.isTrue(groupWidth >= Math.abs(lv.scrollPosition - scrollPosition), "View should not have scrolled more than the width of an entire group");
                     scrollPosition = lv.scrollPosition;
                     lv.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 4 });
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     LiveUnit.Assert.isTrue(groupWidth >= Math.abs(lv.scrollPosition - scrollPosition), "View should not have scrolled more than the width of an entire group");
                     complete();
@@ -564,9 +564,9 @@ module WinJSTests {
             lv.groupDataSource = glist.groups.dataSource;
 
             document.body.appendChild(lv.element);
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 lv.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 1 });
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     LiveUnit.Assert.areEqual(0, lv.scrollPosition, "GroupHeader 1 is fully visible and no scrolling should have occured.");
                     complete();
@@ -622,7 +622,7 @@ module WinJSTests {
                 itemTemplate: verifyingRenderer
             });
 
-            waitForReady(lv)().then(function () {
+            Helper.ListView.waitForReady(lv)().then(function () {
                 LiveUnit.Assert.isTrue(rendererRan, "Item renderer should have ran");
 
                 cleanup();
@@ -668,11 +668,11 @@ module WinJSTests {
                 itemTemplate: imageLoadingRenderer
             });
 
-            waitForReady(lv, -1)().
+            Helper.ListView.waitForReady(lv, -1)().
                 then(function () {
                     LiveUnit.Assert.areEqual(0, pendingImageCount, "All of the images should have errored");
                     lv.itemDataSource.change("0", '');
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).
                 then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
@@ -720,11 +720,11 @@ module WinJSTests {
 
             lv = new WinJS.UI.ListView(div, {
                 itemDataSource: new WinJS.Binding.List(myData).dataSource,
-                itemTemplate: templates.syncJSTemplate,
+                itemTemplate: Helper.ListView.templates.syncJSTemplate,
                 layout: makeLayout()
             });
 
-            waitForReady(lv)().then(function () {
+            Helper.ListView.waitForReady(lv)().then(function () {
                 var layout = lv.layout,
                     origMeasureItem = layout._measureItem;
 
@@ -739,7 +739,7 @@ module WinJSTests {
             lv.itemDataSource = lv.itemDataSource;
                 lv.recalculateItemPosition();
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     return Helper.validateUnhandledErrorsOnIdle();
                 }).then(null, function () {
@@ -815,11 +815,11 @@ module WinJSTests {
 
             lv = new WinJS.UI.ListView(div, {
                 itemDataSource: new WinJS.Binding.List(myData).dataSource,
-                itemTemplate: templates.syncJSTemplate,
+                itemTemplate: Helper.ListView.templates.syncJSTemplate,
                 layout: makeLayout()
             });
 
-            waitForReady(lv)().then(function () {
+            Helper.ListView.waitForReady(lv)().then(function () {
                 var layout = lv.layout,
                     origMeasureElements = layout._measureElements;
 
@@ -841,7 +841,7 @@ module WinJSTests {
                     itemHeight: "75px"
                 });
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     return Helper.validateUnhandledErrorsOnIdle();
                 }).then(function () {
@@ -896,7 +896,7 @@ module WinJSTests {
             setTimeout(function () {
                 lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 0, hasFocus: true, showFocus: true };
                 lv.itemDataSource.list.shift();
-                waitForReady(lv, -1)().
+                Helper.ListView.waitForReady(lv, -1)().
                     then(Helper.validateUnhandledErrorsOnIdle).
                     done(complete);
             }, 1000);
@@ -951,7 +951,7 @@ module WinJSTests {
                 }
             });
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     element.winControl.dispose();
@@ -1005,14 +1005,14 @@ module WinJSTests {
             lv.groupDataSource = glist.groups.dataSource;
             document.body.appendChild(lv.element);
 
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 lv._mode.onTabEntered({ detail: 0, preventDefault: function () { } });
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     glist.dataSource.insertAtStart(null, { data: "new" });
 
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     lv._mode.onTabEntered({ detail: 1, srcElement: lv._canvas, preventDefault: function () { } });
 
@@ -1040,14 +1040,14 @@ module WinJSTests {
             lv.groupDataSource = glist.groups.dataSource;
             document.body.appendChild(lv.element);
 
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 lv._mode.onTabEntered({ detail: 0, preventDefault: function () { } });
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     glist.dataSource.remove("0");
 
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     lv._mode.onTabEntered({ detail: 1, srcElement: lv._canvas, preventDefault: function () { } });
 
@@ -1097,7 +1097,7 @@ module WinJSTests {
                 return jobNode;
             };
 
-            waitForReady(listView, -1)().done(function () {
+            Helper.ListView.waitForReady(listView, -1)().done(function () {
                 // calculate a scroll position beyond the current valid scroll position
                 var scrollValue = listView._viewport.scrollWidth + 1000;
 
@@ -1105,7 +1105,7 @@ module WinJSTests {
                 jobNode.resume();
 
                 listView.scrollPosition = scrollValue;
-                waitForReady(listView, -1)().done(function () {
+                Helper.ListView.waitForReady(listView, -1)().done(function () {
                     LiveUnit.Assert.areEqual(scrollValue, listView.scrollPosition, "The scroll position is invalid");
                     complete();
                 });
@@ -1187,7 +1187,7 @@ module WinJSTests {
                 }
                 list = new WinJS.Binding.List(data);
                 listView.itemDataSource = list.dataSource;
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
                     LiveUnit.Assert.areEqual(15, placeholder.querySelectorAll('.win-container').length);
 
@@ -1198,7 +1198,7 @@ module WinJSTests {
                         title: "NewItem"
                     });
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(Helper.validateUnhandledErrorsOnIdle).done(function () {
                     document.body.removeChild(placeholder);
                     complete();
@@ -1314,7 +1314,7 @@ module WinJSTests {
             // Give focus to ListView so that item 0 will receive focus
             div.focus();
 
-            waitForDeferredAction(lv)().then(function () {
+            Helper.ListView.waitForDeferredAction(lv)().then(function () {
                 LiveUnit.Assert.isTrue(!!lv.elementFromIndex(0), "Item 0 is not in the DOM");
                 LiveUnit.Assert.areEqual(lv.elementFromIndex(0), document.activeElement, "Item 0 doesn't have focus");
                 // Give the viewport focus to simulate the scrolling scenario in Narrator Touch
@@ -1323,7 +1323,7 @@ module WinJSTests {
                 // decide where to put the focus.
                 lv.scrollPosition = 5000;
 
-                return waitForDeferredAction(lv)();
+                return Helper.ListView.waitForDeferredAction(lv)();
             }).then(function () {
                     LiveUnit.Assert.isFalse(!!lv.elementFromIndex(0), "Item 0 is in the DOM");
                     LiveUnit.Assert.areEqual(lv._viewport, document.activeElement, "Viewport doesn't have focus");
@@ -1331,7 +1331,7 @@ module WinJSTests {
                     // Scroll back to the beginning so that the focused item will become realized and receive focus
                     lv.scrollPosition = 0;
 
-                    return waitForDeferredAction(lv)();
+                    return Helper.ListView.waitForDeferredAction(lv)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(lv.elementFromIndex(0), document.activeElement, "Item 0 doesn't have focus after scrolling to the beginning");
                     cleanup();
@@ -1469,7 +1469,7 @@ module WinJSTests {
                 }
             ];
 
-            runTests(lv, tests);
+            Helper.ListView.runTests(lv, tests);
         };
     };
     generateChangeFocusedItem("GridLayout");
@@ -1562,12 +1562,12 @@ module WinJSTests {
             };
             lv.itemDataSource = list.dataSource;
 
-            waitForReady(lv)().then(function () {
+            Helper.ListView.waitForReady(lv)().then(function () {
                 // Initialized, since each item should take up roughly the entire viewport, we should have 1 + 2xPagesToLoad pages alive.
                 LiveUnit.Assert.areEqual(1 + 1 * WinJS.UI._VirtualizeContentsView._pagesToPrefetch, itemsAlive);
                 lv.ensureVisible(7);
 
-                return waitForDeferredAction(lv)();
+                return Helper.ListView.waitForDeferredAction(lv)();
             }).then(function () {
                     // This is called after scrolling is done and items have been disposed, the current number of live items should be 1 + 2xPagesToLoad again.
                     LiveUnit.Assert.areEqual(1 + 2 * WinJS.UI._VirtualizeContentsView._pagesToPrefetch, itemsAlive);
@@ -1697,7 +1697,7 @@ module WinJSTests {
             }
 
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     checkTile(listView, 0, "Tile0");
                     checkTile(listView, 1, "Tile1");
@@ -1757,7 +1757,7 @@ module WinJSTests {
     }
 
     generateEditTest("insert", function (dataSource) {
-        return getDataObjects(dataSource, [1]).then(function (dataObjects) {
+        return Helper.ListView.getDataObjects(dataSource, [1]).then(function (dataObjects) {
             return dataSource.insertBefore(null, { title: "NewTile" }, dataObjects[0].key);
         }).then(null, function () {
                 // handle error
@@ -1765,7 +1765,7 @@ module WinJSTests {
     });
 
     generateEditTest("remove", function (dataSource) {
-        return getDataObjects(dataSource, [1]).then(function (dataObjects) {
+        return Helper.ListView.getDataObjects(dataSource, [1]).then(function (dataObjects) {
             return dataSource.remove(dataObjects[0].key);
         }).then(null, function () {
                 // handle error
@@ -1773,7 +1773,7 @@ module WinJSTests {
     });
 
     generateEditTest("change", function (dataSource) {
-        return getDataObjects(dataSource, [1]).then(function (dataObjects) {
+        return Helper.ListView.getDataObjects(dataSource, [1]).then(function (dataObjects) {
             return dataSource.change(dataObjects[0].key, { title: "UpdatedTile" });
         }).then(null, function () {
                 // handle error
@@ -1781,7 +1781,7 @@ module WinJSTests {
     });
 
     generateEditTest("move", function (dataSource) {
-        return getDataObjects(dataSource, [0, 2]).then(function (dataObjects) {
+        return Helper.ListView.getDataObjects(dataSource, [0, 2]).then(function (dataObjects) {
             return dataSource.moveBefore(dataObjects[0].key, dataObjects[1].key);
         }).then(null, function () {
                 // handle error

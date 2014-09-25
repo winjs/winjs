@@ -91,7 +91,7 @@ module ListViewVerify {
                 } else {
                     verifyParam = (param === "groupHeaderPosition") ? listview.layout[param] : listview[param];
                 }
-                if (!utilities.isPhone || (param !== "selectionMode" && expectedOptions[param] !== "single")) {
+                if (!WinJS.Utilities.isPhone || (param !== "selectionMode" && expectedOptions[param] !== "single")) {
                     LiveUnit.Assert.areEqual(expectedOptions[param], verifyParam, "Expected parameter of " + param + ": " + expectedOptions[param] + " Actual: " + verifyParam);
                 }
                 if (noLoggingParams.indexOf(param) === -1) {

@@ -79,7 +79,7 @@ module WinJSTests {
             lonelyLayout.disableBackdrop = true;
 
             var listview = setupListView(element, new WinJS.UI.ListLayout());
-            waitForReady(listview)().then(function () {
+            Helper.ListView.waitForReady(listview)().then(function () {
                 var disableBackDropClassPrefix = "_win-dynamic-disablebackdrop-";
                 LiveUnit.Assert.areEqual(-1, listview._canvas.className.indexOf(disableBackDropClassPrefix));
                 Helper.Assert.areColorsEqual("rgba(155, 155, 155, 0.23)", getComputedStyle(element.querySelector(".win-listview .win-container.win-backdrop")).backgroundColor);
@@ -103,7 +103,7 @@ module WinJSTests {
             lonelyLayout.backdropColor = "green";
 
             var listview = setupListView(element, new WinJS.UI.ListLayout());
-            waitForReady(listview)().then(function () {
+            Helper.ListView.waitForReady(listview)().then(function () {
                 var customBackDropClassPrefix = "_win-dynamic-backdropcolor-";
                 LiveUnit.Assert.areEqual(-1, listview._canvas.className.indexOf(customBackDropClassPrefix));
                 Helper.Assert.areColorsEqual("rgba(155, 155, 155, 0.23)", getComputedStyle(element.querySelector(".win-listview .win-container.win-backdrop")).backgroundColor);
@@ -126,10 +126,10 @@ module WinJSTests {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.getElementById("BackdropTests");
             var listview = setupListView(element, new WinJS.UI.ListLayout());
-            waitForReady(listview)().then(function () {
+            Helper.ListView.waitForReady(listview)().then(function () {
                 LiveUnit.Assert.areEqual(92, element.querySelectorAll(".win-container.win-backdrop").length);
                 listview.itemDataSource['list'].splice(2, 1);
-                waitForReady(listview, 100)().then(function () {
+                Helper.ListView.waitForReady(listview, 100)().then(function () {
                     LiveUnit.Assert.areEqual(92, element.querySelectorAll(".win-container.win-backdrop").length);
                     complete();
                 });

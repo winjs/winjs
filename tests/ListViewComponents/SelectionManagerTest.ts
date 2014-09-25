@@ -100,7 +100,7 @@ module WinJSTests {
 
     function checkTileSelection(listview, index, selected) {
         var tile = listview.elementFromIndex(index).parentNode;
-        LiveUnit.Assert.areEqual(selected, utilities.hasClass(tile, WinJS.UI._selectedClass));
+        LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(tile, WinJS.UI._selectedClass));
     }
 
     function realizedCount(listView) {
@@ -328,17 +328,17 @@ module WinJSTests {
                     for (var i = 0; i < items.length; ++i) {
                         labels.push(items[i].data['label']);
                     }
-                    elementsEqual(expected, labels);
+                    Helper.ListView.elementsEqual(expected, labels);
                 });
             }
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                 checkSelection(["T0", "T1", "T2", "T10", "T97", "T98", "T99"]);
                 compareArrays([0, 1, 2, 10, 97, 98, 99], listView.selection.getIndices());
                 return splice(7, 1);
-            }).then(waitForReady(listView, -1)).
+            }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
@@ -347,7 +347,7 @@ module WinJSTests {
                     return splice(7, 0, {
                         label: "New"
                     });
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
@@ -356,7 +356,7 @@ module WinJSTests {
                     return splice(98, 0, {
                         label: "New"
                     });
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
@@ -365,21 +365,21 @@ module WinJSTests {
                     return splice(80, 0, {
                         label: "New"
                     });
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                     checkSelection(["T0", "T1", "T2", "T10", "T97", "New", "T98", "T99"]);
                     compareArrays([0, 1, 2, 10, 98, 99, 100, 101], listView.selection.getIndices());
                     return splice(100, 1);
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                     checkSelection(["T0", "T1", "T2", "T10", "T97", "New", "T99"]);
                     compareArrays([0, 1, 2, 10, 98, 99, 100], listView.selection.getIndices());
                     return splice(98, 1);
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
@@ -387,13 +387,13 @@ module WinJSTests {
                     compareArrays([0, 1, 2, 10], listView.selection.getIndices());
 
                     return listView.selection.add({ firstIndex: 90, lastIndex: 92 });
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     compareArrays([0, 1, 2, 10, 90, 91, 92], listView.selection.getIndices());
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                     return move(92, 50);
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
@@ -417,7 +417,7 @@ module WinJSTests {
                 for (var i = 0; i < howMany; i++) {
                     indices.push(index + i);
                 }
-                promise = getDataObjects(dataSource, indices).then(function (dataObjects) {
+                promise = Helper.ListView.getDataObjects(dataSource, indices).then(function (dataObjects) {
                     for (var i = 0; i < dataObjects.length; i++) {
                         dataSource.remove(dataObjects[i].key);
                     }
@@ -425,7 +425,7 @@ module WinJSTests {
             }
             if (item) {
                 promise = promise.then(function () {
-                    return getDataObjects(dataSource, [index]);
+                    return Helper.ListView.getDataObjects(dataSource, [index]);
                 }).then(function (dataObjects) {
                         dataSource.insertBefore(uniqueId.toString(), item, dataObjects[0].key);
                         uniqueId++;
@@ -439,7 +439,7 @@ module WinJSTests {
 
         this.move = function (oldIndex, newIndex) {
             var that = this;
-            return getDataObjects(dataSource, [oldIndex, newIndex]).then(function (dataObjects) {
+            return Helper.ListView.getDataObjects(dataSource, [oldIndex, newIndex]).then(function (dataObjects) {
                 return dataSource.moveBefore(dataObjects[0].key, dataObjects[1].key);
             });
         };
@@ -478,51 +478,51 @@ module WinJSTests {
                 var tile = listview.elementFromIndex(index),
                     wrapper = tile.parentNode;
                 LiveUnit.Assert.areEqual(text, tile.textContent);
-                LiveUnit.Assert.areEqual(selected, utilities.hasClass(wrapper, WinJS.UI._selectedClass));
+                LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(wrapper, WinJS.UI._selectedClass));
             }
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 for (var i = 0; i < 12; i++) {
                     checkTile(listView, i, "Tile" + i, true);
                 }
                 LiveUnit.Assert.isTrue(listView.selection.isEverything());
 
                 return splice(0, 1);
-            }).then(waitForReady(listView, -1)).
+            }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                     compareIndices([], listView.selection.getRanges());
                     listView.selection.selectAll();
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                     compareIndices([{ firstIndex: 0, lastIndex: 98 }], listView.selection.getRanges());
 
                     return splice(0, 0, { label: "NewTile0" });
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                     compareIndices([{ firstIndex: 1, lastIndex: 99 }], listView.selection.getRanges());
 
                     return splice(3, 0, { label: "NewTile1" });
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                     compareIndices([{ firstIndex: 1, lastIndex: 100 }], listView.selection.getRanges());
 
                     return splice(10, 1);
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
                     compareIndices([{ firstIndex: 1, lastIndex: 99 }], listView.selection.getRanges());
 
                     return listView.selection.selectAll();
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
 
@@ -530,7 +530,7 @@ module WinJSTests {
                     LiveUnit.Assert.isTrue(listView.selection.isEverything());
 
                     return push({ label: "NewTile" });
-                }).then(waitForReady(listView, -1)).
+                }).then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     compareIndices([{ firstIndex: 0, lastIndex: 99 }], listView.selection.getRanges());
                     LiveUnit.Assert.isFalse(listView.selection.isEverything());
@@ -1304,7 +1304,7 @@ module WinJSTests {
                     });
                 }
             });
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 listView.addEventListener("loadingstatechanged", function loadingStateHandler() {
                     if (listView.loadingState === "viewPortLoaded") {
                         listView.removeEventListener("loadingstatechanged", loadingStateHandler);
@@ -1315,7 +1315,7 @@ module WinJSTests {
                 });
                 listView.ensureVisible(98);
             });
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
@@ -1338,7 +1338,7 @@ module WinJSTests {
                 selectionMode: "multi"
             });
 
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 listView.selection.set(0).then(function () {
                     checkTileSelection(listView, 0, true);
                     checkTileSelection(listView, 1, false);
@@ -1442,7 +1442,7 @@ module WinJSTests {
                 }
             });
 
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 var promises = [];
                 promises.push(listView.selection.add(0));
                 promises.push(listView.selection.add(100));
@@ -1452,7 +1452,7 @@ module WinJSTests {
                 promises.push(listView.selection.remove(400));
                 WinJS.Promise.join(promises).then(function () {
 
-                    elementsEqual([0, 100, 200, 300], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([0, 100, 200, 300], listView.selection.getIndices());
 
                     checkTileSelection(listView, 0, true);
                     checkTileSelection(listView, 1, false);
@@ -1581,7 +1581,7 @@ module WinJSTests {
                     }, 1000);
                 }
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
     };
     generateSelectionDispose("GridLayout");
@@ -1722,7 +1722,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
     };
     generateSelectionEventsAfterEdits("GridLayout");
@@ -1738,12 +1738,12 @@ module WinJSTests {
             testDiv.appendChild(lvElement);
             var listView = new ListView(lvElement, { layout: new WinJS.UI[layoutName]() });
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     listView.itemDataSource = testDS;
                     listView.selection.set([{ key: '10' }]);
                     listView.itemDataSource = new WinJS.Binding.List(listView.itemDataSource['testDataAdapter'].getItems()).dataSource;
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 then(function () {
                     return listView.selection.set([{ key: '0' }]);
@@ -1778,7 +1778,7 @@ module WinJSTests {
                 itemDataSource: testDS
             });
             listView.selection.set([{ key: 'foo' }]);
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     LiveUnit.Assert.areEqual([].toString(), listView.selection.getIndices().toString());
                     var selectedInDom = listView.element.querySelectorAll(".win-selectioncheckmark");

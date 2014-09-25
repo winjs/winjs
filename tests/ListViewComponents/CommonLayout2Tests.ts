@@ -17,7 +17,7 @@ module WinJSTests {
             var newNode = document.createElement("div");
             newNode.id = "CommonLayoutTests";
             document.body.appendChild(newNode);
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
         }
         tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
@@ -26,7 +26,7 @@ module WinJSTests {
                 WinJS.Utilities.disposeSubTree(element);
                 document.body.removeChild(element);
             }
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
         }
     }
 
@@ -39,7 +39,7 @@ module WinJSTests {
             CommonListViewLayoutTests.prototype[fullName] = function (complete) {
                 LiveUnit.LoggingCore.logComment("in " + fullName);
                 var element = document.getElementById("CommonLayoutTests");
-                var lvDetails = buildGenericListView(element, {
+                var lvDetails = Helper.ListView.buildGenericListView(element, {
                     orientation: direction,
                     layout: layoutName,
                     rtl: rtl,
@@ -48,7 +48,7 @@ module WinJSTests {
                     forceOneItemPerBar: forceOneItemPerBar
                 });
                 var listView = lvDetails.listView;
-                waitForAllContainers(listView).then(function () {
+                Helper.ListView.waitForAllContainers(listView).then(function () {
                     testFunction(listView, lvDetails.layoutInfo, rtl, complete);
                 });
             };

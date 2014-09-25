@@ -80,10 +80,10 @@ module WinJSTests {
             LiveUnit.Assert.isTrue(index <= listView.indexOfLastVisible, "Expecting index (" + index + ") <= indexOfFirstVisible (" + listView.indexOfLastVisible + ")");
         }
 
-        return waitForReady(list1)().
+        return Helper.ListView.waitForReady(list1)().
             then(function () {
                 list1.indexOfFirstVisible = startIndex;
-                return waitForReady(list1)();
+                return Helper.ListView.waitForReady(list1)();
             }).
             then(function () {
                 // Hit test on the listView to get the item at the viewport center
@@ -129,7 +129,7 @@ module WinJSTests {
                     }
                 });
             }).
-            then(waitForReady(list2)).
+            then(Helper.ListView.waitForReady(list2)).
             then(function (currentItem: any) {
                 // currentItem in the zoomed out view should be a group item.
                 // zoomItem should be belonging to this group.
@@ -160,11 +160,11 @@ module WinJSTests {
             LiveUnit.Assert.isTrue(index <= listView.indexOfLastVisible, "Expecting index (" + index + ") <= indexOfFirstVisible (" + listView.indexOfLastVisible + ")");
         }
 
-        return waitForReady(list1)().
+        return Helper.ListView.waitForReady(list1)().
             then(function () {
                 list1.indexOfFirstVisible = startIndex;
 
-                return waitForReady(list1)();
+                return Helper.ListView.waitForReady(list1)();
             }).
             then(function () {
                 // Get the item from datasource
@@ -252,7 +252,7 @@ module WinJSTests {
             if (WinJS.Utilities.isPhone) {
                 complete();
             } else {
-                waitForReady(listDiv1.winControl)().
+                Helper.ListView.waitForReady(listDiv1.winControl)().
                     then(function () {
                         // Button is shown only on mouse move and pen hover
                         // Ensure the button is visible
@@ -315,7 +315,7 @@ module WinJSTests {
                 srcElement: sezoDiv,
                 ctrlKey: true
             };
-            WinJS.Promise.join([waitForReady(inView)(), waitForReady(outView)()]).then(function () {
+            WinJS.Promise.join([Helper.ListView.waitForReady(inView)(), Helper.ListView.waitForReady(outView)()]).then(function () {
                 var sezo = <WinJS.UI.ISemanticZoom> new WinJS.UI.SemanticZoom(sezoDiv, {
                     zoomedInItem: doNothingMappingFunction,
                     zoomedOutItem: doNothingMappingFunction
@@ -424,7 +424,7 @@ module WinJSTests {
                                 list1 = listDiv1.winControl,
                                 list2 = listDiv2.winControl;
 
-                            waitForReady(list1)().
+                            Helper.ListView.waitForReady(list1)().
                                 then(function () {
                                     switch (input) {
                                         case "Api":
@@ -469,7 +469,7 @@ module WinJSTests {
                     listDiv1 = document.getElementById("child1"),
                     listDiv2 = document.getElementById("child2");
 
-                waitForReady(listDiv1.winControl)().
+                Helper.ListView.waitForReady(listDiv1.winControl)().
                     then(function () {
                         // Verify the visibility and opacity for in and out views
                         LiveUnit.Assert.areEqual("visible", getComputedStyle(sezo._viewportIn).visibility,
@@ -523,7 +523,7 @@ module WinJSTests {
                     listDiv1 = document.getElementById("child1"),
                     listDiv2 = document.getElementById("child2");
 
-                waitForReady(listDiv2.winControl)().
+                Helper.ListView.waitForReady(listDiv2.winControl)().
                     then(function () {
                         // Verify the zoomed out view is visible
                         LiveUnit.Assert.isTrue(sezo.zoomedOut, "Sezo didn't start with zoomed out view when initiallyZoomedOut = true");
@@ -553,7 +553,7 @@ module WinJSTests {
                     listDiv1 = document.getElementById("child1"),
                     listDiv2 = document.getElementById("child2");
 
-                waitForReady(listDiv1.winControl)().
+                Helper.ListView.waitForReady(listDiv1.winControl)().
                     then(function () {
                         // Verify you are in zoomed in view
                         LiveUnit.Assert.isFalse(sezo.zoomedOut, "Sezo didn't start with zoomed in view");
@@ -589,7 +589,7 @@ module WinJSTests {
                         listDiv1 = document.getElementById("child1"),
                         listDiv2 = document.getElementById("child2");
 
-                    waitForReady(listDiv1.winControl)().
+                    Helper.ListView.waitForReady(listDiv1.winControl)().
                         then(function () {
                             // Wait for 2 seconds for the Aria worker to execute
                             return WinJS.Promise.timeout(2000);
@@ -612,7 +612,7 @@ module WinJSTests {
                     listDiv1 = document.getElementById("child1"),
                     listDiv2 = document.getElementById("child2");
 
-                WinJS.Promise.join([waitForReady(listDiv1.winControl)(), waitForReady(listDiv2.winControl)()]).
+                WinJS.Promise.join([Helper.ListView.waitForReady(listDiv1.winControl)(), Helper.ListView.waitForReady(listDiv2.winControl)()]).
                     then(function () {
                         return Helper.waitForEvent(sezo, "zoomchanged", function () {
                             // Zoom
@@ -623,7 +623,7 @@ module WinJSTests {
                         });
                     }).
                     then(function () {
-                        return WinJS.Promise.join([waitForReady(listDiv1.winControl)(), waitForReady(listDiv2.winControl)()]);
+                        return WinJS.Promise.join([Helper.ListView.waitForReady(listDiv1.winControl)(), Helper.ListView.waitForReady(listDiv2.winControl)()]);
                     }).
                     done(complete, function (er) {
                         throw er;
@@ -708,7 +708,7 @@ module WinJSTests {
                     listDiv1 = document.getElementById("child1"),
                     listDiv2 = document.getElementById("child2");
 
-                waitForReady(listDiv1.winControl)().
+                Helper.ListView.waitForReady(listDiv1.winControl)().
                     done(complete, function (er) {
                         throw er;
                     });

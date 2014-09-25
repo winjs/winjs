@@ -85,22 +85,22 @@ module WinJSTests {
 
     function checkTile(listView, groupIndex, index, left, top, caption?) {
         var tile = listView.elementFromIndex(index),
-            container = containerFrom(tile),
-            offsetXFromSurface = listView._rtl() ? offsetRightFromSurface : offsetLeftFromSurface;
+            container = Helper.ListView.containerFrom(tile),
+            offsetXFromSurface = listView._rtl() ? Helper.ListView.offsetRightFromSurface : Helper.ListView.offsetLeftFromSurface;
 
         LiveUnit.Assert.areEqual(caption ? caption : (String.fromCharCode("A".charCodeAt(0) + groupIndex) + " tile " + index), tile.textContent.trim());
         LiveUnit.Assert.areEqual(left, offsetXFromSurface(listView, container));
-        LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listView, container));
+        LiveUnit.Assert.areEqual(top, Helper.ListView.offsetTopFromSurface(listView, container));
     }
 
     function checkHeader(listView, groupIndex, left, top, id, caption?) {
         var tile = document.getElementById(id + groupIndex),
-            container = headerContainerFrom(listView, tile),
-            offsetXFromSurface = listView._rtl() ? offsetRightFromSurface : offsetLeftFromSurface;
+            container = Helper.ListView.headerContainerFrom(listView, tile),
+            offsetXFromSurface = listView._rtl() ? Helper.ListView.offsetRightFromSurface : Helper.ListView.offsetLeftFromSurface;
 
         LiveUnit.Assert.areEqual(caption ? caption : String.fromCharCode("A".charCodeAt(0) + groupIndex), tile.textContent.trim());
         LiveUnit.Assert.areEqual(left, offsetXFromSurface(listView, container));
-        LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listView, container));
+        LiveUnit.Assert.areEqual(top, Helper.ListView.offsetTopFromSurface(listView, container));
         return container;
     }
 
@@ -122,12 +122,12 @@ module WinJSTests {
         var element = document.getElementById(elementId ? elementId : "groupTestList"),
             itemDataSource = WinJS.UI.computeDataSourceGroups(dataSource, groupKey, groupData),
             listView = new ListView(element,
-                extend(options, {
-                    layout: extend(options.layout, { groupHeaderPosition: WinJS.UI.HeaderPosition.left }),
+                Helper.ListView.extend(options, {
+                    layout: Helper.ListView.extend(options.layout, { groupHeaderPosition: WinJS.UI.HeaderPosition.left }),
                     itemDataSource: itemDataSource,
-                    itemTemplate: createRenderer("groupTestTemplate"),
+                    itemTemplate: Helper.ListView.createRenderer("groupTestTemplate"),
                     groupDataSource: itemDataSource.groups,
-                    groupHeaderTemplate: createRenderer("groupHeaderTemplate", id)
+                    groupHeaderTemplate: Helper.ListView.createRenderer("groupHeaderTemplate", id)
                 }));
         return listView;
     }
@@ -212,7 +212,7 @@ module WinJSTests {
             document.body.appendChild(testRootEl);
             _oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
         }
 
         tearDown() {
@@ -221,7 +221,7 @@ module WinJSTests {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = _oldMaxTimePerCreateContainers;
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
             WinJS.Utilities.stopLog();
             Helper.cleanupUnhandledErrors();
 
@@ -239,14 +239,14 @@ module WinJSTests {
             var dataSource = TestComponents.simpleSynchronousArrayDataSource(bigGroups);
             var listView = createListView(dataSource, {
                 layout: { type: WinJS.UI.GridLayout, groupHeaderPosition: WinJS.UI.HeaderPosition.top },
-                groupHeaderTemplate: createRenderer("smallGroupHeaderTemplate", "groupScrollTo")
+                groupHeaderTemplate: Helper.ListView.createRenderer("smallGroupHeaderTemplate", "groupScrollTo")
             });
             WinJS.Utilities.addClass(listView.element, "noGroupMargins");
 
             var itemsPerGroup = 15,
                 firstIndexOfGroup10 = itemsPerGroup * 10;
 
-            runTests(listView, [
+            Helper.ListView.runTests(listView, [
                 function () {
                     // Verify the conditions required for triggering the bug.
                     var groupHeaderContainer = listView.element.querySelector(".win-groupheadercontainer");
@@ -274,13 +274,13 @@ module WinJSTests {
             var dataSource = TestComponents.simpleSynchronousArrayDataSource(bigGroups);
             var listView = createListView(dataSource, {
                 layout: { type: WinJS.UI.GridLayout, groupHeaderPosition: WinJS.UI.HeaderPosition.top },
-                groupHeaderTemplate: createRenderer("groupHeaderTemplate", "groupScrollTo")
+                groupHeaderTemplate: Helper.ListView.createRenderer("groupHeaderTemplate", "groupScrollTo")
             });
 
             var itemsPerGroup = 15,
                 lastIndexOfGroup9 = itemsPerGroup * 10 - 1;
 
-            runTests(listView, [
+            Helper.ListView.runTests(listView, [
                 function () {
                     // Verify the conditions required for triggering the bug.
                     LiveUnit.Assert.isTrue(itemsPerGroup % listView.layout['_itemsPerBar'] > 0, "The last column should have some empty rows");
@@ -290,7 +290,7 @@ module WinJSTests {
                 },
                 function () {
                     // Scroll the ListView so that the last thing visible is the last column of group 9.
-                    var container = containerFrom(listView.elementFromIndex(lastIndexOfGroup9));
+                    var container = Helper.ListView.containerFrom(listView.elementFromIndex(lastIndexOfGroup9));
                     listView.scrollPosition = container.offsetLeft + container.offsetWidth - listView._getViewportLength();
                 },
                 function () {
@@ -333,7 +333,7 @@ module WinJSTests {
                 });
             listView.itemDataSource = groupTimelineList.dataSource;
             listView.groupDataSource = groupTimelineList.groups.dataSource;
-            waitForDeferredAction(listView)().then(function () {
+            Helper.ListView.waitForDeferredAction(listView)().then(function () {
                 WinJS.Utilities._setImmediate(function () {
                     list.splice(0, 1, { startDate: new Date(2013, 4, 12, 5), text: "Fri 5am" }),
                     list.splice(1, 1, { startDate: new Date(2013, 4, 12, 6), text: "Fri 6am" }),
@@ -356,11 +356,11 @@ module WinJSTests {
                 list.splice(18, 1, { startDate: new Date(2013, 4, 22, 21), text: "Sat 9pm" })
             });
 
-                waitForDeferredAction(listView)().then(function () {
+                Helper.ListView.waitForDeferredAction(listView)().then(function () {
                     list.splice(5, 1);
-                    waitForDeferredAction(listView)(400).then(function () {
+                    Helper.ListView.waitForDeferredAction(listView)(400).then(function () {
                         list.splice(2, 0, { startDate: new Date(2013, 4, 12, 11), text: "Fri 11am" })
-                    waitForDeferredAction(listView)(400).then(complete);
+                    Helper.ListView.waitForDeferredAction(listView)(400).then(complete);
                     });
                 });
             });
@@ -615,11 +615,11 @@ module WinJSTests {
             var listView = new WinJS.UI.ListView(document.getElementById("groupTestList"), {
                 itemDataSource: itemDataSource,
                 groupDataSource: groupDataSource,
-                itemTemplate: createRenderer("groupTestTemplate"),
-                groupHeaderTemplate: createRenderer("groupHeaderTemplate")
+                itemTemplate: Helper.ListView.createRenderer("groupTestTemplate"),
+                groupHeaderTemplate: Helper.ListView.createRenderer("groupHeaderTemplate")
             });
 
-            return waitForReady(listView, -1)().then(function () {
+            return Helper.ListView.waitForReady(listView, -1)().then(function () {
 
                 checkTile(listView, 0, 0, 50, 200, "Banana Blast");
 
@@ -653,7 +653,7 @@ module WinJSTests {
     function generateSimpleLayout(layout) {
         GroupsTests.prototype["testSimpleLayout" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
             var listView = createListView(createDataSource(smallGroups), { layout: { type: WinJS.UI[layout] } }, "groupSimpleLayout");
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 // first group
                 checkHeader(listView, 0, 50, 0, "groupSimpleLayout");
                 checkTile(listView, 0, 0, 250, 0);
@@ -675,7 +675,7 @@ module WinJSTests {
     function generateSimpleLayoutAsyncDataSource(layout) {
         GroupsTests.prototype["testSimpleLayoutAsyncDataSource" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
             var listView = createListView(createDataSource(smallGroups, true), { layout: { type: WinJS.UI[layout] } }, "groupSimpleLayoutAsyncDataSource");
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 // first group
                 checkHeader(listView, 0, 50, 0, "groupSimpleLayoutAsyncDataSource");
                 checkTile(listView, 0, 0, 250, 0);
@@ -698,11 +698,11 @@ module WinJSTests {
         GroupsTests.prototype["testSimpleLayoutAsyncRenderer" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
             var listView = createListView(createDataSource(smallGroups, true), {
                 layout: { type: WinJS.UI[layout] },
-                itemTemplate: createAsyncRenderer("groupTestTemplate", 100, 100),
-                groupHeaderTemplate: createAsyncRenderer("groupHeaderTemplate", 200, 200, "groupSimpleLayoutAsyncRenderer")
+                itemTemplate: Helper.ListView.createAsyncRenderer("groupTestTemplate", 100, 100),
+                groupHeaderTemplate: Helper.ListView.createAsyncRenderer("groupHeaderTemplate", 200, 200, "groupSimpleLayoutAsyncRenderer")
             });
 
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 // first group
                 checkHeader(listView, 0, 50, 0, "groupSimpleLayoutAsyncRenderer");
                 checkTile(listView, 0, 0, 250, 0);
@@ -743,7 +743,7 @@ module WinJSTests {
 
             var dataSource = TestComponents.simpleSynchronousArrayDataSource(myData);
             var listView = createListView(dataSource, { layout: { type: WinJS.UI[layout], groupHeaderPosition: WinJS.UI.HeaderPosition.top } }, "groupHeaderAbove");
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 // first group
                 var header = checkHeader(listView, 0, 50, 0, "groupHeaderAbove");
                 LiveUnit.Assert.areEqual(300, header.offsetWidth);
@@ -773,7 +773,7 @@ module WinJSTests {
         GroupsTests.prototype["testRtl" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
             var dataSource = TestComponents.simpleSynchronousArrayDataSource(smallGroups);
             var listView = createListView(dataSource, { layout: { type: WinJS.UI[layout] } }, "groupRtlTestList", "groupRtlTestList");
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 // first group
                 checkHeader(listView, 0, 50, 0, "groupRtlTestList");
                 checkTile(listView, 0, 0, 250, 0);
@@ -797,10 +797,10 @@ module WinJSTests {
             var dataSource = TestComponents.simpleSynchronousArrayDataSource(bigGroups);
             var listView = createListView(dataSource, {
                 layout: { type: WinJS.UI[layout] },
-                groupHeaderTemplate: createRenderer("smallGroupHeaderTemplate", "groupScrollTo")
+                groupHeaderTemplate: Helper.ListView.createRenderer("smallGroupHeaderTemplate", "groupScrollTo")
             });
 
-            runTests(listView, [
+            Helper.ListView.runTests(listView, [
                 function () {
                     checkHeader(listView, 0, 50, 0, "groupScrollTo");
                     checkTile(listView, 0, 0, 150, 0);
@@ -809,7 +809,7 @@ module WinJSTests {
                 },
                 function () {
                     var element = document.getElementById("groupTestList"),
-                        viewportElement = viewport(element),
+                        viewportElement = Helper.ListView.viewport(element),
                         scrollOffset = WinJS.Utilities.getScrollPosition(viewportElement).scrollLeft;
 
                     checkHeader(listView, 7, scrollOffset - 50, 0, "groupScrollTo");
@@ -829,12 +829,12 @@ module WinJSTests {
             var dataSource = TestComponents.simpleSynchronousArrayDataSource(bigGroups);
             var listView = createListView(dataSource, {
                 layout: { type: WinJS.UI[layout] },
-                groupHeaderTemplate: createRenderer("smallGroupHeaderTemplate", "groupScrollLeft")
+                groupHeaderTemplate: Helper.ListView.createRenderer("smallGroupHeaderTemplate", "groupScrollLeft")
             }),
                 element = document.getElementById("groupTestList"),
-                viewportElement = viewport(element);
+                viewportElement = Helper.ListView.viewport(element);
 
-            runTests(listView, [
+            Helper.ListView.runTests(listView, [
                 function () {
                     checkHeader(listView, 0, 50, 0, "groupScrollLeft");
                     checkTile(listView, 0, 0, 150, 0);
@@ -866,10 +866,10 @@ module WinJSTests {
 
     function generateAdd(layout) {
         GroupsTests.prototype["testAdd" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
             var dataSource = TestComponents.simpleSynchronousArrayDataSource(smallGroups);
             var listView = createListView(dataSource, { layout: { type: WinJS.UI[layout] } }, "groupAdd");
-            runTests(listView, [
+            Helper.ListView.runTests(listView, [
                 function () {
                     // first group
                     checkHeader(listView, 0, 50, 0, "groupAdd");
@@ -883,7 +883,7 @@ module WinJSTests {
                     checkTile(listView, 1, 6, 700, 100);
                     checkTile(listView, 1, 9, 800, 0);
 
-                    getDataObjects(listView.itemDataSource, [5]).done(function (dataObjects) {
+                    Helper.ListView.getDataObjects(listView.itemDataSource, [5]).done(function (dataObjects) {
                         listView.itemDataSource.beginEdits();
                         listView.itemDataSource.insertBefore(null, { text: "A NewTile" }, dataObjects[0].key);
                         listView.itemDataSource.insertBefore(null, { text: "A NewTile" }, dataObjects[0].key);
@@ -918,19 +918,19 @@ module WinJSTests {
     function generateAddGroup(layout) {
         GroupsTests.prototype["testAddGroup" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
 
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
 
             function test(itemDataSource, groupDataSource, edit) {
                 return new WinJS.Promise(function (testComplete) {
                     var listView = new WinJS.UI.ListView(document.getElementById("groupTestList"), {
                         layout: { type: WinJS.UI[layout] },
                         itemDataSource: itemDataSource,
-                        itemTemplate: createRenderer("groupTestTemplate"),
+                        itemTemplate: Helper.ListView.createRenderer("groupTestTemplate"),
                         groupDataSource: groupDataSource,
-                        groupHeaderTemplate: createRenderer("smallGroupHeaderTemplate", "groupAddGroup")
+                        groupHeaderTemplate: Helper.ListView.createRenderer("smallGroupHeaderTemplate", "groupAddGroup")
                     });
 
-                    runTests(listView, [
+                    Helper.ListView.runTests(listView, [
                         function () {
                             // first group
                             checkHeader(listView, 0, 50, 0, "groupAddGroup");
@@ -1018,7 +1018,7 @@ module WinJSTests {
             }
 
             function editDataSource() {
-                getDataObjects(dataSource, [5]).then(function (dataObjects) {
+                Helper.ListView.getDataObjects(dataSource, [5]).then(function (dataObjects) {
                     dataSource.insertBefore(null, { text: "B New tile" }, dataObjects[0].key);
                 });
             }
@@ -1034,11 +1034,11 @@ module WinJSTests {
 
     function generateDelete(layout) {
         GroupsTests.prototype["testDelete" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
             var dataSource = TestComponents.simpleSynchronousArrayDataSource(smallGroups);
             var i, listView = createListView(dataSource, { layout: { type: WinJS.UI[layout] } }, "groupDelete");
 
-            waitForReady(listView, -1)().then(function () {
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
                 // first group
                 checkHeader(listView, 0, 50, 0, "groupDelete");
                 checkTile(listView, 0, 0, 250, 0);
@@ -1051,7 +1051,7 @@ module WinJSTests {
                 checkTile(listView, 1, 6, 700, 100);
                 checkTile(listView, 1, 9, 800, 0);
 
-                getDataObjects(listView.itemDataSource, [1, 2, 3, 4]).then(function (dataObjects) {
+                Helper.ListView.getDataObjects(listView.itemDataSource, [1, 2, 3, 4]).then(function (dataObjects) {
                     listView.itemDataSource.beginEdits();
                     for (i = 0; i < dataObjects.length; ++i) {
                         listView.itemDataSource.remove(dataObjects[i].key);
@@ -1059,12 +1059,12 @@ module WinJSTests {
                     listView.itemDataSource.endEdits();
                 });
 
-                return waitForState(listView, "viewPortLoaded", -1)()
+                return Helper.ListView.waitForState(listView, "viewPortLoaded", -1)()
             }).then(function () {
                     var headerContainer = <any>listView.element.querySelector(".win-groupheadercontainer");
                     LiveUnit.Assert.areEqual(1, headerContainer.children.length);
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     // first group
                     checkHeader(listView, 0, 50, 0, "groupDelete");
@@ -1076,12 +1076,12 @@ module WinJSTests {
                     checkTile(listView, null, 2, 600, 100, "B tile 6");
                     checkTile(listView, null, 5, 700, 0, "B tile 9");
 
-                    getDataObjects(listView.itemDataSource, [0]).then(function (dataObjects) {
+                    Helper.ListView.getDataObjects(listView.itemDataSource, [0]).then(function (dataObjects) {
                         listView.itemDataSource.remove(dataObjects[0].key);
                     });
 
                     listView._raiseViewLoading();
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     checkHeader(listView, 0, 50, 0, "groupDelete", "B");
                     checkTile(listView, null, 0, 250, 0, "B tile 5");
@@ -1096,20 +1096,20 @@ module WinJSTests {
 
     function generateDeleteAll(layout) {
         GroupsTests.prototype["testDeleteAll" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
 
             function test(itemDataSource, groupDataSource) {
                 return new WinJS.Promise(function (testComplete) {
                     var listView = new WinJS.UI.ListView(document.getElementById("groupTestList"), {
                         layout: { type: WinJS.UI[layout], groupHeaderPosition: WinJS.UI.HeaderPosition.left },
                         itemDataSource: itemDataSource,
-                        itemTemplate: createRenderer("groupTestTemplate"),
+                        itemTemplate: Helper.ListView.createRenderer("groupTestTemplate"),
                         groupDataSource: groupDataSource,
-                        groupHeaderTemplate: createRenderer("groupHeaderTemplate", "groupDeleteAll")
+                        groupHeaderTemplate: Helper.ListView.createRenderer("groupHeaderTemplate", "groupDeleteAll")
                     });
 
 
-                    runTests(listView, [
+                    Helper.ListView.runTests(listView, [
                         function () {
                             // first group
                             checkHeader(listView, 0, 50, 0, "groupDeleteAll");
@@ -1120,7 +1120,7 @@ module WinJSTests {
                             checkHeader(listView, 1, 400, 0, "groupDeleteAll");
                             checkTile(listView, 1, 2, 600, 0);
 
-                            getDataObjects(listView.itemDataSource, [0, 1, 2]).then(function (dataObjects) {
+                            Helper.ListView.getDataObjects(listView.itemDataSource, [0, 1, 2]).then(function (dataObjects) {
                                 listView.itemDataSource.beginEdits();
                                 for (var i = 0; i < dataObjects.length; ++i) {
                                     listView.itemDataSource.remove(dataObjects[i].key);
@@ -1224,7 +1224,7 @@ module WinJSTests {
                     listView.itemDataSource['testDataAdapter'].reload();
                 },
                 function () {
-                    validateResetFocusState(listView, "after calling reload");
+                    Helper.ListView.validateResetFocusState(listView, "after calling reload");
                     checkTileLabel(listView, 0, "C tile 0");
                     checkTileLabel(listView, 2, "D tile 2");
                     checkHeaderLabel(listView, "groupReload", 0, "C");
@@ -1233,7 +1233,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
     };
     generateReload("GridLayout");
@@ -1249,11 +1249,11 @@ module WinJSTests {
             var listView = new WinJS.UI.ListView(element, {
                 layout: { type: WinJS.UI[layout] },
                 itemDataSource: list.dataSource,
-                itemTemplate: createRenderer("groupTestTemplate")
+                itemTemplate: Helper.ListView.createRenderer("groupTestTemplate")
             });
 
             state.completePromise.then(function (states) {
-                elementsEqual(correctStates, states);
+                Helper.ListView.elementsEqual(correctStates, states);
 
                 complete();
             });
@@ -1273,23 +1273,23 @@ module WinJSTests {
             var listView = new ListView(element, {
                 layout: { type: WinJS.UI[layout] },
                 itemDataSource: createDataSource(smallGroups),
-                itemTemplate: createRenderer("groupTestTemplate")
+                itemTemplate: Helper.ListView.createRenderer("groupTestTemplate")
             });
 
             state.completePromise.then(function (states) {
-                elementsEqual(correctStates, states);
+                Helper.ListView.elementsEqual(correctStates, states);
 
                 var state = trackState(listView._element);
                 listView.indexOfFirstVisible = 70;
                 return state.completePromise;
             }).then(function (states) {
-                    elementsEqual(correctStates, states);
+                Helper.ListView.elementsEqual(correctStates, states);
 
                     var state = trackState(listView._element);
                     listView.scrollPosition = listView.scrollPosition + 5;
                     return state.completePromise;
                 }).then(function (states) {
-                    elementsEqual(correctStates, states);
+                    Helper.ListView.elementsEqual(correctStates, states);
                     WinJS.Utilities.stopLog();
                 }).then(null, function () { WinJS.Utilities.stopLog(); }).
                 done(complete);
@@ -1309,7 +1309,7 @@ module WinJSTests {
             var listView = new WinJS.UI.ListView(element, {
                 layout: { type: WinJS.UI[layout] },
                 itemDataSource: createDataSource(smallGroups, true),
-                itemTemplate: createAsyncRenderer("groupTestTemplate", 100, 100, "", 500)
+                itemTemplate: Helper.ListView.createAsyncRenderer("groupTestTemplate", 100, 100, "", 500)
             });
 
             state.loadedPromise.then(function (states) {
@@ -1317,7 +1317,7 @@ module WinJSTests {
 
                 return state.completePromise;
             }).then(function (states) {
-                    elementsEqual(correctStates, states);
+                Helper.ListView.elementsEqual(correctStates, states);
                     checkTile(listView, 0, 1, 0, 100);
                     WinJS.Utilities.stopLog();
                 }).
@@ -1348,13 +1348,13 @@ module WinJSTests {
             });
 
             var header = null;
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     listView.currentItem = { type: WinJS.UI.ObjectType.groupHeader, index: 0, hasFocus: true };
                     header = listView.element.querySelector(".win-groupheader");
                     LiveUnit.Assert.areEqual(header, document.activeElement);
                     listView.itemDataSource.remove("8");
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).done(function () {
                     LiveUnit.Assert.isTrue(document.activeElement && document.activeElement !== header && document.activeElement === listView.element.querySelector(".win-groupheader"));
                     complete();
@@ -1379,7 +1379,7 @@ module WinJSTests {
             });
 
             function getItemTemplate() {
-                var realRenderer = createAsyncRenderer("groupTestTemplate", 200, 200, "", 1000);
+                var realRenderer = Helper.ListView.createAsyncRenderer("groupTestTemplate", 200, 200, "", 1000);
 
                 return function (itemPromise) {
                     itemPromise.then(function (item) {
@@ -1467,7 +1467,7 @@ module WinJSTests {
             var listView = new ListView(element, {
                 layout: { type: WinJS.UI[layout] },
                 itemDataSource: createDataSource(smallGroups, true),
-                itemTemplate: createRenderer("groupTestTemplate")
+                itemTemplate: Helper.ListView.createRenderer("groupTestTemplate")
             });
 
             var stopScrolling = false;

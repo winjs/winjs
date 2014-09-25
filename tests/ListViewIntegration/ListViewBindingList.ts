@@ -284,12 +284,12 @@ module Tests {
             var listView = elements.querySelector(".listViewExample");
 
             WinJS.UI.processAll().
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     list.reverse();
                     // listView.winControl.forceLayout();
                 }).
-                then(waitForReady(listView, 1000)).
+                then(Helper.ListView.waitForReady(listView, 1000)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "checking the correctness of reversing a list");
                 }).
@@ -313,12 +313,12 @@ module Tests {
             var listView = elements.querySelector(".listViewExample");
 
             WinJS.UI.processAll().
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     list.sort(function (l, r) { return l.title - r.title; });
                     // listView.winControl.forceLayout();
                 }).
-                then(waitForReady(listView, 1000)).
+                then(Helper.ListView.waitForReady(listView, 1000)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "checking the correctness of sorting a list");
                 }).
@@ -339,12 +339,12 @@ module Tests {
 
 
             WinJS.UI.processAll().
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     list.push({ title: 1, detail: "first element" });
                     listView.winControl.forceLayout();
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "verfying the listView filter empty insertion");
                 }).
@@ -364,17 +364,17 @@ module Tests {
             var listView = elements.querySelector(".listViewExample");
 
             WinJS.UI.processAll().
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     list.pop();
                 }).
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "checking the correctness of popping the last element");
                     list.push({ title: 2, detail: "hello world2" });
                     listView.winControl.forceLayout();
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "checking the correctness of pushing the first element");
                 }).
@@ -407,7 +407,7 @@ module Tests {
                 then(function () {
                     return asyncSequence(range(10, list.length).map(assertListView));
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list, objToCompare), "checking the correctness of the listView after all Mutations are over");
                 }).
@@ -444,7 +444,7 @@ module Tests {
                 then(function () {
                     return asyncSequence(range(0, list.length).map(assertListView));
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list, objToCompare), "checking the correctness of the listView after all Mutations are over");
                 }).
@@ -480,7 +480,7 @@ module Tests {
                 then(function () {
                     return asyncSequence(range(0, list.length).map(assertListView));
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list, objToCompare), "checking the correctness of the listView after all Mutations are over");
                 }).
@@ -567,7 +567,7 @@ module Tests {
                 then(function () {
                     return asyncSequence(range(0, list.length).map(assertListView));
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list, objToCompare), "checking the correctness of the listView after all Mutations are over");
                 }).
@@ -611,7 +611,7 @@ module Tests {
                 then(function () {
                     return asyncSequence(range(10, 16).map(assertListView));
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "checking the correctness of the listView after all Mutations are over");
                 }).
@@ -648,11 +648,11 @@ module Tests {
             }
 
             WinJS.UI.processAll().
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     return asyncSequence(range(0, 20).map(assertListView));
                 }).
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "checking the correctness of the listView after all Mutations are over");
                 }).
@@ -691,11 +691,11 @@ module Tests {
             }
 
             WinJS.UI.processAll().
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     return asyncSequence(range(0, 20).map(assertListView));
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "checking the correctness of the listView after all Mutations are over");
                 }).
@@ -736,7 +736,7 @@ module Tests {
                 then(function () {
                     return asyncSequence(range(0, 30).map(assertListView));
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.isTrue(verifyListView(listView, list), "checking the correctness of the listView after all Mutations are over");
                 }).
@@ -755,7 +755,7 @@ module Tests {
             var listView = elements.querySelector(".listViewExample");
 
             WinJS.UI.processAll().
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "even"), "should be 1 even group");
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "odd"), "should be 1 odd group");
@@ -765,14 +765,14 @@ module Tests {
                     LiveUnit.Assert.areEqual(1, grouped.groups.length, "should now only be an even group");
                     LiveUnit.Assert.areEqual("even", grouped.groups.getAt(0));
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "even"), "should be 1 even group");
                     LiveUnit.Assert.areEqual(0, getCount(listView.textContent, "odd"), "should be 0 odd groups");
                     LiveUnit.Assert.areEqual(list.length, getCount(listView.textContent, "Corsica_"));
                     return grouped.shift();
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function (item) {
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "even"), "should be 1 even group");
                     LiveUnit.Assert.areEqual(0, getCount(listView.textContent, "odd"), "should be 0 odd groups");
@@ -780,7 +780,7 @@ module Tests {
                     LiveUnit.Assert.areEqual(0, getCount(listView.textContent, item.detail), "removed item should not be in list view");
                     return grouped.pop();
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function (item) {
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "even"), "should be 1 even group");
                     LiveUnit.Assert.areEqual(0, getCount(listView.textContent, "odd"), "should be 0 odd groups");
@@ -793,7 +793,7 @@ module Tests {
                     LiveUnit.Assert.areEqual("odd", grouped.groups.getAt(1));
                     return newItem;
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function (item) {
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "even"), "should be 1 even group");
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "odd"), "should be 1 odd group");
@@ -801,7 +801,7 @@ module Tests {
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, item.detail), "added item should be in list view");
                     return grouped.shift();
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function (item) {
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "even"), "should be 1 even group");
                     LiveUnit.Assert.areEqual(1, getCount(listView.textContent, "odd"), "should be 1 odd group");
@@ -844,7 +844,7 @@ module Tests {
                 };
             }
             WinJS.UI.processAll().
-                then(waitForReady(listView)).
+                then(Helper.ListView.waitForReady(listView)).
                 then(function () {
                     listView.winControl.itemDataSource.beginEdits();
                     listView.winControl.groupDataSource.beginEdits();
@@ -854,7 +854,7 @@ module Tests {
                     listView.winControl.itemDataSource.endEdits();
                     listView.winControl.groupDataSource.endEdits();
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     var evenCount = getCount(listView.textContent, "even");
                     var oddCount = getCount(listView.textContent, "odd");

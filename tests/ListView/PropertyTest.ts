@@ -265,7 +265,7 @@ module WinJSTests {
             newNode.id = "PropertyTests";
             newNode.innerHTML = "<div id='test1'></div>";
             document.body.appendChild(newNode);
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
         }
 
         tearDown() {
@@ -273,7 +273,7 @@ module WinJSTests {
 
             var element = document.getElementById("PropertyTests");
             document.body.removeChild(element);
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
         }
 
         // Tests the winControl property after listView initialization
@@ -283,7 +283,7 @@ module WinJSTests {
             var testElement = document.getElementById("test1"),
                 listView = new WinJS.UI.ListView(testElement);
 
-            validateListView(listView);
+            Helper.ListView.validateListView(listView);
             LiveUnit.Assert.isTrue(listView === testElement.winControl);
             complete();
         }

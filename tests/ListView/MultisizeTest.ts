@@ -153,17 +153,17 @@ module WinJSTests {
         var layout = createLayout(layoutName, dataSource);
         return new ListView(element, {
             itemDataSource: dataSource,
-            itemTemplate: createRenderer("multisizeTestTemplate"),
+            itemTemplate: Helper.ListView.createRenderer("multisizeTestTemplate"),
             layout: layout
         });
     }
 
     function checkTile(listview, index, left, top, tileType?, title?) {
         var tile = listview.elementFromIndex(index),
-            container = containerFrom(tile);
+            container = Helper.ListView.containerFrom(tile);
         LiveUnit.Assert.areEqual((title ? title : "Tile" + index), tile.textContent.replace(/ /g, ''));
-        LiveUnit.Assert.areEqual(left, offsetLeftFromSurface(listview, container), "Error in tile " + index);
-        LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listview, container), "Error in tile " + index);
+        LiveUnit.Assert.areEqual(left, Helper.ListView.offsetLeftFromSurface(listview, container), "Error in tile " + index);
+        LiveUnit.Assert.areEqual(top, Helper.ListView.offsetTopFromSurface(listview, container), "Error in tile " + index);
         var width = container.offsetWidth,
             height = container.offsetHeight;
         switch (tileType) {
@@ -208,7 +208,7 @@ module WinJSTests {
 
             testRootEl.appendChild(newNode);
             document.body.appendChild(testRootEl);
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
 
             _defaultMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
         }
@@ -220,18 +220,18 @@ module WinJSTests {
 
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
         }
 
         testMeasureAfterReadySignal(complete) {
 
             function check250Tile(listView, index, left, top) {
                 var tile = listView.elementFromIndex(index),
-                    container = containerFrom(tile);
+                    container = Helper.ListView.containerFrom(tile);
 
                 LiveUnit.Assert.areEqual("t" + index, tile.textContent);
-                LiveUnit.Assert.areEqual(left, offsetLeftFromSurface(listView, container));
-                LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listView, container));
+                LiveUnit.Assert.areEqual(left, Helper.ListView.offsetLeftFromSurface(listView, container));
+                LiveUnit.Assert.areEqual(top, Helper.ListView.offsetTopFromSurface(listView, container));
                 LiveUnit.Assert.areEqual(250, tile.offsetWidth);
                 LiveUnit.Assert.areEqual(250, tile.offsetHeight);
             }
@@ -268,7 +268,7 @@ module WinJSTests {
             });
 
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 check250Tile(listView, 0, 10, 10);  // margins are 10 pixels
                 check250Tile(listView, 1, 10, 283); // slot is 21px (1px from group info + 20px of margins). An item is 270px (250px of content + 20px of margins) so an item takes 13 slots. Because of rounding an item occupies 273px
                 check250Tile(listView, 3, 283, 283);
@@ -310,7 +310,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateLayout("GridLayout");
@@ -349,8 +349,8 @@ module WinJSTests {
             var listview = new WinJS.UI.ListView(element, {
                 itemDataSource: myGroups.dataSource,
                 groupDataSource: myGroups.groups.dataSource,
-                itemTemplate: createRenderer("multisizeTestTemplate"),
-                groupHeaderTemplate: createRenderer("multisizeHeaderTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("multisizeTestTemplate"),
+                groupHeaderTemplate: Helper.ListView.createRenderer("multisizeHeaderTemplate"),
                 layout: createLayout(layoutName, myList.dataSource)
             });
 
@@ -366,7 +366,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateLayoutOccupancyMap("GridLayout");
@@ -407,7 +407,7 @@ module WinJSTests {
 
             var listview = new WinJS.UI.ListView(document.getElementById("multisizeMarginTestPlaceholder"), {
                 itemDataSource: list.dataSource,
-                itemTemplate: createRenderer("multisizeTestTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("multisizeTestTemplate"),
                 layout: layout
             });
 
@@ -448,7 +448,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateLayoutWithMargins("GridLayout");
@@ -487,8 +487,8 @@ module WinJSTests {
             var listview = new WinJS.UI.ListView(element, {
                 itemDataSource: myGroups.dataSource,
                 groupDataSource: myGroups.groups.dataSource,
-                itemTemplate: createRenderer("multisizeTestTemplate"),
-                groupHeaderTemplate: createRenderer("multisizeHeaderTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("multisizeTestTemplate"),
+                groupHeaderTemplate: Helper.ListView.createRenderer("multisizeHeaderTemplate"),
                 layout: createLayout(layoutName, myList.dataSource, getGroupInfo)
             });
 
@@ -509,7 +509,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateMixedLayout("GridLayout");
@@ -560,8 +560,8 @@ module WinJSTests {
             var listview = new WinJS.UI.ListView(element, {
                 itemDataSource: myGroups.dataSource,
                 groupDataSource: myGroups.groups.dataSource,
-                itemTemplate: createRenderer("multisizeTestTemplate"),
-                groupHeaderTemplate: createRenderer("multisizeHeaderTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("multisizeTestTemplate"),
+                groupHeaderTemplate: Helper.ListView.createRenderer("multisizeHeaderTemplate"),
                 layout: createLayout(layoutName, myList.dataSource, getGroupInfo, { width: 180, height: 250 })
             });
 
@@ -582,7 +582,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateUnevenMixedLayout("GridLayout");
@@ -602,7 +602,7 @@ module WinJSTests {
             //    3  8
             //       9
 
-            whenLoadingComplete(listview, function () {
+            Helper.ListView.whenLoadingComplete(listview, function () {
                 var indices = [
                     [0, Key.downArrow, 0],
 
@@ -659,7 +659,7 @@ module WinJSTests {
                 listview = setupListView(element, layoutName, 10, "b mmm ssssss"),
                 layout = listview._layout;
 
-            whenLoadingComplete(listview, function () {
+            Helper.ListView.whenLoadingComplete(listview, function () {
                 var indices = [
                     [0, Key.rightArrow],
                     [1, Key.rightArrow],
@@ -700,7 +700,7 @@ module WinJSTests {
                 tests = [
                 ];
 
-            whenLoadingComplete(listview, function () {
+            Helper.ListView.whenLoadingComplete(listview, function () {
                 var indices = [
                     [0, Key.pageDown],
                     [10, Key.pageDown],
@@ -779,13 +779,13 @@ module WinJSTests {
             var listview = new ListView(element, {
                 itemDataSource: myGroups.dataSource,
                 groupDataSource: myGroups.groups.dataSource,
-                itemTemplate: createRenderer("multisizeTestTemplate"),
-                groupHeaderTemplate: createRenderer("multisizeHeaderTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("multisizeTestTemplate"),
+                groupHeaderTemplate: Helper.ListView.createRenderer("multisizeHeaderTemplate"),
                 layout: createLayout(layoutName, myList.dataSource, getGroupInfo, { width: 180, height: 250 })
             }),
                 layout = listview._layout;
 
-            whenLoadingComplete(listview, function () {
+            Helper.ListView.whenLoadingComplete(listview, function () {
                 var indices = [
                     [0, Key.rightArrow],
                     [1, Key.rightArrow],
@@ -822,7 +822,7 @@ module WinJSTests {
                 listview = setupListView(element, layoutName, 10, "msm b ssssss"),
                 layout = listview._layout;
 
-            whenLoadingComplete(listview, function () {
+            Helper.ListView.whenLoadingComplete(listview, function () {
                 checkTile(listview, 0, 0, 0, "m");
                 checkTile(listview, 1, 0, 200, "s");
                 checkTile(listview, 2, 0, 300, "m");
@@ -863,7 +863,7 @@ module WinJSTests {
 
     function generateRemove(layoutName) {
         MultisizeTests.prototype["testRemove" + layoutName] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
             var element = document.getElementById("multisizeTestPlaceholder"),
                 listview = setupListView(element, layoutName, 10, "b mmm ssssss");
 
@@ -877,7 +877,7 @@ module WinJSTests {
                     checkTile(listview, 5, 600, 100, "s");
                     checkTile(listview, 10, 900, 0, "b");
 
-                    getDataObjects(listview.itemDataSource, [1]).then(function (dataObjects) {
+                    Helper.ListView.getDataObjects(listview.itemDataSource, [1]).then(function (dataObjects) {
                         listview.itemDataSource.remove(dataObjects[0].key);
                     });
                     return true;
@@ -890,7 +890,7 @@ module WinJSTests {
                     checkTile(listview, 4, 400, 500, "s", "Tile5");
                     checkTile(listview, 5, 600, 0, "s", "Tile6");
 
-                    getDataObjects(listview.itemDataSource, [5, 6, 7, 8]).then(function (dataObjects) {
+                    Helper.ListView.getDataObjects(listview.itemDataSource, [5, 6, 7, 8]).then(function (dataObjects) {
                         listview.itemDataSource.remove(dataObjects[0].key);
                         listview.itemDataSource.remove(dataObjects[1].key);
                         listview.itemDataSource.remove(dataObjects[2].key);
@@ -909,7 +909,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateRemove("GridLayout");
@@ -917,7 +917,7 @@ module WinJSTests {
 
     function generateAdd(layoutName) {
         MultisizeTests.prototype["testAdd" + layoutName] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
             var element = document.getElementById("multisizeTestPlaceholder"),
                 listview = setupListView(element, layoutName, 10, "b mmm ssssss");
 
@@ -947,7 +947,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateAdd("GridLayout");
@@ -955,7 +955,7 @@ module WinJSTests {
 
     function generateChange(layoutName) {
         MultisizeTests.prototype["testChange" + layoutName] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
             var element = document.getElementById("multisizeTestPlaceholder"),
                 listview = setupListView(element, layoutName, 1, "b m s");
 
@@ -965,7 +965,7 @@ module WinJSTests {
                     checkTile(listview, 1, 400, 0, "m");
                     checkTile(listview, 2, 400, 200, "s");
 
-                    getDataObjects(listview.itemDataSource, [1]).then(function (dataObjects) {
+                    Helper.ListView.getDataObjects(listview.itemDataSource, [1]).then(function (dataObjects) {
                         var newItem = getDataObject(0, "b", 999);
                         listview.itemDataSource.change(dataObjects[0].key, newItem);
                     });
@@ -979,14 +979,14 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateChange("CellSpanningLayout");
 
     function generateReplace(layoutName) {
         MultisizeTests.prototype["testReplace" + layoutName] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
             var element = document.getElementById("multisizeTestPlaceholder"),
                 listview = setupListView(element, layoutName, 1, "b m s");
 
@@ -996,7 +996,7 @@ module WinJSTests {
                     checkTile(listview, 1, 400, 0, "m");
                     checkTile(listview, 2, 400, 200, "s");
 
-                    getDataObjects(listview.itemDataSource, [0, 1]).then(function (dataObjects) {
+                    Helper.ListView.getDataObjects(listview.itemDataSource, [0, 1]).then(function (dataObjects) {
                         var newItem = getDataObject(0, "b", 999);
                         listview.itemDataSource.beginEdits();
                         listview.itemDataSource.insertAfter(null, newItem, dataObjects[0].key);
@@ -1013,7 +1013,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateReplace("GridLayout");
@@ -1021,14 +1021,14 @@ module WinJSTests {
 
     function generateFirstVisibleInConstructor(layoutName) {
         MultisizeTests.prototype["testFirstVisibleInConstructor" + layoutName] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
 
             var element = document.getElementById("multisizeTestPlaceholder"),
                 items = initData(10, "b mmm ssssss"),
                 list = new WinJS.Binding.List(items),
                 listview = new WinJS.UI.ListView(element, {
                     itemDataSource: list.dataSource,
-                    itemTemplate: createRenderer("multisizeTestTemplate"),
+                    itemTemplate: Helper.ListView.createRenderer("multisizeTestTemplate"),
                     layout: createLayout(layoutName, list.dataSource),
                     indexOfFirstVisible: 10
                 });
@@ -1051,7 +1051,7 @@ module WinJSTests {
                 }
             ];
 
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
     };
     generateFirstVisibleInConstructor("CellSpanningLayout");
@@ -1059,7 +1059,7 @@ module WinJSTests {
     function generateBigGroup(layoutName) {
         var testName = "testBigGroup" + layoutName;
         MultisizeTests.prototype[testName] = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
 
             var last = WinJS.Utilities.isPhone ? 1999 : 3999, /* Phone has a smaller screen and slower HW */
                 myData = [];
@@ -1120,7 +1120,7 @@ module WinJSTests {
                 }
             ];
 
-            runTests(listview, tests);
+            Helper.ListView.runTests(listview, tests);
         };
         MultisizeTests.prototype[testName].timeout = 30000; //this test requires at least 7 seconds to run on a fast machine
     };

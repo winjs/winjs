@@ -25,7 +25,7 @@ module WinJSTests {
     }
 
     function checkDisposeBeforeRender(index) {
-        elementsEqual(["dispose", "render"], actionHistory[index]);
+        Helper.ListView.elementsEqual(["dispose", "render"], actionHistory[index]);
     }
 
     function setupListView(element, layoutName) {
@@ -93,18 +93,18 @@ module WinJSTests {
 
     function checkSelection(listview, index, selected) {
         var tile = listview.elementFromIndex(index).parentNode;
-        LiveUnit.Assert.areEqual(selected, utilities.hasClass(tile, WinJS.UI._selectedClass));
+        LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(tile, WinJS.UI._selectedClass));
     }
 
     function checkTile(listview, index) {
         var tile = listview.elementFromIndex(index),
-            container = containerFrom(tile),
+            container = Helper.ListView.containerFrom(tile),
             left = Math.floor(index / 3) * 100,
             top = (index - 3 * Math.floor(index / 3)) * 100;
 
         LiveUnit.Assert.areEqual("Tile" + index, tile.textContent);
-        LiveUnit.Assert.areEqual(left, offsetLeftFromSurface(listview, container), "Error in tile " + index);
-        LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listview, container), "Error in tile " + index);
+        LiveUnit.Assert.areEqual(left, Helper.ListView.offsetLeftFromSurface(listview, container), "Error in tile " + index);
+        LiveUnit.Assert.areEqual(top, Helper.ListView.offsetTopFromSurface(listview, container), "Error in tile " + index);
     }
 
     function testDispose(layoutName, complete) {
@@ -125,10 +125,10 @@ module WinJSTests {
             // Make sure the initial state is what we are expecting
             function () {
                 var expected = 9 * 3;
-                LiveUnit.Assert.areEqual(expected, getRealizedCount(element));
+                LiveUnit.Assert.areEqual(expected, Helper.ListView.getRealizedCount(element));
                 LiveUnit.Assert.areEqual(expected, newItems);
                 LiveUnit.Assert.areEqual(0, disposedItemsCount);
-                elementsEqual([], disposedItems);
+                Helper.ListView.elementsEqual([], disposedItems);
             },
 
             // In the following tests, note that:
@@ -140,7 +140,7 @@ module WinJSTests {
                 function checkChangeItem(index, newData, additionalDisposeItems) {
                     myData.setAt(index, newData);
                     expectedReleasedItems = expectedReleasedItems.concat(additionalDisposeItems);
-                    elementsEqual(expectedReleasedItems, disposedItems);
+                    Helper.ListView.elementsEqual(expectedReleasedItems, disposedItems);
                     // If the item was disposed, ensure it was disposed before it was rendered
                     if (additionalDisposeItems.length > 0) {
                         checkDisposeBeforeRender(index);
@@ -169,15 +169,15 @@ module WinJSTests {
                 removeItems(1, 10, [2, 3, 4, 5, 6, "Seven", 8, 9, 10, 11]);
                 removeItems(100, 1, []);
 
-                waitForDeferredAction(listview)().then(function () {
+                Helper.ListView.waitForDeferredAction(listview)().then(function () {
                     // Unlike change notifications, remove notifications don't call dispose until
                     // the animation completes.
-                    elementsEqual(expectedReleasedItems.sort(), disposedItems.sort());
+                    Helper.ListView.elementsEqual(expectedReleasedItems.sort(), disposedItems.sort());
                     complete();
                 });
             }
         ];
-        runTests(listview, tests);
+        Helper.ListView.runTests(listview, tests);
     };
 
     // Check that items, group headers, and grouping elements are not leaked in the DOM
@@ -229,7 +229,7 @@ module WinJSTests {
                 }, 1000);
             },
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     }
 
     export class ReuseTests {
@@ -257,7 +257,7 @@ module WinJSTests {
             newItems = 0;
             disposedItemsCount = 0;
             disposedItems = [];
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
         }
 
         tearDown() {
@@ -265,7 +265,7 @@ module WinJSTests {
 
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
         }
 
         // Ensures dispose is called due to the following data source changes:
@@ -316,7 +316,7 @@ module WinJSTests {
                 var tile = listview.elementFromIndex(index),
                     wrapper = tile.parentNode;
                 LiveUnit.Assert.areEqual(text, tile.textContent);
-                LiveUnit.Assert.areEqual(selected, utilities.hasClass(wrapper, WinJS.UI._selectedClass));
+                LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(wrapper, WinJS.UI._selectedClass));
                 LiveUnit.Assert.areEqual(selected, tile.getAttribute("aria-selected") === "true");
                 LiveUnit.Assert.areEqual(selected, WinJS.Utilities._isSelectionRendered(wrapper));
             }
@@ -335,7 +335,7 @@ module WinJSTests {
                     complete();
                 },
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
     };
     generateChangeSelected("ListLayout");
@@ -370,14 +370,14 @@ module WinJSTests {
             });
             listView.selection.set([0, 1, 2, 3]);
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(4, newNode.querySelectorAll("[aria-selected='true']").length);
                 listView.ensureVisible(99);
-                return waitForDeferredAction(listView)();
+                return Helper.ListView.waitForDeferredAction(listView)();
             }).then(function () {
                     LiveUnit.Assert.areEqual(0, newNode.querySelectorAll("[aria-selected='true']").length);
                     listView.ensureVisible(0);
-                    return waitForDeferredAction(listView)();
+                    return Helper.ListView.waitForDeferredAction(listView)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(4, newNode.querySelectorAll("[aria-selected='true']").length);
                     testRootEl.removeChild(newNode);

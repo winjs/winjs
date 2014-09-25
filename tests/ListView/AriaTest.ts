@@ -33,7 +33,7 @@ module WinJSTests {
         var options: any = {
             layout: new WinJS.UI[layoutName](),
             itemDataSource: TestComponents.simpleSynchronousArrayDataSource(myData),
-            itemTemplate: createRenderer("simpleTemplate"),
+            itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
             selectionMode: "none"
         };
 
@@ -47,7 +47,7 @@ module WinJSTests {
                 }
                 );
             options.groupDataSource = options.itemDataSource.groups;
-            options.groupHeaderTemplate = createRenderer("smallGroupHeaderTemplate");
+            options.groupHeaderTemplate = Helper.ListView.createRenderer("smallGroupHeaderTemplate");
         }
 
         return new ListView(element, options);
@@ -203,7 +203,7 @@ module WinJSTests {
             "</div>";
             testRootEl.appendChild(newNode);
             document.body.appendChild(testRootEl);
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
         }
 
         tearDown() {
@@ -214,7 +214,7 @@ module WinJSTests {
 
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
         }
 
 
@@ -226,7 +226,7 @@ module WinJSTests {
             var element = document.getElementById("ariaTestList");
             var listView = setupListview(element, "ListLayout");
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 listView.selection.add(0);
                 listView.dispose();
                 return WinJS.Utilities.Scheduler.schedulePromiseIdle();
@@ -275,11 +275,11 @@ module WinJSTests {
             var listView = new ListView(element, {
                 layout: cancelingLayout,
                 itemDataSource: new WinJS.Binding.List(myData).dataSource,
-                itemTemplate: createRenderer("simpleTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
                 selectionMode: "none"
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 // If the ARIA work completes without throwing an exception
                 // then complete the test successfully.
                 listView._view.deferTimeout.then(function () {
@@ -354,11 +354,11 @@ module WinJSTests {
             var element = document.getElementById("ariaTestList");
             var listView = new ListView(element, {
                 itemDataSource: new WinJS.Binding.List(myData).dataSource,
-                itemTemplate: createRenderer("simpleTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
                 selectionMode: "none"
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 startMarker = listView._ariaStartMarker;
                 endMarker = listView._ariaEndMarker;
                 indexOfFirstVisible = listView.indexOfFirstVisible;
@@ -531,7 +531,7 @@ module WinJSTests {
         var listView = new ListView(element, {
             layout: new WinJS.UI[layoutName](),
             itemDataSource: new WinJS.Binding.List([]).dataSource,
-            itemTemplate: createRenderer("simpleTemplate")
+            itemTemplate: Helper.ListView.createRenderer("simpleTemplate")
         });
 
         waitForAria(listView).then(function () {
@@ -547,7 +547,7 @@ module WinJSTests {
         var element = document.getElementById("ariaTestList");
         var listView = new WinJS.UI.ListView(element, {
             itemDataSource: new WinJS.Binding.List([]).dataSource,
-            itemTemplate: createRenderer("simpleTemplate"),
+            itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
             layout: new WinJS.UI[layoutName]()
         });
         listView.addEventListener("accessibilityannotationcomplete", function (ev) {
@@ -581,11 +581,11 @@ module WinJSTests {
 
                     LiveUnit.Assert.areEqual(expectedSelection.length, listView.selection.count(),
                         "ListView's selection manager has the wrong number of items selected");
-                    elementsEqual(expectedSelection, listView.selection.getIndices());
+                    Helper.ListView.elementsEqual(expectedSelection, listView.selection.getIndices());
                     for (var i = 0; i < 2; i++) {
                         var item = listView.elementFromIndex(i);
                         var expectedSelected = (expectedSelection.indexOf(i) !== -1);
-                        LiveUnit.Assert.areEqual(expectedSelected, utilities.hasClass(<HTMLElement>item.parentNode, WinJS.UI._selectedClass),
+                        LiveUnit.Assert.areEqual(expectedSelected, WinJS.Utilities.hasClass(<HTMLElement>item.parentNode, WinJS.UI._selectedClass),
                             "Item " + i + ": win-item's selected class is in the wrong state");
                         LiveUnit.Assert.areEqual(expectedSelected, item.getAttribute("aria-selected") === "true",
                             "Item " + i + ": aria-selected is incorrect");
@@ -608,7 +608,7 @@ module WinJSTests {
                 }, false);
 
                 var firstTile, secondTile;
-                return waitForReady(listView)().
+                return Helper.ListView.waitForReady(listView)().
                     then(function () {
                         verifySelection([]);
 
@@ -759,7 +759,7 @@ module WinJSTests {
         };
     };
 
-    if (!utilities.isPhone) {
+    if (!WinJS.Utilities.isPhone) {
         generateUIASelect("GridLayout");
 
         // Verify that the list and item roles are updated appropriately when switching from
@@ -797,7 +797,7 @@ module WinJSTests {
                     }, 1000);
                 }
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         });
     }
 }

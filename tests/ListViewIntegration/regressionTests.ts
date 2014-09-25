@@ -29,14 +29,14 @@ module WinJSTests {
 
 
         setUp() {
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
             testRootEl = document.createElement("div");
             testRootEl.className = "file-listview-css";
             document.body.appendChild(testRootEl);
         }
 
         tearDown() {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
         }
@@ -316,7 +316,7 @@ module WinJSTests {
                     complete();
                 },
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
         testWin8_725480 = function (complete) {
@@ -375,7 +375,7 @@ module WinJSTests {
                 dataSource.endEdits();
             }
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 checkTile(listView, 0, "Tile0");
 
                 addTile("Tile1");
@@ -405,7 +405,7 @@ module WinJSTests {
 
 
         testWin8_769820 = function (complete) {
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
 
             var items = [],
                 tiles = [];
@@ -449,7 +449,7 @@ module WinJSTests {
                         // template is changed while fadeOut animation is in progress
                         listView.itemTemplate = renderer;
                         listView.forceLayout();
-                        whenLoadingComplete(listView, function () {
+                        Helper.ListView.whenLoadingComplete(listView, function () {
                             checkTile(listView, 0, "Tile0");
                             cleanup();
                             complete();
@@ -538,7 +538,7 @@ module WinJSTests {
                 itemTemplate: renderer
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 // this causes items from 45-53 to be rendered and releases items 0-5. Since there is more items to render than released items, items 51-53 will be rendered without recycling
                 listView.scrollPosition = 850;
                 return WinJS.Promise.join(rendererCalled.slice(45, 54));
@@ -548,7 +548,7 @@ module WinJSTests {
                     // In middle of this new realize pass data for items 51-53 is delivered and items pool reuses wrappers corrupting items in in the pool
                     LiveUnit.Assert.areEqual("itemsLoading", listView.loadingState);
                     listView.scrollPosition = 4500;
-                }).then(waitForReady(listView)).then(function () {
+                }).then(Helper.ListView.waitForReady(listView)).then(function () {
                     cleanup();
                     complete();
                 });
@@ -649,15 +649,15 @@ module WinJSTests {
                 groupHeaderTemplate: renderer
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 listView.ensureVisible(99);
-                return waitForReady(listView, -1)();
+                return Helper.ListView.waitForReady(listView, -1)();
             }).then(function () {
                     listView.itemDataSource = null;
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     listView.scrollPosition = 100;
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     cleanup();
                     complete();
@@ -695,11 +695,11 @@ module WinJSTests {
                 layout: new WinJS.UI.GridLayout()
             });
 
-            waitForReady(listView)().then(function () {
+            Helper.ListView.waitForReady(listView)().then(function () {
                 lv.style.display = "none";
                 listView.ensureVisible(100);
 
-                waitForDeferredAction(listView)().then(function () {
+                Helper.ListView.waitForDeferredAction(listView)().then(function () {
                     Helper.validateUnhandledErrors();
                     testRootEl.removeChild(lv);
                     complete();

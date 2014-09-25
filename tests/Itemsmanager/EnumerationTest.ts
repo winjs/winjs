@@ -245,7 +245,7 @@ module WinJSTests {
         }
 
         var count = 100; // total items in datasource
-        var firstIndex = randomNumber(99);; // index of first item be retrived.
+        var firstIndex = Helper.ListView.randomNumber(99);; // index of first item be retrived.
         var maxStep = 30; // max steps
 
         var log = VDSLogging.options.log || console.log.bind(console);
@@ -269,16 +269,16 @@ module WinJSTests {
 
         // Get the item with index firstIndex. This item is set to current item.
         listBinding.fromIndex(firstIndex).then(function (item) {
-            steps = randomNumber(maxStep);
+            steps = Helper.ListView.randomNumber(maxStep);
             LiveUnit.LoggingCore.logComment("Forward Traversal with Steps: " + steps.toString());
             forwardTraversal(listBinding, firstIndex, steps)
                 .then(function (items) {
-                    steps = randomNumber(maxStep);
+                    steps = Helper.ListView.randomNumber(maxStep);
                     LiveUnit.LoggingCore.logComment("Reverse Traversal with Steps: " + steps.toString());
                     return reverseTraversal(listBinding, firstIndex, steps);
                 })
                 .then(function (item) {
-                    steps = randomNumber(maxStep);
+                    steps = Helper.ListView.randomNumber(maxStep);
                     LiveUnit.LoggingCore.logComment("Forward Traversal with Steps: " + steps.toString());
                     return forwardTraversal(listBinding, firstIndex, steps);
                 })

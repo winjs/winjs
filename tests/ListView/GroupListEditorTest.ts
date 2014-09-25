@@ -116,19 +116,19 @@ module WinJSTests {
             itemDataSource: testDataSrc,
             groupDataSource: testDataSrcGroups,
             selectionMode: "multi",
-            itemTemplate: createRenderer("simpleTemplate"),
-            groupHeaderTemplate: createRenderer("simpleHeaderTemplate", "groupListEditorTest_groupheader_"),
+            itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
+            groupHeaderTemplate: Helper.ListView.createRenderer("simpleHeaderTemplate", "groupListEditorTest_groupheader_"),
             layout: new WinJS.UI[layout](layoutOptions)
         });
     }
 
     function checkTile(listview, index, left, top, tileType, title) {
         var tile = listview.elementFromIndex(index),
-            container = containerFrom(tile),
+            container = Helper.ListView.containerFrom(tile),
             viewBoundsOffset = parseInt(listview._viewport.style["msScrollLimitXMin"]) || 0;
         LiveUnit.Assert.areEqual((title ? title : "Tile" + index), tile.textContent.trim());
-        LiveUnit.Assert.areEqual(left, offsetLeftFromSurface(listview, container) - viewBoundsOffset, "Error in tile " + index);
-        LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listview, container), "Error in tile " + index);
+        LiveUnit.Assert.areEqual(left, Helper.ListView.offsetLeftFromSurface(listview, container) - viewBoundsOffset, "Error in tile " + index);
+        LiveUnit.Assert.areEqual(top, Helper.ListView.offsetTopFromSurface(listview, container), "Error in tile " + index);
 
         if (listview.layout.groupInfo) {
             var width = container.offsetWidth,
@@ -152,11 +152,11 @@ module WinJSTests {
 
     function checkHeader(listView, groupIndex, left, top, id, caption) {
         var tile = document.getElementById(id + groupIndex),
-            container = headerContainerFrom(listView, tile),
+            container = Helper.ListView.headerContainerFrom(listView, tile),
             viewBoundsOffset = parseInt(listView._viewport.style["msScrollLimitXMin"]) || 0;
         LiveUnit.Assert.areEqual(caption ? caption : String.fromCharCode("A".charCodeAt(0) + groupIndex), tile.textContent.trim());
-        LiveUnit.Assert.areEqual(left, offsetLeftFromSurface(listView, container) - viewBoundsOffset);
-        LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listView, container));
+        LiveUnit.Assert.areEqual(left, Helper.ListView.offsetLeftFromSurface(listView, container) - viewBoundsOffset);
+        LiveUnit.Assert.areEqual(top, Helper.ListView.offsetTopFromSurface(listView, container));
     }
 
     export class GroupListEditorTest {
@@ -233,26 +233,26 @@ module WinJSTests {
     generate("testInsertBefore", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertBefore");
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [0]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [0]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.insertBefore(null, getDataObject('m', 0, "NewTile"), dataObjects[0].key).then(function () {
                     return listView.itemDataSource.insertBefore(null, getDataObject('s', 0, "NewTile"), dataObjects[0].key);
                 });
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT + 2, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([2], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([2], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT + 2, document.querySelectorAll(".win-container").length);
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
                 checkTile(listView, 0, 70, 120, 'm', "NewTile");
@@ -264,10 +264,10 @@ module WinJSTests {
     generate("testInsertAtStart", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertAtStart");
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [0]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [0]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.insertAtStart(null, getDataObject('s', 0, "NewTile")).
@@ -275,16 +275,16 @@ module WinJSTests {
                         return listView.itemDataSource.insertAtStart(null, getDataObject('m', 0, "NewTile"));
                     });
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT + 2, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([2], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([2], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT + 2, document.querySelectorAll(".win-container").length);
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
                 checkTile(listView, 0, 70, 120, 'm', "NewTile");
@@ -296,13 +296,13 @@ module WinJSTests {
     generate("testInsertAfter", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertAfter");
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                return getDataObjects(listView.itemDataSource, [0]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [0]);
             }).
             then(function (dataObjects) {
                 // throws an exception: Line: 6924 in ui.js
@@ -312,16 +312,16 @@ module WinJSTests {
                         return listView.itemDataSource.insertAfter(null, getDataObject('m', 0, "NewTile"), dataObjects[0].key);
                     });
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT + 2, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT + 2, document.querySelectorAll(".win-container").length);
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
                 checkTile(listView, 1, 270, 120, 'm', "NewTile");
@@ -334,10 +334,10 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testInsertAtEnd");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [0]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [0]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.insertAtEnd(null, getDataObject('m', ITEMS_COUNT - 1, "NewTile")).
@@ -345,23 +345,23 @@ module WinJSTests {
                         return listView.itemDataSource.insertAtEnd(null, getDataObject('s', ITEMS_COUNT - 1, "NewTile"));
                     });
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT + 2, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT + 2, document.querySelectorAll(".win-container").length);
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
             }).
             then(function () {
                 listView.ensureVisible(ITEMS_COUNT + 1);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 if (isMultisizeTest) {
                     checkTile(listView, (ITEMS_COUNT + 2) - 2, 3250, 120, 'm', "NewTile");
@@ -382,9 +382,9 @@ module WinJSTests {
     bigDataSet.sort(function (a, b) { return a.group - b.group; });
 
     generate("testInsertOutsideOfRealizedRange", function (listView, complete) {
-        waitForReady(listView, -1)().then(function () {
+        Helper.ListView.waitForReady(listView, -1)().then(function () {
             listView.itemDataSource.insertAtEnd(null, getDataObject('m', 4, "NewTile"))
-            return waitForReady(listView, -1)();
+            return Helper.ListView.waitForReady(listView, -1)();
         }).then(function () {
                 return listView.itemDataSource.getCount();
             }).then(function (count) {
@@ -397,18 +397,18 @@ module WinJSTests {
     generate("testInsertToEmpty", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testInsertToEmpty");
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 return listView.itemDataSource.insertAtStart(null, getDataObject('s', 0, "NewTile"));
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(1, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 LiveUnit.Assert.areEqual(1, document.querySelectorAll(".win-container").length);
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
@@ -422,10 +422,10 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testRemoveFirstItem");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [0, 1]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [0, 1]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.remove(dataObjects[0].key).
@@ -433,17 +433,17 @@ module WinJSTests {
                         return listView.itemDataSource.remove(dataObjects[1].key);
                     });
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 LiveUnit.Assert.areEqual(0, listView.scrollPosition);
-                elementsEqual([], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, document.querySelectorAll(".win-container").length);
                 if (isMultisizeTest) {
                     checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "1");
@@ -468,26 +468,26 @@ module WinJSTests {
     generate("testRemoveAtGroupBoundary", function (listView, complete) {
         LiveUnit.LoggingCore.logComment("in testRemoveAtGroupBoundary");
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [1, 2]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [1, 2]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.remove(dataObjects[0].key).then(function () {
                     return listView.itemDataSource.remove(dataObjects[1].key);
                 });
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, document.querySelectorAll(".win-container").length);
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
                 checkTile(listView, 0, 70, 120, 'm', "Tile0");
@@ -503,17 +503,17 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testRemoveLastItem");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [8, 9]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [8, 9]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.remove(dataObjects[0].key).then(function () {
                     return listView.itemDataSource.remove(dataObjects[1].key);
                 });
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
@@ -524,9 +524,9 @@ module WinJSTests {
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
                 listView.ensureVisible((ITEMS_COUNT - 1) - 2);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, document.querySelectorAll(".win-container").length);
                 if (isMultisizeTest) {
                     checkHeader(listView, 3, 2080, 0, "groupListEditorTest_groupheader_", "3");
@@ -546,24 +546,24 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testMoveToStart");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [1]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [1]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.moveToStart(dataObjects[0].key);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([1], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([1], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, document.querySelectorAll(".win-container").length);
                 if (isMultisizeTest) {
                     checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
@@ -589,24 +589,24 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testMoveBefore");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [0, 1]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [0, 1]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.moveBefore(dataObjects[1].key, dataObjects[0].key);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([1], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([1], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, document.querySelectorAll(".win-container").length);
                 if (isMultisizeTest) {
                     checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
@@ -632,24 +632,24 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testMoveAfter");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [0, 1]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [0, 1]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.moveAfter(dataObjects[0].key, dataObjects[1].key);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([1], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([1], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, document.querySelectorAll(".win-container").length);
                 if (isMultisizeTest) {
                     checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
@@ -675,31 +675,31 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testMoveToEnd");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [8]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [8]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.moveToEnd(dataObjects[0].key);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, document.querySelectorAll(".win-container").length);
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
             }).
             then(function () {
                 listView.ensureVisible(ITEMS_COUNT - 1);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 if (isMultisizeTest) {
                     checkHeader(listView, 4, 2750, 0, "groupListEditorTest_groupheader_", "4");
@@ -719,24 +719,24 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testChangeFirstItem");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [0]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [0]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.change(dataObjects[0].key, getDataObject('m', 0, "NewTile"));
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, document.querySelectorAll(".win-container").length);
                 if (isMultisizeTest) {
                     checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
@@ -762,10 +762,10 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testChangeAtGroupBoundary");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [1, 2]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [1, 2]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.change(dataObjects[0].key, getDataObject('m', 0, "NewTile")).
@@ -773,16 +773,16 @@ module WinJSTests {
                         return listView.itemDataSource.change(dataObjects[1].key, getDataObject('m', 1, "NewTile"));
                     });
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, document.querySelectorAll(".win-container").length);
                 if (isMultisizeTest) {
                     checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
@@ -808,29 +808,29 @@ module WinJSTests {
         LiveUnit.LoggingCore.logComment("in testChangeLastItem");
         var isMultisizeTest = !!listView.layout.groupInfo;
 
-        waitForReady(listView, -1)().
+        Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 listView.selection.set(0);
-                return getDataObjects(listView.itemDataSource, [9]);
+                return Helper.ListView.getDataObjects(listView.itemDataSource, [9]);
             }).
             then(function (dataObjects) {
                 return listView.itemDataSource.change(dataObjects[0].key, getDataObject('m', 4, "NewTile"));
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 return listView.itemDataSource.getCount();
             }).
             then(function (count) {
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, count);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 LiveUnit.Assert.areEqual(ITEMS_COUNT, document.querySelectorAll(".win-container").length);
                 checkHeader(listView, 0, 70, 0, "groupListEditorTest_groupheader_", "0");
                 listView.ensureVisible(ITEMS_COUNT - 1);
             }).
-            then(waitForReady(listView, -1)).
+            then(Helper.ListView.waitForReady(listView, -1)).
             then(function () {
                 if (isMultisizeTest) {
                     checkHeader(listView, 4, 2750, 0, "groupListEditorTest_groupheader_", "4");

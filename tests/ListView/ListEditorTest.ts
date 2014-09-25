@@ -53,7 +53,7 @@ module WinJSTests {
             layout: new WinJS.UI[layoutName](),
             itemDataSource: dataSource,
             selectionMode: "multi",
-            itemTemplate: createRenderer("simpleTemplate")
+            itemTemplate: Helper.ListView.createRenderer("simpleTemplate")
         });
     }
 
@@ -70,7 +70,7 @@ module WinJSTests {
             var tile = listview.elementFromIndex(index),
                 wrapper = tile.parentNode;
             LiveUnit.Assert.areEqual(text, tile.textContent.trim());
-            LiveUnit.Assert.areEqual(selected, utilities.hasClass(wrapper, WinJS.UI._selectedClass));
+            LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(wrapper, WinJS.UI._selectedClass));
         }
 
         var element = document.getElementById("listEditorTest"),
@@ -113,7 +113,7 @@ module WinJSTests {
                 checkTile(listView, 3, "NewTile3", false);
                 complete();
             }];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     }
 
     export class ListEditorTest {
@@ -284,7 +284,7 @@ module WinJSTests {
             }
             };
 
-            return waitForReady(listView)().then(function () {
+            return Helper.ListView.waitForReady(listView)().then(function () {
                 return new WinJS.Promise(function (complete) {
                     unionTester.complete = complete;
 
@@ -300,7 +300,7 @@ module WinJSTests {
 
                 });
             }).then(function () {
-                    return waitForReady(listView)().then(function () {
+                    return Helper.ListView.waitForReady(listView)().then(function () {
                         complete();
                     });
                 });
@@ -328,7 +328,7 @@ module WinJSTests {
                     Helper.validateUnhandledErrorsOnIdle().
                         done(complete);
                 }];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
         testMakingListEmptyAfterCtor = function (complete) {
@@ -343,7 +343,7 @@ module WinJSTests {
 
             list.pop();
 
-            return waitForReady(listView)().
+            return Helper.ListView.waitForReady(listView)().
                 then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         };
@@ -379,7 +379,7 @@ module WinJSTests {
             });
             testRootEl.appendChild(testElement);
             var ds = groupedList.dataSource;
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     return ds.getCount().then(function (count) {
                         var itemsToDelete = [];
@@ -417,9 +417,9 @@ module WinJSTests {
                     wrapper = tile.parentNode;
                 LiveUnit.Assert.areEqual(text, tile.textContent.trim());
                 // Verify win-container element and win-itembox element have the selected class for new and old layouts.
-                LiveUnit.Assert.areEqual(selected, utilities.hasClass(wrapper, WinJS.UI._selectedClass));
-                if (utilities.hasClass(wrapper.parentNode, WinJS.UI._containerClass)) {
-                    LiveUnit.Assert.areEqual(selected, utilities.hasClass(wrapper.parentNode, WinJS.UI._selectedClass));
+                LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(wrapper, WinJS.UI._selectedClass));
+                if (WinJS.Utilities.hasClass(wrapper.parentNode, WinJS.UI._containerClass)) {
+                    LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(wrapper.parentNode, WinJS.UI._selectedClass));
                 }
                 // Verify selection elements
                 LiveUnit.Assert.areEqual(selected, WinJS.Utilities._isSelectionRendered(wrapper));
@@ -430,7 +430,7 @@ module WinJSTests {
                     checkTile(listView, 0, "Tile0", true);
                     checkTile(listView, 1, "Tile1", true);
                     checkTile(listView, 2, "Tile2", false);
-                    elementsEqual([0, 1], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([0, 1], listView.selection.getIndices());
 
                     listView.selection.clear();
                     listView.itemDataSource.list.splice(0, 1);
@@ -439,13 +439,13 @@ module WinJSTests {
                 function () {
                     checkTile(listView, 0, "Tile1", false);
                     checkTile(listView, 1, "Tile2", false);
-                    elementsEqual([], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([], listView.selection.getIndices());
 
                     listView.selection.set([0, 1]);
                     checkTile(listView, 0, "Tile1", true);
                     checkTile(listView, 1, "Tile2", true);
                     checkTile(listView, 2, "Tile3", false);
-                    elementsEqual([0, 1], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([0, 1], listView.selection.getIndices());
 
                     listView.itemDataSource.list.splice(0, 1);
                     listView.selection.clear();
@@ -454,13 +454,13 @@ module WinJSTests {
                 function () {
                     checkTile(listView, 0, "Tile2", false);
                     checkTile(listView, 1, "Tile3", false);
-                    elementsEqual([], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([], listView.selection.getIndices());
 
                     listView.selection.set([0, 1]);
                     checkTile(listView, 0, "Tile2", true);
                     checkTile(listView, 1, "Tile3", true);
                     checkTile(listView, 2, "Tile4", false);
-                    elementsEqual([0, 1], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([0, 1], listView.selection.getIndices());
 
                     listView.itemDataSource.list.splice(0, 1);
                     listView.selection.set(2);
@@ -470,7 +470,7 @@ module WinJSTests {
                     checkTile(listView, 0, "Tile3", false);
                     checkTile(listView, 1, "Tile4", false);
                     checkTile(listView, 2, "Tile5", true);
-                    elementsEqual([2], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([2], listView.selection.getIndices());
 
                     listView.itemDataSource.list.splice(0, 1);
                     listView.selection.add(0);
@@ -480,7 +480,7 @@ module WinJSTests {
                     checkTile(listView, 0, "Tile4", true);
                     checkTile(listView, 1, "Tile5", true);
                     checkTile(listView, 2, "Tile6", false);
-                    elementsEqual([0, 1], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([0, 1], listView.selection.getIndices());
 
                     listView.itemDataSource.list.splice(0, 1);
                     listView.selection.remove(0);
@@ -489,7 +489,7 @@ module WinJSTests {
                 function () {
                     checkTile(listView, 0, "Tile5", false);
                     checkTile(listView, 1, "Tile6", false);
-                    elementsEqual([], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([], listView.selection.getIndices());
 
                     // Regression test for WinBlue: 100985
                     //
@@ -506,7 +506,7 @@ module WinJSTests {
                     checkTile(listView, 1, "Tile7", true);
                     checkTile(listView, 2, "Tile8", false);
                     checkTile(listView, 3, "Tile6", false);
-                    elementsEqual([0, 1], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([0, 1], listView.selection.getIndices());
 
                     // Regression test for WinBlue: 100985
                     //
@@ -523,11 +523,11 @@ module WinJSTests {
                     checkTile(listView, 1, "Tile7", false);
                     checkTile(listView, 2, "Tile6", false);
                     checkTile(listView, 3, "Tile8", false);
-                    elementsEqual([], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([], listView.selection.getIndices());
 
                     complete();
                 }];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
         // Verifies that when a batch of edits consists of a delete and a move of an item from
@@ -553,7 +553,7 @@ module WinJSTests {
                     checkTile(listView, 2, "Tile301");
                     complete();
                 }];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
 
     }
@@ -587,7 +587,7 @@ module WinJSTests {
             function () {
                 listView.selection.set(0);
                 listView.selection._pivot = 1;
-                getDataObjects(listView.itemDataSource, [0]).then(function (dataObjects) {
+                Helper.ListView.getDataObjects(listView.itemDataSource, [0]).then(function (dataObjects) {
                     listView.itemDataSource.beginEdits();
                     listView.itemDataSource.insertBefore(null, { title: "NewTile" }, dataObjects[0].key);
                     listView.itemDataSource.insertBefore(null, { title: "NewTile" }, dataObjects[0].key);
@@ -596,7 +596,7 @@ module WinJSTests {
                 return true;
             },
             function () {
-                elementsEqual([2], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([2], listView.selection.getIndices());
                 checkTile(listView, 0, "NewTile");
                 checkTile(listView, 1, "NewTile");
                 LiveUnit.Assert.areEqual(3, listView.selection._pivot, "Selection pivot incorrect after insertions");
@@ -613,7 +613,7 @@ module WinJSTests {
                 }));
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
 
@@ -637,7 +637,7 @@ module WinJSTests {
                 }));
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     }, []);
 
     generate("testInsertToEmptyAtEnd", function (listView, complete) {
@@ -661,7 +661,7 @@ module WinJSTests {
                 }));
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     }, []);
 
     generate("testDelete", function (listView, complete) {
@@ -673,21 +673,21 @@ module WinJSTests {
                 listView.selection._pivot = 2;
 
                 listView.addEventListener("selectionchanging", function (eventObject) {
-                    elementsEqual([0, 1], eventObject.detail.newSelection.getIndices());
+                    Helper.ListView.elementsEqual([0, 1], eventObject.detail.newSelection.getIndices());
                 }, false);
 
                 listView.addEventListener("selectionchanged", function (eventObject) {
-                    elementsEqual([0, 1], listView.selection.getIndices());
+                    Helper.ListView.elementsEqual([0, 1], listView.selection.getIndices());
                 }, false);
 
-                getDataObjects(listView.itemDataSource, [1, 3]).then(function (dataObjects) {
+                Helper.ListView.getDataObjects(listView.itemDataSource, [1, 3]).then(function (dataObjects) {
                     listView.itemDataSource.remove(dataObjects[0].key);
                     listView.itemDataSource.remove(dataObjects[1].key);
                 });
                 return true;
             },
             function () {
-                elementsEqual([0, 1], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0, 1], listView.selection.getIndices());
                 checkTile(listView, 0, "Tile0");
                 checkTile(listView, 1, "Tile2");
                 checkTile(listView, 2, "Tile4");
@@ -700,7 +700,7 @@ module WinJSTests {
                 }));
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testDeleteAll", function (listView, complete) {
@@ -732,7 +732,7 @@ module WinJSTests {
                 });
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testDeleteAllWithoutBatching", function (listView, complete) {
@@ -759,7 +759,7 @@ module WinJSTests {
                 });
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testDeleteAllAndInsert", function (listView, complete) {
@@ -809,7 +809,7 @@ module WinJSTests {
                 return true;
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     }, bigDataSet);
 
     generate("testDeleteSelectionPivot", function (listView, complete) {
@@ -818,7 +818,7 @@ module WinJSTests {
         var tests = [
             function () {
                 listView.selection._pivot = 1;
-                getDataObjects(listView.itemDataSource, [0, 1, 2, 3]).then(function (dataObjects) {
+                Helper.ListView.getDataObjects(listView.itemDataSource, [0, 1, 2, 3]).then(function (dataObjects) {
                     listView.itemDataSource.beginEdits();
                     listView.itemDataSource.remove(dataObjects[0].key);
                     listView.itemDataSource.remove(dataObjects[1].key);
@@ -833,7 +833,7 @@ module WinJSTests {
                 complete();
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testUpdate", function (listView, complete) {
@@ -841,7 +841,7 @@ module WinJSTests {
 
         var tests = [
             function () {
-                getDataObjects(listView.itemDataSource, [1]).then(function (dataObjects) {
+                Helper.ListView.getDataObjects(listView.itemDataSource, [1]).then(function (dataObjects) {
                     listView.itemDataSource.change(dataObjects[0].key, { title: "UpdatedTile" });
                 });
                 return true;
@@ -855,7 +855,7 @@ module WinJSTests {
                 }));
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
     // Validate that after updating the content of a selected item:
     // - Its selection visual is still rendered
@@ -871,7 +871,7 @@ module WinJSTests {
 
             LiveUnit.Assert.areEqual(selected, visualRendered, "Selection visual should be rendered " + context);
             LiveUnit.Assert.areEqual(selected, ariaSelected === "true", "aria-selected should be true " + context);
-            LiveUnit.Assert.areEqual(selected, utilities.hasClass(itemBox, WinJS.UI._selectedClass));
+            LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(itemBox, WinJS.UI._selectedClass));
         }
 
         var tests = [
@@ -879,7 +879,7 @@ module WinJSTests {
                 listView.selection.add(0).then(function () {
                     validateItemSelection(0, true, "after selecting the item");
                     validateItemSelection(1, false, "after selecting the item");
-                    getDataObjects(listView.itemDataSource, [0, 1]).then(function (dataObjects) {
+                    Helper.ListView.getDataObjects(listView.itemDataSource, [0, 1]).then(function (dataObjects) {
                         listView.itemDataSource.change(dataObjects[0].key, { title: "UpdatedTile0" });
                         listView.itemDataSource.change(dataObjects[1].key, { title: "UpdatedTile1" });
                     });
@@ -898,7 +898,7 @@ module WinJSTests {
                 }));
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testMove", function (listView, complete) {
@@ -908,18 +908,18 @@ module WinJSTests {
             function () {
                 listView.selection.set(1);
                 listView.selection._pivot = 1;
-                getDataObjects(listView.itemDataSource, [0, 1]).then(function (dataObjects) {
+                Helper.ListView.getDataObjects(listView.itemDataSource, [0, 1]).then(function (dataObjects) {
                     listView.itemDataSource.moveBefore(dataObjects[1].key, dataObjects[0].key);
                 });
                 return true;
             },
             function () {
-                elementsEqual([0], listView.selection.getIndices());
+                Helper.ListView.elementsEqual([0], listView.selection.getIndices());
                 checkTile(listView, 0, "Tile1");
                 checkTile(listView, 1, "Tile0");
                 LiveUnit.Assert.areEqual(0, listView.selection._pivot, "Selection pivot incorrect after move");
 
-                getDataObjects(listView.itemDataSource, [1]).then(function (dataObjects) {
+                Helper.ListView.getDataObjects(listView.itemDataSource, [1]).then(function (dataObjects) {
                     listView.itemDataSource.moveToEnd(dataObjects[0].key);
                 });
 
@@ -934,7 +934,7 @@ module WinJSTests {
                 }));
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     function generateInsertAtEndWithRefresh(layoutName) {
@@ -980,7 +980,7 @@ module WinJSTests {
             var listView = new WinJS.UI.ListView(document.getElementById("listEditorTest"), {
                 layout: new WinJS.UI[layoutName](),
                 itemDataSource: createDataSource(),
-                itemTemplate: createRenderer("simpleTemplate")
+                itemTemplate: Helper.ListView.createRenderer("simpleTemplate")
             });
 
             var tests = [
@@ -1003,7 +1003,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
     };
     generateInsertAtEndWithRefresh("GridLayout");
@@ -1023,7 +1023,7 @@ module WinJSTests {
                             listView.selection['_pivot'] = 1;
                             checkTile(listView, 0, "Tile0");
                             checkTile(listView, 1, "Tile1");
-                            elementsEqual([0], listView.selection.getIndices());
+                            Helper.ListView.elementsEqual([0], listView.selection.getIndices());
 
                             var items = [];
                             for (var i = 0; i < 10; ++i) {
@@ -1036,15 +1036,15 @@ module WinJSTests {
                             listView.itemDataSource['testDataAdapter'].reload();
                         },
                         function () {
-                            validateResetFocusState(listView, "after calling reload");
+                            Helper.ListView.validateResetFocusState(listView, "after calling reload");
                             LiveUnit.Assert.areEqual(WinJS.UI._INVALID_INDEX, listView.selection._pivot, "Selection pivot wasn't reset during reload");
                             checkTile(listView, 0, "NewTile0");
                             checkTile(listView, 1, "NewTile1");
-                            elementsEqual([], listView.selection.getIndices());
+                            Helper.ListView.elementsEqual([], listView.selection.getIndices());
 
                             c();
                         }];
-                    runTests(listView, tests);
+                    Helper.ListView.runTests(listView, tests);
                 });
             }
 
@@ -1088,7 +1088,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual("0px", listView._deleteWrapper.style.minWidth);
                     complete();
                 }];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
     };
     generateTestDeleteWrapperSizeDuringAnimation("GridLayout");
@@ -1195,7 +1195,7 @@ module WinJSTests {
                     });
                 }
 
-                waitForReady(listView, -1)().
+                Helper.ListView.waitForReady(listView, -1)().
                     then(function () {
                         return testFunction(listView, list);
                     }).

@@ -276,7 +276,7 @@ module WinJSTests {
     function checkTile(listView, itemSizes, index, left, top, tileType) {
         var container = listView instanceof SimpleListView ?
             listView._containerAtIndex(index) :
-            containerFrom(listView.elementFromIndex(index));
+            Helper.ListView.containerFrom(listView.elementFromIndex(index));
 
         LiveUnit.Assert.isTrue(tileType === "u" || WinJS.Utilities.hasClass(container, WinJS.UI._laidOutClass),
             "Item should have been laid out");
@@ -616,7 +616,7 @@ module WinJSTests {
                         // in horizontal
                         LiveUnit.Assert.areEqual(110, layout._sizes.containerWidth, "Rendered item width was measured incorrectly");
                         LiveUnit.Assert.areEqual(20, layout._sizes.layoutOriginY, "Space above first item was measured incorrectly");
-                        LiveUnit.Assert.areEqual(utilities.isPhone ? 0 : 70, layout._sizes.layoutOriginX, "Space to the left of the first item was measured incorrectly");
+                        LiveUnit.Assert.areEqual(WinJS.Utilities.isPhone ? 0 : 70, layout._sizes.layoutOriginX, "Space to the left of the first item was measured incorrectly");
                         LiveUnit.Assert.areEqual(37, layout._sizes.viewportContentSize, "Viewport's content height was measured incorrectly");
 
                         // Verify that containers have their sizes set
@@ -949,7 +949,7 @@ module WinJSTests {
 
                             // Items containers on uniform groups should be flush against the items
                             // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                            if (!utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
+                            if (!WinJS.Utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
                                 LiveUnit.Assert.areEqual(640, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
                             } else {
                                 LiveUnit.Assert.areEqual(240, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
@@ -963,7 +963,7 @@ module WinJSTests {
 
                             // Items containers on uniform groups should be flush against the items
                             // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                            if (!utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
+                            if (!WinJS.Utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
                                 LiveUnit.Assert.areEqual(598, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
                             } else {
                                 LiveUnit.Assert.areEqual(198, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
@@ -979,7 +979,7 @@ module WinJSTests {
 
                             // Items containers on uniform groups should be flush against the items
                             // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                            if (!utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
+                            if (!WinJS.Utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
                                 LiveUnit.Assert.areEqual(720, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
                             } else {
                                 LiveUnit.Assert.areEqual(320, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
@@ -994,7 +994,7 @@ module WinJSTests {
 
                             // Items containers on uniform groups should be flush against the items
                             // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                            if (!utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
+                            if (!WinJS.Utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
                                 LiveUnit.Assert.areEqual(598, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
                             } else {
                                 LiveUnit.Assert.areEqual(198, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
@@ -1214,7 +1214,7 @@ module WinJSTests {
                 lv.itemDataSource = list.dataSource;
                 testRootEl.appendChild(lv.element);
 
-                waitForReady(lv, -1)().done(function () {
+                Helper.ListView.waitForReady(lv, -1)().done(function () {
                     var entity = lv.layout.getAdjacent({ type: WinJS.UI.ObjectType.item, index: 0 }, Key.downArrow);
                     LiveUnit.Assert.areEqual(0, entity.index);
                     testRootEl.removeChild(lv.element);
@@ -1603,12 +1603,12 @@ module WinJSTests {
                     }
                 });
                 document.querySelector("#CellSpanningGridLayoutListView").appendChild(listView.element);
-                waitForReady(listView)().
+                Helper.ListView.waitForReady(listView)().
                     then(function () {
                         while (list.length > 10) {
                             list.pop();
                         }
-                        return waitForReady(listView, 10)();
+                        return Helper.ListView.waitForReady(listView, 10)();
                     }).
                     then(function () {
                         if (failed) {
@@ -2575,7 +2575,7 @@ module WinJSTests {
             testRootEl.appendChild(style);
             testRootEl.appendChild(lv.element);
 
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 var cs = getComputedStyle(lv.element.querySelector(".win-container"));
                 LiveUnit.Assert.areEqual("15px", cs.marginLeft);
                 LiveUnit.Assert.areEqual("15px", cs.marginRight);
@@ -2625,11 +2625,11 @@ module WinJSTests {
 
                 var listView = new WinJS.UI.ListView(element, options);
 
-                return waitForReady(listView)().then(function () {
+                return Helper.ListView.waitForReady(listView)().then(function () {
                     var itemsContainer = listView.element.querySelector("." + WinJS.UI._itemsContainerClass),
                         itemsContainerMargins = {
-                            top: utilities.isPhone ? 0 : -200,
-                            bottom: utilities.isPhone ? 0 : -200,
+                            top: WinJS.Utilities.isPhone ? 0 : -200,
+                            bottom: WinJS.Utilities.isPhone ? 0 : -200,
                             left: (useGroups && headerPosition === WinJS.UI.HeaderPosition.top && !rtl ? 70 : 0),
                             right: (useGroups && headerPosition === WinJS.UI.HeaderPosition.top && rtl ? 70 : 0)
                         },
@@ -2688,7 +2688,7 @@ module WinJSTests {
                         itemTemplate: generateRenderer(containerHeight, containerWidth)
                     });
 
-                return waitForReady(listView)().then(function () {
+                return Helper.ListView.waitForReady(listView)().then(function () {
                     var getContentLength = WinJS.Utilities[layout.orientation === "horizontal" ? "getContentWidth" : "getContentHeight"];
                     LiveUnit.Assert.areEqual(expectedSurfaceLength, getContentLength(listView._canvas));
                 });
@@ -2728,7 +2728,7 @@ module WinJSTests {
                     itemTemplate: renderer
                 });
 
-            waitForReady(listView)().done(function () {
+            Helper.ListView.waitForReady(listView)().done(function () {
                 var container = <HTMLElement>listView.element.querySelector(".win-container");
                 LiveUnit.Assert.areNotEqual(null, container, "No win-containers were rendered");
                 LiveUnit.Assert.areEqual(100, container.offsetHeight, "win-container has incorrect offsetHeight");
@@ -2797,7 +2797,7 @@ module WinJSTests {
                 layout: layout
             });
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     checkTile(listView, itemSizesSimple, 0, 0, 0, "b");
                     checkTile(listView, itemSizesSimple, 1, 400, 0, "m");

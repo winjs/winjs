@@ -366,15 +366,15 @@ module WinJSTests {
 
             invoked = { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX };
 
-            LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
             browseMode.onPointerDown({ target: first, button: WinJS.UI._LEFT_MSPOINTER_BUTTON, preventDefault: function () { } });
             forceRequestAnimationFrames();
-            LiveUnit.Assert.isTrue(utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
             browseMode.onPointerUp(createPointerUpEvent(first));
             browseMode.onclick();
             WinJS.Utilities._setImmediate(function () {
                 LiveUnit.Assert.areEqual(0, invoked.index);
-                LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
+                LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
                 complete();
             });
         };
@@ -388,14 +388,14 @@ module WinJSTests {
             browseMode.site._swipeBehavior = "select";
             browseMode.site._selectionMode = "none";
 
-            LiveUnit.Assert.isFalse(utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
             browseMode.onPointerDown({ target: first, button: WinJS.UI._RIGHT_MSPOINTER_BUTTON, preventDefault: function () { } });
             forceRequestAnimationFrames();
-            LiveUnit.Assert.isFalse(utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
             browseMode.onPointerUp(createPointerUpEvent(first));
             browseMode.onclick();
             WinJS.Utilities._setImmediate(function () {
-                LiveUnit.Assert.isFalse(utilities.hasClass(first, WinJS.UI._pressedClass));
+                LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
                 complete();
             });
         };
@@ -407,20 +407,20 @@ module WinJSTests {
             var browseMode = createMode();
 
             invoked = { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX };
-            LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
-            LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
 
             browseMode.onPointerDown({ target: first, button: WinJS.UI._LEFT_MSPOINTER_BUTTON, preventDefault: function () { } });
             forceRequestAnimationFrames();
 
-            LiveUnit.Assert.isTrue(utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
             LiveUnit.Assert.areEqual(WinJS.UI._INVALID_INDEX, invoked.index);
 
             browseMode.onPointerUp(createPointerUpEvent(second));
             browseMode.onclick();
             WinJS.Utilities._setImmediate(function () {
-                LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
-                LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
+                LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
+                LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
                 complete();
             });
         };
@@ -431,18 +431,18 @@ module WinJSTests {
             var browseMode = createMode();
 
             invoked = { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX };
-            LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
-            LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
 
-            LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
-            LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
             LiveUnit.Assert.areEqual(WinJS.UI._INVALID_INDEX, invoked.index);
 
             browseMode.onPointerUp(createPointerUpEvent(second));
             browseMode.onclick();
             LiveUnit.Assert.areEqual(WinJS.UI._INVALID_INDEX, invoked.index);
-            LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
-            LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
         };
 
         testDownMoveBackUp = function (complete) {
@@ -452,31 +452,31 @@ module WinJSTests {
             var browseMode = createMode();
 
             invoked = { type: WinJS.UI.ObjectType.item, index: WinJS.UI._INVALID_INDEX };
-            LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
-            LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
 
             browseMode.onPointerDown({ target: first, button: WinJS.UI._LEFT_MSPOINTER_BUTTON, preventDefault: function () { } });
             forceRequestAnimationFrames();
 
-            LiveUnit.Assert.isTrue(utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
             LiveUnit.Assert.areEqual(WinJS.UI._INVALID_INDEX, invoked.index);
 
-            LiveUnit.Assert.isTrue(utilities.hasClass(first, WinJS.UI._pressedClass));
-            LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
+            LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
             LiveUnit.Assert.areEqual(WinJS.UI._INVALID_INDEX, invoked.index);
 
             browseMode.onPointerUp(createPointerUpEvent(first));
             browseMode.onclick();
             WinJS.Utilities._setImmediate(function () {
                 LiveUnit.Assert.areEqual(0, invoked.index);
-                LiveUnit.Assert.isTrue(!utilities.hasClass(first, WinJS.UI._pressedClass));
-                LiveUnit.Assert.isTrue(!utilities.hasClass(second, WinJS.UI._pressedClass));
+                LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
+                LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
                 complete();
             });
         };
 
         testKeyboard = function () {
-            var Key = utilities.Key;
+            var Key = WinJS.Utilities.Key;
             var browseMode = createMode();
 
             // We're pretending to be a 3x3 horizontal grid here
@@ -639,7 +639,7 @@ module WinJSTests {
             });
 
             lv.indexOfFirstVisible = 4; //ensure group 2 is visible on the screen
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 var header = lv.element.querySelectorAll(".win-groupheader")[2];
                 lv._changeFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 2 }, true, false, false, true);
                 lv._mode.onKeyDown({ target: header, keyCode: 13, stopPropagation: function () { }, preventDefault: function () { } });
@@ -690,16 +690,16 @@ module WinJSTests {
             document.body.appendChild(lv.element);
 
             var headerButton;
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 headerButton = document.querySelector(".testHeaderButtonClass");
                 headerButton.focus();
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     lv._keyboardFocusInbound = true;
                     headerButton.parentNode.focus();
 
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     LiveUnit.Assert.isTrue(headerButton.parentNode.classList.contains(WinJS.UI._itemFocusClass));
                     document.body.removeChild(lv.element);
@@ -742,7 +742,7 @@ module WinJSTests {
             });
 
             lv.indexOfFirstVisible = 4; //ensure group 2 is visible on the screen
-            waitForReady(lv, -1)().then(function () {
+            Helper.ListView.waitForReady(lv, -1)().then(function () {
                 var header = lv.element.querySelector(".win-groupheader");
                 var item = lv.element.querySelector(".win-item");
 
@@ -754,7 +754,7 @@ module WinJSTests {
                 e.button = WinJS.UI._LEFT_MSPOINTER_BUTTON;
                 lv._mode.onPointerUp(e);
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).done(function () {
                     complete();
                 });
@@ -882,13 +882,13 @@ module WinJSTests {
             lv.itemDataSource = glist.dataSource;
             lv.groupDataSource = glist.groups.dataSource;
 
-            waitForReady(lv, -1)().
+            Helper.ListView.waitForReady(lv, -1)().
                 then(function () {
                     lv.currentItem = { type: WinJS.UI.ObjectType.groupHeader, index: 0 };
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.enter));
                     lv._mode._itemEventsHandler.resetPointerDownState();
 
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).
                 then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
@@ -938,7 +938,7 @@ module WinJSTests {
 
             layouSignal.complete(10);
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
 
@@ -949,7 +949,7 @@ module WinJSTests {
 
 
         testKeyboardReorderStopsPropagationOnArrowKeyUp = function (complete) {
-            if (!utilities.isPhone) {
+            if (!WinJS.Utilities.isPhone) {
                 return complete();
             }
             var placeholder = document.createElement("div");
@@ -972,7 +972,7 @@ module WinJSTests {
             function incCount() {
                 count++;
             }
-            waitForReady(listView, -1)().done(function () {
+            Helper.ListView.waitForReady(listView, -1)().done(function () {
                 listView._mode.onKeyDown(createKeyEvent(listView._canvas, Key.alt));
                 listView._mode.onKeyDown(createKeyEvent(listView._canvas, Key.shift, null, null, true));
                 listView._mode.onKeyDown(createKeyEvent(listView._canvas, Key.leftArrow, null, null, true, false, true));
@@ -988,7 +988,7 @@ module WinJSTests {
         };
 
         testKeyboardReorderStopsPropagationOnShiftThenArrowKeyUp = function (complete) {
-            if (!utilities.isPhone) {
+            if (!WinJS.Utilities.isPhone) {
                 return complete();
             }
             var placeholder = document.createElement("div");
@@ -1011,7 +1011,7 @@ module WinJSTests {
             function incCount() {
                 count++;
             }
-            waitForReady(listView, -1)().done(function () {
+            Helper.ListView.waitForReady(listView, -1)().done(function () {
                 listView._mode.onKeyDown(createKeyEvent(listView._canvas, Key.alt));
                 listView._mode.onKeyDown(createKeyEvent(listView._canvas, Key.shift, null, null, true));
                 listView._mode.onKeyDown(createKeyEvent(listView._canvas, Key.leftArrow, null, null, true, false, true));
@@ -1089,7 +1089,7 @@ module WinJSTests {
                 }
             });
 
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
     };
     generateChangeDataSourceInInvoke("GridLayout");
@@ -1136,7 +1136,7 @@ module WinJSTests {
                 }
             });
 
-            waitForDeferredAction(listView)().then(function () {
+            Helper.ListView.waitForDeferredAction(listView)().then(function () {
                 targetElement = listView._tabManager.childFocus;
                 expectingInvokeEvent = true;
                 LiveUnit.Assert.areEqual("Item4", targetElement.textContent);
@@ -1157,7 +1157,7 @@ module WinJSTests {
                     scrollPos.scrollLeft += 5000;
                     WinJS.Utilities.setScrollPosition(listView._viewport, scrollPos);
 
-                    return waitForDeferredAction(listView)();
+                    return Helper.ListView.waitForDeferredAction(listView)();
                 }).then(function () {
                     LiveUnit.Assert.isFalse(listView.element.contains(targetElement));
                     LiveUnit.Assert.isTrue(targetElement !== listView._tabManager.childFocus);
@@ -1198,10 +1198,10 @@ module WinJSTests {
                 Helper.validateUnhandledErrors();
             }, 9900);
             var ensureVisibleIndices = [999, -1];
-            waitForReady(listView, -1)().
+            Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
                     listView.ensureVisible(ensureVisibleIndices[0]);
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     range = {
@@ -1210,7 +1210,7 @@ module WinJSTests {
                     };
                     LiveUnit.Assert.isTrue(ensureVisibleIndices[0] >= range.indexOfFirstVisible && ensureVisibleIndices[0] <= range.indexOfLastVisible);
                     listView.ensureVisible(ensureVisibleIndices[1]);
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     LiveUnit.Assert.areEqual(range.indexOfFirstVisible, listView.indexOfFirstVisible);
@@ -1238,7 +1238,7 @@ module WinJSTests {
                 Helper.validateUnhandledErrors();
             }, 9900);
             var ensureVisibleIndices = [999, -1];
-            waitForReady(listView, -1)().
+            Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
                     listView.ensureVisible(ensureVisibleIndices[0]);
                     return WinJS.Promise.timeout(500);
@@ -1277,10 +1277,10 @@ module WinJSTests {
                 Helper.validateUnhandledErrors();
             }, 9900);
             var indexOfFirstVisibleIndices = [999, -1];
-            waitForReady(listView, -1)().
+            Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
                     listView.indexOfFirstVisible = indexOfFirstVisibleIndices[0];
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     range = {
@@ -1289,7 +1289,7 @@ module WinJSTests {
                     };
                     LiveUnit.Assert.isTrue(indexOfFirstVisibleIndices[0] >= range.indexOfFirstVisible && indexOfFirstVisibleIndices[0] <= range.indexOfLastVisible);
                     listView.indexOfFirstVisible = indexOfFirstVisibleIndices[1];
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     LiveUnit.Assert.areEqual(range.indexOfFirstVisible, listView.indexOfFirstVisible);
@@ -1315,31 +1315,31 @@ module WinJSTests {
             });
 
             var visibleAt900;
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     listView.ensureVisible(900);
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 then(function () {
                     visibleAt900 = listView.indexOfFirstVisible;
                     LiveUnit.Assert.isTrue(listView.indexOfFirstVisible > 10);
                     listView.ensureVisible(0);
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 then(function () {
                     LiveUnit.Assert.areEqual(0, listView.indexOfFirstVisible);
                     listView.ensureVisible(900);
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 then(function () {
                     LiveUnit.Assert.areEqual(visibleAt900, listView.indexOfFirstVisible);
                     listView.ensureVisible(-1);
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 then(function () {
                     // invalid request should be ignored
                     LiveUnit.Assert.areEqual(visibleAt900, listView.indexOfFirstVisible);
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 done(complete, function (e) {
                     throw "Unexpected exception: " + e;
@@ -1406,7 +1406,7 @@ module WinJSTests {
                 return WinJS.Promise.wrap().then(function () {
                     // Ensure that entity is visible so that we'll be able to give it focus
                     lv.ensureVisible(entity);
-                    return waitForReady(lv)();
+                    return Helper.ListView.waitForReady(lv)();
                 }).then(function () {
                         // Give entity focus and when it receives focus, the returned promise completes
                         lv.currentItem = {
@@ -1420,12 +1420,12 @@ module WinJSTests {
             }
 
             // Let's wait until the tree is fully created
-            waitForAllContainers(lv).then(function () {
+            Helper.ListView.waitForAllContainers(lv).then(function () {
                 // Navigating backwards
                 return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 5 });
             }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), (layout === "ListLayout" ? Key.upArrow : Key.leftArrow)));
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                     LiveUnit.Assert.areEqual(4, lv.currentItem.index);
@@ -1434,7 +1434,7 @@ module WinJSTests {
                     return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 5 });
                 }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), (layout === "ListLayout" ? Key.downArrow : Key.rightArrow)));
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                     LiveUnit.Assert.areEqual(6, lv.currentItem.index);
@@ -1443,7 +1443,7 @@ module WinJSTests {
                     return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 0 });
                 }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), (layout === "ListLayout" ? Key.upArrow : Key.leftArrow)));
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                     LiveUnit.Assert.areEqual(0, lv.currentItem.index);
@@ -1452,7 +1452,7 @@ module WinJSTests {
                     return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 19 });
                 }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), (layout === "ListLayout" ? Key.downArrow : Key.rightArrow)));
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                     LiveUnit.Assert.areEqual(19, lv.currentItem.index);
@@ -1461,7 +1461,7 @@ module WinJSTests {
                     return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 5 });
                 }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.home));
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                     LiveUnit.Assert.areEqual(0, lv.currentItem.index);
@@ -1470,7 +1470,7 @@ module WinJSTests {
                     return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 5 });
                 }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.end));
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                     LiveUnit.Assert.areEqual(19, lv.currentItem.index);
@@ -1479,17 +1479,17 @@ module WinJSTests {
                     return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 5 });
                 }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.pageUp));
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, lv.currentItem.type);
 
                     // Page down
                     return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 5 });
                 }).then(function () {
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.pageDown));
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).done(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, lv.currentItem.type);
                     complete();
@@ -1534,7 +1534,7 @@ module WinJSTests {
             lv.itemDataSource = data.dataSource;
             lv.groupDataSource = data.groups.dataSource;
 
-            waitForReady(lv)().then(function () {
+            Helper.ListView.waitForReady(lv)().then(function () {
                 // Focus item, go to group header, remove last focused item from the group and go to item track again, focus should go on first item of the group
                 lv.currentItem = { type: WinJS.UI.ObjectType.groupHeader, index: 4 };
                 lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 22 };
@@ -1605,16 +1605,16 @@ module WinJSTests {
             lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 1 };
             var origScrollPos;
             var indexOfFirstVisible;
-            waitForReady(lv)().then(function () {
+            Helper.ListView.waitForReady(lv)().then(function () {
                 origScrollPos = lv.scrollPosition;
                 lv.scrollPosition = 1000;
 
-                return waitForReady(lv, -1)();
+                return Helper.ListView.waitForReady(lv, -1)();
             }).then(function () {
                     indexOfFirstVisible = lv.indexOfFirstVisible;
                     lv._mode.onKeyDown(createKeyEvent(lv.element, Key.pageDown));
 
-                    return waitForReady(lv, -1)();
+                    return Helper.ListView.waitForReady(lv, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areNotEqual(indexOfFirstVisible, lv.indexOfFirstVisible);
                     complete();

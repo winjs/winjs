@@ -2266,7 +2266,7 @@ module WinJSTests {
             var list = new WinJS.Binding.List([1, 2, 3]);
             var lv = new WinJS.UI.ListView(div);
             lv.itemDataSource = list.dataSource;
-            waitForReady(lv)()
+            Helper.ListView.waitForReady(lv)()
                 .then(function () {
                     LiveUnit.Assert.areEqual(3, div.querySelectorAll(".win-container").length);
                 })

@@ -88,13 +88,13 @@ module WinJSTests {
             newNode.style.width = "500px";
             newNode.style.height = "500px";
             document.body.appendChild(newNode);
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
         }
         tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
             var element = document.getElementById("NonDragAndSelectTests");
             document.body.removeChild(element);
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
         }
 
     }
@@ -114,7 +114,7 @@ module WinJSTests {
                 itemTemplate: basicRenderer,
                 itemDataSource: data
             });
-            waitForAllContainers(listView).done(function () {
+            Helper.ListView.waitForAllContainers(listView).done(function () {
                 listView._currentMode()._itemEventsHandler._getCurrentPoint = function (eventObject) {
                     return {
                         properties: {
@@ -128,7 +128,7 @@ module WinJSTests {
         };
     }
 
-    if (!utilities.isPhone) {
+    if (!WinJS.Utilities.isPhone) {
         generate("testNonSwipeableClass", [0, 2], [1, 2], function (listView, complete) {
             listView.selectionMode = WinJS.UI.SelectionMode.none;
             listView.itemsDraggable = false;
@@ -288,7 +288,7 @@ module WinJSTests {
                 var selected = (expectedSelection.indexOf(i) !== -1);
                 var item = listView.elementFromIndex(i);
 
-                LiveUnit.Assert.areEqual(selected, utilities.hasClass(item.parentNode, WinJS.UI._selectedClass),
+                LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(item.parentNode, WinJS.UI._selectedClass),
                     "Item " + i + ": win-itembox's selected class is in the wrong state");
                 LiveUnit.Assert.areEqual(selected, item.getAttribute("aria-selected") === "true",
                     "Item " + i + ": aria-selected is incorrect");

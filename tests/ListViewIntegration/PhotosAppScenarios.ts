@@ -24,7 +24,7 @@ module WinJSTests {
         var element = listView.elementFromIndex(index);
         if (element) {
             var tile = element.parentNode;
-            LiveUnit.Assert.areEqual(selected, utilities.hasClass(tile, WinJS.UI._selectedClass));
+            LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(tile, WinJS.UI._selectedClass));
         }
     }
 
@@ -155,7 +155,7 @@ module WinJSTests {
             var selected = [2, 48, 99, 23, 74, 35];
             listView.selection.set(selected);
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 done(function () {
                     // Check the selected items
                     var actualSelected = listView.selection.getIndices();
@@ -226,11 +226,11 @@ module WinJSTests {
                     return (index >= listView.indexOfFirstVisible) && (index <= listView.indexOfLastVisible);
                 }
 
-                waitForReady(list1)().
+                Helper.ListView.waitForReady(list1)().
                     then(function () {
                         list1.indexOfFirstVisible = startIndex;
                     }).
-                    then(waitForReady(list1)).
+                    then(Helper.ListView.waitForReady(list1)).
                     then(function () {
                         // Hit test on the listView to get the item at the viewport center
                         var style = getComputedStyle(sezoDiv),
@@ -260,7 +260,7 @@ module WinJSTests {
                             sezo.zoomedOut = true;
                         });
                     }).
-                    then(waitForReady(list2)).
+                    then(Helper.ListView.waitForReady(list2)).
                     then(function () {
                         return list2.zoomableView.getCurrentItem();
                     }).
@@ -276,7 +276,7 @@ module WinJSTests {
                         // Zoom back in
                         sezo.zoomedOut = false;
                     }).
-                    then(waitForReady(list1)).
+                    then(Helper.ListView.waitForReady(list1)).
                     done(complete, function (er) {
                         throw er;
                     });
@@ -321,7 +321,7 @@ module WinJSTests {
                 // Call complete after the control is ready
                 if (control === WinJS.UI.ListView) {
                     // ListView
-                    waitForReady(ctrl)().done(complete);
+                    Helper.ListView.waitForReady(ctrl)().done(complete);
                 }
                 else {
                     //FlipView

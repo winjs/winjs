@@ -143,7 +143,7 @@ module WinJSTests {
 
             lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.Grid, options);
 
-            waitForReady(listView, -1)().
+            Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
                     complete();
                 },
@@ -170,7 +170,7 @@ module WinJSTests {
             var listView = lvUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.Grid, Expected.Direction.ltr, options);
             lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.Grid, options);
 
-            waitForReady(listView, -1)().
+            Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
                     complete();
                 }, function (e) {
@@ -194,11 +194,11 @@ module WinJSTests {
 
             lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.Grid, options);
 
-            waitForReady(listView, -1)().
+            Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
                     listView.itemDataSource = createCellSpanningDataSource(200, 9);
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     complete();
                 },
@@ -223,7 +223,7 @@ module WinJSTests {
 
             lvVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.Grid, options);
 
-            waitForReady(listView, -1)().
+            Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
                     for (var i = 0; i < 100; i++) {
                         listView.itemDataSource.testDataAdapter.insertAtIndex({
@@ -235,7 +235,7 @@ module WinJSTests {
                     }
                     return listView.itemDataSource.invalidateAll();
                 }).
-                then(waitForReady(listView, -1)).
+                then(Helper.ListView.waitForReady(listView, -1)).
                 then(function () {
                     complete();
                 },

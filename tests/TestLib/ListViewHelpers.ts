@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 ///<reference path="util.ts" />
 
-
+module Helper.ListView {
     "use strict";
     var utilities = WinJS.Utilities,
         constants = {
@@ -17,39 +17,41 @@
                     false: "false"
                 }
             }
-        },
-        templates = {
-            syncJSTemplate: function (itemPromise) {
-                return itemPromise.then(function (item) {
-                    var element = document.createElement("div");
-                    element.id = item.data.title;
-                    utilities.addClass(element, "syncJSTemplate");
-                    element.style.width = item.data.itemWidth;
-                    element.style.height = item.data.itemHeight;
-                    element.innerHTML = "<div>" + item.data.title + "</div>";
-                    return element;
-                });
-            },
-            asyncJSTemplate: function (itemPromise) {
-                return itemPromise.then(function (item) {
-                    // TODO: Fill in the details later
-                });
-            }
-        },
-        defaultOptions = function () {
-            return {
-                selectionMode: WinJS.UI.SelectionMode.multi,
-                tapBehavior: WinJS.UI.TapBehavior.invokeOnly,
-                swipeBehavior: WinJS.UI.SwipeBehavior.select,
-                scrollPosition: 0
-            };
         };
 
-    function _ASSERT(condition) {
+    export var templates = {
+        syncJSTemplate: function (itemPromise) {
+            return itemPromise.then(function (item) {
+                var element = document.createElement("div");
+                element.id = item.data.title;
+                utilities.addClass(element, "syncJSTemplate");
+                element.style.width = item.data.itemWidth;
+                element.style.height = item.data.itemHeight;
+                element.innerHTML = "<div>" + item.data.title + "</div>";
+                return element;
+            });
+        },
+        asyncJSTemplate: function (itemPromise) {
+            return itemPromise.then(function (item) {
+                // TODO: Fill in the details later
+            });
+        }
+    };
+
+    export function defaultOptions() {
+        return {
+            selectionMode: WinJS.UI.SelectionMode.multi,
+            tapBehavior: WinJS.UI.TapBehavior.invokeOnly,
+            swipeBehavior: WinJS.UI.SwipeBehavior.select,
+            scrollPosition: 0
+        };
+    };
+
+    export function _ASSERT(condition) {
         LiveUnit.Assert.isTrue(!!condition);
     }
 
-    function _TRACE(text) {
+    export function _TRACE(text) {
         LiveUnit.LoggingCore.logComment(text);
     }
 
@@ -57,7 +59,7 @@
         this._baseDataSourceConstructor(listDataAdapter);
     });
 
-    function checkAttribute(element, attribute, expectedValue) {
+    export function checkAttribute(element, attribute, expectedValue) {
         var values = element.getAttribute(attribute).match(expectedValue),
             value = values ? values[0] : null;
 
@@ -66,11 +68,11 @@
     }
 
     // Returns a number between 0 to parameter
-    function randomNumber(upto) {
+    export function randomNumber(upto) {
         return Math.floor(Math.random() * (upto + 1));
     };
 
-    function validateListView(listView) {
+    export function validateListView(listView) {
         // Check properties and methods
         LiveUnit.Assert.isTrue(listView);
         LiveUnit.Assert.isTrue(listView.itemDataSource);
@@ -111,7 +113,7 @@
         return true;
     }
 
-    function validateResetFocusState(listView, context, listViewIsEmpty = false) {
+    export function validateResetFocusState(listView, context, listViewIsEmpty = false) {
         var childFocus = listView._tabManager.childFocus;
 
         LiveUnit.Assert.areEqual(0, listView.currentItem.index, "ListView's currentItem wasn't reset " + context);
@@ -123,7 +125,7 @@
     }
 
 
-    function waitForDeferredAction(listView) {
+    export function waitForDeferredAction(listView) {
         if (listView.winControl) { listView = listView.winControl; }
 
         return function (x?) {
@@ -140,9 +142,9 @@
         }
     }
 
-    function waitForReady(listView, delay?) {
+    export function waitForReady(listView, delay?) {
         if (listView.winControl) { listView = listView.winControl; }
-        return function (x?):WinJS.Promise<any> {
+        return function (x?): WinJS.Promise<any> {
             return new WinJS.Promise(function (c, e, p) {
                 function waitForReady_handler() {
                     LiveUnit.LoggingCore.logComment("waitForReady_handler, listView.loadingState:" + listView.loadingState);
@@ -158,7 +160,7 @@
                     } else if (listView.loadingState !== "complete") {
                         listView.addEventListener("loadingstatechanged", waitForReady_handler, false);
                     } else {
-                        WinJS.Utilities.Scheduler.schedulePromiseIdle(null, "ListViewWaitForReadyComplete").then(function() {
+                        WinJS.Utilities.Scheduler.schedulePromiseIdle(null, "ListViewWaitForReadyComplete").then(function () {
                             c(x);
                         });
                     }
@@ -182,7 +184,7 @@
         };
     }
 
-    function waitForState(listView, state, delay) {
+    export function waitForState(listView, state, delay) {
         if (listView.winControl) { listView = listView.winControl; }
 
         return function (x?) {
@@ -220,19 +222,19 @@
         }
     }
 
-    function waitForAllContainers(listView) {
+    export function waitForAllContainers(listView) {
         if (listView.winControl) { listView = listView.winControl; }
 
         return waitForReady(listView, -1)().then(function () {
             return listView._view._creatingContainersWork ? listView._view._creatingContainersWork.promise : null;
         }).then(function () {
                 return listView._view._getLayoutCompleted();
-        }).then(function () {
-            return waitForReady(listView, -1)();
-        });
+            }).then(function () {
+                return waitForReady(listView, -1)();
+            });
     }
 
-    function waitForNotReady(listView) {
+    export function waitForNotReady(listView) {
         if (listView.winControl) { listView = listView.winControl; }
 
         return function (x) {
@@ -253,7 +255,7 @@
         }
     }
 
-    function whenLoadingComplete(listview, func) {
+    export function whenLoadingComplete(listview, func) {
         function checkAndExecute() {
             if (listview.loadingState === "complete") {
                 func();
@@ -264,7 +266,7 @@
         checkAndExecute();
     }
 
-    function runTests(listview, tests) {
+    export function runTests(listview, tests) {
         var current = 0;
 
         function stateChanged() {
@@ -280,7 +282,7 @@
         });
     }
 
-    function createAsyncRenderer(templateId, width, height, targetId?, delay?) {
+    export function createAsyncRenderer(templateId, width, height, targetId?, delay?) {
         var templateElement = <HTMLElement>document.getElementById(templateId).cloneNode(true);
         templateElement.id = "";
         var templateText = templateElement.innerHTML;
@@ -313,7 +315,7 @@
         };
     }
 
-    function createRenderer(templateId, targetId?) {
+    export function createRenderer(templateId, targetId?) {
         var element = <HTMLElement>document.getElementById(templateId).cloneNode(true);
         element.id = "";
         var temp = element.outerHTML;
@@ -324,7 +326,7 @@
                     var value = item.data[field];
                     return value !== undefined ? value : str;
                 });
-                var element:HTMLElement = document.createElement("div");
+                var element: HTMLElement = document.createElement("div");
                 element.innerHTML = text;
                 element = <HTMLElement>element.firstChild;
                 element.style.display = "block";
@@ -336,19 +338,19 @@
         };
     }
 
-    function viewport(element) {
+    export function viewport(element) {
         return element.winControl._viewport;
     }
 
-    function canvas(element) {
+    export function canvas(element) {
         return element.winControl._canvas;
     }
 
-    function itemCanvas(element) {
+    export function itemCanvas(element) {
         return element.winControl._itemCanvas;
     }
 
-    function extend(target, source) {
+    export function extend(target, source) {
         target = target || {};
         for (var fieldname in source) {
             if (!target.hasOwnProperty(fieldname)) {
@@ -358,7 +360,7 @@
         return target;
     }
 
-    function getDataObjects(dataSource, indices) {
+    export function getDataObjects(dataSource, indices) {
         var listBinding = dataSource.createListBinding(),
             promises = [];
 
@@ -372,7 +374,7 @@
         });
     }
 
-    function getRealizedCount(element) {
+    export function getRealizedCount(element) {
         var containers = element.querySelectorAll("." + WinJS.UI._containerClass),
             count = 0;
 
@@ -383,7 +385,7 @@
         return count;
     }
 
-    function getItemsCount(canvas) {
+    export function getItemsCount(canvas) {
         var count = 0;
         for (var i = 0; i < canvas.childNodes.length; i++) {
             if (canvas.childNodes[i].className.indexOf(WinJS.UI._containerClass) !== -1 && canvas.childNodes[i].innerHTML !== "") {
@@ -395,7 +397,7 @@
     }
 
 
-    function elementsEqual(expectedArray, actualArray) {
+    export function elementsEqual(expectedArray, actualArray) {
         if (expectedArray === actualArray) {
             return;
         }
@@ -417,7 +419,7 @@
         }
     }
 
-    function setItemsOut(rtl, affectedItems, inserted, removed) {
+    export function setItemsOut(rtl, affectedItems, inserted, removed) {
         var positionProperty = (rtl ? "right" : "left");
         function forEachItem(map, callback) {
             var itemIDs = Object.keys(map);
@@ -439,7 +441,7 @@
         });
     }
 
-    function createTrivialAnimationTracker() {
+    export function createTrivialAnimationTracker() {
         return {
             getCompletionPromise: function () {
                 return WinJS.Promise.wrap();
@@ -447,7 +449,7 @@
         };
     }
 
-    var trivialAnimationHelper = {
+    export var trivialAnimationHelper = {
         animateEntrance: function () {
             return WinJS.Promise.wrap();
         },
@@ -458,10 +460,10 @@
             return WinJS.Promise.wrap();
         }
     }
-    var realAnimationHelper = {
+    export var realAnimationHelper = {
     },
-    realHelperRecorded = false;
-    function removeListviewAnimations() {
+        realHelperRecorded = false;
+    export function removeListviewAnimations() {
         var functions;
         if (!realHelperRecorded) {
             functions = Object.keys(WinJS.UI._ListViewAnimationHelper);
@@ -475,7 +477,7 @@
             WinJS.UI._ListViewAnimationHelper[functions[i]] = trivialAnimationHelper[functions[i]];
         }
     }
-    function restoreListviewAnimations() {
+    export function restoreListviewAnimations() {
         if (realHelperRecorded) {
             var functions = Object.keys(realAnimationHelper);
             for (var i = 0; i < functions.length; i++) {
@@ -484,14 +486,14 @@
         }
     }
 
-    function containerFrom(element) {
+    export function containerFrom(element) {
         while (element && !WinJS.Utilities.hasClass(element, WinJS.UI._containerClass)) {
             element = element.parentNode;
         }
         return element;
     }
 
-    function headerContainerFrom(listView, element) {
+    export function headerContainerFrom(listView, element) {
         var layout = listView.layout;
         while (element && !WinJS.Utilities.hasClass(element, WinJS.UI._headerContainerClass)) {
             element = element.parentNode;
@@ -499,29 +501,29 @@
         return element;
     }
 
-    function offsetLeftFromSurface(listView, element) {
+    export function offsetLeftFromSurface(listView, element) {
         return WinJS.Utilities.getPosition(element).left - WinJS.Utilities.getPosition(listView._canvas).left;
     }
 
-    function offsetRightFromSurface(listView, element) {
-        var surfacePos:any = WinJS.Utilities.getPosition(listView._canvas),
-            elementPos:any = WinJS.Utilities.getPosition(element);
+    export function offsetRightFromSurface(listView, element) {
+        var surfacePos: any = WinJS.Utilities.getPosition(listView._canvas),
+            elementPos: any = WinJS.Utilities.getPosition(element);
         surfacePos.right = surfacePos.left + surfacePos.width;
         elementPos.right = elementPos.left + elementPos.width;
         return surfacePos.right - elementPos.right;
     }
 
-    function offsetTopFromSurface(listView, element) {
+    export function offsetTopFromSurface(listView, element) {
         return WinJS.Utilities.getPosition(element).top - WinJS.Utilities.getPosition(listView._canvas).top;
     }
 
-    function getBasicColorString(rVal, gVal, bVal) {
+    export function getBasicColorString(rVal, gVal, bVal) {
         rVal = ((rVal || 0) % 16).toString(16);
         gVal = ((gVal || 0) % 16).toString(16);
         bVal = ((bVal || 0) % 16).toString(16);
         return "#" + rVal + rVal + gVal + gVal + bVal + bVal;
     }
-    function getBasicDataSource(itemsCount, grouped, itemsPerGroup):WinJS.Binding.ListBaseWithMutators<any> {
+    export function getBasicDataSource(itemsCount, grouped, itemsPerGroup): WinJS.Binding.ListBaseWithMutators<any> {
         var rawData = [];
         for (var i = 0; i < itemsCount; i++) {
             rawData.push({ index: i });
@@ -534,10 +536,10 @@
         return list.createGrouped(function (item) {
             return "Group" + Math.floor(item.index / itemsPerGroup);
         }, function (item) {
-            return { title: "Group" + Math.floor(item.index / itemsPerGroup) };
-        });
+                return { title: "Group" + Math.floor(item.index / itemsPerGroup) };
+            });
     }
-    function basicRenderer(itemPromise) {
+    export function basicRenderer(itemPromise) {
         var element = document.createElement("div");
         return {
             element: element,
@@ -547,7 +549,7 @@
             })
         };
     }
-    function basicHeaderRenderer(itemPromise) {
+    export function basicHeaderRenderer(itemPromise) {
         var element = document.createElement("div");
         return {
             element: element,
@@ -558,7 +560,7 @@
         };
     }
 
-    function calcExpectedItemBarAndSlot(itemIndex, options) {
+    export function calcExpectedItemBarAndSlot(itemIndex, options) {
         if (options.grouped) {
             var itemGroup = Math.floor(itemIndex / options.itemsPerGroup);
             itemIndex -= (options.itemsPerGroup * itemGroup);
@@ -570,7 +572,7 @@
             slot: slotInBar,
         }
     }
-    function calcExpectedItemStart(itemIndex, options) {
+    export function calcExpectedItemStart(itemIndex, options) {
         var itemGroup = 0,
             barsPerGroup = 0;
         if (options.grouped) {
@@ -580,14 +582,14 @@
         }
         var barInGroup = Math.floor(itemIndex / options.itemsPerBar);
         return ((options.headersInline ? options.headerSize : 0) + barInGroup * options.itemSize) +
-                (options.grouped ? (itemGroup * ((options.headersInline ? options.headerSize : 0) + barsPerGroup * options.itemSize)) : 0) +
-                (options.grouped ? ((itemGroup + 1) * options.groupLeaderOffset) : 0) +
-                (options.horizontal ? options.canvasMargins[options.rtl ? "right" : "left"] : options.canvasMargins.top);
+            (options.grouped ? (itemGroup * ((options.headersInline ? options.headerSize : 0) + barsPerGroup * options.itemSize)) : 0) +
+            (options.grouped ? ((itemGroup + 1) * options.groupLeaderOffset) : 0) +
+            (options.horizontal ? options.canvasMargins[options.rtl ? "right" : "left"] : options.canvasMargins.top);
     }
-    function calcExpectedItemEnd(itemIndex, options) {
+    export function calcExpectedItemEnd(itemIndex, options) {
         return calcExpectedItemStart(itemIndex, options) + options.itemSize;
     }
-    function computeExpectedLayoutInformation(options) {
+    export function computeExpectedLayoutInformation(options) {
         var currentAbsoluteIndex = 0;
         var currentPosition = options.groupLeaderOffset + (options.horizontal ? options.canvasMargins.left : options.canvasMargins.top);
         var layoutInfo = {
@@ -639,8 +641,8 @@
         return layoutInfo;
     }
 
-    var uniqueCounter = 0;
-    function addStylesForView(root, options) {
+    export var uniqueCounter = 0;
+    export function addStylesForView(root, options) {
         var styleElement = document.createElement("style");
         document.head.appendChild(styleElement);
         if (!root.id) {
@@ -650,9 +652,9 @@
         WinJS.Utilities.addClass(root, styleClass);
         var rootClass = "#" + root.id + "." + styleClass;
         var rules = [rootClass + " {width: " + options.viewWidth + "px; height: " + options.viewHeight + "px;}",
-                     rootClass + " .win-surface {margin: " + options.canvasMargins.top + "px " + options.canvasMargins.right + "px " + options.canvasMargins.bottom + "px " + options.canvasMargins.left + "px;}",
-                     rootClass + " .win-container {margin: " + options.itemMargins.top + "px " + options.itemMargins.right + "px " + options.itemMargins.bottom + "px " + options.itemMargins.left + "px;}",
-                     rootClass + " .win-container, .win-item {width: " + options.itemWidth + "px; height: " + options.itemHeight + "px;}"
+            rootClass + " .win-surface {margin: " + options.canvasMargins.top + "px " + options.canvasMargins.right + "px " + options.canvasMargins.bottom + "px " + options.canvasMargins.left + "px;}",
+            rootClass + " .win-container {margin: " + options.itemMargins.top + "px " + options.itemMargins.right + "px " + options.itemMargins.bottom + "px " + options.itemMargins.left + "px;}",
+            rootClass + " .win-container, .win-item {width: " + options.itemWidth + "px; height: " + options.itemHeight + "px;}"
         ];
         if (options.grouped) {
             rules.push(rootClass + " .win-groupheadercontainer, .win-groupheader {width: " + options.headerSize + "px; height: " + options.headerSize + "px;padding: 0;}");
@@ -669,20 +671,20 @@
         return styleElement;
     }
 
-    var defaultItemSize = 100;
-    var defaultHeaderSize = 100;
-    var defaultItemsCount = 100;
-    var defaultItemsPerGroup = 10;
-    var defaultViewWidth = 500;
-    var defaultViewHeight = 500;
-    var defaultGroupLeaderOffset = 100;
-    var defaultListOrientation = "vertical";
-    var defaultGridOrientation = "horizontal";
-    var defaultLayout = "GridLayout";
-    var defaultMargins = { left: 0, right: 0, top: 0, bottom: 0 };
-    var defaultHeadersAbove = false;
+    export var defaultItemSize = 100;
+    export var defaultHeaderSize = 100;
+    export var defaultItemsCount = 100;
+    export var defaultItemsPerGroup = 10;
+    export var defaultViewWidth = 500;
+    export var defaultViewHeight = 500;
+    export var defaultGroupLeaderOffset = 100;
+    export var defaultListOrientation = "vertical";
+    export var defaultGridOrientation = "horizontal";
+    export var defaultLayout = "GridLayout";
+    export var defaultMargins = { left: 0, right: 0, top: 0, bottom: 0 };
+    export var defaultHeadersAbove = false;
 
-    function getMarginOptions(marginsProvided) {
+    export function getMarginOptions(marginsProvided) {
         marginsProvided = marginsProvided || { left: 0, right: 0, top: 0, bottom: 0 };
         if (marginsProvided.left === undefined) {
             marginsProvided.left = defaultMargins.left;
@@ -699,7 +701,7 @@
         return marginsProvided;
     }
 
-    function buildGenericListView(root, options) {
+    export function buildGenericListView(root, options) {
         options = options || {};
         options.itemWidth = options.itemWidth || defaultItemSize;
         options.itemHeight = options.itemHeight || defaultItemSize;
@@ -773,10 +775,10 @@
         var styleElement = addStylesForView(root, options);
         root.style.direction = options.rtl ? "rtl" : "ltr";
         var bindingList = <WinJS.Binding.GroupedSortedListProjection<any>> getBasicDataSource(options.itemsCount, options.grouped, options.itemsPerGroup);
-        var layoutOptions:any = {
+        var layoutOptions: any = {
             orientation: options.orientation
         };
-        var viewOptions:any = {
+        var viewOptions: any = {
             itemDataSource: bindingList.dataSource,
             itemTemplate: options.itemTemplate,
         };
@@ -798,7 +800,7 @@
         };
     }
 
-    function skipFirstAnimation(listView) {
+    export function skipFirstAnimation(listView) {
         var firstAnimation = true;
         listView.addEventListener("contentanimating", function (eventObject) {
             if (firstAnimation) {
@@ -807,3 +809,4 @@
             }
         });
     }
+}

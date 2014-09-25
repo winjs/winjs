@@ -409,7 +409,7 @@ module WinJSTests {
             }
         ];
         listView.itemDataSource = getDataSource(ITEMS_COUNT);
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     }, null, true);
 
 
@@ -1135,7 +1135,7 @@ module WinJSTests {
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testUnselectedKeyboardReorderNonDraggable", function (listView, rtl, complete) {
@@ -1157,7 +1157,7 @@ module WinJSTests {
                 }, 50)
             }
         ];
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testSingleSelectionKeyboardReorder", function (listView, rtl, complete) {
@@ -1245,7 +1245,7 @@ module WinJSTests {
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testContiguousSelectionReorder", function (listView, rtl, complete) {
@@ -1389,7 +1389,7 @@ module WinJSTests {
         tests.push(function () {
             complete();
         });
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testUncontiguousSelectionReorder", function (listView, rtl, complete) {
@@ -1561,7 +1561,7 @@ module WinJSTests {
             complete();
         });
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testKeyboardWhenNotReorderable", function (listView, rtl, complete) {
@@ -1604,7 +1604,7 @@ module WinJSTests {
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     }, null, true);
     generate("testCanceledKeyboardReorder", function (listView, rtl, complete) {
         var adjustedKeys = getAdjustedKeys(rtl);
@@ -1655,10 +1655,10 @@ module WinJSTests {
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     }, null, true);
 
 }
-if (!utilities.isPhone) {
+if (!WinJS.Utilities.isPhone) {
     LiveUnit.registerTestClass("WinJSTests.ListViewDragDropTest");
 }

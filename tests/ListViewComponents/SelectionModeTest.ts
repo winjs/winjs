@@ -11,7 +11,7 @@ module WinJSTests {
     "use strict";
 
     var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
-    var Key = utilities.Key;
+    var Key = WinJS.Utilities.Key;
 
     var list, proxy, items, invoked;
 
@@ -19,7 +19,7 @@ module WinJSTests {
         if (!Array.isArray(expected)) {
             expected = [expected];
         }
-        elementsEqual(expected, mode.site._selection.getIndices());
+        Helper.ListView.elementsEqual(expected, mode.site._selection.getIndices());
     }
 
     function eventOnElement(element) {
@@ -959,7 +959,7 @@ module WinJSTests {
                     listView._canvas.setPointerCapture = function () {
                     };
 
-                    runTests(listView, [
+                    Helper.ListView.runTests(listView, [
                         function () {
                             LiveUnit.Assert.areEqual(myData.length, newNode.querySelectorAll(".win-item").length);
                             click(listView._currentMode(), { target: listView.elementFromIndex(1), ctrlKey: ctrl });
@@ -975,7 +975,7 @@ module WinJSTests {
             }
 
             test("invokeOnly", true).then(function () {
-                if (utilities.isPhone) {
+                if (WinJS.Utilities.isPhone) {
                     return WinJS.Promise.wrap();
                 } else {
                     return test("directSelect");

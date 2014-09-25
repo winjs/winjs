@@ -138,27 +138,27 @@ module WinJSTests {
                 complete();
             }
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     listView.ensureVisible(index);
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 done(function () {
                     itemboxToDelete = ancestorWithClass(listView.elementFromIndex(index), WinJS.UI._itemBoxClass);
-                    rectBeforeDelete = containerFrom(itemboxToDelete).getBoundingClientRect();
+                    rectBeforeDelete = Helper.ListView.containerFrom(itemboxToDelete).getBoundingClientRect();
 
                     var realExecuteAnimations = listView.layout.executeAnimations;
                     listView.layout.executeAnimations = function () {
                         try {
                             listView.layout.executeAnimations = realExecuteAnimations;
                             // getComputedStyle needs to be called to ensure that the item is laid out before we try measuring it.
-                            getComputedStyle(containerFrom(itemboxToDelete));
-                            var rectDuringDelete = containerFrom(itemboxToDelete).getBoundingClientRect();
+                            getComputedStyle(Helper.ListView.containerFrom(itemboxToDelete));
+                            var rectDuringDelete = Helper.ListView.containerFrom(itemboxToDelete).getBoundingClientRect();
                             assertRectsAreEqual(rectBeforeDelete, rectDuringDelete,
                                 "Animation improperly set initial size/location of deleted item");
                             didVerification = true;
                         } finally {
-                            waitForReady(listView)().done(finishVerification);
+                            Helper.ListView.waitForReady(listView)().done(finishVerification);
                             return realExecuteAnimations.apply(this, arguments);
                         }
                     };
@@ -215,7 +215,7 @@ module WinJSTests {
             listView.itemTemplate = itemTemplate;
             listView.itemDataSource = bindingList.dataSource;
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
                         // 2 is for entrance animation.
@@ -223,7 +223,7 @@ module WinJSTests {
                         transitionEnd = [];
                     }
                     bindingList.splice(1, 0, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0
@@ -241,7 +241,7 @@ module WinJSTests {
             listView.itemTemplate = itemTemplate;
             listView.itemDataSource = bindingList.dataSource;
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
                         // 2 is for entrance animation.
@@ -249,7 +249,7 @@ module WinJSTests {
                         transitionEnd = [];
                     }
                     bindingList.splice(1, 0, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0,1,2,3,4
@@ -261,7 +261,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(1, 1);
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0,100,1,2,3
@@ -273,7 +273,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(1, 1, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0,1,2,3,4
@@ -293,18 +293,18 @@ module WinJSTests {
             listView.itemTemplate = itemTemplate;
             listView.itemDataSource = bindingList.dataSource;
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     // Insert an item:
                     bindingList.splice(1, 0, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Resize:
                     listViewEl.style.height = "600px";
                     listView._onMSElementResize();
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 done(function () {
                     LiveUnit.Assert.areEqual("1", getComputedStyle(<HTMLElement>listView.elementFromIndex(1).parentNode.parentNode).opacity, "Should not be opacity 0");
@@ -331,7 +331,7 @@ module WinJSTests {
 
             var itemsContainer;
             listView.ensureVisible(90);
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     bindingList.splice(80, 10);
                     return waitForDirectMovePhase(12)();
@@ -340,7 +340,7 @@ module WinJSTests {
                     itemsContainer = listView.element.querySelector(".win-itemscontainer");
                     LiveUnit.Assert.areEqual("200px", itemsContainer.style.paddingRight);
                     LiveUnit.Assert.areEqual("-200px", itemsContainer.style.marginRight);
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 done(function () {
                     LiveUnit.Assert.areEqual("", itemsContainer.style.paddingRight);
@@ -357,7 +357,7 @@ module WinJSTests {
             listView.itemDataSource = bindingList.dataSource;
 
             var itemsContainer;
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     bindingList.splice(0, 1);
                     return waitForDirectMovePhase(7)();
@@ -366,7 +366,7 @@ module WinJSTests {
                     itemsContainer = listView.element.querySelector(".win-itemscontainer");
                     LiveUnit.Assert.areEqual("", itemsContainer.style.paddingRight);
                     LiveUnit.Assert.areEqual("", itemsContainer.style.marginRight);
-                    return waitForReady(listView)();
+                    return Helper.ListView.waitForReady(listView)();
                 }).
                 done(function () {
                     LiveUnit.Assert.areEqual("", itemsContainer.style.paddingRight);
@@ -382,7 +382,7 @@ module WinJSTests {
             listView.itemTemplate = itemTemplate;
             listView.itemDataSource = bindingList.dataSource;
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
                         // 2 is for entrance animation.
@@ -390,7 +390,7 @@ module WinJSTests {
                         transitionEnd = [];
                     }
                     bindingList.splice(6, 0, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0->24
@@ -403,7 +403,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(6, 1);
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0-5,100,6-> 23
@@ -416,7 +416,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(6, 1, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0->24
@@ -458,7 +458,7 @@ module WinJSTests {
             listView.itemTemplate = itemTemplate;
             listView.itemDataSource = bindingList.dataSource;
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
                         // 2 is for entrance animation.
@@ -466,7 +466,7 @@ module WinJSTests {
                         transitionEnd = [];
                     }
                     bindingList.splice(6, 0, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0->24
@@ -478,7 +478,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(6, 1);
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0-5,100,6-> 23
@@ -490,7 +490,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(6, 1, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: 0->24
@@ -526,13 +526,13 @@ module WinJSTests {
             listView.groupHeaderTemplate = groupHeaderTemplate;
             listView.groupDataSource = groupProjection.groups.dataSource;
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     // 2 is for entrance animation.
                     LiveUnit.Assert.areEqual(2, transitionEnd.length, "Grid Grouped Animations: Before edits: Correct number of transitions");
                     transitionEnd = [];
                     bindingList.splice(6, 0, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: Group 0 (0-9), Group 1(10-12)
@@ -546,7 +546,7 @@ module WinJSTests {
 
                     bindingList.splice(6, 0, getItem());
                     bindingList.splice(6, 0, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: Group 0 (0-5,100,6-9), Group 1(10-12)
@@ -560,7 +560,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(0, 0, getItem(-1));
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Added a group at the beginning
@@ -571,7 +571,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(0, 1);
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Removed a group at the beginning
@@ -583,7 +583,7 @@ module WinJSTests {
 
                     bindingList.splice(6, 1);
                     bindingList.splice(6, 1);
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: Group 0 (0-5,100-102,6-9), Group 1(10-12)
@@ -597,7 +597,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(6, 1);
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     // Before: Group 0 (0-5,100,6-9), Group 1(10-12)
@@ -610,7 +610,7 @@ module WinJSTests {
                     transitionEnd = [];
 
                     bindingList.splice(6, 1, getItem());
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 done(function () {
                     // Before: Group 0 (0-9), Group 1(10-12)
@@ -633,7 +633,7 @@ module WinJSTests {
             listView.itemDataSource = bindingList.dataSource;
 
             var timeout;
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
                         // 2 is for entrance animation.
@@ -648,7 +648,7 @@ module WinJSTests {
                         }, WinJS.UI._animationTimeAdjustment(40));
                     }, WinJS.UI._animationTimeAdjustment(40));
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 done(function () {
                     // First 0-2 items move and 3 item fades in. (4 transitions)
@@ -667,7 +667,7 @@ module WinJSTests {
             listView.itemDataSource = bindingList.dataSource;
 
             var timeout;
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
                         // 2 is for entrance animation.
@@ -682,7 +682,7 @@ module WinJSTests {
                         }, WinJS.UI._animationTimeAdjustment(40));
                     }, WinJS.UI._animationTimeAdjustment(40));
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 done(function () {
                     // First 1-5 move and 0 fades out (6 transitions)
@@ -715,10 +715,10 @@ module WinJSTests {
             listView.itemTemplate = itemRenderer;
             listView.itemDataSource = bindingList.dataSource;
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 then(function () {
                     listViewEl.style.width = "600px";
-                    return waitForReady(listView, 100)();
+                    return Helper.ListView.waitForReady(listView, 100)();
                 }).
                 then(function () {
                     return verifyDeleteAnimation(listView, bindingList, 2);
@@ -777,7 +777,7 @@ module WinJSTests {
                 groupHeaderTemplate: renderer
             });
 
-            waitForReady(listView)().
+            Helper.ListView.waitForReady(listView)().
                 done(function () {
                     WinJS.Utilities.disposeSubTree(element);
                     testRootEl.removeChild(element);

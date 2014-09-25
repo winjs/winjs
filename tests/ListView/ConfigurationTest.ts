@@ -15,10 +15,10 @@ module WinJSTests {
 
     function checkTile(listview, index, left, top, caption) {
         var tile = listview.elementFromIndex(index),
-            container = containerFrom(tile);
+            container = Helper.ListView.containerFrom(tile);
         LiveUnit.Assert.areEqual(caption + index, tile.textContent.replace(/ /g, ''));
-        LiveUnit.Assert.areEqual(left, offsetLeftFromSurface(listview, container), "Error in tile " + index);
-        LiveUnit.Assert.areEqual(top, offsetTopFromSurface(listview, container), "Error in tile " + index);
+        LiveUnit.Assert.areEqual(left, Helper.ListView.offsetLeftFromSurface(listview, container), "Error in tile " + index);
+        LiveUnit.Assert.areEqual(top, Helper.ListView.offsetTopFromSurface(listview, container), "Error in tile " + index);
     }
 
     function setupListview(element, layout) {
@@ -29,14 +29,14 @@ module WinJSTests {
         var list = new WinJS.Binding.List(myData);
         return new WinJS.UI.ListView(element, {
             itemDataSource: list.dataSource,
-            itemTemplate: createRenderer("simpleTemplate"),
+            itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
             layout: new WinJS.UI[layout](),
         });
     }
 
     function checkTileSelection(listview, index, selected) {
         var tile = listview.elementFromIndex(index).parentNode;
-        LiveUnit.Assert.areEqual(selected, utilities.hasClass(tile, WinJS.UI._selectedClass));
+        LiveUnit.Assert.areEqual(selected, WinJS.Utilities.hasClass(tile, WinJS.UI._selectedClass));
     }
 
     export class ConfigurationTests {
@@ -73,7 +73,7 @@ module WinJSTests {
             "</div>";
             testRootEl.appendChild(newNode);
             document.body.appendChild(testRootEl);
-            removeListviewAnimations();
+            Helper.ListView.removeListviewAnimations();
         }
 
         tearDown() {
@@ -81,7 +81,7 @@ module WinJSTests {
 
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            restoreListviewAnimations();
+            Helper.ListView.restoreListviewAnimations();
         }
 
         testScrollToItemValidation = function (complete) {
@@ -102,18 +102,18 @@ module WinJSTests {
                     layout: new WinJS.UI.GridLayout()
                 });
 
-                return waitForReady(listView, -1)().then(function () {
+                return Helper.ListView.waitForReady(listView, -1)().then(function () {
 
                     modification(listView, 10);
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
 
                         var list = new WinJS.Binding.List([{ title: "Tile" }]);
                         listView.itemDataSource = list.dataSource;
                         modification(listView, 10);
 
-                        return waitForReady(listView, -1)();
+                        return Helper.ListView.waitForReady(listView, -1)();
                     }).then(function () {
                         LiveUnit.Assert.isTrue(!!listView.elementFromIndex(0));
 
@@ -125,7 +125,7 @@ module WinJSTests {
                         listView.itemDataSource = list.dataSource;
                         modification(listView, 10000);
 
-                        return waitForReady(listView, -1)();
+                        return Helper.ListView.waitForReady(listView, -1)();
                     }).then(function () {
                         LiveUnit.Assert.isTrue(!!listView.elementFromIndex(99));
                         LiveUnit.Assert.areEqual(99, listView.indexOfLastVisible);
@@ -183,19 +183,19 @@ module WinJSTests {
             });
             setupDataSources(listView, []);
 
-            return waitForReady(listView, -1)().
+            return Helper.ListView.waitForReady(listView, -1)().
                 then(function () {
 
                     listView.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 10 });
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
 
                     setupDataSources(listView, [{ title: "Tile", group: 0 }]);
                     listView.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 10 });
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 then(function () {
                     LiveUnit.Assert.isTrue(!!listView.elementFromIndex(0));
@@ -210,7 +210,7 @@ module WinJSTests {
                     setupDataSources(listView, myData);
                     listView.ensureVisible({ type: WinJS.UI.ObjectType.groupHeader, index: 10000 });
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).
                 done(function () {
                     LiveUnit.Assert.isTrue(!!listView.elementFromIndex(99));
@@ -244,7 +244,7 @@ module WinJSTests {
                 indexOfFirstVisible: 60
             });
 
-            waitForReady(listView, -1)().then(function () {
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
                 LiveUnit.Assert.areEqual(2000, listView.scrollPosition);
                 LiveUnit.Assert.areEqual(WinJS.Utilities.getScrollPosition(listView._viewport).scrollLeft, listView.scrollPosition);
                 LiveUnit.Assert.areEqual(60, listView.indexOfFirstVisible);
@@ -263,7 +263,7 @@ module WinJSTests {
                     placeholder.style.display = "block";
                     listView.forceLayout();
 
-                    return waitForReady(listView, -1)();
+                    return Helper.ListView.waitForReady(listView, -1)();
                 }).then(function () {
                     LiveUnit.Assert.areEqual(0, listView.scrollPosition);
                     LiveUnit.Assert.areEqual(WinJS.Utilities.getScrollPosition(listView._viewport).scrollLeft, listView.scrollPosition);
@@ -287,12 +287,12 @@ module WinJSTests {
             var list = new WinJS.Binding.List(myData);
             var listView = new WinJS.UI.ListView(element, {
                 itemDataSource: list.dataSource,
-                itemTemplate: createRenderer("simpleTemplate"),
+                itemTemplate: Helper.ListView.createRenderer("simpleTemplate"),
                 layout: new WinJS.UI[layout](),
             });
             var tests = [
                 function () {
-                    WinJS.Utilities.setScrollPosition(viewport(element), { scrollLeft: 100, scrollTop: 0 });
+                    WinJS.Utilities.setScrollPosition(Helper.ListView.viewport(element), { scrollLeft: 100, scrollTop: 0 });
                     return true;
                 },
                 function () {
@@ -301,7 +301,7 @@ module WinJSTests {
                     checkTile(listView, 2, 0, 200, "Tile");
                     checkTile(listView, 3, 100, 0, "Tile");
 
-                    listView.itemTemplate = createRenderer("smallTemplate");
+                    listView.itemTemplate = Helper.ListView.createRenderer("smallTemplate");
                 },
                 function () {
                     checkTile(listView, 0, 0, 0, "Tile");
@@ -309,7 +309,7 @@ module WinJSTests {
                     checkTile(listView, 2, 0, 100, "Tile");
                     checkTile(listView, 7, 50, 0, "Tile");
 
-                    listView.itemTemplate = createRenderer("bigTemplate");
+                    listView.itemTemplate = Helper.ListView.createRenderer("bigTemplate");
                 },
                 function () {
                     checkTile(listView, 0, 0, 0, "Tile");
@@ -318,7 +318,7 @@ module WinJSTests {
                     complete();
                 }
             ];
-            runTests(listView, tests);
+            Helper.ListView.runTests(listView, tests);
         };
     };
     generateItemSizeChange("GridLayout");
@@ -341,7 +341,7 @@ module WinJSTests {
     generate("testDatasourceChange", "dataSourceChange", function (element, listView, complete) {
         var tests = [
             function () {
-                WinJS.Utilities.setScrollPosition(viewport(element), { scrollLeft: 100, scrollTop: 0 });
+                WinJS.Utilities.setScrollPosition(Helper.ListView.viewport(element), { scrollLeft: 100, scrollTop: 0 });
                 return true;
             },
             function () {
@@ -358,7 +358,7 @@ module WinJSTests {
                 listView.itemDataSource = newBindingList.dataSource;
             },
             function () {
-                validateResetFocusState(listView, "after changing the itemDataSource");
+                Helper.ListView.validateResetFocusState(listView, "after changing the itemDataSource");
                 LiveUnit.Assert.areEqual(WinJS.UI._INVALID_INDEX, listView.selection._pivot, "Selection pivot wasn't reset during data source change");
                 checkTile(listView, 0, 0, 0, "Newtile");
 
@@ -366,7 +366,7 @@ module WinJSTests {
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testChangeToNullDataSource", "dataSourceChange", function (element, listView, complete) {
@@ -378,26 +378,26 @@ module WinJSTests {
                 return true;
             },
             function () {
-                validateResetFocusState(listView, "after changing the itemDataSource", true);
-                validateListView(listView);
+                Helper.ListView.validateResetFocusState(listView, "after changing the itemDataSource", true);
+                Helper.ListView.validateListView(listView);
                 complete();
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testTemplateChange", "templateChange", function (element, listView, complete) {
         var tests = [
             function () {
-                WinJS.Utilities.setScrollPosition(viewport(element), { scrollLeft: 100, scrollTop: 0 });
+                WinJS.Utilities.setScrollPosition(Helper.ListView.viewport(element), { scrollLeft: 100, scrollTop: 0 });
                 return true;
             },
             function () {
                 checkTile(listView, 0, 0, 0, "Tile");
                 checkTile(listView, 1, 0, 100, "Tile");
 
-                listView.itemTemplate = createRenderer("newTemplate");
+                listView.itemTemplate = Helper.ListView.createRenderer("newTemplate");
             },
             function () {
                 checkTile(listView, 0, 0, 0, "NewTile");
@@ -407,7 +407,7 @@ module WinJSTests {
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     generate("testLayoutChange", "layoutChange", function (element, listView, complete) {
@@ -416,8 +416,8 @@ module WinJSTests {
                 checkTile(listView, 1, 0, 100, "Tile");
                 checkTile(listView, 3, 100, 0, "Tile");
 
-                LiveUnit.Assert.areEqual("auto", window.getComputedStyle(viewport(element), null).overflowX);
-                LiveUnit.Assert.areEqual("hidden", window.getComputedStyle(viewport(element), null).overflowY);
+                LiveUnit.Assert.areEqual("auto", window.getComputedStyle(Helper.ListView.viewport(element), null).overflowX);
+                LiveUnit.Assert.areEqual("hidden", window.getComputedStyle(Helper.ListView.viewport(element), null).overflowY);
 
                 listView.layout = new WinJS.UI.ListLayout();
             },
@@ -425,14 +425,14 @@ module WinJSTests {
                 checkTile(listView, 1, 0, 100, "Tile");
                 checkTile(listView, 3, 0, 300, "Tile");
 
-                LiveUnit.Assert.areEqual("hidden", window.getComputedStyle(viewport(element), null).overflowX);
-                LiveUnit.Assert.areEqual("auto", window.getComputedStyle(viewport(element), null).overflowY);
+                LiveUnit.Assert.areEqual("hidden", window.getComputedStyle(Helper.ListView.viewport(element), null).overflowX);
+                LiveUnit.Assert.areEqual("auto", window.getComputedStyle(Helper.ListView.viewport(element), null).overflowY);
 
                 complete();
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
     // When multiple ListView properties are set during a single event loop, ensure that the
@@ -481,7 +481,7 @@ module WinJSTests {
             }
         ];
 
-        runTests(listView, tests);
+        Helper.ListView.runTests(listView, tests);
     });
 
 
@@ -511,7 +511,7 @@ module WinJSTests {
     function generateCurrentItem(layout) {
         ConfigurationTests.prototype["testCurrentItem" + (layout == "GridLayout" ? "" : layout)] = function (complete) {
             var listView = setupListview(document.getElementById("selectionChange"), layout);
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 var currentItem = listView.currentItem;
                 LiveUnit.Assert.areEqual(currentItem.index, 0);
                 LiveUnit.Assert.areEqual(currentItem.key, "0");
@@ -566,12 +566,12 @@ module WinJSTests {
             });
             listView.selection.set([1, 3]);
 
-            whenLoadingComplete(listView, function () {
+            Helper.ListView.whenLoadingComplete(listView, function () {
                 var currentItem = listView.currentItem;
                 LiveUnit.Assert.areEqual(currentItem.index, 5);
                 LiveUnit.Assert.areEqual(currentItem.key, "5");
 
-                elementsEqual(listView.selection.getIndices(), [1, 3]);
+                Helper.ListView.elementsEqual(listView.selection.getIndices(), [1, 3]);
                 checkTileSelection(listView, 0, false);
                 checkTileSelection(listView, 1, true);
                 checkTileSelection(listView, 0, false);
