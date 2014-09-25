@@ -40,11 +40,6 @@ module Helper {
         return WinJS.Utilities.Scheduler.requestDrain(WinJS.Utilities.Scheduler.Priority.idle).
             then(validateUnhandledErrors.bind(this));
     }
-}
-
-module Helper {
-
-    "use strict";
 
     var canElementResize = null;
 
