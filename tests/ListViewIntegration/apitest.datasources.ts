@@ -4,7 +4,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts" />
-/// <reference path="../TestLib/ListViewHelpers.ts"/>
+/// <reference path="../TestLib/Helper.ListView.ts"/>
 /// <reference path="globals.ts"/>
 /// <reference path="../TestLib/listviewutils.ts"/>
 /// <reference path="listviewverify.ts"/>
