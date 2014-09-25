@@ -3,8 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/util.ts"/>
 
 module WinJSTests {
 
@@ -293,11 +292,11 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(2, navigateCalled);
                 LiveUnit.Assert.areEqual(3, invokeCalled);
 
-                CommonUtilities.keydown(navbarCommand._buttonEl, Key.enter);
+                Helper.keydown(navbarCommand._buttonEl, Key.enter);
                 LiveUnit.Assert.areEqual(3, navigateCalled);
                 LiveUnit.Assert.areEqual(4, invokeCalled);
 
-                CommonUtilities.keydown(navbarCommand._buttonEl, Key.space);
+                Helper.keydown(navbarCommand._buttonEl, Key.space);
                 LiveUnit.Assert.areEqual(4, navigateCalled);
                 LiveUnit.Assert.areEqual(5, invokeCalled);
             } finally {
@@ -323,11 +322,11 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(1, splitToggleCalled);
             LiveUnit.Assert.isTrue(navbarCommand.splitOpened);
 
-            CommonUtilities.keydown(navbarCommand._splitButtonEl, Key.enter);
+            Helper.keydown(navbarCommand._splitButtonEl, Key.enter);
             LiveUnit.Assert.areEqual(2, splitToggleCalled);
             LiveUnit.Assert.isFalse(navbarCommand.splitOpened);
 
-            CommonUtilities.keydown(navbarCommand._splitButtonEl, Key.space);
+            Helper.keydown(navbarCommand._splitButtonEl, Key.space);
             LiveUnit.Assert.areEqual(3, splitToggleCalled);
             LiveUnit.Assert.isTrue(navbarCommand.splitOpened);
         };
@@ -338,18 +337,18 @@ module WinJSTests {
             navbarCommand._buttonEl.focus();
             LiveUnit.Assert.areEqual(navbarCommand._buttonEl, document.activeElement);
 
-            CommonUtilities.keydown(navbarCommand._buttonEl, Key.rightArrow);
+            Helper.keydown(navbarCommand._buttonEl, Key.rightArrow);
             LiveUnit.Assert.areEqual(navbarCommand._splitButtonEl, document.activeElement);
 
-            CommonUtilities.keydown(navbarCommand._splitButtonEl, Key.leftArrow);
+            Helper.keydown(navbarCommand._splitButtonEl, Key.leftArrow);
             LiveUnit.Assert.areEqual(navbarCommand._buttonEl, document.activeElement);
 
             navbarCommand.element.style.direction = "rtl";
 
-            CommonUtilities.keydown(navbarCommand._buttonEl, Key.leftArrow);
+            Helper.keydown(navbarCommand._buttonEl, Key.leftArrow);
             LiveUnit.Assert.areEqual(navbarCommand._splitButtonEl, document.activeElement);
 
-            CommonUtilities.keydown(navbarCommand._splitButtonEl, Key.rightArrow);
+            Helper.keydown(navbarCommand._splitButtonEl, Key.rightArrow);
             LiveUnit.Assert.areEqual(navbarCommand._buttonEl, document.activeElement);
         };
 

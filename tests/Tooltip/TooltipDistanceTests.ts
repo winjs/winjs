@@ -8,7 +8,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="TooltipUtils.ts"/>
 // <reference path="Tooltip.css"/>
 
@@ -16,7 +16,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     // Since distances can be off due to rounding errors, use this tolerance for our comparisons.
     var DISTANCE_TOLERANCE = 1;
@@ -98,7 +98,7 @@ module WinJSTests {
     }
 
     export class TooltipDistanceTests {
-        
+
 
         setUp() {
             tooltipUtils.setUp();
@@ -108,7 +108,7 @@ module WinJSTests {
             tooltipUtils.cleanUp();
         }
 
-        
+
     }
 
     Helper.pairwise({

@@ -6,7 +6,6 @@
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts"/>
 /// <reference path="globals.ts"/>
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="../TestLib/listviewutils.ts"/>
 /// <reference path="listviewverify.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>

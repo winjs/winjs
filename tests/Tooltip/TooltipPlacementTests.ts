@@ -8,7 +8,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="TooltipUtils.ts"/>
 // <reference path="Tooltip.css"/>
 
@@ -17,7 +17,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     //-----------------------------------------------------------------------------------
     // Verify the tooltip appears at the expected position

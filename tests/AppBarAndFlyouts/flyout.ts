@@ -3,8 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="OverlayHelpers.ts" />
 
 module CorsicaTests {
@@ -242,7 +241,7 @@ module CorsicaTests {
             flyout.show(document.body);
             flyout.element.innerHTML = "Not an HTML Element"; // A text Node !== an HTML Element
 
-            CommonUtilities.waitForEvent(_element, "aftershow").done(complete);
+            Helper.waitForEvent(_element, "aftershow").done(complete);
         }
 
     testDisposeRemovesFlyoutClickEatingDiv = function (complete) {

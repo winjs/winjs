@@ -47,7 +47,7 @@ module WinJSTests {
                 var rendered = d.firstElementChild;
                 LiveUnit.Assert.areEqual("This is just a test.", rendered.textContent);
             }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // cleanup
                     WinJS.UI.Pages._remove(fragfile);
@@ -63,7 +63,7 @@ module WinJSTests {
             WinJS.UI.Pages.render(fragfile, d).then(function () {
                 var rendered = d.firstElementChild;
                 LiveUnit.Assert.areEqual("This is just a test.", rendered.textContent);
-            }).then(null, unhandledTestError).then(complete);
+            }).then(null, Helper.unhandledTestError).then(complete);
         };
 
         testFragmentControlRemove = function (complete) {
@@ -76,7 +76,7 @@ module WinJSTests {
             var instance = new ctor(d);
 
             // fragment file should be present in the cache after calling constructor
-            LiveUnit.Assert.isTrue(namedObjectContainsString(WinJS.UI.Fragments._cacheStore, fragfile) >= 0);
+            LiveUnit.Assert.isTrue(Helper.namedObjectContainsString(WinJS.UI.Fragments._cacheStore, fragfile) >= 0);
 
             instance.elementReady.then(function (element) {
                 LiveUnit.Assert.isTrue(element === d);
@@ -85,9 +85,9 @@ module WinJSTests {
                     WinJS.UI.Pages._remove(fragfile);
 
                     // fragment file should no longer be in the cache after calling remove
-                    LiveUnit.Assert.isFalse(namedObjectContainsString(WinJS.UI.Fragments._cacheStore, fragfile) >= 0);
+                    LiveUnit.Assert.isFalse(Helper.namedObjectContainsString(WinJS.UI.Fragments._cacheStore, fragfile) >= 0);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // cleanup
                     WinJS.UI.Pages._remove(fragfile);
@@ -115,7 +115,7 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual("This is just a test.", element.childNodes[0].textContent);
                 LiveUnit.Assert.areEqual(1, element.childNodes.length);
             }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // cleanup
                     WinJS.UI.Pages._remove(fragfile);
@@ -146,7 +146,7 @@ module WinJSTests {
                     // cleanup
                     WinJS.UI.Pages._remove(fragfile);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         };
 
@@ -188,7 +188,7 @@ module WinJSTests {
                     WinJS.Utilities.disposeSubTree(d);
                     document.body.removeChild(d);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         };
 
@@ -213,7 +213,7 @@ module WinJSTests {
                     // make sure CSS was applied
                     Helper.Assert.areColorsEqual("rgb(255, 0, 0)", getComputedStyle(x).color);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // clean up after the test
                     WinJS.UI.Pages._remove(fragfile);
@@ -247,7 +247,7 @@ module WinJSTests {
                         LiveUnit.Assert.areEqual("hit", d.children[3].textContent, "Loaded script should have run and updated the body for the generated element");
                     });
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // clean up after the test
                     WinJS.UI.Pages._remove(fragfile);
@@ -307,7 +307,7 @@ module WinJSTests {
                     // clean up after the test
                     WinJS.UI.Pages._remove(fragfile);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         };
 
@@ -403,7 +403,7 @@ module WinJSTests {
                         // clean up after the test
                         WinJS.UI.Pages._remove(fragfile);
                     }).
-                    then(null, unhandledTestError);
+                    then(null, Helper.unhandledTestError);
             }
 
             function failStage(num) {
@@ -422,7 +422,7 @@ module WinJSTests {
                         // clean up after the test
                         WinJS.UI.Pages._remove(fragfile);
                     }).
-                    then(null, unhandledTestError);
+                    then(null, Helper.unhandledTestError);
             }
 
             allStages().then(function () {
@@ -469,7 +469,7 @@ module WinJSTests {
                     LiveUnit.Assert.fail("Should not get here");
                 }
                 )
-                .then(null, unhandledTestError)
+                .then(null, Helper.unhandledTestError)
                 .then(cleanup)
                 .then(complete);
 
@@ -493,7 +493,7 @@ module WinJSTests {
                     LiveUnit.Assert.isFalse(control.selfhost);
                     LiveUnit.Assert.isTrue(control.runWithoutSelfHost);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // clean up after the test
                     WinJS.UI.Pages._remove(fragfile);
@@ -535,7 +535,7 @@ module WinJSTests {
                         var page1Content = WinJS.Utilities.query(".page1")[0];
                         LiveUnit.Assert.isTrue(page1Content !== undefined);
                     }).
-                        then(null, unhandledTestError).
+                        then(null, Helper.unhandledTestError).
                         then(function () {
                             // clean up after the test
                             WinJS.UI.Pages._remove(contentElement);
@@ -557,7 +557,7 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual("This is just a test.", rendered.textContent);
                 LiveUnit.Assert.isTrue(d.winControl !== undefined);
             }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // cleanup
                     WinJS.UI.Pages._remove(fragfile);

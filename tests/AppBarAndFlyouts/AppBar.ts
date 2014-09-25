@@ -3,8 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="OverlayHelpers.ts" />
 
 module CorsicaTests {
@@ -365,7 +364,7 @@ module CorsicaTests {
                     appbar.hide();
                     appbar.show();
 
-                    return CommonUtilities.waitForEvent(appbar, "aftershow");
+                    return Helper.waitForEvent(appbar, "aftershow");
                 }).
                 done(complete);
         };
@@ -410,34 +409,34 @@ module CorsicaTests {
 
                 // Verify 'End' & Left arrow keys
                 LiveUnit.LoggingCore.logComment("Verify that 'End' key moves focus to last visible command");
-                CommonUtilities.keydown(commandsInVisualOrder[expectedIndex], Key.end);
+                Helper.keydown(commandsInVisualOrder[expectedIndex], Key.end);
                 expectedIndex = commandsInVisualOrder.length - 1;
                 LiveUnit.Assert.areEqual(commandsInVisualOrder[expectedIndex], document.activeElement);
                 do {
-                    CommonUtilities.keydown(commandsInVisualOrder[expectedIndex], Key.leftArrow);
+                    Helper.keydown(commandsInVisualOrder[expectedIndex], Key.leftArrow);
                     expectedIndex--;
                     LiveUnit.Assert.areEqual(commandsInVisualOrder[expectedIndex], document.activeElement);
                 } while (expectedIndex > 0);
 
                 LiveUnit.LoggingCore.logComment("Verify that pressing Left arrow key on first visible command wraps focus back to the last visible command.");
-                CommonUtilities.keydown(commandsInVisualOrder[expectedIndex], Key.leftArrow);
+                Helper.keydown(commandsInVisualOrder[expectedIndex], Key.leftArrow);
                 expectedIndex = commandsInVisualOrder.length - 1;
                 LiveUnit.Assert.areEqual(commandsInVisualOrder[expectedIndex], document.activeElement);
 
                 // Verify 'Home' & Right arrow keys
                 LiveUnit.LoggingCore.logComment("Verify that 'Home' key moves focus to first visible command");
-                CommonUtilities.keydown(commandsInVisualOrder[expectedIndex], Key.home);
+                Helper.keydown(commandsInVisualOrder[expectedIndex], Key.home);
                 expectedIndex = 0;
                 LiveUnit.Assert.areEqual(commandsInVisualOrder[expectedIndex], document.activeElement);
 
                 do {
-                    CommonUtilities.keydown(commandsInVisualOrder[expectedIndex], Key.rightArrow);
+                    Helper.keydown(commandsInVisualOrder[expectedIndex], Key.rightArrow);
                     expectedIndex++;
                     LiveUnit.Assert.areEqual(commandsInVisualOrder[expectedIndex], document.activeElement);
                 } while (expectedIndex < commandsInVisualOrder.length - 1);
 
                 LiveUnit.LoggingCore.logComment("Verify that pressing Right arrow key on last visible command, wraps focus back to first visible command.");
-                CommonUtilities.keydown(commandsInVisualOrder[expectedIndex], Key.rightArrow);
+                Helper.keydown(commandsInVisualOrder[expectedIndex], Key.rightArrow);
                 expectedIndex = 0;
                 LiveUnit.Assert.areEqual(commandsInVisualOrder[expectedIndex], document.activeElement);
 
@@ -461,7 +460,7 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(firstCmd, document.activeElement, "The focus should be on the first AppBarCommand");
             // Don't wait for the aftershow event to fire to perform the action
-            CommonUtilities.keydown(_element, Key.rightArrow);
+            Helper.keydown(_element, Key.rightArrow);
             LiveUnit.Assert.areEqual(secondCmd, document.activeElement, "The focus should be on the Second AppBarCommand");
             complete();
         };
@@ -482,10 +481,10 @@ module CorsicaTests {
                 LiveUnit.Assert.isTrue(_element.contains(activeElement), "The focused element should be in the AppBar HTML");
 
                 LiveUnit.LoggingCore.logComment("Verify that 'End', 'Right', 'Left', & 'Home' keys do not crash when the AppBar is empty.");
-                CommonUtilities.keydown(_element, Key.end);
-                CommonUtilities.keydown(_element, Key.home);
-                CommonUtilities.keydown(_element, Key.leftArrow);
-                CommonUtilities.keydown(_element, Key.rightArrow);
+                Helper.keydown(_element, Key.end);
+                Helper.keydown(_element, Key.home);
+                Helper.keydown(_element, Key.leftArrow);
+                Helper.keydown(_element, Key.rightArrow);
 
                 LiveUnit.LoggingCore.logComment("Verify focus is still on the AppBarElement.");
                 LiveUnit.Assert.isTrue(_element.contains(activeElement), "The focused element should still be in the AppBar HTML.");
@@ -557,53 +556,53 @@ module CorsicaTests {
 
                 // Verify 'End' & Left arrow keys
                 LiveUnit.LoggingCore.logComment("Verify that 'End' key moves focus to last visible command");
-                CommonUtilities.keydown(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus, Key.end);
+                Helper.keydown(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus, Key.end);
                 expectedIndex = reachableCommandsInVisualOrder.length - 1;
                 LiveUnit.Assert.areEqual(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus.id, (<HTMLElement>document.activeElement).id);
                 LiveUnit.LoggingCore.logComment("Verify that 'Left' arrow key moves focus to correct command");
                 do {
                     if (WinJS.Utilities.hasClass(<HTMLElement>document.activeElement, "win-interactive")) {
                         LiveUnit.LoggingCore.logComment("Verify that 'Left' arrow key doesn't move focus to the previous element when the active element has the win-interactive class");
-                        CommonUtilities.keydown(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus, Key.leftArrow);
+                        Helper.keydown(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus, Key.leftArrow);
                         LiveUnit.Assert.areEqual(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus.id, (<HTMLElement>document.activeElement).id);
                         // Manually move focus to continue the loop.
                         expectedIndex--;
                         reachableCommandsInVisualOrder[expectedIndex].lastElementFocus.focus();
                     } else {
-                        CommonUtilities.keydown(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus, Key.leftArrow);
+                        Helper.keydown(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus, Key.leftArrow);
                         expectedIndex--;
                         LiveUnit.Assert.areEqual(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus.id, (<HTMLElement>document.activeElement).id);
                     }
                 } while (expectedIndex > 0);
 
                 LiveUnit.LoggingCore.logComment("Verify that pressing Left arrow key on first visible command wraps focus back to the last visible command.");
-                CommonUtilities.keydown(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus, Key.leftArrow);
+                Helper.keydown(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus, Key.leftArrow);
                 expectedIndex = reachableCommandsInVisualOrder.length - 1;
                 LiveUnit.Assert.areEqual(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus.id, (<HTMLElement>document.activeElement).id);
 
                 // Verify 'Home' & Right arrow keys
                 LiveUnit.LoggingCore.logComment("Verify that 'Home' key moves focus to first visible command");
-                CommonUtilities.keydown(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus, Key.home);
+                Helper.keydown(reachableCommandsInVisualOrder[expectedIndex].lastElementFocus, Key.home);
                 expectedIndex = 0;
                 LiveUnit.Assert.areEqual(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus.id, (<HTMLElement>document.activeElement).id);
                 LiveUnit.LoggingCore.logComment("Verify that 'Right' arrow key moves focus to correct command");
                 do {
                     if (WinJS.Utilities.hasClass(<HTMLElement>document.activeElement, "win-interactive")) {
                         LiveUnit.LoggingCore.logComment("Verify that 'Right' arrow key doesn't move focus to the next element when the active element has the win-interactive class");
-                        CommonUtilities.keydown(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus, Key.rightArrow);
+                        Helper.keydown(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus, Key.rightArrow);
                         LiveUnit.Assert.areEqual(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus.id, (<HTMLElement>document.activeElement).id);
                         // Manually move focus to continue the loop.
                         expectedIndex++;
                         reachableCommandsInVisualOrder[expectedIndex].firstElementFocus.focus();
                     } else {
-                        CommonUtilities.keydown(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus, Key.rightArrow);
+                        Helper.keydown(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus, Key.rightArrow);
                         expectedIndex++;
                         LiveUnit.Assert.areEqual(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus.id, (<HTMLElement>document.activeElement).id);
                     }
                 } while (expectedIndex < reachableCommandsInVisualOrder.length - 1);
 
                 LiveUnit.LoggingCore.logComment("Verify that pressing Right arrow key on last visible command, wraps focus back to first visible command.");
-                CommonUtilities.keydown(reachableCommandsInVisualOrder[expectedIndex].element, Key.rightArrow);
+                Helper.keydown(reachableCommandsInVisualOrder[expectedIndex].element, Key.rightArrow);
                 expectedIndex = 0;
                 LiveUnit.Assert.areEqual(reachableCommandsInVisualOrder[expectedIndex].firstElementFocus.id, (<HTMLElement>document.activeElement).id);
 
@@ -648,24 +647,24 @@ module CorsicaTests {
 
                 // Verify multiple 'End' key downs
                 LiveUnit.LoggingCore.logComment("Verify that 'End' key moves focus to last visible command");
-                CommonUtilities.keydown(commandsInVisualOrder[expectedIndex].firstElementFocus, Key.end);
+                Helper.keydown(commandsInVisualOrder[expectedIndex].firstElementFocus, Key.end);
                 expectedIndex = commandsInVisualOrder.length - 1;
                 LiveUnit.Assert.areEqual(commandsInVisualOrder[expectedIndex].lastElementFocus.id, (<HTMLElement>document.activeElement).id);
 
                 LiveUnit.LoggingCore.logComment("Verify that pressing 'End' key again doesn't moves focus");
                 activeElement = <HTMLElement>document.activeElement;
-                CommonUtilities.keydown(commandsInVisualOrder[expectedIndex].firstElementFocus, Key.end);
+                Helper.keydown(commandsInVisualOrder[expectedIndex].firstElementFocus, Key.end);
                 LiveUnit.Assert.areEqual(activeElement.id, (<HTMLElement>document.activeElement).id);
 
                 // Verify multiple 'Home' key downs
                 LiveUnit.LoggingCore.logComment("Verify that 'Home' key moves focus to first visible command");
-                CommonUtilities.keydown(commandsInVisualOrder[expectedIndex].firstElementFocus, Key.home);
+                Helper.keydown(commandsInVisualOrder[expectedIndex].firstElementFocus, Key.home);
                 expectedIndex = 0;
                 LiveUnit.Assert.areEqual(commandsInVisualOrder[expectedIndex].lastElementFocus.id, (<HTMLElement>document.activeElement).id);
 
                 LiveUnit.LoggingCore.logComment("Verify that pressing 'Home' key again doesn't moves focus");
                 activeElement = <HTMLElement>document.activeElement;
-                CommonUtilities.keydown(commandsInVisualOrder[expectedIndex].firstElementFocus, Key.home);
+                Helper.keydown(commandsInVisualOrder[expectedIndex].firstElementFocus, Key.home);
                 LiveUnit.Assert.areEqual(activeElement.id, (<HTMLElement>document.activeElement).id);
 
                 complete();
@@ -1498,7 +1497,7 @@ module CorsicaTests {
             // Simulate click on invoke button.
             var click = function (appBar) {
                 var trigger:any = function () {
-                    CommonUtilities.click(appBar._invokeButton);
+                    Helper.click(appBar._invokeButton);
                 };
                 trigger.sourceAppBar = appBar;
                 return trigger;

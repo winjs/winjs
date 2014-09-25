@@ -4,7 +4,6 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts" />
 /// <reference path="../TestLib/listviewutils.ts" />
 
 module WinJSTests {
@@ -135,7 +134,7 @@ module WinJSTests {
         var scrollMax = 0;
         var increment = 50;
         ListViewUtils.waitForReady(lv)().done(function () {
-            asyncWhile(function () {
+            Helper.asyncWhile(function () {
                 scrollMax = viewport.scrollHeight - viewport.clientHeight;
                 return WinJS.Promise.wrap(viewport.scrollTop < scrollMax);
             }, function () {
@@ -161,7 +160,7 @@ module WinJSTests {
         var increment = 50;
 
         ListViewUtils.waitForReady(lv)().done(function () {
-            asyncWhile(function () {
+            Helper.asyncWhile(function () {
                 scrollMax = viewport.scrollHeight - viewport.clientHeight;
                 return WinJS.Promise.wrap(viewport.scrollTop < scrollMax);
             }, function () {
@@ -184,7 +183,7 @@ module WinJSTests {
 
         var increment = 50;
 
-        asyncWhile(function () {
+        Helper.asyncWhile(function () {
             var scrollMax = viewport.scrollHeight - viewport.clientHeight;
             return WinJS.Promise.wrap(viewport.scrollTop < scrollMax);
         }, function () {
@@ -216,7 +215,7 @@ module WinJSTests {
 
         var increment = 50;
 
-        asyncWhile(function () {
+        Helper.asyncWhile(function () {
             var scrollMax = viewport.scrollHeight - viewport.clientHeight;
             return WinJS.Promise.wrap(viewport.scrollTop < scrollMax);
         }, function () {
@@ -239,7 +238,7 @@ module WinJSTests {
         var itemCount = columnsPerPage * rowsPerPage * pages;
         var maxFirstVisibleIndex = itemCount - (columnsPerPage * (rowsPerPage + 1)); //Skip the last page and 1 row
         ListViewUtils.waitForReady(lv)().done(function () {
-            asyncWhile(function () {
+            Helper.asyncWhile(function () {
                 return WinJS.Promise.wrap(lv.indexOfFirstVisible < maxFirstVisibleIndex);
             }, function () {
                     return new WinJS.Promise(function (c) {
@@ -267,7 +266,7 @@ module WinJSTests {
             ((itemCount / 2) | 0) - 1,   // middle
             itemCount - 1        // end
         ];
-        asyncWhile(function () {
+        Helper.asyncWhile(function () {
             return WinJS.Promise.wrap(ensureVisibleTargets.length > 0);
         }, function () {
                 return new WinJS.Promise(function (c) {

@@ -4,7 +4,6 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts" />
 /// <reference path="../TestLib/listviewutils.ts" />
 
 module WinJSTests {
@@ -154,7 +153,7 @@ module WinJSTests {
         var scrollPositions;
         var scrollIndex;
         ListViewUtils.waitForReady(lv)().done(function () {
-            asyncWhile(function () {
+            Helper.asyncWhile(function () {
                 if (!scrollPositions) {
                     var scrollMax = viewport.scrollWidth - viewport.clientWidth;
                     scrollPositions = [50, Math.floor(scrollMax / 2), scrollMax];
@@ -182,7 +181,7 @@ module WinJSTests {
         var scrollMax = 0;
         var increment = 50;
         ListViewUtils.waitForReady(lv)().done(function () {
-            asyncWhile(function () {
+            Helper.asyncWhile(function () {
                 scrollMax = viewport.scrollWidth - viewport.clientWidth;
                 return WinJS.Promise.wrap(WinJS.Utilities.getScrollPosition(viewport).scrollLeft < scrollMax);
             }, function () {
@@ -205,7 +204,7 @@ module WinJSTests {
         var scrollPositions;
         var scrollIndex;
         ListViewUtils.waitForReady(lv)().done(function () {
-            asyncWhile(function () {
+            Helper.asyncWhile(function () {
                 if (!scrollPositions) {
                     var scrollMax = viewport.scrollWidth - viewport.clientWidth;
                     scrollPositions = [50, Math.floor(scrollMax / 2), scrollMax];
@@ -234,7 +233,7 @@ module WinJSTests {
         var itemCount = columnsPerPage * rowsPerPage * pages;
         var maxFirstVisibleIndex = itemCount - ((1 + columnsPerPage) * rowsPerPage); // Skip the last page and 1 column
         ListViewUtils.waitForReady(lv)().done(function () {
-            asyncWhile(function () {
+            Helper.asyncWhile(function () {
                 return WinJS.Promise.wrap(lv.indexOfFirstVisible < maxFirstVisibleIndex);
             }, function () {
                     return new WinJS.Promise(function (c) {
@@ -261,7 +260,7 @@ module WinJSTests {
             ((itemCount / 2) | 0) - 1,   // middle
             itemCount - 1                // end
         ];
-        asyncWhile(function () {
+        Helper.asyncWhile(function () {
             return WinJS.Promise.wrap(ensureVisibleTargets.length > 0);
         }, function () {
                 return new WinJS.Promise(function (c) {

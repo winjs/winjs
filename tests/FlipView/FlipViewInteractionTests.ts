@@ -4,8 +4,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.ts" />
 /// <reference path="../TestLib/UnitTestsCommon.ts" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="FlipperHelpers.ts" />
 /// <deploy src="../TestData/" />
 
@@ -29,8 +28,8 @@ module WinJSTests {
                 LiveUnit.Assert.isFalse(isButtonVisible(flipView._prevButton), "Prev button not hidden on initialization");
                 LiveUnit.Assert.isFalse(isButtonVisible(flipView._nextButton), "Next button not hidden on initialization");
 
-                var event = CommonUtilities.createPointerEvent("mouse");
-                CommonUtilities.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + 10, window.screenTop + 10, 10, 10, false, false, false, false, 0, null, 10, 10, 0, 0, 0, 0, 0, 0, 0, (event['MSPOINTER_TYPE_MOUSE'] || "mouse"), 0, true);
+                var event = Helper.createPointerEvent("mouse");
+                Helper.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + 10, window.screenTop + 10, 10, 10, false, false, false, false, 0, null, 10, 10, 0, 0, 0, 0, 0, 0, 0, (event['MSPOINTER_TYPE_MOUSE'] || "mouse"), 0, true);
                 flipView._contentDiv.dispatchEvent(event);
 
                 LiveUnit.Assert.isNotNull(flipView._nextButtonAnimation, "nextButtonAnimation is null/undefined on fade in");

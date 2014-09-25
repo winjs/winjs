@@ -4,7 +4,6 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/util.ts" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 
 
 module RatingUtils {
@@ -94,7 +93,7 @@ module RatingUtils {
         ///  Test setup to run prior to every test case.
         /// </summary>
         LiveUnit.LoggingCore.logComment("In setup");
-        CommonUtilities.addTag("div", "rating");
+        Helper.addTag("div", "rating");
 
         //WinBlue:280045 // our code calls releasePointerCapture on faked events, which causes an exception when the pointerid is invalid
         var element = document.getElementById("rating");
@@ -116,7 +115,7 @@ module RatingUtils {
         ///  Test cleanup to run prior to every test case.
         /// </summary>
         LiveUnit.LoggingCore.logComment("In cleanUp");
-        CommonUtilities.removeElementById("rating");
+        Helper.removeElementById("rating");
     }
 
     //-----------------------------------------------------------------------------------
@@ -133,7 +132,7 @@ module RatingUtils {
         /// <param name="attributes" type="object">
         ///  JavaScript object containing list of attributes to set on HTML tag (note that tagId takes precedence for "id" attribute)
         /// </param>
-        return CommonUtilities.addTag(tagName, tagId, attributes);
+        return Helper.addTag(tagName, tagId, attributes);
     }
 
     //-----------------------------------------------------------------------------------
@@ -145,7 +144,7 @@ module RatingUtils {
         /// </param>
         /// <returns type="object" />
         /// </summary>
-        return CommonUtilities.getClientRect(elem);
+        return Helper.getClientRect(elem);
     }
 
     //-----------------------------------------------------------------------------------
@@ -156,7 +155,7 @@ module RatingUtils {
         /// <param name="tagId" type="string">
         ///  String specifying the tag to remove.
         /// </param>
-        var element = CommonUtilities.removeElementById(tagId);
+        var element = Helper.removeElementById(tagId);
         LiveUnit.Assert.isNotNull(element, "removeElementById: Couldn't find element " + tagId);
         return element;
     }
@@ -195,7 +194,7 @@ module RatingUtils {
         /// </param>
         /// <returns type="object" />
 
-        LiveUnit.LoggingCore.logComment("Instantiating rating on element '" + element + "' with options = \"" + CommonUtilities.getOptionsAsString(options) + "\"");
+        LiveUnit.LoggingCore.logComment("Instantiating rating on element '" + element + "' with options = \"" + Helper.getOptionsAsString(options) + "\"");
 
         if (typeof (element) === "string") {
             element = document.getElementById(element);
@@ -460,7 +459,7 @@ module RatingUtils {
 
         LiveUnit.LoggingCore.logComment("Current options: \"{maxRating: " + maxRatingInit + ", userRating: " + userRatingInit + ", averageRating: " + averageRatingInit + ", disabled: " + disabledInit + "}\".");
 
-        LiveUnit.LoggingCore.logComment("Setting options to: \"" + CommonUtilities.getOptionsAsString(options) + "\".");
+        LiveUnit.LoggingCore.logComment("Setting options to: \"" + Helper.getOptionsAsString(options) + "\".");
 
         // Many tests use "Math.random()" to generate data, causing us to sometimes run into false positive failures due to
         //  rounding problems.  Rather than re-author the tests, limit all floating point values to just 10 digits precision
@@ -488,9 +487,9 @@ module RatingUtils {
         if (exception) {
             // Since we got an exception, verify it was expected and gave us the correct exception message.
             if (useProperties) {
-                LiveUnit.Assert.areEqual(true, expectFailure, "Setting rating properties to " + CommonUtilities.getOptionsAsString(options) + ") threw exception: " + exception.message + ", verify expectFailure=true.");
+                LiveUnit.Assert.areEqual(true, expectFailure, "Setting rating properties to " + Helper.getOptionsAsString(options) + ") threw exception: " + exception.message + ", verify expectFailure=true.");
             } else {
-                LiveUnit.Assert.areEqual(true, expectFailure, "Call to WinJS.UI.setOptions(rating, " + CommonUtilities.getOptionsAsString(options) + ") threw exception: " + exception.message + ", verify expectFailure=true.");
+                LiveUnit.Assert.areEqual(true, expectFailure, "Call to WinJS.UI.setOptions(rating, " + Helper.getOptionsAsString(options) + ") threw exception: " + exception.message + ", verify expectFailure=true.");
             }
 
             LiveUnit.Assert.isNotNull(options, "Exception shouldn't be thrown when options null, exception.message: " + exception.message);
@@ -500,32 +499,32 @@ module RatingUtils {
             } else {
                 // All options valid and DOM element valid, no reason for us to fail.
                 if (useProperties) {
-                    LiveUnit.Assert.fail("Unexpected exception thrown when setting rating properties to " + CommonUtilities.getOptionsAsString(options) + ": " + exception.message);
+                    LiveUnit.Assert.fail("Unexpected exception thrown when setting rating properties to " + Helper.getOptionsAsString(options) + ": " + exception.message);
                 } else {
-                    LiveUnit.Assert.fail("Unexpected exception thrown by WinJS.UI.setOptions(rating, " + CommonUtilities.getOptionsAsString(options) + "): " + exception.message);
+                    LiveUnit.Assert.fail("Unexpected exception thrown by WinJS.UI.setOptions(rating, " + Helper.getOptionsAsString(options) + "): " + exception.message);
                 }
             }
 
             // Since we got an exception, all values should have been left un-updated
-            LiveUnit.Assert.areEqual(maxRatingInit, rating.maxRating, "Verify maxRating not changed when exception thrown while setting rating options to " + CommonUtilities.getOptionsAsString(options));
-            LiveUnit.Assert.areEqual(userRatingInit, rating.userRating, "Verify userRating not changed when exception thrown while setting rating options to " + CommonUtilities.getOptionsAsString(options));
-            LiveUnit.Assert.areEqual(averageRatingInit, rating.averageRating, "Verify averageRating not changed when exception thrown while setting rating options to " + CommonUtilities.getOptionsAsString(options));
-            LiveUnit.Assert.areEqual(disabledInit, rating.disabled, "Verify disabled not changed when exception thrown while setting rating options to " + CommonUtilities.getOptionsAsString(options));
+            LiveUnit.Assert.areEqual(maxRatingInit, rating.maxRating, "Verify maxRating not changed when exception thrown while setting rating options to " + Helper.getOptionsAsString(options));
+            LiveUnit.Assert.areEqual(userRatingInit, rating.userRating, "Verify userRating not changed when exception thrown while setting rating options to " + Helper.getOptionsAsString(options));
+            LiveUnit.Assert.areEqual(averageRatingInit, rating.averageRating, "Verify averageRating not changed when exception thrown while setting rating options to " + Helper.getOptionsAsString(options));
+            LiveUnit.Assert.areEqual(disabledInit, rating.disabled, "Verify disabled not changed when exception thrown while setting rating options to " + Helper.getOptionsAsString(options));
 
             if (tooltipsInit) {
                 for (var i = 0; i < rating.maxRating; ++i) {
-                    LiveUnit.Assert.areEqual(tooltipsInit[i], rating.tooltipStrings[i], "Verify tooltipStrings not changed when exception thrown while setting rating options to " + CommonUtilities.getOptionsAsString(options));
+                    LiveUnit.Assert.areEqual(tooltipsInit[i], rating.tooltipStrings[i], "Verify tooltipStrings not changed when exception thrown while setting rating options to " + Helper.getOptionsAsString(options));
                 }
             } else {
-                LiveUnit.Assert.areEqual(null, rating.tooltipStrings, "Verify tooltipStrings not changed from null when exceptiong thrown while setting rating options to " + CommonUtilities.getOptionsAsString(options));
+                LiveUnit.Assert.areEqual(null, rating.tooltipStrings, "Verify tooltipStrings not changed from null when exceptiong thrown while setting rating options to " + Helper.getOptionsAsString(options));
             }
 
         } else {
             // No exception means function must have succeeded (as all failures should throw an exception)
             if (useProperties) {
-                LiveUnit.Assert.areEqual(false, expectFailure, "Setting rating properties to " + CommonUtilities.getOptionsAsString(options) + " succeeded, verify expectFailure=false.");
+                LiveUnit.Assert.areEqual(false, expectFailure, "Setting rating properties to " + Helper.getOptionsAsString(options) + " succeeded, verify expectFailure=false.");
             } else {
-                LiveUnit.Assert.areEqual(false, expectFailure, "Call to WinJS.UI.setOptions(rating, " + CommonUtilities.getOptionsAsString(options) + ") succeeded, verify expectFailure=false.");
+                LiveUnit.Assert.areEqual(false, expectFailure, "Call to WinJS.UI.setOptions(rating, " + Helper.getOptionsAsString(options) + ") succeeded, verify expectFailure=false.");
             }
 
             // Verify options handled correctly
@@ -584,36 +583,36 @@ module RatingUtils {
             if (options && "tooltipStrings" in options) {
                 if (options.tooltipStrings === null) {
                     for (var i = 0; i < rating.maxRating; ++i) {
-                        LiveUnit.Assert.areEqual(i + 1, rating.tooltipStrings[i], "Verify tooltipStrings uses default tooltips when set as part of setting rating options to " + CommonUtilities.getOptionsAsString(options));
+                        LiveUnit.Assert.areEqual(i + 1, rating.tooltipStrings[i], "Verify tooltipStrings uses default tooltips when set as part of setting rating options to " + Helper.getOptionsAsString(options));
                     }
                     LiveUnit.Assert.areEqual(this.localizedStrings[this.currentLanguage].clearYourRating, rating.tooltipStrings[rating.maxRating], "Verify tooltipStrings uses default clear rating tooltip when set to null.");
                 } else {
                     var tooltipIndex;
                     for (tooltipIndex = 0; tooltipIndex < options.tooltipStrings.length && tooltipIndex <= rating.maxRating; ++tooltipIndex) {
-                        LiveUnit.Assert.areEqual(options.tooltipStrings[tooltipIndex], rating.tooltipStrings[tooltipIndex], "Verify tooltipStrings set properly while setting rating options to " + CommonUtilities.getOptionsAsString(options));
+                        LiveUnit.Assert.areEqual(options.tooltipStrings[tooltipIndex], rating.tooltipStrings[tooltipIndex], "Verify tooltipStrings set properly while setting rating options to " + Helper.getOptionsAsString(options));
                     }
 
                     if (tooltipIndex < options.tooltipStrings.length) {
                         // test provided too many tooltips, verify rest of rating.tooltipStrings undefined
                         for (; tooltipIndex < options.tooltipStrings.length; ++tooltipIndex) {
-                            LiveUnit.Assert.areEqual(undefined, rating.tooltipStrings[tooltipIndex], "Verify tooltipStrings only allows setting of up to maxRating tooltips when tooltipStrings supplied more than maxRating tooltips as part of" + CommonUtilities.getOptionsAsString(options));
+                            LiveUnit.Assert.areEqual(undefined, rating.tooltipStrings[tooltipIndex], "Verify tooltipStrings only allows setting of up to maxRating tooltips when tooltipStrings supplied more than maxRating tooltips as part of" + Helper.getOptionsAsString(options));
                         }
                     } else if (tooltipIndex < rating.tooltipStrings.length) {
                         // test provided too few tooltips, verify default used for rest
                         for (; tooltipIndex < rating.maxRating; ++tooltipIndex) {
-                            LiveUnit.Assert.areEqual(tooltipIndex + 1, rating.tooltipStrings[tooltipIndex], "Verify tooltipStrings uses default tooltips when tooltipStrings was not supplied enough tooltips as part of " + CommonUtilities.getOptionsAsString(options));
+                            LiveUnit.Assert.areEqual(tooltipIndex + 1, rating.tooltipStrings[tooltipIndex], "Verify tooltipStrings uses default tooltips when tooltipStrings was not supplied enough tooltips as part of " + Helper.getOptionsAsString(options));
                         }
-                        LiveUnit.Assert.areEqual(this.localizedStrings[this.currentLanguage].clearYourRating, rating.tooltipStrings[rating.maxRating], "Verify tooltipStrings uses default clear rating tooltip when tooltipStrings was not supplied enough tooltips as part of  " + CommonUtilities.getOptionsAsString(options));
+                        LiveUnit.Assert.areEqual(this.localizedStrings[this.currentLanguage].clearYourRating, rating.tooltipStrings[rating.maxRating], "Verify tooltipStrings uses default clear rating tooltip when tooltipStrings was not supplied enough tooltips as part of  " + Helper.getOptionsAsString(options));
                     }
                 }
             } else {
                 if (tooltipsInit) {
                     for (var i = 0; i < rating.maxRating; ++i) {
-                        LiveUnit.Assert.areEqual(tooltipsInit[i], rating.tooltipStrings[i], "Verify tooltipStrings not changed from initial value while setting rating options to " + CommonUtilities.getOptionsAsString(options));
+                        LiveUnit.Assert.areEqual(tooltipsInit[i], rating.tooltipStrings[i], "Verify tooltipStrings not changed from initial value while setting rating options to " + Helper.getOptionsAsString(options));
                     }
-                    LiveUnit.Assert.areEqual(this.localizedStrings[this.currentLanguage].clearYourRating, rating.tooltipStrings[rating.maxRating], "Verify clear rating tooltip not changed from initial value when setting rating options to " + CommonUtilities.getOptionsAsString(options));
+                    LiveUnit.Assert.areEqual(this.localizedStrings[this.currentLanguage].clearYourRating, rating.tooltipStrings[rating.maxRating], "Verify clear rating tooltip not changed from initial value when setting rating options to " + Helper.getOptionsAsString(options));
                 } else {
-                    LiveUnit.Assert.areEqual(null, rating.tooltipStrings, "Verify tooltipStrings not changed from null while setting rating options to " + CommonUtilities.getOptionsAsString(options));
+                    LiveUnit.Assert.areEqual(null, rating.tooltipStrings, "Verify tooltipStrings not changed from null while setting rating options to " + Helper.getOptionsAsString(options));
                 }
             }
         }
@@ -641,7 +640,7 @@ module RatingUtils {
         /// </param>
 
         if (typeof (element) === "string") {
-            element = CommonUtilities.getElementById(element);
+            element = Helper.getElementById(element);
         }
 
         // Get a handle to the (supposedly existing) ratings control
@@ -917,7 +916,7 @@ module RatingUtils {
         /// </param>
 
         if (typeof (element) === "string") {
-            element = CommonUtilities.getElementById(element);
+            element = Helper.getElementById(element);
         }
 
         // Get a handle to the (supposedly existing) ratings control
@@ -1017,7 +1016,7 @@ module RatingUtils {
         ///  Number specifying maximum length for created string.
         /// </param>
         /// <returns type="string" />
-        return CommonUtilities.randomString(maxLength);
+        return Helper.randomString(maxLength);
     }
 
     //-----------------------------------------------------------------------------------
@@ -1031,7 +1030,7 @@ module RatingUtils {
         /// <param name="returnString" type="boolean">
         /// </param>
         /// <returns type="object" />
-        return CommonUtilities.randomHTML(totalElements, returnString);
+        return Helper.randomHTML(totalElements, returnString);
     }
 
     //-----------------------------------------------------------------------------------
@@ -1268,23 +1267,23 @@ module RatingUtils {
     }
 
     export function mouseOver(fromElement, toElement?) {
-        CommonUtilities.mouseOverUsingMiP(fromElement, toElement);
+        Helper.mouseOverUsingMiP(fromElement, toElement);
     }
 
     export function mouseDown(element) {
-        CommonUtilities.mouseDownUsingMiP(element);
+        Helper.mouseDownUsingMiP(element);
     }
 
     export function mouseUp(element) {
-        CommonUtilities.mouseUpUsingMiP(element);
+        Helper.mouseUpUsingMiP(element);
     }
 
     export function click(element) {
-        CommonUtilities.clickUsingMiP(element);
+        Helper.clickUsingMiP(element);
     }
 
     export function touchOver(fromElement, toElement) {
-        CommonUtilities.touchOver(fromElement, toElement);
+        Helper.touchOver(fromElement, toElement);
     }
 
     export function touchDown(element) {
@@ -1296,7 +1295,7 @@ module RatingUtils {
                 element.parentNode.setAttribute("callsToPointerCaptureExpected", Number(element.parentNode.getAttribute("callsToPointerCaptureExpected")) + 1);
             }
 
-            CommonUtilities.touchDown(element);
+            Helper.touchDown(element);
 
             if (element.setPointerCapture) {
                 LiveUnit.Assert.areEqual(
@@ -1306,20 +1305,20 @@ module RatingUtils {
                     (!element.parentNode.winControl.disabled) ? " blocking panning when enabled." : " allowing panning when disabled.");
             }
         } else {
-            CommonUtilities.touchDown(element);
+            Helper.touchDown(element);
         }
     }
 
     export function touchUp(element) {
-        CommonUtilities.touchUp(element);
+        Helper.touchUp(element);
     }
 
     export function touchCancel(element) {
-        CommonUtilities.touchCancel(element);
+        Helper.touchCancel(element);
     }
 
     export function tap(element) {
-        CommonUtilities.tap(element);
+        Helper.tap(element);
     }
 
     export function keyDown(element, keyCode) {
@@ -1336,11 +1335,11 @@ module RatingUtils {
     }
 
     export function focus(element) {
-        CommonUtilities.focus(element);
+        Helper.focus2(element);
     }
 
     export function blur(element) {
-        CommonUtilities.blur(element);
+        Helper.blur(element);
     }
 
     //-----------------------------------------------------------------------------------

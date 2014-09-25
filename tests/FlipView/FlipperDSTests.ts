@@ -2,7 +2,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="FlipperUtils.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 
@@ -10,7 +10,7 @@ module WinJSTests {
     "use strict";
 
     var flipperUtils = FlipperUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     // Create NavigationTests object
     export class DataSourceTests {

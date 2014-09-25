@@ -3,15 +3,14 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/util.ts"/>
 // <reference path="Tooltip.css"/>
 
 
 module TooltipUtils {
     "use strict";
 
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
 
     // Constants just for our tests.
@@ -470,5 +469,5 @@ module TooltipUtils {
 
             this.fireTriggerEvent(tooltipEventListener);
         }
- 
+
 }

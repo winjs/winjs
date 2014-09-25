@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 ///<reference path="../../bin/typings/tsd.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
@@ -160,7 +160,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(2, toolbar.data.length, "Toolbar data has an invalid length");
             LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Constants.emptyToolbarCssClass), "Empty toolbar css class should not be present");
 
-            // set to invalid value 
+            // set to invalid value
             var property = "data";
             try {
 
@@ -633,7 +633,7 @@ module CorsicaTests {
                 customEl.appendChild(customContent);
                 return customEl;
             }
-            
+
             var data = new WinJS.Binding.List([
                 new Command(createCustomElement("custom 1"), { type: Constants.typeContent, label: "1", priority: 5, section: Constants.secondaryCommandSection }),
                 new Command(createCustomElement("custom 2"), { type: Constants.typeContent, label: "2", priority: 5, section: Constants.secondaryCommandSection }),
@@ -674,7 +674,7 @@ module CorsicaTests {
             customContent.innerHTML = "custom 2";
             customContent.style.backgroundColor = "red";
             customEl.appendChild(customContent);
-            
+
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Constants.typeButton, label: "1", priority: 1 }),
                 new Command(customEl, { type: Constants.typeContent, label: "2", priority: 5 }),
@@ -900,35 +900,35 @@ module CorsicaTests {
 
             toolbar.element.focus();
             setTimeout(function () {
-                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual(firstEL, document.activeElement);
                 LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.end);
+                Helper.keydown(toolbar.element, Key.end);
                 LiveUnit.Assert.areEqual("s4", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.home);
+                Helper.keydown(toolbar.element, Key.home);
                 LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual("2", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.downArrow);
+                Helper.keydown(toolbar.element, Key.downArrow);
                 LiveUnit.Assert.areEqual("4", document.activeElement.textContent, "Down arrow should skip '3' because that command is hidden");
 
-                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.downArrow);
+                Helper.keydown(toolbar.element, Key.downArrow);
                 LiveUnit.Assert.areEqual("s2", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.leftArrow);
+                Helper.keydown(toolbar.element, Key.leftArrow);
                 LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.upArrow);
+                Helper.keydown(toolbar.element, Key.upArrow);
                 LiveUnit.Assert.areEqual("4", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.upArrow);
+                Helper.keydown(toolbar.element, Key.upArrow);
                 LiveUnit.Assert.areEqual("2", document.activeElement.textContent, "Up arrow should skip '3' because that command is hidden");
                 complete();
             });
@@ -959,32 +959,32 @@ module CorsicaTests {
             // The main action area should only show | 1 | 2 (disabled) | 3  | ... |
             toolbar.element.focus();
             setTimeout(function () {
-                CommonUtilities.keydown(toolbar.element, Key.downArrow);
+                Helper.keydown(toolbar.element, Key.downArrow);
                 LiveUnit.Assert.areEqual(firstEL, document.activeElement);
                 LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.end);
+                Helper.keydown(toolbar.element, Key.end);
                 LiveUnit.Assert.areEqual("3", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement);
 
-                CommonUtilities.keydown(toolbar.element, Key.home);
+                Helper.keydown(toolbar.element, Key.home);
                 LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual("3", document.activeElement.textContent, "Right arrow, should skip '2' because that command is disabled");
 
-                CommonUtilities.keydown(toolbar.element, Key.downArrow);
+                Helper.keydown(toolbar.element, Key.downArrow);
                 LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement);
 
-                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement);
 
-                CommonUtilities.keydown(toolbar.element, Key.leftArrow);
+                Helper.keydown(toolbar.element, Key.leftArrow);
                 LiveUnit.Assert.areEqual("3", document.activeElement.textContent);
 
-                CommonUtilities.keydown(toolbar.element, Key.upArrow);
+                Helper.keydown(toolbar.element, Key.upArrow);
                 LiveUnit.Assert.areEqual("1", document.activeElement.textContent, "Up arrow, should skip '2' because that command is disabled");
                 complete();
             });
@@ -1016,26 +1016,26 @@ module CorsicaTests {
             this._element.style.width = (2 * toolbar._standardCommandWidth) + customContentWidth + "px";
             toolbar.forceLayout();
 
-            // The main action area should show | 1 | 2 (custom) | 3 | 
+            // The main action area should show | 1 | 2 (custom) | 3 |
 
             toolbar.element.focus();
             setTimeout(function () {
-                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual(firstEL, document.activeElement);
 
-                CommonUtilities.keydown(toolbar.element, Key.end);
+                Helper.keydown(toolbar.element, Key.end);
                 LiveUnit.Assert.areEqual(lastEl, document.activeElement);
 
-                CommonUtilities.keydown(toolbar.element, Key.leftArrow);
+                Helper.keydown(toolbar.element, Key.leftArrow);
                 LiveUnit.Assert.areEqual(secondCheckBox, document.activeElement);
 
-                CommonUtilities.keydown(toolbar.element, Key.leftArrow);
+                Helper.keydown(toolbar.element, Key.leftArrow);
                 LiveUnit.Assert.areEqual(firstEL, document.activeElement);
 
-                CommonUtilities.keydown(toolbar.element, Key.rightArrow);
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual(firstCheckBox, document.activeElement);
 
-                CommonUtilities.keydown(toolbar.element, Key.home);
+                Helper.keydown(toolbar.element, Key.home);
                 LiveUnit.Assert.areEqual(firstEL, document.activeElement);
                 complete();
             });

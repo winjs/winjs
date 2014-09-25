@@ -3,9 +3,8 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
-/// <reference path="NavBarUtils.ts"/>
 /// <reference path="../TestLib/util.ts"/>
+/// <reference path="NavBarUtils.ts"/>
 // <reference path="../TestData/NavBar.css" />
 
 module WinJSTests {
@@ -266,14 +265,14 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
                 for (var i = 0; i < 100; i++) {
-                    CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                    Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
                 }
                 LiveUnit.Assert.areEqual(lastNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(99, navbarContainer.currentIndex);
 
                 WinJS.Utilities._setImmediate(function () {
                     for (var i = 0; i < 100; i++) {
-                        CommonUtilities.keydown(lastNavItem._buttonEl, Key.leftArrow);
+                        Helper.keydown(lastNavItem._buttonEl, Key.leftArrow);
                     }
                     LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                     LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
@@ -301,31 +300,31 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
                 LiveUnit.Assert.areEqual(firstNavItem._splitButtonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(firstNavItem._splitButtonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._splitButtonEl, Key.rightArrow);
                 LiveUnit.Assert.areEqual(thirdNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(2, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(thirdNavItem._buttonEl, Key.downArrow);
+                Helper.keydown(thirdNavItem._buttonEl, Key.downArrow);
                 LiveUnit.Assert.areEqual(fourthNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(3, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(fourthNavItem._buttonEl, Key.upArrow);
+                Helper.keydown(fourthNavItem._buttonEl, Key.upArrow);
                 LiveUnit.Assert.areEqual(thirdNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(2, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(thirdNavItem._buttonEl, Key.leftArrow);
+                Helper.keydown(thirdNavItem._buttonEl, Key.leftArrow);
                 LiveUnit.Assert.areEqual(firstNavItem._splitButtonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(firstNavItem._splitButtonEl, Key.end);
+                Helper.keydown(firstNavItem._splitButtonEl, Key.end);
                 LiveUnit.Assert.areEqual(lastNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(99, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(lastNavItem._buttonEl, Key.home);
+                Helper.keydown(lastNavItem._buttonEl, Key.home);
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
@@ -338,22 +337,22 @@ module WinJSTests {
                 var firstItemOnThirdPageNavItem = navbarContainer._surfaceEl.children[2 * columns * rows].winControl;
                 var lastItemOnThirdPageNavItem = navbarContainer._surfaceEl.children[3 * columns * rows - 1].winControl;
 
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.pageDown);
+                Helper.keydown(firstNavItem._buttonEl, Key.pageDown);
                 LiveUnit.Assert.areEqual(lastItemOnFirstPageNavItem._buttonEl, document.activeElement);
 
-                CommonUtilities.keydown(lastItemOnFirstPageNavItem._buttonEl, Key.pageDown);
+                Helper.keydown(lastItemOnFirstPageNavItem._buttonEl, Key.pageDown);
                 LiveUnit.Assert.areEqual(lastItemOnSecondPageNavItem._buttonEl, document.activeElement);
 
-                CommonUtilities.keydown(lastItemOnSecondPageNavItem._buttonEl, Key.pageDown);
+                Helper.keydown(lastItemOnSecondPageNavItem._buttonEl, Key.pageDown);
                 LiveUnit.Assert.areEqual(lastItemOnThirdPageNavItem._buttonEl, document.activeElement);
 
-                CommonUtilities.keydown(lastItemOnThirdPageNavItem._buttonEl, Key.pageUp);
+                Helper.keydown(lastItemOnThirdPageNavItem._buttonEl, Key.pageUp);
                 LiveUnit.Assert.areEqual(firstItemOnThirdPageNavItem._buttonEl, document.activeElement);
 
-                CommonUtilities.keydown(firstItemOnThirdPageNavItem._buttonEl, Key.pageUp);
+                Helper.keydown(firstItemOnThirdPageNavItem._buttonEl, Key.pageUp);
                 LiveUnit.Assert.areEqual(firstItemOnSecondPageNavItem._buttonEl, document.activeElement);
 
-                CommonUtilities.keydown(firstItemOnSecondPageNavItem._buttonEl, Key.pageUp);
+                Helper.keydown(firstItemOnSecondPageNavItem._buttonEl, Key.pageUp);
                 LiveUnit.Assert.areEqual(firstItemOnFirstPageNavItem._buttonEl, document.activeElement);
 
                 complete();
@@ -384,43 +383,43 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
                 LiveUnit.Assert.areEqual(firstNavItem._splitButtonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(firstNavItem._splitButtonEl, Key.downArrow);
+                Helper.keydown(firstNavItem._splitButtonEl, Key.downArrow);
                 LiveUnit.Assert.areEqual(secondNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(1, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(secondNavItem._buttonEl, Key.downArrow);
+                Helper.keydown(secondNavItem._buttonEl, Key.downArrow);
                 LiveUnit.Assert.areEqual(thirdNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(2, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(thirdNavItem._buttonEl, Key.upArrow);
+                Helper.keydown(thirdNavItem._buttonEl, Key.upArrow);
                 LiveUnit.Assert.areEqual(secondNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(1, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(secondNavItem._buttonEl, Key.end);
+                Helper.keydown(secondNavItem._buttonEl, Key.end);
                 LiveUnit.Assert.areEqual(lastNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(99, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(lastNavItem._buttonEl, Key.home);
+                Helper.keydown(lastNavItem._buttonEl, Key.home);
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.pageDown);
+                Helper.keydown(firstNavItem._buttonEl, Key.pageDown);
                 LiveUnit.Assert.areEqual(fourthNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(3, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(fourthNavItem._buttonEl, Key.pageDown);
+                Helper.keydown(fourthNavItem._buttonEl, Key.pageDown);
                 LiveUnit.Assert.areEqual(seventhNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(6, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(seventhNavItem._buttonEl, Key.pageUp);
+                Helper.keydown(seventhNavItem._buttonEl, Key.pageUp);
                 LiveUnit.Assert.areEqual(fourthNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(3, navbarContainer.currentIndex);
 
-                CommonUtilities.keydown(fourthNavItem._buttonEl, Key.pageUp);
+                Helper.keydown(fourthNavItem._buttonEl, Key.pageUp);
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
@@ -441,7 +440,7 @@ module WinJSTests {
                 var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
 
                 var secondNavItem = navbarContainer._surfaceEl.children[1].winControl;
                 LiveUnit.Assert.areEqual(secondNavItem._buttonEl, document.activeElement);
@@ -483,7 +482,7 @@ module WinJSTests {
                 var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
 
                 var secondNavItem = navbarContainer._surfaceEl.children[1].winControl;
                 LiveUnit.Assert.areEqual(secondNavItem._buttonEl, document.activeElement);
@@ -513,7 +512,7 @@ module WinJSTests {
                 var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
 
                 var secondNavItem = navbarContainer._surfaceEl.children[1].winControl;
                 LiveUnit.Assert.areEqual(secondNavItem._buttonEl, document.activeElement);
@@ -546,7 +545,7 @@ module WinJSTests {
                 var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
 
                 var secondNavItem = navbarContainer._surfaceEl.children[1].winControl;
                 LiveUnit.Assert.areEqual(secondNavItem._buttonEl, document.activeElement);
@@ -576,7 +575,7 @@ module WinJSTests {
                 var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
 
                 var secondNavItem = navbarContainer._surfaceEl.children[1].winControl;
                 LiveUnit.Assert.areEqual(secondNavItem._buttonEl, document.activeElement);
@@ -612,22 +611,22 @@ module WinJSTests {
                 // Open the first split button.
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
                 LiveUnit.Assert.areEqual(firstNavItem._splitButtonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
-                CommonUtilities.keydown(firstNavItem._splitButtonEl, Key.enter);
+                Helper.keydown(firstNavItem._splitButtonEl, Key.enter);
 
                 LiveUnit.Assert.isTrue(firstNavItem.splitOpened);
                 LiveUnit.Assert.isFalse(secondNavItem.splitOpened);
 
                 // When we open the second split button the first one closes.
-                CommonUtilities.keydown(firstNavItem._splitButtonEl, Key.rightArrow);
+                Helper.keydown(firstNavItem._splitButtonEl, Key.rightArrow);
                 LiveUnit.Assert.areEqual(secondNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(1, navbarContainer.currentIndex);
-                CommonUtilities.keydown(secondNavItem._buttonEl, Key.rightArrow);
+                Helper.keydown(secondNavItem._buttonEl, Key.rightArrow);
                 LiveUnit.Assert.areEqual(secondNavItem._splitButtonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(1, navbarContainer.currentIndex);
-                CommonUtilities.keydown(secondNavItem._splitButtonEl, Key.enter);
+                Helper.keydown(secondNavItem._splitButtonEl, Key.enter);
 
                 LiveUnit.Assert.isTrue(secondNavItem.splitOpened);
                 LiveUnit.Assert.isFalse(firstNavItem.splitOpened);
@@ -971,14 +970,14 @@ module WinJSTests {
                 var lastNavItem = navbarContainer._surfaceEl.children[9].winControl;
 
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.end);
+                Helper.keydown(firstNavItem._buttonEl, Key.end);
                 LiveUnit.Assert.areEqual(lastNavItem._buttonEl, document.activeElement);
-                CommonUtilities.keydown(lastNavItem._buttonEl, Key.home);
+                Helper.keydown(lastNavItem._buttonEl, Key.home);
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
 
                 // Switch to horizontal layout
                 navbarContainer.layout = WinJS.UI.Orientation.horizontal;
-                CommonUtilities.keydown(firstNavItem._buttonEl, Key.end);
+                Helper.keydown(firstNavItem._buttonEl, Key.end);
 
                 // Verify pageindicators are visible
                 var style = getComputedStyle(navbarContainerEl.querySelector(".win-navbarcontainer-pageindicator-box"));

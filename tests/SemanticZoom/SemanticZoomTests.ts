@@ -3,9 +3,8 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts" />
-/// <reference path="../TestLib/TestDataSource.ts"/>
 /// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/TestDataSource.ts"/>
 // <reference path="../TestData/ListView.less.css" />
 
 module WinJSTests {
@@ -615,7 +614,7 @@ module WinJSTests {
 
                 WinJS.Promise.join([waitForReady(listDiv1.winControl)(), waitForReady(listDiv2.winControl)()]).
                     then(function () {
-                        return CommonUtilities.waitForEvent(sezo, "zoomchanged", function () {
+                        return Helper.waitForEvent(sezo, "zoomchanged", function () {
                             // Zoom
                             sezo.zoomedOut = !sezo.zoomedOut;
                             // Change listView layouts without waiting for zoomchanged event shouldn't throw

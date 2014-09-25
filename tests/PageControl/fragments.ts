@@ -134,7 +134,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "expect #children == 1");
                     LiveUnit.Assert.areEqual("common header element", temp.children[0].textContent, "expected textContent == 'common header element'");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -169,7 +169,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "expect #children == 1");
                     LiveUnit.Assert.areEqual("common header element", temp.children[0].textContent, "expected textContent == 'common header element'");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -195,7 +195,7 @@ module CorsicaTests {
 
                     WinJS.UI.Fragments.clearCache(<HTMLElement>holder.firstChild);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -213,7 +213,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -232,7 +232,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -244,7 +244,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -259,7 +259,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -271,7 +271,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -292,7 +292,7 @@ module CorsicaTests {
                     WinJS.Utilities.disposeSubTree(temp);
                     document.body.removeChild(temp);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -314,7 +314,7 @@ module CorsicaTests {
                     WinJS.Utilities.disposeSubTree(temp);
                     document.body.removeChild(temp);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -334,7 +334,7 @@ module CorsicaTests {
                     WinJS.Utilities.disposeSubTree(temp);
                     document.body.removeChild(temp);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -355,7 +355,7 @@ module CorsicaTests {
                     WinJS.Utilities.disposeSubTree(temp);
                     document.body.removeChild(temp);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -374,7 +374,7 @@ module CorsicaTests {
                     WinJS.Utilities.disposeSubTree(temp);
                     document.body.removeChild(temp);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -429,7 +429,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -447,7 +447,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -466,7 +466,7 @@ module CorsicaTests {
                     LiveUnit.Assert.areEqual(1, temp.children.length, "Missing expected child");
                     LiveUnit.Assert.areEqual("This is just a test.", temp.children[0].textContent, "Text content does not match");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         };
 
@@ -490,7 +490,7 @@ module CorsicaTests {
                             LiveUnit.Assert.isNotNull(dateElement, "expected dateElement is not null");
                         });
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 
@@ -521,13 +521,13 @@ module CorsicaTests {
                     }
                     LiveUnit.Assert.isTrue(haveLink);
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         };
 
         testBlankFragmentName = function (complete) {
             // bug #480533 this test generates expected error under wwahost, but not under IE
-            if (!isWinRTEnabled()) {
+            if (!Helper.isWinRTEnabled()) {
                 complete();
                 return;
             }
@@ -545,7 +545,7 @@ module CorsicaTests {
 
     testFragmentNotFound = function (complete) {
             // bug #480533 this test generates expected error under wwahost, but not under IE
-            if (!isWinRTEnabled()) {
+            if (!Helper.isWinRTEnabled()) {
                 complete();
                 return;
             }
@@ -577,7 +577,7 @@ module CorsicaTests {
                 }).
                 then(function () {
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     WinJS.Utilities.disposeSubTree(temp);
                     document.body.removeChild(temp);
@@ -615,7 +615,7 @@ module CorsicaTests {
                     fcc_fireOnchange(datepicker.querySelector('.win-datepicker-month'));
                     LiveUnit.Assert.areEqual(3, fcc_getCount(), "expecting count == 3 after firing onchange for month element");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // test clean
                     WinJS.Utilities.disposeSubTree(temp);
@@ -635,7 +635,7 @@ module CorsicaTests {
             //    The <script> tag generates error under wwahost:
             //       !!!!CorsicaTests.Fragments.testJSExecutesOnce: Cannot redefine non-configurable
             //       property 'oncontextchanged' when trying to append <script> tag for base.js
-            if (isWinRTEnabled()) {
+            if (Helper.isWinRTEnabled()) {
                 fragfile = "$(TESTDATA)/FragmentJSExecutesOnce.html";
             } else {
                 fragfile = "$(TESTDATA)/FragmentJSExecutesOnce(ie).html";
@@ -654,7 +654,7 @@ module CorsicaTests {
                     var x = document.querySelectorAll('#FragmentJSExecutesOnce');
                     LiveUnit.Assert.isTrue(x.length === 1, "expecting only 1 element with id='FragmentJSExecutesOnce'");
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(function () {
                     // don't clean this up the element.  Code should only execute once so we need to leave an indicator
                     // that the fragment has already been run once
@@ -666,7 +666,7 @@ module CorsicaTests {
     testVariableAccess = function (complete) {
             // verify global JS code inside the fragment code can access a variable declared in the main page
 
-            if (!isWinRTEnabled()) {
+            if (!Helper.isWinRTEnabled()) {
                 // bug#496135  - fragments: global JS code executes twice under IE (IFrame)
                 complete();
                 return;
@@ -693,7 +693,7 @@ module CorsicaTests {
                     //cleanup:
                     delete window['myFragLoadCounter'];
                 }).
-                then(null, unhandledTestError).
+                then(null, Helper.unhandledTestError).
                 then(complete);
         }
 

@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="NavBarUtils.ts"/>
 
 module WinJSTests {
@@ -30,7 +30,7 @@ module WinJSTests {
             _elementWrapper.appendChild(newNode);
             document.body.appendChild(_elementWrapper);
             _element = newNode;
-            CommonUtilities.detectMsElementResize(function (canResize) {
+            Helper.detectMsElementResize(function (canResize) {
                 canElementResize = canResize;
                 complete();
             });
@@ -82,13 +82,13 @@ module WinJSTests {
                 });
             }
 
-            CommonUtilities.waitForEvent(navbar, "aftershow").
+            Helper.waitForEvent(navbar, "aftershow").
                 then(function () {
                     // Move focus to the last command
                     var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
                     var lastNavItem = navbarContainer._surfaceEl.children[19].winControl;
 
-                    CommonUtilities.keydown(firstNavItem._buttonEl, Key.end);
+                    Helper.keydown(firstNavItem._buttonEl, Key.end);
                     LiveUnit.Assert.areEqual(lastNavItem._buttonEl, document.activeElement);
                     LiveUnit.Assert.areEqual(19, navbarContainer.currentIndex);
 
@@ -103,12 +103,12 @@ module WinJSTests {
 
                     // Hide the navbar
                     navbar.hide();
-                    return CommonUtilities.waitForEvent(navbar, "afterhide");
+                    return Helper.waitForEvent(navbar, "afterhide");
                 }).
                 then(function () {
                     // Show the navbar
                     navbar.show();
-                    return CommonUtilities.waitForEvent(navbar, "aftershow");
+                    return Helper.waitForEvent(navbar, "aftershow");
                 }).
                 then(function () {
                     // Verify the focus state was reset
@@ -158,7 +158,7 @@ module WinJSTests {
 
             navbar.show();
 
-            CommonUtilities.waitForEvent(navbar, "aftershow").
+            Helper.waitForEvent(navbar, "aftershow").
                 then(function () {
                     // Click on split button and verify aria-expanded
                     var splitEl = navbarCmds[0].winControl._splitButtonEl;

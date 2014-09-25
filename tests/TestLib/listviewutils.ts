@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-///<reference path="LegacyLiveUnit/CommonUtils.ts" />
+///<reference path="util.ts" />
 ///<reference path="../ListViewIntegration/globals.ts" />
 
 
@@ -7,7 +7,7 @@ module ListViewUtils {
 
     "use strict";
 
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
     var testCount = 0;
 
     export function createListViewControl(placeholderId, controlType, direction, optionsVal) {

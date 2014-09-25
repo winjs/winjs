@@ -3,12 +3,12 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 
 module CorsicaTests {
 
     var canElementResize: boolean = null;
-    // note: the .win-viewbox style comes from ui-dark.css or ui-light.css 
+    // note: the .win-viewbox style comes from ui-dark.css or ui-light.css
     //      "<style>.win-viewbox { width:100%; height:100%; position:relative; }</style>";
     var square = "<div data-win-control='WinJS.UI.ViewBox'><div class='sizer' style='width:100px;height:100px;'>Content</div></div>";
 
@@ -24,7 +24,7 @@ module CorsicaTests {
         }
 
         setUp(completed) {
-            CommonUtilities.detectMsElementResize((canResize) => {
+            Helper.detectMsElementResize((canResize) => {
                 canElementResize = canResize;
                 completed();
             });
@@ -151,7 +151,7 @@ module CorsicaTests {
                 container.style.width = "200px";
                 container.style.height = "200px";
 
-                // exception should occur when the viewbox constructor is called.  Since processAll() 
+                // exception should occur when the viewbox constructor is called.  Since processAll()
                 // is a promise, we need to snap on a then() to react to the exception.
                 WinJS.UI.processAll(container).
                     then(null,
@@ -182,7 +182,7 @@ module CorsicaTests {
                 container.style.width = "200px";
                 container.style.height = "200px";
 
-                // exception should not occur here 
+                // exception should not occur here
                 WinJS.UI.processAll(container).
                     then(null,
                     function (error) {
@@ -222,7 +222,7 @@ module CorsicaTests {
                 var sizer = <HTMLElement>container.querySelector(".sizer");
                 var actualTransform = sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName];
 
-                // consider container.clientWidth, clientHeight instead of window / 2 
+                // consider container.clientWidth, clientHeight instead of window / 2
                 //                 var myTransform = computeTranslateString(200, 200, window.innerWidth / 2, window.innerHeight / 2);
                 // bug373135       LiveUnit.Assert.areEqual(myTransform.translateString, actualTransform);
 
@@ -230,7 +230,7 @@ module CorsicaTests {
                 var minClientDimension = Math.min(container.clientHeight, container.clientWidth);
                 LiveUnit.LoggingCore.logComment("minClientDimension=" + minClientDimension + ", actualScale=" + actualScale);
 
-                // there is a "chance" that scaling could be 1 if the container is 200px, 
+                // there is a "chance" that scaling could be 1 if the container is 200px,
                 // but scaling == 1 is 99% of the time an indicator that scaling is not occuring
                 if (minClientDimension >= 200) {
                     LiveUnit.Assert.isTrue(actualScale >= 1);

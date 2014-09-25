@@ -2,7 +2,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="FlipperUtils.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 
@@ -20,7 +20,7 @@ module Tests {
         //
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
-            CommonUtilities.getIEInfo();
+            Helper.getIEInfo();
 
             // We want to recreate the flipper element between each test so we start fresh.
             FlipperUtils.addFlipperDom();
@@ -54,8 +54,8 @@ module Tests {
             });
 
             var flipper = FlipperUtils.instantiate(FlipperUtils.basicFlipperID(), {
-                itemDataSource: CommonUtilities.simpleArrayDataSource(numOfItems),
-                itemTemplate: CommonUtilities.simpleArrayRenderer
+                itemDataSource: Helper.simpleArrayDataSource(numOfItems),
+                itemTemplate: Helper.simpleArrayRenderer
             });
             flipper.count().then(countCompleted, countError).
                 then(null, countError);

@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 
 
 module FlipperUtils {
@@ -12,7 +12,7 @@ module FlipperUtils {
     export var NAVIGATION_TIMEOUT = Math.min(NAVIGATION_QUICK_TIMEOUT, WinJS.UI._animationTimeAdjustment(3000));
 
     var mainFlipperDivId = "MainFlipperDiv";
-    var utils = CommonUtilities;
+    var utils = Helper;
 
     var FlipView = <typeof WinJS.UI.PrivateFlipView>WinJS.UI.FlipView;
 

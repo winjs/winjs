@@ -14,13 +14,13 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="RatingUtils.ts"/>
 
 module WinJSTests {
     "use strict";
     export class OptionTests {
-        
+
 
         setUp(complete) {
             RatingUtils.setUp().then(complete);

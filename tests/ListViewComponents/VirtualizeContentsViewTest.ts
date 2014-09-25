@@ -574,7 +574,7 @@ module WinJSTests {
             defaultDisableCustomPagesPrefetch = WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch;
             defaultIsiOS = WinJS.Utilities._isiOS;
 
-            CommonUtilities.detectMsElementResize(function (canResize) {
+            Helper.detectMsElementResize(function (canResize) {
                 canElementResize = canResize;
                 completed();
             });

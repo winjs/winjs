@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 /// <reference path="TooltipUtils.ts"/>
 // <reference path="Tooltip.css"/>
 
@@ -11,7 +11,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     function testTooltip_Infotip(signalTestCaseCompleted, showInfotip, useTouch, toleranceDisplayTime, toleranceInvokeTime) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);
@@ -123,7 +123,7 @@ module WinJSTests {
             tooltipUtils.cleanUp();
         }
 
-        
+
 
     testTooltip_InfotipTrue(signalTestCaseCompleted) {
             testTooltip_Infotip(signalTestCaseCompleted, true, false, 5000, 500);

@@ -55,7 +55,7 @@ module WinJSTests {
                     var promiseChain = WinJS.Promise.timeout();
                     var i = 0;
 
-                    asyncWhile(
+                    Helper.asyncWhile(
                         function () { return i < 6; },
                         function () {
                             promiseChain = promiseChain.then(function () {

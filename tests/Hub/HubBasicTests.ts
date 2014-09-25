@@ -304,7 +304,7 @@ module HubTests {
                 }
 
                 //loop
-                return asyncWhile(continueCondition, loop);
+                return Helper.asyncWhile(continueCondition, loop);
             });
     }
 
@@ -335,7 +335,7 @@ module HubTests {
                 function continueCondition() {
                     return WinJS.Promise.wrap(currentScrollPosition < scrollRange.max);
                 }
-                return asyncWhile(continueCondition, loop);
+                return Helper.asyncWhile(continueCondition, loop);
             });
     }
 
@@ -364,7 +364,7 @@ module HubTests {
                 function continueCondition() {
                     return WinJS.Promise.wrap(currentScrollPosition < scrollRange.max);
                 }
-                return asyncWhile(continueCondition, loop);
+                return Helper.asyncWhile(continueCondition, loop);
             });
     }
 

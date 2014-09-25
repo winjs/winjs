@@ -4,7 +4,6 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
 /// <reference path="../TestLib/util.ts"/>
 /// <reference path="RatingUtils.ts"/>
 
@@ -1065,8 +1064,8 @@ module WinJSTests {
 
                             var rect = window['async'].ratingUtils.getClientRect(star);
 
-                            var event = CommonUtilities.createPointerEvent("mouse");
-                            CommonUtilities.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, "mouse", 0, true);
+                            var event = Helper.createPointerEvent("mouse");
+                            Helper.initPointerEvent(event, "pointermove", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, "mouse", 0, true);
                             star.dispatchEvent(event);
                         };
                     } (rating.element.childNodes[0]),
@@ -1081,8 +1080,8 @@ module WinJSTests {
                         return function () {
                             var rect = window['async'].ratingUtils.getClientRect(star);
 
-                            var event = CommonUtilities.createPointerEvent("mouse");
-                            CommonUtilities.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, "mouse", 0, true);
+                            var event = Helper.createPointerEvent("mouse");
+                            Helper.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, "mouse", 0, true);
                             star.dispatchEvent(event);
                         };
                     } (rating.element.childNodes[0]),
@@ -1152,8 +1151,8 @@ module WinJSTests {
 
                             var rect = window['async'].ratingUtils.getClientRect(star);
 
-                            var event = CommonUtilities.createPointerEvent("mouse");
-                            CommonUtilities.initPointerEvent(event, "pointermove", true, true, window, 0,
+                            var event = Helper.createPointerEvent("mouse");
+                            Helper.initPointerEvent(event, "pointermove", true, true, window, 0,
                                 window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, "mouse", 0, true);
                             star.dispatchEvent(event);
                         };
@@ -1166,8 +1165,8 @@ module WinJSTests {
                         return function () {
                             var rect = window['async'].ratingUtils.getClientRect(star);
 
-                            var event = CommonUtilities.createPointerEvent("mouse");
-                            CommonUtilities.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, "mouse", 0, true);
+                            var event = Helper.createPointerEvent("mouse");
+                            Helper.initPointerEvent(event, "pointerup", true, true, window, 0, window.screenLeft + rect.left - 2, window.screenTop + rect.center.y, rect.left - 2, rect.center.y, false, false, false, false, 0, null, rect.width / 2, rect.height / 2, 0, 0, 0, 0, 0, 0, 0, "mouse", 0, true);
                             star.dispatchEvent(event);
                         };
                     } (rating.element.childNodes[0]),

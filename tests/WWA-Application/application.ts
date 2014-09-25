@@ -2703,7 +2703,7 @@ module CorsicaTests {
                     return true;
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.onactivated = function () {
                     var x: any = {};
@@ -2721,7 +2721,7 @@ module CorsicaTests {
             } finally {
                 WinJS.Utilities._setImmediate(function () {
                     yieldForEventQueue().then(function () {
-                        enableWebunitErrorHandler(true);
+                        Helper.enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
                         WinJS.Application.stop();
                         WinJS.Application._terminateApp = old;
@@ -2758,7 +2758,7 @@ module CorsicaTests {
                 window.onerror = function () {
                     return true;
                 }
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.onactivated = function () {
                     throw 1;
@@ -2775,7 +2775,7 @@ module CorsicaTests {
                 WinJS.Utilities._setImmediate(function () {
                     yieldForEventQueue().done(function () {
                         LiveUnit.Assert.areEqual(1, count);
-                        enableWebunitErrorHandler(true);
+                        Helper.enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
                         WinJS.Application.stop();
                         WinJS.Application._terminateApp = old;
@@ -2809,7 +2809,7 @@ module CorsicaTests {
                 window.onerror = function () {
                     return true;
                 }
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.onactivated = function () {
                     throw { x: 1 };
@@ -2826,7 +2826,7 @@ module CorsicaTests {
                 WinJS.Utilities._setImmediate(function () {
                     yieldForEventQueue().done(function () {
                         LiveUnit.Assert.areEqual(1, count);
-                        enableWebunitErrorHandler(true);
+                        Helper.enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
                         WinJS.Application.stop();
                         WinJS.Application._terminateApp = old;
@@ -2861,7 +2861,7 @@ module CorsicaTests {
                 window.onerror = function () {
                     return true;
                 }
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.onactivated = function () {
                     throw str;
@@ -2878,7 +2878,7 @@ module CorsicaTests {
                 WinJS.Utilities._setImmediate(function () {
                     yieldForEventQueue().done(function () {
                         LiveUnit.Assert.areEqual(1, count);
-                        enableWebunitErrorHandler(true);
+                        Helper.enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
                         WinJS.Application.stop();
                         WinJS.Application._terminateApp = old;
@@ -2907,7 +2907,7 @@ module CorsicaTests {
                 window.onerror = function () {
                     return true;
                 }
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.onactivated = function () {
                     var x;
@@ -2925,7 +2925,7 @@ module CorsicaTests {
                 WinJS.Utilities._setImmediate(function () {
                     yieldForEventQueue().done(function () {
                         LiveUnit.Assert.areEqual(1, count);
-                        enableWebunitErrorHandler(true);
+                        Helper.enableWebunitErrorHandler(true);
                         window.onerror = prevWindowOnError;
                         WinJS.Application.stop();
                         WinJS.Application._terminateApp = old;
@@ -2958,7 +2958,7 @@ module CorsicaTests {
                     return true;
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.start();
 
@@ -2969,7 +2969,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3000,7 +3000,7 @@ module CorsicaTests {
                     error = JSON.parse(data.description);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 window.onerror = function () {
                     return true;
@@ -3019,7 +3019,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 yieldForDoneToThrow().done(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3053,7 +3053,7 @@ module CorsicaTests {
                     error = JSON.parse(data.description);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 window.onerror = function () {
                     return true;
@@ -3074,7 +3074,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 yieldForDoneToThrow().done(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3106,7 +3106,7 @@ module CorsicaTests {
                     error = JSON.parse(data.description);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 window.onerror = function () {
                     return true;
@@ -3128,7 +3128,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 yieldForDoneToThrow().done(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3166,7 +3166,7 @@ module CorsicaTests {
                     error = JSON.parse(data.description);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 window.onerror = function () {
                     return true;
@@ -3188,7 +3188,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 yieldForDoneToThrow().done(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3219,7 +3219,7 @@ module CorsicaTests {
                     error = JSON.parse(data.description);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 window.onerror = function () {
                     return true;
@@ -3234,7 +3234,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3264,7 +3264,7 @@ module CorsicaTests {
                     error = JSON.parse(data.description);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.start();
 
@@ -3281,7 +3281,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
 
@@ -3319,7 +3319,7 @@ module CorsicaTests {
                     }
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 window.onerror = function () {
                     return true;
@@ -3341,7 +3341,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 yieldForDoneToThrow().done(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3377,7 +3377,7 @@ module CorsicaTests {
                     errorFromPromise = JSON.parse(data.description);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.start();
 
@@ -3394,7 +3394,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
 
@@ -3422,7 +3422,7 @@ module CorsicaTests {
                     error = JSON.parse(data.description);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.start();
 
@@ -3440,7 +3440,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(0, count);
             } finally {
                 WinJS.Utilities._setImmediate(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
 
@@ -3534,7 +3534,7 @@ module CorsicaTests {
                     // don't return true so error gets passed along to _terminateApp
                 }, true);
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 window.onerror = function (message, url, linenumber) {
                     count++;
@@ -3562,7 +3562,7 @@ module CorsicaTests {
                 WinJS.Utilities._setImmediate(function () {
                     signal.promise.then(function () {
                         window.onerror = oldOnError;
-                        enableWebunitErrorHandler(true);
+                        Helper.enableWebunitErrorHandler(true);
                         WinJS.Application.stop();
                         WinJS.Application._terminateApp = old;
 
@@ -3611,7 +3611,7 @@ module CorsicaTests {
                     return true;
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 LiveUnit.Assert.areEqual(0, count);
                 count++;
@@ -3627,7 +3627,7 @@ module CorsicaTests {
                     .done();
             } finally {
                 yieldForDoneToThrow().done(function () {
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     window.onerror = prevWindowOnError;
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
@@ -3669,13 +3669,13 @@ module CorsicaTests {
 
             function cleanup() {
                 WinJS.Application._terminateApp = old;
-                enableWebunitErrorHandler(true);
+                Helper.enableWebunitErrorHandler(true);
                 LiveUnit.Assert.areEqual(loopCount, count);
                 WinJS.Application.stop();
                 complete();
             }
 
-            enableWebunitErrorHandler(false);
+            Helper.enableWebunitErrorHandler(false);
 
             WinJS.Application.start();
 
@@ -3726,7 +3726,7 @@ module CorsicaTests {
                     LiveUnit.Assert.isNotNull(data.number);
                 }
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 WinJS.Application.start();
 
@@ -3758,7 +3758,7 @@ module CorsicaTests {
             } finally {
                 WinJS.Application.stop();
                 WinJS.Application._terminateApp = old;
-                enableWebunitErrorHandler(true);
+                Helper.enableWebunitErrorHandler(true);
 
                 LiveUnit.Assert.areEqual(0, count);         // count should not get incremented
                 LiveUnit.Assert.areEqual(2, cancelCount);
@@ -3799,7 +3799,7 @@ module CorsicaTests {
                     // don't return true so error gets passed along to _terminateApp
                 }, true);
 
-                enableWebunitErrorHandler(false);
+                Helper.enableWebunitErrorHandler(false);
 
                 window.onerror = function (message, url, linenumber) {
                     // this exception doesn't get passed onto Application error event
@@ -3816,7 +3816,7 @@ module CorsicaTests {
                 WinJS.Utilities._setImmediate(function () {
                     window.onerror = oldOnError;
                     window.removeEventListener("error", eh);
-                    enableWebunitErrorHandler(true);
+                    Helper.enableWebunitErrorHandler(true);
                     WinJS.Application.stop();
                     WinJS.Application._terminateApp = old;
 
@@ -3836,6 +3836,6 @@ module CorsicaTests {
 
 LiveUnit.registerTestClass("CorsicaTests.ApplicationTests");
 
-if (isWinRTEnabled()) {
+if (Helper.isWinRTEnabled()) {
     LiveUnit.registerTestClass("CorsicaTests.ApplicationWinRTTests");
 }

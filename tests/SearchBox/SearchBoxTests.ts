@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/util.ts"/>
 
 declare var Windows;
 
@@ -267,7 +267,7 @@ module SearchBoxTests {
             });
 
             // This is to test the input language
-            CommonUtilities.keydown(searchBox._inputElement, Key.rightArrow, "ja");
+            Helper.keydown(searchBox._inputElement, Key.rightArrow, "ja");
 
             LiveUnit.Assert.areEqual("ja", searchBox._lastKeyPressLanguage);
             searchBox._inputElement.value = "Test query";
@@ -294,7 +294,7 @@ module SearchBoxTests {
             });
 
             // This is to test the input language
-            CommonUtilities.keydown(searchBox._inputElement, Key.rightArrow, "ja");
+            Helper.keydown(searchBox._inputElement, Key.rightArrow, "ja");
             LiveUnit.Assert.areEqual("ja", searchBox._lastKeyPressLanguage);
             searchBox._inputElement.value = "Test query";
             searchBox._buttonElement.click();
@@ -406,7 +406,7 @@ module SearchBoxTests {
             LiveUnit.Assert.isTrue(changedEventFired, "QueryChanged event was not fired");
 
             submittedEventFired = false;
-            CommonUtilities.keydown(inputElement, Key.enter, "ko");
+            Helper.keydown(inputElement, Key.enter, "ko");
             LiveUnit.Assert.isTrue(submittedEventFired, "QuerySubmitted event was not fired");
 
             // make sure this event is filtered out (Korean IME finalized on key down event, but still passes key to app)
@@ -415,7 +415,7 @@ module SearchBoxTests {
             inputElement.dispatchEvent(createCustomEvent("compositionend"));
             LiveUnit.Assert.isFalse(changedEventFired, "QueryChanged event was fired");
 
-            CommonUtilities.keyup(inputElement, Key.enter, "ko");
+            Helper.keyup(inputElement, Key.enter, "ko");
 
             // ensure query events are still fired after key is released
             changedEventFired = false;
@@ -437,7 +437,7 @@ module SearchBoxTests {
                 inputElement.dispatchEvent(createCustomEvent("input"));
                 LiveUnit.Assert.isTrue(changedEventFired, "QueryChanged event was not fired");
 
-                CommonUtilities.keydown(inputElement, key, "ko");
+                Helper.keydown(inputElement, key, "ko");
 
                 // make sure this event is filtered out (Korean IME finalized on key down event, but still passes key to app)
                 changedEventFired = false;
@@ -445,7 +445,7 @@ module SearchBoxTests {
                 inputElement.dispatchEvent(createCustomEvent("compositionend"));
                 LiveUnit.Assert.isFalse(changedEventFired, "QueryChanged event was fired");
 
-                CommonUtilities.keyup(inputElement, key, "ko");
+                Helper.keyup(inputElement, key, "ko");
 
                 // ensure query events are still fired after key is released
                 changedEventFired = false;
@@ -481,7 +481,7 @@ module SearchBoxTests {
                 return WinJS.Promise.wrap().then(function () {
                     LiveUnit.LoggingCore.logComment("Testing " + key + " key.");
 
-                    CommonUtilities.keydown(inputElement, key, "en-US");
+                    Helper.keydown(inputElement, key, "en-US");
                     otherInputElement.focus();
 
                     return WinJS.Promise.timeout();
@@ -489,7 +489,7 @@ module SearchBoxTests {
                         LiveUnit.Assert.areEqual(otherInputElement, document.activeElement);
 
                         // key up event goes to another control & never reaches inputElement
-                        CommonUtilities.keyup(otherInputElement, key, "en-US");
+                        Helper.keyup(otherInputElement, key, "en-US");
 
                         // now put focus back
                         inputElement.focus();
@@ -534,7 +534,7 @@ module SearchBoxTests {
             var key = Key.enter;
             LiveUnit.LoggingCore.logComment("Testing " + key + " key.");
 
-            CommonUtilities.keydown(inputElement, key, "zh-Hans-CN");
+            Helper.keydown(inputElement, key, "zh-Hans-CN");
             // key up event was eaten by the IME (actually due to Trident bug BLUE:394522)
 
             // ensure query events are still fired
@@ -715,12 +715,12 @@ module SearchBoxTests {
 
             // user submits via enter key
             submitEventFired = false;
-            CommonUtilities.keydown(searchBox._inputElement, Key.enter, "ja");
+            Helper.keydown(searchBox._inputElement, Key.enter, "ja");
             LiveUnit.Assert.isTrue(submitEventFired, "QuerySubmitted event was not fired");
             LiveUnit.Assert.areEqual("bcompd", submitEventQueryText);
             verifyLinguisticDetails(submitEventLinguisticDetails, 0, 0, ['bxd', 'byd', 'bzd']);
 
-            CommonUtilities.keyup(searchBox._inputElement, Key.enter, "ja");
+            Helper.keyup(searchBox._inputElement, Key.enter, "ja");
         }
 
         testSearchHistoryContext() {
@@ -788,7 +788,7 @@ module SearchBoxTests {
 
                 waitForSuggestionFlyoutRender(searchBox).done(function () {
                     // Select the first suggestion.
-                    CommonUtilities.touchUp(searchBox._repeater.elementFromIndex(0));
+                    Helper.touchUp(searchBox._repeater.elementFromIndex(0));
                 });
             });
             searchBox._inputElement.value = "a";
@@ -807,7 +807,7 @@ module SearchBoxTests {
 
                 waitForSuggestionFlyoutRender(searchBox).done(function () {
                     // Select the first suggestion.
-                    CommonUtilities.touchUp(searchBox._repeater.elementFromIndex(0));
+                    Helper.touchUp(searchBox._repeater.elementFromIndex(0));
                 });
             });
             searchBox._inputElement.value = "a";
@@ -831,7 +831,7 @@ module SearchBoxTests {
                 e.detail.searchSuggestionCollection.appendQuerySuggestion("Test query Suggestion1 test");
 
                 WinJS.Utilities._setImmediate(function () {
-                    CommonUtilities.keydown(searchBox._inputElement, Key.enter, "ja-JP");
+                    Helper.keydown(searchBox._inputElement, Key.enter, "ja-JP");
                 });
             });
             searchBox._inputElement.value = "Test query";
@@ -850,7 +850,7 @@ module SearchBoxTests {
             searchBox.addEventListener("suggestionsrequested", function (e) {
                 complete();
             });
-            CommonUtilities.keydown(document, WinJS.Utilities.Key.t);
+            Helper.keydown(document, WinJS.Utilities.Key.t);
         }
 
         testFocusOnKeyboardInputDoesNotBringUpSuggestionsWhenDisabled(complete) {
@@ -864,7 +864,7 @@ module SearchBoxTests {
             searchBox.addEventListener("suggestionsrequested", function (e) {
                 LiveUnit.Assert.fail("suggestions should not be requested");
             });
-            CommonUtilities.keydown(document, WinJS.Utilities.Key.t);
+            Helper.keydown(document, WinJS.Utilities.Key.t);
             WinJS.Promise.timeout().done(complete);
         }
     };

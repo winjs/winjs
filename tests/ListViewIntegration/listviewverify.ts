@@ -10,7 +10,7 @@ module ListViewVerify {
     // Private Functions & Variables
     // ---------------------------------------------------------------------------------------------------------
     var lvUtils = ListViewUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     // ---------------------------------------------------------------------------------------------------------
     // Public Functions
