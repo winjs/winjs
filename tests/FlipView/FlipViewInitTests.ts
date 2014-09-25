@@ -4,7 +4,7 @@
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.ts" />
-/// <reference path="../TestLib/UnitTestsCommon.ts" />
+/// <reference path="../TestLib/Helper.ItemsManager.ts" />
 /// <reference path="FlipperHelpers.ts" />
 /// <reference path="../TestLib/util.ts" />
 

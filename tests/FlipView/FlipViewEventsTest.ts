@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="../TestLib/TestDataSource.ts" />
-/// <reference path="../TestLib/UnitTestsCommon.ts" />
+/// <reference path="../TestLib/Helper.ItemsManager.ts" />
 /// <reference path="FlipperHelpers.ts" />
 /// <deploy src="../TestData/" />
 

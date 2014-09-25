@@ -7,7 +7,7 @@
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
 /// <reference path="../TestLib/TestDataSource.ts" />
-/// <reference path="../TestLib/UnitTestsCommon.ts" />
+/// <reference path="../TestLib/Helper.ItemsManager.ts" />
 
 module CorsicaTests {
 

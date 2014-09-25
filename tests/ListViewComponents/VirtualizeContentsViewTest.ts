@@ -6,7 +6,7 @@
 /// <reference path="../TestLib/util.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <reference path="../TestLib/TestDataSource.ts" />
-/// <reference path="../TestLib/UnitTestsCommon.ts" />
+/// <reference path="../TestLib/Helper.ItemsManager.ts" />
 // <reference path="../TestData/ListView.less.css" />
 var VirtualizeContentsViewTestHost;
 module WinJSTests {
@@ -499,7 +499,7 @@ module WinJSTests {
     var numberOfItemsPerItemsBlock = 10,
         itemHeight = 50;
 
-    
+
 
     function verifyBlockInDom(listView, blocksExpectedInTree) {
         LiveUnit.Assert.areEqual(blocksExpectedInTree.length, listView.element.querySelectorAll(".win-itemsblock").length);
@@ -555,7 +555,7 @@ module WinJSTests {
     }
 
     export class VirtualizedViewTests  {
-        
+
         setUp(completed) {
 
             testRootEl = document.createElement("div");
@@ -2032,7 +2032,7 @@ module WinJSTests {
             };
         };
 
-       
+
 
         testRealizeMoreThanCreated = function (complete) {
             // ListView height is 300, container height is 30
@@ -2999,7 +2999,7 @@ module WinJSTests {
             });
         };
 
-  
+
 
         // Regression test for WinBlue: 88018
         testEnsureVisibleAfterDataChange = function (complete) {
@@ -4193,7 +4193,7 @@ module WinJSTests {
         };
 
 
-        
+
 
         testNoProgressRingInEmptyView = function (complete) {
             var lv = new ListView();
@@ -4212,7 +4212,7 @@ module WinJSTests {
             });
         };
 
-  
+
             testDeferContainerCreationUntilSeZoZoomCompletes = function (complete) {
                 var wrapper = document.createElement("div");
                 wrapper.innerHTML = "<div id='sezo'><div></div><div></div></div>";
@@ -4265,7 +4265,7 @@ module WinJSTests {
                     sezo.zoomedOut = true;
                 });
             };
-        
+
 
         testSlowHeaderRenderingDoesNotCrash = function (complete) {
             var data = [];
@@ -4695,7 +4695,7 @@ module WinJSTests {
                 });
         };
 
-        
+
 
 
 

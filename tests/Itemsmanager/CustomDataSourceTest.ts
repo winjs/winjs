@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 /// <reference path="ProxyDataSource.ts" />
-/// <reference path="../TestLib/UnitTestsCommon.ts" />
+/// <reference path="../TestLib/Helper.ItemsManager.ts" />
 /// <reference path="vds-tracing.ts" />
 
 module WinJSTests {
@@ -13,7 +13,7 @@ module WinJSTests {
     var previousTracingOptions;
 
     export class CustomDataSourceTests {
-        
+
 
         setUp() {
             previousTracingOptions = VDSLogging.options;
