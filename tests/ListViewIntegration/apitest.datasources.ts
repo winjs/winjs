@@ -6,7 +6,7 @@
 /// <reference path="../TestLib/Helper.ts" />
 /// <reference path="../TestLib/Helper.ListView.ts"/>
 /// <reference path="globals.ts"/>
-/// <reference path="../TestLib/listviewutils.ts"/>
+/// <reference path="../TestLib/Helper.ListView.Utils.ts"/>
 /// <reference path="listviewverify.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 /// <deploy src="../TestData/" />
@@ -32,9 +32,9 @@ module WinJSTests {
             }).
             then(function (c) {
                 count = c;
-                ListViewUtils.logTestComment("Initial count: " + count);
+                Helper.ListView.Utils.logTestComment("Initial count: " + count);
 
-                ListViewUtils.logTestComment("Insert an item into empty ListView in grid layout.");
+                Helper.ListView.Utils.logTestComment("Insert an item into empty ListView in grid layout.");
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 count++;
@@ -49,8 +49,8 @@ module WinJSTests {
                 return verifyCount(listView, count);
             }).
             then(function () {
-                ListViewUtils.logTestComment("Delete an item from ListView, leaving in empty state.");
-                ListViewUtils.logTestComment("Removing item at index: 0");
+                Helper.ListView.Utils.logTestComment("Delete an item from ListView, leaving in empty state.");
+                Helper.ListView.Utils.logTestComment("Removing item at index: 0");
                 listView.itemDataSource.testDataAdapter.removeAtIndex(0);
                 listView.itemDataSource.testDataAdapter.removeAtIndex(0);
                 count--;
@@ -78,14 +78,14 @@ module WinJSTests {
             then(function (count) {
 
                 // Check test precondition - Initial count > 0
-                ListViewUtils.logTestComment("Initial count: " + count);
+                Helper.ListView.Utils.logTestComment("Initial count: " + count);
                 LiveUnit.Assert.isTrue(count > 0, "Cannot run selection test with an empty dataSource");
                 return count;
             }).
             then(function (count) {
 
                 // Test 1 - API Selection
-                ListViewUtils.logTestComment("Selection test");
+                Helper.ListView.Utils.logTestComment("Selection test");
 
                 // Build array of indices for selection test
                 var selectionTestIndices = [0, Math.floor(count / 2), count - 1];
@@ -97,7 +97,7 @@ module WinJSTests {
                     selectionPromise = selectionPromise.then(function () {
 
                         // make selection
-                        ListViewUtils.logTestComment("Selection test - Next index: " + i);
+                        Helper.ListView.Utils.logTestComment("Selection test - Next index: " + i);
                         currentSelection.push(i);
                         if (currentSelection.length > 1) {
 
@@ -123,7 +123,7 @@ module WinJSTests {
             then(function (currentSelection) {
 
                 // Test 2 - API Deselection
-                ListViewUtils.logTestComment("Deselection test");
+                Helper.ListView.Utils.logTestComment("Deselection test");
                 var selectionPromise = WinJS.Promise.wrap();
                 for (var i = currentSelection.length; i > 0; i--) {
 
@@ -156,7 +156,7 @@ module WinJSTests {
         function validateEnsureVisible(listView, previousState) {
 
             // Validation
-            ListViewUtils.logTestComment('validateEnsureVisible');
+            Helper.ListView.Utils.logTestComment('validateEnsureVisible');
             var currentLastVisible = listView.indexOfLastVisible;
             var currentFirstVisible = listView.indexOfFirstVisible;
             var currentScrollPos = listView.scrollPosition;
@@ -180,7 +180,7 @@ module WinJSTests {
             then(function () {
 
                 // Test 1 - EnsureVisible on an item off screen
-                ListViewUtils.logTestComment('EnsureVisibleTest');
+                Helper.ListView.Utils.logTestComment('EnsureVisibleTest');
 
                 // find an index off screen
                 var initialLastVisible = listView.indexOfLastVisible;
@@ -194,10 +194,10 @@ module WinJSTests {
 
                 // store the scroll position and log initial conditions
                 var scrollPos = listView.scrollPosition;
-                ListViewUtils.logTestComment("EnsureVisibleTest - Initial First: " + initialFirstVisible
+                Helper.ListView.Utils.logTestComment("EnsureVisibleTest - Initial First: " + initialFirstVisible
                     + " Initial Last: " + initialLastVisible
                     + " Initial Scroll: " + scrollPos);
-                ListViewUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
+                Helper.ListView.Utils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
 
                 // call ensure visible
                 listView.ensureVisible(desiredIndex);
@@ -215,7 +215,7 @@ module WinJSTests {
                 var desiredIndex = 0;
                 var scrollPos = listView.scrollPosition;
 
-                ListViewUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
+                Helper.ListView.Utils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
                 listView.ensureVisible(desiredIndex);
 
                 return { desiredIndex: desiredIndex, scrollPos: scrollPos };
@@ -231,7 +231,7 @@ module WinJSTests {
             var desiredIndex = count - 1;
             var scrollPos = listView.scrollPosition;
 
-            ListViewUtils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
+            Helper.ListView.Utils.logTestComment('EnsureVisibleTest - ensureVisible(' + desiredIndex + ')');
             listView.ensureVisible(desiredIndex);
 
             return { desiredIndex: desiredIndex, scrollPos: scrollPos };
@@ -263,14 +263,14 @@ module WinJSTests {
             then(function () {
 
                 // Test 0 - Set data adapter to one with items
-                ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Replacing data adapter objects with new objects");
+                Helper.ListView.Utils.logTestComment("ReplaceAdapterObjectsTest - Replacing data adapter objects with new objects");
                 listView.itemDataSource.testDataAdapter.replaceItems(getNewObjects(DEF_TOTAL_ITEMS));
 
                 if (!useReload) {
-                    ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.invalidateAll()");
+                    Helper.ListView.Utils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.invalidateAll()");
                     listView.itemDataSource.testDataAdapter.invalidateAll();
                 } else {
-                    ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.reload()");
+                    Helper.ListView.Utils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.reload()");
                     listView.itemDataSource.testDataAdapter.reload();
                 }
             }).
@@ -287,14 +287,14 @@ module WinJSTests {
             then(function () {
 
                 // Test 1 - Set data adapter to an empty one
-                ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Replacing data adapter objects with empty array and calling invalidateAll()");
+                Helper.ListView.Utils.logTestComment("ReplaceAdapterObjectsTest - Replacing data adapter objects with empty array and calling invalidateAll()");
                 listView.itemDataSource.testDataAdapter.replaceItems([]);
 
                 if (!useReload) {
-                    ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.invalidateAll()");
+                    Helper.ListView.Utils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.invalidateAll()");
                     listView.itemDataSource.testDataAdapter.invalidateAll();
                 } else {
-                    ListViewUtils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.reload()");
+                    Helper.ListView.Utils.logTestComment("ReplaceAdapterObjectsTest - Calling testDataAdapter.reload()");
                     listView.itemDataSource.testDataAdapter.reload();
                 }
             }).
@@ -308,7 +308,7 @@ module WinJSTests {
                 var winContainerCount = listView.element.querySelectorAll('.' + Expected.ClassName.Container).length;
                 LiveUnit.Assert.isTrue(winContainerCount === 0, 'winContainerCount: ' + winContainerCount + ' expecting: 0');
 
-                ListViewUtils.logTestComment("Insert an item into empty ListView in grid layout.");
+                Helper.ListView.Utils.logTestComment("Insert an item into empty ListView in grid layout.");
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
             }).
@@ -333,7 +333,7 @@ module WinJSTests {
         Helper.ListView.waitForReady(listView, -1)().
             then(function () {
                 // Test 1 - Set data source to a new one
-                ListViewUtils.logTestComment('ReplaceDataSourceTest - Replacing data source with a new one with ' + DEF_TOTAL_ITEMS + ' items');
+                Helper.ListView.Utils.logTestComment('ReplaceDataSourceTest - Replacing data source with a new one with ' + DEF_TOTAL_ITEMS + ' items');
                 listView.itemDataSource = createTestDataSource(DEF_TOTAL_ITEMS);
             }).
             then(Helper.ListView.waitForReady(listView, -1)).
@@ -353,7 +353,7 @@ module WinJSTests {
             then(function () {
 
                 // Test 2 - Set data source to an empty one
-                ListViewUtils.logTestComment("ReplaceDataSourceTest - Replacing data source with a new empty one");
+                Helper.ListView.Utils.logTestComment("ReplaceDataSourceTest - Replacing data source with a new empty one");
                 listView.itemDataSource = createTestDataSource(0);
             }).
             then(Helper.ListView.waitForReady(listView, -1)).
@@ -366,7 +366,7 @@ module WinJSTests {
                 var winContainerCount = listView.element.querySelectorAll('.' + Expected.ClassName.Container).length;
                 LiveUnit.Assert.areEqual(0, winContainerCount, 'winContainerCount: ' + winContainerCount + ' expecting: 0');
 
-                ListViewUtils.logTestComment("Insert an item into empty ListView in grid layout.");
+                Helper.ListView.Utils.logTestComment("Insert an item into empty ListView in grid layout.");
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
                 listView.itemDataSource.testDataAdapter.insertAtIndex(DEF_ITEM_DATA, 0);
             }).
@@ -458,7 +458,7 @@ module WinJSTests {
     }
 
     function verifyCount(listView, expectedCount) {
-        ListViewUtils.logTestComment("Verifying ListView Count");
+        Helper.ListView.Utils.logTestComment("Verifying ListView Count");
         return listView.itemDataSource.getCount().
             then(function (c) {
                 LiveUnit.Assert.areEqual(expectedCount, c, "verifyCount - expected: " + expectedCount + " got: " + c);
@@ -466,7 +466,7 @@ module WinJSTests {
     }
 
     function verifySelection(listView, expectedSelectionArray) {
-        ListViewUtils.logTestComment("verifySelection - expected: " + expectedSelectionArray.toString());
+        Helper.ListView.Utils.logTestComment("verifySelection - expected: " + expectedSelectionArray.toString());
 
         function iterateByPage(count, index) {
             listView.indexOfFirstVisible = index;
@@ -475,7 +475,7 @@ module WinJSTests {
                     var firstVisible = listView.indexOfFirstVisible;
                     var lastVisible = listView.indexOfLastVisible;
 
-                    ListViewUtils.logTestComment("verifySelection - firstVisible: " + firstVisible + " - lastVisible: " + lastVisible);
+                    Helper.ListView.Utils.logTestComment("verifySelection - firstVisible: " + firstVisible + " - lastVisible: " + lastVisible);
                     for (var i = firstVisible; i <= lastVisible; i++) {
                         var currentElement = listView.elementFromIndex(i).parentNode;
                         var actualClassName = currentElement.className;
@@ -568,13 +568,13 @@ module WinJSTests {
         // Setup function to create HTML page hosting a listview
         setUp() {
             LiveUnit.LoggingCore.logComment("Create Test Page...");
-            ListViewUtils.initializeDOM();
+            Helper.ListView.Utils.initializeDOM();
         }
 
         // Teardown function
         tearDown() {
             LiveUnit.LoggingCore.logComment("Test Tear Down...");
-            ListViewUtils.resetDOM();
+            Helper.ListView.Utils.resetDOM();
         }
 
         /// -----------------------------------------------------------------------------------------------
@@ -592,7 +592,7 @@ module WinJSTests {
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -604,8 +604,8 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            Helper.ListView.Utils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
             ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
@@ -624,7 +624,7 @@ module WinJSTests {
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -636,8 +636,8 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            Helper.ListView.Utils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
             ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
@@ -656,7 +656,7 @@ module WinJSTests {
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -668,8 +668,8 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            Helper.ListView.Utils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
             ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
@@ -688,7 +688,7 @@ module WinJSTests {
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -700,8 +700,8 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            Helper.ListView.Utils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
             ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
@@ -720,7 +720,7 @@ module WinJSTests {
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -732,8 +732,8 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            Helper.ListView.Utils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
             ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
@@ -752,7 +752,7 @@ module WinJSTests {
             ///     Test empty list layout
             /// </summary>
 
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -764,8 +764,8 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            Helper.ListView.Utils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
             ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
@@ -784,7 +784,7 @@ module WinJSTests {
             ///     Rehydrate the ListView synchronously upon creation
             /// </summary>
 
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -796,8 +796,8 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            Helper.ListView.Utils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
             ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
@@ -816,7 +816,7 @@ module WinJSTests {
             ///     Simulate how Live Mail manipulates the ListView when composing an email
             /// </summary>
 
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -828,8 +828,8 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            ListViewUtils.logTestStart("Test initialization of empty ListView in list layout.");
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            Helper.ListView.Utils.logTestStart("Test initialization of empty ListView in list layout.");
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             // Initial verification
             ListViewVerify.verifyGetOptions(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, options);
@@ -841,7 +841,7 @@ module WinJSTests {
 
     var generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange = function (layout) {
         ListViewDSTestClass.prototype["testDataSourceChangeSetFocusOnInvalidIndexAndHeightChange" + layout] = function (signalTestCaseCompleted) {
-            var testRenderer = ListViewUtils.createItemRenderer();
+            var testRenderer = Helper.ListView.Utils.createItemRenderer();
 
             var myList = null;
             var options = {
@@ -853,7 +853,7 @@ module WinJSTests {
                 itemTemplate: testRenderer
             };
 
-            var listView = ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
+            var listView = Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.List, Expected.Direction.ltr, options);
 
             Helper.ListView.waitForReady(listView, -1)().then(function () {
                 var newItemTitle = "New List Item 0";

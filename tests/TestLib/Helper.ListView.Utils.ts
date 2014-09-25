@@ -3,7 +3,7 @@
 ///<reference path="../ListViewIntegration/globals.ts" />
 
 
-module ListViewUtils {
+module Helper.ListView.Utils {
 
     "use strict";
 
@@ -28,7 +28,7 @@ module ListViewUtils {
         /// </param>
         /// <returns type="Object"/>
 
-        ListViewUtils.logTestComment("Initialize Listview ...");
+        Helper.ListView.Utils.logTestComment("Initialize Listview ...");
 
         // Find Div to attach to
         var listviewContainer = (placeholderId) ? document.getElementById(placeholderId) : null;
@@ -56,9 +56,9 @@ module ListViewUtils {
                 }
             }
             populateCssProperties();
-            ListViewUtils.logTestComment("Direction=" + listviewContainer.style.direction + " Width=" + listviewContainer.style.width +
+            Helper.ListView.Utils.logTestComment("Direction=" + listviewContainer.style.direction + " Width=" + listviewContainer.style.width +
                 " Height=" + listviewContainer.style.height + " OffsetWidth=" + listviewContainer.offsetWidth + " OffsetHeight=" + listviewContainer.offsetHeight);
-            ListViewUtils.logTestComment("Listview Options: " + strOptions);
+            Helper.ListView.Utils.logTestComment("Listview Options: " + strOptions);
         }
 
         // Attach the correct control
@@ -81,7 +81,7 @@ module ListViewUtils {
         }
 
         LiveUnit.Assert.isNotNull(listview, "Cannot attach listview to element with id = " + listviewContainer.id);
-        ListViewUtils.logTestComment("Listview attached to element with id=" + listviewContainer.id);
+        Helper.ListView.Utils.logTestComment("Listview attached to element with id=" + listviewContainer.id);
 
         return listview;
 
@@ -372,7 +372,7 @@ module ListViewUtils {
 
         var current = 0;
 
-        ListViewUtils.logTestComment("Running asynchronous tests");
+        Helper.ListView.Utils.logTestComment("Running asynchronous tests");
 
         function ExecuteWhenLoadingComplete(listview, func) {
             function CheckAndExecute() {
@@ -413,7 +413,7 @@ module ListViewUtils {
         ///     Returns the size dimensions of the first item in the listview.
         /// </summary>
 
-        ListViewUtils.logTestComment("Get Size Dimensions of first item.");
+        Helper.ListView.Utils.logTestComment("Get Size Dimensions of first item.");
         var dimensions: any = {};
         var lvItems = document.getElementById(placeholderId).querySelectorAll("div." + Expected.ClassName.Container);
         var lvfirstChild = <HTMLElement>lvItems[0];
@@ -422,7 +422,7 @@ module ListViewUtils {
         dimensions.Width = lvfirstChild.offsetWidth - padding.left - padding.right;
         dimensions.Height = lvfirstChild.offsetHeight - padding.top - padding.bottom;
 
-        ListViewUtils.logTestComment("Dimensions of the first item are: Height=" + dimensions.Height + ", Width = " + dimensions.Width);
+        Helper.ListView.Utils.logTestComment("Dimensions of the first item are: Height=" + dimensions.Height + ", Width = " + dimensions.Width);
         return dimensions;
     }
 
@@ -525,7 +525,7 @@ module ListViewUtils {
         /// </summary>
 
         var listviewEl = listview.element || listview;
-        var visibleElementList = ListViewUtils.getVisibleElements(listview, fullyVisible);
+        var visibleElementList = Helper.ListView.Utils.getVisibleElements(listview, fullyVisible);
 
         //the first item is the first visible
         return visibleElementList[0];
@@ -537,7 +537,7 @@ module ListViewUtils {
         /// </summary>
 
         var listviewEl = listview.element || listview;
-        var visibleElementList = ListViewUtils.getVisibleElements(listview, fullyVisible);
+        var visibleElementList = Helper.ListView.Utils.getVisibleElements(listview, fullyVisible);
 
         //the last item is last visible
         return visibleElementList[visibleElementList.length - 1];
@@ -638,8 +638,8 @@ module ListViewUtils {
         /// Get listview of 100 items with 20 groups for your layout
         /// </summary>
         /// </signature>
-        var testItemRenderer = ListViewUtils.createItemRenderer();
-        var testHeaderRenderer = ListViewUtils.createGroupHeaderRenderer();
+        var testItemRenderer = Helper.ListView.Utils.createItemRenderer();
+        var testHeaderRenderer = Helper.ListView.Utils.createGroupHeaderRenderer();
 
         function groupKey(item) {
             return item.groupKey;
@@ -671,7 +671,7 @@ module ListViewUtils {
         if (direction != Expected.Direction.ltr && direction != Expected.Direction.rtl) {
             direction = Expected.Direction.ltr
             }
-        return ListViewUtils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.Grid, direction, options);
+        return Helper.ListView.Utils.createListViewControl(DEF_LISTVIEWCONTAINER_ID, Expected.Control.Grid, direction, options);
     }
 
 }

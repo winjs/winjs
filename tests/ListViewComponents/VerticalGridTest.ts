@@ -4,7 +4,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts" />
-/// <reference path="../TestLib/listviewutils.ts" />
+/// <reference path="../TestLib/Helper.ListView.Utils.ts" />
 
 module WinJSTests {
 
@@ -14,8 +14,8 @@ module WinJSTests {
     var lv;
 
     var checkFirstLastVisible = function checkFirstLastVisible(lv) {
-        LiveUnit.Assert.areEqual(ListViewUtils.getFirstVisibleElement(lv).querySelector(".win-item").innerHTML, lv.elementFromIndex(lv.indexOfFirstVisible).innerHTML);
-        LiveUnit.Assert.areEqual(ListViewUtils.getLastVisibleElement(lv).querySelector(".win-item").innerHTML, lv.elementFromIndex(lv.indexOfLastVisible).innerHTML);
+        LiveUnit.Assert.areEqual(Helper.ListView.Utils.getFirstVisibleElement(lv).querySelector(".win-item").innerHTML, lv.elementFromIndex(lv.indexOfFirstVisible).innerHTML);
+        LiveUnit.Assert.areEqual(Helper.ListView.Utils.getLastVisibleElement(lv).querySelector(".win-item").innerHTML, lv.elementFromIndex(lv.indexOfLastVisible).innerHTML);
     };
 
     function generateListView(host, rowsPerPage, columnsPerPage, pages, options?) {
@@ -133,7 +133,7 @@ module WinJSTests {
 
         var scrollMax = 0;
         var increment = 50;
-        ListViewUtils.waitForReady(lv)().done(function () {
+        Helper.ListView.Utils.waitForReady(lv)().done(function () {
             Helper.asyncWhile(function () {
                 scrollMax = viewport.scrollHeight - viewport.clientHeight;
                 return WinJS.Promise.wrap(viewport.scrollTop < scrollMax);
@@ -159,7 +159,7 @@ module WinJSTests {
         var scrollMax = 0;
         var increment = 50;
 
-        ListViewUtils.waitForReady(lv)().done(function () {
+        Helper.ListView.Utils.waitForReady(lv)().done(function () {
             Helper.asyncWhile(function () {
                 scrollMax = viewport.scrollHeight - viewport.clientHeight;
                 return WinJS.Promise.wrap(viewport.scrollTop < scrollMax);
@@ -168,7 +168,7 @@ module WinJSTests {
                         var targetScrollPosition = Math.min(viewport.scrollTop + increment, scrollMax);
                         lv.scrollPosition = targetScrollPosition;
 
-                        ListViewUtils.waitForReady(lv)().done(function () {
+                        Helper.ListView.Utils.waitForReady(lv)().done(function () {
                             LiveUnit.Assert.areEqual(targetScrollPosition, viewport.scrollTop);
                             c();
                         });
@@ -190,7 +190,7 @@ module WinJSTests {
                 return new WinJS.Promise(function (c) {
                     viewport.scrollTop += increment;
 
-                    ListViewUtils.waitForReady(lv)().done(function () {
+                    Helper.ListView.Utils.waitForReady(lv)().done(function () {
                         checkFirstLastVisible(lv);
                         c();
                     });
@@ -222,7 +222,7 @@ module WinJSTests {
                 return new WinJS.Promise(function (c) {
                     viewport.scrollTop += increment;
 
-                    ListViewUtils.waitForReady(lv)().done(function () {
+                    Helper.ListView.Utils.waitForReady(lv)().done(function () {
                         checkFirstLastVisible(lv);
                         c();
                     });
@@ -237,7 +237,7 @@ module WinJSTests {
         var pages = lv.testOptions.pages;
         var itemCount = columnsPerPage * rowsPerPage * pages;
         var maxFirstVisibleIndex = itemCount - (columnsPerPage * (rowsPerPage + 1)); //Skip the last page and 1 row
-        ListViewUtils.waitForReady(lv)().done(function () {
+        Helper.ListView.Utils.waitForReady(lv)().done(function () {
             Helper.asyncWhile(function () {
                 return WinJS.Promise.wrap(lv.indexOfFirstVisible < maxFirstVisibleIndex);
             }, function () {
@@ -245,7 +245,7 @@ module WinJSTests {
                         var expectedIndexOfFirstVisible = Math.min(maxFirstVisibleIndex, Math.max(0, lv.indexOfFirstVisible) + columnsPerPage);
                         lv.indexOfFirstVisible = expectedIndexOfFirstVisible;
 
-                        ListViewUtils.waitForReady(lv)().done(function () {
+                        Helper.ListView.Utils.waitForReady(lv)().done(function () {
                             LiveUnit.Assert.areEqual(expectedIndexOfFirstVisible, lv.indexOfFirstVisible, "Read value is different after setting");
                             checkFirstLastVisible(lv);
                             c();
@@ -273,7 +273,7 @@ module WinJSTests {
                     var ensureVisibleIndex = ensureVisibleTargets.pop();
                     lv.ensureVisible(ensureVisibleIndex);
 
-                    ListViewUtils.waitForReady(lv)().then(function () {
+                    Helper.ListView.Utils.waitForReady(lv)().then(function () {
                         LiveUnit.Assert.isTrue(ensureVisibleIndex >= lv.indexOfFirstVisible, "Index of first visible should be less than or eq to ensured visible item index");
                         LiveUnit.Assert.isTrue(ensureVisibleIndex <= lv.indexOfLastVisible, "Index of first visible should be greater than or eq to ensured visible item index");
                         c();

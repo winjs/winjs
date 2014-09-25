@@ -6,7 +6,7 @@
 /// <reference path="../TestLib/Helper.ListView.ts"/>
 /// <reference path="globals.ts"/>
 /// <reference path="../TestLib/Helper.ts"/>
-/// <reference path="../TestLib/listviewutils.ts"/>
+/// <reference path="../TestLib/Helper.ListView.Utils.ts"/>
 /// <reference path="listviewverify.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 /// <deploy src="../TestData/" />
@@ -14,7 +14,7 @@
 module WinJSTests {
 
     "use strict";
-    var lvUtils = ListViewUtils;
+    var lvUtils = Helper.ListView.Utils;
     var lvVerify = ListViewVerify;
 
     function createCellSpanningDataSource(size, spanningPeriod, groupSize?) {
