@@ -1285,7 +1285,7 @@ module WinJSTests {
         };
 
         testSelectionWithSlowDataSourceAfterScrolling = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
             var testDS = getSlowDS();
 
             var testDiv = document.querySelector("#SelectionManagerTest");
@@ -1316,7 +1316,7 @@ module WinJSTests {
                 listView.ensureVisible(98);
             });
             waitForReady(listView)().
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
     }

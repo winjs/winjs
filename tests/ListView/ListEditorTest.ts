@@ -311,7 +311,7 @@ module WinJSTests {
         // inserted and then removed.
         // Regression test for WinBlue#273002.
         testBatchOfEditsWhereListViewStaysEmpty = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.getElementById("listEditorTest");
             var items = [];
@@ -325,14 +325,14 @@ module WinJSTests {
                     return true;
                 },
                 function () {
-                    validateUnhandledErrorsOnIdle().
+                    Helper.validateUnhandledErrorsOnIdle().
                         done(complete);
                 }];
             runTests(listView, tests);
         };
 
         testMakingListEmptyAfterCtor = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var list = new WinJS.Binding.List([{ title: "first" }]);
 
@@ -344,13 +344,13 @@ module WinJSTests {
             list.pop();
 
             return waitForReady(listView)().
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         };
 
         // Regression Test for Windows Blue Bug #409620
         testReEntrancyEditsAfterLoadingStateComplete = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var data = [];
             for (var i = 0; i < 400; i++) { // Crash requires that listview create containers asynchronously. 400 is big enough to force that.
@@ -399,7 +399,7 @@ module WinJSTests {
                     return WinJS.Utilities.Scheduler.requestDrain(WinJS.Utilities.Scheduler.Priority.idle);
                 }).then(function () {
                     return WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500));
-                }).then(validateUnhandledErrorsOnIdle).
+                }).then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     WinJS.Utilities.disposeSubTree(testElement);
                     testRootEl.removeChild(testElement);
@@ -1161,7 +1161,7 @@ module WinJSTests {
         function generateTest(layoutName, groups) {
             var fullName = "test" + name + "OnHiddenListViewIn" + layoutName + (groups ? "WithGroups" : "");
             ListEditorTest.prototype[fullName] = function (complete) {
-                initUnhandledErrors();
+                Helper.initUnhandledErrors();
 
                 var element = document.getElementById("listEditorTest");
                 element.style.display = "none";
@@ -1202,7 +1202,7 @@ module WinJSTests {
                     then(function () {
                         return WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500));
                     }).
-                    then(validateUnhandledErrorsOnIdle).
+                    then(Helper.validateUnhandledErrorsOnIdle).
                     done(complete);
             };
         }

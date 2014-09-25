@@ -222,7 +222,7 @@ module WinJSTests {
         // after the ListView has been disposed.
         // Regression test for WinBlue#395099
         testItemPropertyChangeAfterDispose = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
             var element = document.getElementById("ariaTestList");
             var listView = setupListview(element, "ListLayout");
 
@@ -231,7 +231,7 @@ module WinJSTests {
                 listView.dispose();
                 return WinJS.Utilities.Scheduler.schedulePromiseIdle();
             }).done(function () {
-                    validateUnhandledErrors();
+                    Helper.validateUnhandledErrors();
                     complete();
                 });
         };

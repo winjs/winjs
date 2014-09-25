@@ -120,7 +120,7 @@ module WinJSTests {
 
         ListViewTests.prototype["test" + upFirstChar(failWhen) + failingItem.toString() + "FailsWith" + upFirstChar(errorName) + "In" + suffix + (groups ? "WithGroups" : "") + (async ? "Async" : "")] = function (complete) {
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -161,7 +161,7 @@ module WinJSTests {
 
 
             validator(listView).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     element.winControl.dispose();
                     document.body.removeChild(element);
@@ -430,7 +430,7 @@ module WinJSTests {
         };
 
         testFocusDuringGroupDataSourceChanging = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var data = [];
             for (var i = 0; i < 20; i++) {
@@ -458,7 +458,7 @@ module WinJSTests {
                 then(function () {
                     document.body.removeChild(lv.element);
                     lv.dispose();
-                    return validateUnhandledErrorsOnIdle();
+                    return Helper.validateUnhandledErrorsOnIdle();
                 }).
                 done(complete);
         };
@@ -634,7 +634,7 @@ module WinJSTests {
         // load fails, and the app handles the error thru the loadImage promise.
         // Regression test for WinBlue#138768.
         testLoadImageError = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             function imageLoadingRenderer(itemPromise) {
                 var el = document.createElement("div");
@@ -674,7 +674,7 @@ module WinJSTests {
                     lv.itemDataSource.change("0", '');
                     return waitForReady(lv, -1)();
                 }).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     cleanup();
                     complete();
@@ -687,7 +687,7 @@ module WinJSTests {
         // handle this.
         // Regression test for WinBlue#390892
         testResizeDuringMeasuring = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             function onResize() {
                 lv.layout = makeLayout();
@@ -741,7 +741,7 @@ module WinJSTests {
 
                 return waitForReady(lv, -1)();
             }).then(function () {
-                    return validateUnhandledErrorsOnIdle();
+                    return Helper.validateUnhandledErrorsOnIdle();
                 }).then(null, function () {
                 }).then(function () {
                     cleanUp();
@@ -762,7 +762,7 @@ module WinJSTests {
                 return;
             }
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             function onResize() {
                 lv.layout = makeLayout();
@@ -843,7 +843,7 @@ module WinJSTests {
 
                 return waitForReady(lv, -1)();
             }).then(function () {
-                    return validateUnhandledErrorsOnIdle();
+                    return Helper.validateUnhandledErrorsOnIdle();
                 }).then(function () {
                     verifyContainer({
                         index: 0,
@@ -864,7 +864,7 @@ module WinJSTests {
         };
 
         testDeleteBeforeListViewLoadingStateComplete = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             function render(item) {
                 var div = document.createElement("div");
@@ -897,14 +897,14 @@ module WinJSTests {
                 lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 0, hasFocus: true, showFocus: true };
                 lv.itemDataSource.list.shift();
                 waitForReady(lv, -1)().
-                    then(validateUnhandledErrorsOnIdle).
+                    then(Helper.validateUnhandledErrorsOnIdle).
                     done(complete);
             }, 1000);
         };
 
         //WinBlue: 297330
         xtestMirageHandling = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var dataSourceImpl = {
                 itemsFromIndex: function (index, countBefore, countAfter) {
@@ -952,7 +952,7 @@ module WinJSTests {
             });
 
             waitForReady(listView)().
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     element.winControl.dispose();
                     document.body.removeChild(element);
@@ -1113,7 +1113,7 @@ module WinJSTests {
         };
 
         testDataSourceCancelGetCountPromises = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var placeholder = document.createElement("div");
             placeholder.style.width = placeholder.style.height = "300px";
@@ -1199,7 +1199,7 @@ module WinJSTests {
                     });
 
                     return waitForReady(listView, -1)();
-                }).then(validateUnhandledErrorsOnIdle).done(function () {
+                }).then(Helper.validateUnhandledErrorsOnIdle).done(function () {
                     document.body.removeChild(placeholder);
                     complete();
                 });
@@ -1343,7 +1343,7 @@ module WinJSTests {
 
     function generateInsertAtEndOnHiddenListView(layoutName) {
         ListViewTests.prototype["testInsertAtEndOnHiddenListView" + (layoutName == "GridLayout" ? "" : layoutName)] = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             function generateRenderer(size) {
                 return function (itemPromise) {
@@ -1387,7 +1387,7 @@ module WinJSTests {
                     if (completed === 1) {
                         listView.itemDataSource.insertAtEnd(null, { group: "0", title: "Tile 1" });
                         WinJS.Utilities._setImmediate(function () {
-                            validateUnhandledErrorsOnIdle().
+                            Helper.validateUnhandledErrorsOnIdle().
                                 done(function () {
                                     WinJS.Utilities.disposeSubTree(placeholder);
                                     document.body.removeChild(placeholder);
@@ -1657,7 +1657,7 @@ module WinJSTests {
 
         ListViewTests.prototype["testFailDuring" + upFirstChar(name) + "With" + upFirstChar(error) + "In" + suffix + (groups ? "WithGroups" : "") + (async ? "Async" : "")] = function (complete) {
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -1717,7 +1717,7 @@ module WinJSTests {
                         checkTile(listView, 1, "Tile1");
                         checkTile(listView, 2, "Tile2");
                     }
-                    return validateUnhandledErrorsOnIdle();
+                    return Helper.validateUnhandledErrorsOnIdle();
                 }).
                 done(function () {
                     element.winControl.dispose();

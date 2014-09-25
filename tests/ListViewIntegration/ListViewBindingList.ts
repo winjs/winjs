@@ -265,12 +265,12 @@ module Tests {
 
         setUp() {
             WinJS.Application.start();
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
         }
 
         tearDown() {
             WinJS.Application.stop();
-            cleanupUnhandledErrors();
+            Helper.cleanupUnhandledErrors();
         }
 
 
@@ -295,7 +295,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -324,7 +324,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -350,7 +350,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -380,7 +380,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -413,7 +413,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -450,7 +450,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -486,7 +486,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -533,7 +533,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -573,7 +573,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -617,7 +617,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -658,7 +658,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -701,7 +701,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -742,7 +742,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
 
@@ -811,7 +811,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         };
 
@@ -864,7 +864,7 @@ module Tests {
                 }).
                 then(elements.cleanup).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
 
             function setAtRandoms() {
@@ -1097,7 +1097,7 @@ module Tests {
                     return rangeTester.expectedRange(0, 16);
                 }).
                 then(resetSeed).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
     }

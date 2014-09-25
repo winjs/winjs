@@ -865,7 +865,7 @@ module WinJSTests {
         };
 
         testResetPointerStateAfterPressingEnterOnHeader = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var data = [];
             for (var i = 0; i < 10; i++) {
@@ -890,12 +890,12 @@ module WinJSTests {
 
                     return waitForReady(lv, -1)();
                 }).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         };
 
         testKeyboardingBeforeTreeCreated = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var placeholder = document.createElement("div");
             placeholder.style.width = "300px";
@@ -939,7 +939,7 @@ module WinJSTests {
             layouSignal.complete(10);
 
             waitForReady(listView)().
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
 
                     document.body.removeChild(placeholder);
@@ -1192,10 +1192,10 @@ module WinJSTests {
                 layout: new WinJS.UI[layoutName](),
             });
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
             var range;
             var promiseErrorsTimeout = setTimeout(function () {
-                validateUnhandledErrors();
+                Helper.validateUnhandledErrors();
             }, 9900);
             var ensureVisibleIndices = [999, -1];
             waitForReady(listView, -1)().
@@ -1216,7 +1216,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(range.indexOfFirstVisible, listView.indexOfFirstVisible);
                     clearTimeout(promiseErrorsTimeout);
                 }).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         };
     };
@@ -1232,10 +1232,10 @@ module WinJSTests {
                 layout: new WinJS.UI[layoutName](),
             });
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
             var range;
             var promiseErrorsTimeout = setTimeout(function () {
-                validateUnhandledErrors();
+                Helper.validateUnhandledErrors();
             }, 9900);
             var ensureVisibleIndices = [999, -1];
             waitForReady(listView, -1)().
@@ -1252,7 +1252,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(-1, listView.indexOfFirstVisible);
                     clearTimeout(promiseErrorsTimeout);
                 }).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         }
     };
@@ -1271,10 +1271,10 @@ module WinJSTests {
                 layout: new WinJS.UI[layoutName](),
             });
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
             var range;
             var promiseErrorsTimeout = setTimeout(function () {
-                validateUnhandledErrors();
+                Helper.validateUnhandledErrors();
             }, 9900);
             var indexOfFirstVisibleIndices = [999, -1];
             waitForReady(listView, -1)().
@@ -1295,7 +1295,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(range.indexOfFirstVisible, listView.indexOfFirstVisible);
                     clearTimeout(promiseErrorsTimeout);
                 }).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
         };
     };

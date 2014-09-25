@@ -946,14 +946,14 @@ module WinJSTests {
 
     var testIndexOfFirstVisibleOutOfRange = function (element, listview, complete) {
 
-        initUnhandledErrors();
+        Helper.initUnhandledErrors();
 
         waitForReady(listview)().
             then(function () {
                 listview.indexOfFirstVisible = 1000;
                 return WinJS.Promise.timeout();
             }).
-            then(validateUnhandledErrorsOnIdle).
+            then(Helper.validateUnhandledErrorsOnIdle).
             done(complete);
     };
 
@@ -961,14 +961,14 @@ module WinJSTests {
 
     var testEnsureVisibleOutOfRange = function (element, listview, complete) {
 
-        initUnhandledErrors();
+        Helper.initUnhandledErrors();
 
         waitForReady(listview)().
             then(function () {
                 listview.ensureVisible(1000);
                 return WinJS.Promise.timeout();
             }).
-            then(validateUnhandledErrorsOnIdle).
+            then(Helper.validateUnhandledErrorsOnIdle).
             done(complete);
     };
 

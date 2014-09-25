@@ -223,7 +223,7 @@ module WinJSTests {
             document.body.removeChild(testRootEl);
             restoreListviewAnimations();
             WinJS.Utilities.stopLog();
-            cleanupUnhandledErrors();
+            Helper.cleanupUnhandledErrors();
 
         }
 
@@ -1366,7 +1366,7 @@ module WinJSTests {
     function generateRealizeRenderDuringScrolling(layout) {
         var testName = "testRealizeRenderAndResetDuringScrolling" + (layout == "GridLayout" ? "" : layout);
         GroupsTests.prototype[testName] = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
             var refItems = {};
             var stopScrolling = false;
             var failures = 0;
@@ -1443,7 +1443,7 @@ module WinJSTests {
                         stopScrolling = true;
                     });
                 }).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     WinJS.Utilities.stopLog();
                     complete();
@@ -1507,7 +1507,7 @@ module WinJSTests {
                 then(function (states) {
                     LiveUnit.Assert.areEqual(0, failedEvents);
                 }).
-                then(validateUnhandledErrorsOnIdle)
+                then(Helper.validateUnhandledErrorsOnIdle)
                 .done(function () {
                     WinJS.Utilities.stopLog();
                     complete();

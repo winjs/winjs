@@ -2747,7 +2747,7 @@ module WinJSTests {
                 return;
             }
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var pattern = "bmmmssssss",
                 itemSizesSimple = {
@@ -2805,7 +2805,7 @@ module WinJSTests {
                     checkTile(listView, itemSizesSimple, 3, 400, 400, "m");
                     checkTile(listView, itemSizesSimple, 4, 600, 0, "s");
                     checkTile(listView, itemSizesSimple, 5, 600, 100, "s");
-                    return validateUnhandledErrorsOnIdle();
+                    return Helper.validateUnhandledErrorsOnIdle();
                 }).
                 done(complete);
         };

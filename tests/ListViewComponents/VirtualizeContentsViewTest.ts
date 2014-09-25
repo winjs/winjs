@@ -1956,7 +1956,7 @@ module WinJSTests {
                 return;
             }
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             function verifyTile(data) {
                 var container = <HTMLElement>element.querySelectorAll(".win-container")[data.index];
@@ -2024,7 +2024,7 @@ module WinJSTests {
                             }
 
                             element.parentNode.removeChild(element);
-                            return validateUnhandledErrorsOnIdle();
+                            return Helper.validateUnhandledErrorsOnIdle();
                         }).done(complete);
                     });
                 });
@@ -3042,7 +3042,7 @@ module WinJSTests {
         };
 
         testScrollAfterSkippedRealization = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var newNode = document.createElement("div");
             newNode.innerHTML =
@@ -3066,7 +3066,7 @@ module WinJSTests {
                 }).then(function () {
                     listView.scrollPosition += 10;
 
-                    return validateUnhandledErrorsOnIdle();
+                    return Helper.validateUnhandledErrorsOnIdle();
                 }).done(function () {
                     VirtualizeContentsViewTestHost.removeChild(newNode);
                     complete();
@@ -4107,7 +4107,7 @@ module WinJSTests {
         };
 
         testSerializeRealizePasses = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var placeholder = createListViewElement();
 
@@ -4126,7 +4126,7 @@ module WinJSTests {
             });
 
             waitForDeferredAction(listView)().
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     VirtualizeContentsViewTestHost.removeChild(placeholder);
 
@@ -4135,7 +4135,7 @@ module WinJSTests {
         };
 
         testScrollDonotCancelAnimations = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var placeholder = createListViewElement();
 
@@ -4580,7 +4580,7 @@ module WinJSTests {
         };
 
         testAriaWorkerCancellation = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var data = [];
             for (var i = 0; i < 5000; i++) {
@@ -4636,7 +4636,7 @@ module WinJSTests {
                             var firstIndex = ev.detail.firstIndex;
                             var lastIndex = ev.detail.lastIndex;
                             if (firstIndex !== lastIndex) {
-                                validateUnhandledErrorsOnIdle().
+                                Helper.validateUnhandledErrorsOnIdle().
                                     done(function annotationcomplete() {
 
                                         LiveUnit.Assert.isTrue(scrolled, "Test completed before scroll");
@@ -4657,7 +4657,7 @@ module WinJSTests {
         };
 
         testDeleteDoesNotLoseFocusRectangle = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var data = [];
             for (var i = 0; i < 10; i++) {
@@ -4700,7 +4700,7 @@ module WinJSTests {
 
 
         testRealizeRetryDuringEdits = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var list = new WinJS.Binding.List(initData());
 
@@ -4725,7 +4725,7 @@ module WinJSTests {
                 }).then(function () {
                     LiveUnit.Assert.areEqual(900, listView.scrollPosition);
 
-                    return validateUnhandledErrorsOnIdle();
+                    return Helper.validateUnhandledErrorsOnIdle();
                 }).then(function () {
 
                     placeholder.parentNode.removeChild(placeholder);
@@ -4740,7 +4740,7 @@ module WinJSTests {
                 return;
             }
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var count = 20,
                 list = new WinJS.Binding.List(initData(count));
@@ -4804,7 +4804,7 @@ module WinJSTests {
                         LiveUnit.Assert.areEqual(i + 1, +c.style.msGridColumn);
                     }
 
-                    return validateUnhandledErrorsOnIdle();
+                    return Helper.validateUnhandledErrorsOnIdle();
                 }).then(function () {
 
                     placeholder.parentNode.removeChild(placeholder);

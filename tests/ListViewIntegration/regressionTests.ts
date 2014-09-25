@@ -665,7 +665,7 @@ module WinJSTests {
         };
 
         testWinBlue_389800_EnsureVisibleOnHiddenListViewRTL = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var lv = document.createElement("div");
             lv.setAttribute("dir", "rtl")
@@ -700,7 +700,7 @@ module WinJSTests {
                 listView.ensureVisible(100);
 
                 waitForDeferredAction(listView)().then(function () {
-                    validateUnhandledErrors();
+                    Helper.validateUnhandledErrors();
                     testRootEl.removeChild(lv);
                     complete();
                 });

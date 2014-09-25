@@ -576,7 +576,7 @@ module WinJSTests {
                 return new WinJS.UI.ListDataSource(dataSource);
             }
 
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -593,7 +593,7 @@ module WinJSTests {
                     listView.itemDataSource = (new WinJS.Binding.List(myData)).dataSource;
                 }).
                 then(waitForReady(listView, 100)).
-                then(validateUnhandledErrorsOnIdle).
+                then(Helper.validateUnhandledErrorsOnIdle).
                 done(function () {
                     element.parentNode.removeChild(element);
                     complete();

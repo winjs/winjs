@@ -6,38 +6,6 @@
 //
 "use strict";
 
-var __UnhandledErrors = {};
-
-function errorEventHandler(evt) {
-    var details = evt.detail;
-    var id = details.id;
-    if (!details.parent) {
-        __UnhandledErrors[id] = details;
-    } else if (details.handler) {
-        delete __UnhandledErrors[id];
-    }
-}
-
-function initUnhandledErrors() {
-    __UnhandledErrors = {};
-    WinJS.Promise.addEventListener("error", errorEventHandler);
-}
-
-function validateUnhandledErrors() {
-    WinJS.Promise.removeEventListener("error", errorEventHandler);
-    LiveUnit.Assert.areEqual(0, Object.keys(__UnhandledErrors).length, "Unhandled errors found");
-}
-
-function cleanupUnhandledErrors() {
-    WinJS.Promise.removeEventListener("error", errorEventHandler);
-    __UnhandledErrors = {};
-}
-
-function validateUnhandledErrorsOnIdle() {
-    return WinJS.Utilities.Scheduler.requestDrain(WinJS.Utilities.Scheduler.Priority.idle).
-        then(validateUnhandledErrors.bind(this));
-}
-
 module Helper {
     "use strict";
 

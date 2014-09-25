@@ -358,7 +358,7 @@ module WinJSTests {
 
 
         testBatchNotificationMoveThenRemove = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             document.body.appendChild(element);
@@ -399,7 +399,7 @@ module WinJSTests {
 
                     dsChanged = true;
                 } else {
-                    validateUnhandledErrors();
+                    Helper.validateUnhandledErrors();
                     validateInternalBuffers(fv);
                     WinJS.Utilities.disposeSubTree(element);
                     document.body.removeChild(element);
@@ -409,7 +409,7 @@ module WinJSTests {
         };
 
         testReleasedItemAfterInsertAtIndexOne = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             document.body.appendChild(element);
@@ -439,7 +439,7 @@ module WinJSTests {
                 bl.splice(1, 0, { title: "new" });
 
                 fv._pageManager._notificationsEndedSignal.promise.then(function () {
-                    validateUnhandledErrors();
+                    Helper.validateUnhandledErrors();
                     validateInternalBuffers(fv);
                     WinJS.Utilities.disposeSubTree(element);
                     document.body.removeChild(element);
@@ -449,7 +449,7 @@ module WinJSTests {
         };
 
         testBatchOfRandomChanges = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             document.body.appendChild(element);
@@ -493,7 +493,7 @@ module WinJSTests {
                 bl.dataSource.endEdits();
 
                 fv._pageManager._notificationsEndedSignal.promise.then(function () {
-                    validateUnhandledErrors();
+                    Helper.validateUnhandledErrors();
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.element.textContent, "f");
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.next.element.textContent, "g");
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.next.next.element.textContent, "h");
@@ -506,7 +506,7 @@ module WinJSTests {
         };
 
         testBatchOfMoveThenDeleteAtSameIndex = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             document.body.appendChild(element);
@@ -541,7 +541,7 @@ module WinJSTests {
                 bl.dataSource.endEdits();
 
                 fv._pageManager._notificationsEndedSignal.promise.then(function () {
-                    validateUnhandledErrors();
+                    Helper.validateUnhandledErrors();
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.element.textContent, "c");
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.next.element.textContent, "f");
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.next.next.element.textContent, "g");
@@ -554,7 +554,7 @@ module WinJSTests {
         };
 
         testUpdateCurrentElementThenBatchOfRandomChanges = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             document.body.appendChild(element);
@@ -599,7 +599,7 @@ module WinJSTests {
 
                 bl.dataSource.endEdits();
                 fv._pageManager._notificationsEndedSignal.promise.then(function () {
-                    validateUnhandledErrors();
+                    Helper.validateUnhandledErrors();
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.element.textContent, "changed");
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.next.element.textContent, "new2");
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.next.next.element.textContent, "c");
@@ -612,7 +612,7 @@ module WinJSTests {
         };
 
         testChangesMovingCurrentViewportThenDeleteItem = function (complete) {
-            initUnhandledErrors();
+            Helper.initUnhandledErrors();
 
             var element = document.createElement("div");
             document.body.appendChild(element);
@@ -650,7 +650,7 @@ module WinJSTests {
                 bl.splice(1, 1);
 
                 fv._pageManager._notificationsEndedSignal.promise.then(function () {
-                    validateUnhandledErrors();
+                    Helper.validateUnhandledErrors();
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.element.textContent, "b");
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.next.element.textContent, "e");
                     LiveUnit.Assert.areEqual(fv._pageManager._currentPage.next.next.element.textContent, "f");
