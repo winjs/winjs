@@ -2,7 +2,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/util.ts"/>
+/// <reference path="../TestLib/Helper.ts"/>
 /// <reference path="FlipperUtils.ts"/>
 /// <reference path="../TestLib/TestDataSource.ts"/>
 

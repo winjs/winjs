@@ -4,7 +4,7 @@
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <reference path="../TestLib/TestDataSource.ts"/>
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/Helper.ts" />
 /// <deploy src="../TestData/" />
 
 module WinJSTests {

@@ -6,7 +6,7 @@
 /// <reference path="../TestLib/TestDataSource.ts" />
 /// <reference path="../TestLib/Helper.ItemsManager.ts" />
 /// <reference path="FlipperHelpers.ts" />
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/Helper.ts" />
 
 
 var globTest:any = {};

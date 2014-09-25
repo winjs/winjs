@@ -2,7 +2,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/Helper.ts" />
 /// <deploy src="../TestData/" />
 
 declare var fragmentWithScriptAndStylesLoad;

@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/util.ts" />
+/// <reference path="../TestLib/Helper.ts" />
 /// <reference path="../TestLib/ListViewHelpers.ts" />
 /// <deploy src="../TestData/" />
 
@@ -24,7 +24,7 @@ module WinJSTests {
     var _oldMaxTimePerCreateContainers;
 
     export class SemanticZoomWithListViewTests {
-        
+
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
 
@@ -58,7 +58,7 @@ module WinJSTests {
             removeNode(sezoRootId);
             Helper.ListView.restoreListviewAnimations();
         }
-    
+
     };
 
     function generate(name, disableAnimations, testFunction) {
