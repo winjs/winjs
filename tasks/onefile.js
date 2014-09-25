@@ -5,7 +5,7 @@
     var copiedToTsBuild = false;
 
     module.exports = function (grunt) {
-        grunt.registerTask("onefile", "build a single module into a full WinJS build", function(path) {
+        grunt.registerTask("onefile", "build a single module into a full WinJS build", function (path) {
             if (copiedToTsBuild) {
                 grunt.task.run(["_buildModule:" + path]);
             } else {
