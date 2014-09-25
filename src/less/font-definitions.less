@@ -1,59 +1,19 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-.fontSizes(desktop) {
-    @win_font_size_xx_large: 42pt;
-    @win_font_size_x_large: 20pt;
-    @win_font_size_large: 11pt;
-    @win_font_size_medium: 11pt;
-    @win_font_size_small: 11pt;
-    @win_font_size_x_small: 11pt;
-    @win_font_size_xx_small: 9pt;
+@win_font_size_xx_large: 42pt;
+@win_font_size_x_large: 20pt;
+@win_font_size_large: 11pt;
+@win_font_size_medium: 11pt;
+@win_font_size_small: 11pt;
+@win_font_size_x_small: 11pt;
+@win_font_size_xx_small: 9pt;
 
-    @win_font_weight_xx_large: 200;
-    @win_font_weight_x_large: 200;
-    @win_font_weight_large: 600;
-    @win_font_weight_medium: 400;
-    @win_font_weight_small: 300;
-    @win_font_weight_x_small: 300;
-    @win_font_weight_xx_small: 400;
-
-    @win_font_face_xx_large: "Segoe UI Light";
-    @win_font_face_large: "Segoe UI Semibold";
-    @win_font_face_medium: "Segoe UI";
-    @win_font_face_small: "Segoe UI Semilight";
-    @win_font_face_bold: "Segoe UI Bold";
-
-}
-.fontSizes(phone) {
-    @win_font_weight_xx_large: 300;
-    @win_font_weight_x_large: 300;
-    @win_font_weight_large: 400;
-    @win_font_weight_medium: 500;
-    @win_font_weight_small: 600;
-    @win_font_weight_x_small: 600;
-    @win_font_weight_xx_small: 600;
-
-    @win_font_size_xx_large: 28pt;
-    @win_font_size_x_large: 24pt;
-    @win_font_size_large: 17pt;
-    @win_font_size_medium: 15pt;
-    @win_font_size_small: 10pt;
-    @win_font_size_x_small: 10pt;
-    @win_font_size_xx_small: 10pt;
-
-    @win_font_face_xx_large: "Segoe WP Light";
-    @win_font_face_large: "Segoe WP";
-    @win_font_face_medium: "Segoe WP";
-    @win_font_face_small: "Segoe WP Semilight";
-    @win_font_face_bold: "Segoe WP Bold";
-}
-.fontSizes(@platform);
-
-@win_dark_text_high: rgba(0, 0, 0, 0.87);
-@win_dark_text_medium: rgba(0, 0, 0, 0.6);
-@win_dark_text_low: rgba(0, 0, 0, 0.3);
-@win_light_text_high: ~"rgba(255, 255, 255, 1.0)";
-@win_light_text_medium: rgba(255, 255, 255, 0.6);
-@win_light_text_low: rgba(255, 255, 255, 0.3);
+@win_font_weight_xx_large: 200;
+@win_font_weight_x_large: 200;
+@win_font_weight_large: 600;
+@win_font_weight_medium: 400;
+@win_font_weight_small: 300;
+@win_font_weight_x_small: 300;
+@win_font_weight_xx_small: 400;
 
 // Symbol font face
 @font-face {
@@ -209,38 +169,77 @@
 // Semilight to an appropriate font-weight.
 //
 @font-face {
-    font-family: "Segoe";
+    font-family: "Segoe UI";
     font-weight: @win_font_weight_xx_large;
-    src: local(@win_font_face_xx_large);
+    src: local("Segoe UI Light");
 }
 @font-face {
-    font-family: "Segoe";
+    font-family: "Segoe UI";
     font-weight: @win_font_weight_small;
-    src: local(@win_font_face_small);
+    src: local("Segoe UI Semilight");
 }
 @font-face {
-    font-family: "Segoe";
+    font-family: "Segoe UI";
     font-weight: @win_font_weight_medium;
-    src: local(@win_font_face_medium);
+    src: local("Segoe UI");
 }
 @font-face {
-    font-family: "Segoe";
+    font-family: "Segoe UI";
     font-weight: @win_font_weight_large;
-    src: local(@win_font_face_large);
+    src: local("Segoe UI Semibold");
 }
 @font-face {
-    font-family: "Segoe";
+    font-family: "Segoe UI";
     font-weight: 700;
-    src: local(@win_font_face_bold);
+    src: local("Segoe UI Bold");
 }
 @font-face {
-    font-family: "Segoe";
+    font-family: "Segoe UI";
     font-style: italic;
     font-weight: @win_font_weight_medium;
     src: local("Segoe UI Italic");
 }
 @font-face {
-    font-family: "Segoe";
+    font-family: "Segoe UI";
+    font-style: italic;
+    font-weight: 700;
+    src: local("Segoe UI Bold Italic");
+}
+
+// Same thing but for Segoe WP
+@font-face {
+    font-family: "Segoe WP";
+    font-weight: 300;
+    src: local("Segoe WP Light");
+}
+@font-face {
+    font-family: "Segoe WP";
+    font-weight: 600;
+    src: local("Segoe WP Semilight");
+}
+@font-face {
+    font-family: "Segoe WP";
+    font-weight: 500;
+    src: local("Segoe WP");
+}
+@font-face {
+    font-family: "Segoe WP";
+    font-weight: 400;
+    src: local("Segoe WP");
+}
+@font-face {
+    font-family: "Segoe WP";
+    font-weight: 700;
+    src: local("Segoe WP Bold");
+}
+@font-face {
+    font-family: "Segoe WP";
+    font-style: italic;
+    font-weight: 500;
+    src: local("Segoe UI Italic");
+}
+@font-face {
+    font-family: "Segoe WP";
     font-style: italic;
     font-weight: 700;
     src: local("Segoe UI Bold Italic");

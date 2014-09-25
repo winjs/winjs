@@ -14,7 +14,7 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     './SearchBox/_SearchSuggestionManagerShim',
-    'require-style!less/desktop/controls'
+    'require-style!less/controls'
 ], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, Animations, BindingList, Repeater, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, _SearchSuggestionManagerShim) {
     "use strict";
 

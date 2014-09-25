@@ -14,7 +14,7 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Animations',
-    'require-style!less/desktop/controls'
+    'require-style!less/controls'
     ], function contentDialogInit(_Dispose, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
     "use strict";
 

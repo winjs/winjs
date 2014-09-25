@@ -2,62 +2,57 @@
 
 @import "base.less";
 
-.semanticZoomStyle(desktop) {
-    .win-semanticzoom {
-        touch-action: pan-x pan-y double-tap-zoom;
-    }
-    .win-semanticzoom * {
-        touch-action: inherit;
-    }
-
-    .win-semanticzoom-button {
-        z-index:  100;
-        position: absolute;
-        min-width: 25px;
-        min-height: 25px;
-        width: 25px;
-        height: 25px;
-        padding: 0px;
-        bottom: 21px;
-        touch-action: none;
-    }
-
-    .win-semanticzoom-button::before {
-        font-family: "Segoe UI Symbol", "Symbols";
-        font-weight: normal;
-        font-size: 11pt;
-        content: "\E0B8"; /* minus sign */
-    }
-
-    .win-semanticzoom-button-location {
-        left: auto;
-        right: 4px;
-    }
-
-    .win-semanticzoom-button-location {
-        .RTL({
-            left: 4px;
-            right: auto;
-        });
-    }
-}
-
-.semanticZoomStyle(phone) {
-    .win-semanticzoom .win-listview.win-semanticzoom-zoomedoutview .win-viewport.win-horizontal {
-        touch-action: pan-x;
-    }
-
-    .win-semanticzoom .win-listview.win-semanticzoom-zoomedoutview .win-viewport.win-vertical {
-        touch-action: pan-y;
-    }
-}
-
-.semanticZoomStyle(@platform);
-
 .win-semanticzoom {
+    touch-action: pan-x pan-y double-tap-zoom;
     height: 400px;
 
     .win-listview > .win-viewport * {
         touch-action: auto;
     }
 }
+.win-semanticzoom * {
+    touch-action: inherit;
+}
+
+.win-semanticzoom-button {
+    z-index:  100;
+    position: absolute;
+    min-width: 25px;
+    min-height: 25px;
+    width: 25px;
+    height: 25px;
+    padding: 0px;
+    bottom: 21px;
+    touch-action: none;
+}
+
+.win-semanticzoom-button::before {
+    font-family: "Segoe UI Symbol", "Symbols";
+    font-weight: normal;
+    font-size: 11pt;
+    content: "\E0B8"; /* minus sign */
+}
+
+.win-semanticzoom-button-location {
+    left: auto;
+    right: 4px;
+}
+
+.win-semanticzoom-button-location {
+    .RTL({
+        left: 4px;
+        right: auto;
+    });
+}
+
+// TODO PHONE
+// .semanticZoomStyle(phone) {
+//     .win-semanticzoom .win-listview.win-semanticzoom-zoomedoutview .win-viewport.win-horizontal {
+//         touch-action: pan-x;
+//     }
+
+//     .win-semanticzoom .win-listview.win-semanticzoom-zoomedoutview .win-viewport.win-vertical {
+//         touch-action: pan-y;
+//     }
+// }
+

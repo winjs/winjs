@@ -1,48 +1,40 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
-
-    .platform(desktop) {
-        .win-semanticzoom-button {
-            background-color: rgba(216, 216, 216, 0.33);
-            border-color: transparent;
-        }
-
-        button.win-semanticzoom-button.win-semanticzoom-button:active,
-        button.win-semanticzoom-button.win-semanticzoom-button:hover:active {
-            .mixin(dark) {
-                background-color: rgb(255, 255, 255);
-            }
-            .mixin(light) {
-                background-color: rgb(0, 0, 0);
-            }
-            .mixin(@theme);
-        }
+    .win-semanticzoom-button {
+        background-color: rgba(216, 216, 216, 0.33);
+        border-color: transparent;
     }
 
-    .platform(phone) {
+    button.win-semanticzoom-button.win-semanticzoom-button:active,
+    button.win-semanticzoom-button.win-semanticzoom-button:hover:active {
         .mixin(dark) {
-            .win-semanticzoom .win-semanticzoom-zoomedoutview {
-                background-color: rgba(0, 0, 0, 0.67);
-            }
+            background-color: rgb(255, 255, 255);
         }
         .mixin(light) {
-            .win-semanticzoom .win-semanticzoom-zoomedoutview {
-                background-color: rgba(255, 255, 255, 0.67);
-            }
+            background-color: rgb(0, 0, 0);
         }
         .mixin(@theme);
     }
 
-    .platform(@platform);
+    // TODO PHONE
+    // .platform(phone) {
+    //     .mixin(dark) {
+    //         .win-semanticzoom .win-semanticzoom-zoomedoutview {
+    //             background-color: rgba(0, 0, 0, 0.67);
+    //         }
+    //     }
+    //     .mixin(light) {
+    //         .win-semanticzoom .win-semanticzoom-zoomedoutview {
+    //             background-color: rgba(255, 255, 255, 0.67);
+    //         }
+    //     }
+    //     .mixin(@theme);
+    // }
 }
 .ColorsHover(@theme) {
-
-    .platform(desktop) {
-        button:hover.win-semanticzoom-button {
-            background-color: rgba(216, 216, 216, 1.0);
-        }
+    button:hover.win-semanticzoom-button {
+        background-color: rgba(216, 216, 216, 1.0);
     }
-    .platform(@platform);
 }
 
 @media (-ms-high-contrast) {

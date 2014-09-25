@@ -116,8 +116,7 @@
                 "amd": pkgRoot + "amd",
                 "require-style": pkgRoot + "require-style",
                 "require-json": pkgRoot + "require-json",
-                "WinJS": pkgRoot + "WinJS",
-                "less-desktop": "empty:"
+                "WinJS": pkgRoot + "WinJS"
             },
             bundles: bundles
         };

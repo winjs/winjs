@@ -33,7 +33,7 @@ define([
     './ListView/_Layouts',
     './ListView/_SelectionManager',
     './ListView/_VirtualizeContentsView',
-    'require-style!less/desktop/controls'
+    'require-style!less/controls'
     ], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 

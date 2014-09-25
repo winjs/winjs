@@ -15,7 +15,7 @@ define([
     './Flyout',
     './Flyout/_Overlay',
     './Menu/_Command',
-    'require-style!less/desktop/controls'
+    'require-style!less/controls'
     ], function menuInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _ElementUtilities, _Hoverable, _Constants, Flyout, _Overlay, _Command) {
     "use strict";
 

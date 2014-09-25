@@ -60,9 +60,8 @@ define(['require'], function (req) {
         var path = require.nodeRequire('path');
 
         // Build a custom LESS file that imports every resource
-        // with platform and theme defines at the top
+        // with theme defines at the top
         var defines = [
-            '@platform: desktop;',
             '@theme: ' + theme + ';',
             '@inverseTheme: ' + inverseTheme + ';'
         ].join('\n');
@@ -131,7 +130,6 @@ define(['require'], function (req) {
         if (!configData) {
             return;
         }
-
 
         var fs = require.nodeRequire('fs-extra');
         var path = require.nodeRequire('path');
