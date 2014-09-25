@@ -1210,22 +1210,6 @@ define([
                     // ADCOM: lds_hidden?
                 },
 
-                _createClickEatingDivTemplate: function (divClass, hideClickEatingDivFunction) {
-                    var clickEatingDiv = _Global.document.createElement("section");
-                    clickEatingDiv._winHideClickEater = hideClickEatingDivFunction;
-                    _ElementUtilities.addClass(clickEatingDiv, divClass);
-                    _ElementUtilities._addEventListener(clickEatingDiv, "pointerup", function (event) { _Overlay._checkSameClickEatingPointerUp(event, true); }, true);
-                    _ElementUtilities._addEventListener(clickEatingDiv, "pointerdown", function (event) { _Overlay._checkClickEatingPointerDown(event, true); }, true);
-                    clickEatingDiv.addEventListener("click", function (event) { clickEatingDiv._winHideClickEater(event); }, true);
-                    // Tell Aria that it's clickable
-                    clickEatingDiv.setAttribute("role", "menuitem");
-                    clickEatingDiv.setAttribute("aria-label", strings.closeOverlay);
-                    // Prevent CED from removing any current selection
-                    clickEatingDiv.setAttribute("unselectable", "on");
-                    _Global.document.body.appendChild(clickEatingDiv);
-                    return clickEatingDiv;
-                },
-
                 // All click-eaters eat "down" clicks so that we can still eat
                 // the "up" click that'll come later.
                 _checkClickEatingPointerDown: function (event, stopPropagation) {
