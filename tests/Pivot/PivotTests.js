@@ -24,27 +24,13 @@ WinJSTests.PivotTests = function () {
         initFuncName = "initPointerEvent";
     }
 
-    var snapPointsDetectionFunc = WinJS.Utilities._detectSnapPointsSupport.bind(WinJS.Utilities);
-    var supportsSnap = null;
-    WinJS.Utilities._detectSnapPointsSupport = function () {
-        return WinJS.Promise.timeout(50).then(function () {
-            return supportsSnap;
-        });
-    };
+    var supportsSnap = !!(WinJS.Utilities._supportsSnapPoints && HTMLElement.prototype.msZoomTo);
 
     var pivotWrapperEl;
-    this.setUp = function (complete) {
+    this.setUp = function () {
         pivotWrapperEl = document.createElement('div');
         pivotWrapperEl.style.cssText = "width: " + pivotWidth + "px; height: 480px; background-color: #777;"
         document.body.appendChild(pivotWrapperEl);
-        if (supportsSnap === null) {
-            snapPointsDetectionFunc().done(function (value) {
-                supportsSnap = value;
-                complete();
-            });
-        } else {
-            complete();
-        }
     };
 
     this.tearDown = function () {
@@ -663,12 +649,6 @@ WinJSTests.PivotTests = function () {
                 return;
             }
 
-            if (!WinJS.Utilities._supportsZoomTo) {
-                LiveUnit.LoggingCore.logComment("This test relies on ZoomTo APIs which are not supported on this platform.");
-                complete();
-                return;
-            }
-
             // Use zoomTo
             var pivotItemCount = 3;
             instances = 0;
@@ -793,11 +773,6 @@ WinJSTests.PivotTests = function () {
         };
 
         this.testNavigateViaInertia = function testNavigateViaInertia(complete) {
-            if (!WinJS.Utilities._supportsZoomTo) {
-                LiveUnit.LoggingCore.logComment("This test simulates panning using msZoomTo which is not supported on this platform.");
-                complete();
-                return;
-            }
             if (!supportsSnap) {
                 LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
                 complete();

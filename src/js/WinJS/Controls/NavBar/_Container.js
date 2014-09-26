@@ -22,7 +22,7 @@ define([
     '../AppBar/_Constants',
     '../Repeater',
     './_Command'
-    ], function NavBarContainerInit(exports, _Global, _Base, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
+], function NavBarContainerInit(exports, _Global, _Base, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
     "use strict";
 
     function nobodyHasFocus() {
@@ -118,7 +118,7 @@ define([
                 this._closeSplitAndResetBound = this._closeSplitAndReset.bind(this);
                 this._currentManipulationState = MS_MANIPULATION_STATE_STOPPED;
 
-                this._panningDisabled = false;
+                this._panningDisabled = !_ElementUtilities._supportsSnapPoints;
                 this._fixedSize = false;
                 this._maxRows = 1;
                 this._sizes = {};
@@ -156,19 +156,7 @@ define([
                     this.currentIndex = options.currentIndex;
                 }
 
-                var that = this;
-                var updatedPageUI = false;
-                _ElementUtilities._detectSnapPointsSupport().then(function (supportsSnap) {
-                    that._panningDisabled = !supportsSnap;
-                    if (!that._disposed) {
-                        that._updatePageUI();
-                        updatedPageUI = true;
-                    }
-                });
-
-                if (!updatedPageUI) {
-                    this._updatePageUI();
-                }
+                this._updatePageUI();
 
                 Scheduler.schedule(function NavBarContainer_async_initialize() {
                     this._updateAppBarReference();

@@ -22,7 +22,7 @@ define([
     './FlipView/_PageManager',
     'require-style!less/desktop/controls',
     'require-style!less/phone/controls'
-    ], function flipperInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _UI, _Constants, _PageManager) {
+], function flipperInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _UI, _Constants, _PageManager) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -493,28 +493,8 @@ define([
                         allFeaturesSupported = allFeaturesSupported && !!(styleEquivalents[stylesRequiredForFullFeatureMode[i]]);
                     }
                     allFeaturesSupported = allFeaturesSupported && !!_BaseUtils._browserEventEquivalents["manipulationStateChanged"];
+                    allFeaturesSupported = allFeaturesSupported && _ElementUtilities._supportsSnapPoints;
                     this._environmentSupportsTouch = allFeaturesSupported;
-                    if (allFeaturesSupported) {
-                        // All of our synchronous checks indicate that touch is supported. Because the last check can be
-                        // asynchronous, we'll assume that touch is supported for now and if we later find out it isn't,
-                        // we'll tear down the touch features.
-                        _ElementUtilities._detectSnapPointsSupport().then(function (snapPointsSupported) {
-                            if (!snapPointsSupported) {
-                                that._environmentSupportsTouch = false;
-
-                                // Tear down the touch features
-                                if (flipViewInitialized) {
-                                    that._fadeInButton("prev");
-                                    that._fadeInButton("next");
-                                    _ElementUtilities._removeEventListener(that._contentDiv, "pointerdown", handlePointerDown, false);
-                                    _ElementUtilities._removeEventListener(that._contentDiv, "pointermove", handleShowButtons, false);
-                                    _ElementUtilities._removeEventListener(that._contentDiv, "pointerup", handlePointerUp, false);
-                                    that._panningDivContainer.style[that._isHorizontal ? "overflowX" : "overflowY"] = "hidden";
-                                    that._pageManager.disableTouchFeatures();
-                                }
-                            }
-                        });
-                    }
 
                     var accName = this._flipviewDiv.getAttribute("aria-label");
                     if (!accName) {
@@ -713,7 +693,7 @@ define([
                         }
                     }
 
-                    function handlePointerUp (e) {
+                    function handlePointerUp(e) {
                         if (e.pointerType !== PT_TOUCH) {
                             that._touchInteraction = false;
                         }
