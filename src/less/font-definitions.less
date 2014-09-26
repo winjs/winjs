@@ -1,19 +1,4 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-@win_font_size_xx_large: 42pt;
-@win_font_size_x_large: 20pt;
-@win_font_size_large: 11pt;
-@win_font_size_medium: 11pt;
-@win_font_size_small: 11pt;
-@win_font_size_x_small: 11pt;
-@win_font_size_xx_small: 9pt;
-
-@win_font_weight_xx_large: 200;
-@win_font_weight_x_large: 200;
-@win_font_weight_large: 600;
-@win_font_weight_medium: 400;
-@win_font_weight_small: 300;
-@win_font_weight_x_small: 300;
-@win_font_weight_xx_small: 400;
 
 // Symbol font face
 @font-face {
@@ -29,139 +14,64 @@
 }
 
 //
-// Font size classes
-// Two versions of each size are defined, one is a regular mixin that will be
-// output to the final css, and the other is a parametric mixin to allow using
-// it in LESS with a custom lineheight value. This is necessary because the parametric
-// version will not be output to the css.
+// Font size mixins
 //
+.win-type-header(@lineHeight: 1.216) {
+    font-size: 46px;
+    font-weight: 200;
+    line-height: @lineHeight;
+    letter-spacing: 0px;
+}
+.win-type-subheader(@lineHeight: 1.176) {
+    font-size: 34;
+    font-weight: 200;
+    line-height: @lineHeight;
+}
+.win-type-title(@lineHeight: 1.167) {
+    font-size: 24px;
+    font-weight: 300;
+    line-height: @lineHeight;
+}
+.win-type-subtitle(@lineHeight: 1.2) {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: @lineHeight;
+}
+.win-type-base(@lineHeight: 1.333) {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: @lineHeight;
+}
+.win-type-body(@lineHeight: 1.333) {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: @lineHeight;
+}
+.win-type-caption(@lineHeight: 1.167) {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: @lineHeight;
+}
 .win-type-xx-large {
-    font-size: @win_font_size_xx_large;
-    font-weight: @win_font_weight_xx_large;
-    line-height: 1.1429;
-    letter-spacing: 0px;
+    .win-type-header();
 }
-.win-type-xx-large(@lineHeight: 1.1429) {
-    font-size: @win_font_size_xx_large;
-    font-weight: @win_font_weight_xx_large;
-    line-height: @lineHeight;
-    letter-spacing: 0px;
-}
-
 .win-type-x-large {
-    font-size: @win_font_size_x_large;
-    font-weight: @win_font_weight_x_large;
-    line-height: 1.2;
+    .win-type-subheader();
 }
-.win-type-x-large(@lineHeight: 1.2) {
-    font-size: @win_font_size_x_large;
-    font-weight: @win_font_weight_x_large;
-    line-height: @lineHeight;
-}
-
 .win-type-large {
-    font-size: @win_font_size_large;
-    font-weight: @win_font_weight_large;
-    line-height: 1.3636;
+    .win-type-title();
 }
-.win-type-large(@lineHeight: 1.3636) {
-    font-size: @win_font_size_large;
-    font-weight: @win_font_weight_large;
-    line-height: @lineHeight;
-}
-
 .win-type-medium {
-    font-size: @win_font_size_medium;
-    font-weight: @win_font_weight_medium;
-    line-height: 1.3636;
+    .win-type-subtitle();
 }
-.win-type-medium(@lineHeight: 1.3636) {
-    font-size: @win_font_size_medium;
-    font-weight: @win_font_weight_medium;
-    line-height: @lineHeight;
-}
-
 .win-type-small {
-    font-size: @win_font_size_small;
-    font-weight: @win_font_weight_small;
-    line-height: 1.3636;
+    .win-type-body();
 }
-.win-type-small(@lineHeight: 1.3636) {
-    font-size: @win_font_size_small;
-    font-weight: @win_font_weight_small;
-    line-height: @lineHeight;
-}
-
 .win-type-x-small {
-    font-size: @win_font_size_x_small;
-    font-weight: @win_font_weight_x_small;
-    line-height: 1.3636;
+    .win-type-base();
 }
-.win-type-x-small(@lineHeight: 1.3636) {
-    font-size: @win_font_size_x_small;
-    font-weight: @win_font_weight_x_small;
-    line-height: @lineHeight;
-}
-
 .win-type-xx-small {
-    font-size: @win_font_size_xx_small;
-    font-weight: @win_font_weight_xx_small;
-    line-height: 1.6667;
-}
-.win-type-xx-small(@lineHeight: 1.6667) {
-    font-size: @win_font_size_xx_small;
-    font-weight: @win_font_weight_xx_small;
-    line-height: @lineHeight;
-}
-
-// These internal win-type mixins are necessary to avoid a problem in the output css
-// due to the font fallback solution at the bottom of this file.
-// Basically since font fallbacks are defined for the reguar win-type mixins, and those
-// mixins were used to add size information to body, input, and other controls, there was
-// duplicate output in the css for the -ms-lang pseudo class. By using these internal mixins,
-// which are not output into the css, the selectors in styles-intrinsic.less can use them without
-// incurring duplicate style information, since no font-fallback data is defined for them.
-.win-type-xx-large-internal(@lineHeight: 1.1429) {
-    font-size: @win_font_size_xx_large;
-    font-weight: @win_font_weight_xx_large;
-    line-height: @lineHeight;
-    letter-spacing: 0px;
-}
-
-.win-type-x-large-internal(@lineHeight: 1.2) {
-    font-size: @win_font_size_x_large;
-    font-weight: @win_font_weight_x_large;
-    line-height: @lineHeight;
-}
-
-.win-type-large-internal(@lineHeight: 1.3636) {
-    font-size: @win_font_size_large;
-    font-weight: @win_font_weight_large;
-    line-height: @lineHeight;
-}
-
-.win-type-medium-internal(@lineHeight: 1.3636) {
-    font-size: @win_font_size_medium;
-    font-weight: @win_font_weight_medium;
-    line-height: @lineHeight;
-}
-
-.win-type-small-internal(@lineHeight: 1.3636) {
-    font-size: @win_font_size_small;
-    font-weight: @win_font_weight_small;
-    line-height: @lineHeight;
-}
-
-.win-type-x-small-internal(@lineHeight: 1.3636) {
-    font-size: @win_font_size_x_small;
-    font-weight: @win_font_weight_x_small;
-    line-height: @lineHeight;
-}
-
-.win-type-xx-small-internal(@lineHeight: 1.6667) {
-    font-size: @win_font_size_xx_small;
-    font-weight: @win_font_weight_xx_small;
-    line-height: @lineHeight;
+    .win-type-caption();
 }
 
 //
@@ -170,33 +80,33 @@
 //
 @font-face {
     font-family: "Segoe UI";
-    font-weight: @win_font_weight_xx_large;
+    font-weight: 200;
     src: local("Segoe UI Light");
 }
 @font-face {
     font-family: "Segoe UI";
-    font-weight: @win_font_weight_small;
+    font-weight: 300;
     src: local("Segoe UI Semilight");
 }
 @font-face {
     font-family: "Segoe UI";
-    font-weight: @win_font_weight_medium;
+    font-weight: 400;
     src: local("Segoe UI");
 }
 @font-face {
     font-family: "Segoe UI";
-    font-weight: @win_font_weight_large;
+    font-weight: 500;
     src: local("Segoe UI Semibold");
 }
 @font-face {
     font-family: "Segoe UI";
-    font-weight: 700;
+    font-weight: 600;
     src: local("Segoe UI Bold");
 }
 @font-face {
     font-family: "Segoe UI";
     font-style: italic;
-    font-weight: @win_font_weight_medium;
+    font-weight: 400;
     src: local("Segoe UI Italic");
 }
 @font-face {
@@ -236,13 +146,13 @@
     font-family: "Segoe WP";
     font-style: italic;
     font-weight: 500;
-    src: local("Segoe UI Italic");
+    src: local("Segoe WP Italic");
 }
 @font-face {
     font-family: "Segoe WP";
     font-style: italic;
     font-weight: 700;
-    src: local("Segoe UI Bold Italic");
+    src: local("Segoe WP Bold Italic");
 }
 
 // Stub RTL mixin definition

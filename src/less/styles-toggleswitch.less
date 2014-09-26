@@ -60,7 +60,7 @@
         width: 22em;
         margin-bottom: 10px;
         margin-top: 22px;
-        font-weight: @win_font_weight_small;
+        .win-type-body();
     }
     .win-toggleswitch-values {
         display: inline-block;
@@ -70,9 +70,8 @@
         min-width: 65px;
         margin-right: 20px;
         height: @trackHeight;
-        line-height: @trackHeight;
         vertical-align: top;
-        font-weight: @win_font_weight_large;
+        .win-type-body(@lineHeight: @trackHeight);
     }
     .win-toggleswitch-description {
         font-size: 12pt;

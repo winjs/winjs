@@ -28,7 +28,7 @@ html {
 
 body {
     -ms-content-zooming: none;
-    .win-type-small-internal();
+    .win-type-body();
 }
 
 iframe {
@@ -59,7 +59,7 @@ textarea,
 button,
 select,
 option {
-    font-family: "Segoe", "sans-serif", "Segoe UI Symbol", "Symbols";
+    font-family: "Segoe UI", "Segoe WP", "sans-serif", "Segoe UI Symbol", "Symbols";
 }
 
 //
@@ -86,7 +86,7 @@ input[type=tel], input[type=url], input[type=search] {
     background-clip: border-box;
     padding: 0 8px;
     outline: 0;
-    .win-type-medium-internal();
+    .win-type-body();
 }
 
 input::-ms-value {
@@ -143,7 +143,7 @@ textarea, .win-textarea {
     overflow-y: scroll;
     word-wrap: break-word;
     outline: 0;
-    .win-type-medium-internal();
+    .win-type-body();
 
     .RTL({
         // Flip sides for autohiding scrollbar padding on RTL layouts
@@ -163,7 +163,7 @@ button, input[type=button], input[type=reset], input[type=submit], button[type=s
     min-width: 120px;
     padding: 4px 8px;
     border-width: 2px;
-    .win-type-large-internal();
+    .win-type-body();
 }
 
 input[type=submit], button[type=submit] {
@@ -204,7 +204,7 @@ input[type=file] {
         border-right-style: none;
         border-radius: 0;
         background-clip: border-box;
-        .win-type-medium-internal();
+        .win-type-body();
     }
 
     .RTL({
@@ -220,7 +220,7 @@ input[type=file] {
         border-width: 2px;
         border-style: solid;
         background-clip: padding-box;
-        .win-type-large-internal();
+        .win-type-body();
     }
 }
 
@@ -235,7 +235,7 @@ select {
     background-clip: border-box;
     margin: 4px 0px;
     outline: 0;
-    .win-type-medium-internal();
+    .win-type-body();
 
     &::-ms-value {
         padding: 4px 8px;
@@ -475,7 +475,7 @@ legend {
     margin: 0px 0px 10px 0px;
     padding: 0px;
     color: inherit;
-    .win-type-small-internal();
+    .win-type-body();
 }
 
 //
@@ -483,14 +483,14 @@ legend {
 //
 code, pre, samp {
     font-family: "Consolas";
-    .win-type-medium-internal();
+    .win-type-body();
 }
 
 //
 // Caption
 //
 caption, figcaption, small {
-    .win-type-xx-small-internal();
+    .win-type-caption();
 }
 
 //
@@ -545,20 +545,20 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 0px;
 }
 h1 {
-    .win-type-xx-large-internal();
+    .win-type-header();
 }
 h2 {
-    .win-type-x-large-internal();
+    .win-type-subheader();
 }
 h3 {
-    .win-type-large-internal();
+    .win-type-title();
 }
 h4 {
-    .win-type-medium-internal();
+    .win-type-subtitle();
 }
 h5 {
-    .win-type-small-internal();
+    .win-type-base();
 }
 h6 {
-    .win-type-xx-small-internal();
+    .win-type-body();
 }
