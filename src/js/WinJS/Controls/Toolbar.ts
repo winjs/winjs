@@ -96,6 +96,7 @@ export class Toolbar {
     private _winKeyboard: _KeyboardBehavior._WinKeyboard;
     private _refreshPending: boolean;
     private _refreshBound: Function;
+    private _resizeHandlerBound: (ev:any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
 
     // <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.element" helpKeyword="WinJS.UI.Toolbar.element">
@@ -227,7 +228,8 @@ export class Toolbar {
 
         _Control.setOptions(this, options);
 
-        _ElementUtilities._resizeNotifier.subscribe(this._element, this._resizeHandler.bind(this));
+        this._resizeHandlerBound = this._resizeHandler.bind(this);
+        _ElementUtilities._resizeNotifier.subscribe(this._element, this._resizeHandlerBound);
 
         var initiallyParented = _Global.document.body.contains(this._element);
         _ElementUtilities._addInsertedNotifier(this._element);
@@ -263,6 +265,8 @@ export class Toolbar {
         if (this._disposed) {
             return;
         }
+
+        _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._resizeHandlerBound);
 
         if (this._customContentFlyout) {
             this._customContentFlyout.dispose();
@@ -564,7 +568,9 @@ export class Toolbar {
     }
 
     private _resizeHandler() {
-        this._positionCommands();
+        if (this.element.offsetWidth > 0) {
+            this._positionCommands();
+        }
     }
 
     private _commandUniqueId(command: _Command.ICommand): string {
@@ -657,7 +663,6 @@ export class Toolbar {
             return;
         }
 
-        var primaryCommandsLength = this._primaryCommands.length;
         this._customContentCommandsWidth = {};
         this._separatorWidth = 0;
         this._standardCommandWidth = 0;
@@ -701,12 +706,11 @@ export class Toolbar {
             this._mainActionArea.appendChild(this._overflowButton);
         }
 
-        var mainActionWidth = _ElementUtilities.getTotalWidth(this.element);
-        var primaryCommandsLength = this._primaryCommands.length;
-
         this._primaryCommands.forEach((command) => {
             command.element.style.display = (command.hidden ? "none" : "");
         })
+
+        var mainActionWidth = _ElementUtilities.getTotalWidth(this.element);
 
         var commandsLocation = this._getPrimaryCommandsLocation(mainActionWidth);
 
