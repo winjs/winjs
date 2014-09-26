@@ -615,7 +615,7 @@ module WinJSTests {
 
                 WinJS.Promise.join([waitForReady(listDiv1.winControl)(), waitForReady(listDiv2.winControl)()]).
                     then(function () {
-                        return CommonUtilities.waitForEvent(sezo, "zoomchanged", function () {
+                        return Helper.waitForEvent(sezo, "zoomchanged", function () {
                             // Zoom
                             sezo.zoomedOut = !sezo.zoomedOut;
                             // Change listView layouts without waiting for zoomchanged event shouldn't throw

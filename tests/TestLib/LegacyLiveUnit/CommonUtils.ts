@@ -6,7 +6,7 @@
 
 "use strict";
 
-module CommonUtilities {
+module Helper {
 
     var canElementResize = null;
 

@@ -134,8 +134,8 @@ module WinJSTests {
                 // Simulate clicking the toggle and store some before/after info
                 var oldState = toggle.checked;
                 var oldPosition = toggleClickRegion.offsetLeft;
-                CommonUtilities.mouseDownUsingMiP(toggleClickRegion);
-                CommonUtilities.mouseUpUsingMiP(toggleClickRegion);
+                Helper.mouseDownUsingMiP(toggleClickRegion);
+                Helper.mouseUpUsingMiP(toggleClickRegion);
                 var newState = toggle.checked;
                 var newPosition = toggleClickRegion.offsetLeft;
 
@@ -163,8 +163,8 @@ module WinJSTests {
 
                 // Test that the toggle reacts properly to a tap
                 var oldState = toggle.checked;
-                CommonUtilities.touchDown(toggleClickRegion);
-                CommonUtilities.touchUp(toggleClickRegion);
+                Helper.touchDown(toggleClickRegion);
+                Helper.touchUp(toggleClickRegion);
                 var newState = toggle.checked;
 
                 if (testCase.disabled) {

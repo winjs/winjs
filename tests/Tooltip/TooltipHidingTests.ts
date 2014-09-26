@@ -16,7 +16,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
     var Key = WinJS.Utilities.Key;
 
     var hideMap = {

@@ -51,7 +51,7 @@
 }
 
 /*
-Hide clear button in search box control.
+Hide clear button in ASB control.
 */
 
 .win-autosuggestbox input[type=search]::-ms-clear {
@@ -107,14 +107,12 @@ Hide clear button in search box control.
 }
 
 .win-autosuggestbox-suggestion-result img {
-    .RTL( {
+    .RTL({
         margin-right: 0;
         margin-left: auto;
         padding-left: 10px;
         padding-right: 0;
-    }
-
-    );
+    });
 }
 
 .win-autosuggestbox-suggestion-query {
@@ -143,12 +141,10 @@ Hide clear button in search box control.
 }
 
 .win-autosuggestbox-suggestion-separator hr {
-    .RTL( {
+    .RTL({
         margin-right: 10px;
         margin-left: auto;
-    }
-
-    );
+    });
 }
 
 .win-autosuggestbox-suggestion-separator div {
@@ -162,18 +158,16 @@ Hide clear button in search box control.
 }
 
 .win-autosuggestbox-suggestion-separator div {
-    .RTL( {
+    .RTL({
         margin-left: 10px;
         margin-right: auto;
-    }
-
-    );
+    });
 }
 
 /*
-Search box control animations
+ASB control animations
 */
-@keyframes WinJS-flyoutBelowASM-showPopup {
+@keyframes WinJS-flyoutBelowASB-showPopup {
     from {
         transform: translateY(0px);
     }
@@ -183,7 +177,7 @@ Search box control animations
     }
 }
 
-@keyframes WinJS-flyoutAboveASM-showPopup {
+@keyframes WinJS-flyoutAboveASB-showPopup {
     from {
         transform: translateY(0px);
     }
@@ -193,7 +187,7 @@ Search box control animations
     }
 }
 
-@-webkit-keyframes -webkit-WinJS-flyoutBelowASM-showPopup {
+@-webkit-keyframes -webkit-WinJS-flyoutBelowASB-showPopup {
     from {
         -webkit-transform: translateY(0px);
     }
@@ -203,7 +197,7 @@ Search box control animations
     }
 }
 
-@-webkit-keyframes -webkit-WinJS-flyoutAboveASM-showPopup {
+@-webkit-keyframes -webkit-WinJS-flyoutAboveASB-showPopup {
     from {
         -webkit-transform: translateY(0px);
     }

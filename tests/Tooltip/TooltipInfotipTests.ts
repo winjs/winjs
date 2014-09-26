@@ -11,7 +11,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     function testTooltip_Infotip(signalTestCaseCompleted, showInfotip, useTouch, toleranceDisplayTime, toleranceInvokeTime) {
         LiveUnit.LoggingCore.logComment("Window size: " + window.innerWidth + " " + window.innerHeight);

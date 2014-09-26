@@ -10,7 +10,7 @@
 module TooltipUtils {
     "use strict";
 
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
 
     // Constants just for our tests.

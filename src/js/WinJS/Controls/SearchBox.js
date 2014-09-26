@@ -10,8 +10,7 @@ define([
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
     './AutoSuggestBox/_SearchSuggestionManagerShim',
-    'require-style!less/desktop/controls',
-    'require-style!less/phone/controls',
+    'require-style!less/desktop/controls'
 ], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, AutoSuggestBox, _Control, _ElementUtilities, _SuggestionManagerShim) {
     "use strict";
 
@@ -187,6 +186,7 @@ define([
                 },
 
                 _renderSuggestion: function SearchBox_renderSuggestion(suggestion) {
+                    // Overrides base class
                     var render = AutoSuggestBox.AutoSuggestBox.prototype._renderSuggestion.call(this, suggestion);
                     if (suggestion.kind === _SuggestionManagerShim._SearchSuggestionKind.Query) {
                         render.classList.add(ClassName.searchBoxSuggestionQuery);
@@ -198,23 +198,12 @@ define([
                     return render;
                 },
 
-                _suggestionRenderer: function SearchBox_suggestionRenderer(item) {
+                _shouldIgnoreInput: function asb_shouldIgnoreInput() {
                     // Overrides base class
-                    var root = null;
-                    if (!item) {
-                        return root;
-                    }
-                    if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Query) {
-                        root = this._querySuggestionRenderer(item);
-                    } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Separator) {
-                        root = this._separatorSuggestionRenderer(item);
-                    } else if (item.kind === _SuggestionManagerShim._SearchSuggestionKind.Result) {
-                        root = this._resultSuggestionRenderer(item);
-                    } else {
-                        throw new _ErrorFromName("WinJS.UI.SearchBox.invalidSearchBoxSuggestionKind", strings.invalidSearchBoxSuggestionKind);
-                    }
+                    var shouldIgnore = AutoSuggestBox.AutoSuggestBox.prototype._shouldIgnoreInput();
+                    var isButtonDown = _ElementUtilities._matchesSelector(this._buttonElement, ":active");
 
-                    return root;
+                    return shouldIgnore || isButtonDown;
                 },
 
                 _updateInputElementAriaLabel: function SearchBox_updateInputElementAriaLabel() {

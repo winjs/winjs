@@ -18,7 +18,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     // Since distances can be off due to rounding errors, use this tolerance for our comparisons.
     var DISTANCE_TOLERANCE = 1;

@@ -1,5 +1,9 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+interface Object {
+    [key: string]: any;
+}
+
 interface IStyleEquivalents {
     cssName: string;
     scriptName: string;
@@ -42,11 +46,15 @@ declare module WinJS {
         function _traceAsyncCallbackStarting();
         function _traceAsyncCallbackCompleted();
 
+        function _require(dep: string, callback);
         function _require(deps: string[], callback);
         function _uniqueID(e: HTMLElement):string;
         function _isDOMElement(e: HTMLElement): boolean;
 
         function _yieldForEvents(handler: Function);
+        function _merge(a: any, b: any): any;
+        var _isiOS;
+        function _setIsiOS(isiOS: boolean);
 
         class _PointerEventProxy {
             constructor(eventObject, overrideProperties);
@@ -62,6 +70,31 @@ declare module WinJS {
         }
 
         function _now();
+
+        function _setHasWinRT(value: boolean);
+        var _selectionPartsSelector;
+        var _supportsTouchActionCrossSlide;
+
+        function _writeProfilerMark(mark: string);
+
+        var _browserEventEquivalents: { [key: string]: string };
+
+        var _DOMWeakRefTable_sweepPeriod: number;
+        var _DOMWeakRefTable_timeout: number;
+        var _DOMWeakRefTable_noTimeoutUnderDebugger: boolean;
+        function _createWeakRef(element, id: string);
+        function _getWeakRefElement(id: string): any;
+        var _DOMWeakRefTable_tableSize: number;
+
+        function _matchesSelector(element, selector: string): boolean;
+
+        var _MutationObserver;
+        function _isSelectionRendered(itemBox): boolean;
+        var _getHighestTabIndexInList;
+        var _getLowestTabIndexInList;
+        var _MSPointerEvent;
+        var _detectSnapPointsSupport;
+        var _supportsZoomTo;
 
     }
 
@@ -81,6 +114,7 @@ declare module WinJS {
         var _optionsParser;
         var _CallExpression;
         var _IdentifierExpression;
+        var _GroupFocusCache;
 
         class _ParallelWorkQueue {
             constructor(maxRunning: number);
@@ -112,6 +146,40 @@ declare module WinJS {
             static _DELAY_RESHOW_INFOTIP_TOUCH: number;
             static _DELAY_RESHOW_INFOTIP_NONTOUCH: number;
             static _RESHOW_THRESHOLD: number;
+        }
+        
+        interface ContentDialogHideInfo {
+            reason: string;
+        }
+        
+        interface ContentDialogHideEvent extends Event {
+            detail: ContentDialogHideInfo;
+        }
+        
+        class ContentDialog {
+            constructor(element?: HTMLElement, options?: any);
+            element: HTMLElement;
+            hidden: boolean;
+            title: string;
+            primaryCommandText: string;
+            isPrimaryCommandDisabled: boolean;
+            secondaryCommandText: string;
+            isSecondaryCommandDisabled: boolean;
+            show(): Promise<ContentDialogHideInfo>;
+            hide(reason?: any): void;
+            dispose(): void;
+            addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            onbeforeshow(eventInfo: Event): void;
+            onaftershow(eventInfo: Event): void;
+            onbeforehide(eventInfo: ContentDialogHideEvent): void;
+            onafterhide(eventInfo: ContentDialogHideEvent): void;
+        }
+        
+        class PrivateContentDialog extends WinJS.UI.ContentDialog {
+            static _ClassNames: any;
+            _playEntranceAnimation(): Promise<any>;
+            _playExitAnimation(): Promise<any>;
         }
 
         interface ISelect {
@@ -149,6 +217,7 @@ declare module WinJS {
         var _scrollableClass: string;
         var _containerClass: string;
         var _headerContainerClass: string;
+        var _listViewSupportsCrossSlideClass: string;
 
         module _ListViewAnimationHelper {
             function fadeInElement(element): Promise<any>;
@@ -158,6 +227,13 @@ declare module WinJS {
 
         module _VirtualizeContentsView {
             var _maxTimePerCreateContainers;
+            var _chunkSize;
+            var _disableCustomPagesPrefetch;
+            var _pagesToPrefetch;
+            var _createContainersJobTimeslice;
+            var _startupChunkSize;
+            var _customPagesToPrefetchMax;
+            var _customPagesToPrefetchMin;
         }
 
         class PrivateAutoSuggestBox extends WinJS.UI.AutoSuggestBox {
@@ -179,8 +255,271 @@ declare module WinJS {
             };
         }
 
+        class PrivateDatePicker extends DatePicker {
+            _domElement;
+            _disposed: boolean;
+            static _getInformationJS;
+            static _getInformationWinRT;
+            static getInformation;
+        }
 
+        class PrivateFlipView<T> extends FlipView<T> {
+            _pageManager;
+            _animating: boolean;
+        }
 
+        class PrivateSemanticZoom extends SemanticZoom {
+        }
+
+        interface IPrivateSelection<T> extends ISelection<T> {
+            _isIncluded(i: number): boolean;
+            _pivot;
+            _selected;
+        }
+
+        interface IPrivateListDataSource<T> extends IListDataSource<T> {
+            list?: WinJS.Binding.List<T>;
+            _list?: WinJS.Binding.List<T>;
+        }
+
+        interface IListViewEntity {
+            type: WinJS.UI.ObjectType;
+            index: number;
+        }
+
+        class PrivateListView<T> extends ListView<T> {
+            _onMSElementResize();
+            _animationsDisabled;
+            _view;
+            _ariaStartMarker;
+            _ariaEndMarker;
+            selection: IPrivateSelection<T>
+            itemDataSource: IPrivateListDataSource<T>;
+            _canvas;
+            _viewport;
+            _getViewportLength;
+            _groups;
+            _raiseViewLoading;
+            _element;
+            _horizontal(): boolean;
+            _updateLayout;
+            _affectedRange;
+            _onFocusOut;
+            _onFocusIn;
+            _selection;
+            _tabManager;
+            _layout;
+            _deleteWrapper;
+            _mode;
+            _itemsManager;
+            _raiseViewComplete;
+            _changeFocus;
+            _keyboardFocusInbound: boolean;
+            _currentMode;
+            _dispose;
+            _onMSManipulationStateChanged;
+            _beginZoom;
+            _endZoom;
+            _versionManager;
+            _scrollLength;
+            _onPropertyChange;
+
+            ensureVisible(itemIndex: number): void;
+            ensureVisible(itemIndex: IListViewEntity): void;
+        }
+
+        class PrivateListLayout extends ListLayout {
+            static _numberOfItemsPerItemsBlock: number;
+            _itemsPerBar;
+            initialize();
+            initialize(layout, groupsEnabled);
+            layout(tree: any, changedRange: any, modifiedItems: any, modifiedGroups: any): any;
+            itemsFromRange(firstPixel: number, lastPixel: number): any;
+            _measuringPromise;
+            _envInfo;
+            _sizes;
+        }
+
+        class PrivateGridLayout extends GridLayout {
+            initialize();
+            initialize(layout, groupsEnabled);
+            layout(tree: any, changedRange: any, modifiedItems: any, modifiedGroups: any): any;
+            itemsFromRange(firstPixel: number, lastPixel: number): any;
+            _itemsPerBar;
+            _measuringPromise;
+            _envInfo;
+            _sizes;
+            _lastItemFromRange;
+            _firstItemFromRange;
+            _measureElements;
+        }
+
+        class PrivateCellSpanningLayout extends CellSpanningLayout {
+            initialize();
+            initialize(layout, groupsEnabled);
+            layout(tree: any, changedRange: any, modifiedItems: any, modifiedGroups: any): any;
+            itemsFromRange(firstPixel: number, lastPixel: number): any;
+            _itemsPerBar;
+            _measuringPromise;
+            _envInfo;
+            _sizes;
+        }
+
+        class PrivateToolbar extends WinJS.UI.Toolbar {
+            _disposed: boolean;
+            _primaryCommands: ICommand[];
+            _secondaryCommands: ICommand[];
+            _overflowButton: HTMLButtonElement;
+            _mainActionArea: HTMLElement;
+            _menu: WinJS.UI.Menu;
+            _separatorWidth: number;
+            _standardCommandWidth: number;
+            _overflowButtonWidth: number;
+            _getCommandWidth(command: ICommand): number;
+            _customContentFlyout: WinJS.UI.Flyout;
+            _customContentContainer: HTMLElement;
+            _attachedOverflowArea: HTMLElement;
+        }
+
+        class PrivateCommand extends WinJS.UI.AppBarCommand implements ICommand {
+            priority: number;
+            winControl: ICommand;
+            _commandBarIconButton;
+            _disposed;
+            _tooltipControl;
+            _lastElementFocus;
+        }
+
+        // Move to WinJS.d.ts after the Toolbar API review
+        export interface ICommand {
+            addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            dispose(): void;
+            removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            disabled: boolean;
+            element: HTMLElement;
+            extraClass: string;
+            firstElementFocus: HTMLElement;
+            flyout: WinJS.UI.Flyout;
+            hidden: boolean;
+            icon: string;
+            id: string;
+            label: string;
+            lastElementFocus: HTMLElement;
+            onclick: Function;
+            section: string;
+            selected: boolean;
+            tooltip: string;
+            type: string;
+            priority: number;
+            winControl: ICommand
+        }
+
+        class PrivateAppBar extends AppBar {
+            getCommandById(id: string): PrivateCommand;
+            showCommands(commands: any[], immediate?: boolean): void;
+            showCommands(commands: any, immediate?: boolean): void;
+            hideCommands(commands: any[], immediate?: boolean): void;
+            hideCommands(commands: any, immediate?: boolean): void;
+            showOnlyCommands(commands: any[], immediate?: boolean): void;
+            showOnlyCommands(commands: any, immediate?: boolean): void;
+            commands: any[];
+            _disposed;
+            _getCommands;
+            _uniqueId;
+            _updateFirstAndFinalDiv;
+            _layout;
+            _visiblePosition;
+
+            static _currentAppBarId;
+            static _appBarsSynchronizationPromise;
+        }
+
+        class PrivateFlyout extends Flyout {
+            _disposed;
+        }
+
+        class PrivateMenuCommand extends MenuCommand {
+            _disposed;
+        }
+
+        class PrivateMenu extends Menu {
+            _disposed;
+        }
+
+        class PrivateSettingsFlyout extends SettingsFlyout {
+            _disposed;
+        }
+
+        class PrivateNavBar extends NavBar {
+            _disposed;
+        }
+
+        class PrivateNavBarCommand extends NavBarCommand {
+            _buttonEl;
+            _disposed;
+            _splitButtonEl;
+            static _EventName;
+        }
+
+        class PrivateNavBarContainer extends NavBarContainer {
+            _surfaceEl;
+            _measured;
+            _scrollPosition
+            _sizes;
+            _disposed;
+
+            static _EventName;
+        }
+
+        class PrivateHub extends Hub {
+            sections: WinJS.Binding.List<PrivateHubSection>;
+            _viewportElement;
+
+            static _EventName;
+            static _ClassName;
+            static LoadingState;
+            static AnimationType;
+        }
+
+        class PrivateHubSection extends HubSection {
+            _headerContentElement;
+            _setHeaderTemplate;
+            _headerTabStopElement;
+
+            static _ClassName;
+            static _Constants;
+        }
+
+        class PrivateBackButton extends BackButton {
+            static _getReferenceCount(): number;
+        }
+
+        class PrivateRating extends Rating {
+            _ensureTooltips;
+            _toolTips;
+            _disposed;
+        }
+
+        class PrivatePivot extends Pivot {
+
+            _viewportElement;
+            _goNext;
+            _goPrevious;
+            _headersContainerElement;
+            _headersState;
+            forceLayout();
+            _navMode;
+            _currentScrollTargetLocation;
+            _viewportWidth;
+
+            static _ClassName;
+            static _EventName;
+            static _NavigationModes;
+        }
+
+        class PrivatePivotItem extends PivotItem {
+            static _ClassName;
+        }
 
         /**
          * A rich input box that provides suggestions as the user types.
@@ -305,5 +644,111 @@ declare module WinJS {
             static createResultSuggestionImage(url: string): any;
 
         }
+
+        
+        class Toolbar {
+            public element: HTMLElement;
+            public overflowMode: string;
+            public data: WinJS.Binding.List<ICommand>;
+            constructor(element?: HTMLElement, options?: any);
+            public dispose(): void;
+            public forceLayout(): void;
+        }
+
+        class PrivateItemContainer extends WinJS.UI.ItemContainer {
+            _selectionMode: WinJS.UI.SelectionMode;
+            _onFocusIn();
+            _onFocusOut();
+            _onKeyDown(e);
+            _itemEventsHandler;
+            _itemBox;
+            _disposed: boolean;
+            static _ClassName;
+        }
+
+        var _ItemEventsHandler;
+        var _LEFT_MSPOINTER_BUTTON;
+        var _RIGHT_MSPOINTER_BUTTON;
+        var _selectedClass;
+        var _keyboardSeenLast;
+        var _swipeableClass;
+        var _itemFocusOutlineClass;
+        var _itemBoxClass;
+        var _itemClass;
+        var _headerClass;
+        var _itemFocusClass;
+        var _pressedClass;
+        var _itemsContainerClass;
+        var _laidOutClass;
+        var _cellSpanningGridLayoutClass;
+        var _listLayoutClass;
+        var _gridLayoutClass;
+        var _uniformGridLayoutClass;
+        var _selectionModeClass;
+        var _itemsBlockClass;
+        var _structuralNodesClass;
+        var _progressClass;
+        var _nonDraggableClass;
+        var _nonSelectableClass;
+        var _nonSwipeableClass;
+        var _INVALID_INDEX;
+
+        var _seenUrlsMaxSize: number;
+        var _seenUrlsMRUMaxSize: number;
+        function _seenUrl(url:string);
+        function _getSeenUrlsMRU(): string[];
+        function _getSeenUrls(): string[];
+
+        function _animationTimeAdjustment(time: number);
+
+        function _rotationTransform3d(angle, axis);
+        function _tiltTransform(clickX, clickY, elementRect);
+
+        var ListDataSource;
+        var _SelectionMode;
+        var _SelectionManager;
+        var _NoGroups;
+        var _VersionManager;
+        var _getMargins;
+        var _ItemSet;
+        var _Selection;
+        var _LayoutCommon;
+        var _LISTVIEW_PROGRESS_DELAY;
+        var _Overlay;
+        var _AppBarCommandsLayout;
+
+        module Pages {
+            function _remove(frag);
+            var _cacheStore;
+        }
+
+        module Fragments {
+            var _cacheStore;
+            function clearCache();
+            var _forceLocal;
+            var _getFragmentContents;
+            var _writeProfilerMark;
+        }
+    }
+
+    module Binding {
+        class PrivateList<T> extends List<T> {
+            _getKey(index: number): string;
+            _getFromKey(key: string): T;
+            _spliceFromKey(key: string, howMany: number, ...items: T[]): T[];
+            _notifyMutatedFromKey(key: string);
+        }
+        function _bindingParser(input, context);
+        function getValue(obj: any, path: string[]);
+
+        class PrivateTemplate extends Template {
+            static _interpretAll: boolean;
+            _shouldCompile: boolean;
+            _renderImpl;
+            _compileTemplate;
+            _reset;
+        }
+
+        var _TemplateCompiler;
     }
 }

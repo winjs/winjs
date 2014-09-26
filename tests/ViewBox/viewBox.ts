@@ -24,7 +24,7 @@ module CorsicaTests {
         }
 
         setUp(completed) {
-            CommonUtilities.detectMsElementResize((canResize) => {
+            Helper.detectMsElementResize((canResize) => {
                 canElementResize = canResize;
                 completed();
             });

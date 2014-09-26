@@ -12,7 +12,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
 
     function testTooltip_VerifyEvents(signalTestCaseCompleted, howAddEventListeners) {

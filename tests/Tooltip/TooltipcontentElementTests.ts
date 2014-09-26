@@ -11,7 +11,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     export class TooltipContentElementTests {
         

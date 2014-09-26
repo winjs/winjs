@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/Helper.ts"/>
 
 declare var Windows;
 
@@ -98,7 +98,7 @@ module AutoSuggestBoxTests {
             var asb: WinJS.UI.PrivateAutoSuggestBox = document.getElementById("ASBID").winControl;
             LiveUnit.LoggingCore.logComment("Verifying...");
 
-            // verify searchbox element
+            // verify asb element
             LiveUnit.Assert.isNotNull(asb.element);
 
             // verify input element
@@ -112,19 +112,19 @@ module AutoSuggestBoxTests {
         };
 
         testASBNullInstantiation = function () {
-            // Test searchbox Instantiation with null element
-            LiveUnit.LoggingCore.logComment("Attempt to Instantiate the searchBox with null element");
-            var searchBox = new AutoSuggestBox(null);
-            LiveUnit.Assert.isNotNull(searchBox, "SearchBox instantiation was null when sent a null searchbox element.");
+            // Test ASB Instantiation with null element
+            LiveUnit.LoggingCore.logComment("Attempt to Instantiate the ASB with null element");
+            var asb = new AutoSuggestBox(null);
+            LiveUnit.Assert.isNotNull(asb, "ASB instantiation was null when sent a null element.");
         }
 
         testASBMultipleInstantiation() {
-            // Test multiple instantiation of the same searchbox DOM element
+            // Test multiple instantiation of the same ASB DOM element
             this.testASBMultipleInstantiation["LiveUnit.ExpectedException"] = { message: "Invalid argument: Controls may only be instantiated one time for each DOM element" };
 
-            // Get the searchbox element from the DOM
+            // Get the ASB element from the DOM
             var asbElement = <HTMLElement>document.querySelector("#ASBID");
-            LiveUnit.LoggingCore.logComment("Attempt to Instantiate the searchBox element again");
+            LiveUnit.LoggingCore.logComment("Attempt to Instantiate the ASB element again");
             new AutoSuggestBox(asbElement);
         }
 
@@ -236,7 +236,7 @@ module AutoSuggestBoxTests {
             });
 
             // This is to test the input language
-            CommonUtilities.keydown(asb._inputElement, Key.rightArrow, "ja");
+            Helper.keydown(asb._inputElement, Key.rightArrow, "ja");
 
             LiveUnit.Assert.areEqual("ja", asb._lastKeyPressLanguage);
             asb._inputElement.value = "Test query";
@@ -262,10 +262,10 @@ module AutoSuggestBoxTests {
             });
 
             // This is to test the input language
-            CommonUtilities.keydown(asb._inputElement, Key.rightArrow, "ja");
+            Helper.keydown(asb._inputElement, Key.rightArrow, "ja");
             LiveUnit.Assert.areEqual("ja", asb._lastKeyPressLanguage);
             asb._inputElement.value = "Test query";
-            CommonUtilities.keydown(asb._inputElement, Key.enter, "ja-JP");
+            Helper.keydown(asb._inputElement, Key.enter, "ja-JP");
             LiveUnit.Assert.isTrue(eventFired, "QuerySubmitted event was not fired");
         }
 
@@ -374,7 +374,7 @@ module AutoSuggestBoxTests {
             LiveUnit.Assert.isTrue(changedEventFired, "QueryChanged event was not fired");
 
             submittedEventFired = false;
-            CommonUtilities.keydown(inputElement, Key.enter, "ko");
+            Helper.keydown(inputElement, Key.enter, "ko");
             LiveUnit.Assert.isTrue(submittedEventFired, "QuerySubmitted event was not fired");
 
             // make sure this event is filtered out (Korean IME finalized on key down event, but still passes key to app)
@@ -383,7 +383,7 @@ module AutoSuggestBoxTests {
             inputElement.dispatchEvent(createCustomEvent("compositionend"));
             LiveUnit.Assert.isFalse(changedEventFired, "QueryChanged event was fired");
 
-            CommonUtilities.keyup(inputElement, Key.enter, "ko");
+            Helper.keyup(inputElement, Key.enter, "ko");
 
             // ensure query events are still fired after key is released
             changedEventFired = false;
@@ -405,7 +405,7 @@ module AutoSuggestBoxTests {
                 inputElement.dispatchEvent(createCustomEvent("input"));
                 LiveUnit.Assert.isTrue(changedEventFired, "QueryChanged event was not fired");
 
-                CommonUtilities.keydown(inputElement, key, "ko");
+                Helper.keydown(inputElement, key, "ko");
 
                 // make sure this event is filtered out (Korean IME finalized on key down event, but still passes key to app)
                 changedEventFired = false;
@@ -413,7 +413,7 @@ module AutoSuggestBoxTests {
                 inputElement.dispatchEvent(createCustomEvent("compositionend"));
                 LiveUnit.Assert.isFalse(changedEventFired, "QueryChanged event was fired");
 
-                CommonUtilities.keyup(inputElement, key, "ko");
+                Helper.keyup(inputElement, key, "ko");
 
                 // ensure query events are still fired after key is released
                 changedEventFired = false;
@@ -449,7 +449,7 @@ module AutoSuggestBoxTests {
                 return WinJS.Promise.wrap().then(function () {
                     LiveUnit.LoggingCore.logComment("Testing " + key + " key.");
 
-                    CommonUtilities.keydown(inputElement, key, "en-US");
+                    Helper.keydown(inputElement, key, "en-US");
                     otherInputElement.focus();
 
                     return WinJS.Promise.timeout();
@@ -457,7 +457,7 @@ module AutoSuggestBoxTests {
                         LiveUnit.Assert.areEqual(otherInputElement, document.activeElement);
 
                         // key up event goes to another control & never reaches inputElement
-                        CommonUtilities.keyup(otherInputElement, key, "en-US");
+                        Helper.keyup(otherInputElement, key, "en-US");
 
                         // now put focus back
                         inputElement.focus();
@@ -505,7 +505,7 @@ module AutoSuggestBoxTests {
             var key = Key.enter;
             LiveUnit.LoggingCore.logComment("Testing " + key + " key.");
 
-            CommonUtilities.keydown(inputElement, key, "zh-Hans-CN");
+            Helper.keydown(inputElement, key, "zh-Hans-CN");
             // key up event was eaten by the IME (actually due to Trident bug BLUE:394522)
 
             // ensure query events are still fired
@@ -686,12 +686,12 @@ module AutoSuggestBoxTests {
 
             // user submits via enter key
             submitEventFired = false;
-            CommonUtilities.keydown(asb._inputElement, Key.enter, "ja");
+            Helper.keydown(asb._inputElement, Key.enter, "ja");
             LiveUnit.Assert.isTrue(submitEventFired, "QuerySubmitted event was not fired");
             LiveUnit.Assert.areEqual("bcompd", submitEventQueryText);
             verifyLinguisticDetails(submitEventLinguisticDetails, 0, 0, ['bxd', 'byd', 'bzd']);
 
-            CommonUtilities.keyup(asb._inputElement, Key.enter, "ja");
+            Helper.keyup(asb._inputElement, Key.enter, "ja");
         }
 
         testSearchHistoryContext() {
@@ -758,7 +758,7 @@ module AutoSuggestBoxTests {
 
                 waitForSuggestionFlyoutRender(asb).done(function () {
                     // Select the first suggestion.
-                    CommonUtilities.touchUp(asb._repeater.elementFromIndex(0));
+                    Helper.touchUp(asb._repeater.elementFromIndex(0));
                 });
             });
             asb._inputElement.value = "a";
@@ -777,7 +777,7 @@ module AutoSuggestBoxTests {
 
                 waitForSuggestionFlyoutRender(asb).done(function () {
                     // Select the first suggestion.
-                    CommonUtilities.touchUp(asb._repeater.elementFromIndex(0));
+                    Helper.touchUp(asb._repeater.elementFromIndex(0));
                 });
             });
             asb._inputElement.value = "a";
@@ -801,7 +801,7 @@ module AutoSuggestBoxTests {
                 e.detail.searchSuggestionCollection.appendQuerySuggestion("Test query Suggestion1 test");
 
                 WinJS.Utilities._setImmediate(function () {
-                    CommonUtilities.keydown(asb._inputElement, Key.enter, "ja-JP");
+                    Helper.keydown(asb._inputElement, Key.enter, "ja-JP");
                 });
             });
             asb._inputElement.value = "Test query";

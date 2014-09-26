@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="../TestLib/LegacyLiveUnit/CommonUtils.ts"/>
+/// <reference path="../TestLib/Helper.ts"/>
 
 declare var Windows;
 
@@ -98,7 +98,7 @@ module SearchBoxTests {
             searchBox.addEventListener("suggestionsrequested", function (e) {
                 complete();
             });
-            CommonUtilities.keydown(document, WinJS.Utilities.Key.t);
+            Helper.keydown(document, WinJS.Utilities.Key.t);
         }
 
         testFocusOnKeyboardInputDoesNotBringUpSuggestionsWhenDisabled(complete) {
@@ -112,7 +112,7 @@ module SearchBoxTests {
             searchBox.addEventListener("suggestionsrequested", function (e) {
                 LiveUnit.Assert.fail("suggestions should not be requested");
             });
-            CommonUtilities.keydown(document, WinJS.Utilities.Key.t);
+            Helper.keydown(document, WinJS.Utilities.Key.t);
             WinJS.Promise.timeout().done(complete);
         }
     };

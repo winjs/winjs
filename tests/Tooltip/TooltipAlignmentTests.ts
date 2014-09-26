@@ -21,7 +21,7 @@ module WinJSTests {
     'use strict';
 
     var tooltipUtils = TooltipUtils;
-    var commonUtils = CommonUtilities;
+    var commonUtils = Helper;
 
     //-----------------------------------------------------------------------------------
     // Verify the tooltip appears aligned correctly

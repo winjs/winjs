@@ -179,7 +179,6 @@ define([
                     },
                     set: function (value) {
                         this._chooseSuggestionOnEnter = !!value;
-                        //this._updateSearchButtonClass();
                     }
                 },
 
@@ -279,11 +278,12 @@ define([
 
                     this._suggestionManager = null;
                     this._suggestions = null;
+                    this._hitFinder = null;
 
                     this._disposed = true;
                 },
 
-                setLocalContentSuggestionSettings: function SearchBox_setLocalContentSuggestionSettings(settings) {
+                setLocalContentSuggestionSettings: function asb_setLocalContentSuggestionSettings(settings) {
                     /// <signature helpKeyword="WinJS.UI.AutoSuggestBox.SetLocalContentSuggestionSettings">
                     /// <summary locid="WinJS.UI.AutoSuggestBox.SetLocalContentSuggestionSettings">
                     /// Specifies whether suggestions based on local files are automatically displayed in the input field, and defines the criteria that
@@ -375,8 +375,6 @@ define([
                 _hideFlyout: function asb_hideFlyout() {
                     if (this._isFlyoutShown()) {
                         this._flyoutElement.style.display = "none";
-                        // todo: how does sb override this?
-                        //this._updateSearchButtonClass();
                     }
                 },
 
@@ -542,7 +540,6 @@ define([
                             curElement.setAttribute("aria-selected", "true");
                         }
                     }
-                    //this._updateSearchButtonClass();
                     this._currentSelectedIndex = indexToSelect;
                     if (curElement) {
                         this._inputElement.setAttribute("aria-activedescendant", this._repeaterElement.id + indexToSelect);
@@ -671,9 +668,7 @@ define([
 
                 _shouldIgnoreInput: function asb_shouldIgnoreInput() {
                     var processingIMEFocusLossKey = this._isProcessingDownKey || this._isProcessingUpKey || this._isProcessingTabKey || this._isProcessingEnterKey;
-                    var isButtonDown = false; // todo button: _ElementUtilities._matchesSelector(this._buttonElement, ":active");
-
-                    return processingIMEFocusLossKey || this._isFlyoutPointerDown || isButtonDown;
+                    return processingIMEFocusLossKey || this._isFlyoutPointerDown;
                 },
 
                 _submitQuery: function asb_submitQuery(queryText, fillLinguisticDetails, event) {
@@ -761,8 +756,6 @@ define([
                         this._element.classList.remove(ClassNames.asbInputFocus);
                         this._hideFlyout();
                     }
-                    // todo
-                    //this._updateSearchButtonClass();
                     this._isProcessingDownKey = false;
                     this._isProcessingUpKey = false;
                     this._isProcessingTabKey = false;
@@ -801,8 +794,6 @@ define([
 
                     this._internalFocusMove = false;
                     this._element.classList.add(ClassNames.asbInputFocus);
-                    // todo
-                    //this._updateSearchButtonClass();
                 },
 
                 _inputOrImeChangeHandler: function asb_inputImeChangeHandler() {
@@ -923,8 +914,7 @@ define([
                                 setSelection(-1);
                             } else if (this.queryText !== "") {
                                 this.queryText = "";
-                                //this._inputOrImeChangeHandler(null);
-                                //this._updateSearchButtonClass();
+                                this._inputOrImeChangeHandler(null);
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
@@ -957,15 +947,6 @@ define([
                             }
                             this._hideFlyout();
                         }
-                        // todo: tts
-                        //else if (SearchBox._isTypeToSearchKey(event)) {
-                        //    // Type to search on suggestions scenario.
-                        //    if (this._currentFocusedIndex !== -1) {
-                        //        this._currentFocusedIndex = -1;
-                        //        this._selectSuggestionAtIndex(-1);
-                        //        this._updateFakeFocus();
-                        //    }
-                        //}
                     }
                 },
 
