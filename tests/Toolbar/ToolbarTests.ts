@@ -250,7 +250,7 @@ module CorsicaTests {
 
             var overflowArea: HTMLElement;
             var child: HTMLElement;
-            for (var i = 0, len = toolbar.element.children.length; i< len; i++) {
+            for (var i = 0, len = toolbar.element.children.length; i < len; i++) {
                 child = <HTMLElement> toolbar.element.children[i];
                 if (Util.hasClass(child, Constants.overflowAreaCssClass)) {
                     overflowArea = child;
@@ -438,7 +438,7 @@ module CorsicaTests {
         testOverflowBehaviorOfToggleChangingValues() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Constants.typeToggle, label: "1", extraClass: "c1", selected: true }),
-                new Command(null, { type: Constants.typeButton, label: "2", extraClass: "c2", disabled: true  }),
+                new Command(null, { type: Constants.typeButton, label: "2", extraClass: "c2", disabled: true }),
             ]);
 
             this._element.style.width = "10px";
@@ -453,7 +453,7 @@ module CorsicaTests {
             var menuCommandEl = (<HTMLElement> toolbar._menu.element.children[0]);
             menuCommandEl.click();
 
-            toolbar.element.style.width = 2* toolbar._standardCommandWidth + "px";
+            toolbar.element.style.width = 2 * toolbar._standardCommandWidth + "px";
             toolbar.forceLayout();
 
             // Ensure that the command in the main action area now has the toggle de-selected
@@ -1039,6 +1039,56 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(firstEL, document.activeElement);
                 complete();
             });
+        }
+
+        testDataEdits(complete) {
+            var Key = WinJS.Utilities.Key;
+            var firstEL = document.createElement("button");
+            var data = new WinJS.Binding.List([
+                new Command(firstEL, { type: Constants.typeButton, label: "1" }),
+                new Command(null, { type: Constants.typeButton, label: "2" }),
+                new Command(null, { type: Constants.typeButton, label: "3" }),
+                new Command(null, { type: Constants.typeButton, label: "4" }),
+                new Command(null, { type: Constants.typeButton, label: "s1", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s2", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s3", section: Constants.secondaryCommandSection }),
+                new Command(null, { type: Constants.typeButton, label: "s4", section: Constants.secondaryCommandSection }),
+            ]);
+            this._element.style.width = "10px";
+            var toolbar = new Toolbar(this._element, {
+                overflowMode: Constants.overflowModeDetached,
+                data: data
+            });
+
+            this._element.style.width = (3 * toolbar._standardCommandWidth) + toolbar._overflowButtonWidth + "px";
+            toolbar.forceLayout();
+
+            // The main action area should now show | 1 | 2 | 3  | ... |
+            LiveUnit.Assert.areEqual(3, getVisibleCommandsInElement(toolbar._mainActionArea).length);
+
+            // Delete item wth label 3
+            toolbar.data.splice(2, 1)
+
+            WinJS.Utilities.Scheduler.schedule(() => {
+                LiveUnit.Assert.areEqual("4", getVisibleCommandsInElement(toolbar._mainActionArea)[2].textContent);
+
+                // The main action area should now show | 1 | 2 | 4  | ... |
+                LiveUnit.Assert.areEqual(3, getVisibleCommandsInElement(toolbar._mainActionArea).length);
+
+                toolbar.data.splice(0, 0, new Command(null, { type: Constants.typeButton, label: "new" }));
+
+                WinJS.Utilities.Scheduler.schedule(() => {
+                    var visibleCommands = getVisibleCommandsInElement(toolbar._mainActionArea);
+                    LiveUnit.Assert.areEqual("new", visibleCommands[0].textContent);
+                    LiveUnit.Assert.areEqual("1", visibleCommands[1].textContent);
+                    LiveUnit.Assert.areEqual("2", visibleCommands[2].textContent);
+
+                    // The main action area should now show | new | 1 | 2  | ... |
+                    LiveUnit.Assert.areEqual(3, getVisibleCommandsInElement(toolbar._mainActionArea).length);
+
+                    complete();
+                }, WinJS.Utilities.Scheduler.Priority.high);
+            }, WinJS.Utilities.Scheduler.Priority.high);
         }
     }
 }

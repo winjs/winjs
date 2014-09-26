@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Opven Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="../Core.d.ts" />
+import Animations = require("../Animations");
 import _Base = require("../Core/_Base");
 import _BaseUtils = require("../Core/_BaseUtils");
 import BindingList = require("../BindingList");
@@ -17,6 +18,7 @@ import _KeyboardBehavior = require("../Utilities/_KeyboardBehavior");
 import Menu = require("../Controls/Menu");
 import _MenuCommand = require("./Menu/_Command");
 import _Resources = require("../Core/_Resources");
+import Scheduler = require("../Scheduler");
 import _ToolbarMenuCommand = require("./Toolbar/_MenuCommand");
 import _WriteProfilerMark = require("../Core/_WriteProfilerMark");
 
@@ -36,6 +38,13 @@ interface ICommandWithType {
 interface IFocusableElementsInfo {
     elements: HTMLElement[];
     focusedIndex: number;
+}
+
+interface IDataChangeInfo {
+    currentElements: HTMLElement[];
+    dataElements: HTMLElement[];
+    deletedElements: HTMLElement[];
+    addedElements: HTMLElement[];
 }
 
 var strings = {
@@ -71,7 +80,7 @@ export class Toolbar {
     private _overflowButtonWidth: number;
     private _menu: Menu.Menu;
     private _overflowMode: string;
-    private _element: HTMLElement;      
+    private _element: HTMLElement;
     private _data: BindingList.List<_Command.ICommand>;
     private _primaryCommands: _Command.ICommand[];
     private _secondaryCommands: _Command.ICommand[];
@@ -85,6 +94,9 @@ export class Toolbar {
     private _attachedOverflowArea: HTMLElement;
     private _hoverable = _Hoverable.isHoverable; /* force dependency on hoverable module */
     private _winKeyboard: _KeyboardBehavior._WinKeyboard;
+    private _refreshPending: boolean;
+    private _refreshBound: Function;
+    private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
 
     // <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.element" helpKeyword="WinJS.UI.Toolbar.element">
     /// Gets the DOM element that hosts the Toolbar.
@@ -145,27 +157,12 @@ export class Toolbar {
             throw new _ErrorFromName("WinJS.UI.Toolbar.BadData", strings.badData);
         }
 
-        this._data = value;
-        this._primaryCommands = [];
-        this._secondaryCommands = [];
-
-        if (value.length > 0) {
-            _ElementUtilities.removeClass(this.element, _Constants.emptyToolbarCssClass);
-            value.forEach((command) => {
-                if (command.section === "selection") {
-                    this._secondaryCommands.push(command);
-                } else {
-                    this._primaryCommands.push(command);
-                }
-            });
-
-            if (!this._initializing) {
-                this._measureCommands();
-                this._positionCommands();
-            }
-        } else {
-            _ElementUtilities.addClass(this.element, _Constants.emptyToolbarCssClass);
+        if (this._data) {
+            this._removeDataListeners();
         }
+        this._data = value;
+        this._addDataListeners();
+        this._dataUpdated();
     }
 
     constructor(element?: HTMLElement, options: any = {}) {
@@ -213,6 +210,8 @@ export class Toolbar {
         if (!label) {
             this._element.setAttribute("aria-label", strings.ariaLabel);
         }
+
+        this._refreshBound = this._refresh.bind(this);
 
         this._setupTree();
 
@@ -341,21 +340,134 @@ export class Toolbar {
         return focusableCommandsInfo;
     }
 
+    private _dataUpdated() {
+        this._writeProfilerMark("_dataUpdated,info");
+
+        var changeInfo = this._getDataChangeInfo();
+
+        // Take a snapshot of the current state
+        var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.addedElements, changeInfo.deletedElements, changeInfo.currentElements);
+
+        // Remove deleted elements
+        changeInfo.deletedElements.forEach((element) => {
+            if (element.parentElement) {
+                element.parentElement.removeChild(element);
+            }
+        });
+
+        // Add elements in the right order
+        changeInfo.dataElements.forEach((element) => {
+            this._mainActionArea.appendChild(element);
+        });
+
+        if (this._overflowButton) {
+            // Ensure that the overflow button is the last element in the main action area
+            this._mainActionArea.appendChild(this._overflowButton);
+        }
+
+        this._primaryCommands = [];
+        this._secondaryCommands = [];
+
+        if (this.data.length > 0) {
+            _ElementUtilities.removeClass(this.element, _Constants.emptyToolbarCssClass);
+            this.data.forEach((command) => {
+                if (command.section === "selection") {
+                    this._secondaryCommands.push(command);
+                } else {
+                    this._primaryCommands.push(command);
+                }
+            });
+
+            if (!this._initializing) {
+                this._measureCommands();
+                this._positionCommands();
+            }
+        } else {
+            _ElementUtilities.addClass(this.element, _Constants.emptyToolbarCssClass);
+        }
+
+        // Execute the animation.
+        updateCommandAnimation.execute();
+    }
+
+    private _getDataChangeInfo(): IDataChangeInfo {
+        var child: HTMLElement;
+        var i = 0, len = 0;
+        var dataElements: HTMLElement[] = [];
+        var deletedElements: HTMLElement[] = [];
+        var addedElements: HTMLElement[] = [];
+        var currentElements: HTMLElement[] = [];
+
+        for (i = 0, len = this.data.length; i < len; i++) {
+            dataElements.push(this.data.getAt(i).element);
+        }
+
+        for (i = 0, len = this._mainActionArea.children.length; i < len; i++) {
+            child = <HTMLElement> this._mainActionArea.children[i];
+            if (child.style.display !== "none") {
+                currentElements.push(child);
+                if (dataElements.indexOf(child) === -1 && child !== this._overflowButton) {
+                    deletedElements.push(child);
+                }
+            }
+        }
+
+        dataElements.forEach((element) => {
+            if (deletedElements.indexOf(element) === -1 &&
+                currentElements.indexOf(element) === -1) {
+                addedElements.push(element);
+            }
+        });
+
+        return {
+            dataElements: dataElements,
+            deletedElements: deletedElements,
+            addedElements: addedElements,
+            currentElements: currentElements
+        }
+    }
+
+    private _refresh() {
+        if (!this._refreshPending) {
+            this._refreshPending = true;
+
+            // Batch calls to _dataUpdated
+            Scheduler.schedule(() => {
+                if (this._refreshPending && !this._disposed) {
+                    this._dataUpdated();
+                    this._refreshPending = false;
+                }
+            }, Scheduler.Priority.high, null, "WinJS.UI.Toolbar._refresh");
+        }
+    }
+
+    private _addDataListeners() {
+        this._dataChangedEvents.forEach((eventName) => {
+            this._data.addEventListener(eventName, this._refreshBound, false);
+        });
+    }
+
+    private _removeDataListeners() {
+        this._dataChangedEvents.forEach((eventName) => {
+            this._data.removeEventListener(eventName, this._refreshBound, false);
+        });
+    }
+
     private _isElementFocusable(element: HTMLElement): boolean {
         var focusable = false;
         if (element) {
             var command = element["winControl"];
             if (command) {
                 focusable = command.element.style.display !== "none" &&
-                    command.type !== _Constants.typeSeparator &&
-                    !command.hidden &&
-                    !command.disabled &&
-                    (!command.firstElementFocus || command.firstElementFocus.tabIndex >= 0 || command.lastElementFocus.tabIndex >= 0);
+                command.type !== _Constants.typeSeparator &&
+                !command.hidden &&
+                !command.disabled &&
+                (!command.firstElementFocus || command.firstElementFocus.tabIndex >= 0 || command.lastElementFocus.tabIndex >= 0);
             } else {
                 // e.g. the overflow button
                 focusable = element.style.display !== "none" &&
-                    getComputedStyle(element).visibility !== "hidden" &&
-                    element.tabIndex >= 0;
+                getComputedStyle(element).visibility !== "hidden" &&
+                element.tabIndex >= 0;
             }
         }
         return focusable;
@@ -437,7 +549,7 @@ export class Toolbar {
 
         ControlProcessor.processAll(this._mainActionArea, /*skip root*/ true);
 
-        var commands:_Command.ICommand[] = [];
+        var commands: _Command.ICommand[] = [];
         var childrenLength = this._mainActionArea.children.length;
         var child: Element;
         for (var i = 0; i < childrenLength; i++) {
