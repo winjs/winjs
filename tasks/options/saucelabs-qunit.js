@@ -20,7 +20,7 @@
     }, {
         browserName: "firefox",
         platform: "Win8.1",
-        version: "31"
+        version: "32"
     }, {
         browserName: "googlechrome",
         platform: "Win8.1",
