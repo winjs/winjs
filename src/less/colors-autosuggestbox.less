@@ -1,0 +1,229 @@
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+.Colors(@theme) {
+    .mixin(dark) {
+        .win-autosuggestbox {
+            border-color:rgba(255, 255, 255, 0.8);
+            background-color:rgba(255, 255, 255, 0.8);
+            color:rgba(0, 0, 0, 0.6);
+        }
+        
+        .win-autosuggestbox-disabled {
+            background-color:transparent;
+            border-color:rgba(255, 255, 255, 0.4);
+        }
+        
+        .win-autosuggestbox-disabled input[disabled] {
+            background-color:transparent;
+            color:rgba(255, 255, 255, 0.4);
+        }
+
+        .win-autosuggestbox-disabled div {
+            background-color:transparent;
+            color:rgba(255, 255, 255, 0.4);
+        }
+
+        .win-autosuggestbox-input-focus {
+            border-color:rgb(42, 42, 42);
+            background-color:rgb(255, 255, 255);
+        }
+
+        .win-autosuggestbox-flyout {
+            border-color:rgb(42, 42, 42);
+            background-color:rgb(255, 255, 255);
+        }
+        
+        .win-autosuggestbox-flyout-highlighttext {
+            color: rgb(70, 23, 180);
+        }
+
+        .win-autosuggestbox-suggestion-selected {
+            background-color: rgb(70, 23, 180);
+        }
+
+        .win-autosuggestbox-suggestion-query,
+        .win-autosuggestbox-suggestion-result {
+            color: rgb(0, 0, 0);
+        }
+
+        .win-autosuggestbox-suggestion-separator {
+            color:rgb(122, 122, 122);
+        }
+
+        .win-autosuggestbox-suggestion-separator hr {
+            border-color:rgb(122, 122, 122);
+        }
+
+        .win-autosuggestbox-suggestion-selected .win-autosuggestbox-flyout-highlighttext {
+            color: rgb(163,139,218);
+        }
+
+    }
+    .mixin(light) {
+        .win-autosuggestbox {
+            border-color:rgba(0, 0, 0, 0.27);
+            background-color:rgba(255, 255, 255, 0.8);
+            color:rgba(0, 0, 0, 0.6);
+        }
+        
+        .win-autosuggestbox-disabled {
+            background-color:rgba(202, 202, 202, 0.4);
+            border-color:rgba(0, 0, 0, 0.15);
+        }
+
+        .win-autosuggestbox-disabled input[disabled] {
+            background-color:rgba(202, 202, 202, 0.4);
+            color: rgba(0, 0, 0, 0.22);
+        }
+
+        .win-autosuggestbox-disabled div {
+            background-color:rgba(202, 202, 202, 0.4);
+            color: rgba(0, 0, 0, 0.22);
+        }
+
+        .win-autosuggestbox-input-focus {
+            border-color:rgb(42, 42, 42);
+        }
+
+        .win-autosuggestbox-flyout {
+            border-color:rgb(42, 42, 42);
+            background-color:rgb(255, 255, 255);
+        }
+        
+        .win-autosuggestbox-flyout-highlighttext {
+            color: rgb(70, 23, 180);
+        }
+
+        .win-autosuggestbox-suggestion-selected {
+            background-color: rgb(70, 23, 180);
+        }
+
+        .win-autosuggestbox-suggestion-query,
+        .win-autosuggestbox-suggestion-result {
+            color: rgb(0,0,0);
+        }
+
+        .win-autosuggestbox-suggestion-separator {
+            color:rgb(122,122,122);
+        }
+
+        .win-autosuggestbox-suggestion-separator hr {
+            border-color:rgb(122,122,122);
+        }
+
+        .win-autosuggestbox-suggestion-selected .win-autosuggestbox-flyout-highlighttext {
+            color: rgb(163,139,218);
+        }
+    }
+    .mixin(@theme);
+}
+.ColorsHover(@theme) {
+    .mixin(dark) {
+        .win-autosuggestbox[disabled=false]:hover {
+            border-color:rgba(255, 255, 255, 0.87);
+            background-color:rgba(255, 255, 255, 0.87);
+        }
+
+        .win-autosuggestbox-input-focus:hover {
+            border-color:rgb(42, 42, 42);
+            background-color:rgb(255, 255, 255);
+        }
+
+        .win-autosuggestbox-suggestion-result:hover,
+        .win-autosuggestbox-suggestion-query:hover {
+            background-color:rgb(229, 229, 229);
+        }
+
+        .win-autosuggestbox-suggestion-selected:hover {
+            background-color: rgb(95, 55, 190);
+        }
+
+    }
+    .mixin(light) {
+        .win-autosuggestbox[disabled=false]:hover {
+            background-color:rgba(255, 255, 255, 0.87);
+        }
+
+        .win-autosuggestbox-suggestion-result:hover,
+        .win-autosuggestbox-suggestion-query:hover {
+            background-color:rgb(229,229,229);
+        }
+
+        .win-autosuggestbox-suggestion-selected:hover {
+            background-color: rgb(95, 55, 190);
+        }
+    }
+    .mixin(@theme);
+}
+
+
+@media (-ms-high-contrast) {
+    .win-autosuggestbox {
+        border-color:ButtonText;
+        background-color:ButtonFace;
+        color:ButtonText;
+    }
+    
+    .win-autosuggestbox-disabled {
+        background-color:ButtonFace;
+        border-color: GrayText;
+    }
+
+    .win-autosuggestbox-disabled input[disabled] {
+        background-color:ButtonFace;
+        color: GrayText;
+        border-color: GrayText;
+    }
+
+    .win-autosuggestbox-disabled div {
+        color: GrayText;
+        background-color: ButtonFace;
+    }
+
+    .win-autosuggestbox:-ms-input-placeholder,
+    .win-autosuggestbox::-webkit-input-placeholder,
+    .win-autosuggestbox::-moz-input-placeholder {
+        color:GrayText;
+    }
+
+    .win-autosuggestbox-flyout {
+        border-color:ButtonText;
+        background-color:ButtonFace;
+    }
+    
+    .win-autosuggestbox-flyout-highlighttext {
+        color: ButtonText;
+    }
+
+    html.win-hoverable .win-autosuggestbox-suggestion-result:hover,
+    html.win-hoverable .win-autosuggestbox-query:hover {
+        background-color:Highlight;
+        color:HighlightText;
+    }
+
+    html.win-hoverable .win-autosuggestbox-suggestion-result:hover .win-autosuggestbox-flyout-highlighttext,
+    html.win-hoverable .win-autosuggestbox-suggestion-query:hover .win-autosuggestbox-flyout-highlighttext {
+        color: HighlightText;
+    }
+
+    .win-autosuggestbox-suggestion-query,
+    .win-autosuggestbox-suggestion-result {
+        color:ButtonText;
+    }
+
+    .win-autosuggestbox-suggestion-selected {
+        background-color:Highlight;
+        color:HighlightText;
+    }
+
+    .win-autosuggestbox-suggestion-separator {
+        color:ButtonText;
+    }
+
+    .win-autosuggestbox-suggestion-separator hr {
+        border-color:ButtonText;
+    }
+
+    .win-autosuggestbox-suggestion-selected .win-autosuggestbox-flyout-highlighttext {
+        color: HighlightText;
+    }
+}

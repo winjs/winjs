@@ -236,17 +236,23 @@ declare module WinJS {
             var _customPagesToPrefetchMin;
         }
 
-        class PrivateSearchBox extends WinJS.UI.SearchBox {
+        class PrivateAutoSuggestBox extends WinJS.UI.AutoSuggestBox {
             _disposed: boolean;
+            _inputElement: HTMLInputElement;
+            _flyoutElement: HTMLDivElement;
+            _lastKeyPressLanguage: string;
+            _repeater: WinJS.UI.Repeater;
+            _repeaterElement: HTMLDivElement;
+
+            _inputOrImeChangeHandler(eventArg: Event);
+
             static _sortAndMergeHits(hitsProvided?);
-            static _EventName: {
+            static _EventNames: {
                 querychanged;
                 querysubmitted;
                 resultsuggestionchosen;
                 suggestionsrequested;
-                receivingfocusonkeyboardinput;
             };
-
         }
 
         class PrivateDatePicker extends DatePicker {
@@ -515,6 +521,131 @@ declare module WinJS {
             static _ClassName;
         }
 
+        /**
+         * A rich input box that provides suggestions as the user types.
+        **/
+        class AutoSuggestBox {
+            //#region Constructors
+
+            /**
+             * Creates a new AutoSuggestBox.
+             * @constructor 
+             * @param element The DOM element hosts the new AutoSuggestBox.
+             * @param options An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds to one of the control's properties or events.
+            **/
+            constructor(element?: HTMLElement, options?: any);
+
+            //#endregion Constructors
+
+            //#region Events
+
+            /**
+             * Raised when the user or the app changes the queryText.
+             * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.language, detail.queryText, detail.linguisticDetails.
+            **/
+            onquerychanged(eventInfo: CustomEvent): void;
+
+            /**
+             * Raised awhen the user presses Enter.
+             * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.language, detail.queryText, detail.linguisticDetails, detail.keyModifiers.
+            **/
+            onquerysubmitted(eventInfo: CustomEvent): void;
+
+            /**
+             * Raised when the user selects a suggested option for their query.
+             * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.tag, detail.keyModifiers, detail.storageFile.
+            **/
+            onresultsuggestionschosen(eventInfo: CustomEvent): void;
+
+            /**
+             * Raised when the system requests suggestions from this app.
+             * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.language, detail.linguisticDetails, detail.queryText, detail.searchSuggestionCollection.
+            **/
+            onsuggestionsrequested(eventInfo: CustomEvent): void;
+
+            //#endregion Events
+
+            //#region Methods
+
+            /**
+             * Registers an event handler for the specified event.
+             * @param eventName The name of the event to handle. Note that you drop the "on" when specifying the event name. For example, instead of specifying "onclick", you specify "click".
+             * @param eventHandler The event handler function to associate with the event.
+             * @param useCapture Set to true to register the event handler for the capturing phase; otherwise, set to false to register the event handler for the bubbling phase.
+            **/
+            addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
+
+            /**
+             * Raises an event of the specified type and with additional properties.
+             * @param type The type (name) of the event.
+             * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+             * @returns true if preventDefault was called on the event, otherwise false.
+            **/
+            dispatchEvent(type: string, eventProperties: any): boolean;
+
+            /**
+             * Releases resources held by this AutoSuggestBox. Call this method when the AutoSuggestBox is no longer needed. After calling this method, the AutoSuggestBox becomes unusable.
+            **/
+            dispose(): void;
+
+            /**
+             * Removes an event handler that the addEventListener method registered.
+             * @param eventName The name of the event that the event handler is registered for.
+             * @param eventCallback The event handler function to remove.
+             * @param useCapture Set to true to remove the capturing phase event handler; set to false to remove the bubbling phase event handler.
+            **/
+            removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
+
+            //#endregion Methods
+
+            //#region Properties
+
+            /**
+             * Gets or sets whether the first suggestion is chosen when the user presses Enter.
+            **/
+            chooseSuggestionOnEnter: boolean;
+
+            /**
+             * Gets or sets a value that specifies whether the AutoSuggestBox is disabled. If the control is disabled, it won't receive focus.
+            **/
+            disabled: boolean;
+
+            /**
+             * Gets the DOM element that hosts the AutoSuggestBox.
+            **/
+            element: HTMLElement;
+
+            /**
+             * Gets or sets the placeholder text for the AutoSuggestBox. This text is displayed if there is no other text in the input box.
+            **/
+            placeholderText: string;
+
+            /**
+             * Gets or sets the query text for the AutoSuggestBox.
+            **/
+            queryText: string;
+
+            /**
+             * Gets or sets the history context. This context is used a secondary key (the app ID is the primary key) for storing history.
+            **/
+            searchHistoryContext: string;
+
+            /**
+             * Gets or sets a value that specifies whether history is disabled.
+            **/
+            searchHistoryDisabled: boolean;
+
+            //#endregion Properties
+
+            /**
+             * Creates the image argument for SearchSuggestionCollection.appendResultSuggestion.
+             * @param url The url of the image.
+            **/
+            static createResultSuggestionImage(url: string): any;
+
+        }
+
+        
         class Toolbar {
             public element: HTMLElement;
             public overflowMode: string;

@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="../TestLib/Helper.ts" />
 
-module SearchBoxTests {
+module AutoSuggestBoxTests {
 
-    var SSM = Helper.require("WinJS/Controls/SearchBox/_SearchSuggestionManagerShim");
+    var SSM = Helper.require("WinJS/Controls/AutoSuggestBox/_SearchSuggestionManagerShim");
 
     function createSSM(suggestionsRequestedCallback?, vectorChangedCallback?) {
         var ssm = new SSM._SearchSuggestionManagerShim();
@@ -245,4 +245,4 @@ module SearchBoxTests {
         }
     };
 }
-LiveUnit.registerTestClass("SearchBoxTests.SuggestionShimTests");
+LiveUnit.registerTestClass("AutoSuggestBoxTests.SuggestionShimTests");

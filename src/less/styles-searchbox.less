@@ -3,42 +3,12 @@
 @import "base.less";
 @import "mixins.less";
 
-.win-searchbox {
-    white-space: normal;
-    position: relative;
-    width: 266px;
-    min-width: 265px;
-    height: 28px;
-    border-style: solid;
-    border-width: 2px;
-}
-
 .win-searchbox-flyout {
-    position: absolute;
-    width: 100%;
-    border-style: solid;
-    border-width: 2px 2px 2px 2px;
-    z-index: 100;
-    padding: 5px 0 10px 0;
-    top: 30px;
-    left: -2px;
-    right: -2px;
     max-height: 272px;
-    overflow: auto;
-    -ms-scroll-chaining:none;
-    touch-action:none;
 }
 
 .win-searchbox input {
-    height: 100%;
-    border-style: none;
-    margin: 0px;
     padding-right: 28px;
-    width: 100%;
-    font-size: 11pt;
-    -ms-ime-align: after;
-    line-height: 20px;
-    box-sizing: border-box;
 }
 
 .win-searchbox input {
@@ -51,14 +21,6 @@
 /*
 Hide clear button in search box control.
 */
-
-.win-searchbox input[type=search]::-ms-clear {
-    display: none;
-}
-
-.win-searchbox input[type=search]::-webkit-search-cancel-button {
-    display: none;
-}
 
 .win-searchbox-button {
     position: absolute;
@@ -82,113 +44,3 @@ Hide clear button in search box control.
 .win-searchbox-button.win-searchbox-button:before {
     content: "\E094";
 }
-
-.win-searchbox-suggestion-result {
-    #flex > .display-flex();
-    padding: 0 18px;
-    height: 60px;
-    font-size: 11pt;
-    outline: none;
-}
-
-.win-searchbox-suggestion-result div {
-    line-height: 20px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.win-searchbox-suggestion-result-text {
-    padding-top: 9px;
-    padding-bottom: 11px;
-    height: 60px;
-    width: 179px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    line-height: 20px;
-}
-
-.win-searchbox-suggestion-result-detailed-text {
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 22px; /* Some characters get clipped if line height is < 22px. Work around by setting -2 margin. */
-    margin-top: -1px;
-    width: 100%;
-}
-
-.win-searchbox-suggestion-result img {
-    width: 40px;
-    height: 40px;
-    margin-left: 0;
-    padding-right: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
-.win-searchbox-suggestion-result img {
-    .RTL({
-        margin-right: 0;
-        margin-left: auto;
-        padding-left: 10px;
-        padding-right: 0;
-    });
-}
-
-.win-searchbox-suggestion-query {
-    padding: 9px 18px 11px 18px;
-    font-weight: normal;
-    outline: none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    font-size: 11pt;
-    line-height: 20px;
-}
-
-.win-searchbox-suggestion-separator {
-    #flex > .display-flex();
-    padding: 0 18px;
-    height: 40px;
-    font-size: 11pt;
-}
-
-.win-searchbox-suggestion-separator hr {
-    #flex > .flex(@grow: 1);
-    margin-top: 18px;
-    border-style: solid;
-    border-width: 1px 0px 0px 0px;
-}
-
-.win-searchbox-suggestion-separator hr {
-    .RTL({
-        margin-right: 10px;
-        margin-left: auto;
-    });
-}
-
-.win-searchbox-suggestion-separator div {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    padding-top: 9px;
-    padding-bottom: 11px;
-    line-height: 20px;
-    margin-right: 10px;
-}
-
-.win-searchbox-suggestion-separator div {
-    .RTL({
-        margin-left: 10px;
-        margin-right: auto;
-    });
-}
-
-/*
-Search box control animations
-*/
-@keyframes WinJS-flyoutBelowSearchBox-showPopup { from { transform: translateY(0px); } to { transform: none; } }
-@keyframes WinJS-flyoutAboveSearchBox-showPopup { from { transform: translateY(0px); } to { transform: none; } }
-@-webkit-keyframes -webkit-WinJS-flyoutBelowSearchBox-showPopup { from { -webkit-transform: translateY(0px); } to { -webkit-transform: none; } }
-@-webkit-keyframes -webkit-WinJS-flyoutAboveSearchBox-showPopup { from { -webkit-transform: translateY(0px); } to { -webkit-transform: none; } }

@@ -1,0 +1,208 @@
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+@import "base.less";
+@import "mixins.less";
+
+.win-autosuggestbox {
+    white-space: normal;
+    position: relative;
+    width: 266px;
+    min-width: 265px;
+    height: 28px;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.win-autosuggestbox-flyout {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    border-style: solid;
+    border-width: 2px 2px 2px 2px;
+    z-index: 100;
+    padding: 5px 0 10px 0;
+    left: -2px;
+    right: -2px;
+    max-height: 454px;
+    overflow: auto;
+    -ms-scroll-chaining: none;
+    touch-action: none;
+}
+
+.win-autosuggestbox-flyout-above {
+    bottom: 100%;
+    top: auto;
+}
+
+.win-autosuggestbox-flyout-above .win-repeater {
+    #flex > .display-flex();
+    #flex > .flex-direction(column-reverse);
+}
+
+.win-autosuggestbox input {
+    height: 100%;
+    border-style: none;
+    margin: 0px;
+    width: 100%;
+    font-size: 11pt;
+    -ms-ime-align: after;
+    line-height: 20px;
+    box-sizing: border-box;
+}
+
+/*
+Hide clear button in ASB control.
+*/
+
+.win-autosuggestbox input[type=search]::-ms-clear {
+    display: none;
+}
+
+.win-autosuggestbox input[type=search]::-webkit-search-cancel-button {
+    display: none;
+}
+
+.win-autosuggestbox-suggestion-result {
+    #flex > .display-flex();
+    padding: 0 18px;
+    height: 60px;
+    font-size: 11pt;
+    outline: none;
+}
+
+.win-autosuggestbox-suggestion-result div {
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.win-autosuggestbox-suggestion-result-text {
+    padding-top: 9px;
+    padding-bottom: 11px;
+    height: 60px;
+    width: 179px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 20px;
+}
+
+.win-autosuggestbox-suggestion-result-detailed-text {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 22px; /* Some characters get clipped if line height is < 22px. Work around by setting -2 margin. */
+    margin-top: -1px;
+    width: 100%;
+}
+
+.win-autosuggestbox-suggestion-result img {
+    width: 40px;
+    height: 40px;
+    margin-left: 0;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.win-autosuggestbox-suggestion-result img {
+    .RTL({
+        margin-right: 0;
+        margin-left: auto;
+        padding-left: 10px;
+        padding-right: 0;
+    });
+}
+
+.win-autosuggestbox-suggestion-query {
+    padding: 9px 18px 11px 18px;
+    font-weight: normal;
+    outline: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 11pt;
+    line-height: 20px;
+}
+
+.win-autosuggestbox-suggestion-separator {
+    #flex > .display-flex();
+    padding: 0 18px;
+    height: 40px;
+    font-size: 11pt;
+}
+
+.win-autosuggestbox-suggestion-separator hr {
+    #flex > .flex(@grow: 1);
+    margin-top: 18px;
+    border-style: solid;
+    border-width: 1px 0px 0px 0px;
+}
+
+.win-autosuggestbox-suggestion-separator hr {
+    .RTL({
+        margin-right: 10px;
+        margin-left: auto;
+    });
+}
+
+.win-autosuggestbox-suggestion-separator div {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-top: 9px;
+    padding-bottom: 11px;
+    line-height: 20px;
+    margin-right: 10px;
+}
+
+.win-autosuggestbox-suggestion-separator div {
+    .RTL({
+        margin-left: 10px;
+        margin-right: auto;
+    });
+}
+
+/*
+ASB control animations
+*/
+@keyframes WinJS-flyoutBelowASB-showPopup {
+    from {
+        transform: translateY(0px);
+    }
+
+    to {
+        transform: none;
+    }
+}
+
+@keyframes WinJS-flyoutAboveASB-showPopup {
+    from {
+        transform: translateY(0px);
+    }
+
+    to {
+        transform: none;
+    }
+}
+
+@-webkit-keyframes -webkit-WinJS-flyoutBelowASB-showPopup {
+    from {
+        -webkit-transform: translateY(0px);
+    }
+
+    to {
+        -webkit-transform: none;
+    }
+}
+
+@-webkit-keyframes -webkit-WinJS-flyoutAboveASB-showPopup {
+    from {
+        -webkit-transform: translateY(0px);
+    }
+
+    to {
+        -webkit-transform: none;
+    }
+}
