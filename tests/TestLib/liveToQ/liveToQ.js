@@ -405,7 +405,11 @@
         LoggingCore: {
             logComment: function (message) {
                 verboseLog += "\n" + message;
-            }
+            },
+
+            getVerboseLog: function () {
+                return verboseLog;
+            },
         },
 
         registerTestClass: function (moduleName) {

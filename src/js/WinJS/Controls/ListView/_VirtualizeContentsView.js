@@ -2051,9 +2051,10 @@ define([
                     function addToGroup(itemsContainer, groupSize) {
                         var children = itemsContainer.element.children,
                             oldSize = children.length,
-                            toAdd = Math.min(groupSize - itemsContainer.items.length, chunkSize);
+                            toAdd = Math.min(groupSize - itemsContainer.items.length, chunkSize),
+                            containersMarkup = _Helpers._stripedContainers(toAdd, itemsContainer.items.length);
 
-                        _SafeHtml.insertAdjacentHTMLUnsafe(itemsContainer.element, "beforeend", _Helpers._repeat("<div class='win-container win-backdrop'></div>", toAdd));
+                        _SafeHtml.insertAdjacentHTMLUnsafe(itemsContainer.element, "beforeend", containersMarkup);
 
                         for (var i = 0; i < toAdd; i++) {
                             var container = children[oldSize + i];
@@ -2101,44 +2102,61 @@ define([
                     this._listView._writeProfilerMark("createChunk,StartTM");
 
                     function addToGroup(itemsContainer, toAdd) {
+                        var indexOfNextGroupItem;
                         var lastExistingBlock = itemsContainer.itemsBlocks.length ? itemsContainer.itemsBlocks[itemsContainer.itemsBlocks.length - 1] : null;
 
+                        // 1) Add missing containers to the latest itemsblock if it was only partially filled during the previous pass.
                         if (lastExistingBlock && lastExistingBlock.items.length < blockSize) {
-                            var fix = Math.min(toAdd, blockSize - lastExistingBlock.items.length);
-                            _SafeHtml.insertAdjacentHTMLUnsafe(lastExistingBlock.element, "beforeend", _Helpers._repeat("<div class='win-container win-backdrop'></div>", fix));
+                            var emptySpotsToFill = Math.min(toAdd, blockSize - lastExistingBlock.items.length),
+                                sizeOfOldLastBlock = lastExistingBlock.items.length,
 
-                            var oldSize = lastExistingBlock.items.length;
+                            indexOfNextGroupItem = (itemsContainer.itemsBlocks.length - 1) * blockSize + sizeOfOldLastBlock;
+                            var containersMarkup = _Helpers._stripedContainers(emptySpotsToFill, indexOfNextGroupItem);
+
+                            _SafeHtml.insertAdjacentHTMLUnsafe(lastExistingBlock.element, "beforeend", containersMarkup);
                             children = lastExistingBlock.element.children;
 
-                            for (var j = 0; j < fix; j++) {
-                                var child = children[oldSize + j];
+                            for (var j = 0; j < emptySpotsToFill; j++) {
+                                var child = children[sizeOfOldLastBlock + j];
                                 lastExistingBlock.items.push(child);
                                 that.containers.push(child);
                             }
 
-                            toAdd -= fix;
+                            toAdd -= emptySpotsToFill;
                         }
+                        indexOfNextGroupItem = itemsContainer.itemsBlocks.length * blockSize;
 
                         if (toAdd > chunkSize) {
                             toAdd = Math.min(toAdd, Math.max(1, Math.floor(chunkSize / blockSize)) * blockSize);
                         }
 
-                        var blocks = Math.floor(toAdd / blockSize),
-                            lastBlockSize = toAdd % blockSize;
+                        // 2) Generate as many full itemblocks of containers as we can.                        
+                        var newBlocksCount = Math.floor(toAdd / blockSize),
+                            markup = "",
+                            firstBlockFirstItemIndex = indexOfNextGroupItem,
+                            secondBlockFirstItemIndex = indexOfNextGroupItem + blockSize;
 
-                        var blockMarkup = "<div class='win-itemsblock'>" + _Helpers._repeat("<div class='win-container win-backdrop'></div>", blockSize) + "</div>",
-                            markup = _Helpers._repeat(blockMarkup, blocks);
+                        var pairOfItemBlocks = [
+                            // Use pairs to ensure that the container striping pattern is maintained regardless if blockSize is even or odd.
+                            "<div class='win-itemsblock'>" + _Helpers._stripedContainers(blockSize, firstBlockFirstItemIndex) + "</div>",
+                            "<div class='win-itemsblock'>" + _Helpers._stripedContainers(blockSize, secondBlockFirstItemIndex) + "</div>"
+                        ];
+                        markup = _Helpers._repeat(pairOfItemBlocks, newBlocksCount);
+                        indexOfNextGroupItem += (newBlocksCount * blockSize);
 
-                        if (lastBlockSize) {
-                            markup += "<div class='win-itemsblock'>" + _Helpers._repeat("<div class='win-container win-backdrop'></div>", lastBlockSize) + "</div>";
-                            blocks++;
+                        // 3) Generate and partially fill, one last itemblock if there are any remaining containers to add.
+                        var sizeOfNewLastBlock = toAdd % blockSize;
+                        if (sizeOfNewLastBlock) {
+                            markup += "<div class='win-itemsblock'>" + _Helpers._stripedContainers(sizeOfNewLastBlock, indexOfNextGroupItem) + "</div>";
+                            indexOfNextGroupItem += sizeOfNewLastBlock;
+                            newBlocksCount++;
                         }
 
                         var blocksTemp = _Global.document.createElement("div");
                         _SafeHtml.setInnerHTMLUnsafe(blocksTemp, markup);
                         var children = blocksTemp.children;
 
-                        for (var i = 0; i < blocks; i++) {
+                        for (var i = 0; i < newBlocksCount; i++) {
                             var block = children[i],
                                 blockNode = {
                                     element: block,

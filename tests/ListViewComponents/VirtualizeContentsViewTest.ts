@@ -134,6 +134,9 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(listView._view.containers[itemIndex++], block.items[n]);
                 }
             }
+
+            // Only do this in the structural node case until we can support both.
+            verifyContainerStripesByIndex(listView);
         }
     }
 
@@ -239,6 +242,9 @@ module WinJSTests {
             listView._view.finalItem().then(function (lastItem) {
                 LiveUnit.Assert.areEqual(containers.length - 1, lastItem);
             });
+        } else {
+            // Only do this in the structural node case until we can support both.
+            verifyContainerStripesByIndex(listView);
         }
 
         var prevElement = listView.element.querySelector("._win-proxy");
@@ -554,7 +560,96 @@ module WinJSTests {
         return items;
     }
 
-    export class VirtualizedViewTests  {
+    function verifyContainerStripesByIndex(listView) {        
+
+        // Check correctness in each group
+        var groups = [].slice.call(listView.element.querySelectorAll(".win-itemscontainer"));
+        groups.forEach(function (group) {
+            var containers = [].slice.call(group.querySelectorAll(".win-container"));
+
+            // Verify containers have the right class
+            containers.forEach(function (container, index) {
+                if (index % 2 === 0) {
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(container, "win-container-even"), "Container with index: " + index + " doesn't have even class!!")
+                } else {
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(container, "win-container-odd"), "Container with index: " + index + " doesn't have odd class!!")
+                }
+            });
+        });
+    };
+
+    function getPairWiseConfigurationsForSmallDataStripeTests() {
+
+        var FlowLayout = WinJS.Class.define(function FlowLayout_ctor(blockSize) {
+            this.initialize = function () { },
+            this.numberOfItemsPerItemsBlock = blockSize;
+        });
+
+        // Couple the itemDataSource and groupDataSource together to avoid scenarios that might pair smallDataSource together with bigGroupedDataSource
+        function generateSmallDataSources() {
+            var smallList = new WinJS.Binding.List(initData());
+            return { itemDataSource: smallList.dataSource, groupDataSource: null }
+        }
+        function generateSmallGroupedDataSources() {
+            var smallGroupedList = new WinJS.Binding.List(initData()).createGrouped(groupKey, groupData);
+            return { itemDataSource: smallGroupedList.dataSource, groupDataSource: smallGroupedList.groups.dataSource };
+        }
+
+        // Describe all relevant test inputs to pass to the ListView constructor
+        var relevantConfigurations = {
+            layoutConfiguration: [
+                // Each test will need its own Layout Object, so expose them through getters.
+                { descriptor: "ListLayout", getter: function () { return new WinJS.UI.ListLayout() } },
+                { descriptor: "GridLayout", getter: function () { return new WinJS.UI.GridLayout() } },
+                { descriptor: "FlowLayout9", getter: function () { return new FlowLayout(9) } }, // 9 items per block to test FlowLayout with odd block size
+                { descriptor: "FlowLayout10", getter: function () { return new FlowLayout(10) } } // 10 items per block to test FlowLayout with even block size
+            ],
+
+            dataConfiguration: [
+                // Each test needs its own set of data to modify, so expose them through getters
+                { descriptor: "NonGroupedSmallDataSet", getter: function () { return generateSmallDataSources(); } },
+                { descriptor: "GroupedSmallDataSet", getter: function () { return generateSmallGroupedDataSources(); } },
+            ],
+        };
+
+        // Use the pairwise helper to assemble all our configurations for testing container stripes
+        var pairWiseConfigurations = Helper.pairwise(relevantConfigurations);
+        return pairWiseConfigurations;
+    }
+
+    function getPairWiseConfigurationsForBigDataStripeTests() {
+
+        // Couple the itemDataSource and groupDataSource together to avoid scenarios that might pair smallDataSource together with bigGroupedDataSource
+        function generateBigDataSources() {
+            var bigList = new WinJS.Binding.List(initData(BIG_DATASET));
+            return { itemDataSource: bigList.dataSource, groupDataSource: null }
+        }
+        function generateBigGroupedDataSources() {
+            var bigGroupedList = new WinJS.Binding.List(initData(BIG_DATASET)).createGrouped(groupKey, groupData);
+            return { itemDataSource: bigGroupedList.dataSource, groupDataSource: bigGroupedList.groups.dataSource };
+        }
+
+        // Describe all relevant test inputs to pass to the ListView constructor
+        var relevantConfigurations = {
+            layoutConfiguration: [
+                // Each test will need its own Layout Object, so expose them through getters.
+                { descriptor: "ListLayout", getter: function () { return new WinJS.UI.ListLayout() } },
+                { descriptor: "GridLayout", getter: function () { return new WinJS.UI.GridLayout() } },
+            ],
+
+            dataConfiguration: [
+                // Each test needs its own set of data to modify, so expose them through getters
+                { descriptor: "NonGroupedBigDataSet", getter: function () { return generateBigDataSources(); } },
+                { descriptor: "GroupedBigDataSet", getter: function () { return generateBigGroupedDataSources(); } },
+            ],
+        };
+
+        // Use the pairwise helper to assemble all our configurations for testing container stripes
+        var pairWiseConfigurations = Helper.pairwise(relevantConfigurations);
+        return pairWiseConfigurations;
+    }
+
+    export class VirtualizedViewTests {
 
         setUp(completed) {
 
@@ -3628,7 +3723,7 @@ module WinJSTests {
                         // this is clearly broken
                         var completeLayoutPromise = new WinJS.Promise(function (c) { });
                         completeLayoutPromise.then(
-                            function (c:any) {
+                            function (c: any) {
                                 WinJS.Promise.timeout(5 * 1000).then(function () {
                                     layouInProgress = false;
                                     c();
@@ -3707,7 +3802,7 @@ module WinJSTests {
                         // this is clearly broken
                         var completeLayoutPromise = new WinJS.Promise(function (c) { });
                         completeLayoutPromise.then(
-                            function (c:any) {
+                            function (c: any) {
                                 WinJS.Promise.timeout(10 * 1000).then(function () {
                                     layouInProgress = false;
                                     c();
@@ -3783,7 +3878,7 @@ module WinJSTests {
                         // this is clearly broken
                         var completeLayoutPromise = new WinJS.Promise(function (c) { });
                         completeLayoutPromise.then(
-                            function (c:any) {
+                            function (c: any) {
                                 WinJS.Promise.timeout(10 * 1000).then(function () {
                                     layouInProgress = false;
                                     c();
@@ -4213,58 +4308,58 @@ module WinJSTests {
         };
 
 
-            testDeferContainerCreationUntilSeZoZoomCompletes = function (complete) {
-                var wrapper = document.createElement("div");
-                wrapper.innerHTML = "<div id='sezo'><div></div><div></div></div>";
-                var sezoDiv = <HTMLElement>wrapper.firstElementChild;
-                var data = [];
-                for (var i = 0; i < 200; i++) {
-                    data.push({ data: "" + i });
-                }
-                var list = new WinJS.Binding.List(data);
-                var glist = list.createGrouped(function (item) {
-                    return item.data + "";
-                }, function (item) {
-                        return { data: item.data + "" };
-                    });
+        testDeferContainerCreationUntilSeZoZoomCompletes = function (complete) {
+            var wrapper = document.createElement("div");
+            wrapper.innerHTML = "<div id='sezo'><div></div><div></div></div>";
+            var sezoDiv = <HTMLElement>wrapper.firstElementChild;
+            var data = [];
+            for (var i = 0; i < 200; i++) {
+                data.push({ data: "" + i });
+            }
+            var list = new WinJS.Binding.List(data);
+            var glist = list.createGrouped(function (item) {
+                return item.data + "";
+            }, function (item) {
+                    return { data: item.data + "" };
+                });
 
-                var zoomedIn = new ListView(<HTMLElement>sezoDiv.children[0]);
-                var zoomedOut = new ListView(<HTMLElement>sezoDiv.children[1]);
-                zoomedOut.itemDataSource = glist.groups.dataSource;
-                zoomedIn.itemDataSource = glist.dataSource;
-                zoomedIn.groupDataSource = glist.groups.dataSource;
-                zoomedIn.itemTemplate = zoomedOut.itemTemplate = function (itemPromise) {
-                    return itemPromise.then(function (item) {
-                        var div = document.createElement("div");
-                        div.textContent = item.data.data;
-                        div.style.width = div.style.height = "200px";
-                        return div;
-                    });
-                };
-                var sezo = new WinJS.UI.SemanticZoom(<HTMLElement>sezoDiv);
-
-                var containerCountAtBegin = 0;
-                var oldBeginZoom = zoomedIn._beginZoom;
-                zoomedIn._beginZoom = function (item, position) {
-                    containerCountAtBegin = zoomedIn._view.containers.length;
-                    return oldBeginZoom.bind(zoomedIn, item, position)();
-                };
-
-                var oldEndZoom = zoomedIn._endZoom;
-                zoomedIn._endZoom = function (isCurrentView) {
-                    LiveUnit.Assert.areEqual(containerCountAtBegin, zoomedIn._view.containers.length, "At least one container was created during zoom.");
-                    oldEndZoom.bind(zoomedIn, isCurrentView)();
-                    WinJS.Utilities.disposeSubTree(wrapper);
-                    VirtualizeContentsViewTestHost.removeChild(wrapper);
-                    complete();
-                };
-
-                VirtualizeContentsViewTestHost.appendChild(wrapper);
-
-                Helper.ListView.waitForReady(zoomedIn, -1)().then(function () {
-                    sezo.zoomedOut = true;
+            var zoomedIn = new ListView(<HTMLElement>sezoDiv.children[0]);
+            var zoomedOut = new ListView(<HTMLElement>sezoDiv.children[1]);
+            zoomedOut.itemDataSource = glist.groups.dataSource;
+            zoomedIn.itemDataSource = glist.dataSource;
+            zoomedIn.groupDataSource = glist.groups.dataSource;
+            zoomedIn.itemTemplate = zoomedOut.itemTemplate = function (itemPromise) {
+                return itemPromise.then(function (item) {
+                    var div = document.createElement("div");
+                    div.textContent = item.data.data;
+                    div.style.width = div.style.height = "200px";
+                    return div;
                 });
             };
+            var sezo = new WinJS.UI.SemanticZoom(<HTMLElement>sezoDiv);
+
+            var containerCountAtBegin = 0;
+            var oldBeginZoom = zoomedIn._beginZoom;
+            zoomedIn._beginZoom = function (item, position) {
+                containerCountAtBegin = zoomedIn._view.containers.length;
+                return oldBeginZoom.bind(zoomedIn, item, position)();
+            };
+
+            var oldEndZoom = zoomedIn._endZoom;
+            zoomedIn._endZoom = function (isCurrentView) {
+                LiveUnit.Assert.areEqual(containerCountAtBegin, zoomedIn._view.containers.length, "At least one container was created during zoom.");
+                oldEndZoom.bind(zoomedIn, isCurrentView)();
+                WinJS.Utilities.disposeSubTree(wrapper);
+                VirtualizeContentsViewTestHost.removeChild(wrapper);
+                complete();
+            };
+
+            VirtualizeContentsViewTestHost.appendChild(wrapper);
+
+                Helper.ListView.waitForReady(zoomedIn, -1)().then(function () {
+                sezo.zoomedOut = true;
+            });
+        };
 
 
         testSlowHeaderRenderingDoesNotCrash = function (complete) {
@@ -4988,7 +5083,7 @@ module WinJSTests {
             };
 
             var list = new WinJS.Binding.List(data),
-                listView:WinJS.UI.PrivateListView<any>;
+                listView: WinJS.UI.PrivateListView<any>;
 
             if (groups) {
                 var groupedList = list.createGrouped(groupKey, groupData),
@@ -5183,230 +5278,348 @@ module WinJSTests {
     generateEditsDonotCreateAllContainersTest(false, true);
     generateEditsDonotCreateAllContainersTest(true, true);
 
-var generateNoFocusLossAfterDeleteTest = function (layout) {
-    VirtualizedViewTests.prototype["testNoFocusLossAfterDelete" + layout] = function (complete) {
-        var data = [];
-        for (var i = 0; i < 10; i++) {
-            data.push({ data: i });
-        }
-        var list = new WinJS.Binding.List(data);
+    var generateNoFocusLossAfterDeleteTest = function (layout) {
+        VirtualizedViewTests.prototype["testNoFocusLossAfterDelete" + layout] = function (complete) {
+            var data = [];
+            for (var i = 0; i < 10; i++) {
+                data.push({ data: i });
+            }
+            var list = new WinJS.Binding.List(data);
 
-        var lv = new ListView();
-        lv.layout = new WinJS.UI[layout];
-        lv.itemDataSource = list.dataSource;
-        VirtualizeContentsViewTestHost.appendChild(lv.element);
+            var lv = new ListView();
+            lv.layout = new WinJS.UI[layout];
+            lv.itemDataSource = list.dataSource;
+            VirtualizeContentsViewTestHost.appendChild(lv.element);
 
         Helper.ListView.waitForReady(lv, 1000)().then(function () {
-            lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 2, hasFocus: true };
+                lv.currentItem = { type: WinJS.UI.ObjectType.item, index: 2, hasFocus: true };
             return Helper.ListView.waitForReady(lv, -1)();
-        }).then(function () {
-                lv.itemDataSource.remove("2");
+            }).then(function () {
+                    lv.itemDataSource.remove("2");
                 return Helper.ListView.waitForReady(lv, -1)();
-            }).done(function () {
-                LiveUnit.Assert.isTrue(document.activeElement);
-                LiveUnit.Assert.isTrue((<HTMLElement>document.activeElement).classList.contains(WinJS.UI._itemClass));
-                LiveUnit.Assert.isTrue((<HTMLElement>document.activeElement).contains(lv.elementFromIndex(2)));
-                VirtualizeContentsViewTestHost.removeChild(lv.element);
-                complete();
-            });
+                }).done(function () {
+                    LiveUnit.Assert.isTrue(document.activeElement);
+                    LiveUnit.Assert.isTrue((<HTMLElement>document.activeElement).classList.contains(WinJS.UI._itemClass));
+                    LiveUnit.Assert.isTrue((<HTMLElement>document.activeElement).contains(lv.elementFromIndex(2)));
+                    VirtualizeContentsViewTestHost.removeChild(lv.element);
+                    complete();
+                });
+        };
     };
-};
-generateNoFocusLossAfterDeleteTest("GridLayout");
-generateNoFocusLossAfterDeleteTest("ListLayout");
-if (Helper.Browser.supportsCSSGrid) {
-    generateNoFocusLossAfterDeleteTest("CellSpanningLayout");
-}
-
-
-var generateAnimationDuringSezoZoomingTests = function generateAnimationDuringSezoZoomingTests(operation) {
-    var scrollToEnd;
-    var operationArgs;
-    if (operation === "remove") {
-        scrollToEnd = true;
-        operationArgs = ["0"];
-    } else if (operation === "insert") {
-        scrollToEnd = false;
-        operationArgs = [null, { data: "-1" }]
-            } else if (operation === "change") {
-        scrollToEnd = true;
-        operationArgs = ["0", { data: "99" }];
-    } else {
-        return;
+    generateNoFocusLossAfterDeleteTest("GridLayout");
+    generateNoFocusLossAfterDeleteTest("ListLayout");
+    if (Helper.Browser.supportsCSSGrid) {
+        generateNoFocusLossAfterDeleteTest("CellSpanningLayout");
     }
 
-    VirtualizedViewTests.prototype["testAnimationDuringSezoZoomingAnd" + operation] = function (complete) {
-        var wrapper = document.createElement("div");
-        wrapper.innerHTML = "<div id='sezo'><div></div><div></div></div>";
-        var sezoDiv = <HTMLElement>wrapper.firstElementChild;
-        var data = [];
-        for (var i = 0; i < 200; i++) {
-            data.push({ data: "" + i });
-        }
-        var list = new WinJS.Binding.List(data);
-        var glist = list.createGrouped(function (item) {
-            return item.data + "";
-        }, function (item) {
-                return { data: item.data + "" };
-            });
 
-        var zoomedIn = new ListView(<HTMLElement>sezoDiv.children[0]);
-        var zoomedOut = new ListView(<HTMLElement>sezoDiv.children[1]);
-        zoomedOut.itemDataSource = glist.groups.dataSource;
-        zoomedIn.itemDataSource = glist.dataSource;
-        zoomedIn.groupDataSource = glist.groups.dataSource;
-        zoomedIn.itemTemplate = zoomedOut.itemTemplate = function (itemPromise) {
-            return itemPromise.then(function (item) {
-                var div = document.createElement("div");
-                div.textContent = item.data.data;
-                div.style.width = div.style.height = "200px";
-                return div;
-            });
-        };
-        var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
-        VirtualizeContentsViewTestHost.appendChild(wrapper);
+    var generateAnimationDuringSezoZoomingTests = function generateAnimationDuringSezoZoomingTests(operation) {
+        var scrollToEnd;
+        var operationArgs;
+        if (operation === "remove") {
+            scrollToEnd = true;
+            operationArgs = ["0"];
+        } else if (operation === "insert") {
+            scrollToEnd = false;
+            operationArgs = [null, { data: "-1" }]
+            } else if (operation === "change") {
+            scrollToEnd = true;
+            operationArgs = ["0", { data: "99" }];
+        } else {
+            return;
+        }
+
+        VirtualizedViewTests.prototype["testAnimationDuringSezoZoomingAnd" + operation] = function (complete) {
+            var wrapper = document.createElement("div");
+            wrapper.innerHTML = "<div id='sezo'><div></div><div></div></div>";
+            var sezoDiv = <HTMLElement>wrapper.firstElementChild;
+            var data = [];
+            for (var i = 0; i < 200; i++) {
+                data.push({ data: "" + i });
+            }
+            var list = new WinJS.Binding.List(data);
+            var glist = list.createGrouped(function (item) {
+                return item.data + "";
+            }, function (item) {
+                    return { data: item.data + "" };
+                });
+
+            var zoomedIn = new ListView(<HTMLElement>sezoDiv.children[0]);
+            var zoomedOut = new ListView(<HTMLElement>sezoDiv.children[1]);
+            zoomedOut.itemDataSource = glist.groups.dataSource;
+            zoomedIn.itemDataSource = glist.dataSource;
+            zoomedIn.groupDataSource = glist.groups.dataSource;
+            zoomedIn.itemTemplate = zoomedOut.itemTemplate = function (itemPromise) {
+                return itemPromise.then(function (item) {
+                    var div = document.createElement("div");
+                    div.textContent = item.data.data;
+                    div.style.width = div.style.height = "200px";
+                    return div;
+                });
+            };
+            var sezo = new WinJS.UI.SemanticZoom(sezoDiv);
+            VirtualizeContentsViewTestHost.appendChild(wrapper);
 
         Helper.ListView.waitForReady(zoomedIn, -1)().then(function () {
-            if (scrollToEnd) {
-                zoomedIn.scrollPosition = Number.MAX_VALUE;
-            }
+                if (scrollToEnd) {
+                    zoomedIn.scrollPosition = Number.MAX_VALUE;
+                }
             return Helper.ListView.waitForReady(zoomedIn, -1)();
-        }).then(function () {
-                glist.dataSource[operation].apply(glist.dataSource, operationArgs);
-                sezo.zoomedOut = true;
+            }).then(function () {
+                    glist.dataSource[operation].apply(glist.dataSource, operationArgs);
+                    sezo.zoomedOut = true;
 
                 return Helper.ListView.waitForReady(zoomedIn, -1)();
-            }).done(function () {
-                WinJS.Utilities.disposeSubTree(wrapper);
-                VirtualizeContentsViewTestHost.removeChild(wrapper);
-                complete();
-            });
-    }
+                }).done(function () {
+                    WinJS.Utilities.disposeSubTree(wrapper);
+                    VirtualizeContentsViewTestHost.removeChild(wrapper);
+                    complete();
+                });
+        }
         };
-generateAnimationDuringSezoZoomingTests("remove");
-generateAnimationDuringSezoZoomingTests("insertAtStart");
-generateAnimationDuringSezoZoomingTests("change");
+    generateAnimationDuringSezoZoomingTests("remove");
+    generateAnimationDuringSezoZoomingTests("insertAtStart");
+    generateAnimationDuringSezoZoomingTests("change");
 
-generateDomTrimTest("OneBlock", initData(), false, 0, 9 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [0]);
-});
-generateDomTrimTest("SecondBlock", initData(), false, 10 * itemHeight, 10 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [1]);
-});
-generateDomTrimTest("InMiddleOfBlock", initData(), false, 5 * itemHeight, 5 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [0]);
-});
-generateDomTrimTest("InMiddleOfTwoBlocks", initData(), false, 5 * itemHeight, 10 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(20, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [0, 1]);
-});
-
-generateDomTrimTest("OneBlockWithGroup", initGroups([20, 20]), true, 0, 10 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [0]);
-});
-generateDomTrimTest("FirstBlockInGroup", initGroups([15, 20]), true, 0, 10 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [0]);
-});
-generateDomTrimTest("CollapseWholeGroup", initGroups([20, 20, 20]), true, 20 * itemHeight, 10 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [2]);
-});
-generateDomTrimTest("CollapsePartOfGroup", initGroups([15, 20, 20]), true, 15 * itemHeight, 10 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [2]);
-});
-generateDomTrimTest("BlocksAcrossGroups", initGroups([20, 20, 20]), true, 35 * itemHeight, 20 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [3, 4, 5]);
-});
-generateDomTrimTest("SimpleScroll", initData(), false, 0, 30 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [0, 1, 2]);
-
-    listView.scrollPosition = 10 * itemHeight;
-
-    return Helper.ListView.waitForDeferredAction(listView)().then(function () {
-        LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
-
-        verifyBlockInDom(listView, [1, 2, 3]);
-
-        listView.scrollPosition = 30 * itemHeight;
-        return Helper.ListView.waitForDeferredAction(listView)();
-    }).then(function () {
-            LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
-
-            verifyBlockInDom(listView, [3, 4, 5]);
-
-            listView.scrollPosition = 20 * itemHeight;
-            return Helper.ListView.waitForDeferredAction(listView)();
-        }).then(function () {
-            LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
-
-            verifyBlockInDom(listView, [2, 3, 4]);
-        });
-});
-generateDomTrimTest("NoGroupOverlapDuringScroll", initGroups([20, 20, 20, 20]), true, 0, 10 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
-
-    verifyBlockInDom(listView, [0]);
-
-    listView.scrollPosition = 40 * itemHeight;
-
-    return Helper.ListView.waitForReady(listView, -1)().then(function () {
+    generateDomTrimTest("OneBlock", initData(), false, 0, 9 * itemHeight, function (listView) {
         LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
 
-        verifyBlockInDom(listView, [4]);
+        verifyBlockInDom(listView, [0]);
     });
-});
-generateDomTrimTest("GroupOverlapDuringScroll", initGroups([20, 20, 20, 20, 20]), true, 0, 60 * itemHeight, function (listView) {
-    LiveUnit.Assert.areEqual(60, listView.element.querySelectorAll(".win-container").length);
+    generateDomTrimTest("SecondBlock", initData(), false, 10 * itemHeight, 10 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
 
-    verifyBlockInDom(listView, [0, 1, 2, 3, 4, 5]);
+        verifyBlockInDom(listView, [1]);
+    });
+    generateDomTrimTest("InMiddleOfBlock", initData(), false, 5 * itemHeight, 5 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
 
-    listView.scrollPosition = 30 * itemHeight;
+        verifyBlockInDom(listView, [0]);
+    });
+    generateDomTrimTest("InMiddleOfTwoBlocks", initData(), false, 5 * itemHeight, 10 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(20, listView.element.querySelectorAll(".win-container").length);
 
-    return Helper.ListView.waitForDeferredAction(listView)().then(function () {
-        LiveUnit.Assert.areEqual(60, listView.element.querySelectorAll(".win-container").length);
+        verifyBlockInDom(listView, [0, 1]);
+    });
 
-        verifyBlockInDom(listView, [3, 4, 5, 6, 7, 8]);
+    generateDomTrimTest("OneBlockWithGroup", initGroups([20, 20]), true, 0, 10 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
+
+        verifyBlockInDom(listView, [0]);
+    });
+    generateDomTrimTest("FirstBlockInGroup", initGroups([15, 20]), true, 0, 10 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
+
+        verifyBlockInDom(listView, [0]);
+    });
+    generateDomTrimTest("CollapseWholeGroup", initGroups([20, 20, 20]), true, 20 * itemHeight, 10 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
+
+        verifyBlockInDom(listView, [2]);
+    });
+    generateDomTrimTest("CollapsePartOfGroup", initGroups([15, 20, 20]), true, 15 * itemHeight, 10 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
+
+        verifyBlockInDom(listView, [2]);
+    });
+    generateDomTrimTest("BlocksAcrossGroups", initGroups([20, 20, 20]), true, 35 * itemHeight, 20 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
+
+        verifyBlockInDom(listView, [3, 4, 5]);
+    });
+    generateDomTrimTest("SimpleScroll", initData(), false, 0, 30 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
+
+        verifyBlockInDom(listView, [0, 1, 2]);
 
         listView.scrollPosition = 10 * itemHeight;
 
+    return Helper.ListView.waitForDeferredAction(listView)().then(function () {
+            LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
+
+            verifyBlockInDom(listView, [1, 2, 3]);
+
+            listView.scrollPosition = 30 * itemHeight;
         return Helper.ListView.waitForDeferredAction(listView)();
-    }).then(function () {
-            LiveUnit.Assert.areEqual(60, listView.element.querySelectorAll(".win-container").length);
+        }).then(function () {
+                LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
 
-            verifyBlockInDom(listView, [1, 2, 3, 4, 5, 6]);
+                verifyBlockInDom(listView, [3, 4, 5]);
+
+                listView.scrollPosition = 20 * itemHeight;
+            return Helper.ListView.waitForDeferredAction(listView)();
+            }).then(function () {
+                LiveUnit.Assert.areEqual(30, listView.element.querySelectorAll(".win-container").length);
+
+                verifyBlockInDom(listView, [2, 3, 4]);
+            });
+    });
+    generateDomTrimTest("NoGroupOverlapDuringScroll", initGroups([20, 20, 20, 20]), true, 0, 10 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
+
+        verifyBlockInDom(listView, [0]);
+
+        listView.scrollPosition = 40 * itemHeight;
+
+    return Helper.ListView.waitForReady(listView, -1)().then(function () {
+            LiveUnit.Assert.areEqual(10, listView.element.querySelectorAll(".win-container").length);
+
+            verifyBlockInDom(listView, [4]);
         });
-});
-generateDomTrimTest("ensureVisibleWithoutMove", initData(), false, 500, 1000, function (listView) {
-    LiveUnit.Assert.areEqual(20, listView.element.querySelectorAll(".win-container").length);
+    });
+    generateDomTrimTest("GroupOverlapDuringScroll", initGroups([20, 20, 20, 20, 20]), true, 0, 60 * itemHeight, function (listView) {
+        LiveUnit.Assert.areEqual(60, listView.element.querySelectorAll(".win-container").length);
 
-    verifyBlockInDom(listView, [1, 2]);
+        verifyBlockInDom(listView, [0, 1, 2, 3, 4, 5]);
 
-    listView.ensureVisible(15);
+        listView.scrollPosition = 30 * itemHeight;
 
     return Helper.ListView.waitForDeferredAction(listView)().then(function () {
+            LiveUnit.Assert.areEqual(60, listView.element.querySelectorAll(".win-container").length);
 
+            verifyBlockInDom(listView, [3, 4, 5, 6, 7, 8]);
+
+            listView.scrollPosition = 10 * itemHeight;
+
+        return Helper.ListView.waitForDeferredAction(listView)();
+        }).then(function () {
+                LiveUnit.Assert.areEqual(60, listView.element.querySelectorAll(".win-container").length);
+
+                verifyBlockInDom(listView, [1, 2, 3, 4, 5, 6]);
+            });
+    });
+    generateDomTrimTest("ensureVisibleWithoutMove", initData(), false, 500, 1000, function (listView) {
         LiveUnit.Assert.areEqual(20, listView.element.querySelectorAll(".win-container").length);
 
         verifyBlockInDom(listView, [1, 2]);
+
+        listView.ensureVisible(15);
+
+    return Helper.ListView.waitForDeferredAction(listView)().then(function () {
+
+            LiveUnit.Assert.areEqual(20, listView.element.querySelectorAll(".win-container").length);
+
+            verifyBlockInDom(listView, [1, 2]);
+        });
     });
-});
+
+    // Begin Stripe Testing
+    function generateTestContainerStripesAfterConstruction(name, getLayout, getDataSources) {
+
+        VirtualizedViewTests.prototype["testContainerStripesAfterConstruction" + name] = function (complete) {
+            var layout = getLayout();
+            var dataSources = getDataSources();
+
+            var placeholder = createListViewElement();
+
+            var listView = new WinJS.UI.ListView(placeholder, {
+                layout: layout,
+                itemDataSource: dataSources.itemDataSource,
+                groupDataSource: dataSources.groupDataSource,
+                itemTemplate: generateRenderer("100px"),
+                groupHeaderTemplate: generateRenderer("50px")
+            });
+
+            Helper.ListView.waitForAllContainers(listView).then(function () {
+
+                verifyContainerStripesByIndex(listView);
+                placeholder.parentNode.removeChild(placeholder);
+                complete();
+            });
+        }
+    }
+
+    function generateTestContainerStripesAfterEdits(name, getLayout, getDataSources) {
+
+        var layout = getLayout();
+        if (!layout['_usingStructuralNodes']) { return; } //TODO Remove this check once we have edits support for item striping without structural nodes.
+
+        VirtualizedViewTests.prototype["testContainerStripesAfterEdits" + name] = function (complete) {
+           
+            var dataSources = getDataSources();
+
+            var placeholder = createListViewElement();
+
+            var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
+
+            var listView = new ListView(placeholder, {
+                layout: layout,
+                itemDataSource: dataSources.itemDataSource,
+                groupDataSource: dataSources.groupDataSource,
+                itemTemplate: generateRenderer("100px"),
+                groupHeaderTemplate: generateRenderer("50px")
+            });
+
+            var list = listView.itemDataSource.list;
+
+            LiveUnit.Assert.isTrue(list.length >= 100, "Test requires a data set of 100 or more items");
+
+            return Helper.ListView.waitForAllContainers(listView).then(function () {
+
+                list.move(0, 10);
+                list.move(70, 9);
+                list.move(4, 3);
+
+                return Helper.ListView.waitForAllContainers(listView);
+            }).then(function () {
+                    verifyContainerStripesByIndex(listView);
+
+                    list.splice(25, 1);
+                    list.splice(10, 12);
+                    list.shift();
+                    list.pop();
+
+                return Helper.ListView.waitForAllContainers(listView);
+                }).then(function () {
+                    verifyContainerStripesByIndex(listView);
+
+                    list.unshift({
+                        title: "N1",
+                        group: 0
+                    });
+                    list.unshift({
+                        title: "N0",
+                        group: 0
+                    });
+                    list.push({
+                        title: "Z1",
+                        group: 3,
+                    });
+                    list.splice(50, 0, {
+                        title: "X1",
+                        group: 2,
+                    });
+
+                    initData(25).forEach(function (datum) {
+                        list.splice(33, 0, datum);
+                    });
+
+                    return Helper.ListView.waitForAllContainers(listView);
+                }).then(function () {
+
+                    verifyContainerStripesByIndex(listView);
+
+                    placeholder.parentNode.removeChild(placeholder);
+                    complete();
+                });
+        }
+
+    }
+
+    function generateStripeTests(configuration) {
+
+        var getLayout = configuration.layoutConfiguration.getter;
+        var getDataSources = configuration.dataConfiguration.getter;
+        var name = "_" + configuration.layoutConfiguration.descriptor + "_" + configuration.dataConfiguration.descriptor;
+
+        generateTestContainerStripesAfterConstruction(name, getLayout, getDataSources);
+        generateTestContainerStripesAfterEdits(name, getLayout, getDataSources);
+    }
+
+    // Generate stripe tests
+    getPairWiseConfigurationsForSmallDataStripeTests().forEach(generateStripeTests);
+    getPairWiseConfigurationsForBigDataStripeTests().forEach(generateStripeTests);
+
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.VirtualizedViewTests");

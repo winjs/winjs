@@ -34,7 +34,7 @@ define([
     './ListView/_SelectionManager',
     './ListView/_VirtualizeContentsView',
     'require-style!less/controls'
-    ], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
+], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -1683,9 +1683,17 @@ define([
                                         // component consumes this).
                                         //
                                         if (elementInfo.itemBox) {
+                                            var itemBox = elementInfo.itemBox,
+                                                oddStripe = _Constants._containerOddClass,
+                                                evenStripe = _Constants._containerEvenClass,
+                                                // Store the even/odd container class from the container the itemBox was in before being removed. 
+                                                // We want to reapply that class on whichever container we use to perform the itemBox's exit animation.
+                                                containerStripe = _ElementUtilities.hasClass(itemBox.parentElement, evenStripe)? evenStripe: oddStripe;
+
                                             that._updater.removed.push({
                                                 index: index,
-                                                itemBox: elementInfo.itemBox
+                                                itemBox: itemBox,
+                                                containerStripe: containerStripe,
                                             });
                                         }
                                         that._updater.deletesCount++;
@@ -2092,6 +2100,7 @@ define([
                             modifiedElement.newIndex = -1;
                             if (!modifiedElement._removalHandled) {
                                 modifiedElement._itemBox = removed.itemBox;
+                                modifiedElement._containerStripe = removed.containerStripe;
                             }
                             this._modifiedElements.push(modifiedElement);
                         }
@@ -3934,50 +3943,70 @@ define([
 
                         var itemsContainer = groupNode.itemsContainer,
                             blocks = itemsContainer.itemsBlocks,
+                            blockSize = that._view._blockSize,
                             lastBlock = blocks.length ? blocks[blocks.length - 1] : null,
-                            currentSize = blocks.length ? (blocks.length - 1) * that._view._blockSize + lastBlock.items.length : 0,
-                            delta = newSize - currentSize,
-                            oldSize, children;
+                            indexOfNextGroupItem = blocks.length ? (blocks.length - 1) * blockSize + lastBlock.items.length : 0,
+                            delta = newSize - indexOfNextGroupItem,
+                            children;
 
                         if (delta > 0) {
-                            if (lastBlock && lastBlock.items.length < that._view._blockSize) {
-                                var toAdd = Math.min(delta, that._view._blockSize - lastBlock.items.length);
-                                _SafeHtml.insertAdjacentHTMLUnsafe(lastBlock.element, "beforeend", _Helpers._repeat("<div class='win-container win-backdrop'></div>", toAdd));
+                            // Insert new containers.
+                            var toAdd = delta,
+                                sizeOfOldLastBlock;
+                            if (lastBlock && lastBlock.items.length < blockSize) {
+                                // 1) Add containers to the last itemsblock in the group if it's not already full.
+                                var emptySpotsToFill = Math.min(toAdd, blockSize - lastBlock.items.length);
+                                sizeOfOldLastBlock = lastBlock.items.length;
 
-                                oldSize = lastBlock.items.length;
+                                var containersMarkup = _Helpers._stripedContainers(emptySpotsToFill, indexOfNextGroupItem);
+
+                                _SafeHtml.insertAdjacentHTMLUnsafe(lastBlock.element, "beforeend", containersMarkup);
                                 children = lastBlock.element.children;
 
-                                for (var j = 0; j < toAdd; j++) {
-                                    lastBlock.items.push(children[oldSize + j]);
+                                for (var j = 0; j < emptySpotsToFill; j++) {
+                                    lastBlock.items.push(children[sizeOfOldLastBlock + j]);
                                 }
 
-                                delta -= toAdd;
+                                toAdd -= emptySpotsToFill;
                             }
+                            indexOfNextGroupItem = blocks.length * blockSize;
 
-                            var blocksCount = Math.floor(delta / that._view._blockSize),
-                                lastBlockSize = delta % that._view._blockSize;
+                            // 2) Generate as many full itemblocks of containers as we can.                        
+                            var newBlocksCount = Math.floor(toAdd / blockSize),
+                                markup = "",
+                                firstBlockFirstItemIndex = indexOfNextGroupItem,
+                                secondBlockFirstItemIndex = indexOfNextGroupItem + blockSize;
 
-                            var blockMarkup = "<div class='win-itemsblock'>" + _Helpers._repeat("<div class='win-container win-backdrop'></div>", that._view._blockSize) + "</div>",
-                                markup = _Helpers._repeat(blockMarkup, blocksCount);
+                            var pairOfItemBlocks = [
+                                // Use pairs to ensure that the container striping pattern is maintained regardless if blockSize is even or odd.
+                                "<div class='win-itemsblock'>" + _Helpers._stripedContainers(blockSize, firstBlockFirstItemIndex) + "</div>",
+                                "<div class='win-itemsblock'>" + _Helpers._stripedContainers(blockSize, secondBlockFirstItemIndex) + "</div>"
+                            ];
+                            markup = _Helpers._repeat(pairOfItemBlocks, newBlocksCount);
+                            indexOfNextGroupItem += (newBlocksCount * blockSize);
 
-                            if (lastBlockSize) {
-                                markup += "<div class='win-itemsblock'>" + _Helpers._repeat("<div class='win-container win-backdrop'></div>", lastBlockSize) + "</div>";
-                                blocksCount++;
+                            // 3) Generate and partially fill, one last itemblock if there are any remaining containers to add.
+                            var sizeOfNewLastBlock = toAdd % blockSize;
+                            if (sizeOfNewLastBlock) {
+                                markup += "<div class='win-itemsblock'>" + _Helpers._stripedContainers(sizeOfNewLastBlock, indexOfNextGroupItem) + "</div>";
+                                indexOfNextGroupItem += sizeOfNewLastBlock;
+                                newBlocksCount++;
                             }
 
                             var blocksTemp = _Global.document.createElement("div");
                             _SafeHtml.setInnerHTMLUnsafe(blocksTemp, markup);
-
                             var children = blocksTemp.children;
-                            for (var j = 0; j < blocksCount; j++) {
+
+                            for (var j = 0; j < newBlocksCount; j++) {
                                 var block = children[j],
                                     blockNode = {
                                         element: block,
                                         items: _Helpers._nodeListToArray(block.children)
                                     };
-                                itemsContainer.itemsBlocks.push(blockNode);
+                                blocks.push(blockNode);
                             }
                         } else if (delta < 0) {
+                            // Remove Containers
                             for (var n = delta; n < 0; n++) {
 
                                 var container = lastBlock.items.pop();
@@ -4001,6 +4030,7 @@ define([
                             }
                         }
 
+                        // Update references to containers.
                         for (var j = 0, len = blocks.length; j < len; j++) {
                             var block = blocks[j];
                             for (var n = 0; n < block.items.length; n++) {
@@ -4293,6 +4323,13 @@ define([
                             }
                             if (_ElementUtilities.hasClass(itemBox, _Constants._selectedClass)) {
                                 _ElementUtilities.addClass(container, _Constants._selectedClass);
+                            }
+                            if (modifiedElements._containerStripe === _Constants._containerEvenClass) {
+                                _ElementUtilities.addClass(container, _Constants._containerEvenClass);
+                                _ElementUtilities.removeClass(container, _Constants._containerOddClass);
+                            } else {
+                                _ElementUtilities.addClass(container, _Constants._containerOddClass);
+                                _ElementUtilities.removeClass(container, _Constants._containerEvenClass);
                             }
                             container.appendChild(itemBox);
                             modifiedElements[i].element = container;

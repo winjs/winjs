@@ -20,6 +20,8 @@ define([
     members._itemBoxClass = "win-itembox";
     members._itemsBlockClass = "win-itemsblock";
     members._containerClass = "win-container";
+    members._containerEvenClass = "win-container-even";
+    members._containerOddClass = "win-container-odd";
     members._backdropClass = "win-backdrop";
     members._footprintClass = "win-footprint";
     members._groupsClass = "win-groups";
