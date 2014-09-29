@@ -1011,14 +1011,14 @@ define([
                             // If the suggestions manager gives us an identical item, it means that only the hit highlighted text has changed.
                             var existingElement = this._repeater.elementFromIndex(changeIndex);
                             if (_ElementUtilities.hasClass(existingElement, ClassNames.asbSuggestionQuery)) {
-                                this._addHitHighlightedText(existingElement, suggestion, suggestion.text);
+                                addHitHighlightedText(existingElement, suggestion, suggestion.text);
                             } else {
                                 var resultSuggestionDiv = existingElement.querySelector("." + ClassNames.asbSuggestionResultText);
                                 if (resultSuggestionDiv) {
-                                    this._addHitHighlightedText(resultSuggestionDiv, suggestion, suggestion.text);
+                                    addHitHighlightedText(resultSuggestionDiv, suggestion, suggestion.text);
                                     var resultSuggestionDetailDiv = existingElement.querySelector("." + ClassNames.asbSuggestionResultDetailedText);
                                     if (resultSuggestionDetailDiv) {
-                                        this._addHitHighlightedText(resultSuggestionDetailDiv, suggestion, suggestion.detailText);
+                                        addHitHighlightedText(resultSuggestionDetailDiv, suggestion, suggestion.detailText);
                                     }
                                 }
                             }
