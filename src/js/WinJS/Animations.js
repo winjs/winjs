@@ -2407,30 +2407,13 @@ define([
             /// Returns an object containing the exit and entrance animations to play based on the parameters given.
             /// </returns>
             /// </signature>
-            var PageNavigationAnimation = _Constants.PageNavigationAnimation;
             function emptyAnimationFunction() {
                 return Promise.wrap();
             }
-            if (!_BaseUtils.isPhone || currentPreferredAnimation === PageNavigationAnimation.enterPage || nextPreferredAnimation === PageNavigationAnimation.enterPage) {
-                return {
-                    exit: emptyAnimationFunction,
-                    entrance: exports.enterPage
-                };
-            }
-            if (!nextPreferredAnimation) {
-                nextPreferredAnimation = PageNavigationAnimation.turnstile;
-            }
-            if ((currentPreferredAnimation === PageNavigationAnimation.slide && movingBackwards) ||
-                (nextPreferredAnimation === PageNavigationAnimation.slide && !movingBackwards)) {
-                return {
-                    exit: movingBackwards ? exports.slideDown : emptyAnimationFunction,
-                    entrance: movingBackwards ? emptyAnimationFunction : exports.slideUp
-                };
-            }
-
+            
             return {
-                exit: exports[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "Out"],
-                entrance: exports[nextPreferredAnimation + (movingBackwards ? "Backward" : "Forward") + "In"]
+                exit: emptyAnimationFunction,
+                entrance: exports.enterPage
             };
         }
     });
