@@ -256,6 +256,10 @@ AppBar
         opacity: 0;
     }
 
+    &.win-drawerlayout.win-appbar-hiding .win-appbar-drawer {
+        opacity: 1;
+    }
+
     &.win-appbar-hidden > :not(.win-appbar-invokebutton) {
         display: none !important;
     }
@@ -396,6 +400,34 @@ AppBar commands layout
             padding-left: 60px;
         }
     });
+}
+
+/*
+AppBar drawer layout 
+*/
+.win-drawerlayout {
+    .win-appbar-drawer {
+        position:absolute;
+        right:0;
+        top:0;
+
+        .RTL({
+            left: 0;
+            right: auto;
+        });
+    }
+
+    .win-appbar-toolbarcontainer {
+        overflow: hidden;
+    }
+
+    &.win-bottom .win-appbar-toolbarcontainer {
+        overflow:visible;
+    }
+
+    .win-toolbar {
+        max-width:100vw;
+    }
 }
 
 /* Narrow buttons and no labels */

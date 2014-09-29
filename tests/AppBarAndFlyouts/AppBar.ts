@@ -4,6 +4,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts"/>
+/// <reference path="../TestLib/Helper.Toolbar.ts"/>
 /// <reference path="OverlayHelpers.ts" />
 
 module CorsicaTests {
@@ -240,9 +241,10 @@ module CorsicaTests {
             testGoodInitOption("closedDisplayMode", undefined);
 
             LiveUnit.LoggingCore.logComment("Testing layout");
+            testGoodInitOption("layout", "drawer");
             testGoodInitOption("layout", "custom");
             testGoodInitOption("layout", "commands");
-            var badLayout = "Invalid argument: The layout property must be 'custom' or 'commands'";
+            var badLayout = "Invalid argument: The layout property must be 'custom', 'drawer' or 'commands'";
             testBadInitOption("layout", "fixed", "WinJS.UI.AppBar.BadLayout", badLayout);
             testBadInitOption("layout", -1, "WinJS.UI.AppBar.BadLayout", badLayout);
             testBadInitOption("layout", 12, "WinJS.UI.AppBar.BadLayout", badLayout);
@@ -1828,6 +1830,40 @@ module CorsicaTests {
             });
 
         };
+
+        testDrawerLayoutConstruction = function (complete) {
+            var root = document.getElementById("appBarDiv");
+            root.innerHTML =
+            "<div id='appBar'>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"global\"}'></button>" +
+            "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", label:\"Separator\", section:\"global\"}' />" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\", section:\"selection\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\", section:\"selection\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"toggle\", section:\"selection\"}'></button>" +
+            "</div>";
+            var appBar = new WinJS.UI.AppBar(<HTMLElement>root.querySelector("#appBar"), {
+                layout: "drawer",
+                placement: "top",
+            });
+
+            Helper.waitForEvent(appBar, "aftershow").then(function () {
+                var toolbarEl = appBar.element.querySelector("." + Helper.Toolbar.Constants.controlCssClass);
+                var toolbar = toolbarEl.winControl;
+
+                LiveUnit.Assert.isNotNull(toolbarEl, "Toolbar element not found");
+                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement, "win-appbar-toolbarcontainer"));
+                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement, "win-appbar-drawer"));
+                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement.parentElement, "win-appbar"));
+                LiveUnit.Assert.areEqual(Helper.Toolbar.Constants.overflowModeAttached, toolbar.overflowMode, "Invalid overflowMode toolbar configuration in the appbar");
+
+                Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 0", "Separator", "Button 1"]);
+                Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Button 2", "Button 3", "Button 4"]);
+
+                complete();
+            });
+            appBar.show();
+        }
     };
 }
 // register the object as a test class by passing in the name

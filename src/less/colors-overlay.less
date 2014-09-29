@@ -84,6 +84,12 @@
             background-color: rgb(0, 0, 0);
             border-color: rgb(0, 0, 0);
 
+            &.win-drawerlayout {
+                .win-toolbar {
+                    background-color: rgb(0, 0, 0);
+                }
+            }
+
             button.win-appbar-invokebutton.win-appbar-invokebutton {
                 background-color: transparent;
 
@@ -122,6 +128,16 @@
                     &:enabled {
                         &:hover:active {
                             background-color: rgba(255, 255, 255, 0.13);
+                        }
+                    }
+                }
+            }
+
+            &.win-appbar-hiding.win-drawerlayout {
+                button.win-appbar-invokebutton.win-appbar-invokebutton {
+                    &:enabled {
+                        &:hover:active {
+                            background-color: transparent;
                         }
                     }
                 }
@@ -272,6 +288,12 @@
             background-color: rgb(240, 240, 240);
             border-color: rgb(240, 240, 240);
 
+            &.win-drawerlayout {
+                .win-toolbar {
+                    background-color: rgb(240, 240, 240);
+                }
+            }
+
             button.win-appbar-invokebutton.win-appbar-invokebutton {
                 background-color: transparent;
 
@@ -310,6 +332,16 @@
                     &:enabled {
                         &:hover:active {
                             background-color: rgba(205, 205, 205, 0.82);
+                        }
+                    }
+                }
+            }
+
+            &.win-appbar-hiding.win-drawerlayout {
+                button.win-appbar-invokebutton.win-appbar-invokebutton {
+                    &:enabled {
+                        &:hover:active {
+                            background-color: transparent;
                         }
                     }
                 }
@@ -449,6 +481,18 @@
                 }
             }
         }
+
+        &.win-appbar.win-drawerlayout.win-appbar-hiding, .win-appbar.win-drawerlayout.win-appbar-hiding {
+            &.win-appbar-hiding, &.win-appbar-hidden {
+                button.win-appbar-invokebutton {
+                    &:enabled {
+                        &:hover {
+                            background-color: transparent;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .mixin(light) {
@@ -498,6 +542,18 @@
                     &:enabled {
                         &:hover {
                             background-color: rgba(205, 205, 205, 0.82);
+                        }
+                    }
+                }
+            }
+        }
+
+        &.win-appbar.win-drawerlayout.win-appbar-hiding, .win-appbar.win-drawerlayout.win-appbar-hiding {
+            &.win-appbar-hiding, &.win-appbar-hidden {
+                button.win-appbar-invokebutton {
+                    &:enabled {
+                        &:hover {
+                            background-color: transparent;
                         }
                     }
                 }

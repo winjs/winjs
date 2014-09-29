@@ -16,6 +16,7 @@ define([
         secondaryCommandsClass: "win-secondarygroup",
         reducedClass: "win-reduced",
         commandLayoutClass: "win-commandlayout",
+        drawerLayoutClass: "win-drawerlayout",
         topClass: "win-top",
         bottomClass: "win-bottom",
         showingClass : "win-appbar-showing",
@@ -23,6 +24,8 @@ define([
         hidingClass : "win-appbar-hiding",
         hiddenClass: "win-appbar-hidden",
         minimalClass: "win-appbar-minimal",
+        drawerContainerClass: "win-appbar-drawer",
+        toolbarContainerClass: "win-appbar-toolbarcontainer",
 
         // Constants for AppBar placement
         appBarPlacementTop: "top",
@@ -31,6 +34,7 @@ define([
         // Constants for AppBar layouts
         appBarLayoutCustom: "custom",
         appBarLayoutCommands: "commands",
+        appBarLayoutDrawer: "drawer",
 
         // Constant for AppBar invokebutton width
         appBarInvokeButtonWidth: 60,

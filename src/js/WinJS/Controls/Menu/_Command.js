@@ -171,7 +171,7 @@ define([
                         return this._label;
                     },
                     set: function (value) {
-                        this._label = value;
+                        this._label = value || "";
                         this._element.textContent = this.label;
 
                         // Update aria-label

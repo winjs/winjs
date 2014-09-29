@@ -1,17 +1,23 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Animations/_TransitionAnimation',
+    '../../BindingList',
+    '../../Core/_BaseUtils',
     '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
+    '../../Core/_WriteProfilerMark',
+    '../../Controls/Toolbar',
+    '../../Promise',
     '../../Scheduler',
     '../../Utilities/_Control',
     '../../Utilities/_Dispose',
     '../../Utilities/_ElementUtilities',
     './_Command',
     './_Constants'
-], function appBarLayoutsInit(exports, _Global, _Base, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
+], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, Toolbar, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
 
     // AppBar will use this when AppBar.layout property is set to "custom"
@@ -135,6 +141,10 @@ define([
                 },
                 resize: function _AppBarBaseLayout_resize() {
                     // NOP
+                },
+                positionChanging: function _AppBarBaseLayout_positionChanging(fromPosition, toPosition) {
+                    // NOP
+                    return Promise.wrap();
                 },
             });
             return _AppBarBaseLayout;
@@ -464,4 +474,170 @@ define([
             }
         },
     };
+
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
+        _AppBarDrawerLayout: _Base.Namespace._lazy(function () {
+            var layoutClassName = _Constants.drawerLayoutClass;
+            var layoutType = _Constants.appBarLayoutDrawer;
+
+            var _AppBarDrawerLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarDrawerLayout_ctor(appBarEl) {
+                exports._AppBarBaseLayout.call(this, appBarEl, { _className: layoutClassName, _type: layoutType });
+                this._tranformNames = _BaseUtils._browserStyleEquivalents["transform"];
+            }, {
+                layout: function _AppBarDrawerLayout_layout(commands) {
+                    this._writeProfilerMark("layout,info");
+
+                    if (this._drawer) {
+                        _ElementUtilities.empty(this._drawer);
+                    } else {
+                        this._drawer = _Global.document.createElement("div");
+                        _ElementUtilities.addClass(this._drawer, _Constants.drawerContainerClass);
+                        this.appBarEl.appendChild(this._drawer);
+                    }
+
+                    this._toolbarContainer = _Global.document.createElement("div");
+                    _ElementUtilities.addClass(this._toolbarContainer, _Constants.toolbarContainerClass);
+                    this._drawer.appendChild(this._toolbarContainer);
+
+                    this._toolbarEl = _Global.document.createElement("div");
+                    this._toolbarContainer.appendChild(this._toolbarEl);
+
+                    this._createToolbar(commands);
+                },
+
+                connect: function _AppBarDrawerLayout_connect(appBarEl) {
+                    this._writeProfilerMark("connect,info");
+
+                    exports._AppBarBaseLayout.prototype.connect.call(this, appBarEl);
+                    this._id = _ElementUtilities._uniqueID(appBarEl);
+                },
+
+                resize: function _AppBarDrawerLayout_resize() {
+                    this._writeProfilerMark("resize,info");
+                    this._forceLayoutPending = true;
+                },
+
+                positionChanging: function _AppBarDrawerLayout_positionChanging(fromPosition, toPosition) {
+                    this._writeProfilerMark("positionChanging from:" + fromPosition + " to: " + toPosition + ",info");
+
+                    if (toPosition === "shown") {
+                        return this._animateToolbarEntrance();
+                    } else {
+                        return this._animateToolbarExit();
+                    }
+                },
+
+                disposeChildren: function _AppBarDrawerLayout_disposeChildren() {
+                    this._writeProfilerMark("disposeChildren,info");
+
+                    if (this._toolbar) {
+                        _Dispose.disposeSubTree(this._toolbar);
+                    }
+                },
+
+                _createToolbar: function _AppBarDrawerLayout_createToolbar(commands) {
+                    this._writeProfilerMark("_createToolbar,info");
+
+                    var data = [];
+                    var that = this;
+                    commands.forEach(function (command) {
+                        data.push(that.sanitizeCommand(command));
+                    });
+
+                    // Remove the reducedClass from AppBar to ensure fullsize measurements
+                    var hadReducedClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.reducedClass);
+                    _ElementUtilities.removeClass(this.appBarEl, _Constants.reducedClass);
+
+                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
+                    _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
+
+                    // Make sure AppBar and children have width dimensions.
+                    var prevAppBarDisplay = this.appBarEl.style.display;
+                    this.appBarEl.style.display = "";
+
+                    this._toolbar = new Toolbar.Toolbar(this._toolbarEl, {
+                        data: new BindingList.List(data),
+                        overflowMode: "attached"
+                    });
+
+                    this._positionToolbar();
+
+                    // Restore state to AppBar.
+                    this.appBarEl.style.display = prevAppBarDisplay;
+                    if (hadReducedClass) {
+                        _ElementUtilities.addClass(this.appBarEl, _Constants.reducedClass);
+                    }
+                    if (hadHiddenClass) {
+                        _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
+                    }
+                },
+
+                _positionToolbar: function _AppBarDrawerLayout_positionContainers() {
+                    this._writeProfilerMark("_positionToolbar,info");
+
+                    var drawerOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
+                    var toolbarOffset = this._toolbarEl.offsetHeight - (this._isMinimal() ? 0 : this.appBarEl.offsetHeight);
+
+                    this._toolbarContainer.style[this._tranformNames.scriptName] = "translateY(0px)";
+                    this._drawer.style[this._tranformNames.scriptName] = "translateY(-" + drawerOffset + 'px)';
+                    this._toolbarEl.style[this._tranformNames.scriptName] = "translateY(" + toolbarOffset + 'px)';
+                },
+
+                _animateToolbarEntrance: function _AppBarDrawerLayout_animateToolbarEntrance() {
+                    this._writeProfilerMark("_animateToolbarEntrance,info");
+
+                    if (this._forceLayoutPending) {
+                        this._forceLayoutPending = false;
+                        this._toolbar.forceLayout();
+                        this._positionToolbar();
+                    }
+
+                    var heightVisible = this._isMinimal() ? 0 : this.appBarEl.offsetHeight;
+                    var animation1, animation2;
+                    if (this._isBottom()) {
+                        animation1 = this._executeTranslate(this._toolbarContainer, "translateY(" + (this._toolbarContainer.offsetHeight - heightVisible) + "px)");
+                        animation2 = this._executeTranslate(this._toolbarEl, "translateY(" + -(this._toolbarContainer.offsetHeight - heightVisible) + "px)");
+                    } else {
+                        animation1 = this._executeTranslate(this._toolbarContainer, "translateY(" + (this._toolbarContainer.offsetHeight - heightVisible) + "px)");
+                        animation2 = this._executeTranslate(this._toolbarEl, "translateY(0px)");
+                    }
+                    return Promise.join([animation1, animation2]);
+                },
+
+                _animateToolbarExit: function _AppBarDrawerLayout_animateToolbarExit() {
+                    this._writeProfilerMark("_animateToolbarExit,info");
+
+                    var heightVisible = this._isMinimal() ? 0 : this.appBarEl.offsetHeight;
+                    var animation1 = this._executeTranslate(this._toolbarContainer, "translateY(0px)");
+                    var animation2 = this._executeTranslate(this._toolbarEl, "translateY(" + (this._toolbarContainer.offsetHeight - heightVisible) + "px)");
+                    return Promise.join([animation1, animation2]);
+                },
+
+                _executeTranslate: function _AppBarDrawerLayout_executeTranslate(element, value) {
+                    return _TransitionAnimation.executeTransition(element,
+                        {
+                            property: this._tranformNames.cssName,
+                            delay: 0,
+                            duration: 400,
+                            timing: "ease-in",
+                            to: value
+                        });
+                },
+
+                _isMinimal: function _AppBarDrawerLayout_isMinimal() {
+                    return this.appBarEl.winControl.closedDisplayMode === "minimal";
+                },
+
+                _isBottom: function _AppBarDrawerLayout_isBottom() {
+                    return this.appBarEl.winControl.placement === "bottom";
+                },
+
+                _writeProfilerMark: function _AppBarDrawerLayout_writeProfilerMark(text) {
+                    _WriteProfilerMark("WinJS.UI._AppBarDrawerLayout:" + this._id + ":" + text);
+                }
+            });
+
+            return _AppBarDrawerLayout;
+        }),
+    });
 });

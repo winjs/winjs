@@ -312,7 +312,7 @@ define([
                 get ariaLabel() { return _Resources._getWinJSString("ui/appBarAriaLabel").value; },
                 get requiresCommands() { return "Invalid argument: commands must not be empty"; },
                 get cannotChangePlacementWhenVisible() { return "Invalid argument: The placement property cannot be set when the AppBar is visible, call hide() first"; },
-                get badLayout() { return "Invalid argument: The layout property must be 'custom' or 'commands'"; },
+                get badLayout() { return "Invalid argument: The layout property must be 'custom', 'drawer' or 'commands'"; },
                 get cannotChangeLayoutWhenVisible() { return "Invalid argument: The layout property cannot be set when the AppBar is visible, call hide() first"; }
             };
 
@@ -406,6 +406,8 @@ define([
 
                 this._initializing = false;
 
+                this._setFocusToAppBarBound = this._setFocusToAppBar.bind(this);
+
                 // Make a click eating div
                 _Overlay._Overlay._createClickEatingDivAppBar();
 
@@ -493,7 +495,9 @@ define([
                         return this._layout.type;
                     },
                     set: function (layout) {
-                        if (layout !== _Constants.appBarLayoutCommands && layout !== _Constants.appBarLayoutCustom) {
+                        if (layout !== _Constants.appBarLayoutCommands &&
+                            layout !== _Constants.appBarLayoutCustom && 
+                            layout !== _Constants.appBarLayoutDrawer) {
                             throw new _ErrorFromName("WinJS.UI.AppBar.BadLayout", strings.badLayout);
                         }
 
@@ -520,6 +524,8 @@ define([
                         // Set layout
                         if (layout === _Constants.appBarLayoutCommands) {
                             this._layout = new _Layouts._AppBarCommandsLayout();
+                        } else if (layout === _Constants.appBarLayoutDrawer) {
+                            this._layout = new _Layouts._AppBarDrawerLayout();
                         } else {
                             // Custom layout uses Base AppBar Layout class.
                             this._layout = new _Layouts._AppBarBaseLayout();
@@ -800,7 +806,7 @@ define([
                                 _storePreviousFocus(_Global.document.activeElement);
                             }
 
-                            this._setFocusToAppBar();
+                            this._positionChangingPromise.then(this._setFocusToAppBarBound, this._setFocusToAppBarBound);
                         }
                     }
                 },
@@ -1153,6 +1159,8 @@ define([
 
                 _animatePositionChange: function AppBar_animatePositionChange(fromPosition, toPosition) {
                     // Determines and executes the proper transition between visible positions
+
+                    this._positionChangingPromise = this._layout.positionChanging(fromPosition, toPosition);
 
                     // Get values in terms of pixels to perform animation.
                     var beginningVisiblePixelHeight = this._visiblePixels[fromPosition],
