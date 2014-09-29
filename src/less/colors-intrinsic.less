@@ -514,24 +514,27 @@
     progress {
         .mixin(dark) {
             &:indeterminate {
-                background-color: transparent;
                 color: rgb(138, 87, 255);
 
                 &::-webkit-progress-bar {
-                    background-color: rgba(255, 255, 255, 0.35);
+                    background-color: transparent;
+                }
+            }
+
+            &:not(:indeterminate) {
+                background-color: rgba(255, 255, 255, 0.35);
+
+                &::-moz-progress-bar {
+                    background-color: rgb(138, 87, 255);
                 }
             }
 
             &:-ms-fill {
-                background-color: currentColor;
+                background-color: rgb(91, 46, 197);
             }
 
             &::-webkit-progress-value {
-                background-color: currentColor;
-            }
-
-            &::-moz-progress-bar {
-                background-color: currentColor;
+                background-color: rgb(91, 46, 197);
             }
 
             // This is a weird webkit issue where the background color
@@ -543,36 +546,35 @@
                 background-color: rgba(255, 255, 255, 0.0);
             }
 
-            background-color: rgba(255, 255, 255, 0.35);
             color: rgb(91, 46, 197);
         }
         .mixin(light) {
             &:indeterminate {
-                background-color: transparent;
-                color: rgb(70, 23, 180);
-
                 &::-webkit-progress-bar {
                     background-color: rgba(0, 0, 0, 0.35);
                 }
             }
 
+            &:not(:indeterminate) {
+                background-color: rgba(0, 0, 0, 0.2);
+
+                &::-moz-progress-bar {
+                    background-color: rgb(70, 23, 180);
+                }
+            }
+
             &:-ms-fill {
-                background-color: currentColor;
+                background-color: rgb(70, 23, 180);
             }
 
             &::-webkit-progress-value {
-                background-color: currentColor;
-            }
-
-            &::-moz-progress-bar {
-                background-color: currentColor;
+                background-color: rgb(70, 23, 180);
             }
 
             &::-webkit-progress-bar {
                 background-color: rgba(0, 0, 0, 0.0);
             }
 
-            background-color: rgba(0, 0, 0, 0.2);
             color: rgb(70, 23, 180);
         }
         .mixin(@theme);

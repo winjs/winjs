@@ -255,7 +255,6 @@ select {
 progress {
     width: 180px;
     height: 4px;
-    border-style: none;
 
     &.win-medium {
         width: 296px;
@@ -269,9 +268,13 @@ progress {
         border-style: none;
     }
 
-    &:indeterminate {
-        height: 4px;
-        padding: 1px 0px;
+    &:not(:indeterminate) {
+        border-style: none;
+    }
+
+    &:indeterminate::-webkit-progress-value {
+        position: relative;
+        -webkit-animation: win-progress-indeterminate 3s linear infinite;
     }
 
     &.win-paused:not(:indeterminate) {
@@ -303,6 +306,14 @@ progress {
         width: 60px;
         height: 60px;
     }
+}
+
+@-webkit-keyframes win-progress-indeterminate {
+    0% {left: 0; width: 25%;}
+    50% {left: calc(75%); width: 25%;}
+    75% {left: calc(100%); width: 0%;}
+    75.1% {left: 0; width: 0%;}
+    100% {left: 0; width: 25%;}
 }
 
 @keyframes win-progress-fade-out {
