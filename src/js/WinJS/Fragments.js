@@ -376,7 +376,7 @@ define([
         }
     }
 
-    function forceLocal(uri) {
+    function _forceLocal(uri) {
         if (_BaseUtils.hasWinRT) {
             // we force the URI to be cannonicalized and made absolute by IE
             //
@@ -428,6 +428,7 @@ define([
     }
 
     var writeProfilerMark = _WriteProfilerMark;
+    var forceLocal = _forceLocal;
 
     var getFragmentContents = getFragmentContentsXHR;
     function getFragmentContentsXHR(href) {
@@ -442,7 +443,14 @@ define([
         cache: cache,
         clearCache: clearCache,
         _cacheStore: { get: function () { return cacheStore; } },
-        _forceLocal: forceLocal,
+        _forceLocal: {
+            get: function () {
+                return forceLocal;
+            },
+            set: function (value) {
+                forceLocal = value;
+            }
+        },
         _getFragmentContents: {
             get: function () {
                 return getFragmentContents;
