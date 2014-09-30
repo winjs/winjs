@@ -196,8 +196,8 @@ define([
                 _getFocusableCommandsInLogicalOrder: function _AppBarCommandsLayout_getCommandsInLogicalOrder() {
                     // Function returns an array of all the contained AppBarCommands which are reachable by left/right arrows.
 
-                    var selectionCommands = this._secondaryCommands.children,
-                        globalCommands = this._primaryCommands.children,
+                    var secondaryCommands = this._secondaryCommands.children,
+                        primaryCommands = this._primaryCommands.children,
                         focusedIndex = -1;
 
                     var getFocusableCommandsHelper = function (commandsInReach) {
@@ -221,8 +221,9 @@ define([
                     };
 
                     // Determines which set of commands the user could potentially reach through Home, End, and arrow keys.
-                    // All commands in the commands layout AppBar, from left to right are in reach. Selection then Global.
-                    var commandsInReach = Array.prototype.slice.call(selectionCommands).concat(Array.prototype.slice.call(globalCommands));
+                    // All commands in the commands layout AppBar, from left to right are in reach. Secondary (previously known as Selection)
+                    // then Primary (previously known as Global).
+                    var commandsInReach = Array.prototype.slice.call(secondaryCommands).concat(Array.prototype.slice.call(primaryCommands));
 
                     var focusableCommands = getFocusableCommandsHelper(commandsInReach);
                     focusableCommands.focusedIndex = focusedIndex;
@@ -254,7 +255,7 @@ define([
 
                 this._commandsInOriginalOrder.push(command.element);
 
-                if ("global" === command.section) {
+                if ("primary" === command.section || "global" === command.section) {
                     this._primaryCommands.appendChild(command._element);
                 } else {
                     this._secondaryCommands.appendChild(command._element);

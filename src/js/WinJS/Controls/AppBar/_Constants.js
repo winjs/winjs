@@ -49,8 +49,10 @@ define([
         appBarCommandClass: "win-command",
         appBarCommandGlobalClass: "win-global",
         appBarCommandSelectionClass: "win-selection",
-        sectionSelection: "selection",
-        sectionGlobal: "global",
+        sectionSelection: "selection", /* deprecated, use sectionSecondary */
+        sectionGlobal: "global", /* deprecated, use sectionPrimary */
+        sectionPrimary: "primary",
+        sectionSecondary: "secondary",
 
         // Prevents the element from showing a focus rect
         hideFocusClass: "win-hidefocus",

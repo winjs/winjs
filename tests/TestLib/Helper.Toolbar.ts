@@ -20,7 +20,7 @@ module Helper.Toolbar {
         detachedModeCssClass: "win-toolbar-detached",
         emptyToolbarCssClass: "win-toolbar-empty",
         commandType: "WinJS.UI.AppBarCommand",
-        secondaryCommandSection: "selection",
+        secondaryCommandSection: "secondary",
         commandSelector: ".win-command",
         overflowAttachedCommandHeight: 44,
         overflowAttachedSeparatorHeight: 12,

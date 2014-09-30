@@ -1047,6 +1047,21 @@ module CorsicaTests {
                 }, WinJS.Utilities.Scheduler.Priority.high);
             }, WinJS.Utilities.Scheduler.Priority.high);
         }
+
+        testSelectionAndGlobalSection() {
+            this._element.style.width = "1000px";
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 1", section: 'selection' }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 2", section: 'global' }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 3", section: 'primary' }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 4", section: Helper.Toolbar.Constants.secondaryCommandSection })
+            ]);
+            var toolbar = new Toolbar(this._element, {
+                data: data
+            });
+            Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["opt 1", "opt 2", "opt 3"]);
+            Helper.Toolbar.verifyOverflowMenuContent(Helper.Toolbar.getVisibleCommandsInElement(toolbar._menu.element), ["opt 4"]);
+        }
     }
 }
 LiveUnit.registerTestClass("CorsicaTests.ToolbarTests");

@@ -343,7 +343,7 @@ define([
                 },
 
                 /// <field type="String" defaultValue="global" oamOptionsDatatype="WinJS.UI.AppBarCommand.section" locid="WinJS.UI.AppBarCommand.section" helpKeyword="WinJS.UI.AppBarCommand.section">
-                /// Gets or sets the section that the AppBarCommand is in. Possible values are "selection" and "global".
+                /// Gets or sets the section that the AppBarCommand is in. Possible values are "secondary" and "primary".
                 /// </field>
                 section: {
                     get: function () {
@@ -626,8 +626,14 @@ define([
 
                 _setSection: function AppBarCommand_setSection(section) {
                     if (!section) {
-                        section = _Constants.sectionGlobal;
+                        section = _Constants.sectionPrimary;
                     }
+
+                    // _Constants.sectionSelection and _Constants.sectionGlobal are deprecated, so we will continue
+                    //  adding/removing its corresponding CSS class for app compat.
+                    // _Constants.sectionPrimary and _Constants.sectionSecondary no longer apply CSS classes to the
+                    // commands.
+
                     if (this._section) {
                         // Remove the old section class
                         if (this._section === _Constants.sectionGlobal) {

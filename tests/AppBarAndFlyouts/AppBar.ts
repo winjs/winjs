@@ -1835,12 +1835,12 @@ module CorsicaTests {
             var root = document.getElementById("appBarDiv");
             root.innerHTML =
             "<div id='appBar'>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"global\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"selection\"}'></button>" +
             "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", label:\"Separator\", section:\"global\"}' />" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\", section:\"selection\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\", section:\"selection\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"toggle\", section:\"selection\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"primary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\", section:\"secondary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"toggle\", section:\"secondary\"}'></button>" +
             "</div>";
             var appBar = new WinJS.UI.AppBar(<HTMLElement>root.querySelector("#appBar"), {
                 layout: "drawer",
@@ -1863,6 +1863,30 @@ module CorsicaTests {
                 complete();
             });
             appBar.show();
+        }
+
+        testCommandsLayoutUsingPrimaryAndSecondarySections = function () {
+            var root = document.getElementById("appBarDiv");
+            root.innerHTML =
+            "<div id='appBar'>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"primary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 3\", type:\"button\", section:\"selection\"}'></button>" +
+            "</div>";
+            var appBar = new WinJS.UI.AppBar(<HTMLElement>root.querySelector("#appBar"), { layout: 'commands' });
+
+            var primaryCommands = appBar.element.querySelectorAll(".win-primarygroup .win-command");
+            var secondaryCommands = appBar.element.querySelectorAll(".win-secondarygroup .win-command");
+
+
+            LiveUnit.Assert.areEqual(2, primaryCommands.length);
+            LiveUnit.Assert.areEqual("Button 0", primaryCommands[0]["winControl"].label);
+            LiveUnit.Assert.areEqual("Button 1", primaryCommands[1]["winControl"].label);
+
+            LiveUnit.Assert.areEqual(2, secondaryCommands.length);
+            LiveUnit.Assert.areEqual("Button 2", secondaryCommands[0]["winControl"].label);
+            LiveUnit.Assert.areEqual("Button 3", secondaryCommands[1]["winControl"].label);
         }
     };
 }
