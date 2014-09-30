@@ -790,8 +790,6 @@ export class Toolbar {
         this._writeProfilerMark("_setupOverflowAreaAttached,info");
 
         var hasToggleCommands = false;
-        var containsPrimaryCommands = false;
-        var containsSecondaryCommands = false;
 
         _ElementUtilities.empty(this._attachedOverflowArea);
 
@@ -802,7 +800,6 @@ export class Toolbar {
             if (command.type === _Constants.typeToggle) {
                 hasToggleCommands = true;
             }
-            containsPrimaryCommands = true;
             this._attachedOverflowArea.appendChild(this._getMenuCommand(command).element);
         });
 
@@ -823,12 +820,10 @@ export class Toolbar {
                 if (command.type === _Constants.typeToggle) {
                     hasToggleCommands = true;
                 }
-                containsSecondaryCommands = true;
                 this._attachedOverflowArea.appendChild(this._getMenuCommand(command).element);
             }
         });
 
-        _ElementUtilities[containsPrimaryCommands && containsSecondaryCommands ? "addClass" : "removeClass"](this._attachedOverflowArea, _Constants.overflowAreaWithMixCommandsCssClass);
         _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._attachedOverflowArea, _Constants.menuToggleClass);
     }
 

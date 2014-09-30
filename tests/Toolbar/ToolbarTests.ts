@@ -819,7 +819,7 @@ module CorsicaTests {
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(Helper.Toolbar.Constants.overflowAttachedSeparatorHeight + (4.5 * Helper.Toolbar.Constants.overflowAttachedCommandHeight), WinJS.Utilities.getTotalHeight(toolbar._attachedOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(4.5 * Helper.Toolbar.Constants.overflowAttachedCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._attachedOverflowArea), "Invalid height for the overflow area container");
         }
 
         testAttachedModeOverflowButtonVisiblity() {
