@@ -505,7 +505,8 @@ define([
                 this._onInputPaneShownBound = this._onInputPaneShown.bind(this);
                 this._onInputPaneHiddenBound = this._onInputPaneHidden.bind(this);
                 this._onFocusInBound = this._onFocusIn.bind(this);
-                this._onKeyDownBound = this._onKeyDown.bind(this);
+                this._onKeyDownEnteringDocumentBound = this._onKeyDownEnteringDocument.bind(this);
+                this._onKeyEnteringDocumentBound = this._onKeyEnteringDocument.bind(this);
                 
                 this._disposed = false;
                 this._resizedForInputPane = false;
@@ -712,9 +713,17 @@ define([
                     dom.scroller.appendChild(dom.content);
 
                     _ElementUtilities._ensureId(dom.title);
+                    _ElementUtilities._ensureId(dom.startBodyTab);
+                    _ElementUtilities._ensureId(dom.endBodyTab);
                     dom.dialog.setAttribute("aria-labelledby", dom.title.id);
+                    dom.startBodyTab.setAttribute("x-ms-aria-flowfrom", dom.endBodyTab.id);
+                    dom.endBodyTab.setAttribute("aria-flowto", dom.startBodyTab.id);
                     this._updateTabIndices();
                     
+                    var onKeyLeavingElementBound = this._onKeyLeavingElement.bind(this)
+                    dom.root.addEventListener("keydown", onKeyLeavingElementBound);
+                    dom.root.addEventListener("keyup", onKeyLeavingElementBound);
+                    dom.root.addEventListener("keypress", onKeyLeavingElementBound);
                     _ElementUtilities._addEventListener(dom.root, "pointerdown", this._onPointerDown.bind(this));
                     _ElementUtilities._addEventListener(dom.root, "pointerup", this._onPointerUp.bind(this));
                     dom.root.addEventListener("click", this._onClick.bind(this));
@@ -808,7 +817,7 @@ define([
                     }
                 },
                 
-                _onKeyDown: function ContentDialog_onKeyDown(eventObject) {
+                _onKeyDownEnteringDocument: function ContentDialog_onKeyDownEnteringDocument(eventObject) {
                     eventObject = eventObject.detail.originalEvent;
                     if (this._isTopLevel) {
                         if (eventObject.keyCode === _ElementUtilities.Key.tab) {
@@ -816,12 +825,29 @@ define([
                         } else if (eventObject.keyCode === _ElementUtilities.Key.escape) {
                             this.hide(DismissalReason.none);
                             eventObject.preventDefault();
-                            eventObject.stopPropagation();
+                            eventObject.stopImmediatePropagation();
                         } else if (!this._elementInDialog(_Global.document.activeElement)) {
                             // When focus has escaped the dialog, eat all other keys.
                             eventObject.preventDefault();
-                            eventObject.stopPropagation();
+                            eventObject.stopImmediatePropagation();
                         }
+                    }
+                },
+                
+                _onKeyEnteringDocument: function ContentDialog_onKeyEnteringDocument(eventObject) {
+                    eventObject = eventObject.detail.originalEvent;
+                    if (this._isTopLevel && !this._elementInDialog(_Global.document.activeElement) && eventObject.keyCode !== _ElementUtilities.Key.tab) {
+                        // When focus has escaped the dialog, eat all other keys.
+                        eventObject.preventDefault();
+                        eventObject.stopImmediatePropagation();
+                    }
+                },
+                
+                _onKeyLeavingElement: function ContentDialog_onKeyLeavingElement(eventObject) {
+                    if (this._isTopLevel) {
+                        // stopImmediatePropagation so that none of the app's other event handlers will see the event.
+                        // Don't preventDefault so that the browser's hotkeys will still work.
+                        eventObject.stopImmediatePropagation();
                     }
                 },
                 
@@ -922,7 +948,9 @@ define([
                     _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "showing", this._onInputPaneShownBound);
                     _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "hiding", this._onInputPaneShownBound);
                     
-                    _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "keydown", this._onKeyDownBound, true);
+                    _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "keydown", this._onKeyDownEnteringDocumentBound, true);
+                    _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "keyup", this._onKeyEnteringDocumentBound, true);
+                    _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "keypress", this._onKeyEnteringDocumentBound, true);
                     _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "focusin", this._onFocusInBound);
                     
                     Application._applicationListener.addEventListener(this._dom.root, "backclick", this._onBackClickBound);
@@ -932,7 +960,9 @@ define([
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "showing", this._onInputPaneShownBound);
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "hiding", this._onInputPaneShownBound);
                     
-                    _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "keydown", this._onKeyDownBound, true);
+                    _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "keydown", this._onKeyDownEnteringDocumentBound, true);
+                    _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "keyup", this._onKeyEnteringDocumentBound, true);
+                    _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "keypress", this._onKeyEnteringDocumentBound, true);
                     _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "focusin", this._onFocusInBound);
                     
                     Application._applicationListener.removeEventListener(this._dom.root, "backclick", this._onBackClickBound);
