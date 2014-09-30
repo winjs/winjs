@@ -107,7 +107,7 @@ define([
                     this._type = _Constants.typeButton;
                 }
 
-                options.section = options.section || _Constants.sectionGlobal;
+                options.section = options.section || _Constants.sectionPrimary;
 
                 // Go ahead and create it, separator and content types look different than buttons
                 // Don't forget to use passed in element if one was provided.

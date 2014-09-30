@@ -143,8 +143,10 @@ module CorsicaTests {
             testGoodInitOption("flyout", { element: { uniqueId: "test" } });
 
             LiveUnit.LoggingCore.logComment("Testing section");
-            testGoodInitOption("section", "global");
-            testGoodInitOption("section", "selection");
+            testGoodInitOption("section", "global"); // Deprecated, use primary
+            testGoodInitOption("section", "selection"); // Deprecated, use secondary
+            testGoodInitOption("section", "primary");
+            testGoodInitOption("section", "secondary");
             testGoodInitOption("section", -1);
             testGoodInitOption("section", 12);
             testGoodInitOption("section", {});
@@ -176,7 +178,7 @@ module CorsicaTests {
             LiveUnit.Assert.isNotNull(AppBarCommand, "AppBarCommand element should not be null when instantiated.");
 
             LiveUnit.Assert.isNotNull(AppBarCommand.element, "Verifying that element is not null");
-            LiveUnit.Assert.areEqual("global", AppBarCommand.section, "Verifying that section is 'global'");
+            LiveUnit.Assert.areEqual("primary", AppBarCommand.section, "Verifying that section is 'primary'");
             LiveUnit.Assert.areEqual("", AppBarCommand.id, "Verifying that id is empty string");
             LiveUnit.Assert.areEqual("button", AppBarCommand.type, "Verifying that type is 'button'");
             LiveUnit.Assert.areEqual("test", AppBarCommand.label, "Verifying that label is 'test'");
@@ -228,7 +230,7 @@ module CorsicaTests {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBar element");
             var AppBar = new PrivateAppBar(AppBarElement, { commands: { type: 'separator', id: 'sep' } });
             LiveUnit.LoggingCore.logComment("set commands");
-            AppBar.commands = [{ id: 'cmdA', label: 'One', icon: 'back', section: 'global', tooltip: 'Test glyph by name' }];
+            AppBar.commands = [{ id: 'cmdA', label: 'One', icon: 'back', section: 'primary', tooltip: 'Test glyph by name' }];
             var commandVisibilityChangedCount = 0;
             AppBarElement.addEventListener("commandvisibilitychanged", function () {
                 commandVisibilityChangedCount++;
