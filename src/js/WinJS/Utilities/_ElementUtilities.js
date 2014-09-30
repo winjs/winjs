@@ -4,9 +4,10 @@ define([
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_BaseUtils',
+    '../Core/_WinRT',
     '../Promise',
     '../Scheduler'
-], function elementUtilities(exports, _Global, _Base, _BaseUtils, Promise, Scheduler) {
+], function elementUtilities(exports, _Global, _Base, _BaseUtils, _WinRT, Promise, Scheduler) {
     "use strict";
 
     // not supported in WebWorker
@@ -740,15 +741,28 @@ define([
             _resizeEvent: { get: function () { return 'WinJSElementResize'; } }
         }
     );
-
-
-    var GlobalListener = new (_Base.Class.define(
-        function GlobalListener_ctor() {
+    
+    // - object: The object on which GenericListener will listen for events.
+    // - objectName: A string representing the name of *object*. This will be
+    //   incorporated into the names of the events and classNames created by
+    //   GenericListener.
+    // - options
+    //   - registerThruWinJSCustomEvents: If true, will register for events using
+    //     _exports._addEventListener so that you can take advantage of WinJS's custom
+    //     events (e.g. focusin, pointer*). Otherwise, registers directly on *object*
+    //     using its add/removeEventListener methods.
+    var GenericListener = _Base.Class.define(
+        function GenericListener_ctor(objectName, object, options) {
+            options = options || {};
+            this.registerThruWinJSCustomEvents = !!options.registerThruWinJSCustomEvents; 
+            
+            this.objectName = objectName;
+            this.object = object;
             this.capture = {};
             this.bubble = {};
         },
         {
-            addEventListener: function GlobalListener_addEventListener(element, name, listener, capture) {
+            addEventListener: function GenericListener_addEventListener(element, name, listener, capture) {
                 name = name.toLowerCase();
                 var handlers = this._getHandlers(capture);
                 var handler = handlers[name];
@@ -757,15 +771,19 @@ define([
                     handler = this._getListener(name, capture);
                     handler.refCount = 0;
                     handlers[name] = handler;
-
-                    exports._addEventListener(_Global, name, handler, capture);
+                    
+                    if (this.registerThruWinJSCustomEvents) {
+                        exports._addEventListener(this.object, name, handler, capture);
+                    } else {
+                        this.object.addEventListener(name, handler, capture);
+                    }
                 }
 
                 handler.refCount++;
                 element.addEventListener(this._getEventName(name, capture), listener);
                 addClass(element, this._getClassName(name, capture));
             },
-            removeEventListener: function GlobalListener_removeEventListener(element, name, listener, capture) {
+            removeEventListener: function GenericListener_removeEventListener(element, name, listener, capture) {
                 name = name.toLowerCase();
                 var handlers = this._getHandlers(capture);
                 var handler = handlers[name];
@@ -773,17 +791,20 @@ define([
                 if (handler) {
                     handler.refCount--;
                     if (handler.refCount === 0) {
-                        exports._removeEventListener(_Global, name, handler, capture);
+                        if (this.registerThruWinJSCustomEvents) {
+                            exports._removeEventListener(this.object, name, handler, capture);
+                        } else {
+                            this.object.removeEventListener(name, handler, capture);
+                        }
                         delete handlers[name];
                     }
-
                 }
 
                 removeClass(element, this._getClassName(name, capture));
                 element.removeEventListener(this._getEventName(name, capture), listener);
             },
 
-            _getHandlers: function GlobalListener_getHandlers(capture) {
+            _getHandlers: function GenericListener_getHandlers(capture) {
                 if (capture) {
                     return this.capture;
                 } else {
@@ -791,33 +812,36 @@ define([
                 }
             },
 
-            _getClassName: function GlobalListener_getClassName(name, capture) {
+            _getClassName: function GenericListener_getClassName(name, capture) {
                 var captureSuffix = capture ? 'capture' : 'bubble';
-                return 'win-global-event-' + name + captureSuffix;
+                return 'win-' + this.objectName.toLowerCase() + '-event-' + name + captureSuffix;
             },
 
-            _getEventName: function GlobalListener_getEventName(name, capture) {
+            _getEventName: function GenericListener_getEventName(name, capture) {
                 var captureSuffix = capture ? 'capture' : 'bubble';
-                return 'WinJSGlobalEvent-' + name + captureSuffix;
+                return 'WinJS' + this.objectName + 'Event-' + name + captureSuffix;
             },
 
-            _getListener: function GlobalListener_getListener(name, capture) {
-                var listener = function GlobalListener_generatedListener(ev) {
+            _getListener: function GenericListener_getListener(name, capture) {
+                var listener = function GenericListener_generatedListener(ev) {
 
                     var targets = _Global.document.querySelectorAll('.' + this._getClassName(name, capture));
                     var length = targets.length;
+                    var handled = false;
                     for (var i = 0; i < length; i++) {
                         var event = _Global.document.createEvent("Event");
                         event.initEvent(this._getEventName(name, capture), false, true);
                         event.detail = { originalEvent: ev };
-                        targets[i].dispatchEvent(event);
+                        var doDefault = targets[i].dispatchEvent(event);
+                        handled = handled || !doDefault;
                     }
+                    return handled;
                 };
 
                 return listener.bind(this);
             }
         }
-    ))();
+    );
 
     var determinedRTLEnvironment = false,
         usingWebkitScrollCoordinates = false,
@@ -1255,8 +1279,13 @@ define([
                 return _resizeNotifier;
             }
         },
-
-        _globalListener: GlobalListener,
+        
+        _GenericListener: GenericListener,
+        _globalListener: new GenericListener("Global", _Global, { registerThruWinJSCustomEvents: true }),
+        _documentElementListener: new GenericListener("DocumentElement", _Global.document.documentElement, { registerThruWinJSCustomEvents: true }),
+        _inputPaneListener: _WinRT.Windows.UI.ViewManagement.InputPane ?
+            new GenericListener("InputPane", _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView()) :
+            { addEventListener: function () { }, removeEventListener: function () { } },
 
         // Appends a hidden child to the given element that will listen for being added
         // to the DOM. When the hidden element is added to the DOM, it will dispatch a

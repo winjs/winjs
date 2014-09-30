@@ -105,6 +105,7 @@ declare module WinJS {
 
     module Application {
         var _terminateApp: (data: any, e: any) => void;
+        function _dispatchEvent(eventRecord: any): void;
         function _loadState(e: any);
     }
 
@@ -162,9 +163,9 @@ declare module WinJS {
             hidden: boolean;
             title: string;
             primaryCommandText: string;
-            isPrimaryCommandDisabled: boolean;
+            primaryCommandDisabled: boolean;
             secondaryCommandText: string;
-            isSecondaryCommandDisabled: boolean;
+            secondaryCommandDisabled: boolean;
             show(): Promise<ContentDialogHideInfo>;
             hide(reason?: any): void;
             dispose(): void;
@@ -176,10 +177,28 @@ declare module WinJS {
             onafterhide(eventInfo: ContentDialogHideEvent): void;
         }
         
+        interface IContentDialogDom {
+            root: HTMLElement;
+            backgroundOverlay: HTMLElement;
+            startBodyTab: HTMLElement;
+            dialog: HTMLElement;
+            title: HTMLElement;
+            scroller: HTMLElement;
+            commandContainer: HTMLElement;
+            commands: HTMLElement;
+            endBodyTab: HTMLElement;
+            content: HTMLElement;
+        }
+        
         class PrivateContentDialog extends WinJS.UI.ContentDialog {
             static _ClassNames: any;
             _playEntranceAnimation(): Promise<any>;
             _playExitAnimation(): Promise<any>;
+            _disposed: boolean;
+            _state: any;
+            _dom: IContentDialogDom;
+            _updateTabIndices();
+            _updateTabIndicesImpl();
         }
 
         interface ISelect {

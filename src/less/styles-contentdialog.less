@@ -38,8 +38,8 @@
         #flex > .align-content(center); /* maintain horizontal centering when the flexbox has 2 columns */
     }
     
-    .win-contentdialog-dimcontent {
-        z-index: -1; /* Put dimcontent behind the dialog's body */
+    .win-contentdialog-backgroundoverlay {
+        z-index: -1; /* Put backgroundoverlay behind the dialog's body */
         position: absolute;
         top: 0;
         left: 0;
@@ -47,7 +47,7 @@
         height: 100vh;
     }
     
-    .win-contentdialog-body {
+    .win-contentdialog-dialog {
         #flex > .display-flex();
         #flex > .flex-direction(column);
         
@@ -85,7 +85,7 @@
     }
     
     @media (min-height: 520px) {
-        .win-contentdialog-body {
+        .win-contentdialog-dialog {
             #flex > .flex(@grow: 0; @shrink: 0);
         }
 
@@ -117,6 +117,10 @@
         #flex > .flex(@grow: 0; @shrink: 0);
         #flex > .display-flex();
         margin-right: -4px; /* Chop off margin on last command */
+    }
+    
+    .win-contentdialog-commandspacer {
+        visibility: hidden;
     }
     
     .win-contentdialog-commands > button {
