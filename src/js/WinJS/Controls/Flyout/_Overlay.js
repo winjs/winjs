@@ -149,13 +149,9 @@ define([
                         // on window.
                         _Global[listenerOperation]("blur", this._windowBlur, false);
 
-                        // Be careful so it behaves in designer as well.
-                        if (_WinRT.Windows.UI.Input.EdgeGesture) {
-                            // Catch edgy events too
-                            var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
-                            edgy[listenerOperation]("starting", this._edgyStarting);
-                            edgy[listenerOperation]("completed", this._edgyCompleted);
-                        }
+                        // Catch edgy events too
+                        Application[listenerOperation]("edgystarting", this._edgyStarting);
+                        Application[listenerOperation]("edgycompleted", this._edgyCompleted);
 
                         if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                             // React to Soft Keyboard events
