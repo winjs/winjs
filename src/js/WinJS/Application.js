@@ -38,14 +38,177 @@ define([
     var eventQueuedSignal = null;
     var running = false;
     var registered = false;
-    var registeredRequestingFocusOnKeyboardInput = false;
-    var suggestionManager = null;
 
     var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
     var listeners = new ListenerType();
     var createEvent = _Events._createEventProperty;
     var pendingDeferrals = {};
     var pendingDeferralID = 0;
+    var TypeToSearch = {
+        _suggestionManager: null,
+        _registered: false,
+        
+        updateRegistration: function Application_TypeToSearch_updateRegistration() {
+            var ls = listeners._listeners && listeners._listeners[requestingFocusOnKeyboardInputET] || [];
+            if (!TypeToSearch._registered && ls.length > 0) {
+                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
+                    TypeToSearch._suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
+                    TypeToSearch._suggestionManager.addEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
+                } else {
+                    TypeToSearch._updateKeydownCaptureListeners(_Global.top, true /*add*/);
+                }
+                TypeToSearch._registered = true;
+            }
+            if (TypeToSearch._registered && ls.length === 0) {
+                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
+                    TypeToSearch._suggestionManager && TypeToSearch._suggestionManager.removeEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
+                    TypeToSearch._suggestionManager = null;
+                } else {
+                    TypeToSearch._updateKeydownCaptureListeners(_Global.top, false /*add*/);
+                }
+                TypeToSearch._registered = false;
+            }
+        },
+        
+        _keydownCaptureHandler: function Application_TypeToSearch_keydownCaptureHandler(event) {
+            if (TypeToSearch._registered && TypeToSearch._shouldKeyTriggerTypeToSearch(event)) {
+                requestingFocusOnKeyboardInput();
+            }
+        },
+    
+        _frameLoadCaptureHandler: function Application_TypeToSearch_frameLoadCaptureHandler(event) {
+            if (TypeToSearch._registered) {
+                TypeToSearch._updateKeydownCaptureListeners(event.target.contentWindow, true /*add*/);
+            }
+        },
+    
+        _updateKeydownCaptureListeners: function Application_TypeToSearch_updateKeydownCaptureListeners(win, add) {
+            // Register for child frame keydown events in order to support FocusOnKeyboardInput
+            // when focus is in a child frame.  Also register for child frame load events so
+            // it still works after frame navigations.
+            // Note: This won't catch iframes added programmatically later, but that can be worked
+            // around by toggling FocusOnKeyboardInput off/on after the new iframe is added.
+            try {
+                if (add) {
+                    win.document.addEventListener('keydown', TypeToSearch._keydownCaptureHandler, true);
+                } else {
+                    win.document.removeEventListener('keydown', TypeToSearch._keydownCaptureHandler, true);
+                }
+            } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error
+            }
+    
+            if (win.frames) {
+                for (var i = 0, l = win.frames.length; i < l; i++) {
+                    var childWin = win.frames[i];
+                    TypeToSearch._updateKeydownCaptureListeners(childWin, add);
+    
+                    try {
+                        if (add) {
+                            if (childWin.frameElement) {
+                                childWin.frameElement.addEventListener('load', TypeToSearch._frameLoadCaptureHandler, true);
+                            }
+                        } else {
+                            if (childWin.frameElement) {
+                                childWin.frameElement.removeEventListener('load', TypeToSearch._frameLoadCaptureHandler, true);
+                            }
+                        }
+                    } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error
+                    }
+                }
+            }
+        },
+    
+        _shouldKeyTriggerTypeToSearch: function Application_TypeToSearch_shouldKeyTriggerTypeToSearch(event) {
+            var shouldTrigger = false;
+            // First, check if a metaKey is pressed (only applies to MacOS). If so, do nothing here.
+            if (!event.metaKey) {
+                // We also don't handle CTRL/ALT combinations, unless ALTGR is also set. Since there is no shortcut for checking AltGR,
+                // we need to use getModifierState, however, Safari currently doesn't support this.
+                if ((!event.ctrlKey && !event.altKey) || (event.getModifierState && event.getModifierState("AltGraph"))) {
+                    // Show on most keys for visible characters like letters, numbers, etc.
+                    switch (event.keyCode) {
+                        case 0x30:  //0x30 0 key
+                        case 0x31:  //0x31 1 key
+                        case 0x32:  //0x32 2 key
+                        case 0x33:  //0x33 3 key
+                        case 0x34:  //0x34 4 key
+                        case 0x35:  //0x35 5 key
+                        case 0x36:  //0x36 6 key
+                        case 0x37:  //0x37 7 key
+                        case 0x38:  //0x38 8 key
+                        case 0x39:  //0x39 9 key
+    
+                        case 0x41:  //0x41 A key
+                        case 0x42:  //0x42 B key
+                        case 0x43:  //0x43 C key
+                        case 0x44:  //0x44 D key
+                        case 0x45:  //0x45 E key
+                        case 0x46:  //0x46 F key
+                        case 0x47:  //0x47 G key
+                        case 0x48:  //0x48 H key
+                        case 0x49:  //0x49 I key
+                        case 0x4A:  //0x4A J key
+                        case 0x4B:  //0x4B K key
+                        case 0x4C:  //0x4C L key
+                        case 0x4D:  //0x4D M key
+                        case 0x4E:  //0x4E N key
+                        case 0x4F:  //0x4F O key
+                        case 0x50:  //0x50 P key
+                        case 0x51:  //0x51 Q key
+                        case 0x52:  //0x52 R key
+                        case 0x53:  //0x53 S key
+                        case 0x54:  //0x54 T key
+                        case 0x55:  //0x55 U key
+                        case 0x56:  //0x56 V key
+                        case 0x57:  //0x57 W key
+                        case 0x58:  //0x58 X key
+                        case 0x59:  //0x59 Y key
+                        case 0x5A:  //0x5A Z key
+    
+                        case 0x60:  // VK_NUMPAD0,             //0x60 Numeric keypad 0 key
+                        case 0x61:  // VK_NUMPAD1,             //0x61 Numeric keypad 1 key
+                        case 0x62:  // VK_NUMPAD2,             //0x62 Numeric keypad 2 key
+                        case 0x63:  // VK_NUMPAD3,             //0x63 Numeric keypad 3 key
+                        case 0x64:  // VK_NUMPAD4,             //0x64 Numeric keypad 4 key
+                        case 0x65:  // VK_NUMPAD5,             //0x65 Numeric keypad 5 key
+                        case 0x66:  // VK_NUMPAD6,             //0x66 Numeric keypad 6 key
+                        case 0x67:  // VK_NUMPAD7,             //0x67 Numeric keypad 7 key
+                        case 0x68:  // VK_NUMPAD8,             //0x68 Numeric keypad 8 key
+                        case 0x69:  // VK_NUMPAD9,             //0x69 Numeric keypad 9 key
+                        case 0x6A:  // VK_MULTIPLY,            //0x6A Multiply key
+                        case 0x6B:  // VK_ADD,                 //0x6B Add key
+                        case 0x6C:  // VK_SEPARATOR,           //0x6C Separator key
+                        case 0x6D:  // VK_SUBTRACT,            //0x6D Subtract key
+                        case 0x6E:  // VK_DECIMAL,             //0x6E Decimal key
+                        case 0x6F:  // VK_DIVIDE,              //0x6F Divide key
+    
+                        case 0xBA:  // VK_OEM_1,               //0xBA Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key
+                        case 0xBB:  // VK_OEM_PLUS,            //0xBB For any country/region, the '+' key
+                        case 0xBC:  // VK_OEM_COMMA,           //0xBC For any country/region, the ',' key
+                        case 0xBD:  // VK_OEM_MINUS,           //0xBD For any country/region, the '-' key
+                        case 0xBE:  // VK_OEM_PERIOD,          //0xBE For any country/region, the '.' key
+                        case 0xBF:  // VK_OEM_2,               //0xBF Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key
+                        case 0xC0:  // VK_OEM_3,               //0xC0 Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '`~' key
+    
+                        case 0xDB:  // VK_OEM_4,               //0xDB Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '[{' key
+                        case 0xDC:  // VK_OEM_5,               //0xDC Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '\|' key
+                        case 0xDD:  // VK_OEM_6,               //0xDD Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ']}' key
+                        case 0xDE:  // VK_OEM_7,               //0xDE Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the 'single-quote/double-quote' key
+                        case 0xDF:  // VK_OEM_8,               //0xDF Used for miscellaneous characters; it can vary by keyboard.
+    
+                        case 0xE2:  // VK_OEM_102,             //0xE2 Either the angle bracket key or the backslash key on the RT 102-key keyboard
+    
+                        case 0xE5:  // VK_PROCESSKEY,          //0xE5 IME PROCESS key
+    
+                        case 0xE7:  // VK_PACKET,              //0xE7 Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods. For more information, see Remark in KEYBDINPUT, SendInput, WM_KEYDOWN, and WM_KEYUP
+                            shouldTrigger = true;
+                            break;
+                    }
+                }
+            }
+            return shouldTrigger;
+        }
+    };
 
     function safeSerialize(obj) {
         var str;
@@ -497,175 +660,6 @@ define([
     function edgyCanceled(eventObject) {
         dispatchEvent({ type: edgyCanceledET, kind: eventObject.kind });
     }
-    
-    function updateRequestingFocusOnKeyboardInputRegistration() {
-        var ls = listeners._listeners && listeners._listeners[requestingFocusOnKeyboardInputET] || [];
-        if (!registeredRequestingFocusOnKeyboardInput && ls.length > 0) {
-            if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
-                suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
-                suggestionManager.addEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
-            } else {
-                tts_updateKeydownCaptureListeners(_Global.top, true /*add*/);
-            }
-            registeredRequestingFocusOnKeyboardInput = true;
-        }
-        if (registeredRequestingFocusOnKeyboardInput && ls.length === 0) {
-            if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
-                suggestionManager && suggestionManager.removeEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
-                suggestionManager = null;
-            } else {
-                tts_updateKeydownCaptureListeners(_Global.top, false /*add*/);
-            }
-            registeredRequestingFocusOnKeyboardInput = false;
-        }
-    }
-    
-    //
-    // BEGIN non-WinRT type to search fallback
-    //
-    
-    function tts_keydownCaptureHandler(event) {
-        if (registeredRequestingFocusOnKeyboardInput && tts_shouldKeyTriggerTypeToSearch(event)) {
-            requestingFocusOnKeyboardInput();
-        }
-    }
-
-    function tts_frameLoadCaptureHandler(event) {
-        if (registeredRequestingFocusOnKeyboardInput) {
-            tts_updateKeydownCaptureListeners(event.target.contentWindow, true /*add*/);
-        }
-    }
-
-    function tts_updateKeydownCaptureListeners(win, add) {
-        // Register for child frame keydown events in order to support FocusOnKeyboardInput
-        // when focus is in a child frame.  Also register for child frame load events so
-        // it still works after frame navigations.
-        // Note: This won't catch iframes added programmatically later, but that can be worked
-        // around by toggling FocusOnKeyboardInput off/on after the new iframe is added.
-        try {
-            if (add) {
-                win.document.addEventListener('keydown', tts_keydownCaptureHandler, true);
-            } else {
-                win.document.removeEventListener('keydown', tts_keydownCaptureHandler, true);
-            }
-        } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error
-        }
-
-        if (win.frames) {
-            for (var i = 0, l = win.frames.length; i < l; i++) {
-                var childWin = win.frames[i];
-                tts_updateKeydownCaptureListeners(childWin, add);
-
-                try {
-                    if (add) {
-                        if (childWin.frameElement) {
-                            childWin.frameElement.addEventListener('load', tts_frameLoadCaptureHandler, true);
-                        }
-                    } else {
-                        if (childWin.frameElement) {
-                            childWin.frameElement.removeEventListener('load', tts_frameLoadCaptureHandler, true);
-                        }
-                    }
-                } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error
-                }
-            }
-        }
-    }
-
-    function tts_shouldKeyTriggerTypeToSearch(event) {
-        var shouldTrigger = false;
-        // First, check if a metaKey is pressed (only applies to MacOS). If so, do nothing here.
-        if (!event.metaKey) {
-            // We also don't handle CTRL/ALT combinations, unless ALTGR is also set. Since there is no shortcut for checking AltGR,
-            // we need to use getModifierState, however, Safari currently doesn't support this.
-            if ((!event.ctrlKey && !event.altKey) || (event.getModifierState && event.getModifierState("AltGraph"))) {
-                // Show on most keys for visible characters like letters, numbers, etc.
-                switch (event.keyCode) {
-                    case 0x30:  //0x30 0 key
-                    case 0x31:  //0x31 1 key
-                    case 0x32:  //0x32 2 key
-                    case 0x33:  //0x33 3 key
-                    case 0x34:  //0x34 4 key
-                    case 0x35:  //0x35 5 key
-                    case 0x36:  //0x36 6 key
-                    case 0x37:  //0x37 7 key
-                    case 0x38:  //0x38 8 key
-                    case 0x39:  //0x39 9 key
-
-                    case 0x41:  //0x41 A key
-                    case 0x42:  //0x42 B key
-                    case 0x43:  //0x43 C key
-                    case 0x44:  //0x44 D key
-                    case 0x45:  //0x45 E key
-                    case 0x46:  //0x46 F key
-                    case 0x47:  //0x47 G key
-                    case 0x48:  //0x48 H key
-                    case 0x49:  //0x49 I key
-                    case 0x4A:  //0x4A J key
-                    case 0x4B:  //0x4B K key
-                    case 0x4C:  //0x4C L key
-                    case 0x4D:  //0x4D M key
-                    case 0x4E:  //0x4E N key
-                    case 0x4F:  //0x4F O key
-                    case 0x50:  //0x50 P key
-                    case 0x51:  //0x51 Q key
-                    case 0x52:  //0x52 R key
-                    case 0x53:  //0x53 S key
-                    case 0x54:  //0x54 T key
-                    case 0x55:  //0x55 U key
-                    case 0x56:  //0x56 V key
-                    case 0x57:  //0x57 W key
-                    case 0x58:  //0x58 X key
-                    case 0x59:  //0x59 Y key
-                    case 0x5A:  //0x5A Z key
-
-                    case 0x60:  // VK_NUMPAD0,             //0x60 Numeric keypad 0 key
-                    case 0x61:  // VK_NUMPAD1,             //0x61 Numeric keypad 1 key
-                    case 0x62:  // VK_NUMPAD2,             //0x62 Numeric keypad 2 key
-                    case 0x63:  // VK_NUMPAD3,             //0x63 Numeric keypad 3 key
-                    case 0x64:  // VK_NUMPAD4,             //0x64 Numeric keypad 4 key
-                    case 0x65:  // VK_NUMPAD5,             //0x65 Numeric keypad 5 key
-                    case 0x66:  // VK_NUMPAD6,             //0x66 Numeric keypad 6 key
-                    case 0x67:  // VK_NUMPAD7,             //0x67 Numeric keypad 7 key
-                    case 0x68:  // VK_NUMPAD8,             //0x68 Numeric keypad 8 key
-                    case 0x69:  // VK_NUMPAD9,             //0x69 Numeric keypad 9 key
-                    case 0x6A:  // VK_MULTIPLY,            //0x6A Multiply key
-                    case 0x6B:  // VK_ADD,                 //0x6B Add key
-                    case 0x6C:  // VK_SEPARATOR,           //0x6C Separator key
-                    case 0x6D:  // VK_SUBTRACT,            //0x6D Subtract key
-                    case 0x6E:  // VK_DECIMAL,             //0x6E Decimal key
-                    case 0x6F:  // VK_DIVIDE,              //0x6F Divide key
-
-                    case 0xBA:  // VK_OEM_1,               //0xBA Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key
-                    case 0xBB:  // VK_OEM_PLUS,            //0xBB For any country/region, the '+' key
-                    case 0xBC:  // VK_OEM_COMMA,           //0xBC For any country/region, the ',' key
-                    case 0xBD:  // VK_OEM_MINUS,           //0xBD For any country/region, the '-' key
-                    case 0xBE:  // VK_OEM_PERIOD,          //0xBE For any country/region, the '.' key
-                    case 0xBF:  // VK_OEM_2,               //0xBF Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key
-                    case 0xC0:  // VK_OEM_3,               //0xC0 Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '`~' key
-
-                    case 0xDB:  // VK_OEM_4,               //0xDB Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '[{' key
-                    case 0xDC:  // VK_OEM_5,               //0xDC Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '\|' key
-                    case 0xDD:  // VK_OEM_6,               //0xDD Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ']}' key
-                    case 0xDE:  // VK_OEM_7,               //0xDE Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the 'single-quote/double-quote' key
-                    case 0xDF:  // VK_OEM_8,               //0xDF Used for miscellaneous characters; it can vary by keyboard.
-
-                    case 0xE2:  // VK_OEM_102,             //0xE2 Either the angle bracket key or the backslash key on the RT 102-key keyboard
-
-                    case 0xE5:  // VK_PROCESSKEY,          //0xE5 IME PROCESS key
-
-                    case 0xE7:  // VK_PACKET,              //0xE7 Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods. For more information, see Remark in KEYBDINPUT, SendInput, WM_KEYDOWN, and WM_KEYUP
-                        shouldTrigger = true;
-                        break;
-                }
-            }
-        }
-        return shouldTrigger;
-    }
-    
-    //
-    // END non-WinRT type to search fallback
-    //
 
     function register() {
         if (!registered) {
@@ -788,7 +782,7 @@ define([
             /// </signature>
             listeners.addEventListener(eventType, listener, capture);
             if (eventType === requestingFocusOnKeyboardInputET) {
-                updateRequestingFocusOnKeyboardInputRegistration();
+                TypeToSearch.updateRegistration();
             }
         },
         removeEventListener: function (eventType, listener, capture) {
@@ -808,7 +802,7 @@ define([
             /// </signature>
             listeners.removeEventListener(eventType, listener, capture);
             if (eventType === requestingFocusOnKeyboardInputET) {
-                updateRequestingFocusOnKeyboardInputRegistration();
+                TypeToSearch.updateRegistration();
             }
         },
 
