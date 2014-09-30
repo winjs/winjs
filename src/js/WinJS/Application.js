@@ -25,7 +25,8 @@ define([
         readyET = "ready",
         errorET = "error",
         settingsET = "settings",
-        backClickET = "backclick";
+        backClickET = "backclick",
+        requestingFocusOnKeyboardInputET = "requestingfocusonkeyboardinput";
 
     var outstandingPromiseErrors;
     var eventQueue = [];
@@ -33,6 +34,7 @@ define([
     var eventQueuedSignal = null;
     var running = false;
     var registered = false;
+    var suggestionManager = null;
 
     var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
     var listeners = new ListenerType();
@@ -139,6 +141,10 @@ define([
             /// </signature>
             waitForPromise = waitForPromise.then(function () { return promise; });
         };
+        eventRecord._stoppedImmediatePropagation = false;
+        eventRecord.stopImmediatePropagation = function () {
+            eventRecord._stoppedImmediatePropagation = true;
+        };
         eventRecord.detail = eventRecord.detail || {};
         if (typeof (eventRecord.detail) === "object") {
             eventRecord.detail.setPromise = eventRecord.setPromise;
@@ -149,9 +155,9 @@ define([
                 var handled = false;
                 l = listeners._listeners[eventRecord.type];
                 if (l) {
-                    l.forEach(function dispatchOne(e) {
-                        handled = e.listener(eventRecord) || handled;
-                    });
+                    for (var i = 0, len = l.length; i < len && !eventRecord._stoppedImmediatePropagation; i++) {
+                        handled = l[i].listener(eventRecord) || handled;
+                    }
                 }
             }
 
@@ -461,6 +467,11 @@ define([
         });
         dispatchEvent(eventRecord);
     }
+    
+    function requestingFocusOnKeyboardInput() {
+        var eventRecord = { type: requestingFocusOnKeyboardInputET };
+        dispatchEvent(eventRecord);
+    }
 
     function register() {
         if (!registered) {
@@ -471,7 +482,7 @@ define([
             if (_Global.document) {
                 _Global.addEventListener("error", errorHandler, false);
                 if (_WinRT.Windows.UI.WebUI.WebUIApplication) {
-
+                    
                     var wui = _WinRT.Windows.UI.WebUI.WebUIApplication;
                     wui.addEventListener("activated", activatedHandler, false);
                     wui.addEventListener("suspending", suspendingHandler, false);
@@ -485,6 +496,11 @@ define([
                 // Code in WinJS.Application for phone. This integrates WinJS.Application into the hardware back button.
                 if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.addEventListener("backpressed", hardwareButtonBackPressed);
+                }
+                
+                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
+                    suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
+                    suggestionManager.addEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
                 }
             }
 
@@ -514,6 +530,11 @@ define([
                 // Code in WinJS.Application for phone. This integrates WinJS.Application into the hardware back button.
                 if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.removeEventListener("backpressed", hardwareButtonBackPressed);
+                }
+                
+                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager && suggestionManager) {
+                    suggestionManager.removeEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
+                    suggestionManager = null;
                 }
             }
 

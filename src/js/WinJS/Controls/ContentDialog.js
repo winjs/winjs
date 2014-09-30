@@ -19,6 +19,14 @@ define([
     ], function contentDialogInit(Application, _Dispose, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
     "use strict";
 
+    var ContentDialogManager;
+        
+    Application.addEventListener("requestingfocusonkeyboardinput", function (eventObject) {
+        if (ContentDialogManager && ContentDialogManager.aDialogIsShowing()) {
+            eventObject.stopImmediatePropagation();
+        }
+    });
+
     _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.ContentDialog">
@@ -79,7 +87,7 @@ define([
             };
             var minContentHeightWithInputPane = 120;
             
-            var ContentDialogManager = new (_Base.Class.define(function () {
+            ContentDialogManager = new (_Base.Class.define(function () {
                 this._dialogs = [];
                 this._prevFocus = null;
             }, {

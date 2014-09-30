@@ -10,8 +10,9 @@ define([
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
     './AutoSuggestBox/_SearchSuggestionManagerShim',
+    '../Application',
     'require-style!less/controls'
-], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, AutoSuggestBox, _Control, _ElementUtilities, _SuggestionManagerShim) {
+], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, AutoSuggestBox, _Control, _ElementUtilities, _SuggestionManagerShim, Application) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -87,6 +88,11 @@ define([
                 /// </returns>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
+                // TODO: What's the correct fix?
+                this._requestingFocusOnKeyboardInputHandlerBind = this._requestingFocusOnKeyboardInputHandler.bind(this);
+                this._keydownCaptureHandlerBind = this._keydownCaptureHandler.bind(this);
+                this._frameLoadCaptureHandlerBind = this._frameLoadCaptureHandler.bind(this);
+                
                 AutoSuggestBox.AutoSuggestBox.call(this, element, options);
 
                 // Elements
@@ -94,10 +100,6 @@ define([
 
                 // Variables
                 this._focusOnKeyboardInput = false;
-
-                this._requestingFocusOnKeyboardInputHandlerBind = this._requestingFocusOnKeyboardInputHandler.bind(this);
-                this._keydownCaptureHandlerBind = this._keydownCaptureHandler.bind(this);
-                this._frameLoadCaptureHandlerBind = this._frameLoadCaptureHandler.bind(this);
 
                 this._setupSearchBoxDOM();
             }, {
@@ -117,15 +119,17 @@ define([
                     set: function (value) {
                         if (this._focusOnKeyboardInput && !value) {
                             if (!(this._suggestionManager instanceof _SuggestionManagerShim._SearchSuggestionManagerShim)) {
-                                this._suggestionManager.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
+                                Application.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
                             } else {
+                                // TODO: Integrate non-WinRT fallback into Application event
                                 this._updateKeydownCaptureListeners(_Global.top, false /*add*/);
                             }
 
                         } else if (!this._focusOnKeyboardInput && !!value) {
                             if (!(this._suggestionManager instanceof _SuggestionManagerShim._SearchSuggestionManagerShim)) {
-                                this._suggestionManager.addEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
+                                Application.addEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
                             } else {
+                                // TODO: Integrate non-WinRT fallback into Application event
                                 this._updateKeydownCaptureListeners(_Global.top, true /*add*/);
                             }
 
