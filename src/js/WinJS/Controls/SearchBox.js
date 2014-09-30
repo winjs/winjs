@@ -93,13 +93,13 @@ define([
                 this._keydownCaptureHandlerBind = this._keydownCaptureHandler.bind(this);
                 this._frameLoadCaptureHandlerBind = this._frameLoadCaptureHandler.bind(this);
                 
-                AutoSuggestBox.AutoSuggestBox.call(this, element, options);
-
                 // Elements
                 this._buttonElement = null;
 
                 // Variables
                 this._focusOnKeyboardInput = false;
+                
+                AutoSuggestBox.AutoSuggestBox.call(this, element, options);
 
                 this._setupSearchBoxDOM();
             }, {
@@ -154,7 +154,7 @@ define([
                     // Detach winrt events.
                     if (this._focusOnKeyboardInput) {
                         if (!(this._suggestionManager instanceof _SuggestionManagerShim._SearchSuggestionManagerShim)) {
-                            this._suggestionManager.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
+                            Application.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
                         } else {
                             this._updateKeydownCaptureListeners(_Global.top, false /*add*/);
                         }

@@ -21,8 +21,9 @@ define([
 
     var ContentDialogManager;
     
+    // Need to be the first one to register these events so that they can be
+    // canceled before any other listener sees them.
     var eventsToBlock = [
-        "requestingfocusonkeyboardinput",
         "edgystarting",
         "edgycompleted",
         "edgycanceled"
@@ -521,6 +522,7 @@ define([
                 options = options || {};
                 
                 this._onBackClickBound = this._onBackClick.bind(this);
+                this._onBeforeRequestingFocusOnKeyboardInputBound = this._onBeforeRequestingFocusOnKeyboardInput.bind(this);
                 this._onInputPaneShownBound = this._onInputPaneShown.bind(this);
                 this._onInputPaneHiddenBound = this._onInputPaneHidden.bind(this);
                 this._onFocusInBound = this._onFocusIn.bind(this);
@@ -739,7 +741,7 @@ define([
                     dom.endBodyTab.setAttribute("aria-flowto", dom.startBodyTab.id);
                     this._updateTabIndices();
                     
-                    var onKeyLeavingElementBound = this._onKeyLeavingElement.bind(this)
+                    var onKeyLeavingElementBound = this._onKeyLeavingElement.bind(this);
                     dom.root.addEventListener("keydown", onKeyLeavingElementBound);
                     dom.root.addEventListener("keyup", onKeyLeavingElementBound);
                     dom.root.addEventListener("keypress", onKeyLeavingElementBound);
@@ -870,6 +872,11 @@ define([
                     }
                 },
                 
+                _onBeforeRequestingFocusOnKeyboardInput: function ContentDialog_onBeforeRequestingFocusOnKeyboardInput(eventObject) {
+                    // Suppress the requestingFocusOnKeyboardInput event.
+                    eventObject.preventDefault();
+                },
+                
                 _onBackClick: function ContentDialog_onBackClick(eventObject) {
                     if (this._isTopLevel) {
                         this.hide(DismissalReason.none);
@@ -973,6 +980,7 @@ define([
                     _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "focusin", this._onFocusInBound);
                     
                     Application._applicationListener.addEventListener(this._dom.root, "backclick", this._onBackClickBound);
+                    Application._applicationListener.addEventListener(this._dom.root, "beforerequestingfocusonkeyboardinput", this._onBeforeRequestingFocusOnKeyboardInputBound);
                 },
                 
                 _removeExternalListeners: function ContentDialog_removeExternalListeners() {
@@ -985,6 +993,7 @@ define([
                     _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "focusin", this._onFocusInBound);
                     
                     Application._applicationListener.removeEventListener(this._dom.root, "backclick", this._onBackClickBound);
+                    Application._applicationListener.removeEventListener(this._dom.root, "beforerequestingfocusonkeyboardinput", this._onBeforeRequestingFocusOnKeyboardInputBound);
                 },
 
                 _renderForInputPane: function ContentDialog_renderForInputPane(inputPaneHeight) {

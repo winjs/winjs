@@ -26,6 +26,7 @@ define([
         errorET = "error",
         settingsET = "settings",
         backClickET = "backclick",
+        beforeRequestingFocusOnKeyboardInputET = "beforerequestingfocusonkeyboardinput",
         requestingFocusOnKeyboardInputET = "requestingfocusonkeyboardinput",
         edgyStartingET = "edgystarting",
         edgyCompletedET = "edgycompleted",
@@ -37,6 +38,7 @@ define([
     var eventQueuedSignal = null;
     var running = false;
     var registered = false;
+    var registeredRequestingFocusOnKeyboardInput = false;
     var suggestionManager = null;
 
     var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
@@ -337,6 +339,13 @@ define([
                 }
             }
         ],
+        beforerequestingfocusonkeyboardinput: [
+            function Application_beforeRequestingFocusOnKeyboardInputHandler(e, handled) {
+                if (!handled) {
+                    dispatchEvent({ type: requestingFocusOnKeyboardInputET });
+                }
+            }
+        ]
     };
 
     // loaded == DOMContentLoaded
@@ -472,7 +481,9 @@ define([
     }
     
     function requestingFocusOnKeyboardInput() {
-        dispatchEvent({ type: requestingFocusOnKeyboardInputET });
+        // Built in listener for beforeRequestingFocusOnKeyboardInputET will trigger
+        // requestingFocusOnKeyboardInputET if it wasn't handled.
+        dispatchEvent({ type: beforeRequestingFocusOnKeyboardInputET });
     }
     
     function edgyStarting(eventObject) {
@@ -485,6 +496,24 @@ define([
     
     function edgyCanceled(eventObject) {
         dispatchEvent({ type: edgyCanceledET, kind: eventObject.kind });
+    }
+    
+    function updateRequestingFocusOnKeyboardInputRegistration() {
+        var ls = listeners._listeners && listeners._listeners[requestingFocusOnKeyboardInputET] || [];
+        if (!registeredRequestingFocusOnKeyboardInput && ls.length > 0) {
+            if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
+                suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
+                suggestionManager.addEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
+                registeredRequestingFocusOnKeyboardInput = true;
+            }
+        }
+        if (registeredRequestingFocusOnKeyboardInput && ls.length === 0) {
+            if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager && suggestionManager) {
+                suggestionManager.removeEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
+                suggestionManager = null;
+                registeredRequestingFocusOnKeyboardInput = false;
+            }
+        }
     }
 
     function register() {
@@ -510,11 +539,6 @@ define([
                 // Code in WinJS.Application for phone. This integrates WinJS.Application into the hardware back button.
                 if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.addEventListener("backpressed", hardwareButtonBackPressed);
-                }
-                
-                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
-                    suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
-                    suggestionManager.addEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
                 }
                 
                 if (_WinRT.Windows.UI.Input.EdgeGesture) {
@@ -551,11 +575,6 @@ define([
                 // Code in WinJS.Application for phone. This integrates WinJS.Application into the hardware back button.
                 if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.removeEventListener("backpressed", hardwareButtonBackPressed);
-                }
-                
-                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager && suggestionManager) {
-                    suggestionManager.removeEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
-                    suggestionManager = null;
                 }
                 
                 if (_WinRT.Windows.UI.Input.EdgeGesture) {
@@ -617,6 +636,9 @@ define([
             /// </param>
             /// </signature>
             listeners.addEventListener(eventType, listener, capture);
+            if (eventType === requestingFocusOnKeyboardInputET) {
+                updateRequestingFocusOnKeyboardInputRegistration();
+            }
         },
         removeEventListener: function (eventType, listener, capture) {
             /// <signature helpKeyword="WinJS.Application.removeEventListener">
@@ -634,6 +656,9 @@ define([
             /// </param>
             /// </signature>
             listeners.removeEventListener(eventType, listener, capture);
+            if (eventType === requestingFocusOnKeyboardInputET) {
+                updateRequestingFocusOnKeyboardInputRegistration();
+            }
         },
 
         checkpoint: function () {
