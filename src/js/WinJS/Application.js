@@ -26,7 +26,10 @@ define([
         errorET = "error",
         settingsET = "settings",
         backClickET = "backclick",
-        requestingFocusOnKeyboardInputET = "requestingfocusonkeyboardinput";
+        requestingFocusOnKeyboardInputET = "requestingfocusonkeyboardinput",
+        edgyStartingET = "edgystarting",
+        edgyCompletedET = "edgycompleted",
+        edgyCanceledET = "edgycanceled";
 
     var outstandingPromiseErrors;
     var eventQueue = [];
@@ -469,8 +472,19 @@ define([
     }
     
     function requestingFocusOnKeyboardInput() {
-        var eventRecord = { type: requestingFocusOnKeyboardInputET };
-        dispatchEvent(eventRecord);
+        dispatchEvent({ type: requestingFocusOnKeyboardInputET });
+    }
+    
+    function edgyStarting(eventObject) {
+        dispatchEvent({ type: edgyStartingET, kind: eventObject.kind });
+    }
+    
+    function edgyCompleted(eventObject) {
+        dispatchEvent({ type: edgyCompletedET, kind: eventObject.kind });
+    }
+    
+    function edgyCanceled(eventObject) {
+        dispatchEvent({ type: edgyCanceledET, kind: eventObject.kind });
     }
 
     function register() {
@@ -501,6 +515,13 @@ define([
                 if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
                     suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
                     suggestionManager.addEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
+                }
+                
+                if (_WinRT.Windows.UI.Input.EdgeGesture) {
+                    var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
+                    edgy.addEventListener("starting", edgyStarting);
+                    edgy.addEventListener("completed", edgyCompleted);
+                    edgy.addEventListener("canceled", edgyCanceled);
                 }
             }
 
@@ -535,6 +556,13 @@ define([
                 if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager && suggestionManager) {
                     suggestionManager.removeEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
                     suggestionManager = null;
+                }
+                
+                if (_WinRT.Windows.UI.Input.EdgeGesture) {
+                    var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
+                    edgy.removeEventListener("starting", edgyStarting);
+                    edgy.removeEventListener("completed", edgyCompleted);
+                    edgy.removeEventListener("canceled", edgyCanceled);
                 }
             }
 

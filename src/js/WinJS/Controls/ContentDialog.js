@@ -20,11 +20,22 @@ define([
     "use strict";
 
     var ContentDialogManager;
-        
-    Application.addEventListener("requestingfocusonkeyboardinput", function (eventObject) {
+    
+    var eventsToBlock = [
+        "requestingfocusonkeyboardinput",
+        "edgystarting",
+        "edgycompleted",
+        "edgycanceled"
+    ];
+    
+    function blockEventIfDialogIsShowing(eventObject) {
         if (ContentDialogManager && ContentDialogManager.aDialogIsShowing()) {
             eventObject.stopImmediatePropagation();
         }
+    }
+    
+    eventsToBlock.forEach(function (eventName) {
+        Application.addEventListener(eventName, blockEventIfDialogIsShowing);
     });
 
     _Base.Namespace.define("WinJS.UI", {
