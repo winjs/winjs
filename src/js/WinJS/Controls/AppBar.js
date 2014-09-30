@@ -23,8 +23,9 @@ define([
     './AppBar/_Command',
     './AppBar/_Icon',
     './Flyout/_Overlay',
+    '../Application',
     'require-style!less/controls'
-], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay) {
+], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay, Application) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -418,13 +419,9 @@ define([
                 if (!globalEventsInitialized) {
                     // We'll trigger on invoking.  Could also have invoked or canceled
                     // Eventually we may want click up on invoking and drop back on invoked.
-                    // Check for namespace so it'll behave in the designer.
-                    if (_WinRT.Windows.UI.Input.EdgeGesture) {
-                        var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
-                        edgy.addEventListener("starting", _startingEdgy);
-                        edgy.addEventListener("completed", _completedEdgy);
-                        edgy.addEventListener("canceled", _canceledEdgy);
-                    }
+                    Application.addEventListener("edgystarting", _startingEdgy);
+                    Application.addEventListener("edgycompleted", _completedEdgy);
+                    Application.addEventListener("edgycanceled", _canceledEdgy);
 
                     // Need to know if the IHM is done scrolling
                     _Global.document.addEventListener("MSManipulationStateChanged", _allManipulationChanged, false);
