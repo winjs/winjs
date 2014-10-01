@@ -99,14 +99,14 @@ export class Toolbar {
     private _resizeHandlerBound: (ev:any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
 
-    // <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.element" helpKeyword="WinJS.UI.Toolbar.element">
+    /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.element" helpKeyword="WinJS.UI.Toolbar.element">
     /// Gets the DOM element that hosts the Toolbar.
     /// </field>
     get element() {
         return this._element;
     }
 
-    // <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.overflowMode" helpKeyword="WinJS.UI.Toolbar.overflowMode">
+    /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.overflowMode" helpKeyword="WinJS.UI.Toolbar.overflowMode">
     /// Gets or sets the overflow mode of the Toolbar.
     /// </field>
     get overflowMode() {
@@ -142,7 +142,7 @@ export class Toolbar {
         }
     }
 
-    // <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.data" helpKeyword="WinJS.UI.Toolbar.overflowMode">
+    /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.data" helpKeyword="WinJS.UI.Toolbar.overflowMode">
     /// Gets or sets the Binding List of WinJS.UI.Command for the Toolbar.
     /// </field>
     get data() {
