@@ -1307,6 +1307,22 @@ define([
 
             return hiddenElement;
         },
+        
+        // Returns a promise which completes when *element* is in the DOM.
+        _inDom: function Utilities_inDom(element) {
+            return new Promise(function (c) {
+                if (_Global.document.body.contains(element)) {
+                    c();
+                } else {
+                    var nodeInsertedHandler = function () {
+                        element.removeEventListener("WinJSNodeInserted", nodeInsertedHandler, false);
+                        c();
+                    };
+                    exports._addInsertedNotifier(element);
+                    element.addEventListener("WinJSNodeInserted", nodeInsertedHandler, false);
+                }
+            });
+        },
 
         // Browser agnostic method to set element flex style
         // Param is an object in the form {grow: flex-grow, shrink: flex-shrink, basis: flex-basis}
@@ -2076,31 +2092,7 @@ define([
             /// An object that contains the left, top, width and height properties of the element.
             /// </returns>
             /// </signature>
-            var fromElement = element,
-                offsetParent = element.offsetParent,
-                top = element.offsetTop,
-                left = element.offsetLeft;
-
-            while ((element = element.parentNode) &&
-                    element !== _Global.document.body &&
-                    element !== _Global.document.documentElement) {
-                top -= element.scrollTop;
-                var dir = _Global.document.defaultView.getComputedStyle(element, null).direction;
-                left -= dir !== "rtl" ? element.scrollLeft : -getAdjustedScrollPosition(element).scrollLeft;
-
-                if (element === offsetParent) {
-                    top += element.offsetTop;
-                    left += element.offsetLeft;
-                    offsetParent = element.offsetParent;
-                }
-            }
-
-            return {
-                left: left,
-                top: top,
-                width: fromElement.offsetWidth,
-                height: fromElement.offsetHeight
-            };
+            return exports._getPositionRelativeTo(element, null);
         },
 
         getTabIndex: function (element) {
@@ -2220,6 +2212,35 @@ define([
                     }
                     return element;
                 }
+            };
+        },
+        
+        _getPositionRelativeTo: function Utilities_getPositionRelativeTo(element, ancestor) {
+            var fromElement = element,
+                offsetParent = element.offsetParent,
+                top = element.offsetTop,
+                left = element.offsetLeft;
+
+            while ((element = element.parentNode) &&
+                    element !== ancestor &&
+                    element !== _Global.document.body &&
+                    element !== _Global.document.documentElement) {
+                top -= element.scrollTop;
+                var dir = _Global.document.defaultView.getComputedStyle(element, null).direction;
+                left -= dir !== "rtl" ? element.scrollLeft : -getAdjustedScrollPosition(element).scrollLeft;
+
+                if (element === offsetParent) {
+                    top += element.offsetTop;
+                    left += element.offsetLeft;
+                    offsetParent = element.offsetParent;
+                }
+            }
+
+            return {
+                left: left,
+                top: top,
+                width: fromElement.offsetWidth,
+                height: fromElement.offsetHeight
             };
         },
         
@@ -2431,6 +2452,5 @@ define([
 
             return false;
         }
-
     });
 });

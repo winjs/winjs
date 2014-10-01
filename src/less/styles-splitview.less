@@ -1,0 +1,125 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+@import "base.less";
+@import "mixins.less";
+
+.win-splitview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    #flex > .display-flex();
+    overflow: hidden;
+    
+    &.win-splitview-placementtop,
+    &.win-splitview-placementbottom {
+        #flex > .flex-direction(column);
+        
+        .win-splitview-panewrapper {
+            #flex > .flex-direction(column);
+        }
+    }
+    
+    .win-splitview-panewrapper {
+        #flex > .flex(@grow: 0; @shrink: 0);
+        overflow: hidden;
+        
+        #flex > .display-flex();
+    }
+    
+    .win-splitview-pane,
+    .win-splitview-paneplaceholder {
+        #flex > .flex(@grow: 0; @shrink: 0);
+        overflow: hidden;
+    }
+
+    .win-splitview-content {
+        #flex > .flex(@grow: 1; @shrink: 1);
+        overflow: hidden;
+    }
+
+    &.win-splitview-pane-shown {
+        &.win-splitview-placementleft,
+        &.win-splitview-placementright {
+            .win-splitview-pane {
+                width: 320px;
+            }
+        }
+        
+        &.win-splitview-placementtop,
+        &.win-splitview-placementbottom {
+            .win-splitview-pane {
+                height: 320px;
+            }
+        }
+        
+        &.win-splitview-overlaymode {
+            &.win-splitview-placementtop .win-splitview-panewrapper {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+    
+            &.win-splitview-placementbottom .win-splitview-panewrapper {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+            }
+        
+            @pane-left: {
+                .win-splitview-panewrapper {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: auto;
+                    height: 100%;
+                }
+            };
+            
+            @pane-right: {
+                .win-splitview-panewrapper {
+                    position: absolute;
+                    top: 0;
+                    left: auto;
+                    right: 0;
+                    height: 100%;
+                }
+            };
+            
+            &.win-splitview-placementleft {
+                @pane-left();
+                .RTL(@pane-right);
+            }
+            
+            &.win-splitview-placementright {
+                @pane-right();
+                .RTL(@pane-left);
+            }
+        }
+    }
+
+    &.win-splitview-pane-hidden {
+        .win-splitview-paneplaceholder {
+            display: none;
+        }
+
+        &.win-splitview-placementtop,
+        &.win-splitview-placementbottom {
+            .win-splitview-pane {
+                height: 0;
+            }
+        }
+
+        &.win-splitview-placementleft,
+        &.win-splitview-placementright {
+            .win-splitview-pane {
+                width: 0;
+            }
+        }
+    }
+
+    &.win-splitview-inlinemode .win-splitview-paneplaceholder {
+        display: none;
+    }
+}

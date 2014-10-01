@@ -1292,8 +1292,16 @@ module Helper {
         
         export function areFloatsEqual(expectedValue, actualValue, message = "", tolerance = 0.1) {
             var diff = Math.abs(expectedValue - actualValue);
-            LiveUnit.Assert.isTrue(diff < tolerance, message + " (expected = " + expectedValue +
+            LiveUnit.Assert.isTrue(diff <= tolerance, message + " (expected = " + expectedValue +
                 ", actual = " + actualValue + ", tolerance = " + tolerance + ")");
+        }
+        
+        // Asserts that each key of *object* is a member of *validKeys*.
+        export function areKeysValid(object, validKeys) {
+            Object.keys(object).forEach(function (key) {
+                LiveUnit.Assert.areNotEqual(-1, validKeys.indexOf(key),
+                    "Test provided invalid key: " + key + ". Valid properties are: " + validKeys.join(", "));
+            });
         }
     }
 
@@ -1678,5 +1686,10 @@ module Helper {
         }
         return str;
     }
-
+    
+    // Removes the element if it has a parent
+    export function removeElement(element: HTMLElement): void {
+        var parent = element.parentNode;
+        parent && parent.removeChild(element);
+    }
 }

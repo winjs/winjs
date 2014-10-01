@@ -5647,8 +5647,8 @@ declare module WinJS.UI {
     }
 
     /**
- * A tab control that displays multiple items.
-**/
+     * A tab control that displays multiple items.
+    **/
     class Pivot {
         //#region Constructors
 
@@ -7023,6 +7023,147 @@ declare module WinJS.UI {
 
         //#endregion Properties
 
+    }
+    /**
+     * Displays a SplitView which renders a collapsable pane next to arbitrary HTML content.
+    **/
+    class SplitView {
+        /**
+         * Placement options for a SplitView's pane.
+        **/
+        static Placement: {
+            /**
+             * Pane is positioned left of the SplitView's content.
+            **/
+            left: string;
+            /**
+             * Pane is positioned right of the SplitView's content.
+            **/
+            right: string;
+            /**
+             * Pane is positioned above the SplitView's content.
+            **/
+            top: string;
+            /**
+             * Pane is positioned below the SplitView's content.
+            **/
+            bottom: string;
+        }
+        
+        /**
+         * Display options for a SplitView's pane.
+        **/
+        static ShownDisplayMode: {
+            /**
+             * When the pane is shown, it doesn't take up any space and it is light dismissable.
+            **/
+            overlay: string;
+            /**
+             * When the pane is shown, it occupies space leaving less room for the SplitView's content.
+            **/
+            inline: string;
+        }
+        
+        /**
+         * Creates a new SplitView.
+         * @constructor 
+         * @param element The DOM element hosts the new SplitView.
+         * @param options An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds to one of the control's properties or events.
+        **/
+        constructor(element?: HTMLElement, options?: any);
+        
+        /**
+         * Gets the DOM element that hosts the SplitView control.
+        **/
+        element: HTMLElement;
+        
+        /**
+         * Gets the DOM element that hosts the SplitView pane.
+        **/
+        paneElement: HTMLElement;
+        
+        /**
+         * Gets the DOM element that hosts the SplitView's content.
+        **/
+        contentElement: HTMLElement;
+        
+        /**
+         * Gets or sets the placement of the SplitView's pane.
+        **/
+        placement: string;
+        
+        /**
+         * Gets or sets the display mode of the SplitView's pane.
+        **/
+        shownDisplayMode: string;
+        
+        /**
+         * Gets or sets whether the SpitView's pane is currently collapsed.
+        **/
+        hidden: boolean;
+        
+        /**
+         * Shows the SplitView's pane.
+        **/
+        showPane(): void;
+        
+        /**
+         * Hides the SplitView's pane.
+        **/
+        hidePane(): void;
+        
+        /**
+         * Disposes this control.
+        **/
+        dispose(): void;
+        
+        /**
+         * Registers an event handler for the specified event.
+         * @param eventName The name of the event to handle. Note that you drop the "on" when specifying the event name. For example, instead of specifying "onclick", you specify "click".
+         * @param eventHandler The event handler function to associate with the event.
+         * @param useCapture Set to true to register the event handler for the capturing phase; otherwise, set to false to register the event handler for the bubbling phase.
+        **/
+        addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
+        
+        /**
+         * Removes an event handler that the addEventListener method registered.
+         * @param eventName The name of the event that the event handler is registered for.
+         * @param eventCallback The event handler function to remove.
+         * @param useCapture Set to true to remove the capturing phase event handler; set to false to remove the bubbling phase event handler.
+        **/
+        removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
+        
+        /**
+         * Raises an event of the specified type and with additional properties.
+         * @param type The type (name) of the event.
+         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+         * @returns true if preventDefault was called on the event, otherwise false.
+        **/
+        dispatchEvent(type: string, eventProperties: any): boolean;
+        
+        /**
+         * Raised just before showing the pane. Call preventDefault on this event to stop the pane from being shown.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        onbeforeshow(eventInfo: Event): void;
+        
+        /**
+         * Raised immediately after the pane is fully shown.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        onaftershow(eventInfo: Event): void;
+        
+        /**
+         * Raised just before hiding the pane. Call preventDefault on this event to stop the pane from being hidden.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        onbeforehide(eventInfo: Event): void;
+        
+        /**
+         * Raised immediately after the pane is fully hidden.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        onafterhide(eventInfo: Event): void;
     }
 
     /**

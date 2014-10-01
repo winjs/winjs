@@ -897,6 +897,8 @@ export interface IPosition {
 
 //#endregion Interfaces
 
+export declare function _getPositionRelativeTo(element: HTMLElement, ancestor: HTMLElement): IPosition;
+
 export declare function _uniqueID(e: HTMLElement): string;
 
 export declare module _resizeNotifier {
@@ -906,6 +908,7 @@ export declare module _resizeNotifier {
 
 
 export declare function _addInsertedNotifier(element: HTMLElement): void;
+export declare function _inDom(element: HTMLElement): Promise<any>;
 export declare function _reparentChildren(originalParent: HTMLElement, destinationParent: HTMLElement): void;
 export declare function _matchesSelector(element:HTMLElement, selectors: string): boolean;
 export declare function _addEventListener(element: HTMLElement, type: string, listener: EventListener, useCapture?: boolean): void;

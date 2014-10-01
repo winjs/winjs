@@ -48,7 +48,7 @@ declare class Promise<T> {
      * @param value The value to be treated as a Promise.
      * @returns The promise.
     **/
-    static as<U>(value: U): Promise<U>;
+    static as<U>(value?: U): Promise<U>;
 
     /**
      * Attempts to cancel the fulfillment of a promised value. If the promise hasn't already been fulfilled and cancellation is supported, the promise enters the error state with a value of Error("Canceled").
@@ -152,7 +152,7 @@ declare class Promise<T> {
      * @param value Some non-promise value to be wrapped in a promise.
      * @returns A promise that is successfully fulfilled with the specified value.
     **/
-    static wrap<U>(value: U): Promise<U>;
+    static wrap<U>(value?: U): Promise<U>;
 
     /**
      * Wraps a non-promise error value in a promise. You can use this function if you need to pass an error to a function that requires a promise.
@@ -160,6 +160,8 @@ declare class Promise<T> {
      * @returns A promise that is in an error state with the specified value.
     **/
     static wrapError<U>(error: U): Promise<U>;
+    
+    static _cancelBlocker(input: any, oncancel?: Function): Promise<any>;
 
     //#endregion Methods
 }

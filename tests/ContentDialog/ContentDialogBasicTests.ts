@@ -54,7 +54,7 @@ module ContentDialogTests {
             secondaryCommandDisabled: false
         };
         var validPropreties = Object.keys(defaultOptions);
-        Utils.assertValidKeys(providedOptions, validPropreties);
+        Helper.Assert.areKeysValid(providedOptions, validPropreties);
         var options: IContentDialogOptions = WinJS.Utilities._merge(defaultOptions, providedOptions);
 
         var title = dialog.element.querySelector("." + ContentDialog._ClassNames.title);
@@ -529,7 +529,7 @@ module ContentDialogTests {
                         expectedDialogVerticalPosition: undefined
                     };
                     
-                    Utils.assertValidKeys(providedValues, Object.keys(defaultValues));
+                    Helper.Assert.areKeysValid(providedValues, Object.keys(defaultValues));
                     var values: IPositioningAndSizingAssertions = WinJS.Utilities._merge(defaultValues, providedValues);
                     return values;
                 }

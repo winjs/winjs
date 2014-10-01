@@ -40,7 +40,8 @@ define([
     'WinJS/Controls/Tooltip',
     'WinJS/Controls/ViewBox',
     'WinJS/Controls/ContentDialog',
-    'WinJS/Controls/Toolbar'
+    'WinJS/Controls/Toolbar',
+    'WinJS/Controls/SplitView'
     ], function (_WinJS) {
     "use strict";
 

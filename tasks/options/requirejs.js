@@ -119,7 +119,8 @@
                 "require-json": pkgRoot + "require-json",
                 "WinJS": pkgRoot + "WinJS"
             },
-            bundles: bundles
+            bundles: bundles,
+            findNestedDependencies: true
         };
         var output = "(" + JSON.stringify(requireConfig, null, 4) + ")";
         fs.writeFileSync(path.join(config.modulesOutput, "example.build.js"), output);
@@ -278,6 +279,7 @@
         options.optimize = "none"; // uglify2 is run seperately
         options.stubModules = ["require-style", "require-json"];
         options.done = options.done || done;
+        options.findNestedDependencies = true;
 
         // If it doesn't have an exclude then we include the default AMD implementations
         var primary = !options.exclude;

@@ -16,14 +16,6 @@ module ContentDialogTests {
     }
     
     export module Utilities {
-        
-        export function assertValidKeys(object, validKeys) {
-            Object.keys(object).forEach(function (key) {
-                LiveUnit.Assert.areNotEqual(-1, validKeys.indexOf(key),
-                    "Test provided invalid key: " + key + ". Valid properties are: " + validKeys.join(", "));
-            });
-        }
-        
         export function makeCreateDialog(testRoot) {
             function createDialog(providedOptions={}): WinJS.UI.PrivateContentDialog {
                 var defaultOptions: IPrivateContentDialogOptions = {
@@ -34,7 +26,7 @@ module ContentDialogTests {
                     secondaryCommandDisabled: false,
                     innerHTML: ""
                 };
-                assertValidKeys(providedOptions, Object.keys(defaultOptions));
+                Helper.Assert.areKeysValid(providedOptions, Object.keys(defaultOptions));
                 var options: IPrivateContentDialogOptions = WinJS.Utilities._merge(defaultOptions, providedOptions);
                 
                 var element = document.createElement("div");

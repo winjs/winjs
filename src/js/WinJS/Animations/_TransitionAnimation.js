@@ -404,10 +404,10 @@ define([
         }
     }
 
-    function fastAnimation(animation) {
+    function adjustAnimationTime(animation) {
         if (Array.isArray(animation)) {
             return animation.map(function (animation) {
-                return fastAnimation(animation);
+                return adjustAnimationTime(animation);
             });
         } else if (animation) {
             animation.delay = animationTimeAdjustment(animation.delay);
@@ -419,22 +419,18 @@ define([
     }
 
     function animationAdjustment(animation) {
-        if (fastAnimations) {
-            return fastAnimation(animation);
-        } else {
+        if (animationFactor === 1) {
             return animation;
+        } else {
+            return adjustAnimationTime(animation);
         }
     }
 
     var animationTimeAdjustment = function _animationTimeAdjustmentImpl(v) {
-        if (fastAnimations) {
-            return v / 20;
-        } else {
-            return v;
-        }
+        return v * animationFactor;
     };
-
-    var fastAnimations = false;
+    
+    var animationFactor = 1;
     var libraryDelay = 0;
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -534,12 +530,28 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         _fastAnimations: {
             get: function () {
-                return fastAnimations;
+                return animationFactor === 1/20;
             },
             set: function (value) {
-                fastAnimations = value;
+                animationFactor = value ? 1/20 : 1;
             }
-        }
+        },
+        _slowAnimations: {
+            get: function () {
+                return animationFactor === 3;
+            },
+            set: function (value) {
+                animationFactor = value ? 3 : 1;
+            }
+        },
+        _animationFactor: {
+            get: function () {
+                return animationFactor;
+            },
+            set: function (value) {
+                animationFactor = value;
+            }
+        },
     });
 
 });

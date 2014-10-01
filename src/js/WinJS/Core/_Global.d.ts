@@ -2,3 +2,4 @@
 
 export declare var document: HTMLDocument;
 export declare function getComputedStyle(elt: Element, pseudoElt?: string): CSSStyleDeclaration;
+export declare function setTimeout(expression: any, msec?: number, language?: any): number;
