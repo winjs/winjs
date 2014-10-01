@@ -70,8 +70,18 @@ define([
                 get contentDialogAlreadyShowing() { return "Cannot show a ContentDialog if there is already a ContentDialog that is showing"; }
             };
             var DismissalReason = {
+                /// <field locid="WinJS.UI.ContentDialog.none" helpKeyword="WinJS.UI.ContentDialog.none">
+                /// The dialog was dismissed without the user selecting any of the commands. The user may have
+                /// dismissed the dialog by hitting the escape key or pressing the hardware back button.
+                /// </field>
                 none: "none",
+                /// <field locid="WinJS.UI.ContentDialog.primary" helpKeyword="WinJS.UI.ContentDialog.primary">
+                /// The user dismissed the dialog by pressing the primary command.
+                /// </field>
                 primary: "primary",
+                /// <field locid="WinJS.UI.ContentDialog.secondary" helpKeyword="WinJS.UI.ContentDialog.secondary">
+                /// The user dismissed the dialog by pressing the secondary command.
+                /// </field>
                 secondary: "secondary"
             };
             var ClassNames = {
@@ -1050,7 +1060,11 @@ define([
                     _ElementUtilities._focusFirstFocusableElement(this._dom.content) || this._dom.dialog.focus();
                 }
             }, {
+                /// <field locid="WinJS.UI.ContentDialog.DismissalReason" helpKeyword="WinJS.UI.ContentDialog.DismissalReason">
+                /// Specifies the reason that the ContentDialog was dismissed.
+                /// </field>
                 DismissalReason: DismissalReason,
+                
                 _ClassNames: ClassNames
             });
             _Base.Class.mix(ContentDialog, _Events.createEventProperties(
