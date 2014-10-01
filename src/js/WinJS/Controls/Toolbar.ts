@@ -97,6 +97,7 @@ export class Toolbar {
     private _refreshBound: Function;
     private _resizeHandlerBound: (ev:any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
+    private _extraClass: string;
 
     /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.element" helpKeyword="WinJS.UI.Toolbar.element">
     /// Gets the DOM element that hosts the Toolbar.
@@ -137,6 +138,26 @@ export class Toolbar {
         if (!this._initializing) {
             this._positionCommands();
         }
+    }
+
+    /// <field type="String" locid="WinJS.UI.Toolbar.extraClass" helpKeyword="WinJS.UI.Toolbar.extraClass">
+    /// Gets or sets the extra CSS class that is applied to the host DOM element, and the corresponding 
+    /// overflow menu created by the Toolbar when its inlineMenu property is false.
+    /// </field>
+    get extraClass() {
+        return this._extraClass;
+    }
+    set extraClass(value: string) {
+        this._writeProfilerMark("set_extraClass,info");
+
+        if (this._extraClass) {
+            _ElementUtilities.removeClass(this._element, this._extraClass);
+            this._menu && _ElementUtilities.removeClass(this._menu.element, this._extraClass);
+        }
+
+        this._extraClass = value;
+        _ElementUtilities.addClass(this._element, this._extraClass);
+        this._menu && _ElementUtilities.addClass(this._menu.element, this.extraClass);
     }
 
     /// <field type="WinJS.Binding.List" locid="WinJS.UI.Toolbar.data" helpKeyword="WinJS.UI.Toolbar.data">
@@ -847,6 +868,7 @@ export class Toolbar {
         if (!this._menu) {
             this._menu = new Menu.Menu();
             _ElementUtilities.addClass(this._menu.element, _Constants.overflowAreaCssClass);
+            this.extraClass && _ElementUtilities.addClass(this._menu.element, this.extraClass);
             _Global.document.body.appendChild(this._menu.element);
         }
 

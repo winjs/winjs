@@ -1033,6 +1033,29 @@ module CorsicaTests {
             Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["opt 1", "opt 2", "opt 3"]);
             Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["opt 4"]);
         }
+
+        testExtraClassProperty() {
+            var extraCssClass1 = "cool-class1";
+            var extraCssClass2 = "cool-class2";
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: Helper.Toolbar.Constants.typeContent, label: "1", section: Helper.Toolbar.Constants.secondaryCommandSection }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeContent, label: "2", section: Helper.Toolbar.Constants.secondaryCommandSection }),
+            ]);
+            this._element.style.width = "10px";
+            var toolbar = new Toolbar(this._element, {
+                data: data,
+                extraClass: extraCssClass1
+            });
+
+            LiveUnit.Assert.isTrue(Util.hasClass(this._element, extraCssClass1), "ExtraClass is missing in toolbar element");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar._menu.element, extraCssClass1), "ExtraClass is missing in toolbar element");
+
+            toolbar.extraClass = extraCssClass2;
+            LiveUnit.Assert.isFalse(Util.hasClass(this._element, extraCssClass1), "Toolbar is not clearing older extraClass when a new value is set");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar._menu.element, extraCssClass1), "Toolbar is not clearing older extraClass when a new value is set");
+            LiveUnit.Assert.isTrue(Util.hasClass(this._element, extraCssClass2), "ExtraClass is missing in toolbar element");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar._menu.element, extraCssClass2), "ExtraClass is missing in toolbar element");
+        }
     }
 }
 LiveUnit.registerTestClass("CorsicaTests.ToolbarTests");

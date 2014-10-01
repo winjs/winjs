@@ -669,6 +669,7 @@ declare module WinJS {
             public element: HTMLElement;
             public inlineMenu: boolean;
             public data: WinJS.Binding.List<ICommand>;
+            public extraClass: string;
             constructor(element?: HTMLElement, options?: any);
             public dispose(): void;
             public forceLayout(): void;
