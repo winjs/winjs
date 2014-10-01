@@ -88,7 +88,6 @@ define([
                 /// </returns>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
-                // TODO: What's the correct fix?
                 this._requestingFocusOnKeyboardInputHandlerBind = this._requestingFocusOnKeyboardInputHandler.bind(this);
                 
                 // Elements
@@ -116,9 +115,9 @@ define([
                     },
                     set: function (value) {
                         if (this._focusOnKeyboardInput && !value) {
-                            Application.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
+                            Application._applicationListener.removeEventListener(this.element, "requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
                         } else if (!this._focusOnKeyboardInput && !!value) {
-                            Application.addEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
+                            Application._applicationListener.addEventListener(this.element, "requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
                         }
                         this._focusOnKeyboardInput = !!value;
                     }
@@ -138,7 +137,7 @@ define([
                     AutoSuggestBox.AutoSuggestBox.prototype.dispose.call(this);
                     
                     if (this._focusOnKeyboardInput) {
-                        Application.removeEventListener("requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
+                        Application._applicationListener.removeEventListener(this.element, "requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
                     }
                 },
 
