@@ -762,6 +762,7 @@ define([
             eventQueueJob = null;
             eventQueuedSignal = null;
             unregister();
+            TypeToSearch.updateRegistration();
             cleanupAllPendingDeferrals();
         },
 
