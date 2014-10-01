@@ -42,14 +42,13 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.disposableCssClass), "Toolbar missing disposable css class");
         }
 
-        testAttachedToDomAfterConstruction(complete) {
+        testAppendToDomAfterConstruction(complete) {
             this._element.style.width = "1000px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 1" }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 2" })
             ]);
             var toolbar = new Toolbar(null, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
             var insertedHandler = function () {
@@ -73,33 +72,24 @@ module CorsicaTests {
             LiveUnit.Assert.isNotNull(toolbar.element, "An element should be created when one is not passed to the constructor");
         }
 
-        testOverflowModeProperty() {
-            // default (detached)
+        testInlineMenuProperty() {
+            // default (inlineMenu:false)
             var toolbar = new Toolbar();
-            LiveUnit.Assert.areEqual(Helper.Toolbar.Constants.overflowModeDetached, toolbar.overflowMode, "The default overflowMode should be detached");
-            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.detachedModeCssClass), "Toolbar in detached mode is missing detached css class");
-            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.attachedModeCssClass), "Toolbar in detached mode should not have attached css class");
+            LiveUnit.Assert.areEqual(false, toolbar.inlineMenu, "The default value for inlineMenu should be false");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.flyoutMenuCssClass), "Toolbar with inlineMenu:false is missing flyout menu css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.inlineMenuCssClass), "Toolbar with inlineMenu:false should not have inline menu css class");
 
-            // switch to attached.
-            toolbar.overflowMode = Helper.Toolbar.Constants.overflowModeAttached;
-            LiveUnit.Assert.areEqual(Helper.Toolbar.Constants.overflowModeAttached, toolbar.overflowMode, "OverflowMode should be attached");
-            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.attachedModeCssClass), "Toolbar in attached mode is missing attached css class");
-            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.detachedModeCssClass), "Toolbar in attached mode should not have detached css class");
+            // switch to inlineMenu.
+            toolbar.inlineMenu = true;
+            LiveUnit.Assert.areEqual(true, toolbar.inlineMenu, "InlineMenu property should be true");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.inlineMenuCssClass), "Toolbar with inlineMenu:true is missing inline menu css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.flyoutMenuCssClass), "Toolbar with inlineMenu:true should not have flyout menu css class");
 
-            // switch back to detached
-            toolbar.overflowMode = Helper.Toolbar.Constants.overflowModeDetached;
-            LiveUnit.Assert.areEqual(Helper.Toolbar.Constants.overflowModeDetached, toolbar.overflowMode, "overflowMode should be detached");
-            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.detachedModeCssClass), "Toolbar in detached mode is missing detached css class");
-            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.attachedModeCssClass), "Toolbar in detached mode should not have attached css class");
-
-            // set to invalid value
-            try {
-                toolbar.overflowMode = "invalid";
-            } catch (e) {
-                LiveUnit.Assert.areEqual("WinJS.UI.Toolbar.BadOverflowMode", e.name);
-            } finally {
-                LiveUnit.Assert.areEqual(Helper.Toolbar.Constants.overflowModeDetached, toolbar.overflowMode, "overflowMode should have not changed when set to an invalid value");
-            }
+            // switch back to inlineMenu:false.
+            toolbar.inlineMenu = false;
+            LiveUnit.Assert.areEqual(false, toolbar.inlineMenu, "InlineMenu property should be false");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.flyoutMenuCssClass), "Toolbar with inlineMenu:false is missing flyout menu css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.Toolbar.Constants.inlineMenuCssClass), "Toolbar with inlineMenu:false should not have inline menu css class");
         }
 
         testDataProperty() {
@@ -202,7 +192,7 @@ module CorsicaTests {
 
         testOverflowAreaVisibility() {
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeAttached
+                inlineMenu: true
             });
 
             var overflowArea: HTMLElement;
@@ -215,21 +205,20 @@ module CorsicaTests {
                 }
             }
 
-            LiveUnit.Assert.isNotNull(overflowArea, "Unabled to find overflow area element in attached mode");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(overflowArea).display, "Overflow area should not be hidden in attached mode");
+            LiveUnit.Assert.isNotNull(overflowArea, "Unabled to find overflow area element when inlineMenu:true");
+            LiveUnit.Assert.areNotEqual("none", getComputedStyle(overflowArea).display, "Overflow area should not be hidden when inlineMenu:true");
 
-            toolbar.overflowMode = Helper.Toolbar.Constants.overflowModeDetached;
-            LiveUnit.Assert.areEqual("none", getComputedStyle(overflowArea).display, "Overflow area (attached) should be hidden in detached mode");
+            toolbar.inlineMenu = false;
+            LiveUnit.Assert.areEqual("none", getComputedStyle(overflowArea).display, "Overflow area (inline) should be hidden in inlineMenu:false");
         }
 
-        testOverflowDetachedOverflowButtonHidden() {
+        testflyoutMenuOverflowButtonHidden() {
             this._element.style.width = "1000px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 1" }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 2" })
             ]);
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -238,7 +227,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be hidden when the primary commands fit");
         }
 
-        testOverflowDetachedOverflowButtonVisibleForSecondaryCommand() {
+        testflyoutMenuOverflowButtonVisibleForSecondaryCommand() {
             this._element.style.width = "1000px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 1" }),
@@ -246,7 +235,6 @@ module CorsicaTests {
             ]);
 
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -256,14 +244,13 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(1, Helper.Toolbar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
         }
 
-        testOverflowDetachedOverflowButtonVisibleForPrimaryCommand() {
+        testflyoutMenuOverflowButtonVisibleForPrimaryCommand() {
             this._element.style.width = "10px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 1" }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 2" })
             ]);
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -279,7 +266,6 @@ module CorsicaTests {
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 2" })
             ]);
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -295,7 +281,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(0, Helper.Toolbar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
         }
 
-        testOverflowDetachedSeparatorAddedBetweenPrimaryAndSecondary() {
+        testflyoutMenuSeparatorAddedBetweenPrimaryAndSecondary() {
             this._element.style.width = "10px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "opt 1" }),
@@ -303,7 +289,6 @@ module CorsicaTests {
             ]);
 
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -314,7 +299,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("opt 2", overflowCommands[2].winControl.label);
         }
 
-        testOverflowBehaviorOfCustomContentInDetachedMode() {
+        testFlyoutMenuOverflowBehaviorOfCustomContent() {
             var customEl = document.createElement("div");
             customEl.style.width = "2000px";
             customEl.style.height = "50px";
@@ -325,7 +310,6 @@ module CorsicaTests {
 
             this._element.style.width = "200px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -341,7 +325,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("c1", menuCommand.extraClass, "Invalid extraClass for custom command in the overflow area");
         }
 
-        testOverflowBehaviorOfButtonCommandInDetachedMode() {
+        testFlyoutMenuOverflowBehaviorOfButtonCommand() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "1", extraClass: "c1", disabled: true, onclick: Helper.Toolbar.getVisibleCommandsInElement }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "2", extraClass: "c2", disabled: true, onclick: Helper.Toolbar.getVisibleCommandsInElement }),
@@ -349,7 +333,6 @@ module CorsicaTests {
 
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -366,7 +349,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(Helper.Toolbar.getVisibleCommandsInElement, menuCommand.onclick, "Invalid menuCommand onclick property value");
         }
 
-        testOverflowBehaviorOfToggleCommandInDetachedMode() {
+        testFlyoutMenuOverflowBehaviorOfToggleCommand() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeToggle, label: "1", extraClass: "c1", selected: true, onclick: Helper.Toolbar.getVisibleCommandsInElement }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "2", extraClass: "c2", disabled: true, onclick: Helper.Toolbar.getVisibleCommandsInElement }),
@@ -374,7 +357,6 @@ module CorsicaTests {
 
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -400,7 +382,6 @@ module CorsicaTests {
 
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
             var menuCommand = <WinJS.UI.MenuCommand>(Helper.Toolbar.getVisibleCommandsInElement(toolbar._menu.element)[0]["winControl"]);
@@ -418,7 +399,7 @@ module CorsicaTests {
             LiveUnit.Assert.isFalse(command.winControl.selected, "Invalid menuCommand selected property value");
         }
 
-        testOverflowBehaviorOfFlyoutCommandInDetachedMode() {
+        testFlyoutMenuOverflowBehaviorOfFlyoutCommand() {
             var flyout = new WinJS.UI.Flyout();
             this._element.appendChild(flyout.element);
 
@@ -429,7 +410,6 @@ module CorsicaTests {
 
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -446,7 +426,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(Helper.Toolbar.getVisibleCommandsInElement, menuCommand.onclick, "Invalid menuCommand onclick property value");
         }
 
-        testOverflowBehaviorOfSeparatorCommandInDetachedMode() {
+        testFlyoutMenuOverflowBehaviorOfSeparatorCommand() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "2", extraClass: "c2", disabled: true }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeSeparator }),
@@ -454,7 +434,6 @@ module CorsicaTests {
 
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -475,7 +454,6 @@ module CorsicaTests {
             ]);
 
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -551,7 +529,6 @@ module CorsicaTests {
             ]);
 
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -597,7 +574,6 @@ module CorsicaTests {
             ]);
 
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -646,7 +622,6 @@ module CorsicaTests {
             ]);
 
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -705,48 +680,47 @@ module CorsicaTests {
             Helper.Toolbar.verifyOverflowMenuContent(visibleMenuCommands, ["1", "2", Helper.Toolbar.Constants.typeSeparator, "3", "4", "5", Helper.Toolbar.Constants.typeSeparator, "6", Helper.Toolbar.Constants.typeSeparator, "sec 1", "sec 2"]);
         }
 
-        testDetachedModeMinWidth() {
+        testflyoutMenuMinWidth() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeContent, label: "1" }),
             ]);
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(Helper.Toolbar.Constants.detachedModeMinWidth, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar in detached mode");
+            LiveUnit.Assert.areEqual(Helper.Toolbar.Constants.controlWithFlyoutMenuMinWidth, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar when inlineMenu:false");
         }
 
-        testAttachedModeMinWidth() {
+        testInlineMenuMinWidth() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeContent, label: "1", section: Helper.Toolbar.Constants.secondaryCommandSection }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeContent, label: "2", section: Helper.Toolbar.Constants.secondaryCommandSection }),
             ]);
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeAttached,
+                inlineMenu: true,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(320, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar in attached mode");
+            LiveUnit.Assert.areEqual(320, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar when inlineMenu:true");
         }
 
-        testAttachedOverflowAreaContainerHeightWhenThereIsNoOverflow() {
+        testInlineMenuOverflowAreaContainerHeightWhenThereIsNoOverflow() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeContent, label: "1" }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeContent, label: "2" }),
             ]);
 
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeAttached,
+                inlineMenu: true,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(0, WinJS.Utilities.getTotalHeight(toolbar._attachedOverflowArea), "Invalid height for the overflow area container when there are no commands that overflow");
+            LiveUnit.Assert.areEqual(0, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container when there are no commands that overflow");
         }
 
-        testAttachedOverflowAreaContainerSize() {
+        testInlineMenuOverflowAreaContainerSize() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "1" }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "2" }),
@@ -757,7 +731,7 @@ module CorsicaTests {
             ]);
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeAttached,
+                inlineMenu: true,
                 data: data
             });
 
@@ -766,14 +740,14 @@ module CorsicaTests {
             this._element.style.width = width + "px";
             toolbar.forceLayout();
 
-            LiveUnit.Assert.areEqual(2, Helper.Toolbar.getVisibleCommandsInElement(toolbar._attachedOverflowArea).length, "There should only be 2 commands in the overflow area");
-            LiveUnit.Assert.areEqual(2 * Helper.Toolbar.Constants.overflowAttachedCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._attachedOverflowArea), "Invalid height for the overflow area container");
-            LiveUnit.Assert.areEqual(width, WinJS.Utilities.getTotalWidth(toolbar._attachedOverflowArea), "Invalid width for the overflow area container");
-            LiveUnit.Assert.areEqual(toolbar.element, toolbar._attachedOverflowArea.parentNode, "Invalid parent for the overflow area container");
+            LiveUnit.Assert.areEqual(2, Helper.Toolbar.getVisibleCommandsInElement(toolbar._inlineOverflowArea).length, "There should only be 2 commands in the overflow area");
+            LiveUnit.Assert.areEqual(2 * Helper.Toolbar.Constants.overflowInlineMenuCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(width, WinJS.Utilities.getTotalWidth(toolbar._inlineOverflowArea), "Invalid width for the overflow area container");
+            LiveUnit.Assert.areEqual(toolbar.element, toolbar._inlineOverflowArea.parentNode, "Invalid parent for the overflow area container");
             LiveUnit.Assert.areEqual(toolbar.element, toolbar._mainActionArea.parentNode, "Invalid parent for the main action area container");
         }
 
-        testAttachedOverflowMaxHeightForOnlySecondaryCommands() {
+        testInlineMenuOverflowMaxHeightForOnlySecondaryCommands() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "1", section: Helper.Toolbar.Constants.secondaryCommandSection }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "2", section: Helper.Toolbar.Constants.secondaryCommandSection }),
@@ -787,15 +761,15 @@ module CorsicaTests {
             ]);
             this._element.style.width = "1000px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeAttached,
+                inlineMenu: true,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(4.5 * Helper.Toolbar.Constants.overflowAttachedCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._attachedOverflowArea), "Invalid height for the overflow area container");
-            LiveUnit.Assert.areEqual(9, Helper.Toolbar.getVisibleCommandsInElement(toolbar._attachedOverflowArea).length, "There should be 9 commands in the overflow area");
+            LiveUnit.Assert.areEqual(4.5 * Helper.Toolbar.Constants.overflowInlineMenuCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(9, Helper.Toolbar.getVisibleCommandsInElement(toolbar._inlineOverflowArea).length, "There should be 9 commands in the overflow area");
         }
 
-        testAttachedOverflowMaxHeightForMixedCommands() {
+        testInlineMenuOverflowMaxHeightForMixedCommands() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "1" }),
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "2" }),
@@ -815,28 +789,28 @@ module CorsicaTests {
             ]);
             this._element.style.width = "320px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeAttached,
+                inlineMenu: true,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(4.5 * Helper.Toolbar.Constants.overflowAttachedCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._attachedOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(4.5 * Helper.Toolbar.Constants.overflowInlineMenuCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
         }
 
-        testAttachedModeOverflowButtonVisiblity() {
+        testInlineMenuOverflowButtonVisiblity() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "s1", section: Helper.Toolbar.Constants.secondaryCommandSection }),
             ]);
             this._element.style.width = "320px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeAttached,
+                inlineMenu: true,
                 data: data
             });
-            LiveUnit.Assert.areEqual("hidden", getComputedStyle(toolbar._overflowButton).visibility, "Overflow button should not be visible in attached mode");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should still take space in attached mode");
+            LiveUnit.Assert.areEqual("hidden", getComputedStyle(toolbar._overflowButton).visibility, "Overflow button should not be visible when inlineMenu:true");
+            LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should still take space when inlineMenu:true");
             LiveUnit.Assert.areEqual(24, WinJS.Utilities.getTotalHeight(toolbar._overflowButton), "Overflow button has an invalid height");
         }
 
-        testKeyboardingAttached(complete) {
+        testKeyboardingInlineMenuMode(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([
@@ -851,7 +825,7 @@ module CorsicaTests {
             ]);
             this._element.style.width = "320px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeAttached,
+                inlineMenu: true,
                 data: data
             });
 
@@ -891,7 +865,7 @@ module CorsicaTests {
             });
         }
 
-        testKeyboardingDetached(complete) {
+        testKeyboardingflyoutMenu(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([
@@ -906,7 +880,6 @@ module CorsicaTests {
             ]);
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -965,7 +938,6 @@ module CorsicaTests {
             ]);
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -1013,7 +985,6 @@ module CorsicaTests {
             ]);
             this._element.style.width = "10px";
             var toolbar = new Toolbar(this._element, {
-                overflowMode: Helper.Toolbar.Constants.overflowModeDetached,
                 data: data
             });
 
@@ -1060,7 +1031,7 @@ module CorsicaTests {
                 data: data
             });
             Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["opt 1", "opt 2", "opt 3"]);
-            Helper.Toolbar.verifyOverflowMenuContent(Helper.Toolbar.getVisibleCommandsInElement(toolbar._menu.element), ["opt 4"]);
+            Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["opt 4"]);
         }
     }
 }

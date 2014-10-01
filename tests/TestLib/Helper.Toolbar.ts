@@ -6,8 +6,6 @@ module Helper.Toolbar {
     "use strict";
     
     export var Constants = {
-        overflowModeAttached: "attached",
-        overflowModeDetached: "detached",
         typeSeparator: "separator",
         typeContent: "content",
         typeButton: "button",
@@ -16,15 +14,15 @@ module Helper.Toolbar {
         controlCssClass: "win-toolbar",
         disposableCssClass: "win-disposable",
         overflowAreaCssClass: "win-toolbar-overflowarea",
-        attachedModeCssClass: "win-toolbar-attached",
-        detachedModeCssClass: "win-toolbar-detached",
+        flyoutMenuCssClass: "win-toolbar-flyoutmenu",
+        inlineMenuCssClass: "win-toolbar-inlinemenu",
         emptyToolbarCssClass: "win-toolbar-empty",
         commandType: "WinJS.UI.AppBarCommand",
         secondaryCommandSection: "secondary",
         commandSelector: ".win-command",
-        overflowAttachedCommandHeight: 44,
-        overflowAttachedSeparatorHeight: 12,
-        detachedModeMinWidth: 100
+        overflowInlineMenuCommandHeight: 44,
+        overflowInlineMenuSeparatorHeight: 12,
+        controlWithFlyoutMenuMinWidth: 100
     }
 
     export function getVisibleCommandsInElement(element: HTMLElement) {
@@ -58,7 +56,8 @@ module Helper.Toolbar {
     }
 
     export function verifyOverflowAreaCommandsLabels(toolbar: WinJS.UI.Toolbar, labels: string[]) {
-        var commands = getVisibleCommandsInElement((<WinJS.UI.PrivateToolbar>toolbar.element.winControl)._attachedOverflowArea);
+        var control = <WinJS.UI.PrivateToolbar>toolbar.element.winControl;
+        var commands = getVisibleCommandsInElement(control.inlineMenu ? control._inlineOverflowArea : control._menu.element);
         labels.forEach((label, index) => {
             LiveUnit.Assert.areEqual(label, commands[index].winControl.label);
         });

@@ -312,7 +312,7 @@ define([
                 get ariaLabel() { return _Resources._getWinJSString("ui/appBarAriaLabel").value; },
                 get requiresCommands() { return "Invalid argument: commands must not be empty"; },
                 get cannotChangePlacementWhenVisible() { return "Invalid argument: The placement property cannot be set when the AppBar is visible, call hide() first"; },
-                get badLayout() { return "Invalid argument: The layout property must be 'custom', 'drawer' or 'commands'"; },
+                get badLayout() { return "Invalid argument: The layout property must be 'custom', 'menu' or 'commands'"; },
                 get cannotChangeLayoutWhenVisible() { return "Invalid argument: The layout property cannot be set when the AppBar is visible, call hide() first"; }
             };
 
@@ -497,7 +497,7 @@ define([
                     set: function (layout) {
                         if (layout !== _Constants.appBarLayoutCommands &&
                             layout !== _Constants.appBarLayoutCustom && 
-                            layout !== _Constants.appBarLayoutDrawer) {
+                            layout !== _Constants.appBarLayoutMenu) {
                             throw new _ErrorFromName("WinJS.UI.AppBar.BadLayout", strings.badLayout);
                         }
 
@@ -524,8 +524,8 @@ define([
                         // Set layout
                         if (layout === _Constants.appBarLayoutCommands) {
                             this._layout = new _Layouts._AppBarCommandsLayout();
-                        } else if (layout === _Constants.appBarLayoutDrawer) {
-                            this._layout = new _Layouts._AppBarDrawerLayout();
+                        } else if (layout === _Constants.appBarLayoutMenu) {
+                            this._layout = new _Layouts._AppBarMenuLayout();
                         } else {
                             // Custom layout uses Base AppBar Layout class.
                             this._layout = new _Layouts._AppBarBaseLayout();

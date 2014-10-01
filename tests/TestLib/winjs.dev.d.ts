@@ -397,7 +397,7 @@ declare module WinJS {
             _getCommandWidth(command: ICommand): number;
             _customContentFlyout: WinJS.UI.Flyout;
             _customContentContainer: HTMLElement;
-            _attachedOverflowArea: HTMLElement;
+            _inlineOverflowArea: HTMLElement;
         }
 
         class PrivateCommand extends WinJS.UI.AppBarCommand implements ICommand {
@@ -667,7 +667,7 @@ declare module WinJS {
         
         class Toolbar {
             public element: HTMLElement;
-            public overflowMode: string;
+            public inlineMenu: boolean;
             public data: WinJS.Binding.List<ICommand>;
             constructor(element?: HTMLElement, options?: any);
             public dispose(): void;

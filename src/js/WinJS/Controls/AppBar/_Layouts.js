@@ -477,28 +477,28 @@ define([
     };
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
-        _AppBarDrawerLayout: _Base.Namespace._lazy(function () {
-            var layoutClassName = _Constants.drawerLayoutClass;
-            var layoutType = _Constants.appBarLayoutDrawer;
+        _AppBarMenuLayout: _Base.Namespace._lazy(function () {
+            var layoutClassName = _Constants.menuLayoutClass;
+            var layoutType = _Constants.appBarLayoutMenu;
 
-            var _AppBarDrawerLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarDrawerLayout_ctor(appBarEl) {
+            var _AppBarMenuLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarMenuLayout_ctor(appBarEl) {
                 exports._AppBarBaseLayout.call(this, appBarEl, { _className: layoutClassName, _type: layoutType });
                 this._tranformNames = _BaseUtils._browserStyleEquivalents["transform"];
             }, {
-                layout: function _AppBarDrawerLayout_layout(commands) {
+                layout: function _AppBarMenuLayout_layout(commands) {
                     this._writeProfilerMark("layout,info");
 
-                    if (this._drawer) {
-                        _ElementUtilities.empty(this._drawer);
+                    if (this._menu) {
+                        _ElementUtilities.empty(this._menu);
                     } else {
-                        this._drawer = _Global.document.createElement("div");
-                        _ElementUtilities.addClass(this._drawer, _Constants.drawerContainerClass);
-                        this.appBarEl.appendChild(this._drawer);
+                        this._menu = _Global.document.createElement("div");
+                        _ElementUtilities.addClass(this._menu, _Constants.menuContainerClass);
+                        this.appBarEl.appendChild(this._menu);
                     }
 
                     this._toolbarContainer = _Global.document.createElement("div");
                     _ElementUtilities.addClass(this._toolbarContainer, _Constants.toolbarContainerClass);
-                    this._drawer.appendChild(this._toolbarContainer);
+                    this._menu.appendChild(this._toolbarContainer);
 
                     this._toolbarEl = _Global.document.createElement("div");
                     this._toolbarContainer.appendChild(this._toolbarEl);
@@ -506,19 +506,19 @@ define([
                     this._createToolbar(commands);
                 },
 
-                connect: function _AppBarDrawerLayout_connect(appBarEl) {
+                connect: function _AppBarMenuLayout_connect(appBarEl) {
                     this._writeProfilerMark("connect,info");
 
                     exports._AppBarBaseLayout.prototype.connect.call(this, appBarEl);
                     this._id = _ElementUtilities._uniqueID(appBarEl);
                 },
 
-                resize: function _AppBarDrawerLayout_resize() {
+                resize: function _AppBarMenuLayout_resize() {
                     this._writeProfilerMark("resize,info");
                     this._forceLayoutPending = true;
                 },
 
-                positionChanging: function _AppBarDrawerLayout_positionChanging(fromPosition, toPosition) {
+                positionChanging: function _AppBarMenuLayout_positionChanging(fromPosition, toPosition) {
                     this._writeProfilerMark("positionChanging from:" + fromPosition + " to: " + toPosition + ",info");
 
                     if (toPosition === "shown") {
@@ -528,7 +528,7 @@ define([
                     }
                 },
 
-                disposeChildren: function _AppBarDrawerLayout_disposeChildren() {
+                disposeChildren: function _AppBarMenuLayout_disposeChildren() {
                     this._writeProfilerMark("disposeChildren,info");
 
                     if (this._toolbar) {
@@ -536,7 +536,7 @@ define([
                     }
                 },
 
-                _createToolbar: function _AppBarDrawerLayout_createToolbar(commands) {
+                _createToolbar: function _AppBarMenuLayout_createToolbar(commands) {
                     this._writeProfilerMark("_createToolbar,info");
 
                     var data = [];
@@ -558,7 +558,7 @@ define([
 
                     this._toolbar = new Toolbar.Toolbar(this._toolbarEl, {
                         data: new BindingList.List(data),
-                        overflowMode: "attached"
+                        inlineMenu: true
                     });
 
                     this._positionToolbar();
@@ -573,18 +573,18 @@ define([
                     }
                 },
 
-                _positionToolbar: function _AppBarDrawerLayout_positionContainers() {
+                _positionToolbar: function _AppBarMenuLayout_positionContainers() {
                     this._writeProfilerMark("_positionToolbar,info");
 
-                    var drawerOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
+                    var menuOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
                     var toolbarOffset = this._toolbarEl.offsetHeight - (this._isMinimal() ? 0 : this.appBarEl.offsetHeight);
 
                     this._toolbarContainer.style[this._tranformNames.scriptName] = "translateY(0px)";
-                    this._drawer.style[this._tranformNames.scriptName] = "translateY(-" + drawerOffset + 'px)';
+                    this._menu.style[this._tranformNames.scriptName] = "translateY(-" + menuOffset + 'px)';
                     this._toolbarEl.style[this._tranformNames.scriptName] = "translateY(" + toolbarOffset + 'px)';
                 },
 
-                _animateToolbarEntrance: function _AppBarDrawerLayout_animateToolbarEntrance() {
+                _animateToolbarEntrance: function _AppBarMenuLayout_animateToolbarEntrance() {
                     this._writeProfilerMark("_animateToolbarEntrance,info");
 
                     if (this._forceLayoutPending) {
@@ -605,7 +605,7 @@ define([
                     return Promise.join([animation1, animation2]);
                 },
 
-                _animateToolbarExit: function _AppBarDrawerLayout_animateToolbarExit() {
+                _animateToolbarExit: function _AppBarMenuLayout_animateToolbarExit() {
                     this._writeProfilerMark("_animateToolbarExit,info");
 
                     var heightVisible = this._isMinimal() ? 0 : this.appBarEl.offsetHeight;
@@ -614,7 +614,7 @@ define([
                     return Promise.join([animation1, animation2]);
                 },
 
-                _executeTranslate: function _AppBarDrawerLayout_executeTranslate(element, value) {
+                _executeTranslate: function _AppBarMenuLayout_executeTranslate(element, value) {
                     return _TransitionAnimation.executeTransition(element,
                         {
                             property: this._tranformNames.cssName,
@@ -625,20 +625,20 @@ define([
                         });
                 },
 
-                _isMinimal: function _AppBarDrawerLayout_isMinimal() {
+                _isMinimal: function _AppBarMenuLayout_isMinimal() {
                     return this.appBarEl.winControl.closedDisplayMode === "minimal";
                 },
 
-                _isBottom: function _AppBarDrawerLayout_isBottom() {
+                _isBottom: function _AppBarMenuLayout_isBottom() {
                     return this.appBarEl.winControl.placement === "bottom";
                 },
 
-                _writeProfilerMark: function _AppBarDrawerLayout_writeProfilerMark(text) {
-                    _WriteProfilerMark("WinJS.UI._AppBarDrawerLayout:" + this._id + ":" + text);
+                _writeProfilerMark: function _AppBarMenuLayout_writeProfilerMark(text) {
+                    _WriteProfilerMark("WinJS.UI._AppBarMenuLayout:" + this._id + ":" + text);
                 }
             });
 
-            return _AppBarDrawerLayout;
+            return _AppBarMenuLayout;
         }),
     });
 });
