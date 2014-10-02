@@ -428,19 +428,19 @@ module HubTests {
         // Test functions
     }
 
-    HubUtils.test(BasicTests, hostSelector, "Init", InitTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "LoadingStateChanged", LoadingStateChangedTest), { priority: 0 };
-    HubUtils.test(BasicTests, hostSelector, "RemoveFromDOMTest", RemoveFromDOMTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "RehydrationTest", RehydrationTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "SwapOrientation", SwapOrientationTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "SwapHeaderTemplateTest", SwapHeaderTemplateTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "HeaderInvokedTest", HeaderInvokedTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "SetSectionOnScreenTest", SetSectionOnScreenTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "GetSectionOnScreenTest", GetSectionOnScreenTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "GetScrollPosTest", GetScrollPosTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "SetScrollPosTest", SetScrollPosTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "SwapSectionsTest", SwapSectionsTest, { priority: 0 });
-    HubUtils.test(BasicTests, hostSelector, "DeleteAll", DeleteAllTest, { priority: 1 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "Init", InitTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "LoadingStateChanged", LoadingStateChangedTest), { priority: 0 };
+    HubUtils.test(BasicTests.prototype, hostSelector, "RemoveFromDOMTest", RemoveFromDOMTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "RehydrationTest", RehydrationTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "SwapOrientation", SwapOrientationTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "SwapHeaderTemplateTest", SwapHeaderTemplateTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "HeaderInvokedTest", HeaderInvokedTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "SetSectionOnScreenTest", SetSectionOnScreenTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "GetSectionOnScreenTest", GetSectionOnScreenTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "GetScrollPosTest", GetScrollPosTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "SetScrollPosTest", SetScrollPosTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "SwapSectionsTest", SwapSectionsTest, { priority: 0 });
+    HubUtils.test(BasicTests.prototype, hostSelector, "DeleteAll", DeleteAllTest, { priority: 1 });
 }
 
 LiveUnit.registerTestClass("HubTests.BasicTests");
