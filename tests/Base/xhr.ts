@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // <reference path="ms-appx://$(TargetFramework)/js/base.js" />
 /// <reference path="../TestLib/Helper.ts" />
-///<reference path="../../bin/typings/tsd.d.ts" />
+///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
 /// <deploy src="../TestData/" />

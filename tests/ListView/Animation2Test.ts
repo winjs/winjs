@@ -6,7 +6,7 @@
 /// <reference path="../TestLib/Helper.ts" />
 /// <reference path="../TestLib/Helper.ListView.ts" />
 // <reference path="../TestData/ListView.less.css" />
-///<reference path="../../bin/typings/tsd.d.ts" />
+///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
 
