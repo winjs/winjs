@@ -79,12 +79,13 @@
     function moduleDone(done, output) {
         var fs = require("fs-extra");
 
-        // require-style seems to build in WinJS rather then in the root
+        // require-style seems to build in WinJS rather than in the root
         fs.copySync(path.join(config.modulesOutput, "WinJS/css"), path.join(config.modulesOutput, "css"));
         // rename the main file
         fs.copySync(path.join(config.modulesOutput, "WinJS.js"), path.join(config.modulesOutput, "WinJS-custom.js"));
-        // replace require-style with a stub
+        // replace require-style and require-json with a stub
         fs.writeFileSync(path.join(config.modulesOutput, "require-style.js"), config.copyright + "define({ load: function (name, req, onload, config) { onload(); }});");
+        fs.writeFileSync(path.join(config.modulesOutput, "require-json.js"), config.copyright + "define({ load: function (name, req, onload, config) { onload(); }});");
 
         // require.js copies some undesirable source files over
         var toRemove = [
