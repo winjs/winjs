@@ -844,7 +844,7 @@ module CorsicaTests {
         };
 
         testCommandsLayoutCleansUpAfterItself = function (complete) {
-            // Verify that switching away from commands layout will remove the commandlayout class, the win-reduced class,
+            // Verify that switching away from commands layout will remove the commandlayout class,
             // and any commands layout specific HTML from the AppBar element.
             var root = document.getElementById("appBarDiv");
             root.innerHTML =
@@ -859,12 +859,8 @@ module CorsicaTests {
             var layoutHTML = appBar.element.querySelectorAll(".win-primarygroup, .win-secondarygroup");
             LiveUnit.Assert.isTrue(layoutHTML.length === 2, "commands layout appbar should have its own HTML inside of the AppBar element.");
 
-            // Programatically add the win-reduced class to verify that switching away from commands layout removes it.
-            WinJS.Utilities.addClass(appBar.element, _Constants.reducedClass);
-
             appBar.layout = "custom";
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(appBar.element, _Constants.commandLayoutClass), "Custom Layout AppBar should not have the commands layout CSS class");
-            LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(appBar.element, _Constants.reducedClass), "Custom Layout AppBar should not have the win-reduced CSS class");
             layoutHTML = appBar.element.querySelectorAll(".win-primarygroup, .win-secondarygroup");
             LiveUnit.Assert.isTrue(layoutHTML.length === 0, "custom layout appbar should not have commands layout HTML inside of the AppBar element.");
 

@@ -380,25 +380,7 @@ define([
                 this.scale();
             }
         },
-        scale: function _commandLayoutsMixin_scale() {
-            // If the total width of all AppBarCommands in the primary row is greater than the
-            // width of the AppBar, add the win-reduced class to the AppBar element and all
-            // AppBarCommands will reduce in size.
 
-            // Measure the width all visible commands in  AppBar's primary row, the AppBar's offsetWidth and the AppBar horizontal padding:
-            var fullSizeWidthOfVisibleContent = this._getWidthOfFullSizeCommands();
-            if (this._appBarTotalKnownWidth !== +this._appBarTotalKnownWidth) {
-                this._appBarTotalKnownWidth = this._scaleHelper();
-            }
-
-            if (fullSizeWidthOfVisibleContent <= this._appBarTotalKnownWidth) {
-                // Full size commands
-                _ElementUtilities.removeClass(this.appBarEl, _Constants.reducedClass);
-            } else {
-                // Reduced size commands
-                _ElementUtilities.addClass(this.appBarEl, _Constants.reducedClass);
-            }
-        },
         resize: function _commandLayoutsMixin_resize() {
             if (!this._disposed) {
                 // Check for horizontal window resizes.
@@ -409,7 +391,6 @@ define([
             }
         },
         disconnect: function _commandLayoutsMixin_disconnect() {
-            _ElementUtilities.removeClass(this.appBarEl, _Constants.reducedClass);
             exports._AppBarBaseLayout.prototype.disconnect.call(this);
         },
         _commandLayoutsInit: function _commandLayoutsMixin_commandLayoutsInit() {
@@ -437,10 +418,6 @@ define([
             if (_Global.document.body.contains(this.appBarEl)) {
                 this._needToMeasureNewCommands = false;
 
-                // Remove the reducedClass from AppBar to ensure fullsize measurements
-                var hadReducedClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.reducedClass);
-                _ElementUtilities.removeClass(this.appBarEl, _Constants.reducedClass);
-
                 var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
                 _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
 
@@ -464,9 +441,6 @@ define([
 
                 // Restore state to AppBar.
                 this.appBarEl.style.display = prevAppBarDisplay;
-                if (hadReducedClass) {
-                    _ElementUtilities.addClass(this.appBarEl, _Constants.reducedClass);
-                }
                 if (hadHiddenClass) {
                     _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
                 }
@@ -545,9 +519,6 @@ define([
                         data.push(that.sanitizeCommand(command));
                     });
 
-                    // Remove the reducedClass from AppBar to ensure fullsize measurements
-                    var hadReducedClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.reducedClass);
-                    _ElementUtilities.removeClass(this.appBarEl, _Constants.reducedClass);
 
                     var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
                     _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
@@ -565,9 +536,6 @@ define([
 
                     // Restore state to AppBar.
                     this.appBarEl.style.display = prevAppBarDisplay;
-                    if (hadReducedClass) {
-                        _ElementUtilities.addClass(this.appBarEl, _Constants.reducedClass);
-                    }
                     if (hadHiddenClass) {
                         _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
                     }

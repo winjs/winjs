@@ -16,19 +16,16 @@ module CorsicaTests {
     var host;
 
     var fullSizeCommandWidth = 100,
-        reducedSizeCommandWidth = 60,
         fullSizeSeparatorWidth = 60,
-        reducedSizeSeparatorWidth = 20,
         originalHelper,
         originalAfterPositionChangeCallBack,
-        reducedAppBarClass = "win-reduced",
         hiddenAppBarClass = "win-hidden";
 
     var testHelperPromise;
     var testHelperPromiseComplete;
 
     function testHelper() {
-        // Return the width that would be available to the AppBar when full size (not reduced). Full size AppBar always has 0 left padding. 
+        // Return the width that would be available to the AppBar when full size. Full size AppBar always has 0 left padding. 
         // If it doesn't have invokeButton because of closedDisplayMode 'none', Full-sized AppBar has 0 right padding, otherwise it will have some right padding.
 
         if (testHelperPromise) {
@@ -69,42 +66,18 @@ module CorsicaTests {
         return cmds;
     }
 
-    function isReducedSizeExpected(appBarElem, cmdCount, sepCount, widthOfAllContentCommands) {
-        // Check if full size commands would fit in the full size AppBar. Otherwise we expect the AppBar to have scaled down. 
-
-        var ctrlWidth = parseInt(getComputedStyle(host).width, 10); // In case AppBar is completely hidden we measure the width of its parent.
-        var hasInvokeButton = appBarElem.winControl.closedDisplayMode !== "none";
-        var spaceForCommandsInFullSizeAppBar = ctrlWidth - (hasInvokeButton ? rightPaddingReservedForInvokeButton : 0);
-
-        LiveUnit.LoggingCore.logComment("Space Available for commands: " + spaceForCommandsInFullSizeAppBar);
-        LiveUnit.LoggingCore.logComment("AppBar command button count: " + cmdCount);
-        LiveUnit.LoggingCore.logComment("AppBar command separator count: " + sepCount);
-        var totalFullSizeCmdWidth = (cmdCount * fullSizeCommandWidth) + (sepCount * fullSizeSeparatorWidth + widthOfAllContentCommands);
-        return totalFullSizeCmdWidth > spaceForCommandsInFullSizeAppBar ? true : false;
-    }
-
     function setWidth(element, width) {
         element.style.width = width + "px";
     }
 
     function verifyCommandSizes(appBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, widthOfAllContentCommands) {
-        var expectingReducedSize = isReducedSizeExpected(appBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, widthOfAllContentCommands);
-
-        verifyReducedClass(expectingReducedSize, appBarElem);
-
         LiveUnit.LoggingCore.logComment("Verifying Command Sizes");
         // We have a hard coded expectaion about button and separator command sizes. Verify them now.
-        verifyButtonCommandSizes(expectingReducedSize, appBarElem);
-        verifySeparatorCommandSizes(expectingReducedSize, appBarElem);
+        verifyButtonCommandSizes(appBarElem);
+        verifySeparatorCommandSizes(appBarElem);
     }
 
-    function verifyReducedClass(expectingReducedSize, appBarElem) {
-        LiveUnit.LoggingCore.logComment("Expecting Reduced-sized commands? " + expectingReducedSize);
-        LiveUnit.Assert.areEqual(WinJS.Utilities.hasClass(appBarElem, reducedAppBarClass), expectingReducedSize),
-        "AppBar hasClass \"" + reducedAppBarClass + "\":" + expectingReducedSize + ", but we were expecting " + !expectingReducedSize;
-    }
-
-    function verifyButtonCommandSizes(expectingReducedSize, appBarElem) {
+    function verifyButtonCommandSizes(appBarElem) {
         var buttons = appBarElem.querySelectorAll("button.win-command"),
             buttonsLength = buttons.length,
             labelElement,
@@ -120,23 +93,15 @@ module CorsicaTests {
             wasHidden = true;
             WinJS.Utilities.removeClass(appBarElem, hiddenAppBarClass);
         }
-        if (expectingReducedSize) { // Reduced-size commands.
-            for (var i = 0; i < buttonsLength; i++) {
-                if (!buttons[i].winControl.hidden) {
-                    LiveUnit.Assert.areEqual(buttons[i].offsetWidth, reducedSizeCommandWidth, "Command Buttons are too big");
-                    labelElement = buttons[i].querySelector(".win-label");
-                    LiveUnit.Assert.areEqual(getComputedStyle(labelElement).display, "none", "Command Button labels should be hidden");
-                }
-            }
-        } else { // Full-size commands.
-            for (var i = 0; i < buttonsLength; i++) {
-                if (!buttons[i].winControl.hidden) {
-                    LiveUnit.Assert.areEqual(buttons[i].offsetWidth, fullSizeCommandWidth, "Command Buttons are too small");
-                    labelElement = buttons[i].querySelector(".win-label");
-                    LiveUnit.Assert.areNotEqual(labelElement.style.display, "none", "Command Button labels should be visible when commands are full size.");
-                }
+
+        for (var i = 0; i < buttonsLength; i++) {
+            if (!buttons[i].winControl.hidden) {
+                LiveUnit.Assert.areEqual(buttons[i].offsetWidth, fullSizeCommandWidth, "Command Buttons are too small");
+                labelElement = buttons[i].querySelector(".win-label");
+                LiveUnit.Assert.areNotEqual(labelElement.style.display, "none", "Command Button labels should be visible when commands are full size.");
             }
         }
+
         if (displayNone) {
             // Restore display.
             appBarElem.style.display = "none";
@@ -146,29 +111,19 @@ module CorsicaTests {
         }
     }
 
-    function verifySeparatorCommandSizes(expectingReducedSize, appBarElem) {
+    function verifySeparatorCommandSizes(appBarElem) {
         var separators = appBarElem.querySelectorAll("hr.win-command"),
             separatorsLength = separators.length,
             style,
             measurement;
-        if (expectingReducedSize) { // Reduced-size commands.
-            for (var i = 0; i < separatorsLength; i++) {
-                if (!separators[i].winControl.hidden) {
-                    style = getComputedStyle(separators[i]); // For separators we have to measure their width + margins.
-                    measurement = parseInt(style.marginLeft, 10) + parseInt(style.marginRight, 10) + parseInt(style.width, 10);
-                    LiveUnit.Assert.areEqual(measurement, reducedSizeSeparatorWidth, "Command Separators are too big");
-                }
-            }
-        } else { // Full-size commands.
-            for (var i = 0; i < separatorsLength; i++) {
-                if (!separators[i].winControl.hidden) {
-                    style = getComputedStyle(separators[i]); // For separators we have to measure their width + margins.
-                    measurement = parseInt(style.marginLeft, 10) + parseInt(style.marginRight, 10) + parseInt(style.width, 10);
-                    LiveUnit.Assert.areEqual(measurement, fullSizeSeparatorWidth, "Command Separators are too small");
-                }
+
+        for (var i = 0; i < separatorsLength; i++) {
+            if (!separators[i].winControl.hidden) {
+                style = getComputedStyle(separators[i]); // For separators we have to measure their width + margins.
+                measurement = parseInt(style.marginLeft, 10) + parseInt(style.marginRight, 10) + parseInt(style.width, 10);
+                LiveUnit.Assert.areEqual(measurement, fullSizeSeparatorWidth, "Command Separators are too small");
             }
         }
-
     }
 
     function waitForCommandAnimations(appBar, animateCommands) {
@@ -230,170 +185,17 @@ module CorsicaTests {
 
             LiveUnit.LoggingCore.logComment("Verify padding for full-size AppBar with InvokeButton");
             topAppBar.closedDisplayMode = 'minimal';
-            WinJS.Utilities.removeClass(topAppBarElem, reducedAppBarClass);
             var appBarStyle = getComputedStyle(topAppBarElem);
             LiveUnit.Assert.areEqual(0, parseInt(appBarStyle.paddingLeft, 10), "Incorrect left padding for full-size AppBar with InvokeButton");
             LiveUnit.Assert.areEqual(rightPaddingReservedForInvokeButton, parseInt(appBarStyle.paddingRight, 10), "Incorrect right padding for full-size AppBar with InvokeButton");
 
             LiveUnit.LoggingCore.logComment("Verify padding for full-size AppBar with no InvokeButton");
             topAppBar.closedDisplayMode = "none";
-            WinJS.Utilities.removeClass(topAppBarElem, reducedAppBarClass);
             appBarStyle = getComputedStyle(topAppBarElem);
             LiveUnit.Assert.areEqual(0, parseInt(appBarStyle.paddingLeft, 10), "Incorrect left padding for full-size AppBar with no InvokeButton");
             LiveUnit.Assert.areEqual(0, parseInt(appBarStyle.paddingRight, 10), "Incorrect right padding for full-size AppBar with no InvokeButton");
 
-            LiveUnit.LoggingCore.logComment("Verify padding for win-reduced AppBar with InvokeButton");
-            topAppBar.closedDisplayMode = 'minimal';
-            WinJS.Utilities.addClass(topAppBarElem, reducedAppBarClass);
-            appBarStyle = getComputedStyle(topAppBarElem);
-            LiveUnit.Assert.areEqual(10, parseInt(appBarStyle.paddingLeft, 10), "Incorrect left padding for win-reduced AppBar with InvokeButton");
-            LiveUnit.Assert.areEqual(rightPaddingReservedForInvokeButton, parseInt(appBarStyle.paddingRight, 10), "Incorrect right padding for win-reduced AppBar with InvokeButton");
-
-            LiveUnit.LoggingCore.logComment("Verify padding for win-reduced AppBar with no InvokeButton");
-            topAppBar.closedDisplayMode = "none";
-            WinJS.Utilities.addClass(topAppBarElem, reducedAppBarClass);
-            appBarStyle = getComputedStyle(topAppBarElem);
-            LiveUnit.Assert.areEqual(10, parseInt(appBarStyle.paddingLeft, 10), "Incorrect left padding for win-reduced AppBar with no InvokeButton");
-            LiveUnit.Assert.areEqual(10, parseInt(appBarStyle.paddingRight, 10), "Incorrect right padding for win-reduced AppBar with no InvokeButton");
-
             complete();
-        };
-
-        testCommandSizeAtAppBarInitAndResize = function (complete) {
-            var noInvokeButton_topAppBar,
-                invokeButton_bottomAppBar;
-
-            var topAppBarElem = document.getElementById("topappbar"),
-                bottomAppBarElem = document.getElementById("bottomappbar"),
-                appBarVisibleCommandCount = 6,
-                appBarVisibleSeparatorCount = 1;
-
-            // Create AppBarCommands via JavaScript for the topAppBar and then pass them to the constructor of the TopAppBar.
-            var commands = createAppBarCommands(appBarVisibleCommandCount, appBarVisibleSeparatorCount);
-            // Add 2 hidden commands to verify that these are not included when we calculate how wide the commands are.
-            commands = commands.concat([
-                new WinJS.UI.AppBarCommand(null, { label: "hiddenButton", hidden: true }),
-                new WinJS.UI.AppBarCommand(null, { hidden: true, type: "separator" })
-            ]);
-            // Add a content command
-            var contentDiv = document.createElement("DIV");
-            contentDiv.innerHTML = "<div style=\"height:50px; width:50px; background-color:yellow;\"></div>";
-            contentDiv.style.padding = "0px";
-            contentDiv.style.margin = "0px";
-            contentDiv.style.border = "none";
-            commands = commands.concat([
-                new WinJS.UI.AppBarCommand(contentDiv, { id: "contentDiv", type: 'content' }),
-            ]);
-
-            LiveUnit.LoggingCore.logComment("Top AppBarCommands created");
-
-
-            // Create AppBarCommands as innerHTML of the BottomAppBarElement and then call the AppBar constructor. Include 2 extra hidden buttons and one visible content command.
-            bottomAppBarElem.innerHTML = "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{label:\"Button 0\", type:\"button\", section:\"global\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{label:\"Button 2\", type:\"button\", section:\"selection\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{label:\"Button 3\", type:\"button\", section:\"global\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{label:\"Button 4\", type:\"button\", section:\"selection\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{label:\"Button 5\", type:\"button\", section:\"selection\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{label:\"Button 6\", type:\"button\", section:\"global\", hidden: true}'></button>" +
-            "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", hidden: true, section:\"global\"}' />" +
-            "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", section:\"selection\"}' />" +
-            "<div style=\"border:none; padding:0px; margin:0px;\" data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"content\", section:\"selection\"}'> <div style=\"height:50px;width:50px; background-color:yellow;\"></div> </div>";
-
-            // The total widths of full size commands in each AppBar should be 710px. 
-            var expectedWidthOfFullSizeCommands = 710;
-            // The AppBar's will each start at 650px wide and are constrained by the width of their parent element. 
-            // They will need to scale their content down to fit everything on a sigle row. 
-            // They should do so by scheduling a job to apply the win-reduced class on themselves after construction. 
-            noInvokeButton_topAppBar = new WinJS.UI.AppBar(topAppBarElem, { sticky: true, placement: 'top', commands: commands, closedDisplayMode: 'none' });
-            LiveUnit.LoggingCore.logComment("noInvokeButton_topAppBar has initialized with more commands than it can fit");
-
-            var msg = "noInvokeButton_topAppBar with too many commands should not apply reduced class synchronously from construction.";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(topAppBarElem, reducedAppBarClass), msg);
-
-            testHelperPromise = new WinJS.Promise(function (complete) {
-                testHelperPromiseComplete = complete;
-            }).then(function () {
-
-                    msg = "noInvokeButton_topAppBar with too many comands should have applied reduced class asynchronously after construction.";
-                    LiveUnit.LoggingCore.logComment("Test: " + msg);
-                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(topAppBarElem, reducedAppBarClass), msg);
-
-                    invokeButton_bottomAppBar = new WinJS.UI.AppBar(bottomAppBarElem, { sticky: true, closedDisplayMode: 'minimal' });
-                    LiveUnit.LoggingCore.logComment("invokeButton_bottomAppBar has initialized with more commands than it can fit");
-
-                    var msg = "invokeButton_bottomAppBar with too many commands should not apply reduced class synchronously from construction.";
-                    LiveUnit.LoggingCore.logComment("Test: " + msg);
-                    LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(bottomAppBarElem, reducedAppBarClass), msg);
-
-                    testHelperPromise = new WinJS.Promise(function (complete) {
-                        testHelperPromiseComplete = complete;
-                    });
-                    return testHelperPromise;
-                }).then(function () {
-                    msg = "invokeButton_bottomAppBar with too many commands should have applied reduced class asynchronously after construction.";
-                    LiveUnit.LoggingCore.logComment("Test: " + msg);
-                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(topAppBarElem, reducedAppBarClass), msg);
-
-                    // Show both AppBars so we can test resizing scenarios will cause the AppBar to scale, closed AppBars won't scale on resize.
-                    noInvokeButton_topAppBar.show();
-                    invokeButton_bottomAppBar.show();
-
-                    // Verify that all commands in both AppBars conform to our hardCoded size expectations. 
-                    // Also verify that the total width of fullsize commands in each AppBar is 710. The rest of this test depends on it.
-                    verifyCommandSizes(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv));
-                    verifyCommandSizes(bottomAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(<HTMLElement>bottomAppBarElem.querySelector("div.win-command")));
-
-                    msg = "TEST ERROR: Width of full size commands in top and bottom AppBars don't both match the preconditional value: " + expectedWidthOfFullSizeCommands;
-                    LiveUnit.Assert.isTrue(expectedWidthOfFullSizeCommands === noInvokeButton_topAppBar._layout._getWidthOfFullSizeCommands() && expectedWidthOfFullSizeCommands === invokeButton_bottomAppBar._layout._getWidthOfFullSizeCommands(), msg);
-                    var minimumSizeForFullSizeAppBarWithNoInvokeButton = expectedWidthOfFullSizeCommands;
-                    var minimumSizeForFullSizeAppBarWithInvokeButton = expectedWidthOfFullSizeCommands + rightPaddingReservedForInvokeButton;
-
-                    // Begin Increasing the container width to increase the AppBar width's in turn. Eventually scaling to full size commands.
-                    LiveUnit.LoggingCore.logComment("Testing that AppBar resize scales command appropriately.");
-
-                    // Set width of container to be just under the minimum required for AppBar's with no invokeButton to scale to full size and verify that neither AppBar scales.
-                    setWidth(host, minimumSizeForFullSizeAppBarWithNoInvokeButton - 1);
-
-                    // Workaround since we can't trigger a window resize from javascript directly.
-                    // Let the AppBar layout know that a resize occurred directly.
-                    noInvokeButton_topAppBar._layout.resize();
-                    invokeButton_bottomAppBar._layout.resize();
-
-                    msg = "Neither AppBar should be wide enough to hold commands at full-size."
-            LiveUnit.Assert.isTrue(isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv)), msg);
-                    LiveUnit.Assert.isTrue(isReducedSizeExpected(bottomAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv)), msg);
-
-                    // Set width of container to be EXACTLY the minimum required for AppBar's with no invokeButton to scale to full size and verify that only that AppBar scales up.
-                    setWidth(host, minimumSizeForFullSizeAppBarWithNoInvokeButton);
-                    noInvokeButton_topAppBar._layout.resize();
-                    invokeButton_bottomAppBar._layout.resize();
-
-                    msg = "AppBars without InvokeButton should now be wide enough to hold commands at full size. AppBars with InvokeButton should still have reduced commands."
-            LiveUnit.Assert.isFalse(isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv)), msg);
-                    LiveUnit.Assert.isTrue(isReducedSizeExpected(bottomAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv)), msg);
-
-                    // Set width of container to be just under the minimum required for AppBar's WITH invokeButton to scale to full size. Verify no change since last resize.
-                    setWidth(host, minimumSizeForFullSizeAppBarWithInvokeButton - 1);
-                    noInvokeButton_topAppBar._layout.resize();
-                    invokeButton_bottomAppBar._layout.resize();
-
-                    LiveUnit.Assert.isFalse(isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv)), msg);
-                    LiveUnit.Assert.isTrue(isReducedSizeExpected(bottomAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv)), msg);
-
-                    // Set width of container to be EXACTLY the minimum required for AppBar's WITH invokeButton to scale to full size. Verify Both AppBars are now fullsize.           
-                    setWidth(host, minimumSizeForFullSizeAppBarWithInvokeButton);
-                    noInvokeButton_topAppBar._layout.resize();
-                    invokeButton_bottomAppBar._layout.resize();
-
-                    msg = "AppBars with InvokeButton should now be EXACTLY wide enough to hold commands at full size. All AppBars should be full size."
-            LiveUnit.Assert.isFalse(isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv)), msg);
-                    LiveUnit.Assert.isFalse(isReducedSizeExpected(bottomAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, WinJS.Utilities.getTotalWidth(contentDiv)), msg);
-
-                    complete();
-
-                });
         };
 
         testHideShowAndShowOnlyCommandsWhileClosed = function (complete) {
@@ -447,9 +249,6 @@ module CorsicaTests {
                             appBarVisibleContentWidth -= contentDivWidth;
                         }
                         topAppBar.hideCommands([cmd]);
-                        var expectingReducedClass = isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, appBarVisibleContentWidth);
-                        verifyReducedClass(expectingReducedClass, topAppBarElem);
-
                     }
                 };
                 topAppBar.show();
@@ -470,8 +269,6 @@ module CorsicaTests {
                     } else {
                         appBarVisibleContentWidth += contentDivWidth;
                     }
-                    var expectingReducedClass = isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, appBarVisibleContentWidth);
-                    verifyReducedClass(expectingReducedClass, topAppBarElem);
                 }
                 topAppBar.show();
             }
@@ -490,9 +287,6 @@ module CorsicaTests {
                     appBarVisibleCommandCount = randomCommands.visibleCmdCount;
                     appBarVisibleSeparatorCount = randomCommands.visibleSepCount;
                     appBarVisibleContentWidth = randomCommands.visibleContentWidth;
-
-                    var expectingReducedClass = isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, appBarVisibleContentWidth);
-                    verifyReducedClass(expectingReducedClass, topAppBarElem);
                 }
                 topAppBar.show();
             }
@@ -581,8 +375,6 @@ module CorsicaTests {
                             appBarVisibleContentWidth -= contentDivWidth;
                         }
                         cmd.hidden = true;
-                        var expectingReducedClass = isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, appBarVisibleContentWidth);
-                        verifyReducedClass(expectingReducedClass, topAppBarElem);
                     }
                 }
                 topAppBar.show();
@@ -603,8 +395,6 @@ module CorsicaTests {
                         appBarVisibleContentWidth += contentDivWidth;
                     }
                     cmd.hidden = false;
-                    var expectingReducedClass = isReducedSizeExpected(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, appBarVisibleContentWidth);
-                    verifyReducedClass(expectingReducedClass, topAppBarElem);
                 }
                 topAppBar.show();
             }

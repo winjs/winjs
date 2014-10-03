@@ -430,62 +430,6 @@ AppBar menu layout
     }
 }
 
-/* Narrow buttons and no labels */
-.win-reduced button.win-command .win-label {
-    display: none;
-}
-
-.win-reduced button.win-command .win-commandicon {
-    margin: 0 9px; /* 1px margin for focus */
-}
-
-/* Narrow Separators */
-.win-reduced hr.win-command {
-    margin-bottom: 10px;
-    margin-top: 10px;
-}
-
-.win-reduced hr.win-command {
-    margin-left: 10px;
-    margin-right: 9px;
-}
-
-.win-reduced hr.win-command {
-    .RTL({
-        margin-left: 9px;
-        margin-right: 10px;
-    });
-}
-
-/* Narrow Content Commands */
-.win-reduced div.win-command {
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-
-/* AppBar reduced height and width. */
-.win-commandlayout.win-reduced {
-    padding-left: 10px;
-    padding-right: 10px;
-    width: ~"calc(100% - 20px)";
-    &.win-appbar-showing,
-    &.win-appbar-shown,
-    &.win-appbar-hiding {
-        min-height: 60px;
-    }
-
-    &.win-appbar-minimal{
-        padding-right: 60px;
-        padding-left: 10px;
-        width: ~"calc(100% - 70px)"; // 100% - left & right padding.
-        .RTL({
-            padding-left: 60px;
-            padding-right: 10px;
-        });
-    }
-}
-
 /*
 High contrast AppBar needs a border
 */
@@ -533,23 +477,6 @@ High contrast AppBar needs a border
         &.win-appbar-hiding {
             min-height: 78px;
         }
-    }
-
-    /* High Contrast Reduced sizes slightly different */
-    .win-commandlayout.win-reduced {
-        &.win-appbar-showing,
-        &.win-appbar-shown,
-        &.win-appbar-hiding {
-            min-height: 58px;
-        }
-    }
-
-    .win-appbar.win-reduced.win-top hr.win-command {
-        margin-bottom: 8px;
-    }
-
-    .win-appbar.win-reduced.win-bottom hr.win-command {
-        margin-top: 8px;
     }
 }
 

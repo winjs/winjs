@@ -14,7 +14,6 @@ define([
         ellipsisClass: "win-appbar-ellipsis",
         primaryCommandsClass: "win-primarygroup",
         secondaryCommandsClass: "win-secondarygroup",
-        reducedClass: "win-reduced",
         commandLayoutClass: "win-commandlayout",
         menuLayoutClass: "win-menulayout",
         topClass: "win-top",
