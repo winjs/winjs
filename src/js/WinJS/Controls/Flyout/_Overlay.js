@@ -536,6 +536,9 @@ define([
                         return;
                     }
 
+                    // Do our derived classes hide stuff
+                    this._endHide();
+
                     // Make sure animation is finished.
                     this._element.style.visibility = "hidden";
                     this._element.style.display = "none";
@@ -548,9 +551,6 @@ define([
                         this._queuedToShow = [];
                         this._queuedToHide = [];
                     }
-
-                    // Do our derived classes hide stuff
-                    this._endHide();
 
                     // We're hidden now
                     if (this._doNext === "hide") {

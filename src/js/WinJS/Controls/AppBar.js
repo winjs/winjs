@@ -50,19 +50,43 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AppBar: _Base.Namespace._lazy(function () {
+            function nextVisibleAppBar(thisAppBar) {
+                var appBars = [].slice.call(_Global.document.querySelectorAll("." + _Constants.appBarClass), 0);
+                var index = appBars.indexOf(thisAppBar);
+                if (index !== -1) {
+                    appBars = appBars.slice(index + 1).concat(appBars.slice(0, index));
+                }
+                for (var i = 0, len = appBars.length; i < len; i++) {
+                    if (!appBars[i].winControl.hidden) {
+                        return appBars[i].winControl;
+                    }
+                }
+                return null;
+            }
+
             // ADCOM: Can we turn some of this into a LightDismissableLayer mixin?
             // For example, ld_setZIndex, ld_containsElement, and ld_lightDismiss all just
             // dispatch to the clients. Also, shown and hidden mostly just manage the clients.
             var AppBarManagerClass = _Base.Class.define(function () {
                 this._clients = [];
                 this._zIndex = null; // ADCOM: Can we accidentally use _zIndex while it's null?
+                this._currentFocus = null;
             }, {
                 shown: function (client) {
                     var index = this._clients.indexOf(client);
                     if (index === -1) {
                         this._clients.push(client);
                         if (this._clients.length === 1) {
+                            this._currentFocus = client;
                             _LightDismissService.shown(this);
+                        } else {
+                            // Attempted simplified version of _shouldStealFocus
+                            if (!client.sticky && client._placement === _Constants.appBarPlacementBottom) {
+                                this._currentFocus = client;
+                                if (this._isTopLevel()) {
+                                    client.ld_becameTopLevel();
+                                }
+                            }
                         }
                     }
                 },
@@ -72,14 +96,24 @@ define([
                     var index = this._clients.indexOf(client);
                     if (index !== -1) {
                         this._clients.splice(index, 1);
-                    }
 
-                    if (index !== -1 && this._clients.length === 0) {
-                        _LightDismissService.hidden(this);
-                    } else {
-                        // ADCOM: Make sure an AppBar or one of its Flyouts has focus
-                        //this._restoreFocus();
+                        if (this._clients.length === 0) {
+                            _LightDismissService.hidden(this);
+                        } else if (this._currentFocus == client) {
+                            this._currentFocus = nextVisibleAppBar(client);
+                            if (this._currentFocus && this._isTopLevel()) {
+                                this._currentFocus.ld_becameTopLevel();
+                            }
+                        }
                     }
+                },
+
+                onFocus: function (client) {
+                    this._currentFocus = client;
+                },
+
+                _isTopLevel: function () {
+                    return _LightDismissService.isTopLevel(this);
                 },
 
                 //onFocus: function (d) {
@@ -115,6 +149,13 @@ define([
                     return this._clients.some(function (c) {
                         return c.ld_containsElement(element);
                     });
+                },
+                ld_becameTopLevel: function () {
+                    if (this._currentFocus) {
+                        this._currentFocus.ld_becameTopLevel();
+                    } else {
+                        this._clients[0].ld_becameTopLevel();
+                    }
                 },
                 ld_lightDismiss: function (info) {
                     var clients = this._clients.slice(0);
@@ -485,6 +526,8 @@ define([
 
                 // Handle key down (esc) and (left & right)
                 this._element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
+
+                _ElementUtilities._addEventListener(this._element, "focusin", this._handleFocusIn.bind(this));
 
                 // Attach global event handlers
                 if (!globalEventsInitialized) {
@@ -865,14 +908,15 @@ define([
                         }
 
                         // Check if we should steal focus
-                        if (!this._doNotFocus && this._shouldStealFocus()) {
-                            // Store what had focus if nothing currently is stored
-                            if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
-                                _storePreviousFocus(_Global.document.activeElement);
-                            }
+                        // ADCOM: _doNotFocus only true for sticky
+                        //if (!this._doNotFocus && this._shouldStealFocus()) {
+                        //    // Store what had focus if nothing currently is stored
+                        //    if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
+                        //        _storePreviousFocus(_Global.document.activeElement);
+                        //    }
 
-                            this._setFocusToAppBar();
-                        }
+                        //    this._setFocusToAppBar();
+                        //}
                     }
                 },
 
@@ -899,73 +943,6 @@ define([
 
                     this._changeVisiblePosition(toPosition, hiding);
                     if (hiding) {
-                        // ADCOM: The block of code below about restoring focus seems to be a good candidate
-                        // for moving to the AppBarManager.
-
-                        // Determine if there are any AppBars that are shown.
-                        // Set the focus to the next shown AppBar.
-                        // If there are none, set the focus to the control stored in the cache, which
-                        //   is what had focus before the AppBars were given focus.
-                        var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
-                        var areOtherAppBars = false;
-                        var areOtherNonStickyAppBars = false;
-                        var i;
-                        for (i = 0; i < appBars.length; i++) {
-                            var appBarControl = appBars[i].winControl;
-                            if (appBarControl && !appBarControl.hidden && (appBarControl !== this)) {
-                                areOtherAppBars = true;
-
-                                if (!appBarControl.sticky) {
-                                    areOtherNonStickyAppBars = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        var settingsFlyouts = _Global.document.querySelectorAll("." + _Constants.settingsFlyoutClass);
-                        var areVisibleSettingsFlyouts = false;
-                        for (i = 0; i < settingsFlyouts.length; i++) {
-                            var settingsFlyoutControl = settingsFlyouts[i].winControl;
-                            if (settingsFlyoutControl && !settingsFlyoutControl.hidden) {
-                                areVisibleSettingsFlyouts = true;
-                                break;
-                            }
-                        }
-
-                        if (!areOtherNonStickyAppBars && !areVisibleSettingsFlyouts) {
-                            // Hide the click eating div because there are no other AppBars showing
-                            // ADCOM: lds_hidden?
-                        }
-
-                        var that = this;
-                        if (!areOtherAppBars) {
-                            // Set focus to what had focus before showing the AppBar
-                            if (_Overlay._Overlay._ElementWithFocusPreviousToAppBar &&
-                                (!_Global.document.activeElement || _Overlay._Overlay._isAppBarOrChild(_Global.document.activeElement))) {
-                                _restorePreviousFocus();
-                            }
-                            // Always clear the previous focus (to prevent temporary leaking of element)
-                            _Overlay._Overlay._ElementWithFocusPreviousToAppBar = null;
-                        } else if (AppBar._isWithinAppBarOrChild(_Global.document.activeElement, that.element)) {
-                            // Set focus to next visible AppBar in DOM
-
-                            var foundCurrentAppBar = false;
-                            for (i = 0; i <= appBars.length; i++) {
-                                if (i === appBars.length) {
-                                    i = 0;
-                                }
-
-                                var appBar = appBars[i];
-                                if (appBar === this.element) {
-                                    foundCurrentAppBar = true;
-                                } else if (foundCurrentAppBar && !appBar.winControl.hidden) {
-                                    appBar.winControl._keyboardInvoked = !!this._keyboardInvoked;
-                                    appBar.winControl._setFocusToAppBar();
-                                    break;
-                                }
-                            }
-                        }
-
                         // If we are hiding the last lightDismiss AppBar,
                         //   then we need to update the tabStops of the other AppBars
                         if (!this.sticky && !_isThereVisibleNonStickyBar()) {
@@ -1012,6 +989,11 @@ define([
                     if (!this._invokeButton.contains(_Global.document.activeElement)) {
                         this._layout.handleKeyDown(event);
                     }
+                },
+
+                _handleFocusIn: function AppBar_handleFocusIn(eventObject) {
+                    this._currentFocus = eventObject.target;
+                    AppBarManager.onFocus(this);
                 },
 
                 _visiblePixels: {
@@ -1139,6 +1121,11 @@ define([
                             this._doNext = "";
                         }
 
+                        if (newState === appbarHiddenState) {
+                            AppBarManager.hidden(this);
+                            this._currentFocus = null;
+                        }
+
                         if (newPosition === displayModeVisiblePositions.hidden) {
                             // Make sure animation is finished.
                             this._element.style.visibility = "hidden";
@@ -1219,8 +1206,6 @@ define([
 
                     _ElementUtilities.removeClass(this._element, _Constants.hidingClass);
                     _ElementUtilities.addClass(this._element, _Constants.hiddenClass);
-
-                    AppBarManager.hidden(this);
 
                     // Send our "afterHide" event
                     this._sendEvent(_Overlay._Overlay.afterHide);
@@ -1321,16 +1306,7 @@ define([
 
                 // Set focus to the passed in AppBar
                 _setFocusToAppBar: function AppBar_setFocusToAppBar() {
-                    if (this._focusOnFirstFocusableElement()) {
-                        // Prevent what is gaining focus from showing that it has focus,
-                        // but only in the non-keyboard scenario.
-                        if (!this._keyboardInvoked) {
-                            _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
-                        }
-                    } else {
-                        // No first element, set it to appbar itself
-                        _Overlay._Overlay._trySetActive(this._element);
-                    }
+                    
                 },
 
                 _commandsUpdated: function AppBar_commandsUpdated() {
@@ -1618,6 +1594,22 @@ define([
                 },
 
                 // ILightDismissable
+                ld_becameTopLevel: function () {
+                    if (this._currentFocus) {
+                        this._currentFocus.focus();
+                    } else {
+                        if (this._focusOnFirstFocusableElement()) {
+                            // Prevent what is gaining focus from showing that it has focus,
+                            // but only in the non-keyboard scenario.
+                            //if (!this._keyboardInvoked) {
+                            //    _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
+                            //}
+                        } else {
+                            // No first element, set it to appbar itself
+                            _Overlay._Overlay._trySetActive(this._element);
+                        }
+                    }
+                },
                 ld_lightDismiss: function (info) {
                     switch (info.reason) {
                         case _LightDismissService.LightDismissalReasons.tap:

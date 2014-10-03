@@ -88,6 +88,8 @@ define([
                 // Handle "esc" & "tab" key presses
                 this._element.addEventListener("keydown", this._handleKeyDown, true);
 
+                _ElementUtilities._addEventListener(this._element, "focusin", this._handleFocusIn.bind(this));
+
                 this._writeProfilerMark("constructor,StopTM");
                 return this;
             }, {
@@ -227,58 +229,12 @@ define([
                 },
 
                 _hide: function Flyout_hide() {
-                    if (this._baseHide()) {
-                        // Return focus if this or the flyout CED has focus
-                        var active = _Global.document.activeElement;
-                        if (this._previousFocus
-                           && active
-                           && (this._element.contains(active)
-                               || _ElementUtilities.hasClass(active, _Overlay._Overlay._clickEatingFlyoutClass))
-                           && this._previousFocus.focus !== undefined) {
-
-                            // _isAppBarOrChild may return a CED or sentinal
-                            var appBar = _Overlay._Overlay._isAppBarOrChild(this._previousFocus);
-                            if (!appBar || (appBar.winControl && !appBar.winControl.hidden && !appBar.winAnimating)) {
-                                // Don't move focus back to a appBar that is hidden
-                                // We cannot rely on element.style.visibility because it will be visible while animating
-                                var role = this._previousFocus.getAttribute("role");
-                                var fHideRole = _Overlay._Overlay._keyboardInfo._visible && !this._keyboardWasUp;
-                                if (fHideRole) {
-                                    // Convince IHM to dismiss because it only came up after the flyout was up.
-                                    // Change aria role and back to get IHM to dismiss.
-                                    this._previousFocus.setAttribute("role", "");
-                                }
-
-                                if (this._keyboardInvoked) {
-                                    this._previousFocus.focus();
-                                } else {
-                                    _Overlay._Overlay._trySetActive(this._previousFocus);
-                                }
-                                active = _Global.document.activeElement;
-
-                                if (fHideRole) {
-                                    // Restore the role so that css is applied correctly
-                                    var previousFocus = this._previousFocus;
-                                    if (previousFocus) {
-                                        _BaseUtils._yieldForDomModification(function () {
-                                            previousFocus.setAttribute("role", role);
-                                        });
-                                    }
-                                }
-                            }
-
-                            // If the anchor gained focus we want to hide the focus in the non-keyboarding scenario
-                            if (!this._keyboardInvoked && (this._previousFocus === active) && appBar && active) {
-                                _Overlay._Overlay._addHideFocusClass(active);
-                            }
-                        }
-
-                        this._previousFocus = null;
-                    }
+                    this._baseHide();
                 },
 
                 _endHide: function () {
                     _LightDismissService.hidden(this);
+                    this._currentFocus = null;
                 },
 
                 _baseFlyoutShow: function Flyout_baseFlyoutShow(anchor, placement, alignment) {
@@ -364,15 +320,11 @@ define([
                             finalDiv.tabIndex = _ElementUtilities._getHighestTabIndexInList(_elms);
                         }
 
-                        _LightDismissService.shown(this);
-
                         // Hide all other flyouts
                         // ADCOM: So we intentionally only show 1 flyout at a time?
                         //this._hideAllOtherFlyouts(this);
 
-                        // Store what had focus before showing the Flyout.
-                        // This must happen after we hide all other flyouts so that we store the correct element.
-                        this._previousFocus = _Global.document.activeElement;
+                        _LightDismissService.shown(this);
                     }
                 },
 
@@ -381,17 +333,6 @@ define([
                     // This check needs to happen after the IHM has a chance to hide itself after we force hide
                     // all other visible Flyouts.
                     this._keyboardWasUp = _Overlay._Overlay._keyboardInfo._visible;
-
-                    if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
-                        // Put focus on the first child in the Flyout
-                        this._focusOnFirstFocusableElementOrThis();
-
-                        // Prevent what is gaining focus from showing that it has focus
-                        _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
-                    } else {
-                        // Make sure the menu has focus, but don't show a focus rect
-                        _Overlay._Overlay._trySetActive(this._element);
-                    }
                 },
 
                 _lightDismiss: function Flyout_lightDismiss() {
@@ -856,6 +797,10 @@ define([
                     }
                 },
 
+                _handleFocusIn: function Flyout_handleFocusIn(eventObject) {
+                    this._currentFocus = eventObject.target;
+                },
+
                 // Create and add a new first div as the first child
                 _addFirstDiv: function Flyout_addFirstDiv() {
                     var firstDiv = _Global.document.createElement("div");
@@ -897,9 +842,37 @@ define([
                 },
 
                 // ILightDismissable
+                ld_becameTopLevel: function () {
+                    if (this._currentFocus && this._element.contains(this._currentFocus)) {
+                        // Retake focus
+                        this._currentFocus.focus();
+                        // ADCOM: Take _keyboardInvoked into account (should we show the focus rect? was part of _hide)
+                        // ADCOM: Dismiss IHM based on value of _keyboardWasUp? (was part of _hide)
+                    } else {
+                        // Initial focus
+
+                        if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
+                            // Put focus on the first child in the Flyout
+                            this._focusOnFirstFocusableElementOrThis();
+
+                            // Prevent what is gaining focus from showing that it has focus
+                            _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
+                        } else {
+                            // Make sure the menu has focus, but don't show a focus rect
+                            _Overlay._Overlay._trySetActive(this._element);
+                        }
+                    }
+                },
                 ld_lightDismiss: function (info) {
                     switch (info.reason) {
                         case _LightDismissService.LightDismissalReasons.tap:
+                            if (info.topLevel) {
+                                // _hide or hide?
+                                this._hide();
+                            } else {
+                                info.stopPropagation();
+                            }
+                            break;
                         case _LightDismissService.LightDismissalReasons.lostFocus:
                             // _hide or hide?
                             this._hide();

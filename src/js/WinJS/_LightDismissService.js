@@ -31,6 +31,7 @@ define([
     var LightDismissService = _Base.Class.define(function () {
         this._clickEaterEl = this._createClickEater();
         this._clients = [];
+        this._currentTopLevel = null;
         this._isLive = false;
         
         this._onFocusInBound = this._onFocusIn.bind(this);
@@ -74,6 +75,10 @@ define([
             }
         },
 
+        isTopLevel: function (client) {
+            return this._clients[this._clients.length - 1] === client;
+        },
+
         _updateUI: function () {
             this._clients.forEach(function (c, i) {
                 c.ld_setZIndex(BASE_ZINDEX + i * 2 + 1);
@@ -88,6 +93,17 @@ define([
                 _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.body.removeChild(this._clickEaterEl);
                 this._isLive = false;
+            
+            }
+
+            if (this._clients.length > 0) {
+                var topLevel = this._clients[this._clients.length - 1];
+                if (this._currentTopLevel !== topLevel) {
+                    this._currentTopLevel = topLevel;
+                    topLevel.ld_becameTopLevel();
+                }
+            } else {
+                this._currentTopLevel = null;
             }
         },
 
