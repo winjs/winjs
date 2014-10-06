@@ -1173,7 +1173,7 @@ module WinJSTests {
         listview.layout.orientation = "vertical";
         var tests = [
             function () {
-                var columnSpacing = WinJS.Utilities.isPhone ? 29 : 31;
+                var columnSpacing = WinJS.Utilities.isPhone ? 29 : 33;
                 checkTile(listview, 0, 0, 0);
                 checkTile(listview, 1, columnSpacing, 0);
                 checkTile(listview, 2, 2 * columnSpacing, 0);
@@ -1184,7 +1184,7 @@ module WinJSTests {
                 listview.layout.maximumRowsOrColumns = 2;
             },
             function () {
-                var columnSpacing = WinJS.Utilities.isPhone ? 29 : 31;
+                var columnSpacing = WinJS.Utilities.isPhone ? 29 : 33;
                 checkTile(listview, 0, 0, 0);
                 checkTile(listview, 1, columnSpacing, 0);
                 checkTile(listview, 2, 0, 100);
