@@ -93,27 +93,6 @@ module WinJSTests {
                     LiveUnit.Assert.isTrue(toggle.checked, 'Toggle should be able to be initialized in the checked, disabled state');
                 }
 
-                // Test that fill sizes update properly based on checked / rtl setting
-                var fillLower = toggle.element.querySelector('.win-toggleswitch-fill-lower');
-                var fillUpper = toggle.element.querySelector('.win-toggleswitch-fill-upper');
-                if (testCase.rtl) {
-                    if (toggle.checked) {
-                        LiveUnit.Assert.areEqual(0, fillLower.offsetWidth, 'Lower fill should be 0 width when checked in RTL');
-                        LiveUnit.Assert.isTrue(fillUpper.offsetWidth > 0, 'Upper fill should be > 0 width when checked in RTL');
-                    } else {
-                        LiveUnit.Assert.isTrue(fillLower.offsetWidth > 0, 'Lower fill should be > 0 width when unchecked in RTL');
-                        LiveUnit.Assert.areEqual(0, fillUpper.offsetWidth, 'Upper fill should be 0 width when unchecked in RTL');
-                    }
-                } else {
-                    if (toggle.checked) {
-                        LiveUnit.Assert.areEqual(0, fillUpper.offsetWidth, 'Upper fill should be 0 width when checked');
-                        LiveUnit.Assert.isTrue(fillLower.offsetWidth > 0, 'Lower fill should be > 0 width when checked');
-                    } else {
-                        LiveUnit.Assert.isTrue(fillUpper.offsetWidth > 0, 'Upper fill should be > 0 width when unchecked');
-                        LiveUnit.Assert.areEqual(0, fillLower.offsetWidth, 'Lower fill should be 0 width when unchecked');
-                    }
-                }
-
                 // Clean up
                 if (testCase.rtl) {
                     container.removeAttribute('lang');

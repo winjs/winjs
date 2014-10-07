@@ -1,0 +1,39 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+.colorDefinitions(@theme) {
+    // Primary theme colors
+    .mixin(light) {
+        @altHigh: rgb(255, 255, 255);
+        @baseHigh: rgb(0, 0, 0);
+        @chromeHigh: #ccc;
+        @chromeMediumMid: #f2f2f2;
+        @sliderThumbHover: #1f1f1f;
+    }
+    .mixin(dark) {
+        @altHigh: rgb(0, 0, 0);
+        @baseHigh: rgb(255, 255, 255);
+        @chromeHigh: #767676;
+        @chromeMediumMid: #2b2b2b;
+        @sliderThumbHover: #f9f9f9;
+    }
+    .mixin(@theme);
+
+    // Secondary colors based off primary
+    @altMediumHigh: fade(@altHigh, 80%);
+    @altMid: fade(@altHigh, 60%);
+    @altMediumMid: fade(@altHigh, 40%);
+    @baseMediumHigh: fade(@baseHigh, 80%);
+    @baseMid: fade(@baseHigh, 60%);
+    @baseMediumMid: fade(@baseHigh, 40%);
+    @baseLow: fade(@baseHigh, 20%);
+
+    @listHover: fade(@baseHigh, 10%);
+    @listPress: fade(@baseHigh, 20%);
+
+    // Accent color
+    @accentColor: rgb(0, 120, 215);
+
+    // Other colors not dependent on anything
+    @baseWhite: #fff;
+    @baseBlack: #000;
+}

@@ -24,8 +24,6 @@ define([
             /// <event name="change" bubbles="true" locid="WinJS.UI.ToggleSwitch_e:change">Raised when the switch is flipped to on (checked is set to true) or off (checked is set to false). </event>
             /// <part name="toggle" class="win-toggleswitch" locid="WinJS.UI.ToggleSwitch_part:toggle">The entire ToggleSwitch control.</part>
             /// <part name="track" class="win-toggleswitch-track" locid="WinJS.UI.ToggleSwitch_part:track">The slider portion of the toggle.</part>
-            /// <part name="lower-fill" class="win-toggleswitch-fill-lower" locid="WinJS.UI.ToggleSwitch_part:fill-lower">The lower fill of the slider.</part>
-            /// <part name="upper-fill" class="win-toggleswitch-fill-upper" locid="WinJS.UI.ToggleSwitch_part:fill-upper">The upper fill of the slider.</part>
             /// <part name="thumb" class="win-toggleswitch-thumb" locid="WinJS.UI.ToggleSwitch_part:thumb">The thumb of the slider.</part>
             /// <part name="title" class="win-toggleswitch-header" locid="WinJS.UI.ToggleSwitch_part:title">The main text for the ToggleSwitch control.</part>
             /// <part name="label-on" class="win-toggleswitch-value" locid="WinJS.UI.ToggleSwitch_part:label-on">The text for when the switch is on.</part>
@@ -40,9 +38,6 @@ define([
                 var classHeader = 'win-toggleswitch-header';
                 var classClick = 'win-toggleswitch-clickregion';
                 var classTrack = 'win-toggleswitch-track';
-                var classFill = 'win-toggleswitch-fill';
-                var classFillLower = 'win-toggleswitch-fill-lower';
-                var classFillUpper = 'win-toggleswitch-fill-upper';
                 var classThumb = 'win-toggleswitch-thumb';
                 var classValues = 'win-toggleswitch-values';
                 var classValue = 'win-toggleswitch-value';
@@ -95,31 +90,27 @@ define([
                     // Set up DOM elements
                     this._domElement.innerHTML = [
                         '<div class="' + classHeader + '"></div>',
+                        '<div class="' + classClick + '">',
+                        '   <div class="' + classTrack + '">',
+                        '       <div class="' + classThumb + '"></div>',
+                        '   </div>',
+                        '</div>',
                         '<div class="' + classValues + '">',
                         '   <div class="' + classValue + ' ' + classValueOn + '"></div>',
                         '   <div class="' + classValue + ' ' + classValueOff + '"></div>',
-                        '</div>',
-                        '<div class="' + classClick + '">',
-                        '   <div class="' + classTrack + '">',
-                        '       <div class="' + classFill + ' ' + classFillLower + '"></div>',
-                        '       <div class="' + classThumb + '"></div>',
-                        '       <div class="' + classFill + ' ' + classFillUpper + '"></div>',
-                        '   </div>',
                         '</div>',
                         '<div class="' + classDescription + '"></div>'
                     ].join('\n');
 
                     // Get references to elements
                     this._headerElement = this._domElement.firstElementChild;
-                    this._labelsElement = this._headerElement.nextElementSibling;
+                    this._clickElement = this._headerElement.nextElementSibling;
+                    this._trackElement = this._clickElement.firstElementChild;
+                    this._thumbElement = this._trackElement.firstElementChild;
+                    this._labelsElement = this._clickElement.nextElementSibling;
                     this._labelOnElement = this._labelsElement.firstElementChild;
                     this._labelOffElement = this._labelOnElement.nextElementSibling;
-                    this._clickElement = this._labelsElement.nextElementSibling;
-                    this._trackElement = this._clickElement.firstElementChild;
-                    this._fillLowerElement = this._trackElement.firstElementChild;
-                    this._thumbElement = this._fillLowerElement.nextElementSibling;
-                    this._fillUpperElement = this._thumbElement.nextElementSibling;
-                    this._descriptionElement = this._clickElement.nextElementSibling;
+                    this._descriptionElement = this._labelsElement.nextElementSibling;
 
                     // Set aria label info
                     this._headerElement.setAttribute('aria-hidden', true);
@@ -338,8 +329,6 @@ define([
                         // Reset tracking variables and intermediate styles
                         this._mousedown = false;
                         this._thumbElement.style.left = '';
-                        this._fillLowerElement.style.width = '';
-                        this._fillUpperElement.style.width = '';
                         _ElementUtilities.removeClass(this._domElement, classPressed);
                     },
                     _pointerMoveHandler: function ToggleSwitch_pointerMove(e) {
@@ -358,12 +347,10 @@ define([
                         // Get pointer x coord relative to control
                         var localMouseX = e.pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
 
-                        // Calculate a new width for the fill elements and position for
-                        // the thumb
-                        var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth;
-                        var trackOffset = this._fillLowerElement.offsetLeft + this._trackElement.clientLeft;
+                        // Calculate a position for the thumb
+                        var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth - 6;
                         this._dragX = Math.min(maxX, localMouseX);
-                        this._dragX = Math.max(0, this._dragX);
+                        this._dragX = Math.max(2, this._dragX);
 
                         // Calculate if this pointermove constitutes switching to drag mode
                         if (!this._dragging && Math.abs(this._dragX - this._dragXStart) > 3) {
@@ -372,8 +359,6 @@ define([
                         }
 
                         this._thumbElement.style.left = this._dragX + 'px';
-                        this._fillLowerElement.style.width = (this._dragX - trackOffset) + 'px';
-                        this._fillUpperElement.style.width = (maxX - this._dragX - trackOffset) + 'px';
                     }
                 });
 

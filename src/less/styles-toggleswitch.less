@@ -1,54 +1,29 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 .win-toggleswitch {
-    @trackWidth: 40px;
-    @trackHeight: 20px;
-    @thumbWidth: 12px;
-    @thumbHeight: 24px;
-    @fillWidth: @trackWidth - @thumbWidth - 3px;
+    @trackWidth: 44px;
+    @trackHeight: 16px;
+    @thumbWidth: 20px;
+    @thumbHeight: 8px;
 
-    .calculateFillSizes(@isRTL) when (@isRTL = false) {
-        @lowerFillWidthOn: @fillWidth;
-        @lowerFillWidthOff: 0;
-        @upperFillWidthOn: 0;
-        @upperFillWidthOff: @fillWidth;
-        @thumbPosOn: @trackWidth - @thumbWidth;
-        @thumbPosOff: 0;
+    .calculateThumbPos(@isRTL) when (@isRTL = false) {
+        @thumbPosOn: @trackWidth - @thumbWidth - 6;
+        @thumbPosOff: 2px;
     }
-    .calculateFillSizes(@isRTL) when (@isRTL = true) {
-        @lowerFillWidthOn: 0;
-        @lowerFillWidthOff: @fillWidth;
-        @upperFillWidthOn: @fillWidth;
-        @upperFillWidthOff: 0;
-        @thumbPosOn: 0;
-        @thumbPosOff: @trackWidth - @thumbWidth;
+    .calculateThumbPos(@isRTL) when (@isRTL = true) {
+        @thumbPosOn: 2px;
+        @thumbPosOff: @trackWidth - @thumbWidth - 6;
     }
-    .calculateFillSizes(false);
+    .calculateThumbPos(false);
 
     .rtlDependentStyles(@isRTL) {
-        .calculateFillSizes(@isRTL);
+        .calculateThumbPos(@isRTL);
 
-        &.win-toggleswitch-on {
-            .win-toggleswitch-fill-lower {
-                width: @lowerFillWidthOn;
-            }
-            .win-toggleswitch-fill-upper {
-                width: @upperFillWidthOn;
-            }
-            .win-toggleswitch-thumb {
-                left: @thumbPosOn;
-            }
+        &.win-toggleswitch-on .win-toggleswitch-thumb {
+            left: @thumbPosOn;
         }
-        &.win-toggleswitch-off {
-            .win-toggleswitch-fill-lower {
-                width: @lowerFillWidthOff;
-            }
-            .win-toggleswitch-fill-upper {
-                width: @upperFillWidthOff;
-            }
-            .win-toggleswitch-thumb {
-                left: @thumbPosOff;
-            }
+        &.win-toggleswitch-off .win-toggleswitch-thumb {
+            left: @thumbPosOff;
         }
     }
 
@@ -56,9 +31,8 @@
 
     .win-toggleswitch-header {
         max-width: 470px;
-        font-size: 12pt;
         width: 22em;
-        margin-bottom: 10px;
+        margin-bottom: 14px;
         margin-top: 22px;
         .win-type-body();
     }
@@ -68,7 +42,7 @@
     }
     .win-toggleswitch-value {
         min-width: 65px;
-        margin-right: 20px;
+        margin-left: 12px;
         height: @trackHeight;
         vertical-align: top;
         .win-type-body(@lineHeight: @trackHeight);
@@ -95,31 +69,16 @@
         height: @trackHeight;
         border-style: solid;
         border-width: 2px;
+        border-radius: @trackHeight / 2;
         box-sizing: border-box;
-    }
-    .win-toggleswitch-fill {
-        position: absolute;
-        top: 1px;
-        display: inline-block;
-        height: @trackHeight - 6px;
-        box-sizing: border-box;
-        -webkit-transition: width 0.1s;
-        transition: width 0.1s;
-    }
-    .win-toggleswitch-fill-lower {
-        left: 1px;
-    }
-    .win-toggleswitch-fill-upper {
-        right: 1px;
     }
     .win-toggleswitch-thumb {
         position: absolute;
-        top: 0;
-        margin-top: -4px;
-        margin-left: -2px;
+        top: 2px;
         display: inline-block;
-        width: 12px;
+        width: @thumbWidth;
         height: @thumbHeight;
+        border-radius: @thumbHeight / 2;
         -webkit-transition: left 0.1s;
         transition: left 0.1s;
     }
@@ -130,7 +89,6 @@
         }
     }
     &.win-toggleswitch-dragging {
-        .win-toggleswitch-fill,
         .win-toggleswitch-thumb {
             -webkit-transition: none;
             transition: none;

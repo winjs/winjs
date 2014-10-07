@@ -1,510 +1,129 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 .Colors(@theme) {
+    .colorDefinitions(@theme);
 
     // These classes reverse the colors on the subtree to which they are applied.
     // Ensure that the opposite color scheme always comes after the rule that is for the current color scheme.
     // This ensures that an author using <div class="win-ui-dark win-ui-light"> will always get the rule for the
     // inverted scheme to match last and win.
-    .themeMixin(dark) {
-        .win-ui-dark {
-            color: rgb(255, 255, 255);
-            background-color: rgb(29, 29, 29);
-        }
-        .win-ui-light {
-            color: rgb(0, 0, 0);
-            background-color: rgb(255, 255, 255);
-        }
+    .bodyStyle() {
+        background-color: @altHigh;
+        color: @baseHigh;
     }
-    .themeMixin(light) {
-        .win-ui-light {
-            color: rgb(0, 0, 0);
-            background-color: rgb(255, 255, 255);
-        }
-        .win-ui-dark {
-            color: rgb(255, 255, 255);
-            background-color: rgb(29, 29, 29);
-        }
+    & when (@theme = dark) {
+        .win-ui-dark { .bodyStyle(); }
+        .win-ui-light { .bodyStyle(); }
     }
-    .themeMixin(@theme);
+    & when (@theme = light) {
+        .win-ui-light { .bodyStyle(); }
+        .win-ui-dark { .bodyStyle(); }
+    }
 
     //
     // Body
     //
-    body, input, textarea, select, button {
-        .mixin(dark) {
-            background-color: rgb(29, 29, 29);
-            color: rgb(255, 255, 255);
-        }
-        .mixin(light) {
-            background-color: rgb(255, 255, 255);
-            color: rgb(0, 0, 0);
-        }
-        .mixin(@theme);
+    body {
+        .bodyStyle();
     }
 
     //
     // Text selection
     //
     ::selection {
-        background-color: rgb(87, 41, 193);
-        color: rgb(255, 255, 255);
+        background-color: @accentColor;
+        color: #fff;
     }
 
     //
-    // Text input
+    // Link
     //
-    input[type=text], input[type=password],
-    input[type=email], input[type=number],
-    input[type=tel], input[type=url],
-    input[type=search], textarea, .win-textarea {
-        .mixin(dark) {
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.87);
-            }
+    a {
+        color: @accentColor;
 
-            &:focus {
-                background-color: rgb(255, 255, 255);
-            }
-
-            &:disabled {
-                background-color: transparent;
-                border-color: rgba(255, 255, 255, 0.4);
-                color: rgba(255, 255, 255, 0.4);
-
-                // Can't group these rules together as IE will throw out the whole
-                // group if unrecognized pseudos are present
-                &:-ms-input-placeholder {
-                    color: rgba(255, 255, 255, 0.22);
-                }
-                &::-webkit-input-placeholder {
-                    color: rgba(255, 255, 255, 0.22);
-                }
-                &::-moz-input-placeholder {
-                    color: rgba(255, 255, 255, 0.22);
-                }
-            }
-
-            &:-ms-input-placeholder {
-                color: rgba(0, 0, 0, 0.6);
-            }
-            &::-webkit-input-placeholder {
-                color: rgba(0, 0, 0, 0.6);
-            }
-            &::-moz-input-placeholder {
-                color: rgba(0, 0, 0, 0.6);
-            }
-
-            background-color: rgba(255, 255, 255, 0.8);
-            border-color: transparent;
-            color: rgb(0, 0, 0);
+        &:hover {
+            color: @baseMid;
         }
-        .mixin(light) {
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.87);
-                border-color: rgba(0, 0, 0, 0.44);
-            }
 
-            &:focus {
-                background-color: rgb(255, 255, 255);
-            }
-
-            &:disabled {
-                background-color: rgba(202, 202, 202, 0.4);
-                border-color: rgba(0, 0, 0, 0.15);
-                color: rgba(0, 0, 0, 0.4);
-
-                &:-ms-input-placeholder {
-                    color: rgba(0, 0, 0, 0.22);
-                }
-                &::-webkit-input-placeholder {
-                    color: rgba(0, 0, 0, 0.22);
-                }
-                &::-moz-input-placeholder {
-                    color: rgba(0, 0, 0, 0.22);
-                }
-            }
-
-            &:-ms-input-placeholder {
-                color: rgba(0, 0, 0, 0.6);
-            }
-            &::-webkit-input-placeholder {
-                color: rgba(0, 0, 0, 0.6);
-            }
-            &::-moz-input-placeholder {
-                color: rgba(0, 0, 0, 0.6);
-            }
-
-            background-color: rgba(255, 255, 255, 0.8);
-            border-color: rgba(0, 0, 0, 0.27);
-            color: rgb(0, 0, 0);
+        &:active {
+            color: @baseMediumMid;
         }
-        .mixin(@theme);
+
+        &[disabled] {
+            color: @baseLow;
+        }
     }
 
     //
     // Radio and Checkbox
     //
-    input::-ms-check {
-        .mixin(dark) {
-            border-color: transparent;
-        }
-        .mixin(light) {
-            border-color: rgba(0, 0, 0, 0.27);
-        }
-        .mixin(@theme);
-
-        background-color: rgba(255, 255, 255, 0.8);
-        color: rgb(0, 0, 0);
-    }
-
-    input:hover::-ms-check {
-        .mixin(dark) {
-        }
-        .mixin(light) {
-            border-color: rgba(0, 0, 0, 0.44);
-        }
-        .mixin(@theme);
-
-        background-color: rgba(255, 255, 255, 0.87);
-    }
-
-    input:disabled::-ms-check {
-        .mixin(dark) {
-            background-color: rgba(255, 255, 255, 0.4);
-            border-color: transparent;
-        }
-        .mixin(light) {
-            background-color: rgba(202, 202, 202, 0.4);
-            border-color: rgba(0, 0, 0, 0.15);
-        }
-        .mixin(@theme);
-
-        color: rgba(0, 0, 0, 0.4);
-    }
-
-    input:enabled:hover:active::-ms-check {
-        .mixin(dark) {
-            background-color: rgb(255, 255, 255);
-        }
-        .mixin(light) {
-            background-color: rgb(0, 0, 0);
-            border-color: transparent;
-            color: rgb(255, 255, 255);
-        }
-        .mixin(@theme);
-    }
-
-    input:-ms-keyboard-active::-ms-check {
-        .mixin(dark) {
-            background-color: rgb(255, 255, 255);
-        }
-        .mixin(light) {
-            background-clip: border-box;
-            background-color: rgb(0, 0, 0);
-            border-color: transparent;
-            color: rgb(255, 255, 255);
-        }
-        .mixin(@theme);
-    }
-
-    //
-    // Clear and reveal buttons
-    //
-    input::-ms-clear, input::-ms-reveal {
-        background-color: rgb(255, 255, 255);
-        color: rgb(0, 0, 0);
-    }
-    input::-ms-clear:hover, input::-ms-reveal:hover {
-        background-color: rgb(222, 222, 222);
-    }
-    input::-ms-clear:hover:active, input::-ms-reveal:hover:active {
-        background-color: rgb(0, 0, 0);
-        color: rgb(255, 255, 255);
-    }
-
-    //
-    // Invalid input
-    //
-    input[type]:invalid {
-        outline-color: rgb(255, 128, 51);
-        outline-width: 2px;
-    }
-
-    //
-    // Button
-    //
-    input[type=file] {
-        .mixin(dark) {
-            &::-ms-browse {
-                color: rgb(255, 255, 255);
-                border-color: rgb(255, 255, 255);
-                background-color: transparent;
-            }
-
-            &::-ms-value {
-                background-color: transparent;
-                border-color: rgba(255, 255, 255, 0.4);
-                color: rgba(255, 255, 255, 0.4);
-            }
-
-            &::-ms-browse:hover:active {
-                background-color: rgb(255, 255, 255);
-                color: rgb(0, 0, 0);
-            }
-
-            &::-ms-browse:hover {
-                background-color: rgba(255, 255, 255, 0.13);
-            }
-
-            &:disabled::-ms-browse {
-                border-color: rgba(255, 255, 255, 0.4);
-                color: rgba(255, 255, 255, 0.4);
-            }
-        }
-        .mixin(light) {
-            &::-ms-browse {
-                color: rgb(0, 0, 0);
-                border-color: rgba(0, 0, 0, 0.2);
-                background-color: rgba(182, 182, 182, 0.7);
-            }
-
-            &::-ms-value {
-                background-color: rgba(202, 202, 202, 0.4);
-                border-color: rgba(0, 0, 0, 0.15);
-                color: rgba(0, 0, 0, 0.4);
-            }
-
-            &::-ms-browse:hover:active {
-                background-color: rgb(0, 0, 0);
-                color: rgb(255, 255, 255);
-            }
-
-            &::-ms-browse:hover {
-                background-color: rgba(205, 205, 205, 0.82);
-                border-color: rgba(164, 164, 164, 0.45);
-            }
-
-            &:disabled::-ms-browse {
-                background-color: rgba(202, 202, 202, 0.4);
-                border-color: rgba(0, 0, 0, 0.15);
-                color: rgba(0, 0, 0, 0.4);
-            }
-        }
-        .mixin(@theme);
-
-        background-color: transparent;
-        border-color: transparent;
-        color: transparent;
-    }
-
-    button, input[type=button], input[type=reset] {
-        .mixin(dark) {
-            &:hover:active {
-                background-color: rgb(255, 255, 255);
-                color: rgb(0, 0, 0);
-            }
-
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.13);
-            }
-
-            &:disabled, &:disabled:hover, &:disabled:hover:active {
-                background-color: transparent;
-                border-color: rgba(255, 255, 255, 0.4);
-                color: rgba(255, 255, 255, 0.4);
-            }
-
-            color: rgb(255, 255, 255);
+    input[type=checkbox] {
+        &::-ms-check {
+            color: @baseHigh;
+            border-color: @baseMediumHigh;
             background-color: transparent;
-            border-color: rgb(255, 255, 255);
         }
-        .mixin(light) {
-            &:hover:active {
-                background-color: rgb(0, 0, 0);
-                border-color: rgb(0, 0, 0);
-                color: rgb(255, 255, 255);
-            }
 
-            &:hover {
-                background-color: rgba(205, 205, 205, 0.82);
-                border-color: rgba(164, 164, 164, 0.45);
-            }
-
-            &:disabled, &:disabled:hover:active {
-                background-color: rgba(202, 202, 202, 0.4);
-                border-color: rgba(0, 0, 0, 0.08);
-                color: rgba(0, 0, 0, 0.4);
-            }
-
-            color: rgb(0, 0, 0);
-            border-color: rgba(0, 0, 0, 0.2);
-            background-color: rgba(182, 182, 182, 0.7);
+        &:indeterminate::-ms-check {
+            color: @baseMediumHigh;
+            border-color: @accentColor;
         }
-        .mixin(@theme);
-    }
 
-    button[type=submit], input[type=submit] {
-        .mixin(dark) {
-            &:hover:active {
-                background-color: rgb(255, 255, 255);
-                border-color: transparent;
-                color: rgb(0, 0, 0);
-            }
-
-            &:hover {
-                background-color: rgb(95, 55, 190);
-                border-color: rgb(255, 255, 255);
-            }
-
-            &:disabled, &:disabled:hover:active {
-                background-color: transparent;
-                border-color: rgba(255, 255, 255, 0.4);
-                color: rgba(255, 255, 255, 0.4);
-            }
-        }
-        .mixin(light) {
-            &:hover:active {
-                background-color: rgb(0, 0, 0);
-                border-color: transparent;
-                color: rgb(255, 255, 255);
-            }
-
-            &:hover {
-                background-color: rgb(95, 55, 190);
-                border-color: transparent;
-            }
-
-            &:disabled, &:disabled:hover:active {
-                background-color: rgba(202, 202, 202, 0.4);
-                border-color: rgba(0, 0, 0, 0.08);
-                color: rgba(0, 0, 0, 0.4);
-            }
-        }
-        .mixin(@theme);
-
-        background-color: rgb(70, 23, 180);
-        border-color: transparent;
-        color: rgb(255, 255, 255);
-    }
-
-    // Keyboard active has to be handled separately
-    button:-ms-keyboard-active, button[type=submit]:-ms-keyboard-active,
-    input[type=button]:-ms-keyboard-active, input[type=reset]:-ms-keyboard-active,
-    input[type=submit]:-ms-keyboard-active {
-        .mixin(dark) {
-            background-color: rgb(255, 255, 255);
-            color: rgb(0, 0, 0);
-        }
-        .mixin(light) {
-            background-color: rgb(0, 0, 0);
-            color: rgb(255, 255, 255);
-        }
-        .mixin(@theme);
-
-        background-clip: border-box;
-        border-color: transparent;
-    }
-
-    //
-    // Dropdown
-    //
-    select {
-        .mixin(dark) {
-            &:enabled:focus {
-                background-color: rgb(255, 255, 255);
-            }
-
-            &:disabled {
-                background-color: transparent;
-                border-color: rgba(255, 255, 255, 0.4);
-                color: rgba(255, 255, 255, 0.4);
-
-                option:checked {
-                    background-color: rgba(255, 255, 255, 0.4);
-                    color: rgba(0, 0, 0, 0.6);
-                }
-            }
-
-            &::-ms-expand {
-                background-color: transparent;
-            }
-
+        &:checked::-ms-check {
+            background-color: @accentColor;
             border-color: transparent;
         }
-        .mixin(light) {
-            &:enabled:focus {
-                background-color: rgb(255, 255, 255);
-                border-color: rgba(0, 0, 0, 0.6);
-            }
 
-            &:enabled:hover {
-                border-color: rgba(0, 0, 0, 0.44);
-            }
-
-            &:disabled {
-                background-color: rgba(202, 202, 202, 0.4);
-                border-color: rgba(0, 0, 0, 0.15);
-                color: rgba(0, 0, 0, 0.4);
-
-                option:checked {
-                    background-color: rgba(0, 0, 0, 0.55);
-                    color: rgba(255, 255, 255, 0.6);
-                }
-            }
-
-            &::-ms-expand {
-                background-color: transparent;
-            }
-
-            border-color: rgba(0, 0, 0, 0.27);
-        }
-        .mixin(@theme);
-
-        &:enabled:focus {
-            option:hover {
-                background-color: rgb(222, 222, 222);
-            }
-
-            option:checked:hover {
-                color: rgb(255, 255, 255);
-                background-color: rgb(95, 55, 190);
-            }
+        &:hover::-ms-check {
+            border-color: @baseHigh;
         }
 
-        &:enabled:hover {
-            background-color: rgba(255, 255, 255, 0.87);
+        &:hover:indeterminate::-ms-check {
+            color: @baseHigh;
+            border-color: @accentColor;
         }
 
-        background-color: rgba(255, 255, 255, 0.8);
-        color: rgb(0, 0, 0);
-    }
-
-    option {
-        &:hover {
-            background-color: rgb(197, 197, 197);
+        &:active::-ms-check {
+            border-color: transparent;
+            background-color: @baseMid;
         }
 
-        &:checked:hover {
-            background-color: rgb(95, 55, 190);
+        &:indeterminate:active::-ms-check {
+            color: @baseMid;
+            border-color: @baseMediumHigh;
+            background-color: transparent;
         }
 
-        &:checked {
-            color: rgb(255, 255, 255);
-            background-color: rgb(70, 23, 180);
+        &:disabled::-ms-check, &:indeterminate:disabled::-ms-check {
+            color: @baseLow;
+            border-color: @baseLow;
+            background-color: transparent;
         }
     }
 
-    optgroup:disabled {
-        option:checked, option:checked:active {
-            .mixin(dark) {
-                background-color: rgba(255, 255, 255, 0.4);
-                color: rgba(0, 0, 0, 0.6) ;
-            }
-            .mixin(light) {
-                background-color: rgba(0, 0, 0, 0.55);
-                color: rgba(255, 255, 255, 0.6) ;
-            }
-            .mixin(@theme);
+    input[type=radio] {
+        &::-ms-check {
+            color: @baseMediumHigh;
+            border-color: @baseMediumHigh;
+            background-color: transparent;
+        }
+
+        &:checked::-ms-check {
+            border-color: @accentColor;
+        }
+
+        &:hover::-ms-check {
+            color: @baseHigh;
+        }
+
+        &:active::-ms-check {
+            color: @baseMid;
+            border-color: @baseMid;
+        }
+
+        &:disabled::-ms-check {
+            color: @baseLow;
+            border-color: @baseLow;
         }
     }
 
@@ -512,550 +131,241 @@
     // Progress
     //
     progress {
-        .mixin(dark) {
-            &:indeterminate {
-                color: rgb(138, 87, 255);
+      // Main colors
+      color: @accentColor;
+      background-color: @baseLow;
 
-                &::-webkit-progress-bar {
-                    background-color: transparent;
-                }
-            }
+      &::-webkit-progress-value {
+        background-color: @accentColor;
+      }
+      &::-moz-progress-bar {
+        background-color: @accentColor;
+      }
 
-            &:not(:indeterminate) {
-                background-color: rgba(255, 255, 255, 0.35);
+      // Ring
+      &.win-ring {
+        background-color: transparent;
+      }
 
-                &::-moz-progress-bar {
-                    background-color: rgb(138, 87, 255);
-                }
-            }
+      // This is a weird webkit issue where the background color
+      // of the progress seems to overlay with this background color,
+      // but neither one on its own seems to work correctly. Really we just
+      // want the regular progress bg color, but it doesn't seem to take it
+      // unless we specify some color here.
+      &::-webkit-progress-bar {
+        background-color: transparent;
+      }
+    }
 
-            &:-ms-fill {
-                background-color: rgb(91, 46, 197);
-            }
+    //
+    // Push button
+    //
+    button,
+    input[type=button],
+    input[type=reset],
+    input[type=submit],
+    button[type=submit] {
+        color: @baseHigh;
+        background-color: @baseLow;
+        border-color: transparent;
 
-            &::-webkit-progress-value {
-                background-color: rgb(91, 46, 197);
-            }
-
-            // This is a weird webkit issue where the background color
-            // of the progress seems to overlay with this background color,
-            // but neither one on its own seems to work correctly. Really we just
-            // want the regular progress bg color, but it doesn't seem to take it
-            // unless we specify some color here.
-            &::-webkit-progress-bar {
-                background-color: rgba(255, 255, 255, 0.0);
-            }
-
-            color: rgb(91, 46, 197);
+        &:hover {
+            border-color: @baseMediumMid;
         }
-        .mixin(light) {
-            &:indeterminate {
-                &::-webkit-progress-bar {
-                    background-color: rgba(0, 0, 0, 0.35);
-                }
-            }
 
-            &:not(:indeterminate) {
-                background-color: rgba(0, 0, 0, 0.2);
-
-                &::-moz-progress-bar {
-                    background-color: rgb(70, 23, 180);
-                }
-            }
-
-            &:-ms-fill {
-                background-color: rgb(70, 23, 180);
-            }
-
-            &::-webkit-progress-value {
-                background-color: rgb(70, 23, 180);
-            }
-
-            &::-webkit-progress-bar {
-                background-color: rgba(0, 0, 0, 0.0);
-            }
-
-            color: rgb(70, 23, 180);
+        &:active {
+            background-color: @baseMediumMid;
         }
-        .mixin(@theme);
 
-        -webkit-appearance: none;
+        &:disabled {
+            color: @baseLow;
+            background-color: @baseLow;
+            border-color: transparent;
+        }
+    }
+
+    input[type=submit],
+    button[type=submit] {
+        background-color: @accentColor;
+    }
+
+    //
+    // Select
+    //
+    select {
+        color: @baseHigh;
+        border-color: @baseMediumMid;
+        background-color: @altMediumMid;
+
+        &::-ms-expand {
+            color: @baseMediumHigh;
+            background-color: transparent;
+        }
+
+        &:hover {
+            border-color: @baseMid;
+            background-color: @altMid;
+        }
+
+        &:disabled {
+            color: @baseLow;
+            border-color: transparent;
+            background-color: @baseLow;
+        }
+        &:disabled::-ms-expand {
+            color: @baseLow;
+        }
+    }
+
+    option {
+        color: @baseHigh;
+        background-color: @chromeMediumMid;
+
+        &:hover {
+            color: @baseHigh;
+            background-color: @listHover;
+        }
+        &:checked {
+            color: @baseHigh;
+            background-color: @accentColor;
+        }
+        &:active {
+            color: @baseHigh;
+            background-color: @listPress;
+        }
+    }
+
+    select[multiple] {
+        border: none;
+        background-color: @chromeMediumMid;
     }
 
     //
     // Slider
     //
     input[type=range] {
-        .mixin(dark) {
-            &::-ms-fill-lower {
-                background-color: rgb(91, 46, 197);
-            }
+        background-color: transparent;
 
-            &::-ms-fill-upper {
-                background-color: rgba(255, 255, 255, 0.16);
-            }
-
-            &::-webkit-slider-runnable-track {
-                background: rgba(255, 255, 255, 0.16);
-            }
-
-            &::-moz-range-track {
-                background: rgba(255, 255, 255, 0.16);
-            }
-
-            &::-ms-thumb {
-                background-color: rgb(255, 255, 255);
-            }
-
-            &::-webkit-slider-thumb {
-                background: rgb(255, 255, 255);
-            }
-
-            &::-moz-range-thumb {
-                background: rgb(255, 255, 255);
-            }
-
-            &::-ms-ticks-before, &::-ms-ticks-after {
-                color: rgba(255, 255, 255, 0.5);
-            }
-
-            &:enabled:hover::-ms-fill-lower {
-                background-color: rgb(114, 75, 205);
-            }
-
-            &:enabled:hover::-ms-fill-upper {
-                background-color: rgba(255, 255, 255, 0.18);
-            }
-
-            &:enabled:hover::-webkit-slider-runnable-track {
-                background-color: rgba(255, 255, 255, 0.18);
-            }
-
-            &:enabled:hover::-moz-range-track {
-                background-color: rgba(255, 255, 255, 0.18);
-            }
-
-            &:disabled::-ms-fill-lower {
-                background-color: rgba(255, 255, 255, 0.23);
-            }
-
-            &:disabled::-ms-fill-upper {
-                background-color: rgba(255, 255, 255, 0.16);
-            }
-
-            &:disabled::-ms-thumb {
-                background-color: rgb(126, 126, 126);
-            }
-
-            &:disabled::-webkit-slider-thumb {
-                background-color: rgb(126, 126, 126);
-            }
-
-            &:disabled::-moz-range-thumb {
-                background-color: rgb(126, 126, 126);
-            }
-
+        // Note the use of background instead of background-color
+        // FF slider styling doesn't work with background-color
+        // so using background for everything here for consistency
+        .thumb() {
+            background: @accentColor;
         }
-        .mixin(light) {
-            &::-ms-fill-lower {
-                background-color: rgb(70, 23, 180);
-            }
-
-            &::-ms-fill-upper {
-                background-color: rgba(0, 0, 0, 0.1);
-            }
-
-            &::-webkit-slider-runnable-track {
-                background-color: rgba(0, 0, 0, 0.1);
-            }
-
-            &::-moz-range-track {
-                background: rgba(0, 0, 0, 0.1);
-            }
-
-            &::-ms-thumb {
-                background-color: rgb(0, 0, 0);
-            }
-
-            &::-webkit-slider-thumb {
-                background-color: rgb(0, 0, 0);
-            }
-
-            &::-moz-range-thumb {
-                background: rgb(0, 0, 0);
-            }
-
-            &::-ms-ticks-before, &::-ms-ticks-after {
-                color: rgba(0, 0, 0, 0.5);
-            }
-
-            &:enabled:hover::-ms-fill-lower {
-                background-color: rgb(95, 55, 190);
-            }
-
-            &:enabled:hover::-ms-fill-upper {
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-
-            &:enabled:hover::-webkit-slider-runnable-track {
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-
-            &:enabled:hover::-moz-range-track {
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-
-            &:disabled::-ms-fill-lower {
-                background-color: rgba(0, 0, 0, 0.2);
-            }
-
-            &:disabled::-ms-fill-upper {
-                background-color: rgba(0, 0, 0, 0.1);
-            }
-
-            &:disabled::-ms-thumb {
-                background-color: rgb(146, 146, 146);
-            }
-
-            &:disabled::-moz-range-thumb {
-                background-color: rgb(146, 146, 146);
-            }
-
-            &:disabled::-webkit-slider-thumb {
-                background-color: rgb(146, 146, 146);
-            }
+        .thumbHover() {
+            background: @sliderThumbHover;
         }
-        .mixin(@theme);
+        .thumbActive() {
+            background: @chromeHigh;
+        }
+        .thumbDisabled() {
+            background: @chromeHigh;
+        }
+        .lowerFill() {
+            background: @accentColor;
+        }
+        .upperFill() {
+            background: @baseMediumMid;
+        }
+        .upperFillHover() {
+            background: @baseMid;
+        }
+        .fillDisabled() {
+            background: @baseLow;
+        }
 
+        // We can't use :extend() to shrink the CSS output here since rules with
+        // mixed browser pseudo selectors will get thrown out
+
+        // Thumb
+        &::-ms-thumb {.thumb();}
+        &::-webkit-slider-thumb {.thumb();}
+        &::-moz-range-thumb {.thumb();}
+        &:hover::-ms-thumb {.thumbHover();}
+        &:hover::-webkit-slider-thumb {.thumbHover();}
+        &:hover::-moz-range-thumb {.thumbHover();}
+        &:active::-ms-thumb {.thumbActive();}
+        &:active::-webkit-slider-thumb {.thumbActive();}
+        &:active::-moz-range-thumb {.thumbActive();}
+        &:disabled::-ms-thumb {.thumbDisabled();}
+        &:disabled::-webkit-slider-thumb {.thumbDisabled();}
+        &:disabled::-moz-range-thumb {.thumbDisabled();}
+
+        // Lower fill (only supported in IE)
+        &::-ms-fill-lower {.lowerFill();}
+        &:disabled::-ms-fill-lower {.fillDisabled();}
+
+        // Upper fill / track
+        &::-ms-fill-upper {.upperFill();}
+        &::-webkit-slider-runnable-track {.upperFill();}
+        &::-moz-range-track {.upperFill();}
+        &:hover::-ms-fill-upper {.upperFillHover();}
+        &:hover::-webkit-slider-runnable-track {.upperFillHover();}
+        &:hover::-moz-range-track {.upperFillHover();}
+        &:active::-ms-fill-upper {.upperFill();}
+        &:active::-webkit-slider-runnable-track {.upperFill();}
+        &:active::-moz-range-track {.upperFill();}
+        &:disabled::-ms-fill-upper {.fillDisabled();}
+        &:disabled::-webkit-slider-runnable-track {.fillDisabled();}
+        &:disabled::-moz-range-track {.fillDisabled();}
+
+        // IE specific stuff
         &::-ms-track {
-            background-color: transparent;
             color: transparent;
+            background-color: transparent;
         }
-
-        background-color: transparent;
+        &::-ms-ticks-before, &::-ms-ticks-after {
+            color: @baseMediumMid;
+        }
     }
 
     //
-    // Link
+    // Text box
     //
-    a {
-        .mixin(dark) {
-            &:hover:active {
-                color: rgba(156, 114, 255, 0.6);
-            }
+    input[type=text],
+    input[type=password],
+    input[type=email],
+    input[type=number],
+    input[type=tel],
+    input[type=url],
+    input[type=search],
+    textarea,
+    .win-textarea {
+        color: @baseHigh;
+        background-color: @altMediumMid;
+        border-color: @baseMediumMid;
 
-            &:hover {
-                color: rgba(156, 114, 255, 0.8);
-            }
+        // Hint text color
+        // Single colon on -ms not a typo
+        &:-ms-input-placeholder {color: @baseMid;}
+        &::-webkit-input-placeholder {color: @baseMid;}
+        &::-moz-input-placeholder {color: @baseMid;}
 
-            /*
-            :disabled pseudo-class doesn't apply to a,
-            even though disabled attribute stops navigation
-            */
-            &[disabled], &[disabled]:active {
-                color: rgba(255, 255, 255, 0.4);
-            }
-
-            color: rgb(156, 114, 255);
+        &:hover {
+            background-color: @altMid;
+            border-color: @baseMid;
         }
-        .mixin(light) {
-            &:hover:active {
-                color: rgba(79, 26, 203, 0.6);
-            }
 
-            &:hover {
-                color: rgba(79, 26, 203, 0.8);
-            }
-
-            &[disabled], &[disabled]:active {
-                color: rgba(0, 0, 0, 0.4);
-            }
-
-            color: rgb(79, 26, 203);
+        &:focus {
+            color: @baseBlack;
+            background-color: @baseWhite;
+            border-color: @accentColor;
         }
-        .mixin(@theme);
     }
 
-    // The "-ms-keyboard-active" pseudo is not always supported. When it is not supported
-    // it will be treated as a CSS parse error and will throw out all rules in the current
-    // CSS rule group. For this reason, never group it with other rules.
-    .win-type-interactive {
-        .mixin(dark) {
-            &:-ms-keyboard-active {
-                color: rgba(255, 255, 255, 0.4);
-            }
+    //
+    // Clear/Reveal buttons
+    //
+    input::-ms-clear, input::-ms-reveal {
+        display: block;
+        color: fade(@baseBlack, 60%); // Equivalent to altMid in dark and baseMid in light
 
-            &:hover:active {
-                color: rgba(255, 255, 255, 0.4);
-            }
-
-            &:hover {
-                color: rgba(255, 255, 255, 0.8);
-            }
+        &:hover {
+            color: @accentColor;
         }
-        .mixin(light) {
-            &:-ms-keyboard-active {
-                color: rgba(0, 0, 0, 0.4);
-            }
-
-            &:hover:active {
-                color: rgba(0, 0, 0, 0.4);
-            }
-
-            &:hover {
-                color: rgba(0, 0, 0, 0.8);
-            }
+        &:active {
+            color: @baseWhite;
+            background-color: @accentColor;
         }
-        .mixin(@theme);
-    }
-}
-
-@media (-ms-high-contrast) {
-    .win-type-interactive {
-        color: WindowText;
-    }
-    .win-type-interactive:hover, .win-type-interactive:hover:active {
-        color: -ms-hotlight;
-    }
-    .win-type-interactive:-ms-keyboard-active {
-        color: -ms-hotlight;
-    }
-
-    /*
-    Text selection high contrast color.
-    */
-    ::selection, select:focus::-ms-value {
-        background-color: Highlight;
-        color: HighlightText;
-    }
-
-    /*
-    Button
-    */
-    button, input[type=button], input[type=reset],
-    input[type=file]::-ms-browse {
-        background-color: ButtonFace;
-        border-color: ButtonText;
-        color: ButtonText;
-    }
-
-    button[type=submit], input[type=submit] {
-        background-color: Highlight;
-        border-color: ButtonText;
-        color: HighlightText;
-    }
-
-    button:hover:active, button[type=submit]:hover:active, input[type=button]:hover:active,
-    input[type=submit]:hover:active, input[type=reset]:hover:active,
-    input[type=file]::-ms-browse:hover:active {
-        background-clip: border-box;
-        background-color: ButtonText;
-        border-color: transparent;
-        color: ButtonFace;
-    }
-    button:disabled, button[type=submit]:disabled, input[type=button]:disabled,
-    input[type=submit]:disabled, input[type=reset]:disabled,
-    input[type=file]:disabled::-ms-browse, button:disabled:active, button[type=submit]:disabled:active,
-    input[type=button]:disabled:active, input[type=submit]:disabled:active,
-    input[type=reset]:disabled:active, input[type=file]:disabled::-ms-browse:active {
-        background-color: ButtonFace;
-        border-color: GrayText;
-        color: GrayText;
-    }
-
-    button:-ms-keyboard-active, button[type=submit]:-ms-keyboard-active, input[type=button]:-ms-keyboard-active,
-    input[type=submit]:-ms-keyboard-active, input[type=reset]:-ms-keyboard-active {
-        background-clip: border-box;
-        background-color: ButtonText;
-        border-color: transparent;
-        color: ButtonFace;
-    }
-
-    button:hover, input[type=button]:hover, input[type=reset]:hover,
-    input::-ms-clear:hover, input::-ms-reveal:hover,
-    input[type=file]::-ms-browse:hover {
-        background-color: Highlight;
-        border-color: ButtonText;
-        color: HighlightText;
-    }
-
-    input::-ms-clear:hover:active, input::-ms-reveal:hover:active {
-        background-clip: border-box;
-        background-color: ButtonText;
-        border-color: transparent;
-        color: ButtonFace;
-    }
-    input:disabled::-ms-clear, input:disabled::-ms-reveal, select:disabled::-ms-expand {
-        background-color: ButtonFace;
-        border-color: GrayText;
-        color: GrayText;
-    }
-
-    input::-ms-clear, input::-ms-reveal, select::-ms-expand {
-        background-color: ButtonFace;
-        border-color: ButtonText;
-        color: ButtonText;
-    }
-
-    /*
-    Select
-    */
-    select:active:not(:disabled)::-ms-expand {
-        color: ButtonFace;
-        background-color: ButtonText;
-    }
-    option:checked, select:focus::-ms-value {
-        color: HighlightText;
-        background-color: Highlight;
-    }
-    select:active:not(:disabled)::-ms-value,
-    option:hover:active, option:checked:hover:active {
-        color: ButtonFace;
-        background-color: ButtonText;
-    }
-    option:checked:disabled, option:checked:disabled:active,
-    optgroup:disabled option:checked, optgroup:disabled option:checked:active,
-    select:disabled option:checked, select:disabled option:checked:active,
-    select:disabled:focus::-ms-value {
-        color: ButtonFace;
-        background-color: GrayText;
-    }
-
-    /*
-    Link high contrast colors.
-    */
-    a {
-        color: -ms-hotlight;
-    }
-    a[disabled] {
-        color: GrayText;
-    }
-
-    /*
-    Text input, checkbox, radio, and select high contrast colors.
-    */
-    input:hover::-ms-check { /* only checkbox and radio have hover state */
-        background-color: Highlight;
-        color: HighlightText;
-    }
-
-    input[type=text], input[type=password],
-    input[type=email], input[type=number],
-    input[type=tel], input[type=url],
-    input[type=search], textarea, .win-textarea, select,
-    input::-ms-check {
-        background-color: ButtonFace;
-        border-color: ButtonText;
-        color: ButtonText;
-    }
-    input:hover:active::-ms-check { /* only checkbox and radio have active state */
-        background-clip: border-box;
-        background-color: ButtonText;
-        border-color: transparent;
-        color: ButtonFace;
-    }
-    input[type=text]:disabled, input[type=password]:disabled,
-    input[type=email]:disabled, input[type=number]:disabled,
-    input[type=tel]:disabled, input[type=url]:disabled,
-    input[type=search]:disabled, input[type=file]::-ms-value,
-    textarea:disabled, .win-textarea:disabled, select:disabled,
-    input:disabled::-ms-check, input:disabled:active::-ms-check {
-        border-color: GrayText;
-        color: ButtonText;
-        background-color: ButtonFace;
-    }
-    input[type]:-ms-input-placeholder,
-    textarea:-ms-input-placeholder {
-        color: GrayText;
-    }
-    input[type]::-webkit-input-placeholder,
-    textarea::-webkit-input-placeholder {
-        color: GrayText;
-    }
-    input[type]::-moz-input-placeholder,
-    textarea::-moz-input-placeholder {
-        color: GrayText;
-    }
-
-    input:disabled::-ms-check, input:disabled:active::-ms-check,
-    select:disabled::-ms-value {
-        color: GrayText;
-    }
-    input:-ms-keyboard-active::-ms-check { /* only checkbox and radio have active state */
-        background-clip: border-box;
-        background-color: ButtonText;
-        border-color: transparent;
-        color: ButtonFace;
-    }
-
-    /*
-    Progress high contrast colors.
-    */
-    progress {
-        border: 1px solid ButtonText;
-        background-color: ButtonFace;
-        color: Highlight;
-    }
-    progress:indeterminate {
-        border: transparent;
-    }
-    progress::-ms-fill {
-        border-right: 1px solid ButtonText;
-        background-color: Highlight;
-    }
-    progress.win-paused:not(:indeterminate)::-ms-fill {
-        background-color: GrayText;
-    }
-    progress.win-paused:not(:indeterminate) {
-        opacity: 1.0;
-    }
-
-    /*
-    Slider
-    */
-    input[type=range]::-ms-track {
-        border: 1px solid ButtonText;
-        background-color: ButtonFace;
-        color: transparent;
-    }
-    input[type=range]:disabled::-ms-track {
-        border-color: GrayText;
-    }
-    input[type=range]::-ms-fill-lower {
-        background-color: Highlight;
-    }
-    input[type=range]:disabled::-ms-fill-lower {
-        background-color: transparent;
-    }
-    input[type=range]::-ms-ticks-before,
-    input[type=range]::-ms-ticks-after {
-        color: ButtonText;
-    }
-    input[type=range]:disabled::-ms-ticks-before,
-    input[type=range]:disabled::-ms-ticks-after {
-        color: GrayText;
-    }
-    input[type=range]::-ms-thumb {
-        background-color: ButtonText;
-        border-left: 1px solid HighlightText;
-        border-right: 1px solid HighlightText;
-    }
-    input[type=range].win-vertical::-ms-thumb {
-        border-left-style: none;
-        border-right-style: none;
-        border-top: 1px solid HighlightText;
-        border-bottom: 1px solid HighlightText;
-    }
-    input[type=range]:active::-ms-thumb {
-        background-color: HighlightText;
-        border-color: ButtonText;
-    }
-    input[type=range]:disabled::-ms-thumb,
-    input[type=range]:disabled:active::-ms-thumb {
-        background-color: GrayText;
-        border-color: GrayText;
-    }
-    input[type=range]:hover::-ms-thumb {
-        background-color: Highlight;
     }
 }

@@ -1,214 +1,57 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#win-toggleswitch {
-    // Color definitions in light theme
-    .variableDefs(light) {
-        @mainColor: #000;
-        @textDisabledColor: fade(@mainColor, 40%);
-
-        @thumbPressedColor: @mainColor;
-        @thumbHoverColor: @mainColor;
-        @thumbDisabledColor: rgb(146, 146, 146);
-
-        @borderColor: fade(@mainColor, 35%);
-        @borderDisabledColor: fade(@mainColor, 20%);
-
-        @secondaryColor: fade(@mainColor, 35%);
-        @secondaryPressedColor: fade(@mainColor, 26%);
-        @secondaryHoverColor: fade(@mainColor, 29%);
-        @secondaryDisabledColor: fade(@mainColor, 12%);
-
-        @primaryColor: rgb(70, 23, 180);
-        @primaryPressedColor: rgb(114, 65, 228);
-        @primaryHoverColor: rgb(95, 55, 190);
-        @primaryDisabledColor: fade(@mainColor, 12%);
-    }
-    // Color definitions in dark theme
-    .variableDefs(dark) {
-        @mainColor: #fff;
-        @textDisabledColor: fade(@mainColor, 40%);
-
-        @thumbPressedColor: @mainColor;
-        @thumbHoverColor: @mainColor;
-        @thumbDisabledColor: rgb(126, 126, 126);
-
-        @borderColor: fade(@mainColor, 35%);
-        @borderDisabledColor: fade(@mainColor, 20%);
-
-        @secondaryColor: fade(@mainColor, 26%);
-        @secondaryPressedColor: fade(@mainColor, 35%);
-        @secondaryHoverColor: fade(@mainColor, 29%);
-        @secondaryDisabledColor: fade(@mainColor, 12%);
-
-        @primaryColor: rgb(87, 41, 193);
-        @primaryPressedColor: rgb(126, 79, 236);
-        @primaryHoverColor: rgb(110, 70, 202);
-        @primaryDisabledColor: rgb(126, 126, 126);
-    }
-    // Color definitions in high contrast
-    .variableDefs(highcontrast) {
-        @mainColor: ButtonText;
-        @textDisabledColor: ButtonText;
-
-        @thumbPressedColor: ButtonFace;
-        @thumbHoverColor: Highlight;
-        @thumbDisabledColor: GrayText;
-
-        @borderColor: ButtonText;
-        @borderDisabledColor: GrayText;
-
-        @secondaryColor: ButtonFace;
-        @secondaryPressedColor: ButtonFace;
-        @secondaryHoverColor: ButtonFace;
-        @secondaryDisabledColor: ButtonFace;
-
-        @primaryColor: Highlight;
-        @primaryPressedColor: Highlight;
-        @primaryHoverColor: Highlight;
-        @primaryDisabledColor: ButtonFace;
-    }
-
-    // Colors based on RTL
-    .calculateFillColors(@isRTL) when (@isRTL = false) {
-        @lowerFillColor: @primaryColor;
-        @lowerFillPressedColor: @primaryPressedColor;
-        @lowerFillHoverColor: @primaryHoverColor;
-        @lowerFillDisabledColor: @primaryDisabledColor;
-        @upperFillColor: @secondaryColor;
-        @upperFillPressedColor: @secondaryPressedColor;
-        @upperFillHoverColor: @secondaryHoverColor;
-        @upperFillDisabledColor: @secondaryDisabledColor;
-    }
-    .calculateFillColors(@isRTL) when (@isRTL = true) {
-        @lowerFillColor: @secondaryColor;
-        @lowerFillPressedColor: @secondaryPressedColor;
-        @lowerFillHoverColor: @secondaryHoverColor;
-        @lowerFillDisabledColor: @secondaryDisabledColor;
-        @upperFillColor: @primaryColor;
-        @upperFillPressedColor: @primaryPressedColor;
-        @upperFillHoverColor: @primaryHoverColor;
-        @upperFillDisabledColor: @primaryDisabledColor;
-    }
-
-    .styleToggleForTheme(@theme) {
-        .win-toggleswitch {
-
-            #win-toggleswitch > .variableDefs(@theme);
-
-            .rtlDependentStyles(@isRTL) {
-                #win-toggleswitch > .calculateFillColors(@isRTL);
-                .win-toggleswitch-fill-lower {
-                    background-color: @lowerFillColor;
-                }
-                .win-toggleswitch-fill-upper {
-                    background-color: @upperFillColor;
-                }
-                &.win-toggleswitch-disabled {
-                    .win-toggleswitch-fill-lower {
-                        background-color: @lowerFillDisabledColor;
-                    }
-                    .win-toggleswitch-fill-upper {
-                        background-color: @upperFillDisabledColor;
-                    }
-                }
-                &.win-toggleswitch-pressed {
-                    .win-toggleswitch-fill-lower {
-                        background-color: @lowerFillPressedColor;
-                    }
-                    .win-toggleswitch-fill-upper {
-                        background-color: @upperFillPressedColor;
-                    }
-                }
-            }
-
-            .win-toggleswitch-header {
-                color: @mainColor;
-            }
-            .win-toggleswitch-value {
-                color: @mainColor;
-            }
-            .win-toggleswitch-description {
-                color: @mainColor;
-            }
-            .win-toggleswitch-track {
-                border-color: @borderColor;
-            }
-            .win-toggleswitch-thumb {
-                background-color: @mainColor;
-            }
-
-            &:focus {
-                .win-toggleswitch-track {
-                    outline-color: @mainColor;
-                }
-            }
-            &.win-toggleswitch-disabled {
-                .win-toggleswitch-header,
-                .win-toggleswitch-value,
-                .win-toggleswitch-description {
-                    color: @textDisabledColor;
-                }
-                .win-toggleswitch-track {
-                    border-color: @borderDisabledColor;
-                }
-                .win-toggleswitch-thumb {
-                    background-color: @thumbDisabledColor;
-                }
-            }
-            &.win-toggleswitch-pressed {
-                .win-toggleswitch-thumb {
-                    background-color: @thumbPressedColor;
-                }
-            }
-
-            .rtlDependentStyles(false);
-            .RTL({
-                .rtlDependentStyles(true);
-            });
-        }
-    }
-
-    .styleToggleForThemeHover(@theme) {
-        .win-toggleswitch {
-
-            #win-toggleswitch > .variableDefs(@theme);
-
-            .rtlDependentStyles(@isRTL) {
-                #win-toggleswitch > .calculateFillColors(@isRTL);
-
-                &.win-toggleswitch-enabled:hover {
-                    .win-toggleswitch-fill-lower {
-                        background-color: @lowerFillHoverColor;
-                    }
-                    .win-toggleswitch-fill-upper {
-                        background-color: @upperFillHoverColor;
-                    }
-                    .win-toggleswitch-thumb {
-                        background-color: @thumbHoverColor;
-                    }
-                }
-            }
-
-            .rtlDependentStyles(false);
-            .RTL({
-                .rtlDependentStyles(true);
-            });
-        }
-    }
-}
-
 .Colors(@theme) {
-    #win-toggleswitch > .styleToggleForTheme(@theme);
+    .colorDefinitions(@theme);
+
+    // Rest styles
+    .win-toggleswitch-header {
+        color: @baseHigh;
+    }
+    .win-toggleswitch-value {
+        color: @baseHigh;
+    }
+    .win-toggleswitch-thumb {
+        background-color: @baseMediumHigh;
+    }
+    .win-toggleswitch-on .win-toggleswitch-track {
+        border-color: @accentColor;
+    }
+    .win-toggleswitch-off .win-toggleswitch-track {
+        border-color: @baseMediumHigh;
+    }
+
+    // Active styles
+    .win-toggleswitch-pressed .win-toggleswitch-track {
+        border-color: @baseMid;
+    }
+    .win-toggleswitch-pressed .win-toggleswitch-thumb {
+        background-color: @baseMid;
+    }
+
+    // Disabled styles
+    .win-toggleswitch-disabled .win-toggleswitch-track {
+        border-color: @baseLow;
+    }
+    .win-toggleswitch-disabled .win-toggleswitch-thumb {
+        background-color: @baseLow;
+    }
+    .win-toggleswitch-disabled .win-toggleswitch-header,
+    .win-toggleswitch-disabled .win-toggleswitch-value {
+        color: @baseLow;
+    }
 }
 
 .ColorsHover(@theme) {
-    #win-toggleswitch > .styleToggleForThemeHover(@theme);
-}
+    .colorDefinitions(@theme);
 
-.HighContrast() {
-    #win-toggleswitch > .styleToggleForTheme(highcontrast);
-}
+    // Hover styles
+    .win-toggleswitch-off:not(.win-toggleswitch-disabled):not(.win-toggleswitch-pressed) {
+        .win-toggleswitch-clickregion:hover .win-toggleswitch-track {
+            border-color: @baseHigh;
+        }
+        .win-toggleswitch-clickregion:hover .win-toggleswitch-thumb {
+            background-color: @baseHigh;
+        }
+    }
 
-.HighContrastHover() {
-    #win-toggleswitch > .styleToggleForThemeHover(highcontrast);
 }

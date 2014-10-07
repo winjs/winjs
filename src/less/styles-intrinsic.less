@@ -21,8 +21,6 @@ html, body {
 
 html {
     overflow: hidden;
-}
-html {
     .RTL({direction: rtl;});
 }
 
@@ -33,13 +31,6 @@ body {
 
 iframe {
     border: 0;
-}
-
-body,
-button, input,
-textarea, .win-textarea,
-select, option {
-    letter-spacing: 0.02em;
 }
 
 // Define basic font fallback list for intrinsic elements
@@ -75,40 +66,35 @@ input::-moz-focus-inner {
 // Text input
 //
 input[type=text], input[type=password], input[type=email], input[type=number],
-input[type=tel], input[type=url], input[type=search] {
+input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
     -ms-user-select: element;
     border-style: solid;
     border-width: 2px;
-    margin: 4px 0px;
+    margin: 8px 0px;
     width: 292px;
     min-width: 64px;
     min-height: 28px;
     background-clip: border-box;
-    padding: 0 8px;
+    box-sizing: border-box;
+    padding: 3px 10px 5px 10px; // Subtract 2 from padding values due to border
     outline: 0;
     .win-type-body();
 }
 
 input::-ms-value {
     margin: 0;
+    padding: 0;
+}
+
+textarea, .win-textarea {
+    resize: none;
+    overflow-y: auto;
 }
 
 //
 // Radio and check
 //
-input[type=radio] {
-    width: 20px;
-    height: 20px;
-    margin-left: -1px;
-    margin-right: 4px;
-    margin-bottom: -2px;
-
-    .RTL({
-        margin-left: 4px;
-        margin-right: -1px;
-    });
-}
-input[type=checkbox] {
+input[type=radio], input[type=checkbox] {
     width: 20px;
     height: 20px;
     margin-right: 8px;
@@ -127,47 +113,19 @@ input::-ms-check {
     background-clip: border-box;
 }
 
-//
-// Text area
-//
-textarea, .win-textarea {
-    -ms-user-select: element;
-    border-style: solid;
-    border-width: 2px;
-    margin: 4px 0px;
-    padding: 4px 8px;
-    padding-right: 17px;
-    min-width: 64px;
-    min-height: 39px;
-    background-clip: border-box;
-    overflow-y: scroll;
-    word-wrap: break-word;
-    outline: 0;
-    .win-type-body();
-
-    .RTL({
-        // Flip sides for autohiding scrollbar padding on RTL layouts
-        padding-right: 8px;
-        padding-left: 17px;
-    });
-}
 
 //
 // Button
 //
 button, input[type=button], input[type=reset], input[type=submit], button[type=submit] {
     border-style: solid;
-    background-clip: padding-box;
     margin: 0px;
     min-height: 32px;
     min-width: 120px;
     padding: 4px 8px;
     border-width: 2px;
-    .win-type-body();
-}
-
-input[type=submit], button[type=submit] {
     background-clip: border-box;
+    .win-type-body();
 }
 
 input::-ms-clear, input::-ms-reveal {
@@ -228,25 +186,32 @@ input[type=file] {
 // Dropdown
 //
 select {
-    min-width: 80px;
+    min-width: 296px;
     min-height: 32px;
-    border-width: 2px;
-    border-style: solid;
-    background-clip: border-box;
-    margin: 4px 0px;
+    padding: 3px 10px 5px 10px; // Subtract 2px for border
     outline: 0;
+    border-style: solid;
+    border-width: 2px;
+    background-clip: border-box;
+    box-sizing: border-box;
     .win-type-body();
 
     &::-ms-value {
-        padding: 4px 8px;
-        margin: 0px;
+        padding: 0;
+        margin: 0;
     }
 
     &::-ms-expand {
-        border: 0px;
-        padding-left: 6px;
-        padding-right: 6px;
+        border: none;
+        margin-right: -2px; // 10px total with padding
+        margin-bottom: -2px; // 5px total with padding
+        font-size: 20px;
     }
+
+}
+
+option {
+    .win-type-body();
 }
 
 //
@@ -255,6 +220,12 @@ select {
 progress {
     width: 180px;
     height: 4px;
+    border-style: none;
+    -webkit-appearance: none;
+
+    &::-ms-fill {
+        border-style: none;
+    }
 
     &.win-medium {
         width: 296px;
@@ -262,14 +233,6 @@ progress {
 
     &.win-large {
         width: 100%;
-    }
-
-    &::-ms-fill {
-        border-style: none;
-    }
-
-    &:not(:indeterminate) {
-        border-style: none;
     }
 
     &:indeterminate::-webkit-progress-value {
@@ -329,126 +292,51 @@ progress {
 // Horizontal slider
 //
 input[type=range] {
-    width: 280px;
-    height: 32px;
-    padding: 17px 0px 32px 0px;
     -webkit-appearance: none;
 
-    &:focus {
-        outline: none;
-    }
+    width: 280px;
+    height: 22px; // Leave enough room for tick marks
 
-    &::-ms-track {
-        padding: 0px;
-        width: auto;
-        height: 12px;
+    .track() {
+        height: 2px;
         border-style: none;
     }
 
-    &::-webkit-slider-runnable-track {
-        height: 12px;
-    }
-
-    &::-moz-range-track {
-        height: 12px;
-        border: none;
-    }
-
-    &::-ms-thumb {
-        width: 12px;
-        height: 32px;
+    .thumb() {
+        width: 24px;
+        height: 8px;
+        border-radius: 4px;
         border-style: none;
     }
 
+    &::-ms-track {.track();}
+    &::-webkit-slider-runnable-track {.track();}
+    &::-moz-range-track {.track();}
+    &::-ms-thumb {.thumb();}
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        height: 32px;
-        width: 12px;
-        margin-top: -10px;
+        margin-top: -4px;
+        .thumb();
     }
-
-    &::-moz-range-thumb {
-        width: 12px;
-        height: 32px;
-        border-radius: 0;
-        border: none;
-    }
-
-    &::-ms-ticks-before, &::-ms-ticks-after {
-        width: 100%;
-        height: 5px;
-        display: none;
-    }
-
-    &:disabled::-ms-fill-lower {
-        margin-right: 5px;
-    }
-
-    &:disabled::-ms-fill-upper {
-        margin-left: 6px;
-    }
-
-    &:disabled {
-        .RTL({
-            &::-ms-fill-lower {
-                margin-right: 0;
-                margin-left: 5px;
-            }
-
-            &::-ms-fill-upper {
-                margin-left: 0;
-                margin-right: 6px;
-            }
-        });
-    }
+    &::-moz-range-thumb {.thumb();}
 }
 
 //
 // Vertical slider
 //
 input[type=range].win-vertical {
-    width: 32px;
-    height: 191px;
-    padding: 0px 17px;
     writing-mode: bt-lr;
 
+    width: 22px; // Leave enough room for tick marks
+    height: 280px;
+
     &::-ms-track {
-        width: 12px;
+        width: 2px;
         height: auto;
     }
-
     &::-ms-thumb {
-        width: 32px;
-        height: 11px;
-        border-style: none;
-    }
-
-    &:disabled::-ms-fill-lower {
-        margin-right: 0;
-        margin-top: 6px;
-    }
-
-    &:disabled::-ms-fill-upper {
-        margin-left: 0;
-        margin-bottom: 5px;
-    }
-
-    &::-ms-ticks-before, &::-ms-ticks-after {
-        width: 5px;
-        height: 100%;
-        display: none;
-    }
-
-    &:disabled {
-        .RTL({
-            &::-ms-fill-lower {
-                margin-left: 0;
-            }
-
-            &::-ms-fill-upper {
-                margin-right: 0;
-            }
-        });
+        width: 8px;
+        height: 24px;
     }
 
     .RTL({
