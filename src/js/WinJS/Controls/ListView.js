@@ -1571,7 +1571,7 @@ define([
                     } else if (entity.type === _UI.ObjectType.groupHeader) {
                         this._focusRequest = this._groups.requestHeader(entity.index);
                     } else {
-                        this._focusRequest = WinJS.Promise.wrap(entity.type === _UI.ObjectType.listHeader ? this._listHeader : this._listFooter);
+                        this._focusRequest = Promise.wrap(entity.type === _UI.ObjectType.listHeader ? this._listHeader : this._listFooter);
                     }
                     this._focusRequest.then(setFocusOnItemImpl);
                 },
