@@ -50,6 +50,7 @@ define([
     members._headerPositionTopClass = "win-headerpositiontop";
     members._headerPositionLeftClass = "win-headerpositionleft";
     members._structuralNodesClass = "win-structuralnodes";
+    members._singleItemsBlockClass = "win-single-itemsblock";
     members._uniformGridLayoutClass = "win-uniformgridlayout";
     members._uniformListLayoutClass = "win-uniformlistlayout";
     members._cellSpanningGridLayoutClass = "win-cellspanninggridlayout";

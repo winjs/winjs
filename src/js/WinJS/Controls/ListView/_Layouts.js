@@ -17,7 +17,7 @@ define([
     '../../Utilities/_UI',
     '../ItemContainer/_Constants',
     './_ErrorMessages'
-    ], function layouts2Init(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _TransitionAnimation, Promise, Scheduler, _Signal, _Dispose, _ElementUtilities, _SafeHtml, _UI, _Constants, _ErrorMessages) {
+], function layouts2Init(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _TransitionAnimation, Promise, Scheduler, _Signal, _Dispose, _ElementUtilities, _SafeHtml, _UI, _Constants, _ErrorMessages) {
     "use strict";
 
     var Key = _ElementUtilities.Key,
@@ -325,6 +325,7 @@ define([
                         _ElementUtilities.removeClass(this._site.surface, _Constants._headerPositionTopClass);
                         _ElementUtilities.removeClass(this._site.surface, _Constants._headerPositionLeftClass);
                         _ElementUtilities.removeClass(this._site.surface, _Constants._structuralNodesClass);
+                        _ElementUtilities.removeClass(this._site.surface, _Constants._singleItemsBlockClass);
                         this._site.surface.style.cssText = "";
                         if (this._groups) {
                             cleanGroups(this._groups);
@@ -385,14 +386,16 @@ define([
                                 that._viewportSizeChanged(that._getViewportCrossSize());
                             }
 
-                            if (!that._envInfo.nestedFlexTooLarge && // Disabling structural nodes works around this issue
-                                    !that._envInfo.nestedFlexTooSmall &&
-                                    allGroupsAreUniform()) {
-                                that._usingStructuralNodes = exports._LayoutCommon._barsPerItemsBlock > 0;
-                                return exports._LayoutCommon._barsPerItemsBlock * that._itemsPerBar;
-                            } else {
+                            if (!allGroupsAreUniform()) {
                                 that._usingStructuralNodes = false;
                                 return null;
+                            } else if (that._envInfo.nestedFlexTooLarge || that._envInfo.nestedFlexTooSmall) {
+                                // Store all items in a single itemsblock
+                                that._usingStructuralNodes = true;
+                                return Number.MAX_VALUE;
+                            } else {
+                                that._usingStructuralNodes = exports._LayoutCommon._barsPerItemsBlock > 0;
+                                return exports._LayoutCommon._barsPerItemsBlock * that._itemsPerBar;
                             }
                         });
                     }
@@ -604,7 +607,10 @@ define([
                     }
 
                     realizedRangePromise = that._measureItem(0).then(function () {
-                        _ElementUtilities[that._usingStructuralNodes ? "addClass" : "removeClass"](that._site.surface, _Constants._structuralNodesClass);
+                        _ElementUtilities[(that._usingStructuralNodes) ? "addClass" : "removeClass"]
+                            (that._site.surface, _Constants._structuralNodesClass);
+                        _ElementUtilities[(that._envInfo.nestedFlexTooLarge || that._envInfo.nestedFlexTooSmall) ? "addClass" : "removeClass"]
+                            (that._site.surface, _Constants._singleItemsBlockClass);
 
                         if (that._sizes.viewportContentSize !== that._getViewportCrossSize()) {
                             that._viewportSizeChanged(that._getViewportCrossSize());
@@ -4225,7 +4231,11 @@ define([
                     var perfId = "Layout:_layoutNonGroupedVerticalList";
                     that._site._writeProfilerMark(perfId + ",StartTM");
                     this._layoutPromise = that._measureItem(0).then(function () {
-                        _ElementUtilities[that._usingStructuralNodes ? "addClass" : "removeClass"](that._site.surface, _Constants._structuralNodesClass);
+                        _ElementUtilities[(that._usingStructuralNodes) ? "addClass" : "removeClass"]
+                            (that._site.surface, _Constants._structuralNodesClass);
+                        _ElementUtilities[(that._envInfo.nestedFlexTooLarge || that._envInfo.nestedFlexTooSmall) ? "addClass" : "removeClass"]
+                            (that._site.surface, _Constants._singleItemsBlockClass);
+
 
                         if (that._sizes.viewportContentSize !== that._getViewportCrossSize()) {
                             that._viewportSizeChanged(that._getViewportCrossSize());
@@ -4267,11 +4277,13 @@ define([
                         // which reduces the trident layout required by measure.
                         return this._measureItem(0).then(function () {
                             if (that._envInfo.nestedFlexTooLarge || that._envInfo.nestedFlexTooSmall) {
-                                that._usingStructuralNodes = false;
+                                // Store all items in a single itemsblock
+                                that._usingStructuralNodes = true;
+                                return Number.MAX_VALUE;
                             } else {
                                 that._usingStructuralNodes = exports.ListLayout._numberOfItemsPerItemsBlock > 0;
+                                return exports.ListLayout._numberOfItemsPerItemsBlock;
                             }
-                            return (that._usingStructuralNodes ? exports.ListLayout._numberOfItemsPerItemsBlock : null);
                         });
                     }
                 },

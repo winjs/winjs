@@ -305,6 +305,25 @@ html.win-hoverable .win-container.win-selected:hover .win-selectionborder {
 }
 
 //
+// All uniform layouts using structural nodes (Grid/List), once we've detected any bugs in the enviornment for nested flexboxes.
+// ListView will put all containers in one itemsblock, so the padder is never used.
+//
+.win-listview .win-vertical,
+.win-listview .win-horizontal {
+    .win-structuralnodes.win-single-itemsblock.win-listlayout .win-itemscontainer.win-laidout,
+    .win-structuralnodes.win-single-itemsblock.win-gridlayout .win-uniformgridlayout.win-itemscontainer.win-laidout {
+        // Itemsblocks will already be styled as flexboxes elsewhere in the file. 
+        // Display the itemscontainer "block" since it will only contain one giant itemsblock.
+        display: block;
+
+        .win-itemscontainer-padder {
+            display: none;
+        }
+    }
+}
+
+
+//
 // ListLayout
 //
 .win-listview.win-groups .win-vertical .win-listlayout.win-headerpositionleft .win-itemscontainer,
