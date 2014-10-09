@@ -22,7 +22,7 @@ module Helper.Toolbar {
         commandSelector: ".win-command",
         overflowInlineMenuCommandHeight: 44,
         overflowInlineMenuSeparatorHeight: 12,
-        controlWithFlyoutMenuMinWidth: 100
+        controlWithFlyoutMenuMinWidth: 68
     }
 
     export function getVisibleCommandsInElement(element: HTMLElement) {

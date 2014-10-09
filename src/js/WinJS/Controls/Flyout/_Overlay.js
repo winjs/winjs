@@ -1443,24 +1443,6 @@ define([
                     } catch (e) { }
                 },
 
-                // Prevent the document.activeElement from showing focus
-                _addHideFocusClass: function (element) {
-                    if (element) {
-                        _ElementUtilities.addClass(element, _Constants.hideFocusClass);
-                        _ElementUtilities._addEventListener(element, "focusout", _Overlay._removeHideFocusClass, false);
-                    }
-                },
-
-                // Allow the event.target (element that is losing focus) to show focus next time it gains focus
-                _removeHideFocusClass: function (event) {
-                    // Make sure we really lost focus and was not just an App switch
-                    var target = event.target;
-                    if (target && target !== _Global.document.activeElement) {
-                        _ElementUtilities.removeClass(target, _Constants.hideFocusClass);
-                        _ElementUtilities._removeEventListener(event.target, "focusout", _Overlay._removeHideFocusClass, false);
-                    }
-                },
-
                 _sizeOfDocument: function () {
                     return {
                         width: _Global.document.documentElement.offsetWidth,

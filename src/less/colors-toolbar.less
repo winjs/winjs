@@ -3,37 +3,34 @@
 #win-toolbar {
     .variableDefs(dark) {
         @backgroundColor:rgb(43, 43, 43);
-        @commandDefaultBorderColor: transparent;
+        @textColorActive: rgb(255, 255, 255);
         @commandFocusBorderColor: rgb(255, 255, 255);
         @overflowButtonEllipsisColor: rgb(255, 255, 255);
-        @overflowButtonEllipsisHoverBackground: transparent;
         @overflowButtonBackground: transparent;
-        @inlineMenuCommandHoverBackground: rgba(222, 222, 222, 0.5);
-        @inlineMenuCommandFocusBackground: transparent;
-        @inlineMenuCommandActiveBackground: rgba(222, 222, 222, 0.3);
+        @overflowButtonActiveBackground: rgb(128, 128, 128);
+        @inlineMenuCommandHoverBackground: rgb(85, 85, 85);
+        @inlineMenuCommandActiveBackground: rgb(128, 128, 128);
     }
 
     .variableDefs(light) {
         @backgroundColor:rgb(230, 230, 230);
-        @commandDefaultBorderColor: transparent;
+        @textColorActive: rgb(0, 0, 0);
         @commandFocusBorderColor: rgb(0, 0, 0);
         @overflowButtonEllipsisColor: rgb(0, 0, 0);
-        @overflowButtonEllipsisHoverBackground: transparent;
         @overflowButtonBackground: transparent;
-        @inlineMenuCommandHoverBackground: rgb(222, 222, 222);
-        @inlineMenuCommandFocusBackground: transparent;
-        @inlineMenuCommandActiveBackground:  rgb(0, 0, 0);
+        @overflowButtonActiveBackground: rgb(138, 138, 138);
+        @inlineMenuCommandHoverBackground: rgb(184, 184, 184);
+        @inlineMenuCommandActiveBackground:  rgb(138, 138, 138);
     }
 
     .variableDefs(highcontrast) {
         @backgroundColor:ButtonFace;
-        @commandDefaultBorderColor: ButtonFace;
+        @textColorActive: ButtonFace;
         @commandFocusBorderColor: ButtonText;
         @overflowButtonEllipsisColor: ButtonText;
-        @overflowButtonEllipsisHoverBackground: Highlight;
         @overflowButtonBackground: ButtonFace;
+        @overflowButtonActiveBackground: Highlight;
         @inlineMenuCommandHoverBackground: Highlight;
-        @inlineMenuCommandFocusBackground: ButtonFace;
         @inlineMenuCommandActiveBackground: ButtonText;
     }
 
@@ -44,21 +41,9 @@
 
             background-color: @backgroundColor;
 
-            div.win-command.win-command:focus,
-            div.win-command.win-command,
-            button:enabled.win-command.win-command:focus,
-            button:enabled.win-command.win-command {
-                border-color: @commandDefaultBorderColor;
-            }
-
-            div.win-command:focus.win-keyboard,
-            button:enabled.win-command:focus.win-keyboard {
-                border-color: @commandFocusBorderColor;
-            }
-
             button.win-toolbar-overflowbutton {
                 background-color: @overflowButtonBackground;
-                border-color: @commandDefaultBorderColor;
+                border-color: transparent;
 
                 &:enabled {
                     &:-ms-keyboard-active {
@@ -76,15 +61,13 @@
                 }
             }
 
-            .win-toolbar-overflowarea {
-                button:enabled.win-command {
-                    &:focus {
-                        background-color: @inlineMenuCommandFocusBackground
-                    }
-                    &:hover:active {
-                        background-color: @inlineMenuCommandActiveBackground;
-                    }
-                }
+            button.win-toolbar-overflowbutton.win-toolbar-overflowbutton:hover:active {
+                background-color: @overflowButtonActiveBackground;
+            }
+
+            .win-toolbar-overflowarea button:enabled.win-command:hover:active {
+                color: @textColorActive;
+                background-color: @inlineMenuCommandActiveBackground;
             }
         }
     }
@@ -94,10 +77,7 @@
 
             #win-toolbar > .variableDefs(@theme);
 
-            button.win-toolbar-overflowbutton:hover {
-                background-color: @overflowButtonEllipsisHoverBackground;
-            }
-
+            button.win-toolbar-overflowbutton:hover,
             .win-toolbar-overflowarea button.win-command:hover {
                 background-color: @inlineMenuCommandHoverBackground;
             }

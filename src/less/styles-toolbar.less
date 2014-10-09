@@ -9,6 +9,7 @@
         min-height: 24px;
         #flex > .display-inline-flex();
         #flex > .justify-content(flex-end;);
+        #flex > .align-items(flex-start);
     }
 
     .win-toolbar-actionarea .win-command,
@@ -17,7 +18,7 @@
     }
 
     &.win-toolbar-flyoutmenu {
-        min-width: 100px; /* enough for one primary command */
+        min-width: 68px; /* enough for one primary command */
 
         > .win-toolbar-overflowarea {
             display:none;
@@ -40,7 +41,7 @@
                 #flex > .flex(@grow: 0; @shrink: 0);
                 border: 1px dotted transparent;
                 padding: 10px 11px 12px 11px;
-                .win-type-caption(@lineHeight: 20px); /* 44px - 10px top padding - 12px bottom padding - 2px border */
+                .win-type-body();
                 white-space: nowrap;
                 overflow: hidden;
                 width:auto;
@@ -67,18 +68,22 @@
 
     .win-toolbar-overflowbutton {
         width: 32px; /* 30px + 2px border */
-        height: 80px; /* 78px + 2px border */
+        min-height: 48px; /* height of a command without labels */
         margin: 0px;
         padding: 0px;
-        border: 1px dotted transparent;
+        border: 1px dotted;
         min-width: 0px;
         position: relative;
         outline:none;
+        #flex > .align-self(stretch);
+        box-sizing: border-box;
+        background-clip:border-box;
 
         .win-toolbar-ellipsis {
             width: 32px;
             right: 0px;
-            top:20px;
+            top:12px;
+            line-height: 24px;
             position: absolute;
             display: inline-block;
             font-size: 19px;

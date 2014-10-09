@@ -683,6 +683,11 @@ export class Toolbar {
                 this._mainActionArea.appendChild(command.element);
             }
 
+            // Ensure that the element we are measuring does not have display: none (e.g. it was just added, and it
+            // will be animated in)
+            var originalDisplayStyle = command.element.style.display;
+            command.element.style.display = "";
+
             if (command.type === _Constants.typeContent) {
                 this._customContentCommandsWidth[this._commandUniqueId(command)] = _ElementUtilities.getTotalWidth(command.element);
             } else if (command.type === _Constants.typeSeparator) {
@@ -695,6 +700,9 @@ export class Toolbar {
                     this._standardCommandWidth = _ElementUtilities.getTotalWidth(command.element);
                 }
             }
+
+            // Restore the original display style
+            command.element.style.display = originalDisplayStyle;
         });
 
         if (this._overflowButton && !this._overflowButtonWidth) {

@@ -380,7 +380,6 @@ define([
                 _ElementUtilities.addClass(this._invokeButton, _Constants.invokeButtonClass);
                 this._element.appendChild(this._invokeButton);
                 var that = this;
-                _ElementUtilities._addEventListener(this._invokeButton, "pointerdown", function () { _Overlay._Overlay._addHideFocusClass(that._invokeButton); }, false);
                 this._invokeButton.addEventListener("click", function () { AppBar._toggleAllAppBarsState(_KeyboardBehavior._keyboardSeenLast, that); }, false);
 
                 // Run layout setter immediately. We need to know our layout in order to correctly
@@ -441,6 +440,8 @@ define([
                     // the window resizes or when CSS changes are applied to the commands layout AppBar's parent element.
                     this._element.style.display = "none";
                 }
+
+                this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._element);
 
                 this._writeProfilerMark("constructor,StopTM");
 
@@ -1250,13 +1251,7 @@ define([
 
                 // Set focus to the passed in AppBar
                 _setFocusToAppBar: function AppBar_setFocusToAppBar() {
-                    if (this._focusOnFirstFocusableElement()) {
-                        // Prevent what is gaining focus from showing that it has focus,
-                        // but only in the non-keyboard scenario.
-                        if (!this._keyboardInvoked) {
-                            _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
-                        }
-                    } else {
+                    if (!this._focusOnFirstFocusableElement()) {
                         // No first element, set it to appbar itself
                         _Overlay._Overlay._trySetActive(this._element);
                     }

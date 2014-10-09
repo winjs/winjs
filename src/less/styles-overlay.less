@@ -45,17 +45,21 @@ Command buttons.
 button.win-command {
     background: none;
     background-clip: border-box;
-    height: auto; /* height is 80px (label) or 60px (no label) */
-    padding: 9px 0; /* bottom dependent on label/img, 1px margin */
+    height: auto;
+    padding: 0;
     margin: 0;
     border: 1px dotted; /* reserve focus rect */
-    min-width: 40px;
+    min-width: 40px; 
+    min-height: 48px; 
     text-align: center;
     font-size: 9pt;
     line-height: 16px;
     font-weight: normal;
+    overflow: visible;
     /* Commands are lrtb */
     writing-mode: lr-tb;
+    position: relative;
+    z-index:0;
 }
 
 button {
@@ -74,16 +78,18 @@ Command button icons.
 */
 .win-commandicon {
     display: inline-block;
-    margin: 0 29px; /* padding for command buttons, 1px/side for focus */
+    margin: 12px 21px; /* left/right margin: 22px = 1px focus rect + 21px. Affects margin-top of  button.win-command .win-label */
     min-width: 0;
     min-height: 0;
     padding: 0;
     /* Normal sizing */
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     cursor: default;
+    position: relative;
+    outline:none;
 }
 
 .win-commandimage {
@@ -92,86 +98,69 @@ Command button icons.
     letter-spacing: 0;
     /* Applications provide their own content, like &#xE0D5;. */
     vertical-align: middle;
-    font-size: 14pt;
-    margin: -2px;
-    line-height: 40px; /* line-height must match the content box height */
+    font-size: 19pt;
+    margin: 0;
+    line-height: 24px; /* line-height must match the content box height */
     background-position: 0 0;
     background-origin: border-box;
     display: inline-block;
-    /* Still 40px */
-    width: 40px;
-    height: 40px;
-    background-size: 160px 80px;
+    width: 24px;
+    height: 24px;
+    background-size: 96px 48px;
+    outline: none;
+}
+
+.win-commandimage.win-commandglyph {
+    position: absolute;
+    left:-4px; /* offset for font-size:19pt */
 }
 
 /*
 Offsets for sprite versions.
 */
 html.win-hoverable button:enabled:hover .win-commandimage, button:active .win-commandimage {
-    background-position: -40px 0;
+    background-position: -24px 0;
 }
 
 button:enabled:hover:active .win-commandimage.win-commandimage {
-    background-position: -80px 0;
+    background-position: -48px 0;
 }
 
 // The "-ms-keyboard-active" pseudo is not always supported. When it is not supported
 //   it will be treated as a CSS parse error and will throw out all rules in the current
 //   CSS rule group. For this reason, never group it with other rules.
 button:-ms-keyboard-active .win-commandimage {
-    background-position: -80px 0;
+    background-position: -48px 0;
 }
 
 button:disabled .win-commandimage,
 button:disabled:active .win-commandimage {
-    background-position: -120px 0;
+    background-position: -72px 0;
 }
 
 /*
 Offsets for sprite versions in selected state.
 */
 button[aria-checked=true] .win-commandimage {
-    background-position: 0 -40px;
+    background-position: 0 -24px;
 }
 
 html.win-hoverable button[aria-checked=true]:enabled:hover .win-commandimage,
 button[aria-checked=true]:active .win-commandimage {
-    background-position: -40px -40px;
+    background-position: -24px -24px;
 }
 
 button[aria-checked=true]:enabled:hover:active .win-commandimage.win-commandimage {
-    background-position: -80px -40px;
+    background-position: -48px -24px;
 }
 
 button[aria-checked=true]:-ms-keyboard-active .win-commandimage {
-    background-position: -80px -40px;
+    background-position: -48px -24px;
 }
 
 button[aria-checked=true]:disabled .win-commandimage,
 button[aria-checked=true]:disabled:active .win-commandimage {
-    background-position: -120px -40px;
-}
-
-/*
-Command button "ring".
-*/
-.win-commandring,
-html.win-hoverable button:enabled:hover .win-commandring,
-button:active .win-commandring,
-button.win-command:disabled .win-commandring,
-button.win-command:disabled:active .win-commandring {
-    border-width: 2px;
-    border-style: solid;
-    border-radius: 50%;
-    background-clip: border-box;
-}
-
-button:enabled:hover:active .win-commandring.win-commandring,
-button[aria-checked=true] .win-commandring,
-button[aria-checked=true]:active .win-commandring,
-button[aria-checked=true]:disabled .win-commandring,
-button[aria-checked=true]:disabled:active .win-commandring {
-    background-clip: border-box;
+    background-position: -72px -24px;
 }
 
 /*
@@ -181,14 +170,14 @@ button.win-command .win-label {
     position: relative;
     line-height: 16px;
     display: block;
-    max-width: 88px; /* 100px button, but allow for 2px margins and 4px padding on each side */
-    margin-top: 5px;
-    margin-bottom: -1px;
-    padding-left: 4px; /* 12px between buttons, 6px per side, minus 2px margins */
-    padding-right: 4px;
+    max-width: 66px; /* 68px button, but allow for 2*1px for focus border on each side */
+    margin-top: -10px; /* 2px = 12px margin-bottom of .win-commandicon  - 10px*/
+    margin-bottom: 6px;
+    padding:0;
     overflow: hidden;
     word-wrap: break-word;
     word-break: keep-all;
+    outline: none;
 }
 
 /*
@@ -197,18 +186,11 @@ AppBarCommand separator types.
 hr.win-command {
     display: inline-block;
     padding: 0;
-    margin: 10px 29px 30px 30px;
-    width: 1px;
-    height: 40px;
+    margin: 12px 16px;
+    width: 2px;
+    height: 24px;
     border: 0;
     vertical-align: top;
-}
-
-hr.win-command {
-    .RTL({
-        margin-left: 29px;
-        margin-right: 30px;
-    });
 }
 
 /*
@@ -227,6 +209,7 @@ div.win-command {
     vertical-align: top;
     /* Content Commands are lrtb */
     writing-mode: lr-tb;
+    position: relative;
 }
 
 div.win-command {
@@ -320,7 +303,7 @@ AppBar
 
         .win-appbar-ellipsis::before {
             /* Necessary to adjust vertical position of Ellipsis Glyph in bottom AppBar so that the top of the 3 ellipsis dots are drawn ~10px away from the top of the AppBar.
-               This is to appear consistent with where the top of the win-commnandring element in an AppBarCommand button is drawn, also 10px away from the top of the AppBar.
+               This is to appear consistent with where the top of the win-commandicon element in an AppBarCommand button is drawn, also 10px away from the top of the AppBar.
                This value is dependant on the font-size of the Ellipsis Glyph being 19px and the height of the parent element being 21px */
             top: -3px;
         }
@@ -382,7 +365,7 @@ AppBar commands layout
     &.win-appbar-showing,
     &.win-appbar-shown,
     &.win-appbar-hiding {
-        min-height: 80px;
+        min-height: 62px;
     }
 
     &.win-appbar-minimal {
@@ -475,7 +458,7 @@ High contrast AppBar needs a border
         &.win-appbar-showing,
         &.win-appbar-shown,
         &.win-appbar-hiding {
-            min-height: 78px;
+            min-height: 62px;
         }
     }
 }
@@ -489,7 +472,7 @@ Flyout control.
     position: -ms-device-fixed;
     padding: 12px;
     border-style: solid;
-    border-width: 2px;
+    border-width: 1px;
     margin: 5px;
     min-width: 68px; /* 96px - padding - border */
     max-width: 404; /* 432px - padding - border */
@@ -518,11 +501,11 @@ Flyout control.
 Menu control.
 */
 .win-menu {
-    padding: 5px 0 5px 0;
+    padding: 0;
     line-height: 33px;
     text-align: left; /* Set explicitly in case our parent has different alignment, like appbar overflow. */
-    min-height: 38px; /* 54px - padding - border = 38px */
-    max-height: ~"calc(100% - 26px)"; /* 768px - margin - padding - border = 742px */
+    min-height: 46px; /* 44px -  2px in border = 46px */
+    max-height: ~"calc(100% - 26px)";
     max-width: none;
 }
 
@@ -538,8 +521,8 @@ Menu commands.
 */
 .win-menu button.win-command {
     display: block;
-    border: none;
     padding: 10px 20px 12px 20px;
+    min-height: 44px;
     margin-left: 0;
     margin-right: 0;
     float: none;
@@ -575,7 +558,7 @@ Menu toggle buttons.
     content: "\E0E7";
     visibility: hidden;
     padding-left: 0px;
-    padding-right: 10px;
+    padding-right: 12px;
 }
 
 .win-menu-toggle button[aria-checked=true].win-command::before {
@@ -587,7 +570,7 @@ Menu toggle buttons.
     .RTL({
         &::before {
             padding-right: 0;
-            padding-left: 10px;
+            padding-left: 12px;
             float: right;
         }
     });

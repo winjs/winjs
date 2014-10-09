@@ -15,8 +15,8 @@ module CorsicaTests {
     // we fake it by putting the AppBar in an element we can resize ourselves.
     var host;
 
-    var fullSizeCommandWidth = 100,
-        fullSizeSeparatorWidth = 60,
+    var fullSizeCommandWidth = 68,
+        fullSizeSeparatorWidth = 34,
         originalHelper,
         originalAfterPositionChangeCallBack,
         hiddenAppBarClass = "win-hidden";

@@ -53,9 +53,6 @@ define([
         sectionPrimary: "primary",
         sectionSecondary: "secondary",
 
-        // Prevents the element from showing a focus rect
-        hideFocusClass: "win-hidefocus",
-
         // Other class names
         overlayClass: "win-overlay",
         flyoutClass: "win-flyout",

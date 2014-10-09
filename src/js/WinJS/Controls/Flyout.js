@@ -110,7 +110,6 @@ define([
 
                     // Attach our css class
                     _ElementUtilities.addClass(this._element, _Constants.flyoutClass);
-                    _ElementUtilities.addClass(this._element, _Constants.flyoutLightClass);
 
                     // Make sure we have an ARIA role
                     var role = this._element.getAttribute("role");
@@ -267,11 +266,6 @@ define([
                                     }
                                 }
                             }
-
-                            // If the anchor gained focus we want to hide the focus in the non-keyboarding scenario
-                            if (!this._keyboardInvoked && (this._previousFocus === active) && appBar && active) {
-                                _Overlay._Overlay._addHideFocusClass(active);
-                            }
                         }
 
                         this._previousFocus = null;
@@ -383,9 +377,6 @@ define([
                     if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
                         // Put focus on the first child in the Flyout
                         this._focusOnFirstFocusableElementOrThis();
-
-                        // Prevent what is gaining focus from showing that it has focus
-                        _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
                     } else {
                         // Make sure the menu has focus, but don't show a focus rect
                         _Overlay._Overlay._trySetActive(this._element);

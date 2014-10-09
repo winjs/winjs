@@ -31,7 +31,6 @@ define([
         /// <part name="appBarCommand" class="win-command" locid="WinJS.UI.AppBarCommand_part:appBarCommand">The AppBarCommand control itself.</part>
         /// <part name="appBarCommandIcon" class="win-commandicon" locid="WinJS.UI.AppBarCommand_part:appBarCommandIcon">The AppBarCommand's icon box.</part>
         /// <part name="appBarCommandImage" class="win-commandimage" locid="WinJS.UI.AppBarCommand_part:appBarCommandImage">The AppBarCommand's icon's image formatting.</part>
-        /// <part name="appBarCommandRing" class="win-commandring" locid="WinJS.UI.AppBarCommand_part:appBarCommandRing">The AppBarCommand's icon's ring.</part>
         /// <part name="appBarCommandLabel" class="win-label" locid="WinJS.UI.AppBarCommand_part:appBarCommandLabel">The AppBarCommand's label</part>
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
@@ -144,10 +143,6 @@ define([
                 // Set up pointerdown handler and clean up ARIA if needed
                 if (this._type !== _Constants.typeSeparator) {
 
-                    // Hide the modern focus rect on click or touch
-                    var that = this;
-                    _ElementUtilities._addEventListener(this._element, "pointerdown", function () { _Overlay._Overlay._addHideFocusClass(that._element); }, false);
-
                     // Make sure we have an ARIA role
                     var role = this._element.getAttribute("role");
                     if (role === null || role === "" || role === undefined) {
@@ -250,11 +245,13 @@ define([
                                 this._imageSpan.textContent = this._icon;
                                 this._imageSpan.style.backgroundImage = "";
                                 this._imageSpan.style.msHighContrastAdjust = "";
+                                _ElementUtilities.addClass(this._imageSpan, "win-commandglyph");
                             } else {
                                 // Must be an image, set that
                                 this._imageSpan.textContent = "";
                                 this._imageSpan.style.backgroundImage = this._icon;
                                 this._imageSpan.style.msHighContrastAdjust = "none";
+                                _ElementUtilities.removeClass(this._imageSpan, "win-commandglyph");
                             }
                         }
                     }
@@ -590,14 +587,14 @@ define([
 
                     // AppBarCommand buttons need to look like this:
                     //// <button type="button" onclick="" class="win-command win-global">
-                    ////      <span class="win-commandicon win-commandring"><span class="win-commandimage">&#xE0D5;</span></span><span class="win-label">Command 1</span>
+                    ////      <span class="win-commandicon"><span class="win-commandimage">&#xE0D5;</span></span><span class="win-label">Command 1</span>
                     //// Or This:
-                    ////      <span class="win-commandicon win-commandring"><span class="win-commandimage" style="background-image:url('customimage.png')"></span></span><span class="win-label">Command 1</span>
+                    ////      <span class="win-commandicon"><span class="win-commandimage" style="background-image:url('customimage.png')"></span></span><span class="win-label">Command 1</span>
                     //// </button>
                     this._element.type = "button";
                     this._iconSpan = _Global.document.createElement("span");
                     this._iconSpan.setAttribute("aria-hidden", "true");
-                    this._iconSpan.className = "win-commandicon win-commandring";
+                    this._iconSpan.className = "win-commandicon";
                     this._iconSpan.tabIndex = -1;
                     this._element.appendChild(this._iconSpan);
                     this._imageSpan = _Global.document.createElement("span");
