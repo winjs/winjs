@@ -16,12 +16,19 @@ define([
                 // back into a number when calling getIndexForGroup
 
                 updateCache: function (groupKey, itemKey, itemIndex) {
+                    this._lastFocusedItemKey = itemKey;
+                    this._lastFocusedItemIndex = itemIndex;
                     itemIndex = "" + itemIndex;
                     this._itemToIndex[itemKey] = itemIndex;
                     this._groupToItem[groupKey] = itemKey;
                 },
 
                 deleteItem: function (itemKey) {
+                    if (itemKey === this._lastFocusedItemKey) {
+                        this._lastFocusedItemKey = null;
+                        this._lastFocusedItemIndex = 0;
+                    }
+
                     if (!this._itemToIndex[itemKey]) {
                         return;
                     }
@@ -46,6 +53,10 @@ define([
                 },
 
                 updateItemIndex: function (itemKey, itemIndex) {
+                    if (itemKey === this._lastFocusedItemKey) {
+                        this._lastFocusedItemIndex = itemIndex;
+                    }
+
                     if (!this._itemToIndex[itemKey]) {
                         return;
                     }
@@ -66,22 +77,37 @@ define([
                 clear: function () {
                     this._groupToItem = {};
                     this._itemToIndex = {};
+                    this._lastFocusedItemIndex = 0;
+                    this._lastFocusedItemKey = null;
+                },
+
+                getLastFocusedItemIndex: function () {
+                    return this._lastFocusedItemIndex;
                 }
             });
         }),
 
         _UnsupportedGroupFocusCache: _Base.Namespace._lazy(function () {
             return _Base.Class.define(null, {
-                updateCache: function () {
+                updateCache: function (groupKey, itemKey, itemIndex) {
+                    this._lastFocusedItemKey = itemKey;
+                    this._lastFocusedItemIndex = itemIndex;
                 },
 
-                deleteItem: function () {
+                deleteItem: function (itemKey) {
+                    if (itemKey === this._lastFocusedItemKey) {
+                        this._lastFocusedItemKey = null;
+                        this._lastFocusedItemIndex = 0;
+                    }
                 },
 
                 deleteGroup: function () {
                 },
 
-                updateItemIndex: function () {
+                updateItemIndex: function (itemKey, itemIndex) {
+                    if (itemKey === this._lastFocusedItemKey) {
+                        this._lastFocusedItemIndex = itemIndex;
+                    }
                 },
 
                 getIndexForGroup: function () {
@@ -89,6 +115,12 @@ define([
                 },
 
                 clear: function () {
+                    this._lastFocusedItemIndex = 0;
+                    this._lastFocusedItemKey = null;
+                },
+
+                getLastFocusedItemIndex: function () {
+                    return this._lastFocusedItemIndex;
                 }
             });
         })

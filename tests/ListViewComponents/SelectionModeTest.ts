@@ -107,6 +107,7 @@ module WinJSTests {
                 return window.getComputedStyle(site._canvas, null).direction === "rtl";
             },
             keyboardFocusedItem: { type: "item", index: 0 },
+            _lastFocusedElementInGroupTrack: { type: "item", index: -1 },
             _updateSelection: function () {
             },
             _unsetFocusOnItem: function () {
@@ -229,8 +230,8 @@ module WinJSTests {
                 },
                 groups: null,
                 // We're pretending to be a 3x3 horizontal grid here
-                finalItem: function () {
-                    return WinJS.Promise.wrap(8);
+                lastItemIndex: function () {
+                    return 8;
                 }
             },
             _itemsCount: function () {

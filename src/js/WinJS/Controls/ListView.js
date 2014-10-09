@@ -119,6 +119,8 @@ define([
         /// <event name="itemdragleave" bubbles="true" locid="WinJS.UI.ListView_e:itemdragleave">Raised when the user drags outside of the ListView region.</event>
         /// <event name="itemdragchanged" bubbles="true" locid="WinJS.UI.ListView_e:itemdragchanged">Raised when the items being dragged are changed due to a datasource modification.</event>
         /// <event name="itemdragdrop" bubbles="true" locid="WinJS.UI.ListView_e:itemdragdrop">Raised when the user drops items into the ListView.</event>
+        /// <event name="headervisibilitychanged" bubbles="true" locid="WinJS.UI.ListView_e:headervisibilitychanged">Raised when the layout header becomes visible or invisible</event>
+        /// <event name="footervisibilitychanged" bubbles="true" locid="WinJS.UI.ListView_e:footervisibilitychanged">Raised when the layout footer becomes visible or invisible</event>
         /// <event name="accessibilityannotationcomplete" bubbles="true" locid="WinJS.UI.ListView_e:accessibilityannotationcomplete">Raised when the accessibility attributes have been added to the ListView items.</event>
         /// <part name="listView" class="win-listview" locid="WinJS.UI.ListView_part:listView">The entire ListView control.</part>
         /// <part name="viewport" class="win-viewport" locid="WinJS.UI.ListView_part:viewport">The viewport of the ListView. </part>
@@ -266,6 +268,8 @@ define([
                 this._lastScrollPosition = 0;
                 this._notificationHandlers = [];
                 this._itemsBlockExtent = -1;
+                this._lastFocusedElementInGroupTrack = { type: _UI.ObjectType.item, index: -1 };
+                this._headerFooterVisibilityStatus = { headerVisible: false, footerVisible: false };
                 this._viewportWidth = _Constants._UNINITIALIZED;
                 this._viewportHeight = _Constants._UNINITIALIZED;
                 this._manipulationState = _ElementUtilities._MSManipulationEvent.MS_MANIPULATION_STATE_STOPPED;
@@ -643,6 +647,70 @@ define([
                     }
                 },
 
+                /// <field type="HTMLElement" domElement="true" locid="WinJS.UI.ListView.listHeader" helpKeyword="WinJS.UI.ListView.listHeader">
+                /// Gets or sets the header to display at the start of the ListView.
+                /// </field>
+                listHeader: {
+                    get: function () {
+                        return this._listHeader;
+                    },
+                    set: function (newHeader) {
+                        _ElementUtilities.empty(this._listHeaderContainer);
+                        this._listHeader = newHeader;
+                        if (newHeader) {
+                            this._listHeader.tabIndex = this._tabIndex;
+                            this._listHeaderContainer.appendChild(newHeader);
+                        }
+
+                        var currentFocus = this._selection._getFocused();
+                        if (currentFocus.type === _UI.ObjectType.listHeader) {
+                            var targetEntity = currentFocus;
+                            if (!newHeader) {
+                                targetEntity = { type: _UI.ObjectType.item, index: 0 };
+                            }
+
+                            if (this._hasKeyboardFocus) {
+                                this._changeFocus(targetEntity, true, false, true);
+                            } else {
+                                this._changeFocusPassively(targetEntity);
+                            }
+                        }
+                        this.recalculateItemPosition();
+                    }
+                },
+
+                /// <field type="HTMLElement" domElement="true" locid="WinJS.UI.ListView.listFooter" helpKeyword="WinJS.UI.ListView.listFooter">
+                /// Gets or sets the footer to display at the end of the ListView.
+                /// </field>
+                listFooter: {
+                    get: function () {
+                        return this._listFooter;
+                    },
+                    set: function (newFooter) {
+                        _ElementUtilities.empty(this._listFooterContainer);
+                        this._listFooter = newFooter;
+                        if (newFooter) {
+                            this._listFooter.tabIndex = this._tabIndex;
+                            this._listFooterContainer.appendChild(newFooter);
+                        }
+
+                        var currentFocus = this._selection._getFocused();
+                        if (currentFocus.type === _UI.ObjectType.listFooter) {
+                            var targetEntity = currentFocus;
+                            if (!newFooter) {
+                                targetEntity = { type: _UI.ObjectType.item, index: 0 };
+                            }
+
+                            if (this._hasKeyboardFocus) {
+                                this._changeFocus(targetEntity, true, false, true);
+                            } else {
+                                this._changeFocusPassively(targetEntity);
+                            }
+                        }
+                        this.recalculateItemPosition();
+                    }
+                },
+
                 /// <field type="String" hidden="true" locid="WinJS.UI.ListView.loadingState" helpKeyword="WinJS.UI.ListView.loadingState">
                 /// Gets a value that indicates whether the ListView is still loading or whether
                 /// loading is complete.  This property can return one of these values:
@@ -749,7 +817,7 @@ define([
                                 retVal.key = group.key;
                                 retVal.showFocus = !!(group.header && _ElementUtilities.hasClass(group.header, _Constants._itemFocusClass));
                             }
-                        } else {
+                        } else if (focused.type === _UI.ObjectType.item) {
                             var item = this._view.items.itemAt(focused.index);
                             if (item) {
                                 var record = this._itemsManager._recordFromElement(item);
@@ -762,6 +830,9 @@ define([
 
                     set: function (data) {
                         this._hasKeyboardFocus = data.hasFocus || this._hasKeyboardFocus;
+                        if (!data.type) {
+                            data.type = _UI.ObjectType.item;
+                        }
                         var that = this;
                         function setItemFocused(item, isInTree, entity) {
                             var drawKeyboardFocus = !!data.showFocus && that._hasKeyboardFocus;
@@ -784,7 +855,7 @@ define([
                         }
 
                         if (data.key &&
-                            ((data.type !== _UI.ObjectType.groupHeader && this._dataSource.itemFromKey) ||
+                            ((data.type === _UI.ObjectType.item && this._dataSource.itemFromKey) ||
                             (data.type === _UI.ObjectType.groupHeader && this._groupDataSource && this._groupDataSource.itemFromKey))) {
                             if (this.oldCurrentItemKeyFetch) {
                                 this.oldCurrentItemKeyFetch.cancel();
@@ -794,19 +865,22 @@ define([
                                 that.oldCurrentItemKeyFetch = null;
                                 if (item) {
                                     var element = (data.type === _UI.ObjectType.groupHeader ? that._groups.group(item.index).header : that._view.items.itemAt(item.index));
-                                    setItemFocused(element, !!element, { type: data.type || _UI.ObjectType.item, index: item.index });
+                                    setItemFocused(element, !!element, { type: data.type, index: item.index });
                                 }
                             });
                         } else {
-                            if (data.index !== undefined) {
-                                var element;
+                            var element;
+                            if (data.type === _UI.ObjectType.listHeader || data.type === _UI.ObjectType.listFooter) {
+                                element = (data.type === _UI.ObjectType.listHeader ? this._listHeader : this._listFooter);
+                                setItemFocused(element, !!element, { type: data.type, index: data.index });
+                            } else if (data.index !== undefined) {
                                 if (data.type === _UI.ObjectType.groupHeader) {
                                     var group = that._groups.group(data.index);
                                     element = group && group.header;
                                 } else {
                                     element = that._view.items.itemAt(data.index);
                                 }
-                                setItemFocused(element, !!element, { type: data.type || _UI.ObjectType.item, index: data.index });
+                                setItemFocused(element, !!element, { type: data.type, index: data.index });
                             }
                         }
                     }
@@ -1059,11 +1133,16 @@ define([
                                 index: index
                             };
                         });
-                    } else {
+                    } else if (entity.type === _UI.ObjectType.groupHeader) {
                         var index = _ElementUtilities._clamp(entity.index, 0, this._groups.length() - 1);
                         return Promise.wrap({
                             inRange: index >= 0 && index < this._groups.length(),
                             index: index
+                        });
+                    } else {
+                        return Promise.wrap({
+                            inRange: true,
+                            index: 0
                         });
                     }
                 },
@@ -1112,6 +1191,22 @@ define([
                             this._lastScrollPositionValue = position;
                         }
                     }
+                },
+
+                _hasListHeaderOrFooter: {
+                    get: function () {
+                        return !!(this._listHeader || this._listFooter);
+                    }
+                },
+
+                _getHeaderOrFooterFromElement: function (element) {
+                    if (this._listHeader && this._listHeader.contains(element)) {
+                        return this._listHeader;
+                    } else if (this._listFooter && this._listFooter.contains(element)) {
+                        return this._listFooter;
+                    }
+
+                    return null;
                 },
 
                 _supportsGroupHeaderKeyboarding: {
@@ -1287,12 +1382,14 @@ define([
                         }
                         this._view.reload(functorWrapper, true);
                         this._setFocusOnItem(this._selection._getFocused());
+                        this._headerFooterVisibilityStatus = { headerVisible: false, footerVisible: false };
                     } else if (viewChange === _Constants._ViewChange.remeasure) {
                         this._view.resetItems(true);
                         this._resetLayout();
                         resetCache();
                         this._view.refresh(functorWrapper);
                         this._setFocusOnItem(this._selection._getFocused());
+                        this._headerFooterVisibilityStatus = { headerVisible: false, footerVisible: false };
                     } else if (viewChange === _Constants._ViewChange.relayout) {
                         if (this._pendingLayoutReset) {
                             this._resetLayout();
@@ -1368,11 +1465,13 @@ define([
 
                     this._element.innerHTML =
                         '<div tabIndex="-1" role="group" class="' + _Constants._viewportClass + ' ' + _Constants._horizontalClass + '">' +
+                            '<div></div>' +
                             '<div class="' + _Constants._scrollableClass + '">' +
                                 // Create a proxy element inside the canvas so that during an MSPointerDown event we can call
                                 // msSetPointerCapture on it. This allows hover to not be passed to it which saves a large invalidation.
                                 '<div class="' + _Constants._proxyClass + '"></div>' +
                             '</div>' +
+                            '<div></div>' +
                             '<div></div>' +
                         '</div>' +
                         // The keyboard event helper is a dummy node that allows us to keep getting keyboard events when a virtualized element
@@ -1382,7 +1481,11 @@ define([
                        '<div aria-hidden="true" style="position:absolute;left:50%;top:50%;width:0px;height:0px;" tabindex="-1"></div>';
 
                     this._viewport = this._element.firstElementChild;
-                    this._canvas = this._viewport.firstElementChild;
+                    this._listHeaderContainer = this._viewport.firstElementChild;
+                    _ElementUtilities.addClass(this._listHeaderContainer, _Constants._listHeaderContainerClass);
+                    this._canvas = this._listHeaderContainer.nextElementSibling;
+                    this._listFooterContainer = this._canvas.nextElementSibling;
+                    _ElementUtilities.addClass(this._listFooterContainer, _Constants._listFooterContainerClass);
                     this._canvasProxy = this._canvas.firstElementChild;
                     // The deleteWrapper div is used to maintain the scroll width (after delete(s)) until the animation is done
                     this._deleteWrapper = this._canvas.nextElementSibling;
@@ -1449,7 +1552,9 @@ define([
                             }
                             // The requestItem promise just completed so _cachedCount will
                             // be initialized.
-                            that._view.updateAriaForAnnouncement(item, (entity.type === _UI.ObjectType.groupHeader ? that._groups.length() : that._cachedCount));
+                            if (entity.type === _UI.ObjectType.groupHeader || entity.type === _UI.ObjectType.item) {
+                                that._view.updateAriaForAnnouncement(item, (entity.type === _UI.ObjectType.groupHeader ? that._groups.length() : that._cachedCount));
+                            }                           
 
                             // Some consumers of ListView listen for item invoked events and hide the listview when an item is clicked.
                             // Since keyboard interactions rely on async operations, sometimes an invoke event can be received before we get
@@ -1461,10 +1566,12 @@ define([
                         }
                     };
 
-                    if (entity.type !== _UI.ObjectType.groupHeader) {
+                    if (entity.type === _UI.ObjectType.item) {
                         this._focusRequest = this._view.items.requestItem(entity.index);
-                    } else {
+                    } else if (entity.type === _UI.ObjectType.groupHeader) {
                         this._focusRequest = this._groups.requestHeader(entity.index);
+                    } else {
+                        this._focusRequest = WinJS.Promise.wrap(entity.type === _UI.ObjectType.listHeader ? this._listHeader : this._listFooter);
                     }
                     this._focusRequest.then(setFocusOnItemImpl);
                 },
@@ -2451,6 +2558,18 @@ define([
                             get: function () {
                                 return that._groups.length();
                             }
+                        },
+                        listHeader: {
+                            enumerable: true,
+                            get: function () {
+                                return that.listHeader;
+                            }
+                        },
+                        listFooter: {
+                            enumerable: true,
+                            get: function () {
+                                return that.listFooter;
+                            }
                         }
                     });
                 },
@@ -2524,7 +2643,10 @@ define([
                     hadPreviousLayout && this._unsetFocusOnItem();
                     this._setFocusOnItem({ type: _UI.ObjectType.item, index: 0 });
                     this._selection._setFocused({ type: _UI.ObjectType.item, index: 0 });
+                    this._lastFocusedElementInGroupTrack = { type: _UI.ObjectType.item, index: -1 };
 
+                    this._listHeaderContainer.style.opacity = 0;
+                    this._listFooterContainer.style.opacity = 0;
                     this._horizontalLayout = this._initializeLayout();
                     this._resetLayoutOrientation(hadPreviousLayout);
 
@@ -2642,16 +2764,24 @@ define([
                         // In the event that .focus() is explicitly called on an element, we need to figure out what item got focus and set our state appropriately.
                         var items = this._view.items,
                             entity = {},
-                            element = this._groups.headerFrom(event.target),
+                            element = this._getHeaderOrFooterFromElement(event.target),
                             winItem = null;
                         if (element) {
-                            entity.type = _UI.ObjectType.groupHeader;
-                            entity.index = this._groups.index(element);
+                            entity.index = 0;
+                            entity.type = (element === this._listHeader ? _UI.ObjectType.listHeader : _UI.ObjectType.listFooter);
+                            this._lastFocusedElementInGroupTrack = entity;
                         } else {
-                            entity.index = items.index(event.target);
-                            entity.type = _UI.ObjectType.item;
-                            element = items.itemBoxAt(entity.index);
-                            winItem = items.itemAt(entity.index);
+                            element = this._groups.headerFrom(event.target);
+                            if (element) {
+                                entity.type = _UI.ObjectType.groupHeader;
+                                entity.index = this._groups.index(element);
+                                this._lastFocusedElementInGroupTrack = entity;
+                            } else {
+                                entity.index = items.index(event.target);
+                                entity.type = _UI.ObjectType.item;
+                                element = items.itemBoxAt(entity.index);
+                                winItem = items.itemAt(entity.index);
+                            }
                         }
 
                         // In the old layouts, index will be -1 if a group header got focus
@@ -2667,7 +2797,9 @@ define([
                             if (this._tabManager.childFocus !== element && this._tabManager.childFocus !== winItem) {
                                 this._selection._setFocused(entity, this._keyboardFocusInbound || this._selection._keyboardFocused());
                                 this._keyboardFocusInbound = false;
-                                element = entity.type === _UI.ObjectType.groupHeader ? element : items.itemAt(entity.index);
+                                if (entity.type === _UI.ObjectType.item) {
+                                    element = items.itemAt(entity.index);
+                                }
                                 this._tabManager.childFocus = element;
 
                                 if (that._updater) {
@@ -2738,6 +2870,7 @@ define([
 
                         this._lastScrollPosition = currentScrollPosition;
                         this._raiseViewLoading(true);
+                        this._raiseHeaderFooterVisibilityEvent();
                         var that = this;
                         this._view.onScroll(function () {
                             return {
@@ -2795,6 +2928,8 @@ define([
                                 that._view.items.each(function (index, item) {
                                     item.tabIndex = newTabIndex;
                                 });
+                                that._listHeader && (that._listHeader.tabIndex = newTabIndex);
+                                that._listFooter && (that._listFooter.tabIndex = newTabIndex);
                                 that._tabIndex = newTabIndex;
                                 that._tabManager.tabIndex = newTabIndex;
                                 that._element.tabIndex = -1;
@@ -2913,6 +3048,38 @@ define([
                 _raiseViewComplete: function ListView_raiseViewComplete() {
                     if (!this._disposed && !this._view.animating) {
                         this._setViewState(this._LoadingState.complete);
+                    }
+                },
+
+                _raiseHeaderFooterVisibilityEvent: function ListView_raiseHeaderFooterVisibilityEvent() {
+                    var that = this;
+                    var elementInViewport = function (element) {
+                        if (!element) {
+                            return false;
+                        }
+
+                        var scrollPosition = that._lastScrollPosition,
+                            elementPosition = element[(that._horizontal() ? "offsetLeft" : "offsetTop")],
+                            elementLength = element[(that._horizontal() ? "offsetWidth" : "offsetHeight")];
+
+                        return ((elementPosition + elementLength) > scrollPosition && elementPosition < (scrollPosition + that._getViewportLength()));
+                    },
+                    raiseVisibilityEvent = function (eventName, visible) {
+                        var visibilityEvent = _Global.document.createEvent("CustomEvent");
+                        visibilityEvent.initCustomEvent(eventName, true, true, { visible: visible });
+                        that._element.dispatchEvent(visibilityEvent);
+                    };
+
+                    var headerInView = this._listHeader && elementInViewport(this._listHeaderContainer);
+                    var footerInView = this._listFooter && elementInViewport(this._listFooterContainer);
+
+                    if (this._headerFooterVisibilityStatus.headerVisible !== headerInView) {
+                        this._headerFooterVisibilityStatus.headerVisible = headerInView;
+                        raiseVisibilityEvent("headervisibilitychanged", headerInView);
+                    }
+                    if (this._headerFooterVisibilityStatus.footerVisible !== footerInView) {
+                        this._headerFooterVisibilityStatus.footerVisible = footerInView;
+                        raiseVisibilityEvent("footervisibilitychanged", footerInView);
                     }
                 },
 
@@ -3092,6 +3259,8 @@ define([
 
                     if (focused.type === _UI.ObjectType.groupHeader) {
                         focused = { type: _UI.ObjectType.item, index: this._groups.group(focused.index).startIndex };
+                    } else if (focused.type !== _UI.ObjectType.item) {
+                        focused = { type: _UI.ObjectType.item, index: (focused.type === _UI.ObjectType.listHeader ? 0 : this._cachedCount) }; 
                     }
 
                     if (typeof focused.index !== "number") {
@@ -3363,15 +3532,20 @@ define([
                         return;
                     }
                     var targetItem;
-                    if (newFocus.type !== _UI.ObjectType.groupHeader) {
+
+                    if (newFocus.type === _UI.ObjectType.item) {
                         targetItem = this._view.items.itemAt(newFocus.index);
                         if (!skipSelection && targetItem && _ElementUtilities.hasClass(targetItem, _Constants._nonSelectableClass)) {
                             skipSelection = true;
                         }
                         this._updateFocusCache(newFocus.index);
-                    } else {
+                    } else if (newFocus.type === _UI.ObjectType.groupHeader) {
+                        this._lastFocusedElementInGroupTrack = newFocus;
                         var group = this._groups.group(newFocus.index);
                         targetItem = group && group.header;
+                    } else {
+                        this._lastFocusedElementInGroupTrack = newFocus;
+                        targetItem = (newFocus.type === _UI.ObjectType.listFooter ? this._listFooter : this._listHeader);
                     }
                     this._unsetFocusOnItem(!!targetItem);
                     this._hasKeyboardFocus = true;
@@ -3395,12 +3569,24 @@ define([
                 // - set Trident's focus to newFocus when ListView doesn't have focus
                 _changeFocusPassively: function (newFocus) {
                     var targetItem;
-                    if (newFocus.type !== _UI.ObjectType.groupHeader) {
-                        targetItem = this._view.items.itemAt(newFocus.index);
-                        this._updateFocusCache(newFocus.index);
-                    } else {
-                        var group = this._groups.group(newFocus.index);
-                        targetItem = group && group.header;
+                    switch (newFocus.type) {
+                        case _UI.ObjectType.item:
+                            targetItem = this._view.items.itemAt(newFocus.index);
+                            this._updateFocusCache(newFocus.index);
+                            break;
+                        case _UI.ObjectType.groupHeader:
+                            this._lastFocusedElementInGroupTrack = newFocus;
+                            var group = this._groups.group(newFocus.index);
+                            targetItem = group && group.header;
+                            break;
+                        case _UI.ObjectType.listHeader:
+                            this._lastFocusedElementInGroupTrack = newFocus;
+                            targetItem = this._listHeader;
+                            break;
+                        case _UI.ObjectType.listFooter:
+                            this._lastFocusedElementInGroupTrack = newFocus;
+                            targetItem = this._listFooter;
+                            break;
                     }
                     this._unsetFocusOnItem(!!targetItem);
                     this._selection._setFocused(newFocus);
@@ -3408,6 +3594,9 @@ define([
                 },
 
                 _drawFocusRectangle: function (item) {
+                    if (item === this._listHeader || item === this._listFooter) {
+                        return;
+                    }
                     if (_ElementUtilities.hasClass(item, _Constants._headerClass)) {
                         _ElementUtilities.addClass(item, _Constants._itemFocusClass);
                     } else {
@@ -3423,7 +3612,7 @@ define([
                 },
 
                 _clearFocusRectangle: function (item) {
-                    if (!item || this._isZombie()) {
+                    if (!item || this._isZombie() || item === this._listHeader || item === this._listFooter) {
                         return;
                     }
 
@@ -3579,11 +3768,15 @@ define([
                     var that = this;
                     var overflowStyle = _BaseUtils._browserStyleEquivalents["overflow-style"];
                     var animatedElement = overflowStyle ? this._viewport : this._canvas;
+                    this._raiseHeaderFooterVisibilityEvent();
                     function resetViewOpacity() {
                         that._canvas.style.opacity = 1;
+                        that._listHeaderContainer.style.opacity = 1;
+                        that._listFooterContainer.style.opacity = 1;
                         if (overflowStyle) {
                             animatedElement.style[overflowStyle.scriptName] = "";
                         }
+                        that._raiseHeaderFooterVisibilityEvent();
                     }
 
                     if (this._disableEntranceAnimation || this._animationsDisabled()) {
@@ -3613,15 +3806,27 @@ define([
                         if (overflowStyle) {
                             animatedElement.style[overflowStyle.scriptName] = "none";
                         }
+                        this._listHeaderContainer.style.opacity = 1;
+                        this._listFooterContainer.style.opacity = 1;
                         this._waitingEntranceAnimationPromise = eventDetails.animationPromise.then(function () {
                             if (!that._isZombie()) {
                                 that._canvas.style.opacity = 1;
-                                return AnimationHelper.animateEntrance(animatedElement, firstTime).then(function () {
+                                var animatedElements = [animatedElement];
+                                if (animatedElement !== that._viewport) {
+                                    if (that._listHeader) {
+                                        animatedElements.push(that._listHeaderContainer);
+                                    }
+                                    if (that._listFooter) {
+                                        animatedElements.push(that._listFooterContainer);
+                                    }
+                                }
+
+                                return AnimationHelper.animateEntrance(animatedElements, firstTime).then(function () {
                                     if (!that._isZombie()) {
+                                        that._waitingEntranceAnimationPromise = null;
                                         if (overflowStyle) {
                                             animatedElement.style[overflowStyle.scriptName] = "";
                                         }
-                                        that._waitingEntranceAnimationPromise = null;
                                     }
                                 });
                             }
@@ -3787,7 +3992,26 @@ define([
                 _getItemPosition: function ListView_getItemPosition(entity, preserveItemsBlocks) {
                     var that = this;
                     return this._view.waitForEntityPosition(entity).then(function () {
-                        var container = (entity.type === _UI.ObjectType.groupHeader ? that._view._getHeaderContainer(entity.index) : that._view.getContainer(entity.index));
+                        var container,
+                            alreadyCorrectedForCanvasMargins = (that._zooming && that._canvasStart !== 0);
+
+                        switch (entity.type) {
+                            case _UI.ObjectType.item:
+                                container = that._view.getContainer(entity.index);
+                                break;
+                            case _UI.ObjectType.groupHeader:
+                                container = that._view._getHeaderContainer(entity.index);
+                                break;
+                            case _UI.ObjectType.listHeader:
+                                alreadyCorrectedForCanvasMargins = true;
+                                container = that._listHeaderContainer;
+                                break;
+                            case _UI.ObjectType.listFooter:
+                                alreadyCorrectedForCanvasMargins = true;
+                                container = that._listFooterContainer;
+                                break;
+                        }
+
                         if (container) {
                             that._writeProfilerMark("WinJS.UI.ListView:getItemPosition,info");
                             var itemsBlockFrom;
@@ -3822,7 +4046,8 @@ define([
 
                             // When a translation is applied to the surface during zooming, offsetLeft includes the canvas margins, so the left/top position will already be in canvas coordinates.
                             // If we're not zooming, we need to convert the position to canvas coordinates before returning.
-                            return (that._zooming && that._canvasStart !== 0 ? position : that._convertToCanvasCoordinates(position));
+                            // We also want to skip correcting for canvas margins when we're looking at the position of the layout header or footer, since they aren't parented under the canvas.
+                            return (alreadyCorrectedForCanvasMargins ? position : that._convertToCanvasCoordinates(position));
                         } else {
                             return Promise.cancel;
                         }
@@ -3870,10 +4095,18 @@ define([
                         return margins;
                     };
 
-                    if (type !== _UI.ObjectType.groupHeader) {
+                    if (type === _UI.ObjectType.item) {
                         return (this._itemMargins ? this._itemMargins : (this._itemMargins = calculateMargins(_Constants._containerClass)));
-                    } else {
+                    } else if (type === _UI.ObjectType.groupHeader) {
                         return (this._headerMargins ? this._headerMargins : (this._headerMargins = calculateMargins(_Constants._headerContainerClass)));
+                    } else {
+                        if (!this._listHeaderFooterMargins) {
+                            this._listHeaderFooterMargins = {
+                                headerMargins: calculateMargins(_Constants._listHeaderContainerClass),
+                                footerMargins: calculateMargins(_Constants._listFooterContainerClass)
+                            };
+                        }
+                        return this._listHeaderFooterMargins[(type === _UI.ObjectType.listHeader? "headerMargins" : "footerMargins")];
                     }
                 },
 
@@ -3897,6 +4130,10 @@ define([
                 },
 
                 _ensureFirstColumnRange: function ListView_ensureFirstColumnRange(type) {
+                    if (type === _UI.ObjectType.listHeader || type === _UI.ObjectType.listFooter) {
+                        // No corrections are necessary for the layout header or footer, since they exist outside of the canvas
+                        return Promise.wrap();
+                    }
                     var propName = (type === _UI.ObjectType.item ? "_firstItemRange" : "_firstHeaderRange");
                     if (!this[propName]) {
                         var that = this;
@@ -3909,6 +4146,10 @@ define([
                 },
 
                 _correctRangeInFirstColumn: function ListView_correctRangeInFirstColumn(range, type) {
+                    if (type === _UI.ObjectType.listHeader || type === _UI.ObjectType.listFooter) {
+                        // No corrections are necessary for the layout header or footer, since they exist outside of the canvas
+                        return range;
+                    }
                     var firstRange = (type === _UI.ObjectType.groupHeader ? this._firstHeaderRange : this._firstItemRange);
                     if (firstRange.begin === range.begin) {
                         if (this._horizontal()) {
@@ -4381,6 +4622,8 @@ define([
                 "itemdragleave",
                 "itemdragchanged",
                 "itemdragdrop",
+                "headervisibilitychanged",
+                "footervisibilitychanged",
                 "accessibilityannotationcomplete"));
             _Base.Class.mix(ListView, _Control.DOMEventMixin);
             return ListView;

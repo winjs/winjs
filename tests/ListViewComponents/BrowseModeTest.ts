@@ -115,6 +115,7 @@ module WinJSTests {
                     return 100;
                 },
             },
+            _lastFocusedElementInGroupTrack: { type: WinJS.UI.ObjectType.item, index: -1 },
             _rtl: function () {
                 return false;
             },
@@ -162,6 +163,7 @@ module WinJSTests {
             },
             _options: {},
             keyboardFocusedItem: { type: WinJS.UI.ObjectType.item, index: 0 },
+            _lastFocusedElementInGroupTrack: { type: WinJS.UI.ObjectType.item, index: -1 },
             _unsetFocusOnItem: function () {
                 this.keyboardFocusedItem = -1;
             },
@@ -220,8 +222,8 @@ module WinJSTests {
                         return this.itemDataAt(index).itemBox;
                     }
                 },
-                finalItem: function () {
-                    return WinJS.Promise.wrap(8);
+                lastItemIndex: function () {
+                    return 8;
                 }
             },
             _changeFocus: function (newFocus) {
@@ -503,7 +505,7 @@ module WinJSTests {
                 ensureVisibleCalled = true;
             }
 
-        function createKeyEvent(key) {
+            function createKeyEvent(key) {
                 return {
                     keyCode: key,
                     target: first,
@@ -1490,8 +1492,37 @@ module WinJSTests {
                 }).then(function () {
                     lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.pageDown));
                     return Helper.ListView.waitForReady(lv, -1)();
-                }).done(function () {
+                }).then(function () {
                     LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.item, lv.currentItem.type);
+                    lv.listHeader = document.createElement("div");
+                    lv.listFooter = document.createElement("div");
+                    return setFocus({ type: WinJS.UI.ObjectType.groupHeader, index: 0 });
+                }).then(function () {
+                    LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
+                    lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.leftArrow));
+                    return Helper.ListView.waitForReady(lv, -1)();
+                }).then(function () {
+                    LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.listHeader, lv.currentItem.type);
+                    lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.end));
+                    return Helper.ListView.waitForReady(lv, -1)();
+                }).then(function () {
+                    LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.listFooter, lv.currentItem.type);
+                    lv.listHeader = null;
+                    lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.home));
+                    return Helper.ListView.waitForReady(lv, -1)();
+                }).then(function () {
+                    LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
+                    lv.listHeader = document.createElement("div");
+                    lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.leftArrow));
+                    return Helper.ListView.waitForReady(lv, -1)();
+                }).then(function () {
+                    LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.listHeader, lv.currentItem.type);
+                    lv.listFooter = null;
+                    lv._mode.onKeyDown(createKeyEvent(document.querySelector(".win-groupheader"), Key.end));
+
+                    return Helper.ListView.waitForReady(lv, -1)();
+                }).done(function () {
+                    LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, lv.currentItem.type);
                     complete();
                 });
         };

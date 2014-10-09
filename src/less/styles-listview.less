@@ -23,6 +23,7 @@
     z-index: 0;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
 }
 .win-listview > .win-viewport.win-horizontal {
     overflow-x: auto;
@@ -137,6 +138,18 @@ html.win-hoverable .win-container.win-selected:hover .win-selectionborder {
 .win-listview .win-groupheadercontainer {
     z-index: 1;
     touch-action:pan-x pan-y pinch-zoom;
+    overflow: hidden;
+}
+.win-listview .win-horizontal .win-listheadercontainer,
+.win-listview .win-horizontal .win-listfootercontainer {
+    height: 100%;
+    display: inline-block;
+    overflow: hidden;
+}
+.win-listview .win-vertical .win-listheadercontainer,
+.win-listview .win-vertical .win-listfootercontainer {
+    width: 100%;
+    display: block;
     overflow: hidden;
 }
 .win-listview .win-groupheader.win-focused {

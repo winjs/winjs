@@ -180,8 +180,8 @@ define([
                     }
                 },
 
-                finalItem: function VirtualizeContentsView_finalItem() {
-                    return this.containers ? Promise.wrap(this.containers.length - 1) : Promise.cancel;
+                lastItemIndex: function VirtualizeContentsView_lastItemIndex() {
+                    return (this.containers ? (this.containers.length - 1) : -1);
                 },
 
                 _setSkipRealizationForChange: function (skip) {
@@ -804,7 +804,7 @@ define([
                     this._listView._writeProfilerMark("_unrealizeItem(" + itemIndex + "),info");
 
                     var focused = listView._selection._getFocused();
-                    if (focused.type !== _UI.ObjectType.groupHeader && focused.index === itemIndex) {
+                    if (focused.type === _UI.ObjectType.item && focused.index === itemIndex) {
                         listView._unsetFocusOnItem();
                         focusedItemPurged = true;
                     }
@@ -1260,6 +1260,10 @@ define([
                 // Update the ARIA attributes on item that are needed so that Narrator can announce it.
                 // item must be in the items container.
                 updateAriaForAnnouncement: function VirtualizeContentsView_updateAriaForAnnouncement(item, count) {
+                    if (item === this._listView.listHeader || item === this._listView.listFooter) {
+                        return;
+                    }
+
                     var index = -1;
                     var type = _UI.ObjectType.item;
                     if (_ElementUtilities.hasClass(item, _Constants._headerClass)) {
@@ -1886,6 +1890,10 @@ define([
 
                 waitForEntityPosition: function VirtualizeContentsView_waitForEntityPosition(entity) {
                     var that = this;
+                    if (entity.type === _UI.ObjectType.listHeader || entity.type === _UI.ObjectType.listFooter) {
+                        // Headers and footers are always laid out by the ListView as soon as it gets them, so there's nothing to wait on
+                        return Promise.wrap();
+                    }
                     this._listView._writeProfilerMark(this._state.name + "_waitForEntityPosition" + "(" + entity.type + ": " + entity.index + ")" + ",info");
                     return Promise._cancelBlocker(this._state.waitForEntityPosition(entity).then(function () {
                         if ((entity.type !== _UI.ObjectType.groupHeader && entity.index >= that.containers.length) ||

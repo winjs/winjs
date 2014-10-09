@@ -232,7 +232,7 @@ define([
                             this._swipeBehaviorSelectionChanged = false;
                             this._selectionHint = null;
 
-                            if (this._site.pressedEntity.type !== _UI.ObjectType.groupHeader) {
+                            if (this._site.pressedEntity.type === _UI.ObjectType.item) {
                                 this._site.pressedItemBox = site.itemBoxAtIndex(this._site.pressedEntity.index);
                                 this._site.pressedContainer = site.containerAtIndex(this._site.pressedEntity.index);
                                 this._site.animatedElement = _BaseUtils.isPhone ? this._site.pressedItemBox : this._site.pressedContainer;
@@ -301,7 +301,7 @@ define([
 
                     // Once the shift selection pivot is set, it remains the same until the user
                     // performs a left- or right-click without holding the shift key down.
-                    if (this._site.pressedEntity.type !== _UI.ObjectType.groupHeader &&
+                    if (this._site.pressedEntity.type === _UI.ObjectType.item &&
                             this._selectionAllowed() && this._multiSelection() &&       // Multi selection enabled
                             this._site.pressedEntity.index !== _Constants._INVALID_INDEX &&    // A valid item was clicked
                             site.selection._getFocused().index !== _Constants._INVALID_INDEX && site.selection._pivot === _Constants._INVALID_INDEX) {
@@ -395,7 +395,7 @@ define([
 
                         this._resetPressedContainer();
 
-                        if (this._site.pressedEntity.type !== _UI.ObjectType.groupHeader && releasedEntity.type !== _UI.ObjectType.groupHeader &&
+                        if (this._site.pressedEntity.type === _UI.ObjectType.item && releasedEntity.type === _UI.ObjectType.item &&
                                 this._site.pressedContainer && this._site.pressedEntity.index === releasedEntity.index) {
 
                             if (!eventObject.shiftKey) {
@@ -923,7 +923,7 @@ define([
 
                     if (!selected) {
                         (this._animations[pressedIndex] || Promise.wrap()).then(function () {
-                            if (!site.isZombie() && pressedEntity.type !== _UI.ObjectType.groupHeader && site.pressedEntity.index !== -1) {
+                            if (!site.isZombie() && pressedEntity.type === _UI.ObjectType.item && site.pressedEntity.index !== -1) {
                                 pressedIndex = site.pressedEntity.index;
 
                                 var pressedElement = site.itemAtIndex(pressedIndex),

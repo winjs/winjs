@@ -700,19 +700,39 @@ define([
                         group = that._groups[groupIndex],
                         adjustedKey = that._adjustedKeyForOrientationAndBars(that._adjustedKeyForRTL(pressedKey), group instanceof Groups.CellSpanningGroup);
 
-                    if (currentItem.type === _UI.ObjectType.groupHeader) {
-                        if (pressedKey === Key.pageUp || pressedKey === Key.pageDown) {
-                            // We treat page up and page down keys as if an item had focus
-                            currentItem = { type: _UI.ObjectType.item, index: this._groups[currentItem.index].startIndex };
+                    if (!currentItem.type) {
+                        currentItem.type = _UI.ObjectType.item;
+                    }
+                    if (currentItem.type !== _UI.ObjectType.item && (pressedKey === Key.pageUp || pressedKey === Key.pageDown)) {
+                        // We treat page up and page down keys as if an item had focus
+                        var itemIndex = 0;
+                        if (currentItem.type === _UI.ObjectType.groupHeader) {
+                            itemIndex = that._groups[currentItem.index].startIndex;
                         } else {
-                            switch (adjustedKey) {
-                                case Key.leftArrow:
-                                    return { type: _UI.ObjectType.groupHeader, index: Math.max(0, currentItem.index - 1) };
-                                case Key.rightArrow:
-                                    return { type: _UI.ObjectType.groupHeader, index: Math.min(that._groups.length - 1, currentItem.index + 1) };
-                            }
-                            return currentItem;
+                            itemIndex = (currentItem.type === _UI.ObjectType.listHeader ? 0 : that._groups[that._groups.length - 1].count - 1);
                         }
+                        currentItem = { type: _UI.ObjectType.item, index: itemIndex };
+                    }else if (currentItem.type === _UI.ObjectType.listHeader && adjustedKey === Key.rightArrow) {
+                        return { type: (that._groupsEnabled ? _UI.ObjectType.groupHeader : _UI.ObjectType.listFooter), index: 0 };
+                    } else if (currentItem.type === _UI.ObjectType.listFooter && adjustedKey === Key.leftArrow) {
+                        return { type: (that._groupsEnabled ? _UI.ObjectType.groupHeader : _UI.ObjectType.listHeader), index: 0 };
+                    } else if (currentItem.type === _UI.ObjectType.groupHeader) {
+                        if (adjustedKey === Key.leftArrow) {
+                            var desiredIndex = currentItem.index - 1;
+                            desiredIndex = (that._site.listHeader ? desiredIndex : Math.max(0, desiredIndex));
+                            return {
+                                type: (desiredIndex > -1 ? _UI.ObjectType.groupHeader : _UI.ObjectType.listHeader),
+                                index: (desiredIndex > -1 ? desiredIndex : 0)
+                            };
+                        } else if (adjustedKey === Key.rightArrow) {
+                            var desiredIndex = currentItem.index + 1;
+                            desiredIndex = (that._site.listHeader ? desiredIndex : Math.min(that._groups.length - 1, currentItem.index + 1));
+                            return { 
+                                type: (desiredIndex >= that._groups.length ? _UI.ObjectType.listHeader : _UI.ObjectType.groupHeader),
+                                index: (desiredIndex >= that._groups.length ? 0 : desiredIndex)
+                            };
+                        }
+                        return currentItem;
                     }
 
                     function handleArrowKeys() {
@@ -2649,7 +2669,6 @@ define([
                                     (site.viewport.offsetWidth - (firstElementOnSurface.offsetLeft + firstElementOnSurface.offsetWidth)) :
                                     firstElementOnSurface.offsetLeft;
                                 var firstElementOnSurfaceOffsetY = firstElementOnSurface.offsetTop;
-
                                 var sizes = {
                                     // These will be set by _viewportSizeChanged
                                     viewportContentSize: 0,
@@ -2683,6 +2702,10 @@ define([
                                     // true when both containerWidth and containerHeight have been measured
                                     containerSizeLoaded: false
                                 };
+
+                                if (site.listHeader) {
+                                    sizes[(horizontal ? "layoutOriginX" : "layoutOriginY")] += _ElementUtilities[(horizontal ? "getTotalWidth" : "getTotalHeight")](site.listHeader);
+                                }
 
                                 if (groupsEnabled) {
                                     // Amount of space between the header container's margin and its content

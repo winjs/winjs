@@ -119,10 +119,7 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(container, listView._view.tree[0].itemsContainer.items[i]);
             }
 
-            listView._view.finalItem().then(function (lastItem) {
-                LiveUnit.Assert.areEqual(containers.length - 1, lastItem);
-            });
-
+            LiveUnit.Assert.areEqual(containers.length - 1, listView._view.lastItemIndex());
         } else {
             var blocks = listView._view.tree[0].itemsContainer.itemsBlocks;
             for (var i = 0, itemIndex = 0, len = blocks.length; i < len; i++) {
@@ -239,9 +236,8 @@ module WinJSTests {
                 }
             }
 
-            listView._view.finalItem().then(function (lastItem) {
-                LiveUnit.Assert.areEqual(containers.length - 1, lastItem);
-            });
+
+            LiveUnit.Assert.areEqual(containers.length - 1, listView._view.lastItemIndex());
         } else {
             // Only do this in the structural node case until we can support both.
             verifyContainerStripesByIndex(listView);

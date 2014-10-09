@@ -72,7 +72,15 @@ define([
             /// <field locid="WinJS.UI.ListView.ObjectType.groupHeader" helpKeyword="WinJS.UI.ObjectType.groupHeader">
             /// This value represents a ListView group header.
             /// </field>
-            groupHeader: "groupHeader"
+            groupHeader: "groupHeader",
+            /// <field locid="WinJS.UI.ListView.ObjectType.listHeader" helpKeyword="WinJS.UI.ObjectType.listHeader">
+            /// This value represents the ListView's header.
+            /// </field>
+            listHeader: "listHeader",
+            /// <field locid="WinJS.UI.ListView.ObjectType.listFooter" helpKeyword="WinJS.UI.ObjectType.listFooter">
+            /// This value represents the ListView's footer.
+            /// </field>
+            listFooter: "listFooter",
         },
 
         /// <field locid="WinJS.UI.ListView.SelectionMode" helpKeyword="WinJS.UI.SelectionMode">

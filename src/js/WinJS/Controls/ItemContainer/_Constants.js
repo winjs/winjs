@@ -14,6 +14,8 @@ define([
     members._verticalClass = "win-vertical";
     members._scrollableClass = "win-surface";
     members._itemsContainerClass = "win-itemscontainer";
+    members._listHeaderContainerClass = "win-listheadercontainer";
+    members._listFooterContainerClass = "win-listfootercontainer";
     members._padderClass = "win-itemscontainer-padder";
     members._proxyClass = "_win-proxy";
     members._itemClass = "win-item";
