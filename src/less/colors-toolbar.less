@@ -5,6 +5,7 @@
         @backgroundColor:rgb(43, 43, 43);
         @textColorActive: rgb(255, 255, 255);
         @commandFocusBorderColor: rgb(255, 255, 255);
+        @overflowButtonEllipsisHoverColor: rgb(255, 255, 255);
         @overflowButtonEllipsisColor: rgb(255, 255, 255);
         @overflowButtonBackground: transparent;
         @overflowButtonActiveBackground: rgb(128, 128, 128);
@@ -17,6 +18,7 @@
         @textColorActive: rgb(0, 0, 0);
         @commandFocusBorderColor: rgb(0, 0, 0);
         @overflowButtonEllipsisColor: rgb(0, 0, 0);
+        @overflowButtonEllipsisHoverColor: rgb(0, 0, 0);
         @overflowButtonBackground: transparent;
         @overflowButtonActiveBackground: rgb(138, 138, 138);
         @inlineMenuCommandHoverBackground: rgb(184, 184, 184);
@@ -28,6 +30,7 @@
         @textColorActive: ButtonFace;
         @commandFocusBorderColor: ButtonText;
         @overflowButtonEllipsisColor: ButtonText;
+        @overflowButtonEllipsisHoverColor: HighlightText;
         @overflowButtonBackground: ButtonFace;
         @overflowButtonActiveBackground: Highlight;
         @inlineMenuCommandHoverBackground: Highlight;
@@ -80,6 +83,10 @@
             button.win-toolbar-overflowbutton:hover,
             .win-toolbar-overflowarea button.win-command:hover {
                 background-color: @inlineMenuCommandHoverBackground;
+            }
+
+            button.win-toolbar-overflowbutton:hover .win-toolbar-ellipsis {
+                color: @overflowButtonEllipsisHoverColor;
             }
         }
     }

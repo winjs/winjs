@@ -10,6 +10,7 @@
         @textColorDisabled: rgba(255, 255, 255, 0.4);
         @textColorActive: rgb(255, 255, 255);
         @textColorSelected: rgb(255, 255, 255);
+        @textColorHover: rgb(255, 255, 255);
         @separatorBackgroundColor: rgb(123, 123, 123);
         @appbarBackgroundColor: rgb(0, 0, 0);
         @appbarBorderColor: rgb(0, 0, 0);
@@ -36,6 +37,7 @@
         @textColorDisabled: rgba(0, 0, 0, 0.4);
         @textColorActive: rgb(0, 0, 0);
         @textColorSelected: rgb(0, 0, 0);
+        @textColorHover: rgb(0, 0, 0);
         @separatorBackgroundColor: rgb(123, 123, 123);
         @appbarBackgroundColor: rgb(240, 240, 240);
         @appbarBorderColor: rgb(240, 240, 240);
@@ -62,6 +64,7 @@
         @textColorDisabled: GrayText;
         @textColorActive: ButtonFace;
         @textColorSelected: ButtonFace;
+        @textColorHover: HighlightText;
         @separatorBackgroundColor: ButtonText;
         @appbarBackgroundColor: ButtonFace;
         @appbarBorderColor: Highlight;
@@ -218,6 +221,10 @@
             &.win-appbar-hiding, &.win-appbar-hidden {
                 button.win-appbar-invokebutton.win-appbar-invokebutton:enabled:hover:active {
                     background-color: @invokeButtonHoverBackgroundColor;
+
+                    .win-appbar-ellipsis {
+                        color: @textColorHover;
+                    }
                 }
             }
 
@@ -281,12 +288,17 @@
             &.win-appbar-showing, &.win-appbar-shown {
                 button.win-appbar-invokebutton:enabled:hover .win-appbar-ellipsis {
                     background-color: @appbarEllipsisHoverBackgroundColor;
+                    color: @textColorHover;
                 }
             }
             // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
             &.win-appbar-hiding, &.win-appbar-hidden {
                 button.win-appbar-invokebutton:enabled:hover {
                     background-color: @appbarEllipsisHoverBackgroundColor;
+
+                    .win-appbar-ellipsis {
+                        color: @textColorHover;
+                    }
                 }
             }
         }
@@ -301,12 +313,16 @@
 
         button.win-command:enabled:hover {
             background-color: @commandHoverBackgroundColor;
-            color: @textColor;
+            color: @textColorHover;
+
+            .win-commandglyph {
+                color: @textColorHover;
+            }
         }
 
         .win-menu button.win-command:enabled:hover {
             background-color: @menuCommandHoverBackgroundColor;
-            color: @textColor;
+            color: @textColorHover;
         }
 
         button[aria-checked=true].win-command:hover {
