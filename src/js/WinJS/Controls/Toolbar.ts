@@ -326,8 +326,10 @@ export class Toolbar {
         _ElementUtilities.addClass(this._overflowButton, _Constants.overflowButtonCssClass);
         this._mainActionArea.appendChild(this._overflowButton);
         this._overflowButton.addEventListener("click", () => {
-            var isRTL = _Global.getComputedStyle(this._element).direction === 'rtl';
-            this._menu.show(this._overflowButton, "autovertical", isRTL ? "left" : "right");
+            if (this._menu) {
+                var isRTL = _Global.getComputedStyle(this._element).direction === 'rtl';
+                this._menu.show(this._overflowButton, "autovertical", isRTL ? "left" : "right");
+            }
         });
         this._overflowButtonWidth = _ElementUtilities.getTotalWidth(this._overflowButton);
         _ElementUtilities.addClass(this.element, _Constants.flyoutMenuCssClass);
@@ -793,13 +795,11 @@ export class Toolbar {
         if (this.inlineMenu) {
             // Inline menu mode always has the overflow button hidden
             this._overflowButton.style.display = "";
-            this._overflowButton.style.visibility = "hidden";
 
             this._setupOverflowAreaInline(additionalCommands);
         } else {
             var showOverflowButton = (additionalCommands.length > 0 || this._secondaryCommands.length > 0);
             this._overflowButton.style.display = showOverflowButton ? "" : "none"
-            this._overflowButton.style.visibility = "";
 
             this._setupOverflowAreaDetached(additionalCommands);
         }
