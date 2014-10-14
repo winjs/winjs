@@ -46,7 +46,7 @@
         "websocket": "^1.0.8",
         "grunt-jscs": "^0.6.2",
         "grunt-ts": "^1.11.6",
-        "typescript": "^1.0.1",
+        "typescript": "1.0.1",
         "grunt-contrib-cssmin": "^0.10.0"
     },
     "browserify": {
