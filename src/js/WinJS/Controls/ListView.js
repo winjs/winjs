@@ -355,6 +355,30 @@ define([
                     }
                 },
 
+                /// <field type="Number" integer="true" locid="WinJS.UI.ListView.maxLeadingPages" helpKeyword="WinJS.UI.ListView.maxLeadingPages" isAdvanced="true">
+                /// Gets or sets the maximum number of pages to prefetch in the leading buffer for virtualization.
+                /// </field>
+                maxLeadingPages: {
+                    get: function ListView_getMaxLeadingPages() {
+                        return this._view.maxLeadingPages;
+                    },
+                    set: function ListView_setMaxLeadingPages(value) {
+                        this._view.maxLeadingPages = Math.max(0, Math.floor(value));
+                    },
+                },
+
+                /// <field type="Number" integer="true" locid="WinJS.UI.ListView.maxLeadingPages" helpKeyword="WinJS.UI.ListView.maxLeadingPages" isAdvanced="true">
+                /// Gets or sets the maximum number of pages to prefetch in the trailing buffer for virtualization.
+                /// </field>
+                maxTrailingPages: {
+                    get: function ListView_getMaxTrailingPages() {
+                        return this._view.maxTrailingPages;
+                    },
+                    set: function ListView_setMaxTrailingPages(value) {
+                        this._view.maxTrailingPages = Math.max(0, Math.floor(value));
+                    },
+                },
+
                 /// <field type="Number" integer="true" locid="WinJS.UI.ListView.pagesToLoad" helpKeyword="WinJS.UI.ListView.pagesToLoad" isAdvanced="true">
                 /// Gets or sets the number of pages to load when the user scrolls beyond the
                 /// threshold specified by the pagesToLoadThreshold property if
@@ -365,7 +389,7 @@ define([
                 /// </field>
                 pagesToLoad: {
                     get: function () {
-                        return (_VirtualizeContentsView._VirtualizeContentsView._pagesToPrefetch * 2) + 1;
+                        return (_VirtualizeContentsView._VirtualizeContentsView._defaultPagesToPrefetch * 2) + 1;
                     },
                     set: function () {
                         _ElementUtilities._deprecated(_ErrorMessages.pagesToLoadIsDeprecated);

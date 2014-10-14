@@ -1564,13 +1564,13 @@ module WinJSTests {
 
             Helper.ListView.waitForReady(lv)().then(function () {
                 // Initialized, since each item should take up roughly the entire viewport, we should have 1 + 2xPagesToLoad pages alive.
-                LiveUnit.Assert.areEqual(1 + 1 * WinJS.UI._VirtualizeContentsView._pagesToPrefetch, itemsAlive);
+                LiveUnit.Assert.areEqual(1 + 1 * WinJS.UI._VirtualizeContentsView._defaultPagesToPrefetch, itemsAlive);
                 lv.ensureVisible(7);
 
                 return Helper.ListView.waitForDeferredAction(lv)();
             }).then(function () {
                     // This is called after scrolling is done and items have been disposed, the current number of live items should be 1 + 2xPagesToLoad again.
-                    LiveUnit.Assert.areEqual(1 + 2 * WinJS.UI._VirtualizeContentsView._pagesToPrefetch, itemsAlive);
+                    LiveUnit.Assert.areEqual(1 + 2 * WinJS.UI._VirtualizeContentsView._defaultPagesToPrefetch, itemsAlive);
                     var element = lv.element;
 
                     disposing = true;

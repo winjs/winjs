@@ -248,11 +248,11 @@ declare module WinJS {
             var _maxTimePerCreateContainers;
             var _chunkSize;
             var _disableCustomPagesPrefetch;
-            var _pagesToPrefetch;
+            var _defaultPagesToPrefetch;
             var _createContainersJobTimeslice;
             var _startupChunkSize;
-            var _customPagesToPrefetchMax;
-            var _customPagesToPrefetchMin;
+            var _iOSMaxLeadingPages;
+            var _iOSMaxTrailingPages;
         }
 
         class PrivateAutoSuggestBox extends WinJS.UI.AutoSuggestBox {
@@ -345,6 +345,8 @@ declare module WinJS {
 
             ensureVisible(itemIndex: number): void;
             ensureVisible(itemIndex: IListViewEntity): void;
+            maxTrailingPages: number;
+            maxLeadingPages: number;
         }
 
         class PrivateListLayout extends ListLayout {
