@@ -895,9 +895,10 @@ define([
             /// </returns>
             /// </signature>
             writeAnimationProfilerMark("showEdgeUI,StartTM");
-
+            
+            var isTransition = options && options.mechanism === "transition";
             var offsetArray = new OffsetArray(offset, "WinJS-showEdgeUI", [{ top: "-70px", left: "0px" }]);
-            return _TransitionAnimation[((options && options.mechanism === "transition") ? "executeTransition" : "executeAnimation")](
+            return _TransitionAnimation[(isTransition ? "executeTransition" : "executeAnimation")](
                 element,
                 {
                     keyframe: offsetArray.keyframe,
@@ -905,7 +906,7 @@ define([
                     delay: 0,
                     duration: 367,
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
-                    from: offsetArray.keyframe || translateCallback(offsetArray),
+                    from: isTransition ? translateCallback(offsetArray) : (offsetArray.keyframe || translateCallback(offsetArray)),
                     to: "none"
                 })
                 .then(function () { writeAnimationProfilerMark("showEdgeUI,StopTM"); });
@@ -979,9 +980,10 @@ define([
             /// </returns>
             /// </signature>
             writeAnimationProfilerMark("hideEdgeUI,StartTM");
-
+            
+            var isTransition = options && options.mechanism === "transition";
             var offsetArray = new OffsetArray(offset, "WinJS-hideEdgeUI", [{ top: "-70px", left: "0px" }]);
-            return _TransitionAnimation[((options && options.mechanism === "transition") ? "executeTransition" : "executeAnimation")](
+            return _TransitionAnimation[(isTransition ? "executeTransition" : "executeAnimation")](
                 element,
                 {
                     keyframe: offsetArray.keyframe,
@@ -990,7 +992,7 @@ define([
                     duration: 367,
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
                     from: "none",
-                    to: offsetArray.keyframe || translateCallback(offsetArray)
+                    to: isTransition ? translateCallback(offsetArray) : (offsetArray.keyframe || translateCallback(offsetArray))
                 })
                 .then(function () { writeAnimationProfilerMark("hideEdgeUI,StopTM"); });
         },
