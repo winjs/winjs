@@ -72,6 +72,7 @@ define([
                 // Default to Placement = Top and Layout = Custom
                 options.placement = options.placement || "top";
                 options.layout = customLayout;
+                options.closedDisplayMode = options.closedDisplayMode || "minimal";
 
                 AppBar.AppBar.call(this, element, options);
 
@@ -97,6 +98,22 @@ define([
                     },
                     set: function () {
                         Object.getOwnPropertyDescriptor(AppBar.AppBar.prototype, "layout").set.call(this, customLayout);
+                    },
+                },
+
+                // Restrict values of closedDisplayMode to 'none' or 'minimal'
+
+                /// <field type="String" defaultValue="minimal" locid="WinJS.UI.NavBar.closedDisplayMode" helpKeyword="WinJS.UI.NavBar.closedDisplayMode" isAdvanced="true">
+                /// Gets/Sets how NavBar will display itself while hidden. Values are "none" and "minimal".
+                /// </field>
+                closedDisplayMode: {
+                    get: function () {
+                        return this._closedDisplayMode;
+                    },
+                    set: function (value) {
+                        var newValue = (value  === "none" ? "none" : "minimal");
+                        Object.getOwnPropertyDescriptor(AppBar.AppBar.prototype, "closedDisplayMode").set.call(this, newValue);
+                        this._closedDisplayMode = newValue;
                     },
                 },
 

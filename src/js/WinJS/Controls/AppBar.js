@@ -57,6 +57,7 @@ define([
                 none: 0,
                 hidden: 0,
                 minimal: 25,
+                compact: 48
             };
 
             // Maps each notion of a display modes to the corresponding visible position
@@ -66,12 +67,14 @@ define([
                 hidden: "hidden",
                 minimal: "minimal",
                 shown: "shown",
+                compact: "compact"
             };
 
             // Enum of closedDisplayMode constants
             var closedDisplayModes = {
                 none: "none",
                 minimal: "minimal",
+                compact: "compact"
             };
 
             // Constants shown/hidden states
@@ -389,7 +392,7 @@ define([
 
                 // Need to set placement before closedDisplayMode, closedDisplayMode sets our starting position, which is dependant on placement.
                 this.placement = options.placement || _Constants.appBarPlacementBottom;
-                this.closedDisplayMode = options.closedDisplayMode || closedDisplayModes.minimal;
+                this.closedDisplayMode = options.closedDisplayMode || closedDisplayModes.compact;
 
                 _Control.setOptions(this, options);
 
@@ -617,8 +620,8 @@ define([
                     this._layout.layout(commands);
                 },
 
-                /// <field type="String" defaultValue="minimal" locid="WinJS.UI.AppBar.closedDisplayMode" helpKeyword="WinJS.UI.AppBar.closedDisplayMode" isAdvanced="true">
-                /// Gets/Sets how AppBar will display itself while hidden. Values are "none" and "minimal".
+                /// <field type="String" defaultValue="compact" locid="WinJS.UI.AppBar.closedDisplayMode" helpKeyword="WinJS.UI.AppBar.closedDisplayMode" isAdvanced="true">
+                /// Gets/Sets how AppBar will display itself while hidden. Values are "none", "minimal" and '"compact".
                 /// </field>
                 closedDisplayMode: {
                     get: function AppBar_get_closedDisplayMode() {
@@ -628,19 +631,34 @@ define([
                         var oldValue = this._closedDisplayMode;
 
                         if (oldValue !== value) {
+
+                            // Determine if the visible position is changing. This can be used to determine if we need to delay updating closedDisplayMode related CSS classes
+                            // to avoid affecting the animation.
+                            var changeVisiblePosition = _ElementUtilities.hasClass(this._element, _Constants.hiddenClass) || _ElementUtilities.hasClass(this._element, _Constants.hidingClass);
+
                             if (value === closedDisplayModes.none) {
                                 this._closedDisplayMode = closedDisplayModes.none;
-                                _ElementUtilities.removeClass(this._element, _Constants.minimalClass);
-                            } else {
-                                // Minimal is default fallback.
+                                if (!changeVisiblePosition || !oldValue) {
+                                    _ElementUtilities.removeClass(this._element, _Constants.minimalClass);
+                                    _ElementUtilities.removeClass(this._element, _Constants.compactClass);
+                                }
+                            } else if (value === closedDisplayModes.minimal) {
                                 this._closedDisplayMode = closedDisplayModes.minimal;
-                                _ElementUtilities.addClass(this._element, _Constants.minimalClass);
+                                if (!changeVisiblePosition || !oldValue || oldValue === closedDisplayModes.none) {
+                                    _ElementUtilities.addClass(this._element, _Constants.minimalClass);
+                                    _ElementUtilities.removeClass(this._element, _Constants.compactClass);
+                                }
+                            } else {
+                                // Compact is default fallback.
+                                this._closedDisplayMode = closedDisplayModes.compact;
+                                _ElementUtilities.addClass(this._element, _Constants.compactClass);
+                                _ElementUtilities.removeClass(this._element, _Constants.minimalClass);
                             }
 
                             // The invoke button has changed the amount of available space in the AppBar. Layout might need to scale.
                             this._layout.resize();
 
-                            if (_ElementUtilities.hasClass(this._element, _Constants.hiddenClass) || _ElementUtilities.hasClass(this._element, _Constants.hidingClass)) {
+                            if (changeVisiblePosition) {
                                 // If the value is being set while we are not showing, change to our new position.
                                 this._changeVisiblePosition(displayModeVisiblePositions[this._closedDisplayMode]);
                             }
@@ -680,6 +698,7 @@ define([
                         return _ElementUtilities.hasClass(this._element, _Constants.hiddenClass) ||
                             _ElementUtilities.hasClass(this._element, _Constants.hidingClass) ||
                             this._doNext === displayModeVisiblePositions.minimal ||
+                            this._doNext === displayModeVisiblePositions.compact ||
                             this._doNext === displayModeVisiblePositions.none;
                     },
                 },
@@ -950,6 +969,7 @@ define([
                         return {
                             hidden: knownVisibleHeights.hidden,
                             minimal: knownVisibleHeights.minimal,
+                            compact: Math.max(this._heightWithoutLabels || 0, knownVisibleHeights.compact),
                             // Element can change size as content gets added or removed or if it
                             // experinces style changes. We have to look this up at run time.
                             shown: this._element.offsetHeight,
@@ -1061,6 +1081,18 @@ define([
                     }
 
                     if (newPosition) {
+
+                        // Update closedDisplayMode related CSS classes, which were delayed from the closedDisplayMode setter to avoid affecting the animation
+                        if (newPosition === displayModeVisiblePositions.minimal) {
+                            _ElementUtilities.addClass(this._element, _Constants.minimalClass);
+                            _ElementUtilities.removeClass(this._element, _Constants.compactClass);
+                        }
+
+                        if (newPosition === displayModeVisiblePositions.hidden && this.closedDisplayMode === closedDisplayModes.none) {
+                            _ElementUtilities.removeClass(this._element, _Constants.minimalClass);
+                            _ElementUtilities.removeClass(this._element, _Constants.compactClass);
+                        }
+
                         // Clear animation flag and record having visited this position.
                         this._element.winAnimating = "";
                         this._lastPositionVisited = newPosition;
@@ -1109,8 +1141,12 @@ define([
                         this._queuedToHide = [];
                     }
 
-                    // Make sure everything fits before showinging
+                    // Make sure everything fits before showing
                     this._layout.scale();
+
+                    if (this.closedDisplayMode === closedDisplayModes.compact) {
+                        this._heightWithoutLabels = this._element.offsetHeight;
+                    }
 
                     _ElementUtilities.removeClass(this._element, _Constants.hiddenClass);
                     _ElementUtilities.addClass(this._element, _Constants.showingClass);
@@ -1166,6 +1202,16 @@ define([
                         distance = Math.abs(endingVisiblePixelHeight - beginningVisiblePixelHeight),
                         offsetTop = (this._placement === _Constants.appBarPlacementTop) ? -distance : distance;
 
+                    if ((this._placement === _Constants.appBarPlacementTop) &&
+                        ((fromPosition === displayModeVisiblePositions.shown &&
+                        toPosition === displayModeVisiblePositions.compact) ||
+                        (fromPosition === displayModeVisiblePositions.compact &&
+                        toPosition === displayModeVisiblePositions.shown))) {
+                        // Command icons remain in the same location on a top appbar
+                        // when going from compact > shown or shown > compact.
+                        offsetTop = 0;
+                    }
+
                     // Animate
                     if (endingVisiblePixelHeight > beginningVisiblePixelHeight) {
                         var fromOffset = { top: offsetTop + "px", left: "0px" };
@@ -1184,7 +1230,8 @@ define([
 
                     if (this._doNext === displayModeVisiblePositions.disabled ||
                         this._doNext === displayModeVisiblePositions.hidden ||
-                        this._doNext === displayModeVisiblePositions.minimal) {
+                        this._doNext === displayModeVisiblePositions.minimal ||
+                        this._doNext === displayModeVisiblePositions.compact) {
                         // Do hide first because animating commands would be easier
                         this._hide(this._doNext);
                         this._doNext = "";

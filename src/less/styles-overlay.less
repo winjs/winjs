@@ -233,9 +233,17 @@ AppBar
     left: 0;
     position: fixed;
     position: -ms-device-fixed;
-    min-height: 25px;
+    min-height: 48px;
 
-    &.win-appbar-hiding > :not(.win-appbar-invokebutton) {
+    &.win-appbar-minimal {
+        min-height: 25px;
+
+        &.win-appbar-hidden .win-appbar-invokebutton .win-appbar-ellipsis {
+            top: 5px;
+        }
+    }
+
+    &.win-appbar-hiding.win-appbar-minimal > :not(.win-appbar-invokebutton) {
         opacity: 0;
     }
 
@@ -243,36 +251,49 @@ AppBar
         opacity: 1;
     }
 
-    &.win-appbar-hidden > :not(.win-appbar-invokebutton) {
+    &.win-appbar-hidden.win-appbar-minimal > :not(.win-appbar-invokebutton) {
         display: none !important;
     }
 
-    &.win-appbar-hiding .win-appbar-invokebutton,
-    &.win-appbar-hidden .win-appbar-invokebutton {
+    &.win-appbar-hiding.win-appbar-minimal .win-appbar-invokebutton,
+    &.win-appbar-hidden.win-appbar-minimal .win-appbar-invokebutton {
         width: 100%;
     }
 
+    &.win-menulayout.win-appbar-showing, 
+    &.win-menulayout.win-appbar-shown, 
+    &.win-menulayout.win-appbar-hiding  {
+        .win-appbar-invokebutton {
+            visibility: hidden;;
+        }
+        .win-toolbar.win-toolbar-inlinemenu .win-toolbar-overflowbutton {
+            visibility: visible;
+        }
+    }
+
     .win-appbar-invokebutton {
-        width: 60px;
-        height: 40px;
+        width: 32px;
+        height: 100%;
+        min-height: 25px;
         position: absolute;
         right: 0px;
         margin: 0px;
         padding: 0px;
-        border: none;
+        border: dotted 1px;
         min-width: 0px;
+        background-clip:border-box;
         display: none;
         // Setting explicit z-index here works around draw ordering issue that occurs in IE when other positioned elements are present in a custom AppBar.
         z-index: 1;
 
         .win-appbar-ellipsis {
-            width: 58px; /* 58px + 2px border = 60px */
-            height: 23px; /* 23px + 2px of border === the height of the closed minimal AppBar.*/
+            width: 32px;
+            height: 100%;
             right: 0px;
+            top:15px;
             position: absolute;
             display: inline-block;
-            border: dotted 1px;
-            font-size: 19px;
+            font-size: 14px;
             text-align: center;
             font-family: "Segoe UI Symbol", "Symbols";
 
@@ -280,10 +301,6 @@ AppBar
                 content: "\E10C";
                 position: relative;
             }
-        }
-
-        &:focus .win-appbar-ellipsis {
-            border: dotted 1px;
         }
     }
 
@@ -295,36 +312,9 @@ AppBar
         }
     });
 
-    &.win-bottom {
-        .win-appbar-invokebutton,
-        .win-appbar-ellipsis {
-            top: 0px;
-        }
-
-        .win-appbar-ellipsis::before {
-            /* Necessary to adjust vertical position of Ellipsis Glyph in bottom AppBar so that the top of the 3 ellipsis dots are drawn ~10px away from the top of the AppBar.
-               This is to appear consistent with where the top of the win-commandicon element in an AppBarCommand button is drawn, also 10px away from the top of the AppBar.
-               This value is dependant on the font-size of the Ellipsis Glyph being 19px and the height of the parent element being 21px */
-            top: -3px;
-        }
-    }
-
-    &.win-top {
-        .win-appbar-invokebutton,
-        .win-appbar-ellipsis {
-            bottom: 0px;
-        }
-
-        .win-appbar-ellipsis::before {
-            /* Necessary to adjust vertical position of Ellipsis Glyph in top AppBar so that the botom of the 3 ellipsis dots are drawn ~10px away from the bottom of the AppBar.
-               This is to appear consistent with where the bottom of the win-label in an AppBarCommand button is drawn, also 10px away from the bottom of the AppBar.
-               This value is dependant on the font-size of the Ellipsis Glyph being 19px and the height of the parent element being 21px */
-            bottom: 2px;
-        }
-    }
-
-    &.win-appbar-minimal .win-appbar-invokebutton {
-            display: block;
+    &.win-appbar-minimal .win-appbar-invokebutton,
+    &.win-appbar-compact .win-appbar-invokebutton {
+        display: block;
     }
 }
 
@@ -368,19 +358,48 @@ AppBar commands layout
         min-height: 62px;
     }
 
-    &.win-appbar-minimal {
-        // Minimal AppBar with commands layout makes room for the invokeButton.
-        padding-right: 60px;
-        width: ~"calc(100% - 60px)";
+    &.win-appbar-showing.win-appbar-compact,
+    &.win-appbar-shown.win-appbar-compact,
+    &.win-appbar-hiding.win-appbar-compact {
+        min-height: 48px;
+    }
+
+    &.win-appbar-minimal,
+    &.win-appbar-compact {
+        // Minimal and compact AppBar with commands layout makes room for the invokeButton.
+        padding-right: 32px;
+        width: ~"calc(100% - 32px)";
+    }
+
+    &.win-appbar-compact {
+        button.win-command .win-label {
+            display: none;
+        }
+    }
+
+    &.win-appbar-compact.win-appbar-hiding {
+        button.win-command .win-label {
+            display: block;
+            visibility: hidden;
+        }
+    }
+
+    &.win-appbar-compact.win-appbar-shown,
+    &.win-appbar-compact.win-appbar-showing {
+        button.win-command .win-label {
+            display: block;
+            visibility: visible;;
+        }
     }
 }
 
 /* CommandsLayout RTL */
 .win-commandlayout {
     .RTL({
-        &.win-appbar-minimal {
+        &.win-appbar-minimal, 
+        &.win-appbar-compact {
             padding-right: 0px;
-            padding-left: 60px;
+            padding-left: 32px;
         }
     });
 }
@@ -410,6 +429,36 @@ AppBar menu layout
 
     .win-toolbar {
         max-width:100vw;
+    }
+
+    &.win-appbar-compact {
+        button.win-command .win-label {
+            display: none;
+            visibility: hidden;
+        }
+    }
+
+    &.win-appbar-compact.win-appbar-hiding,
+    &.win-appbar-compact.win-appbar-showing {
+        button.win-command .win-label {
+            display: block;
+            visibility: visible;
+        }
+    }
+
+    &.win-appbar-compact.win-appbar-shown  {
+        button.win-command .win-label {
+            display: block;
+            visibility: visible;
+        }
+    }
+
+    &.win-appbar-compact.win-appbar-hidden {
+        overflow: hidden;
+
+        .win-toolbar-overflowarea {
+            visibility: hidden;
+        }
     }
 }
 

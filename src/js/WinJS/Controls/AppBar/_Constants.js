@@ -20,6 +20,7 @@ define([
         bottomClass: "win-bottom",
         showingClass : "win-appbar-showing",
         shownClass : "win-appbar-shown",
+        compactClass : "win-appbar-compact",
         hidingClass : "win-appbar-hiding",
         hiddenClass: "win-appbar-hidden",
         minimalClass: "win-appbar-minimal",
@@ -36,7 +37,7 @@ define([
         appBarLayoutMenu: "menu",
 
         // Constant for AppBar invokebutton width
-        appBarInvokeButtonWidth: 60,
+        appBarInvokeButtonWidth: 32,
 
         // Constants for Commands
         typeSeparator: "separator",
@@ -63,8 +64,8 @@ define([
         scrollsClass: "win-scrolls",
 
         // Constants for AppBarCommand full-size widths.
-        separatorWidth: 60,
-        buttonWidth: 100,
+        separatorWidth: 34,
+        buttonWidth: 68,
 
         narrowClass: "win-narrow",
         wideClass: "win-wide",

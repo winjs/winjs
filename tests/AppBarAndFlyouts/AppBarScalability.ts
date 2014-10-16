@@ -8,7 +8,7 @@ module CorsicaTests {
 
     // If the AppBar has the invokeButton (ie closedDisplayMode !== 'none', then the AppBar also has reserved some right padding 
     // to keep other contents in the flow of the AppBar DOM from overlaying it. 
-    var rightPaddingReservedForInvokeButton = 60;
+    var rightPaddingReservedForInvokeButton = 32;
 
     // This is the element that will contain the AppBars for all of these tests. 
     // Normally AppBars should be a direct descendant of the body element, but to be able to test our window resize handlers, 

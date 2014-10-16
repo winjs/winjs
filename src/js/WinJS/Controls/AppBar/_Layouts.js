@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
     '../../Animations/_TransitionAnimation',
@@ -10,6 +10,7 @@ define([
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
     '../../Controls/Toolbar',
+    '../../Controls/Toolbar/_Constants',
     '../../Promise',
     '../../Scheduler',
     '../../Utilities/_Control',
@@ -17,7 +18,7 @@ define([
     '../../Utilities/_ElementUtilities',
     './_Command',
     './_Constants'
-], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, Toolbar, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
+], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, Toolbar, _ToolbarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
 
     // AppBar will use this when AppBar.layout property is set to "custom"
@@ -458,6 +459,8 @@ define([
             var _AppBarMenuLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarMenuLayout_ctor(appBarEl) {
                 exports._AppBarBaseLayout.call(this, appBarEl, { _className: layoutClassName, _type: layoutType });
                 this._tranformNames = _BaseUtils._browserStyleEquivalents["transform"];
+                this._animationCompleteBound = this._animationComplete.bind(this);
+                this._positionToolbarBound = this._positionToolbar.bind(this);
             }, {
                 layout: function _AppBarMenuLayout_layout(commands) {
                     this._writeProfilerMark("layout,info");
@@ -467,8 +470,8 @@ define([
                     } else {
                         this._menu = _Global.document.createElement("div");
                         _ElementUtilities.addClass(this._menu, _Constants.menuContainerClass);
-                        this.appBarEl.appendChild(this._menu);
                     }
+                    this.appBarEl.appendChild(this._menu);
 
                     this._toolbarContainer = _Global.document.createElement("div");
                     _ElementUtilities.addClass(this._toolbarContainer, _Constants.toolbarContainerClass);
@@ -489,25 +492,46 @@ define([
 
                 resize: function _AppBarMenuLayout_resize() {
                     this._writeProfilerMark("resize,info");
-                    this._forceLayoutPending = true;
+
+                    if (this._initialized) {
+                        this._forceLayoutPending = true;
+                    }
                 },
 
                 positionChanging: function _AppBarMenuLayout_positionChanging(fromPosition, toPosition) {
                     this._writeProfilerMark("positionChanging from:" + fromPosition + " to: " + toPosition + ",info");
 
-                    if (toPosition === "shown") {
-                        return this._animateToolbarEntrance();
-                    } else {
-                        return this._animateToolbarExit();
+                    this._animationPromise = this._animationPromise || Promise.wrap();
+
+                    if (this._animating) {
+                        this._animationPromise.cancel();
                     }
+
+                    this._animating = true;
+                    if (toPosition === "shown" || (fromPosition !== "shown" && toPosition === "compact")) {
+                        this._positionToolbar();
+                        this._animationPromise = this._animateToolbarEntrance();
+                    } else {
+                        if (fromPosition === "minimal" || fromPosition === "compact" || fromPosition === "hidden") {
+                            this._animationPromise = Promise.wrap();
+                        } else {
+                            this._animationPromise = this._animateToolbarExit();
+                        }
+                    }
+                    this._animationPromise.then(this._animationCompleteBound, this._animationCompleteBound);
+                    return this._animationPromise;
                 },
 
                 disposeChildren: function _AppBarMenuLayout_disposeChildren() {
                     this._writeProfilerMark("disposeChildren,info");
 
                     if (this._toolbar) {
-                        _Dispose.disposeSubTree(this._toolbar);
+                        _Dispose.disposeSubTree(this._toolbarEl);
                     }
+                },
+
+                _animationComplete: function _AppBarMenuLayout_animationComplete() {
+                    this._animating = false;
                 },
 
                 _createToolbar: function _AppBarMenuLayout_createToolbar(commands) {
@@ -532,6 +556,13 @@ define([
                         inlineMenu: true
                     });
 
+                    var that = this;
+                    this._appbarInvokeButton = this.appBarEl.querySelector("." + _Constants.invokeButtonClass);
+                    this._overflowButton = this._toolbarEl.querySelector("." + _ToolbarConstants.overflowButtonCssClass);
+                    this._overflowButton.addEventListener("click", function () {
+                        that._appbarInvokeButton.click();
+                    });
+
                     this._positionToolbar();
 
                     // Restore state to AppBar.
@@ -541,7 +572,7 @@ define([
                     }
                 },
 
-                _positionToolbar: function _AppBarMenuLayout_positionContainers() {
+                _positionToolbar: function _AppBarMenuLayout_positionToolbar() {
                     this._writeProfilerMark("_positionToolbar,info");
 
                     var menuOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
@@ -550,6 +581,8 @@ define([
                     this._toolbarContainer.style[this._tranformNames.scriptName] = "translateY(0px)";
                     this._menu.style[this._tranformNames.scriptName] = "translateY(-" + menuOffset + 'px)';
                     this._toolbarEl.style[this._tranformNames.scriptName] = "translateY(" + toolbarOffset + 'px)';
+
+                    this._initialized = true;
                 },
 
                 _animateToolbarEntrance: function _AppBarMenuLayout_animateToolbarEntrance() {
@@ -579,7 +612,9 @@ define([
                     var heightVisible = this._isMinimal() ? 0 : this.appBarEl.offsetHeight;
                     var animation1 = this._executeTranslate(this._toolbarContainer, "translateY(0px)");
                     var animation2 = this._executeTranslate(this._toolbarEl, "translateY(" + (this._toolbarContainer.offsetHeight - heightVisible) + "px)");
-                    return Promise.join([animation1, animation2]);
+                    var animation = Promise.join([animation1, animation2]);
+                    animation.then(this._positionToolbarBound, this._positionToolbarBound);
+                    return animation;
                 },
 
                 _executeTranslate: function _AppBarMenuLayout_executeTranslate(element, value) {

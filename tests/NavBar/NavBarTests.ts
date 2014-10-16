@@ -92,6 +92,22 @@ module WinJSTests {
             LiveUnit.Assert.areEqual("custom", navBar.layout);
         };
 
+        testNavBarClosedDisplayModeProperty = function () {
+            var navBar;
+
+            navBar = new WinJS.UI.NavBar();
+            LiveUnit.Assert.areEqual("minimal", navBar.closedDisplayMode);
+
+            navBar = new WinJS.UI.NavBar(null, { closedDisplayMode: "none" });
+            LiveUnit.Assert.areEqual("none", navBar.closedDisplayMode);
+
+            navBar = new WinJS.UI.NavBar();
+
+            // The layout setter of the NavBar will respect the value 'none', anything else is consider 'minimal'
+            navBar.closedDisplayMode = "compact";
+            LiveUnit.Assert.areEqual("minimal", navBar.closedDisplayMode);
+        };
+
         testNavBarPlacementProperty = function () {
             var navBar;
 
