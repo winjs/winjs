@@ -367,7 +367,7 @@ define([
                     },
                 },
 
-                /// <field type="Number" integer="true" locid="WinJS.UI.ListView.maxLeadingPages" helpKeyword="WinJS.UI.ListView.maxLeadingPages" isAdvanced="true">
+                /// <field type="Number" integer="true" locid="WinJS.UI.ListView.maxTrailingPages" helpKeyword="WinJS.UI.ListView.maxTrailingPages" isAdvanced="true">
                 /// Gets or sets the maximum number of pages to prefetch in the trailing buffer for virtualization.
                 /// </field>
                 maxTrailingPages: {
@@ -1578,7 +1578,7 @@ define([
                             // be initialized.
                             if (entity.type === _UI.ObjectType.groupHeader || entity.type === _UI.ObjectType.item) {
                                 that._view.updateAriaForAnnouncement(item, (entity.type === _UI.ObjectType.groupHeader ? that._groups.length() : that._cachedCount));
-                            }                           
+                            }
 
                             // Some consumers of ListView listen for item invoked events and hide the listview when an item is clicked.
                             // Since keyboard interactions rely on async operations, sometimes an invoke event can be received before we get
@@ -1817,7 +1817,7 @@ define([
                                             var itemBox = elementInfo.itemBox,
                                                 oddStripe = _Constants._containerOddClass,
                                                 evenStripe = _Constants._containerEvenClass,
-                                                // Store the even/odd container class from the container the itemBox was in before being removed. 
+                                                // Store the even/odd container class from the container the itemBox was in before being removed.
                                                 // We want to reapply that class on whichever container we use to perform the itemBox's exit animation.
                                                 containerStripe = _ElementUtilities.hasClass(itemBox.parentElement, evenStripe) ? evenStripe : oddStripe;
 
@@ -3284,7 +3284,7 @@ define([
                     if (focused.type === _UI.ObjectType.groupHeader) {
                         focused = { type: _UI.ObjectType.item, index: this._groups.group(focused.index).startIndex };
                     } else if (focused.type !== _UI.ObjectType.item) {
-                        focused = { type: _UI.ObjectType.item, index: (focused.type === _UI.ObjectType.listHeader ? 0 : this._cachedCount) }; 
+                        focused = { type: _UI.ObjectType.item, index: (focused.type === _UI.ObjectType.listHeader ? 0 : this._cachedCount) };
                     }
 
                     if (typeof focused.index !== "number") {
@@ -4242,7 +4242,7 @@ define([
                                 markup = "",
                                 firstBlockFirstItemIndex = indexOfNextGroupItem,
                                 secondBlockFirstItemIndex = indexOfNextGroupItem + blockSize;
-                                
+
                             if (newBlocksCount > 0) {
                                 var pairOfItemBlocks = [
                                     // Use pairs to ensure that the container striping pattern is maintained regardless if blockSize is even or odd.
