@@ -400,6 +400,7 @@ export class Toolbar {
                 this._positionCommands();
             }
         } else {
+            this._setupOverflowArea([]);
             _ElementUtilities.addClass(this.element, _Constants.emptyToolbarCssClass);
         }
 
@@ -421,7 +422,7 @@ export class Toolbar {
 
         for (i = 0, len = this._mainActionArea.children.length; i < len; i++) {
             child = <HTMLElement> this._mainActionArea.children[i];
-            if (child.style.display !== "none") {
+            if (child.style.display !== "none" || (child["winControl"] && child["winControl"].section === "secondary")) {
                 currentElements.push(child);
                 if (dataElements.indexOf(child) === -1 && child !== this._overflowButton) {
                     deletedElements.push(child);

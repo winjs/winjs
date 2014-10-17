@@ -1032,6 +1032,41 @@ module CorsicaTests {
             }, WinJS.Utilities.Scheduler.Priority.high);
         }
 
+        testDataEditEmptyScenario(complete) {
+            var Key = WinJS.Utilities.Key;
+            var firstEL = document.createElement("button");
+            var data = new WinJS.Binding.List([
+                new Command(firstEL, { type: Helper.Toolbar.Constants.typeButton, label: "1" }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "2" }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "3" }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "4" }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "s1", section: Helper.Toolbar.Constants.secondaryCommandSection }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "s2", section: Helper.Toolbar.Constants.secondaryCommandSection }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "s3", section: Helper.Toolbar.Constants.secondaryCommandSection }),
+                new Command(null, { type: Helper.Toolbar.Constants.typeButton, label: "s4", section: Helper.Toolbar.Constants.secondaryCommandSection }),
+            ]);
+            this._element.style.width = "10px";
+            var toolbar = new Toolbar(this._element, {
+                data: data,
+                inlineMenu: true
+            });
+
+            this._element.style.width = (3 * toolbar._standardCommandWidth) + toolbar._overflowButtonWidth + "px";
+            toolbar.forceLayout();
+
+            // The main action area should now show | 1 | 2 | 3  | ... |
+            LiveUnit.Assert.areEqual(4, Helper.Toolbar.getVisibleCommandsInElement(toolbar._mainActionArea).length);
+
+            // Delete all items
+            toolbar.data = new WinJS.Binding.List([]);
+
+            WinJS.Utilities.Scheduler.schedule(() => {
+                LiveUnit.Assert.areEqual(1, toolbar._mainActionArea.children.length, "Only the overflow button should be a child");
+                LiveUnit.Assert.areEqual(0, toolbar._inlineOverflowArea.children.length);
+                complete();
+            }, WinJS.Utilities.Scheduler.Priority.high);
+        }
+
         testSelectionAndGlobalSection() {
             this._element.style.width = "1000px";
             var data = new WinJS.Binding.List([
