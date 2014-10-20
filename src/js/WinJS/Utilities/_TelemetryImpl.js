@@ -17,16 +17,16 @@ define([
     var WinJSProvider = "WinJS-Telemetry-Provider";
     
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
-        _telemetry: _Base.Namespace._lazy(function () {
-            return _Base.Class.define(function _telemetry_ctor() {
-            /// <signature helpKeyword="WinJS.Utilities._telemetry">
-            /// <summary locid="WinJS.Utilities._telemetry">
+        _Telemetry: _Base.Namespace._lazy(function () {
+            var Telemetry = _Base.Class.define(function _Telemetry_ctor() {
+            /// <signature helpKeyword="WinJS.Utilities._Telemetry">
+            /// <summary locid="WinJS.Utilities._Telemetry">
             /// Wraps calls to Microsoft.Foundation.Diagnostics WinRT.
             /// This will result in no-op when built outside of Microsoft Framework Package.
             /// </summary>
             /// </signature>
-              if (_BaseUtils.hasWinRT) {
-                  this._diagnostics = _WinRT.Windows.Foundation.Diagnostics;
+              this._diagnostics = _WinRT.Windows.Foundation.Diagnostics;
+              if (this._diagnostics) {
                   this._loggingOption = new this._diagnostics.LoggingOptions(MicrosoftKeyword);
                   this._loggingLevel = this._diagnostics.LoggingLevel.information;
                   this._channel = new this._diagnostics.LoggingChannel(WinJSProvider, new this._diagnostics.LoggingChannelOptions(MicrosoftGroup));
@@ -34,44 +34,46 @@ define([
               }, {
                   /* empty */
               }, {
-                 send: function (name, params) {
-                 /// <signature helpKeyword="WinJS.Utilities._telemetry.send">
-                 /// <summary locid="WinJS.Utilities._telemetry.send">
-                 /// Formatter to upload the name/value pair to Asimov in the correct format.
-                 /// This will result in no-op when built outside of Microsoft Framework Package.
-                 /// </summary>
-                 /// <param name="params" type="Object" locid="WinJS.Utilities._telemetry.send_p:params">
-                 /// Array of name/value pair items that need to be logged. They can be of type,
-                 /// bool, int32, string.  Any other type will be ignored.
-                 /// </param>
-                 /// </signature>
-                    if (this._diagnostics) {
-                      var fields = null;
-                      if (params) {
-                          fields = this._diagnostics.LoggingFields();
-                          Object.keys(params).forEach(function (key) {
-                              var value = params[key];
-                              switch (typeof value) {
-                                  case "number":
-                                      fields.addInt32(key, value);
-                                      break;
-                                  case "string":
-                                      fields.addString(key, value);
-                                      break;
-                                  case "boolean":
-                                      fields.addBoolean(key, value);
-                                      break;
-                                  default:
-                                      // no-op
-                                      break;
-                              }
-                          });
-                      }
+                  send: function (name, params) {
+                  /// <signature helpKeyword="WinJS.Utilities._Telemetry.send">
+                  /// <summary locid="WinJS.Utilities._Telemetry.send">
+                  /// Formatter to upload the name/value pair to Asimov in the correct format.
+                  /// This will result in no-op when built outside of Microsoft Framework Package.
+                  /// </summary>
+                  /// <param name="params" type="Object" locid="WinJS.Utilities._Telemetry.send_p:params">
+                  /// Object of name/value pair items that need to be logged. They can be of type,
+                  /// bool, int32, string.  Any other type will be ignored.
+                  /// </param>
+                  /// </signature>
+                      if (this._diagnostics) {
+                          var fields = null;
+                          if (params) {
+                              fields = this._diagnostics.LoggingFields();
+                              Object.keys(params).forEach(function (key) {
+                                  var value = params[key];
+                                  switch (typeof value) {
+                                      case "number":
+                                          fields.addInt32(key, value);
+                                          break;
+                                      case "string":
+                                          fields.addString(key, value);
+                                          break;
+                                      case "boolean":
+                                          fields.addBoolean(key, value);
+                                          break;
+                                      default:
+                                          // no-op
+                                          break;
+                                  }
+                              });
+                          }
 
-                      this._channel.logEvent(name, fields, this._loggingLevel, this._loggingOption);
-                    }
+                          this._channel.logEvent(name, fields, this._loggingLevel, this._loggingOption);
+                      }
                  }
             });
+            
+            return new Telemetry();
         })
     });
 });
