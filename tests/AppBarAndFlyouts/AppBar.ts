@@ -1986,6 +1986,57 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("Button 2", secondaryCommands[0]["winControl"].label);
             LiveUnit.Assert.areEqual("Button 3", secondaryCommands[1]["winControl"].label);
         }
+
+        testMenuLayoutShowHideCommands = function (complete) {
+            var root = document.getElementById("appBarDiv");
+            root.innerHTML =
+                "<div id='appBar'>" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\"}'></button>" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\"}'></button>" +
+                "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", label:\"Separator\"}' />" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\"}'></button>" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"button\"}'></button>" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton1\", label:\"Secondary Button 1\", type:\"button\", section:\"secondary\"}'></button>" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton2\", label:\"Secondary Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
+                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton3\", label:\"Secondary Button 3\", type:\"button\", section:\"secondary\"}'></button>" +
+                "</div>";
+            var appBar = new WinJS.UI.AppBar(<HTMLElement>root.querySelector("#appBar"), {
+                layout: "menu"
+            });
+
+            var toolbarEl = appBar.element.querySelector("." + Helper.Toolbar.Constants.controlCssClass);
+            var toolbar = toolbarEl.winControl;
+            Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 2", "Separator", "Button 3", "Button 4"]);
+            Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1", "Secondary Button 2", "Secondary Button 3"]);
+
+            appBar.showOnlyCommands(["Button1", "Button3", "SecButton1"]);
+
+            WinJS.Utilities.Scheduler.schedule(() => {
+                Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3"]);
+                Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
+
+                appBar.showCommands(["Button1", "Button4", "Button3", "SecButton1"]);
+
+                WinJS.Utilities.Scheduler.schedule(() => {
+                    Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3", "Button 4"]);
+                    Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
+
+                    appBar.hideCommands(["SecButton1"]);
+                    WinJS.Utilities.Scheduler.schedule(() => {
+                        Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3", "Button 4"]);
+                        Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, []);
+
+                        appBar.showOnlyCommands(["SecButton1"]);
+                        WinJS.Utilities.Scheduler.schedule(() => {
+                            Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, []);
+                            Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
+
+                            complete();
+                        }, WinJS.Utilities.Scheduler.Priority.high);
+                    }, WinJS.Utilities.Scheduler.Priority.high);
+                }, WinJS.Utilities.Scheduler.Priority.high);
+            }, WinJS.Utilities.Scheduler.Priority.high);
+        }
     };
 }
 // register the object as a test class by passing in the name

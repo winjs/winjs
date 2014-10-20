@@ -744,7 +744,7 @@ define([
                         throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
                     }
 
-                    this._showCommands(commands);
+                    this._layout.showCommands(commands);
                 },
 
                 hideCommands: function (commands) {
@@ -758,7 +758,7 @@ define([
                         throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
                     }
 
-                    this._hideCommands(commands);
+                    this._layout.hideCommands(commands);
                 },
 
                 showOnlyCommands: function (commands) {
@@ -774,7 +774,7 @@ define([
                         throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
                     }
 
-                    this._showOnlyCommands(commands);
+                    this._layout.showOnlyCommands(commands);
                 },
 
                 show: function () {

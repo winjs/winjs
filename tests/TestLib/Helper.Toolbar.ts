@@ -50,6 +50,7 @@ module Helper.Toolbar {
 
     export function verifyMainActionVisibleCommandsLabels(toolbar: WinJS.UI.Toolbar, labels: string[]) {
         var commands = getVisibleCommandsInElement((<WinJS.UI.PrivateToolbar>toolbar.element.winControl)._mainActionArea);
+        LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
             LiveUnit.Assert.areEqual(label, commands[index].winControl.label);
         });
@@ -58,6 +59,7 @@ module Helper.Toolbar {
     export function verifyOverflowAreaCommandsLabels(toolbar: WinJS.UI.Toolbar, labels: string[]) {
         var control = <WinJS.UI.PrivateToolbar>toolbar.element.winControl;
         var commands = getVisibleCommandsInElement(control.inlineMenu ? control._inlineOverflowArea : control._menu.element);
+        LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
             LiveUnit.Assert.areEqual(label, commands[index].winControl.label);
         });

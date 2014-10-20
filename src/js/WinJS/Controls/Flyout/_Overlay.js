@@ -937,6 +937,8 @@ define([
                     for (count = 0; count < hideCommands.length; count++) {
                         // Force us back into our appbar so that we can show again correctly
                         hideCommands[count].style.position = "";
+                        hideCommands[count].style.top = "";
+                        hideCommands[count].style.left = "";
                         hideCommands[count].getBoundingClientRect();
                         // Now make us really hidden
                         hideCommands[count].style.visibility = "hidden";

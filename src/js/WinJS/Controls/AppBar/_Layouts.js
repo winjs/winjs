@@ -83,6 +83,18 @@ define([
                         this.appBarEl.appendChild(command._element);
                     }
                 },
+                showCommands: function _AppBarBaseLayout_showCommands(commands) {
+                    // Use the default overlay showCommands implementation
+                    this.appBarEl.winControl._showCommands(commands);
+                },
+                showOnlyCommands: function _AppBarBaseLayout_showOnlyCommands(commands) {
+                    // Use the default overlay _showOnlyCommands implementation
+                    this.appBarEl.winControl._showOnlyCommands(commands);
+                },
+                hideCommands: function _AppBarBaseLayout_hideCommands(commands) {
+                    // Use the default overlay _hideCommands implementation
+                    this.appBarEl.winControl._hideCommands(commands);
+                },
                 sanitizeCommand: function _AppBarBaseLayout_sanitizeCommand(command) {
                     if (!command) {
                         throw new _ErrorFromName("WinJS.UI.AppBar.NullCommand", strings.nullCommand);
@@ -464,6 +476,15 @@ define([
             }, {
                 layout: function _AppBarMenuLayout_layout(commands) {
                     this._writeProfilerMark("layout,info");
+                    
+                    commands = commands || [];
+                    this._originalCommands = [];
+
+                    var that = this;
+                    commands.forEach(function (command) {
+                         that._originalCommands.push(that.sanitizeCommand(command));
+                    });
+                    this._displayedCommands = this._originalCommands.slice(0);
 
                     if (this._menu) {
                         _ElementUtilities.empty(this._menu);
@@ -481,6 +502,41 @@ define([
                     this._toolbarContainer.appendChild(this._toolbarEl);
 
                     this._createToolbar(commands);
+                },
+
+                showCommands: function _AppBarMenuLayout_showCommands(commands) {
+                    var elements = this._getCommandsElements(commands);
+                    var data = [];
+                    var newDisplayedCommands = [];
+                    var that = this;
+                    this._originalCommands.forEach(function (command) {
+                        if (elements.indexOf(command.element) >= 0 || that._displayedCommands.indexOf(command) >= 0) {
+                            newDisplayedCommands.push(command);
+                            data.push(command);
+                        }
+                    });
+                    this._displayedCommands = newDisplayedCommands;
+                    this._updateData(data);
+                },
+
+                showOnlyCommands: function _AppBarMenuLayout_showOnlyCommands(commands) {
+                    this._displayedCommands = [];
+                    this.showCommands(commands);
+                },
+
+                hideCommands: function _AppBarMenuLayout_hideCommands(commands) {
+                    var elements = this._getCommandsElements(commands);
+                    var data = [];
+                    var newDisplayedCommands = [];
+                    var that = this;
+                    this._originalCommands.forEach(function (command) {
+                        if (elements.indexOf(command.element) === -1 && that._displayedCommands.indexOf(command) >= 0) {
+                            newDisplayedCommands.push(command);
+                            data.push(command);
+                        }
+                    });
+                    this._displayedCommands = newDisplayedCommands;
+                    this._updateData(data);
                 },
 
                 connect: function _AppBarMenuLayout_connect(appBarEl) {
@@ -528,6 +584,71 @@ define([
                     if (this._toolbar) {
                         _Dispose.disposeSubTree(this._toolbarEl);
                     }
+                    this._originalCommands = [];
+                    this._displayedCommands = [];
+                },
+
+                _updateData: function _AppBarMenuLayout_updateData(data) {
+                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
+                    var hadShownClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.shownClass);
+                    _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
+
+                    // Make sure AppBar and children have width dimensions.
+                    var prevAppBarDisplay = this.appBarEl.style.display;
+                    this.appBarEl.style.display = "";
+
+
+                    this._toolbar.data = new BindingList.List(data);
+                    if (hadHiddenClass) {
+                        this._positionToolbar();
+                    }
+
+                    // Restore state to AppBar.
+                    this.appBarEl.style.display = prevAppBarDisplay;
+                    if (hadHiddenClass) {
+                        _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
+                    }
+
+                    if (hadShownClass) {
+                        this._positionToolbar();
+                        this._animateToolbarEntrance();
+                    }
+                },
+
+                _getCommandsElements: function _AppBarMenuLayout_getCommandsElements(commands) {
+                    if (!commands) {
+                        return [];
+                    }
+
+                    if (typeof commands === "string" || !commands || !commands.length) {
+                        commands = [commands];
+                    }
+
+                    var elements = [];
+                    for (var i = 0, len = commands.length; i < len; i++) {
+                        if (commands[i]) {
+                            if (typeof commands[i] === "string") {
+                                var element = _Global.document.getElementById(commands[i]);
+                                if (element) {
+                                    elements.push(element);
+                                } else {
+                                    // Check in the list we are tracking, since it might not be in the DOM yet
+                                    for (var j = 0, len2 = this._originalCommands.length; j < len2; j++) {
+                                        var element = this._originalCommands[j].element;
+                                        if (element.id === commands[i]) {
+                                            elements.push(element);
+                                        }
+                                    }
+                                }
+                            } else if (elements[i].element) {
+                                elements.push(commands[i].element);
+                            } else {
+                                elements.push(commands[i]);
+                            }
+                        }
+                    }
+
+                    return elements;
                 },
 
                 _animationComplete: function _AppBarMenuLayout_animationComplete() {
@@ -537,13 +658,6 @@ define([
                 _createToolbar: function _AppBarMenuLayout_createToolbar(commands) {
                     this._writeProfilerMark("_createToolbar,info");
 
-                    var data = [];
-                    var that = this;
-                    commands.forEach(function (command) {
-                        data.push(that.sanitizeCommand(command));
-                    });
-
-
                     var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
                     _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
 
@@ -552,7 +666,7 @@ define([
                     this.appBarEl.style.display = "";
 
                     this._toolbar = new Toolbar.Toolbar(this._toolbarEl, {
-                        data: new BindingList.List(data),
+                        data: new BindingList.List(this._originalCommands),
                         inlineMenu: true
                     });
 
@@ -577,6 +691,11 @@ define([
 
                     var menuOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
                     var toolbarOffset = this._toolbarEl.offsetHeight - (this._isMinimal() ? 0 : this.appBarEl.offsetHeight);
+
+                    // Ensure that initial position is correct
+                    this._toolbarContainer.style[this._tranformNames.scriptName] = "";
+                    this._menu.style[this._tranformNames.scriptName] = "";
+                    this._toolbarEl.style[this._tranformNames.scriptName] = "";
 
                     this._toolbarContainer.style[this._tranformNames.scriptName] = "translateY(0px)";
                     this._menu.style[this._tranformNames.scriptName] = "translateY(-" + menuOffset + 'px)';
