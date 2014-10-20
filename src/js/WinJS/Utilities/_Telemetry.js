@@ -10,15 +10,13 @@ define([
     
     _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
         _Telemetry: _Base.Namespace._lazy(function () {
-            return _Base.Class.define(function _Telemetry_ctor() {
+            var Telemetry = _Base.Class.define(function _Telemetry_ctor() {
             /// <signature helpKeyword="WinJS.Utilities._Telemetry">
             /// <summary locid="WinJS.Utilities._Telemetry">
             /// Wraps calls to Microsoft.Foundation.Diagnostics WinRT.
             /// This will result in no-op when built outside of Microsoft Framework Package.
             /// </summary>
             /// </signature>
-                /* empty */
-            }, {
                 /* empty */
             }, {
                 send: function (name, params) {
@@ -34,7 +32,11 @@ define([
                 /// </signature>
                     /* empty */
                 }
+            }, {
+                /* empty */
             });
+
+            return new Telemetry();
         })
     });
 });

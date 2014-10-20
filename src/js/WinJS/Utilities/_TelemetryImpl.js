@@ -32,8 +32,6 @@ define([
                   this._channel = new this._diagnostics.LoggingChannel(WinJSProvider, new this._diagnostics.LoggingChannelOptions(MicrosoftGroup));
                 }
               }, {
-                  /* empty */
-              }, {
                   send: function (name, params) {
                   /// <signature helpKeyword="WinJS.Utilities._Telemetry.send">
                   /// <summary locid="WinJS.Utilities._Telemetry.send">
@@ -70,9 +68,11 @@ define([
 
                           this._channel.logEvent(name, fields, this._loggingLevel, this._loggingOption);
                       }
-                 }
+                  }
+              }, {
+                  /* empty */
             });
-            
+
             return new Telemetry();
         })
     });
