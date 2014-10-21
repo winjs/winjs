@@ -94,6 +94,7 @@ define([
                 },
 
                 hidden: function (client) {
+                    // TODO: batch calls to hidden? often multiple AppBars are light dismissed together
                     var dismissed = false;
                     var index = this._clients.indexOf(client);
                     if (index !== -1) {
@@ -104,7 +105,13 @@ define([
                         } else {
                             if (this._currentFocus == client) {
                                 this._currentFocus = nextVisibleAppBar(client);
-                                if (this._currentFocus && this._isTopLevel()) {
+                                if (this._currentFocus && this._isTopLevel() && client.ld_containsElement(_Global.document.activeElement)) {
+                                    // TODO: ugly. client.ld_containsElement(_Global.document.activeElement) check is so that sticky AppBars don't take
+                                    // focus when the non-sticky AppBars were dismissed due to focus leaving them. This check assumes that a dismissed
+                                    // AppBar will not display='none' itself until after it calls hide
+
+                                    // TODO: When AppBar receives focus due to other AppBar dismissing, focus goes to first command in AppBar.
+                                    // When AppBar receives focus due to Flyout dismissing, focus goes to previously focused command of AppBar.
                                     this._currentFocus.ld_becameTopLevel();
                                 }
                             }
