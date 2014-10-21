@@ -88,6 +88,7 @@ define([
                                     client.ld_becameTopLevel();
                                 }
                             }
+                            _LightDismissService.forceLayout(); // we may now have a sticky AppBar in which case we need a click eater
                         }
                     }
                 },
@@ -100,17 +101,24 @@ define([
 
                         if (this._clients.length === 0) {
                             _LightDismissService.hidden(this);
-                        } else if (this._currentFocus == client) {
-                            this._currentFocus = nextVisibleAppBar(client);
-                            if (this._currentFocus && this._isTopLevel()) {
-                                this._currentFocus.ld_becameTopLevel();
+                        } else {
+                            if (this._currentFocus == client) {
+                                this._currentFocus = nextVisibleAppBar(client);
+                                if (this._currentFocus && this._isTopLevel()) {
+                                    this._currentFocus.ld_becameTopLevel();
+                                }
                             }
+                            _LightDismissService.forceLayout(); // we may have lost our last non-sticky AppBar in which case we don't need a click eater
                         }
                     }
                 },
 
                 onFocus: function (client) {
                     this._currentFocus = client;
+                },
+
+                forceLayout: function () {
+                    _LightDismissService.forceLayout();
                 },
 
                 _isTopLevel: function () {
@@ -686,19 +694,20 @@ define([
                             // May have changed sticky state for keyboard navigation
                             _updateAllAppBarsFirstAndFinalDiv();
 
+                            AppBarManager.forceLayout();
                             // Ensure that the click eating div is in the correct state
-                            if (this._sticky) {
-                                if (!_isThereVisibleNonStickyBar()) {
-                                    // ADCOM: lds_hidden?
-                                }
-                            } else {
-                                // ADCOM: lds_shown?
+                            //if (this._sticky) {
+                            //    if (!_isThereVisibleNonStickyBar()) {
+                            //        // ADCOM: lds_hidden?
+                            //    }
+                            //} else {
+                            //    // ADCOM: lds_shown?
 
-                                if (this._shouldStealFocus()) {
-                                    _storePreviousFocus(_Global.document.activeElement);
-                                    this._setFocusToAppBar();
-                                }
-                            }
+                            //    if (this._shouldStealFocus()) {
+                            //        _storePreviousFocus(_Global.document.activeElement);
+                            //        this._setFocusToAppBar();
+                            //    }
+                            //}
                         }
                     }
                 },
@@ -905,11 +914,11 @@ define([
 
                     if (showing) {
                         // Configure shown state for lightdismiss & sticky appbars.
-                        if (!this.sticky) {
+                        //if (!this.sticky) {
                             // Need click-eating div to be visible ASAP.
                             // ADCOM: lds_shown?
                             AppBarManager.shown(this);
-                        }
+                        //}
 
                         // Clean up tabbing behavior by making sure first and final divs are correct after showing.
                         if (!this.sticky && _isThereVisibleNonStickyBar()) {
@@ -1622,19 +1631,21 @@ define([
                     }
                 },
                 ld_lightDismiss: function (info) {
-                    switch (info.reason) {
-                        case _LightDismissService.LightDismissalReasons.tap:
-                            if (info.topLevel) {
+                    if (!this.sticky) {
+                        switch (info.reason) {
+                            case _LightDismissService.LightDismissalReasons.tap:
+                                if (info.topLevel) {
+                                    // _hide or hide?
+                                    this.hide();
+                                } else {
+                                    info.stopPropagation();
+                                }
+                                break;
+                            case _LightDismissService.LightDismissalReasons.lostFocus:
                                 // _hide or hide?
                                 this.hide();
-                            } else {
-                                info.stopPropagation();
-                            }
-                            break;
-                        case _LightDismissService.LightDismissalReasons.lostFocus:
-                            // _hide or hide?
-                            this.hide();
-                            break;
+                                break;
+                        }
                     }
                 }
             }, {
@@ -1684,6 +1695,9 @@ define([
                 },
             });
             _Base.Class.mix(AppBar, _LightDismissService.LightDismissableElement);
+            AppBar.prototype.ld_requiresClickEater = function () {
+                return !this.sticky;
+            };
             return AppBar;
         })
     });

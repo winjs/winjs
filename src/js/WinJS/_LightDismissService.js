@@ -35,7 +35,7 @@ define([
     function _() { };
 
     var LightDismissableBody = _Base.Class.define(function () {
-        this._onFocusInBound = this._onFocusIn.bind(this);
+        _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusIn.bind(this));
     }, {
         _belongsToBody: function (element) {
             if (element && _Global.document.body.contains(element)) {
@@ -60,39 +60,19 @@ define([
         ld_lightDismiss: _,
 
         ld_receivedFocus: function (element) {
-            //this._currentFocus = element;
-            //console.log("body received focus: " + pp(this._currentFocus));
         },
 
         ld_becameTopLevel: function () {
-            var impl = function () {
-                _Global.document.body.addEventListener("focusin", this._onFocusInBound);
-                if (this._belongsToBody(_Global.document.activeElement)) {
-                    // nop
-                } else if (this._currentFocus && _Global.document.body.contains(this._currentFocus)) {
-                    this._currentFocus.focus();
-                } else {
-                    _Global.document.body && _ElementUtilities._focusFirstFocusableElement(_Global.document.body);
-                }
-            }.bind(this);
-
-            if (_Global.document.body) {
-                impl();
+            if (this._belongsToBody(_Global.document.activeElement)) {
+                // nop
+            } else if (this._currentFocus && _Global.document.body.contains(this._currentFocus)) {
+                this._currentFocus.focus();
             } else {
-                var that = this;
-                document.addEventListener("DOMContentLoaded", function loaded() {
-                    document.removeEventListener("DOMContentLoaded", loaded);
-                    if (lds.isTopLevel(that)) {
-                        impl();
-                    }
-                });
+                _Global.document.body && _ElementUtilities._focusFirstFocusableElement(_Global.document.body);
             }
         },
 
         ld_lostTopLevel: function () {
-            document.body.removeEventListener("focusin", this._onFocusInBound);
-            //this._currentFocus = _Global.document.activeElement;
-            //console.log("body losing toplevel: " + pp(this._currentFocus));
         },
 
         ld_requiresClickEater: function () {
@@ -135,6 +115,7 @@ define([
         this._isLive = false;
         
         this._onFocusInBound = this._onFocusIn.bind(this);
+        _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
 
         this.shown(new LightDismissableBody());
     }, {
@@ -184,6 +165,10 @@ define([
             return this._clients[this._clients.length - 1] === client;
         },
 
+        forceLayout: function () {
+            this._updateUI();
+        },
+        
         _updateUI: function () {
             var clickEaterIndex = -1;
             this._clients.forEach(function (c, i) {
@@ -198,11 +183,11 @@ define([
 
             if (!this._isLive && clickEaterIndex !== -1) {
                 // TODO: Do we have to listen to focus events when there are clients but nobody needs the click eater?
-                _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+                //_ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.body.appendChild(this._clickEaterEl);
                 this._isLive = true;
             } else if (this._isLive && clickEaterIndex === -1) {
-                _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+                //_ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.body.removeChild(this._clickEaterEl);
                 this._isLive = false;
             
