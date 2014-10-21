@@ -11,6 +11,14 @@ define([
 
     // TODO: Sticky AppBar with Flyout on top. Flyout dismisses due to moving focus to body.
     // AppBar should not steal focus.
+    // TODO: Bottom AppBar sticky and shown. When focus is in body and you show the top AppBar,
+    // (via show button in body) the top AppBar should receive focus.
+    // TODO: Bottom AppBar sticky and shown. When showing top AppBar via its invoke button,
+    // focus should move to the first command of the top AppBar.
+    // TODO: When AppBars are shown via bottom AppBar's invoke button, first command of bottom
+    // AppBar should receive focus.
+
+    // TODO: When restoring focus, need to try restoring text selection (as is done by _trySelect in Overlay.js)
 
     var Strings = {
         // TODO: Don't use an overlay specific string?

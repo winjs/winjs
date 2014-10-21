@@ -1337,15 +1337,6 @@ define([
                 // Static controller for _Overlay global events registering/unregistering.
                 _globalEventListeners: new _GlobalListener(),
 
-                // Hide all light dismiss AppBars if what has focus is not part of a AppBar or flyout.
-                _hideIfAllAppBarsLostFocus: function _Overlay_hideIfAllAppBarsLostFocus() {
-                    if (!_Overlay._isAppBarOrChild(_Global.document.activeElement)) {
-                        _Overlay._lightDismissAppBars(false);
-                        // Ensure that sticky appbars clear cached focus after light dismiss are dismissed, which moved focus.
-                        _Overlay._ElementWithFocusPreviousToAppBar = null;
-                    }
-                },
-
                 // Show/Hide all bars
                 _hideAppBars: function _Overlay_hideAppBars(bars, keyboardInvoked) {
                     var allBarsAnimationPromises = bars.map(function (bar) {
@@ -1364,52 +1355,6 @@ define([
                         return bar._animationPromise;
                     });
                     return Promise.join(allBarsAnimationPromises);
-                },
-
-                // Returns appbar element (or CED/sentinal) if the element or what had focus before the element (if a Flyout) is either:
-                //   1) an AppBar,
-                //   2) OR in the subtree of an AppBar,
-                //   3) OR an AppBar click eating div.
-                // Returns null otherwise.
-                _isAppBarOrChild: function (element) {
-                    // If it's null, we can't do this
-                    if (!element) {
-                        return null;
-                    }
-
-                    // Intrinsic components of the AppBar count as the AppBar
-                    if (_ElementUtilities.hasClass(element, _Constants._clickEatingAppBarClass) ||
-                        _ElementUtilities.hasClass(element, _Constants._clickEatingFlyoutClass) ||
-                        _ElementUtilities.hasClass(element, _Constants.firstDivClass) ||
-                        _ElementUtilities.hasClass(element, _Constants.finalDivClass) ||
-                        _ElementUtilities.hasClass(element, _Constants.invokeButtonClass)) {
-                        return element;
-                    }
-
-                    while (element && element !== _Global.document) {
-                        if (_ElementUtilities.hasClass(element, _Constants.appBarClass)) {
-                            return element;
-                        }
-                        if (_ElementUtilities.hasClass(element, "win-flyout")
-                         && element !== element.winControl._previousFocus) {
-                            var flyoutControl = element.winControl;
-                            // If _previousFocus was in a light dismissible AppBar, then this Flyout is considered of an extension of it and that AppBar should not hide.
-                            // Hook up a 'focusout' listener to this Flyout element to make sure that light dismiss AppBars hide if focus moves anywhere other than back to an AppBar.
-                            var appBarElement = _Overlay._isAppBarOrChild(flyoutControl._previousFocus);
-                            if (appBarElement) {
-                                _ElementUtilities._addEventListener(flyoutControl.element, 'focusout', function focusOut() {
-                                    // Hides any shown AppBars if the new activeElement is not in an AppBar.
-                                    _Overlay._hideIfAllAppBarsLostFocus();
-                                    _ElementUtilities._removeEventListener(flyoutControl.element, 'focusout', focusOut, false);
-                                }, false);
-                            }
-                            return appBarElement;
-                        }
-
-                        element = element.parentNode;
-                    }
-
-                    return null;
                 },
 
                 // WWA Soft Keyboard offsets
@@ -1490,8 +1435,6 @@ define([
                         }
                     },
                 },
-
-                _ElementWithFocusPreviousToAppBar: null,
 
                 // for tests
                 _clickEatingAppBarClass: _Constants._clickEatingAppBarClass,

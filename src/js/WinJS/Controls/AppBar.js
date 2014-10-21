@@ -73,6 +73,9 @@ define([
                 this._currentFocus = null;
             }, {
                 shown: function (client) {
+                    // TODO: batch calls to shown? often multiple AppBars are shown together
+                    // Is it bad to bounce focus around between AppBars (e.g. if we show 2 AppBars and give
+                    // focus to the top one and then switch it to the bottom one (since bottom is preferable)
                     var index = this._clients.indexOf(client);
                     if (index === -1) {
                         this._clients.push(client);
@@ -429,29 +432,6 @@ define([
                 return false;
             }
 
-            // If the previous focus was not a AppBar or CED, store it in the cache
-            // (_isAppBarOrChild tests CED for us).
-            function _checkStorePreviousFocus(focusEvent) {
-                if (focusEvent.relatedTarget
-                 && focusEvent.relatedTarget.focus
-             && !_Overlay._Overlay._isAppBarOrChild(focusEvent.relatedTarget)) {
-                    _storePreviousFocus(focusEvent.relatedTarget);
-                }
-            }
-
-            // Cache the previous focus information
-            function _storePreviousFocus(element) {
-                if (element) {
-                    _Overlay._Overlay._ElementWithFocusPreviousToAppBar = element;
-                }
-            }
-
-            // Try to return focus to what had focus before.
-            // If successfully return focus to a textbox, restore the selection too.
-            function _restorePreviousFocus() {
-                _Overlay._Overlay._trySetActive(_Overlay._Overlay._ElementWithFocusPreviousToAppBar);
-            }
-
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/appBarAriaLabel").value; },
                 get requiresCommands() { return "Invalid argument: commands must not be empty"; },
@@ -572,9 +552,6 @@ define([
 
                     globalEventsInitialized = true;
                 }
-
-                // Need to store what had focus before
-                _ElementUtilities._addEventListener(this._element, "focusin", function (event) { _checkStorePreviousFocus(event); }, false);
 
                 if (this.closedDisplayMode === closedDisplayModes.none && this.layout === _Constants.appBarLayoutCommands) {
                     // Remove the commands layout AppBar from the layout tree at this point so we don't cause unnecessary layout costs whenever
@@ -1279,51 +1256,6 @@ define([
                     }
 
                     return false;
-                },
-
-                // Returns true if
-                //   1) This is a bottom appbar
-                //   2) No appbar has focus and a bottom appbar is not in the process of showing
-                //   3) What currently has focus is neither a bottom appbar nor a top appbar
-                //      AND a bottom appbar is not in the process of showing.
-                // Otherwise Returns false
-                _shouldStealFocus: function AppBar_shouldStealFocus() {
-                    var activeElementAppBar = _Overlay._Overlay._isAppBarOrChild(_Global.document.activeElement);
-                    if (this._element === activeElementAppBar) {
-                        // This appbar already has focus and we don't want to move focus
-                        // from where it currently is in this appbar.
-                        return false;
-                    }
-                    if (this._placement === _Constants.appBarPlacementBottom) {
-                        // This is a bottom appbar
-                        return true;
-                    }
-
-                    var isBottomAppBarShowing = this._isABottomAppBarInTheProcessOfShowing();
-                    if (!activeElementAppBar) {
-                        // Currently no appbar has focus.
-                        // Return true if a bottom appbar is not in the process of showing.
-                        return !isBottomAppBarShowing;
-                    }
-                    if (!activeElementAppBar.winControl) {
-                        // This should not happen, but if it does we want to make sure
-                        // that an AppBar ends up with focus.
-                        return true;
-                    }
-                    if ((activeElementAppBar.winControl._placement !== _Constants.appBarPlacementBottom)
-                     && (activeElementAppBar.winControl._placement !== _Constants.appBarPlacementTop)
-                     && !isBottomAppBarShowing) {
-                        // What currently has focus is neither a bottom appbar nor a top appbar
-                        // -and-
-                        // a bottom appbar is not in the process of showing.
-                        return true;
-                    }
-                    return false;
-                },
-
-                // Set focus to the passed in AppBar
-                _setFocusToAppBar: function AppBar_setFocusToAppBar() {
-                    
                 },
 
                 _commandsUpdated: function AppBar_commandsUpdated() {
