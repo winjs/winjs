@@ -335,12 +335,6 @@ define([
                     this._keyboardWasUp = _Overlay._Overlay._keyboardInfo._visible;
                 },
 
-                _lightDismiss: function Flyout_lightDismiss() {
-                    if (this._isLightDismissible()) {
-                        _Overlay._Overlay._lightDismissFlyouts();
-                    }
-                },
-
                 // Find our new flyout position.
                 _findPosition: function Flyout_findPosition() {
                     this._nextHeight = null;

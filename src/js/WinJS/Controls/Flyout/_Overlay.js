@@ -401,9 +401,6 @@ define([
                         return false;
                     }
 
-                    // Each overlay tracks the size of the <HTML> element for triggering light-dismiss in the window resize handler.
-                    this._cachedDocumentSize = this._cachedDocumentSize || _Overlay._sizeOfDocument();
-
                     // "hiding" would need to cancel.
                     if (this._element.style.visibility !== "visible") {
                         // Let us know we're showing.
@@ -970,34 +967,8 @@ define([
                 },
 
                 _baseResize: function _Overlay_baseResize(event) {
-                    // Avoid the cost of a resize if the Overlay is hidden.
-                    if (this._cachedDocumentSize) {
-                        if (this.hidden) {
-                            this._cachedDocumentSize = null;
-                        } else {
-                            // Overlays will light dismiss on <HTML> resize.
-                            var newDocSize = _Overlay._sizeOfDocument();
-                            if (this._cachedDocumentSize.width !== newDocSize.width || this._cachedDocumentSize.height !== newDocSize.height) {
-                                this._cachedDocumentSize = newDocSize;
-                                if (!this._sticky) {
-                                    this._hideOrDismiss();
-                                }
-                            }
-                        }
-                    }
-
                     // Call specific resize
                     this._resize(event);
-                },
-
-                _isLightDismissible: function _Overlay_isLightDismissible() {
-                    return (!this._sticky && !this.hidden);
-                },
-
-                _lightDismiss: function _Overlay_lightDismiss(keyboardInvoked) {
-                    if (this._isLightDismissible()) {
-                        _Overlay._lightDismissOverlays(keyboardInvoked);
-                    }
                 },
 
                 _hideOrDismiss: function _Overlay_hideOrDismiss() {
@@ -1295,13 +1266,6 @@ define([
                         _ElementUtilities.removeClass(target, _Constants.hideFocusClass);
                         _ElementUtilities._removeEventListener(event.target, "focusout", _Overlay._removeHideFocusClass, false);
                     }
-                },
-
-                _sizeOfDocument: function () {
-                    return {
-                        width: _Global.document.documentElement.offsetWidth,
-                        height: _Global.document.documentElement.offsetHeight,
-                    };
                 },
 
                 _getParentControlUsingClassName: function (element, className) {

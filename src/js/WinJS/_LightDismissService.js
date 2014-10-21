@@ -32,7 +32,8 @@ define([
         tap: "tap",
         lostFocus: "lostFocus",
         escape: "escape",
-        hardwareBackButton: "hardwareBackButton"
+        hardwareBackButton: "hardwareBackButton",
+        windowResize: "windowResize"
         // click (_Overlay.js: _Overlay_handleAppBarClickEatingClick, _Overlay__handleFlyoutClickEatingClick)
         // window blur (_Overlay.js: _GlobalListener_windowBlur)
         // edgy (_Overlay.js: _checkRightClickUp, _GlobalListener_edgyStarting, _GlobalListener_edgyCompleted)
@@ -64,6 +65,7 @@ define([
                     }
                     break;
                 case LightDismissalReasons.lostFocus:
+                case LightDismissalReasons.windowResize:
                     return true;
                     break;
             }
@@ -170,6 +172,7 @@ define([
         _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDown.bind(this));
         Application.addEventListener("backclick", this._onBackClick.bind(this));
+        _Global.addEventListener("resize", this._onResize.bind(this));
 
         this.shown(new LightDismissableBody());
     }, {
@@ -327,6 +330,12 @@ define([
             // Sets keyboardInvoked to false (_Overlay_backClick in _Overlay.js)
             var doDefault = this._dispatchLightDismiss(LightDismissalReasons.hardwareBackButton);
             return !doDefault; // Returns whether or not the event was handled.
+        },
+        
+        _onResize: function (eventObject) {
+            // TODO: Cache document size like in _Overlay_baseResize and only trigger light dismiss
+            // if the dimensions really changed?
+            this._dispatchLightDismiss(LightDismissalReasons.windowResize);
         },
 
         _createClickEater: function () {

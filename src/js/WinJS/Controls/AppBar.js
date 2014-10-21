@@ -976,11 +976,6 @@ define([
                     this._layout.disposeChildren();
                 },
 
-                _isLightDismissible: function AppBar_isLightDismissible() {
-                    // An AppBar is considered light dismissible if there is at least one visible non sticky AppBar.
-                    return _Overlay._Overlay.prototype._isLightDismissible.call(this) || _isThereVisibleNonStickyBar();
-                },
-
                 _handleKeyDown: function AppBar_handleKeyDown(event) {
                     // On Left/Right arrow keys, moves focus to previous/next AppbarCommand element.
 
@@ -1155,9 +1150,6 @@ define([
                 },
 
                 _beforeShow: function AppBar_beforeShow() {
-                    // Each overlay tracks the size of the <HTML> element for triggering light-dismiss in the window resize handler.
-                    this._cachedDocumentSize = this._cachedDocumentSize || _Overlay._Overlay._sizeOfDocument();
-
                     // In case their event 'beforeshow' event listener is going to manipulate commands,
                     // first see if there are any queued command animations we can handle while we're still hidden.
                     if (this._queuedCommandAnimation) {
