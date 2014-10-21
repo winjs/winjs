@@ -1000,16 +1000,6 @@ define([
 
                 _handleKeyDown: function AppBar_handleKeyDown(event) {
                     // On Left/Right arrow keys, moves focus to previous/next AppbarCommand element.
-                    // On "Esc" key press hide flyouts and hide light dismiss AppBars.
-
-                    // Esc hides light-dismiss AppBars in all layouts but if the user has a text box with an IME
-                    // candidate window open, we want to skip the ESC key event since it is handled by the IME.
-                    // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
-                    if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this._lightDismiss(true);
-                    }
 
                     // If the current active element isn't an intrinsic part of the AppBar,
                     // Layout might want to handle additional keys.
@@ -1638,9 +1628,12 @@ define([
                     }
                 },
                 ld_lightDismiss: function (info) {
-                    if (!this.sticky) {
+                    if (this.sticky) {
+                        info.stopPropagation();
+                    } else {
                         switch (info.reason) {
                             case _LightDismissService.LightDismissalReasons.tap:
+                            case _LightDismissService.LightDismissalReasons.escape:
                                 if (info.topLevel) {
                                     // _hide or hide?
                                     this.hide();

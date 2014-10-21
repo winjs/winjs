@@ -7,6 +7,8 @@ define([
 ], function lightDismissServiceInit(_Global, _Base, _ElementUtilities, _Resources) {
     "use strict";
 
+    // TODO: Connect Menu and SettingsFlyout to service (only did AppBar and Flyout so far)
+
     // TODO: Sticky AppBar with Flyout on top. Flyout dismisses due to moving focus to body.
     // AppBar should not steal focus.
 
@@ -19,7 +21,8 @@ define([
     };
     var LightDismissalReasons = {
         tap: "tap",
-        lostFocus: "lostFocus"
+        lostFocus: "lostFocus",
+        escape: "escape"
         // click (_Overlay.js: _Overlay_handleAppBarClickEatingClick, _Overlay__handleFlyoutClickEatingClick)
         // window blur (_Overlay.js: _GlobalListener_windowBlur)
         // edgy (_Overlay.js: _checkRightClickUp, _GlobalListener_edgyStarting, _GlobalListener_edgyCompleted)
@@ -119,6 +122,7 @@ define([
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+        _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDown.bind(this));
 
         this.shown(new LightDismissableBody());
     }, {
@@ -251,6 +255,16 @@ define([
             }
 
             this._dispatchLightDismiss(LightDismissalReasons.lostFocus, this._clients.slice(i + 1, this._clients.length));
+        },
+
+        _onKeyDown: function (eventObject) {
+            // TODO: Original would set _keyboardInvoked to true for escape here.
+            // TODO: preventDefault, stopPropagation even if nobody dismisses?
+            if (eventObject.keyCode === _ElementUtilities.Key.escape) {
+                event.preventDefault();
+                event.stopPropagation();
+                this._dispatchLightDismiss(LightDismissalReasons.escape);
+            }
         },
 
         _createClickEater: function () {

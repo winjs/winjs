@@ -774,16 +774,7 @@ define([
                 },
 
                 _handleKeyDown: function Flyout_handleKeyDown(event) {
-                    // Escape closes flyouts but if the user has a text box with an IME candidate
-                    // window open, we want to skip the ESC key event since it is handled by the IME.
-                    // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
-                    if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
-                        // Show a focus rect on what we move focus to
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.winControl._keyboardInvoked = true;
-                        this.winControl._hide();
-                    } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
+                    if ((event.keyCode === Key.space || event.keyCode === Key.enter)
                          && (this === _Global.document.activeElement)) {
                         event.preventDefault();
                         event.stopPropagation();
@@ -866,6 +857,7 @@ define([
                 ld_lightDismiss: function (info) {
                     switch (info.reason) {
                         case _LightDismissService.LightDismissalReasons.tap:
+                        case _LightDismissService.LightDismissalReasons.escape:
                             if (info.topLevel) {
                                 // _hide or hide?
                                 this._hide();
