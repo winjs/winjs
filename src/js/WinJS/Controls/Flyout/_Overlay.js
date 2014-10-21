@@ -11,14 +11,13 @@ define([
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
     '../../Animations',
-    '../../Application',
     '../../ControlProcessor',
     '../../Promise',
     '../../Scheduler',
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
     '../AppBar/_Constants'
-], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
+], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -54,7 +53,6 @@ define([
                 this._documentScroll = this._documentScroll.bind(this);
                 this._edgyStarting = this._edgyStarting.bind(this);
                 this._edgyCompleted = this._edgyCompleted.bind(this);
-                this._backClicked = this._backClicked.bind(this);
                 this._windowResized = this._windowResized.bind(this);
             }, {
                 initialize: function _GlobalListener_initialize() {
@@ -90,14 +88,6 @@ define([
                         _Overlay._lightDismissAllFlyouts();
                     }
                 },
-                _backClicked: function _GlobalListener_backClicked(event) {
-                    _WriteProfilerMark(_GlobalListener.profilerString + "_backClick,StartTM");
-                    // Pass true as the 3rd parameter to _allOverlaysCallback to ensure that we stop processing once an _Overlay has handled the event. 
-                    // A failure to do so can lead to a chain reaction of light dismiss in scenarios where a SettingsFlyout or AppBar had invoked a Flyout or Menu.
-                    var handled = _allOverlaysCallback(event, "_backClick", true);
-                    _WriteProfilerMark(_GlobalListener.profilerString + "_backClick,StopTM");
-                    return handled;
-                },
                 _windowResized: function _GlobalListener_windowResized(event) {
                     _WriteProfilerMark(_GlobalListener.profilerString + "_baseResize,StartTM");
                     _allOverlaysCallback(event, "_baseResize");
@@ -129,9 +119,6 @@ define([
 
                             _Global.document[listenerOperation]("scroll", this._documentScroll, false);
                         }
-
-                        // React to Hardware BackButton event
-                        Application[listenerOperation]("backclick", this._backClicked, false);
 
                         // Window resize event
                         _Global.addEventListener("resize", this._windowResized, false);
@@ -1010,13 +997,6 @@ define([
                 _lightDismiss: function _Overlay_lightDismiss(keyboardInvoked) {
                     if (this._isLightDismissible()) {
                         _Overlay._lightDismissOverlays(keyboardInvoked);
-                    }
-                },
-
-                _backClick: function _Overlay_backClick() {
-                    if (this._element.contains(_Global.document.activeElement) && this._isLightDismissible()) {
-                        this._lightDismiss(false); //  dismiss this transient UI control.
-                        return true; // indicate that we've handled the event to cancel its propagation.
                     }
                 },
 

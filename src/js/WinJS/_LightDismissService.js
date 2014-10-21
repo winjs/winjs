@@ -169,7 +169,7 @@ define([
         this._onFocusInBound = this._onFocusIn.bind(this);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDown.bind(this));
-        //Application.addEventListener("backclick", this._onBackClick.bind(this));
+        Application.addEventListener("backclick", this._onBackClick.bind(this));
 
         this.shown(new LightDismissableBody());
     }, {
@@ -324,6 +324,7 @@ define([
         },
         
         _onBackClick: function (eventObject) {
+            // Sets keyboardInvoked to false (_Overlay_backClick in _Overlay.js)
             var doDefault = this._dispatchLightDismiss(LightDismissalReasons.hardwareBackButton);
             return !doDefault; // Returns whether or not the event was handled.
         },
