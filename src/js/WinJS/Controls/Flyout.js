@@ -854,22 +854,11 @@ define([
                         }
                     }
                 },
+                ld_shouldReceiveLightDismiss: _LightDismissService.LightDismissalPolicies.Light,
                 ld_lightDismiss: function (info) {
-                    switch (info.reason) {
-                        case _LightDismissService.LightDismissalReasons.tap:
-                        case _LightDismissService.LightDismissalReasons.escape:
-                            if (info.topLevel) {
-                                // _hide or hide?
-                                this._hide();
-                            } else {
-                                info.stopPropagation();
-                            }
-                            break;
-                        case _LightDismissService.LightDismissalReasons.lostFocus:
-                            // _hide or hide?
-                            this._hide();
-                            break;
-                    }
+                    // _hide or hide?
+                    this._hide();
+                    
                     // From _Overlay.js. Used to call this when losing focus
                     //overlay._hideOrDismiss();
                     // From _Overlay.js. Do we need to handle this case here?

@@ -2,9 +2,10 @@
 define([
     './Core/_Global',
     './Core/_Base',
+    './Application',
     './Utilities/_ElementUtilities',
     './Core/_Resources'
-], function lightDismissServiceInit(_Global, _Base, _ElementUtilities, _Resources) {
+], function lightDismissServiceInit(_Global, _Base, Application, _ElementUtilities, _Resources) {
     "use strict";
 
     // TODO: Connect Menu and SettingsFlyout to service (only did AppBar and Flyout so far)
@@ -30,7 +31,8 @@ define([
     var LightDismissalReasons = {
         tap: "tap",
         lostFocus: "lostFocus",
-        escape: "escape"
+        escape: "escape",
+        hardwareBackButton: "hardwareBackButton"
         // click (_Overlay.js: _Overlay_handleAppBarClickEatingClick, _Overlay__handleFlyoutClickEatingClick)
         // window blur (_Overlay.js: _GlobalListener_windowBlur)
         // edgy (_Overlay.js: _checkRightClickUp, _GlobalListener_edgyStarting, _GlobalListener_edgyCompleted)
@@ -39,6 +41,37 @@ define([
         // window resize
         // rotation
         // page navigation?
+    };
+    var LightDismissalPolicies = {
+        Light: function LightDismissalPolicies_Light_shouldReceiveLightDismiss(info) {
+            switch (info.reason) {
+                case LightDismissalReasons.tap:
+                case LightDismissalReasons.escape:
+                    if (info.topLevel) {
+                        return true;
+                    } else {
+                        info.stopPropagation();
+                        return false;
+                    }
+                    break;
+                case LightDismissalReasons.hardwareBackButton:
+                    if (info.topLevel) {
+                        info.preventDefault(); // prevent backwards navigation in the app
+                        return true;
+                    } else {
+                        info.stopPropagation();
+                        return false;
+                    }
+                    break;
+                case LightDismissalReasons.lostFocus:
+                    return true;
+                    break;
+            }
+        },
+        Sticky: function LightDismissalPolicies_Sticky_shouldReceiveLightDismiss(info) {
+            info.stopPropagation();
+            return false;
+        }  
     };
     var BASE_ZINDEX = 1000;
 
@@ -70,7 +103,12 @@ define([
         },
 
         // ILightDismissable
-
+        
+        ld_shouldReceiveLightDismiss: function (info) {
+            info.stopPropagation();
+            return false;
+        },
+        
         ld_lightDismiss: _,
 
         ld_receivedFocus: function (element) {
@@ -131,11 +169,13 @@ define([
         this._onFocusInBound = this._onFocusIn.bind(this);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDown.bind(this));
+        //Application.addEventListener("backclick", this._onBackClick.bind(this));
 
         this.shown(new LightDismissableBody());
     }, {
         LightDismissableElement: LightDismissableElement,
         LightDismissalReasons: LightDismissalReasons,
+        LightDismissalPolicies: LightDismissalPolicies,
 
         // TODO: Think about states
         // - is top level
@@ -220,27 +260,35 @@ define([
             this._notifying = true;
             //this._saveFocus();
             clients = clients || this._clients.slice(0);
-            var lastClient;
-            var info = {
+            var shouldReceiveDismissInfo = {
                 reason: reason,
                 topLevel: true,
                 stopPropagation: function () {
                     this._stop = true;
                 },
-                _stop: false
+                _stop: false,
+                preventDefault: function () {
+                    this._doDefault = false;  
+                },
+                _doDefault: true
             };
-            for (var i = clients.length - 1; i >= 0; i--) {
-                lastClient = clients[i];
-                lastClient.ld_lightDismiss(info);
-                info.topLevel = false;
-                if (info._stop) {
-                    break;
+            var dismissInfo = {
+                reason: reason,
+                topLevel: true
+            };
+            for (var i = clients.length - 1; i >= 0 && !shouldReceiveDismissInfo._stop; i--) {
+                if (clients[i].ld_shouldReceiveLightDismiss(shouldReceiveDismissInfo, dismissInfo)) {
+                    clients[i].ld_lightDismiss(dismissInfo);
                 }
+                shouldReceiveDismissInfo.topLevel = false;
+                dismissInfo.topLevel = false;
             }
 
             //this._becameTopLevelIfNeeded();
             this._updateUI();
             this._notifying = false;
+            
+            return shouldReceiveDismissInfo._doDefault;
         },
 
         _onFocusIn: function (eventObject) {
@@ -273,6 +321,11 @@ define([
                 event.stopPropagation();
                 this._dispatchLightDismiss(LightDismissalReasons.escape);
             }
+        },
+        
+        _onBackClick: function (eventObject) {
+            var doDefault = this._dispatchLightDismiss(LightDismissalReasons.hardwareBackButton);
+            return !doDefault; // Returns whether or not the event was handled.
         },
 
         _createClickEater: function () {

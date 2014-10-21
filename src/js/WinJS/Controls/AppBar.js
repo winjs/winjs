@@ -186,11 +186,17 @@ define([
                 },
                 ld_lostTopLevel: function () {
                 },
-                ld_lightDismiss: function (info) {
+                ld_shouldReceiveLightDismiss: function (shouldReceiveDismissInfo, dismissInfo) {
                     var clients = this._clients.slice(0);
                     clients.forEach(function (c) {
-                        c.ld_lightDismiss(info);
+                        if (c.ld_shouldReceiveLightDismiss(shouldReceiveDismissInfo)) {
+                            c.ld_lightDismiss(dismissInfo);
+                        }
                     });
+                    return false;
+                },
+                ld_lightDismiss: function (info) {
+                    // no op -- Should always be preceded by a call to ld_shouldLightDismiss
                 }
             });
             var AppBarManager = new AppBarManagerClass();
@@ -1559,26 +1565,13 @@ define([
                         }
                     }
                 },
+                ld_shouldReceiveLightDismiss: function (info) {
+                    var policy = _LightDismissService.LightDismissalPolicies[this.sticky ? "Sticky" : "Light"];
+                    return policy(info);
+                },
                 ld_lightDismiss: function (info) {
-                    if (this.sticky) {
-                        info.stopPropagation();
-                    } else {
-                        switch (info.reason) {
-                            case _LightDismissService.LightDismissalReasons.tap:
-                            case _LightDismissService.LightDismissalReasons.escape:
-                                if (info.topLevel) {
-                                    // _hide or hide?
-                                    this.hide();
-                                } else {
-                                    info.stopPropagation();
-                                }
-                                break;
-                            case _LightDismissService.LightDismissalReasons.lostFocus:
-                                // _hide or hide?
-                                this.hide();
-                                break;
-                        }
-                    }
+                    // _hide or hide?
+                    this.hide();
                 }
             }, {
                 // Statics
