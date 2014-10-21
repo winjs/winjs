@@ -7,6 +7,9 @@ define([
 ], function lightDismissServiceInit(_Global, _Base, _ElementUtilities, _Resources) {
     "use strict";
 
+    // TODO: Sticky AppBar with Flyout on top. Flyout dismisses due to moving focus to body.
+    // AppBar should not steal focus.
+
     var Strings = {
         // TODO: Don't use an overlay specific string?
         get closeOverlay() { return _Resources._getWinJSString("ui/closeOverlay").value; }
@@ -253,7 +256,7 @@ define([
         _createClickEater: function () {
             var clickEater = _Global.document.createElement("section");
             clickEater.className = ClassNames._clickEater;
-            clickEater.tabIndex = -1; // testing
+            //clickEater.tabIndex = -1; // testing
             _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
             _ElementUtilities._addEventListener(clickEater, "pointerup", this._onClickEaterPointerUp.bind(this), true);
             clickEater.addEventListener("click", this._onClickEaterClick.bind(this), true);
@@ -308,6 +311,9 @@ define([
         },
 
         // TODO: Think about edgy
+        // TODO: How to dismiss on right-click? click event doesn't seem to fire on right-click.
+        // AppBars don't want to dismiss on right-click because they are hooked up to edgy which
+        // will trigger on right-click.
         _onClickEaterClick: function (event) {
             event.stopPropagation();
             event.preventDefault();

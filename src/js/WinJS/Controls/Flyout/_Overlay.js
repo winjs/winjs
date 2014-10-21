@@ -1258,27 +1258,6 @@ define([
                     return result;
                 },
 
-                // If they click on a click eating div, even with a right click,
-                // touch or anything, then we want to light dismiss that layer.
-                _handleAppBarClickEatingClick: function _Overlay_handleAppBarClickEatingClick(event) {
-                    event.stopPropagation();
-                    event.preventDefault();
-
-                    // Light Dismiss everything.
-                    _Overlay._lightDismissOverlays(false);
-                },
-
-                // If they click on a click eating div, even with a right click,
-                // touch or anything, then we want to light dismiss that layer.
-                _handleFlyoutClickEatingClick: function _Overlay__handleFlyoutClickEatingClick(event) {
-                    event.stopPropagation();
-                    event.preventDefault();
-
-                    // Don't light dismiss AppBars because edgy will do that as needed,
-                    // so flyouts only.
-                    _Overlay._lightDismissFlyouts();
-                },
-
                 _checkRightClickDown: function (event) {
                     _Overlay._checkClickEatingPointerDown(event, false);
                 },
