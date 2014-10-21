@@ -259,6 +259,25 @@ define([
             }
         },
 
+        _createClickEater: function () {
+            var clickEater = _Global.document.createElement("section");
+            clickEater.className = ClassNames._clickEater;
+            //clickEater.tabIndex = -1; // testing
+            _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
+            _ElementUtilities._addEventListener(clickEater, "pointerup", this._onClickEaterPointerUp.bind(this), true);
+            clickEater.addEventListener("click", this._onClickEaterClick.bind(this), true);
+            // Tell Aria that it's clickable
+            clickEater.setAttribute("role", "menuitem");
+            clickEater.setAttribute("aria-label", Strings.closeOverlay);
+            // Prevent CED from removing any current selection
+            clickEater.setAttribute("unselectable", "on");
+            return clickEater;
+
+
+            //lickEater._winHideClickEater = hideClickEatingDivFunction;
+            //_Global.document.body.appendChild(clickEatingDiv);
+        },
+        
         _dispatchLightDismiss: function (reason, clients) {
             this._notifying = true;
             //this._saveFocus();
@@ -293,7 +312,11 @@ define([
             
             return shouldReceiveDismissInfo._doDefault;
         },
-
+        
+        //
+        // Light dismiss triggers
+        //
+        
         _onFocusIn: function (eventObject) {
             // Commented out code is from _Overlay.js. Think if we need to handle this case in the service.
             // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
@@ -336,25 +359,6 @@ define([
             // TODO: Cache document size like in _Overlay_baseResize and only trigger light dismiss
             // if the dimensions really changed?
             this._dispatchLightDismiss(LightDismissalReasons.windowResize);
-        },
-
-        _createClickEater: function () {
-            var clickEater = _Global.document.createElement("section");
-            clickEater.className = ClassNames._clickEater;
-            //clickEater.tabIndex = -1; // testing
-            _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
-            _ElementUtilities._addEventListener(clickEater, "pointerup", this._onClickEaterPointerUp.bind(this), true);
-            clickEater.addEventListener("click", this._onClickEaterClick.bind(this), true);
-            // Tell Aria that it's clickable
-            clickEater.setAttribute("role", "menuitem");
-            clickEater.setAttribute("aria-label", Strings.closeOverlay);
-            // Prevent CED from removing any current selection
-            clickEater.setAttribute("unselectable", "on");
-            return clickEater;
-
-
-            //lickEater._winHideClickEater = hideClickEatingDivFunction;
-            //_Global.document.body.appendChild(clickEatingDiv);
         },
 
         _onClickEaterPointerDown: function (event) {
