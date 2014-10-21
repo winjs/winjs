@@ -80,6 +80,7 @@ define([
                             this._currentFocus = client;
                             _LightDismissService.shown(this);
                         } else {
+                            client.ld_setZIndex(this._zIndex);
                             // Attempted simplified version of _shouldStealFocus
                             if (!client.sticky && client._placement === _Constants.appBarPlacementBottom) {
                                 this._currentFocus = client;
@@ -139,6 +140,12 @@ define([
 
                 // ILightDismissable
 
+                ld_requiresClickEater: function () {
+                    return this._clients.some(function (c) {
+                        return c.ld_requiresClickEater();
+                    });
+                },
+
                 ld_setZIndex: function (value) {
                     this._zIndex = value;
                     this._clients.forEach(function (c) {
@@ -156,6 +163,10 @@ define([
                     } else {
                         this._clients[0].ld_becameTopLevel();
                     }
+                },
+                ld_receivedFocus: function () {
+                },
+                ld_lostTopLevel: function () {
                 },
                 ld_lightDismiss: function (info) {
                     var clients = this._clients.slice(0);

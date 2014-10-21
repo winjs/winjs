@@ -253,6 +253,7 @@ define([
                     // Attach our css class
                     _ElementUtilities.addClass(this._element, _Constants.overlayClass);
                     _ElementUtilities.addClass(this._element, "win-disposable");
+                    _ElementUtilities.addClass(this._element, "win-lightdismissable");
 
                     // We don't want to be selectable, set UNSELECTABLE
                     var unselectable = this._element.getAttribute("unselectable");

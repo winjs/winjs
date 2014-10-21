@@ -4,7 +4,7 @@ define([
     './Core/_Base',
     './Utilities/_ElementUtilities',
     './Core/_Resources'
-], function overlayInit(_Global, _Base, _ElementUtilities, _Resources) {
+], function lightDismissServiceInit(_Global, _Base, _ElementUtilities, _Resources) {
     "use strict";
 
     var Strings = {
@@ -28,6 +28,106 @@ define([
     };
     var BASE_ZINDEX = 1000;
 
+    function pp(e) {
+        return e ? [e.id, e.className, e.tagName].join(":") : "<null>";
+    }
+
+    function _() { };
+
+    var LightDismissableBody = _Base.Class.define(function () {
+        this._onFocusInBound = this._onFocusIn.bind(this);
+    }, {
+        _belongsToBody: function (element) {
+            if (element && _Global.document.body.contains(element)) {
+                while (element && !_ElementUtilities.hasClass(element, "win-lightdismissable")) {
+                    element = element.parentNode;
+                }
+
+                return !element;
+            } else {
+                return false;
+            }
+        },
+
+        _onFocusIn: function (eventObject) {
+            if (this._belongsToBody(eventObject.target)) {
+                this._currentFocus = eventObject.target;
+            }
+        },
+
+        // ILightDismissable
+
+        ld_lightDismiss: _,
+
+        ld_receivedFocus: function (element) {
+            //this._currentFocus = element;
+            //console.log("body received focus: " + pp(this._currentFocus));
+        },
+
+        ld_becameTopLevel: function () {
+            var impl = function () {
+                _Global.document.body.addEventListener("focusin", this._onFocusInBound);
+                if (this._belongsToBody(_Global.document.activeElement)) {
+                    // nop
+                } else if (this._currentFocus && _Global.document.body.contains(this._currentFocus)) {
+                    this._currentFocus.focus();
+                } else {
+                    _Global.document.body && _ElementUtilities._focusFirstFocusableElement(_Global.document.body);
+                }
+            }.bind(this);
+
+            if (_Global.document.body) {
+                impl();
+            } else {
+                var that = this;
+                document.addEventListener("DOMContentLoaded", function loaded() {
+                    document.removeEventListener("DOMContentLoaded", loaded);
+                    if (lds.isTopLevel(that)) {
+                        impl();
+                    }
+                });
+            }
+        },
+
+        ld_lostTopLevel: function () {
+            document.body.removeEventListener("focusin", this._onFocusInBound);
+            //this._currentFocus = _Global.document.activeElement;
+            //console.log("body losing toplevel: " + pp(this._currentFocus));
+        },
+
+        ld_requiresClickEater: function () {
+            return false;
+        },
+
+        ld_setZIndex: _,
+
+        ld_containsElement: function (element) {
+            return _Global.document.body.contains(element);
+        }
+    });
+
+    var LightDismissableElement = {
+        // ILightDismissable
+
+        // ABSTRACT: ld_lightDismiss
+        // ABSTRACT: ld_becameTopLevel (deafault impl?: _ElementUtilities._focusFirstFocusableElement(this.element);)
+
+        ld_receivedFocus: _,
+        ld_lostTopLevel: _,
+
+        ld_requiresClickEater: function () {
+            return true;
+        },
+
+        ld_setZIndex: function (value) {
+            this.element.style.zIndex = value;
+        },
+
+        ld_containsElement: function (element) {
+            return this.element.contains(element);
+        }
+    };
+
     var LightDismissService = _Base.Class.define(function () {
         this._clickEaterEl = this._createClickEater();
         this._clients = [];
@@ -35,7 +135,12 @@ define([
         this._isLive = false;
         
         this._onFocusInBound = this._onFocusIn.bind(this);
+
+        this.shown(new LightDismissableBody());
     }, {
+        LightDismissableElement: LightDismissableElement,
+        LightDismissalReasons: LightDismissalReasons,
+
         // TODO: Think about states
         // - is top level
         //   - maybe we can put a permanent client at index 0
@@ -80,30 +185,34 @@ define([
         },
 
         _updateUI: function () {
+            var clickEaterIndex = -1;
             this._clients.forEach(function (c, i) {
+                if (c.ld_requiresClickEater()) {
+                    clickEaterIndex = i;
+                }
                 c.ld_setZIndex(BASE_ZINDEX + i * 2 + 1);
             }.bind(this));
-            this._clickEaterEl.style.zIndex = BASE_ZINDEX + (this._clients.length - 1) * 2;
+            if (clickEaterIndex !== -1) {
+                this._clickEaterEl.style.zIndex = BASE_ZINDEX + clickEaterIndex * 2;
+            }
 
-            if (!this._isLive && this._clients.length > 0) {
+            if (!this._isLive && clickEaterIndex !== -1) {
+                // TODO: Do we have to listen to focus events when there are clients but nobody needs the click eater?
                 _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.body.appendChild(this._clickEaterEl);
                 this._isLive = true;
-            } else if (this._isLive && this._clients.length === 0) {
+            } else if (this._isLive && clickEaterIndex === -1) {
                 _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.body.removeChild(this._clickEaterEl);
                 this._isLive = false;
             
             }
 
-            if (this._clients.length > 0) {
-                var topLevel = this._clients[this._clients.length - 1];
-                if (this._currentTopLevel !== topLevel) {
-                    this._currentTopLevel = topLevel;
-                    topLevel.ld_becameTopLevel();
-                }
-            } else {
-                this._currentTopLevel = null;
+            var topLevel = this._clients.length > 0 ? this._clients[this._clients.length - 1] : null;
+            if (this._currentTopLevel !== topLevel) {
+                this._currentTopLevel && this._currentTopLevel.ld_lostTopLevel();
+                this._currentTopLevel = topLevel;
+                this._currentTopLevel && this._currentTopLevel.ld_becameTopLevel();
             }
         },
 
@@ -148,6 +257,9 @@ define([
                 if (this._clients[i].ld_containsElement(target)) {
                     break;
                 }
+            }
+            if (i !== -1) {
+                this._clients[i].ld_receivedFocus(target);
             }
 
             this._dispatchLightDismiss(LightDismissalReasons.lostFocus, this._clients.slice(i + 1, this._clients.length));
@@ -219,24 +331,9 @@ define([
         }
     });
 
-    var LightDismissableElement = {
-        // ILightDismissable
-
-        // ABSTRACT: ld_lightDismiss
-        // ABSTRACT: ld_becameTopLevel
-
-        ld_setZIndex: function (value) {
-            this.element.style.zIndex = value;
-        },
-
-        ld_containsElement: function (element) {
-            return this.element.contains(element);
-        }
-    };
-
     var lds = new LightDismissService();
-    lds.LightDismissableElement = LightDismissableElement;
-    lds.LightDismissalReasons = LightDismissalReasons;
-
+    _Base.Namespace.define("WinJS.UI", {
+        _LightDismissService: lds
+    });
     return lds;
 });
