@@ -23,8 +23,7 @@ define([
     './AppBar/_Command',
     './AppBar/_Icon',
     './Flyout/_Overlay',
-    '../Application',
-    'require-style!less/controls'
+    '../Application'
 ], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay, Application) {
     "use strict";
 
@@ -497,7 +496,7 @@ define([
                     },
                     set: function (layout) {
                         if (layout !== _Constants.appBarLayoutCommands &&
-                            layout !== _Constants.appBarLayoutCustom && 
+                            layout !== _Constants.appBarLayoutCustom &&
                             layout !== _Constants.appBarLayoutMenu) {
                             throw new _ErrorFromName("WinJS.UI.AppBar.BadLayout", strings.badLayout);
                         }

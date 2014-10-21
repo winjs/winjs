@@ -11,7 +11,8 @@ define([
     '../Utilities/_ElementUtilities',
     './AutoSuggestBox/_SearchSuggestionManagerShim',
     '../Application',
-    'require-style!less/controls'
+    'require-style!less/styles-searchbox',
+    'require-style!less/colors-searchbox'
 ], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, AutoSuggestBox, _Control, _ElementUtilities, _SuggestionManagerShim, Application) {
     "use strict";
 
@@ -89,13 +90,13 @@ define([
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
                 this._requestingFocusOnKeyboardInputHandlerBind = this._requestingFocusOnKeyboardInputHandler.bind(this);
-                
+
                 // Elements
                 this._buttonElement = null;
 
                 // Variables
                 this._focusOnKeyboardInput = false;
-                
+
                 AutoSuggestBox.AutoSuggestBox.call(this, element, options);
 
                 this._setupSearchBoxDOM();
@@ -135,7 +136,7 @@ define([
                         return;
                     }
                     AutoSuggestBox.AutoSuggestBox.prototype.dispose.call(this);
-                    
+
                     if (this._focusOnKeyboardInput) {
                         Application._applicationListener.removeEventListener(this.element, "requestingfocusonkeyboardinput", this._requestingFocusOnKeyboardInputHandlerBind);
                     }

@@ -11,7 +11,7 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Utilities/_Select',
-    'require-style!less/controls'
+    'require-style!less/styles-datetimepicker'
     ], function timePickerInit(_Global, _WinRT, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities, _Hoverable, _Select) {
     "use strict";
 

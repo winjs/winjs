@@ -17,7 +17,9 @@ define([
     '../../Scheduler',
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
-    '../AppBar/_Constants'
+    '../AppBar/_Constants',
+    'require-style!less/styles-overlay',
+    'require-style!less/colors-overlay'
 ], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
     "use strict";
 

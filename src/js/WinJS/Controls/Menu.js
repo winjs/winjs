@@ -15,8 +15,7 @@ define([
     './AppBar/_Constants',
     './Flyout',
     './Flyout/_Overlay',
-    './Menu/_Command',
-    'require-style!less/controls'
+    './Menu/_Command'
     ], function menuInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, Flyout, _Overlay, _Command) {
     "use strict";
 

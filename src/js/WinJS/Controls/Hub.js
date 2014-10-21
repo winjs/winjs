@@ -20,7 +20,8 @@ define([
     '../Utilities/_Hoverable',
     '../Utilities/_UI',
     './Hub/_Section',
-    'require-style!less/controls'
+    'require-style!less/styles-hub',
+    'require-style!less/colors-hub'
     ], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _Section) {
     "use strict";
 

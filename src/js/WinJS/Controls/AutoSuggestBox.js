@@ -16,6 +16,8 @@ define([
     "../Promise",
     "./Repeater",
     "./AutoSuggestBox/_SearchSuggestionManagerShim",
+    "require-style!less/styles-autosuggestbox",
+    "require-style!less/colors-autosuggestbox"
 ], function autoSuggestBoxInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Promise, Repeater, _SuggestionManagerShim) {
     "use strict";
 

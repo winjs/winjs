@@ -10,7 +10,8 @@ define([
     '../Utilities/_Hoverable',
     '../Utilities/_SafeHtml',
     './Tooltip',
-    'require-style!less/controls'
+    'require-style!less/styles-rating',
+    'require-style!less/colors-rating'
     ], function ratingInit(_Global,_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, _Hoverable, _SafeHtml, Tooltip) {
     "use strict";
 

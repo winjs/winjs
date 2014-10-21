@@ -13,7 +13,8 @@ define([
     './AppBar',
     './NavBar/_Command',
     './NavBar/_Container',
-    'require-style!less/controls'
+    'require-style!less/styles-navbar',
+    'require-style!less/colors-navbar'
 ], function NavBarInit(_Global,_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, _Hoverable, AppBar, _Command, _Container) {
     "use strict";
 

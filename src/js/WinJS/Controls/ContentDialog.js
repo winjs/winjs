@@ -15,12 +15,13 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Animations',
-    'require-style!less/controls'
+    'require-style!less/styles-contentdialog',
+    'require-style!less/colors-contentdialog'
     ], function contentDialogInit(Application, _Dispose, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
     "use strict";
 
     var ContentDialogManager;
-    
+
     // Need to be the first one to register these events so that they can be
     // canceled before any other listener sees them.
     var eventsToBlock = [
@@ -28,13 +29,13 @@ define([
         "edgycompleted",
         "edgycanceled"
     ];
-    
+
     function blockEventIfDialogIsShowing(eventObject) {
         if (ContentDialogManager && ContentDialogManager.aDialogIsShowing()) {
             eventObject.stopImmediatePropagation();
         }
     }
-    
+
     eventsToBlock.forEach(function (eventName) {
         Application.addEventListener(eventName, blockEventIfDialogIsShowing);
     });
@@ -108,44 +109,44 @@ define([
                 afterHide: "afterhide",
             };
             var minContentHeightWithInputPane = 96;
-            
+
             ContentDialogManager = new (_Base.Class.define(function () {
                 this._dialogs = [];
                 this._prevFocus = null;
             }, {
                 willShow: function ContentDialogManager_willShow(dialog) {
-                    var startLength = this._dialogs.length; 
+                    var startLength = this._dialogs.length;
                     this._pruneDialogsMissingFromDom();
-                    
+
                     if (this._dialogs.indexOf(dialog) === -1) {
                         this._dialogs.push(dialog);
                     }
-                    
+
                     if (startLength === 0 && this._dialogs.length === 1) {
                         this._firstDialogWillShow(dialog);
                     }
                 },
-                
+
                 didHide: function ContentDialogManager_didHide(dialog) {
-                    var startLength = this._dialogs.length; 
+                    var startLength = this._dialogs.length;
                     this._pruneDialogsMissingFromDom();
-                    
+
                     var index = this._dialogs.indexOf(dialog);
                     if (index !== -1) {
                         this._dialogs.splice(index, 1);
                     }
-                    
+
                     if (startLength > 0 && this._dialogs.length === 0) {
                         this._lastDialogDidHide();
                     }
                 },
-                
+
                 aDialogIsShowing: function ContentDialogManager_aDialogIsShowing() {
                     return this._dialogs.some(function (dialog) {
                         return !dialog.hidden;
                     });
                 },
-                
+
                 // Filter out any ContentDialogs that may have been ripped
                 // out of the DOM without getting hidden or disposed.
                 _pruneDialogsMissingFromDom: function ContentDialogManager_pruneDialogsMissingFromDom() {
@@ -153,18 +154,18 @@ define([
                         return !_Global.document.body.contains(dialog.element);
                     });
                 },
-                
+
                 _firstDialogWillShow: function ContentDialogManager_firstDialogWillShow(dialog) {
                     this._prevFocus = _Global.document.activeElement;
                 },
-                
+
                 _lastDialogDidHide: function ContentDialogManager_lastDialogDidHide() {
                     var prevFocus = this._prevFocus;
                     this._prevFocus = null;
                     prevFocus && prevFocus.focus();
                 }
             }))();
-            
+
             function elementInFlyout(element) {
                 while (element) {
                     if (_ElementUtilities.hasClass(element, "win-flyout")) {
@@ -530,7 +531,7 @@ define([
                     throw new _ErrorFromName("WinJS.UI.ContentDialog.DuplicateConstruction", Strings.duplicateConstruction);
                 }
                 options = options || {};
-                
+
                 this._onBackClickBound = this._onBackClick.bind(this);
                 this._onBeforeRequestingFocusOnKeyboardInputBound = this._onBeforeRequestingFocusOnKeyboardInput.bind(this);
                 this._onInputPaneShownBound = this._onInputPaneShown.bind(this);
@@ -538,11 +539,11 @@ define([
                 this._onFocusInBound = this._onFocusIn.bind(this);
                 this._onKeyDownEnteringDocumentBound = this._onKeyDownEnteringDocument.bind(this);
                 this._onKeyEnteringDocumentBound = this._onKeyEnteringDocument.bind(this);
-                
+
                 this._disposed = false;
                 this._resizedForInputPane = false;
                 this._currentFocus = null;
-                
+
                 this._initializeDom(element || _Global.document.createElement("div"));
                 this._setState(States.Init);
 
@@ -613,7 +614,7 @@ define([
                         }
                     }
                 },
-                
+
                 /// <field type="Boolean" locid="WinJS.UI.ContentDialog.primaryCommandDisabled" helpKeyword="WinJS.UI.ContentDialog.primaryCommandDisabled">
                 /// Indicates whether the button representing the primary command is currently disabled.
                 /// </field>
@@ -629,7 +630,7 @@ define([
                         }
                     }
                 },
-                
+
                 /// <field type="Boolean" locid="WinJS.UI.ContentDialog.secondaryCommandDisabled" helpKeyword="WinJS.UI.ContentDialog.secondaryCommandDisabled">
                 /// Indicates whether the button representing the secondary command is currently disabled.
                 /// </field>
@@ -750,7 +751,7 @@ define([
                     dom.startBodyTab.setAttribute("x-ms-aria-flowfrom", dom.endBodyTab.id);
                     dom.endBodyTab.setAttribute("aria-flowto", dom.startBodyTab.id);
                     this._updateTabIndices();
-                    
+
                     var onKeyLeavingElementBound = this._onKeyLeavingElement.bind(this);
                     dom.root.addEventListener("keydown", onKeyLeavingElementBound);
                     dom.root.addEventListener("keyup", onKeyLeavingElementBound);
@@ -763,11 +764,11 @@ define([
                     dom.commands[0].addEventListener("click", this._onCommandClicked.bind(this, DismissalReason.primary));
                     dom.commands[1].addEventListener("click", this._onCommandClicked.bind(this, DismissalReason.secondary));
                 },
-                
+
                 _updateCommandsUI: function ContentDialog_updateCommandsUI() {
                     this._dom.commands[0].style.display = this.primaryCommandText ? "" : "none";
                     this._dom.commands[1].style.display = this.secondaryCommandText ? "" : "none";
-                    
+
                     // commandSpacer's purpose is to ensure that when only 1 button is shown, that button takes up half
                     // the width of the dialog and is right-aligned. It works by:
                     // - When only one command is shown:
@@ -778,13 +779,13 @@ define([
                     //   - Having display: none (so it doesn't occupy any space and the two shown commands each take up half the dialog)
                     // - When 0 commands are shown:
                     //   - Having display: none (so the commands area takes up no space)
-                    this._dom.commandSpacer.style.display = this.primaryCommandText && !this.secondaryCommandText || !this.primaryCommandText && this.secondaryCommandText ? "" : "none"; 
+                    this._dom.commandSpacer.style.display = this.primaryCommandText && !this.secondaryCommandText || !this.primaryCommandText && this.secondaryCommandText ? "" : "none";
                 },
-                
+
                 // _updateTabIndices and _updateTabIndicesImpl are used in tests
                 _updateTabIndices: function ContentDialog_updateTabIndices() {
                     if (!this._updateTabIndicesThrottled) {
-                        this._updateTabIndicesThrottled = _BaseUtils._throttledFunction(100, this._updateTabIndicesImpl.bind(this));    
+                        this._updateTabIndicesThrottled = _BaseUtils._throttledFunction(100, this._updateTabIndicesImpl.bind(this));
                     }
                     this._updateTabIndicesThrottled();
                 },
@@ -795,27 +796,27 @@ define([
                     this._dom.commands[1].tabIndex = tabIndex.highest;
                     this._dom.endBodyTab.tabIndex = tabIndex.highest;
                 },
-                
+
                 _elementInDialog: function ContentDialog_elementInDialog(element) {
                     return this._dom.dialog.contains(element) || element === this._dom.startBodyTab || element === this._dom.endBodyTab;
                 },
-                
+
                 _retakeFocus: function ContentDialog_retakeFocus(element) {
                     if (!(this._currentFocus && this._elementInDialog(this._currentFocus) && _ElementUtilities._tryFocus(this._currentFocus))) {
                         this._focusInitialElement();
                     }
                 },
-                
+
                 _isTopLevel: {
                     get: function ContentDialog_isTopLevel_get() {
                         return !elementInFlyout(_Global.document.activeElement);
                     }
                 },
-                
+
                 _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
                     this._state.onCommandClicked(reason);
                 },
-                
+
                 _onPointerDown: function ContentDialog_onPointerDown(eventObject) {
                     eventObject.stopPropagation();
                     if (!this._elementInDialog(eventObject.target)) {
@@ -836,7 +837,7 @@ define([
                         eventObject.preventDefault();
                     }
                 },
-                
+
                 _onFocusIn: function ContentDialog_onFocusIn(eventObject) {
                     eventObject = eventObject.detail.originalEvent;
                     if (this._isTopLevel) {
@@ -847,7 +848,7 @@ define([
                         }
                     }
                 },
-                
+
                 _onKeyDownEnteringDocument: function ContentDialog_onKeyDownEnteringDocument(eventObject) {
                     eventObject = eventObject.detail.originalEvent;
                     if (this._isTopLevel) {
@@ -864,7 +865,7 @@ define([
                         }
                     }
                 },
-                
+
                 _onKeyEnteringDocument: function ContentDialog_onKeyEnteringDocument(eventObject) {
                     eventObject = eventObject.detail.originalEvent;
                     if (this._isTopLevel && !this._elementInDialog(_Global.document.activeElement) && eventObject.keyCode !== _ElementUtilities.Key.tab) {
@@ -873,7 +874,7 @@ define([
                         eventObject.stopImmediatePropagation();
                     }
                 },
-                
+
                 _onKeyLeavingElement: function ContentDialog_onKeyLeavingElement(eventObject) {
                     if (this._isTopLevel) {
                         // stopImmediatePropagation so that none of the app's other event handlers will see the event.
@@ -881,12 +882,12 @@ define([
                         eventObject.stopImmediatePropagation();
                     }
                 },
-                
+
                 _onBeforeRequestingFocusOnKeyboardInput: function ContentDialog_onBeforeRequestingFocusOnKeyboardInput(eventObject) {
                     // Suppress the requestingFocusOnKeyboardInput event.
                     eventObject.preventDefault();
                 },
-                
+
                 _onBackClick: function ContentDialog_onBackClick(eventObject) {
                     if (this._isTopLevel) {
                         this.hide(DismissalReason.none);
@@ -938,7 +939,7 @@ define([
                     dismissedSignal.cancel();
                     return newDismissedSignal;
                 },
-                
+
                 // Calls into arbitrary app code
                 _fireEvent: function ContentDialog_fireEvent(eventName, options) {
                     options = options || {};
@@ -956,7 +957,7 @@ define([
                         cancelable: true
                     });
                 },
-                
+
                 // Calls into arbitrary app code
                 _fireBeforeHide: function ContentDialog_fireBeforeHide(reason) {
                     return this._fireEvent(EventNames.beforeHide, {
@@ -979,29 +980,29 @@ define([
                 _playExitAnimation: function ContentDialog_playExitAnimation() {
                     return cancelablePromise(_Animations.fadeOut(this._dom.root));
                 },
-                
+
                 _addExternalListeners: function ContentDialog_addExternalListeners() {
                     _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "showing", this._onInputPaneShownBound);
                     _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "hiding", this._onInputPaneShownBound);
-                    
+
                     _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "keydown", this._onKeyDownEnteringDocumentBound, true);
                     _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "keyup", this._onKeyEnteringDocumentBound, true);
                     _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "keypress", this._onKeyEnteringDocumentBound, true);
                     _ElementUtilities._documentElementListener.addEventListener(this._dom.root, "focusin", this._onFocusInBound);
-                    
+
                     Application._applicationListener.addEventListener(this._dom.root, "backclick", this._onBackClickBound);
                     Application._applicationListener.addEventListener(this._dom.root, "beforerequestingfocusonkeyboardinput", this._onBeforeRequestingFocusOnKeyboardInputBound);
                 },
-                
+
                 _removeExternalListeners: function ContentDialog_removeExternalListeners() {
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "showing", this._onInputPaneShownBound);
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "hiding", this._onInputPaneShownBound);
-                    
+
                     _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "keydown", this._onKeyDownEnteringDocumentBound, true);
                     _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "keyup", this._onKeyEnteringDocumentBound, true);
                     _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "keypress", this._onKeyEnteringDocumentBound, true);
                     _ElementUtilities._documentElementListener.removeEventListener(this._dom.root, "focusin", this._onFocusInBound);
-                    
+
                     Application._applicationListener.removeEventListener(this._dom.root, "backclick", this._onBackClickBound);
                     Application._applicationListener.removeEventListener(this._dom.root, "beforerequestingfocusonkeyboardinput", this._onBeforeRequestingFocusOnKeyboardInputBound);
                 },
@@ -1044,7 +1045,7 @@ define([
                             // Make sure the title isn't in the scroller
                             this._dom.dialog.insertBefore(this._dom.title, this._dom.scroller);
                         }
-                        
+
                         var style = this._dom.dialog.style;
                         this._dom.root.style.display = "";
                         style.height = "";
@@ -1055,7 +1056,7 @@ define([
                         this._resizedForInputPane = false;
                     }
                 },
-                
+
                 _focusInitialElement: function ContentDialog_focusInitialElement() {
                     _ElementUtilities._focusFirstFocusableElement(this._dom.content) || this._dom.dialog.focus();
                 }
@@ -1064,7 +1065,7 @@ define([
                 /// Specifies the reason that the ContentDialog was dismissed.
                 /// </field>
                 DismissalReason: DismissalReason,
-                
+
                 _ClassNames: ClassNames
             });
             _Base.Class.mix(ContentDialog, _Events.createEventProperties(

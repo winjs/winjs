@@ -7,7 +7,8 @@ define([
     '../Core/_Resources',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
-    'require-style!less/controls'
+    'require-style!less/styles-toggleswitch',
+    'require-style!less/colors-toggleswitch'
     ],
     function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities) {
         "use strict";

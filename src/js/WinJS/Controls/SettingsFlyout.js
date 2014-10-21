@@ -16,8 +16,7 @@ define([
     '../Utilities/_ElementListUtilities',
     '../Utilities/_Hoverable',
     './AppBar/_Constants',
-    './Flyout/_Overlay',
-    'require-style!less/controls'
+    './Flyout/_Overlay'
     ], function settingsFlyoutInit(_Global,_WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable, _Constants, _Overlay) {
     "use strict";
 

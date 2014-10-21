@@ -9,7 +9,8 @@ define([
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
-    'require-style!less/controls'
+    'require-style!less/styles-backbutton',
+    'require-style!less/colors-backbutton'
     ], function backButtonInit(_Global, _Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities, _Hoverable) {
     "use strict";
 
