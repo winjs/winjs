@@ -258,6 +258,7 @@ declare module WinJS {
         class PrivateAutoSuggestBox extends WinJS.UI.AutoSuggestBox {
             _disposed: boolean;
             _inputElement: HTMLInputElement;
+            _isFlyoutPointerDown: boolean;
             _flyoutElement: HTMLDivElement;
             _lastKeyPressLanguage: string;
             _repeater: WinJS.UI.Repeater;

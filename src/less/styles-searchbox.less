@@ -21,6 +21,14 @@
 /*
 Hide clear button in search box control.
 */
+.win-searchbox input[type=search]::-ms-clear {
+    display: none;
+}
+
+.win-searchbox input[type=search]::-webkit-search-cancel-button {
+    display: none;
+}
+
 
 .win-searchbox-button {
     position: absolute;

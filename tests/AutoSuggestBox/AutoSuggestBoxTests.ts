@@ -758,6 +758,7 @@ module AutoSuggestBoxTests {
 
                 waitForSuggestionFlyoutRender(asb).done(function () {
                     // Select the first suggestion.
+                    Helper.touchDown(asb._repeater.elementFromIndex(0));
                     Helper.touchUp(asb._repeater.elementFromIndex(0));
                 });
             });
@@ -777,7 +778,41 @@ module AutoSuggestBoxTests {
 
                 waitForSuggestionFlyoutRender(asb).done(function () {
                     // Select the first suggestion.
+                    Helper.touchDown(asb._repeater.elementFromIndex(0));
                     Helper.touchUp(asb._repeater.elementFromIndex(0));
+                });
+            });
+            asb._inputElement.value = "a";
+            asb._inputElement.focus();
+        }
+
+        testSuggestionSelectionWithNarrator(complete) {
+            var expectCallback = false;
+
+            var asb: WinJS.UI.PrivateAutoSuggestBox = document.getElementById("ASBID").winControl;
+            asb.addEventListener("resultsuggestionchosen", function asbTest_resultsuggestionchosen_listener(event) {
+                if (!expectCallback) {
+                    LiveUnit.Assert.fail("unexpected callback");
+                }
+                complete();
+            });
+
+            asb.addEventListener("suggestionsrequested", function (e) {
+                e.detail.searchSuggestionCollection.appendResultSuggestion("Test result Suggestion3 test", "Query suggestion3 detailed text", "tag3", AutoSuggestBox.createResultSuggestionImage("http://fakeurl"), "");
+
+                waitForSuggestionFlyoutRender(asb).done(function () {
+                    var element = asb._repeater.elementFromIndex(0);
+
+                    // Simulate mouse/touch scenario - Mouse/Touch go thru pointer events then click event. In this scenario,
+                    // the click event should NOT invoke the selection.
+                    expectCallback = false;
+                    Helper.touchDown(element);
+                    element.click();
+
+                    // Simulate narrator click - Fire click w/o going thru pointer events, here we expect an invocation
+                    asb._isFlyoutPointerDown = false;
+                    expectCallback = true;
+                    element.click();
                 });
             });
             asb._inputElement.value = "a";

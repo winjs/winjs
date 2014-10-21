@@ -310,6 +310,7 @@ define([
 
                     // Input element
                     this._inputElement = _Global.document.createElement("input");
+                    this._inputElement.autocorrect = "off";
                     this._inputElement.type = "search";
                     this._inputElement.classList.add(ClassNames.asbInput);
                     this._inputElement.setAttribute("role", "textbox");
@@ -548,7 +549,7 @@ define([
                     }
                 },
 
-                _updateFakeFocus: function asm_updateFakeFocus() {
+                _updateFakeFocus: function asb_updateFakeFocus() {
                     var firstElementIndex;
                     if (this._isFlyoutShown() && (this._chooseSuggestionOnEnter)) {
                         firstElementIndex = this._findNextSuggestionElementIndex(-1);
@@ -709,7 +710,7 @@ define([
                     }
                 },
 
-                _flyoutPointerDownHandler: function asm_flyoutPointerDownHandler(ev) {
+                _flyoutPointerDownHandler: function asb_flyoutPointerDownHandler(ev) {
                     var that = this;
                     var srcElement = ev.target;
                     function findSuggestionElementIndex() {
@@ -739,7 +740,7 @@ define([
                     ev.preventDefault();
                 },
 
-                _flyoutPointerReleasedHandler: function asm_flyoutPointerReleasedHandler() {
+                _flyoutPointerReleasedHandler: function asb_flyoutPointerReleasedHandler() {
                     this._isFlyoutPointerDown = false;
 
                     if (this._reflowImeOnPointerRelease) {
@@ -1184,6 +1185,12 @@ define([
             }
 
             function resultSuggestionRenderer(asb, item) {
+                function handleInvoke(e) {
+                    asb._internalFocusMove = true;
+                    asb._inputElement.focus();
+                    asb._processSuggestionChosen(item, e);
+                }
+
                 var root = _Global.document.createElement("div");
                 var image = new _Global.Image();
                 image.style.opacity = 0;
@@ -1227,10 +1234,12 @@ define([
 
                 _ElementUtilities.addClass(root, ClassNames.asbSuggestionResult);
 
-                _ElementUtilities._addEventListener(root, "pointerup", function (ev) {
-                    asb._inputElement.focus();
-                    asb._processSuggestionChosen(item, ev);
+                _ElementUtilities._addEventListener(root, "click", function (e) {
+                    if (!asb._isFlyoutPointerDown) {
+                        handleInvoke(e);
+                    }
                 });
+                _ElementUtilities._addEventListener(root, "pointerup", handleInvoke);
 
                 root.setAttribute("role", "option");
                 var ariaLabel = _Resources._formatString(Strings.ariaLabelResult, item.text, item.detailText);
@@ -1239,6 +1248,12 @@ define([
             }
 
             function querySuggestionRenderer(asb, item) {
+                function handleInvoke(e) {
+                    asb._internalFocusMove = true;
+                    asb._inputElement.focus();
+                    asb._processSuggestionChosen(item, e);
+                }
+
                 var root = _Global.document.createElement("div");
 
                 addHitHighlightedText(root, item, item.text);
@@ -1246,10 +1261,12 @@ define([
 
                 root.classList.add(ClassNames.asbSuggestionQuery);
 
-                _ElementUtilities._addEventListener(root, "pointerup", function (ev) {
-                    asb._inputElement.focus();
-                    asb._processSuggestionChosen(item, ev);
+                _ElementUtilities._addEventListener(root, "click", function (e) {
+                    if (!asb._isFlyoutPointerDown) {
+                        handleInvoke(e);
+                    }
                 });
+                _ElementUtilities._addEventListener(root, "pointerup", handleInvoke);
 
                 var ariaLabel = _Resources._formatString(Strings.ariaLabelQuery, item.text);
                 root.setAttribute("role", "option");
