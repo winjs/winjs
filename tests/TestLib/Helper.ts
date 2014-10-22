@@ -1168,6 +1168,23 @@ module Helper {
         return Math.round(n * Math.pow(10, decimalPoints)) / Math.pow(10, decimalPoints);
     };
 
+    // Very fast method to generate a random number from a seed
+    // https://software.intel.com/en-us/articles/fast-random-number-generator-on-the-intel-pentiumr-4-processor
+    var fastRandSeed = 0;
+    export function fastRand(seed) {
+        if (typeof seed !== 'undefined') {
+            fastRandSeed = seed;
+        }
+        fastRandSeed = 214013 * fastRandSeed + 2531011;
+
+        // This mod is necessary because js treats all numbers as floats and won't overflow
+        // the seed when this algorithm expects it to
+        // Fast bitwise mod using a power of 2 found here:
+        // http://stackoverflow.com/questions/6572670/other-ways-of-performing-modulo-operation
+        fastRandSeed = (fastRandSeed & ((1 << 31) - 1)) >>> 0;
+        return (fastRandSeed >> 16) & 0x7fff;
+    };
+
     // Returns a random integer less than the given number
     export function getRandomNumberUpto(num) {
         return Math.floor(Math.random() * num);
@@ -1289,7 +1306,7 @@ module Helper {
 
         export var areFontFamiliesEqual = makeNormalizedCssValueAssertion(LiveUnit.Assert.areEqual.bind(LiveUnit.Assert), "fontFamily");
         export var areFontFamiliesNotEqual = makeNormalizedCssValueAssertion(LiveUnit.Assert.areNotEqual.bind(LiveUnit.Assert), "fontFamily");
-        
+
         export function areFloatsEqual(expectedValue, actualValue, message = "", tolerance = 0.1) {
             var diff = Math.abs(expectedValue - actualValue);
             LiveUnit.Assert.isTrue(diff <= tolerance, message + " (expected = " + expectedValue +
