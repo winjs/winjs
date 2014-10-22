@@ -175,6 +175,11 @@ define([
                         return c.ld_containsElement(element);
                     });
                 },
+                ld_qsa: function (selector) {
+                    return this._clients.reduce(function (list, c) {
+                        return list.concat(c.ld_qsa(selector));
+                    }, []);
+                },
                 ld_becameTopLevel: function () {
                     if (this._currentFocus) {
                         this._currentFocus.ld_becameTopLevel();
