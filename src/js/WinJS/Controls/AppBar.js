@@ -1611,10 +1611,11 @@ define([
                     }
                 },
             });
-            _Base.Class.mix(AppBar, _LightDismissService.LightDismissableElement);
-            AppBar.prototype.ld_requiresClickEater = function () {
-                return !this.sticky;
-            };
+            _Base.Class.mix(AppBar, _LightDismissService.LightDismissableElement, {
+                ld_requiresClickEater: function () {
+                    return !this.sticky;
+                }
+            });
             return AppBar;
         })
     });
