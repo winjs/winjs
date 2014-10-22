@@ -447,6 +447,8 @@ define([
                 if (name === EventNames.requestingFocusOnKeyboardInput) {
                     TypeToSearch.register(this._requestingFocusOnKeyboardInput.bind(this));
                     //this.object.addEventListener(name, handler);
+                } else if (name === EventNames.edgyStarting || name === EventNames.edgyCompleted || name === EventNames.edgyCanceled) {
+                    
                 }
             }
 
@@ -466,12 +468,14 @@ define([
                     if (name === EventNames.requestingFocusOnKeyboardInput) {
                         TypeToSearch.unregister();
                         //this.object.removeEventListener(name, handler);
+                    } else if (name === EventNames.edgyStarting || name === EventNames.edgyCompleted || name === EventNames.edgyCanceled) {
+                    
                     }
                     delete handlers[name];
                 }
             }
 
-            removeClass(element, this._getClassName(name));
+            _ElementUtilities.removeClass(element, this._getClassName(name));
             element.removeEventListener(this._getEventName(name), listener);
         },
         
@@ -511,6 +515,21 @@ define([
                 var client = this._clients[this._clients.length - 1];
                 var className = this._getClassName(EventNames.requestingFocusOnKeyboardInput);
                 var eventName = this._getEventName(EventNames.requestingFocusOnKeyboardInput);
+                var targets = client.ld_qsa('.' + className);
+                var length = targets.length;
+                for (var i = 0; i < length; i++) {
+                    var event = _Global.document.createEvent("Event");
+                    event.initEvent(eventName, false, true);
+                    targets[i].dispatchEvent(event);
+                }
+            }
+        },
+        
+        _dispatchEdgy: function (edgyEventName) {
+            if (this._clients.length > 0) {
+                var client = this._clients[this._clients.length - 1];
+                var className = this._getClassName(edgyEventName);
+                var eventName = this._getEventName(edgyEventName);
                 var targets = client.ld_qsa('.' + className);
                 var length = targets.length;
                 for (var i = 0; i < length; i++) {
