@@ -183,64 +183,6 @@ module CorsicaTests {
             }
         };
 
-        testRedlines2 = function () {
-            var controlElement = document.createElement("div");
-
-            // this select element will be used as the truth, ie styles of the datepicker subelements
-            // should be the same as a basic select element
-            var selectElement = document.createElement("select");
-
-            try {
-                var control = new DatePicker(controlElement);
-                document.body.appendChild(controlElement);
-                document.body.appendChild(selectElement);
-
-                // classes of the datepicker
-                var classes = ["." + this.DatePickerClassName.DatePicker_Month, "." + this.DatePickerClassName.DatePicker_Date, "." + this.DatePickerClassName.DatePicker_Year];
-
-                // specific elements of the datepicker corresponding to the classes
-                var subElements = [];
-
-                // styles of the subelements to compare to the select element
-                var stylesToVerify = ["color",
-                    "lineHeight",
-                    "fontStyle",
-                    "fontWeight",
-                    "fontSize",
-                    "fontStretch",
-                    "fontSizeAdjust",
-                    "borderTopWidth",
-                    "borderRightWidth",
-                    "borderLeftWidth",
-                    "borderBottomWidth",
-                    "borderTopStyle",
-                    "borderRightStyle",
-                    "borderLeftStyle",
-                    "borderBottomStyle",
-                ];
-
-                // initialize the subelements
-                classes.forEach(function (item, index) {
-                    subElements[index] = controlElement.querySelector(".win-datepicker " + item);
-                });
-
-                // compare styles of subelements to the basic select element
-                subElements.forEach(function (subElement) {
-                    stylesToVerify.forEach(function (testStyle) {
-                        LiveUnit.Assert.areEqual(
-                            getComputedStyle(selectElement)[testStyle],
-                            getComputedStyle(subElement)[testStyle]),
-                        "testing subElement=" + subElement.getAttribute("class") + ", style=" + testStyle;
-                    });
-                });
-            } finally {
-                WinJS.Utilities.disposeSubTree(controlElement);
-                WinJS.Utilities.disposeSubTree(selectElement);
-                document.body.removeChild(controlElement);
-                document.body.removeChild(selectElement);
-            }
-        };
-
         testEmptyOptions = function () {
             var controlElement = document.createElement("div");
             var t = new Date();

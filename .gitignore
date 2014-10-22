@@ -17,3 +17,4 @@ sauce_connect.log
 npm-debug.log
 .baseDir.ts
 .tscache
+*.tmp.txt
