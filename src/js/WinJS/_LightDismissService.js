@@ -33,7 +33,8 @@ define([
         lostFocus: "lostFocus",
         escape: "escape",
         hardwareBackButton: "hardwareBackButton",
-        windowResize: "windowResize"
+        windowResize: "windowResize",
+        windowBlur: "windowBlur"
         // click (_Overlay.js: _Overlay_handleAppBarClickEatingClick, _Overlay__handleFlyoutClickEatingClick)
         // window blur (_Overlay.js: _GlobalListener_windowBlur)
         // edgy (_Overlay.js: _checkRightClickUp, _GlobalListener_edgyStarting, _GlobalListener_edgyCompleted)
@@ -66,6 +67,7 @@ define([
                     break;
                 case LightDismissalReasons.lostFocus:
                 case LightDismissalReasons.windowResize:
+                case LightDismissalReasons.windowBlur:
                     return true;
                     break;
             }
@@ -172,7 +174,11 @@ define([
         _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDown.bind(this));
         Application.addEventListener("backclick", this._onBackClick.bind(this));
-        _Global.addEventListener("resize", this._onResize.bind(this));
+        _Global.addEventListener("resize", this._onWindowResize.bind(this));
+        // Focus handlers generally use WinJS.Utilities._addEventListener with focusout/focusin. This
+        // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
+        // on window.
+        _Global.addEventListener("blur", this._onWindowBlur.bind(this));
 
         this.shown(new LightDismissableBody());
     }, {
@@ -316,6 +322,17 @@ define([
         //
         // Light dismiss triggers
         //
+        //  Implemented
+        //    - tap on click eater
+        //    - hardware back button
+        //    - escape key
+        //    - resize
+        //    - *lost focus (not in SplitView spec)
+        //    - app is navigated away (start button pressed) (window blur?)
+        //  Might work (need to test)
+        //    - rotation (does this trigger resize?)
+        //    - page is navigated away (should happen automatically because controls get disposed when a page navigates away)
+        //
         
         _onFocusIn: function (eventObject) {
             // Commented out code is from _Overlay.js. Think if we need to handle this case in the service.
@@ -355,10 +372,15 @@ define([
             return !doDefault; // Returns whether or not the event was handled.
         },
         
-        _onResize: function (eventObject) {
+        _onWindowResize: function (eventObject) {
             // TODO: Cache document size like in _Overlay_baseResize and only trigger light dismiss
             // if the dimensions really changed?
             this._dispatchLightDismiss(LightDismissalReasons.windowResize);
+        },
+        
+        _onWindowBlur: function (eventObject) {
+            // TODO: Handle iframe case like _GlobalListener_windowBlur in _Overlay.js.
+            this._dispatchLightDismiss(LightDismissalReasons.windowBlur);
         },
 
         _onClickEaterPointerDown: function (event) {
