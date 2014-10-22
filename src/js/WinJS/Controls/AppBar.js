@@ -1538,32 +1538,6 @@ define([
 
                 _writeProfilerMark: function AppBar_writeProfilerMark(text) {
                     _WriteProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
-                },
-
-                // ILightDismissable
-                ld_becameTopLevel: function () {
-                    if (this._currentFocus) {
-                        this._currentFocus.focus();
-                    } else {
-                        if (this._focusOnFirstFocusableElement()) {
-                            // Prevent what is gaining focus from showing that it has focus,
-                            // but only in the non-keyboard scenario.
-                            //if (!this._keyboardInvoked) {
-                            //    _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
-                            //}
-                        } else {
-                            // No first element, set it to appbar itself
-                            _Overlay._Overlay._trySetActive(this._element);
-                        }
-                    }
-                },
-                ld_shouldReceiveLightDismiss: function (info) {
-                    var policy = _LightDismissService.LightDismissalPolicies[this.sticky ? "Sticky" : "Light"];
-                    return policy(info);
-                },
-                ld_lightDismiss: function (info) {
-                    // _hide or hide?
-                    this.hide();
                 }
             }, {
                 // Statics
@@ -1614,6 +1588,30 @@ define([
             _Base.Class.mix(AppBar, _LightDismissService.LightDismissableElement, {
                 ld_requiresClickEater: function () {
                     return !this.sticky;
+                },
+                ld_becameTopLevel: function () {
+                    if (this._currentFocus) {
+                        this._currentFocus.focus();
+                    } else {
+                        if (this._focusOnFirstFocusableElement()) {
+                            // Prevent what is gaining focus from showing that it has focus,
+                            // but only in the non-keyboard scenario.
+                            //if (!this._keyboardInvoked) {
+                            //    _Overlay._Overlay._addHideFocusClass(_Global.document.activeElement);
+                            //}
+                        } else {
+                            // No first element, set it to appbar itself
+                            _Overlay._Overlay._trySetActive(this._element);
+                        }
+                    }
+                },
+                ld_shouldReceiveLightDismiss: function (info) {
+                    var policy = _LightDismissService.LightDismissalPolicies[this.sticky ? "Sticky" : "Light"];
+                    return policy(info);
+                },
+                ld_lightDismiss: function (info) {
+                    // _hide or hide?
+                    this.hide();
                 }
             });
             return AppBar;

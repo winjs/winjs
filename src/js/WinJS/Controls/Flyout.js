@@ -824,9 +824,9 @@ define([
 
                 _writeProfilerMark: function Flyout_writeProfilerMark(text) {
                     _WriteProfilerMark("WinJS.UI.Flyout:" + this._id + ":" + text);
-                },
-
-                // ILightDismissable
+                }
+            });
+            _Base.Class.mix(Flyout, _LightDismissService.LightDismissableElement, {
                 ld_becameTopLevel: function () {
                     if (this._currentFocus && this._element.contains(this._currentFocus)) {
                         // Retake focus
@@ -862,7 +862,6 @@ define([
                     //}
                 }
             });
-            _Base.Class.mix(Flyout, _LightDismissService.LightDismissableElement);
             return Flyout;
         })
     });

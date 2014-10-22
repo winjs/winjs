@@ -145,11 +145,17 @@ define([
     var LightDismissableElement = {
         // ILightDismissable
 
-        // ABSTRACT: ld_lightDismiss
-        // ABSTRACT: ld_becameTopLevel (deafault impl?: _ElementUtilities._focusFirstFocusableElement(this.element);)
-
         ld_receivedFocus: _,
         ld_lostTopLevel: _,
+        
+        ld_becameTopLevel: function () {
+            // TODO: Track focus so that we can restore it rather than always going to the first element?
+            _ElementUtilities._focusFirstFocusableElement(this.element);
+        },
+        
+        ld_shouldReceiveLightDismiss: LightDismissalPolicies.Light,
+        
+        ld_lightDismiss: _,
 
         ld_requiresClickEater: function () {
             return true;
