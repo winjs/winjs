@@ -28,6 +28,12 @@ define([
     var ClassNames = {
         _clickEater: "win-click-eater"
     };
+    var EventNames = {
+        requestingFocusOnKeyboardInput: "requestingfocusonkeyboardinput",
+        edgyStarting: "edgystarting",
+        edgyCompleted: "edgycompleted",
+        edgyCanceled: "edgycanceled"
+    };
     var LightDismissalReasons = {
         tap: "tap",
         lostFocus: "lostFocus",
@@ -175,6 +181,8 @@ define([
         this._clients = [];
         this._currentTopLevel = null;
         this._isLive = false;
+        this._capture = {};
+        this._bubble = {};
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
@@ -237,6 +245,63 @@ define([
 
         forceLayout: function () {
             this._updateUI();
+        },
+        
+        addEventListener: function (element, name, listener, capture) {
+            name = name.toLowerCase();
+            var handlers = this._getHandlers(capture);
+            var handler = handlers[name];
+
+            if (!handler) {
+                handler = this._getListener(name, capture);
+                handler.refCount = 0;
+                handlers[name] = handler;
+                
+                if (name === EventNames.requestingFocusOnKeyboardInput) {
+                    this.object.addEventListener(name, handler, capture);
+                }
+            }
+
+            handler.refCount++;
+            element.addEventListener(this._getEventName(name, capture), listener);
+            _ElementUtilities.addClass(element, this._getClassName(name, capture));
+        },
+        
+        _getHandlers: function (capture) {
+            if (capture) {
+                return this._capture;
+            } else {
+                return this._bubble;
+            }
+        },
+        
+        _getClassName: function (name, capture) {
+            var captureSuffix = capture ? 'capture' : 'bubble';
+            return 'win-lightdismissservice-event-' + name + captureSuffix;
+        },
+
+        _getEventName: function (name, capture) {
+            var captureSuffix = capture ? 'capture' : 'bubble';
+            return 'WinJSLightDismissServiceEvent-' + name + captureSuffix;
+        },
+        
+        _getListener: function (name, capture) {
+            var listener = function (ev) {
+
+                var targets = _Global.document.querySelectorAll('.' + this._getClassName(name, capture));
+                var length = targets.length;
+                var handled = false;
+                for (var i = 0; i < length; i++) {
+                    var event = _Global.document.createEvent("Event");
+                    event.initEvent(this._getEventName(name, capture), false, true);
+                    event.detail = { originalEvent: ev };
+                    var doDefault = targets[i].dispatchEvent(event);
+                    handled = handled || !doDefault;
+                }
+                return handled;
+            };
+
+            return listener.bind(this);
         },
         
         _updateUI: function () {
