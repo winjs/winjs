@@ -341,7 +341,7 @@ export class Toolbar {
             focusedIndex: -1
         };
         var elementsInReach = Array.prototype.slice.call(this._mainActionArea.children);
-        if (this.inlineMenu) {
+        if (this.inlineMenu && _Global.getComputedStyle(this._inlineOverflowArea).visibility !== "hidden") {
             elementsInReach = elementsInReach.concat(Array.prototype.slice.call(this._inlineOverflowArea.children));
         }
 

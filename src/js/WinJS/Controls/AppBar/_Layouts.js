@@ -640,7 +640,7 @@ define([
                                         }
                                     }
                                 }
-                            } else if (elements[i].element) {
+                            } else if (commands[i].element) {
                                 elements.push(commands[i].element);
                             } else {
                                 elements.push(commands[i]);

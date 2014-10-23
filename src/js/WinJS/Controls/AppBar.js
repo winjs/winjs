@@ -387,7 +387,7 @@ define([
 
                 // Run layout setter immediately. We need to know our layout in order to correctly
                 // position any commands that may be getting set through the constructor.
-                this.layout = options.layout || _Constants.appBarLayoutCommands;
+                this.layout = options.layout || _Constants.appBarLayoutMenu;
                 delete options.layout;
 
                 // Need to set placement before closedDisplayMode, closedDisplayMode sets our starting position, which is dependant on placement.
@@ -1074,7 +1074,7 @@ define([
                     }
                 },
 
-                _afterPositionChange: function AppBar_afterPosiitonChange(newPosition, newState) {
+                _afterPositionChange: function AppBar_afterPositionChange(newPosition, newState) {
                     // Defines body of work to perform after changing positions.
                     if (this._disposed) {
                         return;

@@ -282,7 +282,7 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(_element, AppBar.element, "Verifying that element is what we set it with");
             LiveUnit.Assert.areEqual("bottom", AppBar.placement, "Verifying that position is 'bottom'");
-            LiveUnit.Assert.areEqual("commands", AppBar.layout, "Verifying that layout is 'commands'");
+            LiveUnit.Assert.areEqual("menu", AppBar.layout, "Verifying that layout is 'commands'");
             LiveUnit.Assert.isFalse(AppBar.sticky, "Verifying that sticky is false");
             LiveUnit.Assert.isFalse(AppBar.disabled, "Verifying that disabled is false");
             LiveUnit.Assert.isTrue(AppBar.hidden, "Verifying that hidden is true");
@@ -376,7 +376,7 @@ module CorsicaTests {
                 done(complete);
         };
 
-        testKeyboarding = function (complete) {
+        testCommandsLayoutKeyboarding = function (complete) {
             var htmlString = "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"primary\"}'></button>" +
                 "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"primary\"}'></button>" +
                 "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
@@ -396,7 +396,9 @@ module CorsicaTests {
                     3) Button 1
                     4) Button 3
             */
-            var AppBar = new WinJS.UI.AppBar(_element);
+
+            // Using commands layout, since this keyboarding logic is validated in the menu layout on Toolbar unit tests.
+            var AppBar = new WinJS.UI.AppBar(_element, { layout: "commands" });
             LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
             LiveUnit.Assert.isNotNull(AppBar, "AppBar element should not be null when instantiated.");
             AppBar.show();
@@ -456,7 +458,7 @@ module CorsicaTests {
                 "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\", section:\"primary\"}'></button>";
 
             _element.innerHTML = htmlString;
-            var AppBar = new WinJS.UI.AppBar(_element);
+            var AppBar = new WinJS.UI.AppBar(_element, { layout: 'commands' });
             LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
             LiveUnit.Assert.isNotNull(AppBar, "AppBar element should not be null when instantiated.");
             AppBar.show();
@@ -499,7 +501,7 @@ module CorsicaTests {
             });
         };
 
-        testKeyboardingWithContentCommands = function (complete) {
+        testCommandsLayoutKeyboardingWithContentCommands = function (complete) {
             /*
             Tests:
             win-interactive: left/right/home/end are ignored when focus is on an element with the win-interactive class.
@@ -545,7 +547,7 @@ module CorsicaTests {
                     2) "rangeContainer" Content Command: "rangeContainer" (firstElementFocus and lastElementFocus are set to the <input type="range"/> element.
                     3) "x8" Content Command: "adele" (firstElementFocus is default and lastElementFocus is set to #adele.)
             */
-            var AppBar = new WinJS.UI.AppBar(_element);
+            var AppBar = new WinJS.UI.AppBar(_element, { layout: 'commands' });
             LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
             LiveUnit.Assert.isNotNull(AppBar, "AppBar element should not be null when instantiated.");
             AppBar.show();
@@ -617,7 +619,7 @@ module CorsicaTests {
             });
         };
 
-        testMultiplePressesOFHomeAndEndKeys = function (complete) {
+        testCommandsLayoutMultiplePressesOFHomeAndEndKeys = function (complete) {
             /*
             Regression Test for WinBlue 238117: Pressing "home" or "end" key twice shouldn't move the focus to a different element
             */
@@ -637,7 +639,7 @@ module CorsicaTests {
                     1) "progressCmd" Content Command: "progress" (firstElementFocus is set to "#progress" and lastElementFocus is default)
                     2) "x8" Content Command: "adele" (firstElementFocus is default and lastElementFocus is set to #adele)
             */
-            var AppBar = new WinJS.UI.AppBar(_element);
+            var AppBar = new WinJS.UI.AppBar(_element, { layout: 'commands' });
             LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
             LiveUnit.Assert.isNotNull(AppBar, "AppBar element should not be null when instantiated.");
             AppBar.show();
@@ -1610,7 +1612,7 @@ module CorsicaTests {
 
         testSingleAppBarLightDismissFocusWrapping = function (complete) {
             var root = document.getElementById("appBarDiv");
-            var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: [{ id: 'top1', icon: 'add' }, { id: 'top2', icon: 'edit' }, { id: 'top3', icon: 'camera' }], closedDisplayMode: 'none' });
+            var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: [{ id: 'top1', icon: 'add' }, { id: 'top2', icon: 'edit' }, { id: 'top3', icon: 'camera' }], closedDisplayMode: 'none', layout:'commands' });
             var bottomBar = new WinJS.UI.AppBar(null, { placement: 'bottom', commands: [{ id: 'bot1', icon: 'add' }, { id: 'bot2', icon: 'edit' }, { id: 'bot3', icon: 'camera' }], closedDisplayMode: 'none', layout: 'custom' });
             root.appendChild(topBar.element);
             root.appendChild(bottomBar.element);
@@ -1661,7 +1663,7 @@ module CorsicaTests {
             // Test that focus wraps from one bar to the next, whenever more than one appbar is open and at least one of them is non sticky.
 
             var root = document.getElementById("appBarDiv");
-            var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: [{ id: 'top1', icon: 'add' }, { id: 'top2', icon: 'edit' }, { id: 'top3', icon: 'camera' }], closedDisplayMode: 'none', sticky: false });
+            var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: [{ id: 'top1', icon: 'add' }, { id: 'top2', icon: 'edit' }, { id: 'top3', icon: 'camera' }], closedDisplayMode: 'none', sticky: false, layout: 'commands' });
             var bottomBar = new WinJS.UI.AppBar(null, { placement: 'bottom', commands: [{ id: 'bot1', icon: 'add' }, { id: 'bot2', icon: 'edit' }, { id: 'bot3', icon: 'camera' }], sticky: false, closedDisplayMode: 'none', layout: 'custom' });
             root.appendChild(topBar.element);
             root.appendChild(bottomBar.element);

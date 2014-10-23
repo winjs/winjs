@@ -178,7 +178,7 @@ module CorsicaTests {
 
             var topAppBarElem = document.getElementById("topappbar");
 
-            var topAppBar = new WinJS.UI.AppBar(topAppBarElem, { sticky: true, placement: 'top' });
+            var topAppBar = new WinJS.UI.AppBar(topAppBarElem, { sticky: true, placement: 'top', layout:'commands' });
             LiveUnit.LoggingCore.logComment("Top AppBar Initialized with commands");
 
             topAppBar.show();
@@ -490,7 +490,7 @@ module CorsicaTests {
             appBarVisibleContentWidth += contentDivWidth;
 
             LiveUnit.LoggingCore.logComment("Top AppBarCommands created");
-            var topAppBar = <WinJS.UI.PrivateAppBar> new WinJS.UI.AppBar(topAppBarElem, { sticky: true, placement: 'top', commands: commands, closedDisplayMode: 'none' });
+            var topAppBar = <WinJS.UI.PrivateAppBar> new WinJS.UI.AppBar(topAppBarElem, { sticky: true, placement: 'top', commands: commands, closedDisplayMode: 'none', layout: 'commands' });
             LiveUnit.LoggingCore.logComment("Top AppBar Initialized with commands");
             topAppBar.show();
 
