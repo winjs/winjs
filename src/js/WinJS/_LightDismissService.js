@@ -385,12 +385,25 @@ define([
         },
     };
 
+    function moveToFront(array, item) {
+        removeItem(array, item);
+        array.unshift(item);
+    }
+
+    function removeItem(array, item) {
+        var index = array.indexOf(item);
+        if (index !== -1) {
+            array.splice(index, 1);
+        }
+    }
+
     var LightDismissService = _Base.Class.define(function () {
         this._clickEaterEl = this._createClickEater();
         this._clients = [];
         this._currentTopLevel = null;
         this._isLive = false;
         this._listeners = {};
+        this._focusOrder = [];
         
         this._onEdgyStartingBound = this._onEdgyStarting.bind(this);
         this._onEdgyCompletedBound = this._onEdgyCompleted.bind(this);
@@ -447,6 +460,7 @@ define([
             var index = this._clients.indexOf(client);
             if (index !== -1) {
                 this._clients.splice(index, 1);
+                removeItem(this._focusOrder, client);
                 //if (dismissedTopLevel) {
                 //    client._isTopLevel = false;
                     if (!this._notifying) {
@@ -657,7 +671,20 @@ define([
             
             }
 
-            var topLevel = this._clients.length > 0 ? this._clients[this._clients.length - 1] : null;
+            var topLevel = null;
+            if (this._clients.length > 0) {
+                var startIndex = clickEaterIndex === -1 ? 0 : clickEaterIndex;
+                var candidates = this._clients.slice(startIndex);
+                for (var i = 0, len = this._focusOrder.length; i < len && !topLevel; i++) {
+                    if (candidates.indexOf(this._focusOrder[i]) !== -1) {
+                        topLevel = this._focusOrder[i];
+                    }
+                }
+                if (!topLevel) {
+                    topLevel = candidates[candidates.length - 1];
+                }
+            }
+
             if (this._currentTopLevel !== topLevel) {
                 this._currentTopLevel && this._currentTopLevel.ld_lostTopLevel();
                 this._currentTopLevel = topLevel;
@@ -756,6 +783,7 @@ define([
                 }
             }
             if (i !== -1) {
+                moveToFront(this._focusOrder, this._clients[i]);
                 this._clients[i].ld_receivedFocus(target);
             }
 
