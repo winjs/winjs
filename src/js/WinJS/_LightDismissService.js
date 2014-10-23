@@ -292,6 +292,12 @@ define([
 
         // ILightDismissable
         
+        ld_edgyStarting: _,
+        
+        ld_edgyCompleted: _,
+        
+        ld_edgyCanceled: _,
+        
         ld_shouldReceiveLightDismiss: function (info) {
             info.stopPropagation();
             return false;
@@ -340,6 +346,12 @@ define([
             // TODO: Track focus so that we can restore it rather than always going to the first element?
             _ElementUtilities._focusFirstFocusableElement(this.element);
         },
+        
+        ld_edgyStarting: _,
+        
+        ld_edgyCompleted: _,
+        
+        ld_edgyCanceled: _,
         
         ld_shouldReceiveLightDismiss: LightDismissalPolicies.Light,
         
@@ -551,35 +563,50 @@ define([
         },
         
         _onEdgyStarting: function (eventObject) {
-            if (this._dispatchLightDismiss(LightDismissalReasons.edgy)) {
-                this._dispatchEdgy(EventNames.edgyStarting, eventObject);
-            }
+            this._dispatchEdgy(EventNames.edgyStarting, eventObject);
         },
         
         _onEdgyCompleted: function (eventObject) {
-            if (this._dispatchLightDismiss(LightDismissalReasons.edgy)) {
-                this._dispatchEdgy(EventNames.edgyCompleted, eventObject);
-            }
+            this._dispatchEdgy(EventNames.edgyCompleted, eventObject);
         },
         
         _onEdgyCanceled: function (eventObject) {
-            // TODO: How can ContentDialog cancel this? Doesn't trigger light dismiss in overlays
-             
-            //if (this._dispatchLightDismiss(LightDismissalReasons.edgy)) {
-            //    this._dispatchEdgy(EventNames.edgyCanceled, eventObject);
-            //}
+            this._dispatchEdgy(EventNames.edgyCanceled, eventObject);
         },
         
         _dispatchEdgy: function (edgyEventName, eventObject) {
-            edgyEventName = edgyEventName.toLowerCase();
-            var handlers = this._getHandlers();
-            var handler = handlers[edgyEventName];
+            var eventToMethod = {};
+            eventToMethod[EventNames.edgyStarting] = "ld_edgyStarting";
+            eventToMethod[EventNames.edgyCompleted] = "ld_edgyCompleted";
+            eventToMethod[EventNames.edgyCanceled] = "ld_edgyCanceled";
+            var method = eventToMethod[edgyEventName];
+            var handler = this._getHandlers()[edgyEventName.toLowerCase()];
+            var baseListeners = handler ? handler.listeners.slice(0) : [];
             
-            if (handler) {
-                var listeners = handler.listeners.slice(0);
-                listeners.forEach(function (listener) {
-                    listener(eventObject);
-                });
+            var clients = this._clients.slice(0);
+            var info = {
+                originalEvent: eventObject,
+                stopPropagation: function () {
+                    this._stop = true;
+                },
+                _stop: false,
+                preventDefault: function () {
+                    this._doDefault = false;  
+                },
+                _doDefault: true
+            };
+            // Notify light dismiss stack
+            for (var i = clients.length - 1; i >= 0 && !info._stop; i--) {
+                clients[i][method](info);
+            }
+            // Notify listeners outside of the light dismiss stack
+            for (var i = 0, len = baseListeners.length; i < len && !info._stop; i++) {
+                baseListeners[i](info);
+            }
+            
+            // Convert the edgy event into a light dismiss trigger
+            if (info._doDefault && (edgyEventName === EventNames.edgyStarting || edgyEventName === EventNames.edgyCompleted)) {
+                this._dispatchLightDismiss(LightDismissalReasons.edgy);
             }
         },
         
@@ -694,6 +721,12 @@ define([
             //}
 
             var target = eventObject.target;
+            // TODO: Should I uncomment this?
+            //if (target !== document.activeElement) {
+            //    // The elements don't match. Focus events are async in IE so assume this
+            //    // focus event is out of date and ignore it. Another one must be coming.
+            //    return;
+            //}
             for (var i = this._clients.length - 1; i >= 0; i--) {
                 if (this._clients[i].ld_containsElement(target)) {
                     break;

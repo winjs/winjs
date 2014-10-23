@@ -196,6 +196,24 @@ define([
                 },
 
                 // ILightDismissable
+                
+                ld_edgyStarting: function (eventObject) {
+                    this._clients.forEach(function (c) {
+                        c.ld_edgyStarting(eventObject);
+                    });
+                },
+        
+                ld_edgyCompleted: function (eventObject) {
+                    this._clients.forEach(function (c) {
+                        c.ld_edgyCompleted(eventObject);
+                    });
+                },
+                
+                ld_edgyCanceled: function (eventObject) {
+                    this._clients.forEach(function (c) {
+                        c.ld_edgyCanceled(eventObject);
+                    });
+                },
 
                 ld_requiresClickEater: function () {
                     return this._clients.some(function (c) {

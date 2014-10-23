@@ -848,24 +848,17 @@ define([
                         }
                     }
                 },
-                ld_shouldReceiveLightDismiss: function (info) {
-                    // TODO: Should the right click logic be provided by _LightDismissService.LightDismissalPolicies.Light?
-                    // TODO: It's strange that Overlay is that one that manages _containsRightMouseClick but Flyout is the
+                ld_edgyCompleted: function (edgyEvent) {
+                    // TODO: Should the right click logic be provided by the LightDismissableElement mixin?
+                    // TODO: It's strange that Overlay is the one that manages _containsRightMouseClick but Flyout is the
                     //       one that uses it.
                     // TODO: SettingsFlyout probably needs the same function
-                    
-                    if (info.reason === _LightDismissService.LightDismissalReasons.edgy) {
-                        if (this._containsRightMouseClick) {
-                            info.stopPropagation(); // nobody else should receive a light dismiss due to edgy
-                            info.preventDefault(); // nobody listening directly to the edgy event should hear it
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    } else {
-                        return _LightDismissService.LightDismissalPolicies.Light(info);
+                    if (this._containsRightMouseClick) {
+                        edgyEvent.stopPropagation(); // Don't let anybody else see edgyCompleted
+                        edgyEvent.preventDefault(); // Don't let edgyCompleted turn into a light dismiss event 
                     }
                 },
+                ld_shouldReceiveLightDismiss: _LightDismissService.LightDismissalPolicies.Light,
                 ld_lightDismiss: function (info) {
                     // _hide or hide?
                     this._hide();
