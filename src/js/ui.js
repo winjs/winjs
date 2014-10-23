@@ -26,7 +26,8 @@ define([
     'WinJS/Controls/ViewBox',
     'WinJS/Controls/ContentDialog',
     'WinJS/Controls/ToolBar',
-    'WinJS/Controls/SplitView'
+    'WinJS/Controls/SplitView',
+    'WinJS/Utilities/_AutoFocus'
     ], function (_WinJS) {
     "use strict";
 
