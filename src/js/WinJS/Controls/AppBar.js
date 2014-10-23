@@ -71,6 +71,11 @@ define([
                 this._clients = [];
                 this._zIndex = null; // ADCOM: Can we accidentally use _zIndex while it's null?
                 this._currentFocus = null;
+                this._edgyHappening = null;
+                
+                _LightDismissService.addEventListener(null, "edgystarting", this._startingEdgy.bind(this));
+                _LightDismissService.addEventListener(null, "edgycompleted", this._completedEdgy.bind(this));
+                _LightDismissService.addEventListener(null, "edgycanceled", this._canceledEdgy.bind(this));
             }, {
                 shown: function (client) {
                     // TODO: batch calls to shown? often multiple AppBars are shown together
@@ -155,6 +160,40 @@ define([
                 //        this._prevFocus : this._clients[0];
                 //    focusTo.element.focus();
                 //},
+                
+                // edgy event handlers
+                // TODO: Maybe these don't need to be in the AppBarManager or maybe more things need to be in it (e.g. toggleAllAppBarsState
+                //       and anything else that involves coordination between AppBars.)
+                
+                _startingEdgy: function () {
+                    if (!this._edgyHappening) {
+                        // Edgy wasn't happening, so toggle & start it
+                        this._edgyHappening = AppBar._toggleAllAppBarsState(false);
+                    }
+                },
+                
+                _completedEdgy: function (e) {                    
+                    if (this._edgyHappening) {
+                        // Edgy was happening, just skip it
+                        this._edgyHappening = null;
+                    } else {
+                        // Edgy wasn't happening, so toggle
+                        var keyboardInvoked = e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
+                        AppBar._toggleAllAppBarsState(keyboardInvoked);
+                    }
+                },
+    
+                _canceledEdgy: function () {
+                    // Shouldn't get here unless edgy was happening.
+                    // Undo whatever we were doing.
+                    var bars = _getDynamicBarsForEdgy();
+                    if (this._edgyHappening === "showing") {
+                        _Overlay._Overlay._hideAppBars(bars, false);
+                    } else if (this._edgyHappening === "hiding") {
+                        _Overlay._Overlay._showAppBars(bars, false);
+                    }
+                    this._edgyHappening = null;
+                },
 
                 // ILightDismissable
 
@@ -237,43 +276,6 @@ define([
 
             // Hook into event
             var globalEventsInitialized = false;
-            var edgyHappening = null;
-
-            // Handler for the edgy starting/completed/cancelled events
-            function _completedEdgy(e) {
-                // If we had a right click on a flyout, ignore it.
-                if (_Overlay._Overlay._containsRightMouseClick &&
-                    e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.mouse) {
-                    return;
-                }
-                if (edgyHappening) {
-                    // Edgy was happening, just skip it
-                    edgyHappening = null;
-                } else {
-                    // Edgy wasn't happening, so toggle
-                    var keyboardInvoked = e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
-                    AppBar._toggleAllAppBarsState(keyboardInvoked);
-                }
-            }
-
-            function _startingEdgy() {
-                if (!edgyHappening) {
-                    // Edgy wasn't happening, so toggle & start it
-                    edgyHappening = AppBar._toggleAllAppBarsState(false);
-                }
-            }
-
-            function _canceledEdgy() {
-                // Shouldn't get here unless edgy was happening.
-                // Undo whatever we were doing.
-                var bars = _getDynamicBarsForEdgy();
-                if (edgyHappening === "showing") {
-                    _Overlay._Overlay._hideAppBars(bars, false);
-                } else if (edgyHappening === "hiding") {
-                    _Overlay._Overlay._showAppBars(bars, false);
-                }
-                edgyHappening = null;
-            }
 
             function _allManipulationChanged(event) {
                 var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
@@ -548,16 +550,6 @@ define([
 
                 // Attach global event handlers
                 if (!globalEventsInitialized) {
-                    // We'll trigger on invoking.  Could also have invoked or canceled
-                    // Eventually we may want click up on invoking and drop back on invoked.
-                    // Check for namespace so it'll behave in the designer.
-                    if (_WinRT.Windows.UI.Input.EdgeGesture) {
-                        var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
-                        edgy.addEventListener("starting", _startingEdgy);
-                        edgy.addEventListener("completed", _completedEdgy);
-                        edgy.addEventListener("canceled", _canceledEdgy);
-                    }
-
                     // Need to know if the IHM is done scrolling
                     _Global.document.addEventListener("MSManipulationStateChanged", _allManipulationChanged, false);
 
@@ -1611,8 +1603,13 @@ define([
                     }
                 },
                 ld_shouldReceiveLightDismiss: function (info) {
-                    var policy = _LightDismissService.LightDismissalPolicies[this.sticky ? "Sticky" : "Light"];
-                    return policy(info);
+                    if (info.reason === _LightDismissService.LightDismissalReasons.edgy) {
+                        // TODO: Should we stopPropagation?
+                        return false;
+                    } else {
+                        var policy = _LightDismissService.LightDismissalPolicies[this.sticky ? "Sticky" : "Light"];
+                        return policy(info);
+                    }
                 },
                 ld_lightDismiss: function (info) {
                     // _hide or hide?

@@ -41,7 +41,8 @@ define([
         escape: "escape",
         hardwareBackButton: "hardwareBackButton",
         windowResize: "windowResize",
-        windowBlur: "windowBlur"
+        windowBlur: "windowBlur",
+        edgy: "edgy"
         // click (_Overlay.js: _Overlay_handleAppBarClickEatingClick, _Overlay__handleFlyoutClickEatingClick)
         // window blur (_Overlay.js: _GlobalListener_windowBlur)
         // edgy (_Overlay.js: _checkRightClickUp, _GlobalListener_edgyStarting, _GlobalListener_edgyCompleted)
@@ -75,12 +76,13 @@ define([
                 case LightDismissalReasons.lostFocus:
                 case LightDismissalReasons.windowResize:
                 case LightDismissalReasons.windowBlur:
+                case LightDismissalReasons.edgy:
                     return true;
                     break;
             }
         },
         Sticky: function LightDismissalPolicies_Sticky_shouldReceiveLightDismiss(info) {
-            info.stopPropagation();
+            info.stopPropagation(); // TODO: Maybe we shouldn't stopPropagation here
             return false;
         }  
     };
@@ -358,7 +360,7 @@ define([
         ld_qsa: function (selector) {
             var list = Array.prototype.slice.call(this.element.querySelectorAll(selector), 0);
             if (_ElementUtilities._matchesSelector(this.element, selector)) {
-                list.unshift(element);
+                list.unshift(this.element);
             }
             return list;
         },
@@ -370,6 +372,16 @@ define([
         this._currentTopLevel = null;
         this._isLive = false;
         this._listeners = {};
+        
+        this._onEdgyStartingBound = this._onEdgyStarting.bind(this);
+        this._onEdgyCompletedBound = this._onEdgyCompleted.bind(this);
+        this._onEdgyCanceledBound = this._onEdgyCanceled.bind(this);
+        if (_WinRT.Windows.UI.Input.EdgeGesture) {
+            var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
+            edgy.addEventListener("starting", this._onEdgyStartingBound);
+            edgy.addEventListener("completed", this._onEdgyCompletedBound);
+            edgy.addEventListener("canceled", this._onEdgyCanceledBound);
+        }
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
@@ -443,18 +455,23 @@ define([
                 handler = this._getListener(name);
                 handler.refCount = 0;
                 handlers[name] = handler;
+                handler.listeners = [];
                 
                 if (name === EventNames.requestingFocusOnKeyboardInput) {
                     TypeToSearch.register(this._requestingFocusOnKeyboardInput.bind(this));
                     //this.object.addEventListener(name, handler);
-                } else if (name === EventNames.edgyStarting || name === EventNames.edgyCompleted || name === EventNames.edgyCanceled) {
-                    
                 }
+                // We're always listening to edgy events so no need to start listening to them now
             }
-
+            
             handler.refCount++;
-            element.addEventListener(this._getEventName(name), listener);
-            _ElementUtilities.addClass(element, this._getClassName(name));
+            if (name === EventNames.requestingFocusOnKeyboardInput) {
+                element.addEventListener(this._getEventName(name), listener);
+                _ElementUtilities.addClass(element, this._getClassName(name));
+            } else {
+                // edgy
+                handler.listeners.push(listener);
+            }
         },
 
         removeEventListener: function (element, name, listener) {
@@ -468,15 +485,23 @@ define([
                     if (name === EventNames.requestingFocusOnKeyboardInput) {
                         TypeToSearch.unregister();
                         //this.object.removeEventListener(name, handler);
-                    } else if (name === EventNames.edgyStarting || name === EventNames.edgyCompleted || name === EventNames.edgyCanceled) {
-                    
                     }
+                    // We're always listening to edgy events so no need to unregister them now
                     delete handlers[name];
                 }
             }
-
-            _ElementUtilities.removeClass(element, this._getClassName(name));
-            element.removeEventListener(this._getEventName(name), listener);
+            
+            if (name === EventNames.requestingFocusOnKeyboardInput) {
+                _ElementUtilities.removeClass(element, this._getClassName(name));
+                element.removeEventListener(this._getEventName(name), listener);
+            } else {
+                // edgy
+                var index = handler.listeners.indexOf(listener);
+                if (index !== -1) {
+                    handler.listeners.splice(index, 1);
+                }
+            }
+            
         },
         
         _getHandlers: function () {
@@ -525,18 +550,36 @@ define([
             }
         },
         
-        _dispatchEdgy: function (edgyEventName) {
-            if (this._clients.length > 0) {
-                var client = this._clients[this._clients.length - 1];
-                var className = this._getClassName(edgyEventName);
-                var eventName = this._getEventName(edgyEventName);
-                var targets = client.ld_qsa('.' + className);
-                var length = targets.length;
-                for (var i = 0; i < length; i++) {
-                    var event = _Global.document.createEvent("Event");
-                    event.initEvent(eventName, false, true);
-                    targets[i].dispatchEvent(event);
-                }
+        _onEdgyStarting: function (eventObject) {
+            if (this._dispatchLightDismiss(LightDismissalReasons.edgy)) {
+                this._dispatchEdgy(EventNames.edgyStarting, eventObject);
+            }
+        },
+        
+        _onEdgyCompleted: function (eventObject) {
+            if (this._dispatchLightDismiss(LightDismissalReasons.edgy)) {
+                this._dispatchEdgy(EventNames.edgyCompleted, eventObject);
+            }
+        },
+        
+        _onEdgyCanceled: function (eventObject) {
+            // TODO: How can ContentDialog cancel this? Doesn't trigger light dismiss in overlays
+             
+            //if (this._dispatchLightDismiss(LightDismissalReasons.edgy)) {
+            //    this._dispatchEdgy(EventNames.edgyCanceled, eventObject);
+            //}
+        },
+        
+        _dispatchEdgy: function (edgyEventName, eventObject) {
+            edgyEventName = edgyEventName.toLowerCase();
+            var handlers = this._getHandlers();
+            var handler = handlers[edgyEventName];
+            
+            if (handler) {
+                var listeners = handler.listeners.slice(0);
+                listeners.forEach(function (listener) {
+                    listener(eventObject);
+                });
             }
         },
         

@@ -51,8 +51,6 @@ define([
                 this._inputPaneShowing = this._inputPaneShowing.bind(this);
                 this._inputPaneHiding = this._inputPaneHiding.bind(this);
                 this._documentScroll = this._documentScroll.bind(this);
-                this._edgyStarting = this._edgyStarting.bind(this);
-                this._edgyCompleted = this._edgyCompleted.bind(this);
                 this._windowResized = this._windowResized.bind(this);
             }, {
                 initialize: function _GlobalListener_initialize() {
@@ -78,16 +76,6 @@ define([
                     _allOverlaysCallback(event, "_checkScrollPosition");
                     _WriteProfilerMark(_GlobalListener.profilerString + "_checkScrollPosition,StopTM");
                 },
-                _edgyStarting: function _GlobalListener_edgyStarting(event) {
-                    _Overlay._lightDismissAllFlyouts();
-                },
-                _edgyCompleted: function _GlobalListener_edgyCompleted(event) {
-                    // Right mouse clicks in WWA will trigger the edgy "completed" event.
-                    // Flyouts and SettingsFlyouts should not light dismiss if they are the target of that right click.
-                    if (!_Overlay._containsRightMouseClick) {
-                        _Overlay._lightDismissAllFlyouts();
-                    }
-                },
                 _windowResized: function _GlobalListener_windowResized(event) {
                     _WriteProfilerMark(_GlobalListener.profilerString + "_baseResize,StartTM");
                     _allOverlaysCallback(event, "_baseResize");
@@ -101,14 +89,6 @@ define([
                             listenerOperation = "addEventListener";
                         } else if (newState === _GlobalListener.states.off) {
                             listenerOperation = "removeEventListener";
-                        }
-
-                        // Be careful so it behaves in designer as well.
-                        if (_WinRT.Windows.UI.Input.EdgeGesture) {
-                            // Catch edgy events too
-                            var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
-                            edgy[listenerOperation]("starting", this._edgyStarting);
-                            edgy[listenerOperation]("completed", this._edgyCompleted);
                         }
 
                         if (_WinRT.Windows.UI.ViewManagement.InputPane) {
@@ -182,6 +162,53 @@ define([
                 }
 
                 return realElements;
+            }
+            
+            // All click-eaters eat "down" clicks so that we can still eat
+            // the "up" click that'll come later.
+            function checkClickEatingPointerDown(event, stopPropagation) {
+                var target = event.currentTarget;
+                if (target) {
+                    try {
+                        // Remember pointer id and remember right mouse
+                        target._winPointerId = event.pointerId;
+                        // Cache right mouse if that was what happened
+                        target._winRightMouse = (event.button === 2);
+                    } catch (e) { }
+                }
+
+                if (stopPropagation && !target._winRightMouse) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            }
+            
+            // Make sure that if we have an up we had an earlier down of the same kind
+            function checkSameClickEatingPointerUp(event, stopPropagation) {
+                var result = false,
+                    rightMouse = false,
+                    target = event.currentTarget;
+
+                // Same pointer we were watching?
+                try {
+                    if (target && target._winPointerId === event.pointerId) {
+                        // Same pointer
+                        result = true;
+                        rightMouse = target._winRightMouse;
+                        // For click-eaters, don't count right click the same because edgy will dismiss
+                        if (rightMouse && stopPropagation) {
+                            result = false;
+                        }
+                    }
+                } catch (e) { }
+
+                if (stopPropagation && !rightMouse) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    target._winHideClickEater(event);
+                }
+
+                return result;
             }
 
             var strings = {
@@ -1091,13 +1118,27 @@ define([
                         return false;
                     }
                 },
+                
+                _checkRightClickDown: function (event) {
+                    checkClickEatingPointerDown(event, false);
+                },
+
+                _checkRightClickUp: function (event) {
+                    if (checkSameClickEatingPointerUp(event, false)) {
+                        // Right clicks will trigger the edgy 'completed' event in WWA. 
+                        // Set a flag now and and process it later in our edgy event handler.
+                        var that = this;
+                        that._containsRightMouseClick = true;
+                        _BaseUtils._yieldForEvents(function () { that._containsRightMouseClick = false; });
+                    }
+                },
 
                 _handleOverlayEventsForFlyoutOrSettingsFlyout: function _Overlay_handleOverlayEventsForFlyoutOrSettingsFlyout() {
                     var that = this;
 
                     // Need to handle right clicks that trigger edgy events in WWA
-                    _ElementUtilities._addEventListener(this._element, "pointerdown", _Overlay._checkRightClickDown, true);
-                    _ElementUtilities._addEventListener(this._element, "pointerup", _Overlay._checkRightClickUp, true);
+                    _ElementUtilities._addEventListener(this._element, "pointerdown", this._checkRightClickDown.bind(this), true);
+                    _ElementUtilities._addEventListener(this._element, "pointerup", this._checkRightClickUp.bind(this), true);
                 },
 
                 _writeProfilerMark: function _Overlay_writeProfilerMark(text) {
@@ -1160,66 +1201,6 @@ define([
 
                     _Overlay._hideAppBars(appBars, keyboardInvoked);
                     // ADCOM: lds_hidden?
-                },
-
-                // All click-eaters eat "down" clicks so that we can still eat
-                // the "up" click that'll come later.
-                _checkClickEatingPointerDown: function (event, stopPropagation) {
-                    var target = event.currentTarget;
-                    if (target) {
-                        try {
-                            // Remember pointer id and remember right mouse
-                            target._winPointerId = event.pointerId;
-                            // Cache right mouse if that was what happened
-                            target._winRightMouse = (event.button === 2);
-                        } catch (e) { }
-                    }
-
-                    if (stopPropagation && !target._winRightMouse) {
-                        event.stopPropagation();
-                        event.preventDefault();
-                    }
-                },
-
-                // Make sure that if we have an up we had an earlier down of the same kind
-                _checkSameClickEatingPointerUp: function (event, stopPropagation) {
-                    var result = false,
-                        rightMouse = false,
-                        target = event.currentTarget;
-
-                    // Same pointer we were watching?
-                    try {
-                        if (target && target._winPointerId === event.pointerId) {
-                            // Same pointer
-                            result = true;
-                            rightMouse = target._winRightMouse;
-                            // For click-eaters, don't count right click the same because edgy will dismiss
-                            if (rightMouse && stopPropagation) {
-                                result = false;
-                            }
-                        }
-                    } catch (e) { }
-
-                    if (stopPropagation && !rightMouse) {
-                        event.stopPropagation();
-                        event.preventDefault();
-                        target._winHideClickEater(event);
-                    }
-
-                    return result;
-                },
-
-                _checkRightClickDown: function (event) {
-                    _Overlay._checkClickEatingPointerDown(event, false);
-                },
-
-                _checkRightClickUp: function (event) {
-                    if (_Overlay._checkSameClickEatingPointerUp(event, false)) {
-                        // Right clicks will trigger the edgy 'completed' event in WWA. 
-                        // Set a flag now and and process it later in our edgy event handler.
-                        _Overlay._containsRightMouseClick = true;
-                        _BaseUtils._yieldForEvents(function () { _Overlay._containsRightMouseClick = false; });
-                    }
                 },
 
                 _isFlyoutVisible: function () {
