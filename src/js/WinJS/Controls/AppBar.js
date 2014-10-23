@@ -232,10 +232,12 @@ define([
                         return c.ld_containsElement(element);
                     });
                 },
-                ld_qsa: function (selector) {
-                    return this._clients.reduce(function (list, c) {
-                        return list.concat(c.ld_qsa(selector));
-                    }, []);
+                ld_requestingFocusOnKeyboardInput: function (selector) {
+                    // TODO: If there's a type to search SearchBox, this will run on every keystroke
+                    // even though there probably isn't one in the AppBars
+                    return this._clients.forEach(function (c) {
+                        c.ld_requestingFocusOnKeyboardInput(selector);
+                    });
                 },
                 ld_becameTopLevel: function () {
                     if (this._currentFocus) {

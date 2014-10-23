@@ -331,9 +331,16 @@ define([
             return _Global.document.body.contains(element);
         },
 
-        ld_qsa: function (selector) {
-            return Array.prototype.slice.call(_Global.document.body.querySelectorAll(selector), 0);
-        },
+        ld_requestingFocusOnKeyboardInput: function (info) {
+            var that = this;
+            // TODO: Is the filter necessary?
+            // TODO: Is this too much overhead for the common path? This will run on every keystroke.
+            var targets = lds._getRequestingFocusOnKeyboardInputCandidates(_Global.document.body).filter(function (el) {
+                return that._belongsToBody(el);
+            });
+            lds._dispatchRequestingFocusOnKeyboardInput(targets);
+            info.stopPropagation();
+        }
     });
 
     var LightDismissableElement = {
@@ -369,12 +376,12 @@ define([
             return this.element.contains(element);
         },
 
-        ld_qsa: function (selector) {
-            var list = Array.prototype.slice.call(this.element.querySelectorAll(selector), 0);
-            if (_ElementUtilities._matchesSelector(this.element, selector)) {
-                list.unshift(this.element);
-            }
-            return list;
+        ld_requestingFocusOnKeyboardInput: function (info) {
+            // TODO: If there's a type to search SearchBox, this will run on every keystroke
+            // even though there probably isn't one in this light dismissable
+            var targets = lds._getRequestingFocusOnKeyboardInputCandidates(this.element);
+            lds._dispatchRequestingFocusOnKeyboardInput(targets);
+            info.stopPropagation();
         },
     };
 
@@ -546,19 +553,35 @@ define([
 
             return listener.bind(this);
         },
+        
+        _getRequestingFocusOnKeyboardInputCandidates: function (element) {
+            var className = lds._getClassName(EventNames.requestingFocusOnKeyboardInput);
+            
+            return Array.prototype.slice.call(element.querySelectorAll('.' + className), 0);
+        },
+        
+        _dispatchRequestingFocusOnKeyboardInput: function (targets) {
+            var eventName = lds._getEventName(EventNames.requestingFocusOnKeyboardInput);
+            
+            var length = targets.length;
+            for (var i = 0; i < length; i++) {
+                var event = _Global.document.createEvent("Event");
+                event.initEvent(eventName, false, true);
+                targets[i].dispatchEvent(event);
+            }
+        },
 
         _requestingFocusOnKeyboardInput: function () {
-            if (this._clients.length > 0) {
-                var client = this._clients[this._clients.length - 1];
-                var className = this._getClassName(EventNames.requestingFocusOnKeyboardInput);
-                var eventName = this._getEventName(EventNames.requestingFocusOnKeyboardInput);
-                var targets = client.ld_qsa('.' + className);
-                var length = targets.length;
-                for (var i = 0; i < length; i++) {
-                    var event = _Global.document.createEvent("Event");
-                    event.initEvent(eventName, false, true);
-                    targets[i].dispatchEvent(event);
-                }
+            var clients = this._clients.slice(0);
+            var info = {
+                stopPropagation: function () {
+                    this._stop = true;
+                },
+                _stop: false,
+            };
+            // Notify light dismiss stack
+            for (var i = clients.length - 1; i >= 0 && !info._stop; i--) {
+                clients[i].ld_requestingFocusOnKeyboardInput(info);
             }
         },
         
