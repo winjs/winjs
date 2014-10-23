@@ -178,7 +178,7 @@ define([
                         this._edgyHappening = null;
                     } else {
                         // Edgy wasn't happening, so toggle
-                        var keyboardInvoked = e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
+                        var keyboardInvoked = e.originalEvent.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
                         AppBar._toggleAllAppBarsState(keyboardInvoked);
                     }
                 },
