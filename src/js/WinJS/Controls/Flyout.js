@@ -229,11 +229,15 @@ define([
                 },
 
                 _hide: function Flyout_hide() {
-                    this._baseHide();
+                    if (this._baseHide()) {
+                        // Synchronous call to hidden (good for focus management)
+                        _LightDismissService.hidden(this);
+                    }
                 },
 
                 _endHide: function () {
-                    _LightDismissService.hidden(this);
+                    // Aynchronous call to hidden (good for rendering)
+                    //_LightDismissService.hidden(this);
                     this._currentFocus = null;
                 },
 

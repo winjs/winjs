@@ -1101,6 +1101,8 @@ define([
                             this._beforeShow();
                         } else if (newState === appbarHiddenState) {
                             this._beforeHide();
+                            // Synchronous call to hidden (good for focus management)
+                            AppBarManager.hidden(this);
                         }
 
                         // Position our element into the correct "end of animation" position,
@@ -1134,7 +1136,8 @@ define([
                         }
 
                         if (newState === appbarHiddenState) {
-                            AppBarManager.hidden(this);
+                            // Aynchronous call to hidden (good for rendering)
+                            //AppBarManager.hidden(this);
                             this._currentFocus = null;
                         }
 
