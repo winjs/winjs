@@ -30,7 +30,7 @@
                 'git push https://' + gitInfo.token + '@github.com/phosphoer/winjs-controls.git gh-pages'
             ];
 
-            function doAllCommands(index, doneCallback) {
+            function doAllCommands (index, doneCallback) {
                 if (index >= commands.length) {
                     doneCallback();
                     return;
@@ -47,7 +47,7 @@
                 fs.removeSync('winjs/unreleased');
                 fs.copySync('../' + config.desktopOutput, 'winjs/unreleased');
 
-                doAllCommands(0, function() {
+                doAllCommands(0, function () {
                     process.chdir('../');
                     done();
                 });
