@@ -9,7 +9,17 @@ var AttributeNames = {
 };
 
 var ClassNames = {
+    autoFocusableIframe: "win-autofocus-iframe",
     focusable: "win-focusable"
+};
+
+var CrossDomainMessageConstants = {
+    messageDataProperty: "msWinJSAutoFocusControlMessage",
+
+    register: "register",
+    unregister: "unregister",
+    enterFocus: "enterFocus",
+    exitFocus: "exitFocus"
 };
 
 var DirectionNames = {
@@ -26,6 +36,7 @@ var EventNames = {
 var FocusableTagNames = [
     "A",
     "BUTTON",
+    "IFRAME",
     "INPUT",
     "SELECT",
     "TEXTAREA"
@@ -33,10 +44,9 @@ var FocusableTagNames = [
 
 // These factors can be tweaked to adjust which elements are favored by the focus algorithm  
 var ScoringConstants = {
-    primaryAxisDistanceWeight: 10,
-    secondaryAxisDistanceWeight: 7,
+    primaryAxisDistanceWeight: 3,
+    secondaryAxisDistanceWeight: 2,
     percentInHistoryShadowWeight: 10000,
-    percentInShadowWeight: 50,
     inShadowThreshold: 0.25
 };
 
@@ -103,21 +113,24 @@ export function findNextFocusElement(direction: string, options?: AutoFocusOptio
 
 var _lastAutoFocusTarget: HTMLElement;
 var _historyRect: IRect;
-function autoFocus(direction: string): void {
-    var historyInvalidated = document.activeElement !== _lastAutoFocusTarget;
-    if (historyInvalidated) {
+function _autoFocus(direction: string, referenceRect?: IRect): void {
+    if (referenceRect || document.activeElement !== _lastAutoFocusTarget) {
         _historyRect = null;
         _lastAutoFocusTarget = null;
     }
+
+    var lastAutoFocusTarget = _lastAutoFocusTarget;
 
     var result = _findNextFocusElementInternal(direction, {
         allowOverride: true,
         focusRoot: autoFocusRoot,
         historyRect: _historyRect,
         referenceElement: _lastAutoFocusTarget,
+        referenceRect: referenceRect
     });
 
     if (result) {
+        // A focus target was found
         var focusMoved = trySetFocus(result.target);
 
         if (result.usedOverride) {
@@ -133,26 +146,55 @@ function autoFocus(direction: string): void {
                     historyRect: null,
                     referenceElement: _lastAutoFocusTarget,
                 });
-                if (result && trySetFocus(result.target)) {
-                    updateHistoryRect(direction, result);
-                    _lastAutoFocusTarget = result.target;
+                if (result) {
+                    focusMoved = trySetFocus(result.target);
+                    if (focusMoved) {
+                        updateHistoryRect(direction, result);
+                        _lastAutoFocusTarget = result.target;
+                    }
                 }
             }
         } else {
             updateHistoryRect(direction, result);
             _lastAutoFocusTarget = result.target;
         }
+
+        if (focusMoved) {
+            // If we successfully moved focus and the new focused item is an IFRAME, then we need to notify it
+            if (result.target.tagName === "IFRAME" && result.target.classList.contains(ClassNames.autoFocusableIframe)) {
+                var message = {};
+                message[CrossDomainMessageConstants.messageDataProperty] = {
+                    type: CrossDomainMessageConstants.enterFocus,
+                    direction: direction,
+                    refRect: result.referenceRect
+                };
+                (<HTMLIFrameElement>result.target).contentWindow.postMessage(message, "*");
+            }
+        }
+    } else {
+        // No focus target was found; if we are inside an IFRAME, notify the parent that focus is exiting this IFRAME
+        if (top !== window) {
+            var refRect = referenceRect;
+            if (!refRect) {
+                refRect = document.activeElement ? _toIRect(document.activeElement.getBoundingClientRect()) : _defaultRect();
+            }
+
+            var message = {};
+            message[CrossDomainMessageConstants.messageDataProperty] = {
+                type: CrossDomainMessageConstants.exitFocus,
+                direction: direction,
+                refRect: refRect,
+                screenTop: window.screenTop,
+                screenLeft: window.screenLeft
+            };
+            window.parent.postMessage(message, "*");
+        }
     }
 
+
+    // Nested Helpers
     function updateHistoryRect(direction: string, result: FindNextFocusResult) {
-        var newHistoryRect: IRect = {
-            left: 0,
-            top: 0,
-            width: 0,
-            height: 0,
-            bottom: 0,
-            right: 0
-        };
+        var newHistoryRect = _defaultRect();
 
         // It's possible to get into a situation where the target element has no overlap with the reference edge.
         //  
@@ -210,7 +252,7 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
     options.allowOverride = options.allowOverride || false;
     options.focusRoot = options.focusRoot || autoFocusRoot || document.body;
-    options.historyRect = options.historyRect || toIRect({ top: 0, left: 0, width: 0, height: 0 });
+    options.historyRect = options.historyRect || _defaultRect();
     options.maxDistance = options.maxDistance || Math.max(screen.availHeight, screen.availWidth);
 
     var refObj = getReferenceObject(options.referenceElement, options.referenceRect);
@@ -249,7 +291,7 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
             continue;
         }
 
-        var potentialRect = toIRect(potentialElement.getBoundingClientRect());
+        var potentialRect = _toIRect(potentialElement.getBoundingClientRect());
 
         // Skip elements that have either a width or zero or a height of zero  
         if (potentialRect.width === 0 || potentialRect.height === 0) {
@@ -265,13 +307,10 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
         }
     }
 
-    if (bestPotential.element) {
-        return { target: bestPotential.element, targetRect: bestPotential.rect, referenceRect: refObj.rect, usedOverride: false };
-    } else {
-        // todo: iframe case
-    }
+    return bestPotential.element ? { target: bestPotential.element, targetRect: bestPotential.rect, referenceRect: refObj.rect, usedOverride: false } : null;
 
-    // Helpers
+
+    // Nested Helpers
     function calculatePercentInShadow(minReferenceCoord: number, maxReferenceCoord: number, minPotentialCoord: number, maxPotentialCoord: number) {
         /// Calculates the percentage of the potential element that is in the shadow of the reference element.   
         if ((minReferenceCoord >= maxPotentialCoord) ||
@@ -405,15 +444,12 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
             primaryAxisDistance = maxDistance - primaryAxisDistance;
             secondaryAxisDistance = maxDistance - secondaryAxisDistance;
 
-            // Potential elements in the shadow get a multiplier to their final score  
             if (percentInShadow >= ScoringConstants.inShadowThreshold) {
-                percentInShadow = 1;
-
+                // Potential elements in the shadow get a multiplier to their final score  
                 primaryAxisDistance *= 2;
             }
 
-            score = percentInShadow * ScoringConstants.percentInShadowWeight +
-            primaryAxisDistance * ScoringConstants.primaryAxisDistanceWeight +
+            score = primaryAxisDistance * ScoringConstants.primaryAxisDistanceWeight +
             secondaryAxisDistance * ScoringConstants.secondaryAxisDistanceWeight +
             percentInHistoryShadow * ScoringConstants.percentInHistoryShadowWeight;
         }
@@ -437,21 +473,11 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
         if (referenceElement) {
             refElement = referenceElement;
-            refRect = toIRect(refElement.getBoundingClientRect());
+            refRect = _toIRect(refElement.getBoundingClientRect());
         } else if (referenceRect) {
-            refRect = toIRect(referenceRect);
+            refRect = _toIRect(referenceRect);
         } else {
-            // We set the top, left, bottom and right properties of the referenceBoundingRectangle to '-1'   
-            // (as opposed to '0') because we want to make sure that even elements that are up to the edge   
-            // of the screen can receive focus.  
-            refRect = {
-                top: -1,
-                bottom: -1,
-                right: -1,
-                left: -1,
-                height: 0,
-                width: 0
-            };
+            refRect = _defaultRect();
         }
         return {
             element: refElement,
@@ -460,42 +486,102 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
     }
 
     function isFocusable(element: HTMLElement): boolean {
-        // If the current potential element is not one of the tags we consider to be focusable, then exit  
         var elementTagName = element.tagName;
         if (FocusableTagNames.indexOf(elementTagName) === -1 && (!element.classList || !element.classList.contains(ClassNames.focusable))) {
+            // If the current potential element is not one of the tags we consider to be focusable, then exit  
             return false;
         }
 
-        // Skip disabled WinJS controls  
-        if (elementTagName === "DIV" &&
-            element["winControl"] &&
-            element["winControl"].disabled) {
+        //if (elementTagName === "IFRAME" && !element.classList.contains(ClassNames.autoFocusableIframe)) {
+        //    // Skip IFRAMEs without compatible AutoFocus implementation
+        //    return false;
+        //}
+
+        if (elementTagName === "DIV" && element["winControl"] && element["winControl"].disabled) {
+            // Skip disabled WinJS controls  
             return false;
         }
 
-        // Skip elements that are hidden  
-        // Note: We don't check for opacity === 0, because the browser cannot tell us this value accurately.  
         var style = element.currentStyle;
-        if (element.tabIndex === -1 ||
-            style.display === "none" ||
-            style.visibility === "hidden" ||
-            element.disabled) {
+        if (element.tabIndex === -1 || style.display === "none" || style.visibility === "hidden" || element.disabled) {
+            // Skip elements that are hidden  
+            // Note: We don't check for opacity === 0, because the browser cannot tell us this value accurately.  
             return false;
         }
         return true;
     }
-
-    function toIRect(rect: IRect): IRect {
-        return {
-            top: Math.floor(rect.top),
-            bottom: Math.floor(rect.top + rect.height),
-            right: Math.floor(rect.left + rect.width),
-            left: Math.floor(rect.left),
-            height: Math.floor(rect.height),
-            width: Math.floor(rect.width),
-        };
-    }
 }
+
+function _defaultRect(): IRect {
+    // We set the top, left, bottom and right properties of the referenceBoundingRectangle to '-1'   
+    // (as opposed to '0') because we want to make sure that even elements that are up to the edge   
+    // of the screen can receive focus.  
+    return {
+        top: -1,
+        bottom: -1,
+        right: -1,
+        left: -1,
+        height: 0,
+        width: 0
+    };
+}
+
+function _toIRect(rect: IRect): IRect {
+    return {
+        top: Math.floor(rect.top),
+        bottom: Math.floor(rect.top + rect.height),
+        right: Math.floor(rect.left + rect.width),
+        left: Math.floor(rect.left),
+        height: Math.floor(rect.height),
+        width: Math.floor(rect.width),
+    };
+}
+
+window.addEventListener("message", (e: MessageEvent): void => {
+    if (!(e.isTrusted && e.data && e.data[CrossDomainMessageConstants.messageDataProperty])) {
+        return;
+    }
+
+    var data = e.data[CrossDomainMessageConstants.messageDataProperty];
+
+    switch (data.type) {
+        case CrossDomainMessageConstants.register:
+            (<HTMLIFrameElement>e.source.frameElement).classList.add(ClassNames.autoFocusableIframe);
+            break;
+
+        case CrossDomainMessageConstants.unregister:
+            (<HTMLIFrameElement>e.source.frameElement).classList.remove(ClassNames.autoFocusableIframe);
+            break;
+
+        case CrossDomainMessageConstants.enterFocus:
+            // The coordinates stored in data.refRect are in the parent's coordinate system,
+            // so we must first transform them into this frame's coordinate system.
+            var refRect: IRect = data.refRect;
+            refRect.top -= window.screenTop - e.source.screenTop;
+            refRect.bottom -= window.screenTop - e.source.screenTop;
+            refRect.left -= window.screenLeft - e.source.screenLeft;
+            refRect.right -= window.screenLeft - e.source.screenLeft;
+            _autoFocus(data.direction, refRect);
+            break;
+
+        case CrossDomainMessageConstants.exitFocus:
+            if (document.activeElement !== e.source.frameElement) {
+                // Since postMessage is async, by the time we get this message, the user may have
+                // manually moved the focus elsewhere, if so, ignore this message.
+                break;
+            }
+
+            // The coordinates stored in data.refRect are in the IFRAME's coordinate system,
+            // so we must first transform them into this frame's coordinate system.
+            var refRect: IRect = data.refRect;
+            refRect.top += e.source.screenTop - window.screenTop;
+            refRect.bottom += e.source.screenTop - window.screenTop;
+            refRect.left += e.source.screenLeft - window.screenLeft;
+            refRect.right += e.source.screenLeft - window.screenLeft;
+            _autoFocus(data.direction, refRect);
+            break;
+    }
+});
 
 document.addEventListener("DOMContentLoaded", function initializeAlgorithm() {
     document.addEventListener("keydown", (e: KeyboardEvent): void => {
@@ -517,19 +603,16 @@ document.addEventListener("DOMContentLoaded", function initializeAlgorithm() {
                 return null;
         }
         e.preventDefault();
-        autoFocus(direction);
+        _autoFocus(direction);
     });
 
-    //window.addEventListener("message", _onMessage, false);
-
-    //// If we are running within an iframe, we send a registration message to the parent window  
-    //if (top !== self) {
-    //    window.parent.postMessage({
-    //        ms__winJSAutomaticFocusControlMessage: {
-    //            type: _VmType.registerChild,
-    //            clientId: window.location.href,
-    //            version: 1.0
-    //        }
-    //    }, "*");
-    //}
+    // If we are running within an iframe, we send a registration message to the parent window  
+    if (top !== self) {
+        var message = {};
+        message[CrossDomainMessageConstants.messageDataProperty] = {
+            type: CrossDomainMessageConstants.register,
+            version: 1.0
+        };
+        window.parent.postMessage(message, "*");
+    }
 });
