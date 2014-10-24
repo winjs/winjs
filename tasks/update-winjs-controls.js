@@ -9,7 +9,9 @@
                 return;
             }
 
-            var exec = require('exec-sync');
+            var done = this.async();
+
+            var exec = require('child_process').exec;
             var fs = require('fs-extra');
             var config = require('../config.js');
 
@@ -21,16 +23,19 @@
             };
 
             // Pull down winjs-controls, add the new built files, and commit/push them
-            exec('git clone https://github.com/phosphoer/winjs-controls.git');
-            process.chdir('winjs-controls');
-            fs.removeSync('winjs/unreleased');
-            fs.copySync('../' + config.desktopOutput, 'winjs/unreleased');
-            exec('git config user.name ' + gitInfo.user);
-            exec('git config user.email ' + gitInfo.email);
-            exec('git add .');
-            exec('git commit -m "Automated update to latest master"');
-            exec('git push --quiet https://' + gitInfo.token + '@github.com/phosphoer/winjs-controls.git gh-pages');
-            process.chdir('../');
+            exec('git clone https://github.com/phosphoer/winjs-controls.git', function () {
+                process.chdir('winjs-controls');
+                fs.removeSync('winjs/unreleased');
+                fs.copySync('../' + config.desktopOutput, 'winjs/unreleased');
+                exec('git config user.name ' + gitInfo.user);
+                exec('git config user.email ' + gitInfo.email);
+                exec('git add .');
+                exec('git commit -m "Automated update to latest master"');
+                exec('git push --quiet https://' + gitInfo.token + '@github.com/phosphoer/winjs-controls.git gh-pages', function () {
+                    process.chdir('../');
+                    done();
+                });
+            });
         });
     };
 })();

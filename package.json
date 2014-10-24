@@ -22,7 +22,6 @@
   "bugs": "https://github.com/winjs/winjs/issues",
   "devDependencies": {
     "chalk": "~0.5.1",
-    "exec-sync": "^0.1.6",
     "fs-extra": "^0.10.0",
     "glob": "^4.0.5",
     "grunt": "~0.4.5",
