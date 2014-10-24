@@ -22,16 +22,32 @@
                 token: process.env.CONTROLS_GIT_TOKEN
             };
 
+            var commands = [
+                'git config user.name ' + gitInfo.user,
+                'git config user.email ' + gitInfo.email,
+                'git add .',
+                'git commit -m "Automated update to latest master"',
+                'git push https://' + gitInfo.token + '@github.com/phosphoer/winjs-controls.git gh-pages'
+            ];
+
+            function doAllCommands(index, doneCallback) {
+                if (index >= commands.length) {
+                    doneCallback();
+                    return;
+                }
+
+                exec(commands[index], function(error, stdout, stderr) {
+                    doAllCommands(index + 1, doneCallback);
+                });
+            }
+
             // Pull down winjs-controls, add the new built files, and commit/push them
             exec('git clone https://github.com/phosphoer/winjs-controls.git', function () {
                 process.chdir('winjs-controls');
                 fs.removeSync('winjs/unreleased');
                 fs.copySync('../' + config.desktopOutput, 'winjs/unreleased');
-                exec('git config user.name ' + gitInfo.user);
-                exec('git config user.email ' + gitInfo.email);
-                exec('git add .');
-                exec('git commit -m "Automated update to latest master"');
-                exec('git push --quiet https://' + gitInfo.token + '@github.com/phosphoer/winjs-controls.git gh-pages', function () {
+
+                doAllCommands(0, function() {
                     process.chdir('../');
                     done();
                 });
