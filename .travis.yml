@@ -7,12 +7,14 @@ before_script:
 script:
 - grunt release
 after_success:
+- grunt update-winjs-controls
 - grunt saucelabs --force
 env:
   global:
   - SAUCE_USERNAME=winjs
   - SAUCE_ACCESS_KEY=26c17025-4f79-4313-ab42-c5f77a7ece4b
   - secure: UVSPVW/U0QGmbpEBPBiFW3mIwxw+/cXNWpDgufddKRKaW1MpcP41lUAkLG9SwsgeevGd2L5qdvCmVetV3dk9Fl82PJF3ct0Yy7HJspn9nsfHz1Si5hJyLyQwkaxYrLQqtgyaV9dpNOZJeeZPg/vQPOMqbexo9oIfZMkmoi8n5d8=
+  - secure: lvhv6nQcB1xEinYw1sWQtDv/ntgrr8GeGIhQ0YBQtQni9WvDV9y87HPmZ2Ph+Md87y9L6dseeGir6JPEg8qbGPzZAQHG9aLF/Mcan9EFMgV8Y+RFilv6xJR7F5zhSC4Hsw9i6Oqg7CXLPcZI3U8a+iyOIRfo38amcuq7CFRbHrA=
 branches:
   only:
   - master
