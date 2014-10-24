@@ -5,9 +5,7 @@
     module.exports = function (grunt) {
         grunt.registerTask('update-winjs-controls', 'Update winjs-controls with current master build', function (path) {
             // Don't do anything if pull request or not on master
-            if (process.env.TRAVIS_PULL_REQUEST !== 'false' || process.env.TRAVIS_BRANCH !== 'master')
-            {
-                console.log('skipping due to pull request or branch not being master');
+            if (process.env.TRAVIS_PULL_REQUEST !== 'false' || process.env.TRAVIS_BRANCH !== 'master') {
                 return;
             }
 
