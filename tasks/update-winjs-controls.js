@@ -36,7 +36,7 @@
                     return;
                 }
 
-                exec(commands[index], function(error, stdout, stderr) {
+                exec(commands[index], function (error, stdout, stderr) {
                     doAllCommands(index + 1, doneCallback);
                 });
             }
