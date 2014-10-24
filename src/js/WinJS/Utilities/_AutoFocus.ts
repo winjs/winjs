@@ -1,4 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+import _Global = require("../Core/_Global");
+
 import _ElementUtilities = require("../Utilities/_ElementUtilities");
 import _OptionsParser = require("../ControlProcessor/_OptionsParser");
 
@@ -9,8 +11,8 @@ var AttributeNames = {
 };
 
 var ClassNames = {
-    autoFocusableIframe: "win-autofocus-iframe",
-    focusable: "win-focusable"
+    focusable: "win-focusable",
+    manualFocusContainer: "win-autofocus-manualfocuscontainer"
 };
 
 var CrossDomainMessageConstants = {
@@ -18,8 +20,8 @@ var CrossDomainMessageConstants = {
 
     register: "register",
     unregister: "unregister",
-    enterFocus: "enterFocus",
-    exitFocus: "exitFocus"
+    autoFocusEnter: "autoFocusEnter",
+    autoFocusExit: "autoFocusExit"
 };
 
 var DirectionNames = {
@@ -30,7 +32,8 @@ var DirectionNames = {
 };
 
 var EventNames = {
-    focusChanging: "focuschanging"
+    focusChanging: "focuschanging",
+    focusChanged: "focuschanged"
 };
 
 var FocusableTagNames = [
@@ -49,6 +52,12 @@ var ScoringConstants = {
     percentInHistoryShadowWeight: 10000,
     inShadowThreshold: 0.25
 };
+
+interface ICrossDomainMessage {
+    type: string;
+    direction?: string;
+    referenceRect?: IRect;
+}
 
 interface FindNextFocusResult {
     referenceRect: IRect;
@@ -113,8 +122,21 @@ export function findNextFocusElement(direction: string, options?: AutoFocusOptio
 
 var _lastAutoFocusTarget: HTMLElement;
 var _historyRect: IRect;
-function _autoFocus(direction: string, referenceRect?: IRect): void {
-    if (referenceRect || document.activeElement !== _lastAutoFocusTarget) {
+var _afEnabledFrames: Window[] = [];
+function _autoFocus(direction: string, exitManualFocusContainer?: boolean, referenceRect?: IRect): void {
+    if (!exitManualFocusContainer) {
+        // AutoFocus is suspended if the activeElement is in a manual-focus-container
+        var element = <HTMLElement>_Global.document.activeElement;
+        while (element) {
+            // Do not use HTMLElement.classList here as the current element may not support it
+            if (element.className.indexOf(ClassNames.manualFocusContainer) >= 0) {
+                return;
+            }
+            element = element.parentElement;
+        }
+    }
+
+    if (referenceRect || _Global.document.activeElement !== _lastAutoFocusTarget) {
         _historyRect = null;
         _lastAutoFocusTarget = null;
     }
@@ -160,34 +182,46 @@ function _autoFocus(direction: string, referenceRect?: IRect): void {
         }
 
         if (focusMoved) {
-            // If we successfully moved focus and the new focused item is an IFRAME, then we need to notify it
-            if (result.target.tagName === "IFRAME" && result.target.classList.contains(ClassNames.autoFocusableIframe)) {
-                var message = {};
-                message[CrossDomainMessageConstants.messageDataProperty] = {
-                    type: CrossDomainMessageConstants.enterFocus,
-                    direction: direction,
-                    refRect: result.referenceRect
-                };
-                (<HTMLIFrameElement>result.target).contentWindow.postMessage(message, "*");
+            if (result.target.tagName === "IFRAME") {
+                var index = _afEnabledFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
+                if (index >= 0) {
+                    var iframe = _getIFrameFromWindow(_afEnabledFrames[index]);
+
+                    // If we successfully moved focus and the new focused item is an IFRAME, then we need to notify it
+                    // Note on coordinates: When signaling enter, DO transform the coordinates into the child frame's coordinate system.
+                    var refRect = _toIRect({
+                        left: result.referenceRect.left - iframe.offsetLeft,
+                        top: result.referenceRect.top - iframe.offsetTop,
+                        width: result.referenceRect.width,
+                        height: result.referenceRect.height
+                    });
+
+                    var message = {};
+                    message[CrossDomainMessageConstants.messageDataProperty] = <ICrossDomainMessage>{
+                        type: CrossDomainMessageConstants.autoFocusEnter,
+                        direction: direction,
+                        referenceRect: refRect
+                    };
+                    (<HTMLIFrameElement>result.target).contentWindow.postMessage(message, "*");
+                }
             }
         }
     } else {
         // No focus target was found; if we are inside an IFRAME, notify the parent that focus is exiting this IFRAME
+        // Note on coordinates: When signaling exit, do NOT transform the coordinates into the parent's coordinate system.
         if (top !== window) {
             var refRect = referenceRect;
             if (!refRect) {
-                refRect = document.activeElement ? _toIRect(document.activeElement.getBoundingClientRect()) : _defaultRect();
+                refRect = _Global.document.activeElement ? _toIRect(_Global.document.activeElement.getBoundingClientRect()) : _defaultRect();
             }
 
             var message = {};
-            message[CrossDomainMessageConstants.messageDataProperty] = {
-                type: CrossDomainMessageConstants.exitFocus,
+            message[CrossDomainMessageConstants.messageDataProperty] = <ICrossDomainMessage>{
+                type: CrossDomainMessageConstants.autoFocusExit,
                 direction: direction,
-                refRect: refRect,
-                screenTop: window.screenTop,
-                screenLeft: window.screenLeft
+                referenceRect: refRect
             };
-            window.parent.postMessage(message, "*");
+            _Global.parent.postMessage(message, "*");
         }
     }
 
@@ -243,7 +277,7 @@ function _autoFocus(direction: string, referenceRect?: IRect): void {
         if (!canceled) {
             element.focus();
         }
-        return document.activeElement === element;
+        return _Global.document.activeElement === element;
     }
 }
 
@@ -251,7 +285,7 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
     options = options || {};
 
     options.allowOverride = options.allowOverride || false;
-    options.focusRoot = options.focusRoot || autoFocusRoot || document.body;
+    options.focusRoot = options.focusRoot || autoFocusRoot || _Global.document.body;
     options.historyRect = options.historyRect || _defaultRect();
     options.maxDistance = options.maxDistance || Math.max(screen.availHeight, screen.availWidth);
 
@@ -269,7 +303,7 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
             var selector: string = parsedOptions[direction] || parsedOptions[direction[0].toUpperCase() + direction.substr(1)];
 
             if (selector) {
-                target = <HTMLElement>document.querySelector(selector);
+                target = <HTMLElement>_Global.document.querySelector(selector);
             }
             if (target) {
                 return { target: target, targetRect: null, referenceRect: null, usedOverride: true };
@@ -465,9 +499,9 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
             // where lastFocusedElement is defined, but calling getBoundingClientRect will throw a native exception.  
             // This case happens if the innerHTML of the parent of the lastFocusElement is set to "".  
 
-            // If no valid reference is supplied, we'll use document.activeElement unless it's the body
-            if (document.activeElement !== document.body) {
-                referenceElement = <HTMLElement>document.activeElement;
+            // If no valid reference is supplied, we'll use _Global.document.activeElement unless it's the body
+            if (_Global.document.activeElement !== _Global.document.body) {
+                referenceElement = <HTMLElement>_Global.document.activeElement;
             }
         }
 
@@ -492,17 +526,17 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
             return false;
         }
 
-        //if (elementTagName === "IFRAME" && !element.classList.contains(ClassNames.autoFocusableIframe)) {
-        //    // Skip IFRAMEs without compatible AutoFocus implementation
-        //    return false;
-        //}
+        if (elementTagName === "IFRAME" && _afEnabledFrames.indexOf((<HTMLIFrameElement>element).contentWindow) === -1) {
+            // Skip IFRAMEs without compatible AutoFocus implementation
+            return false;
+        }
 
         if (elementTagName === "DIV" && element["winControl"] && element["winControl"].disabled) {
             // Skip disabled WinJS controls  
             return false;
         }
 
-        var style = element.currentStyle;
+        var style = getComputedStyle(element);
         if (element.tabIndex === -1 || style.display === "none" || style.visibility === "hidden" || element.disabled) {
             // Skip elements that are hidden  
             // Note: We don't check for opacity === 0, because the browser cannot tell us this value accurately.  
@@ -537,35 +571,38 @@ function _toIRect(rect: IRect): IRect {
     };
 }
 
-window.addEventListener("message", (e: MessageEvent): void => {
-    if (!(e.isTrusted && e.data && e.data[CrossDomainMessageConstants.messageDataProperty])) {
+function _getIFrameFromWindow(win: Window) {
+    var iframes = _Global.document.querySelectorAll("IFRAME");
+    var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes, (x: HTMLIFrameElement) => x.contentWindow === win);
+    return found.length ? found[0] : null;
+}
+
+_Global.addEventListener("message", (e: MessageEvent): void => {
+    if (!e.data || !e.data[CrossDomainMessageConstants.messageDataProperty]) {
         return;
     }
 
-    var data = e.data[CrossDomainMessageConstants.messageDataProperty];
-
+    var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
     switch (data.type) {
         case CrossDomainMessageConstants.register:
-            (<HTMLIFrameElement>e.source.frameElement).classList.add(ClassNames.autoFocusableIframe);
+            _afEnabledFrames.push(e.source);
             break;
 
         case CrossDomainMessageConstants.unregister:
-            (<HTMLIFrameElement>e.source.frameElement).classList.remove(ClassNames.autoFocusableIframe);
+            var index = _afEnabledFrames.indexOf(e.source);
+            if (index >= 0) {
+                _afEnabledFrames.splice(index, 1);
+            }
             break;
 
-        case CrossDomainMessageConstants.enterFocus:
-            // The coordinates stored in data.refRect are in the parent's coordinate system,
-            // so we must first transform them into this frame's coordinate system.
-            var refRect: IRect = data.refRect;
-            refRect.top -= window.screenTop - e.source.screenTop;
-            refRect.bottom -= window.screenTop - e.source.screenTop;
-            refRect.left -= window.screenLeft - e.source.screenLeft;
-            refRect.right -= window.screenLeft - e.source.screenLeft;
-            _autoFocus(data.direction, refRect);
+        case CrossDomainMessageConstants.autoFocusEnter:
+            // The coordinates stored in data.refRect are already in this frame's coordinate system.
+            _autoFocus(data.direction, true, data.referenceRect);
             break;
 
-        case CrossDomainMessageConstants.exitFocus:
-            if (document.activeElement !== e.source.frameElement) {
+        case CrossDomainMessageConstants.autoFocusExit:
+            var iframe = _getIFrameFromWindow(e.source);
+            if (_Global.document.activeElement !== iframe) {
                 // Since postMessage is async, by the time we get this message, the user may have
                 // manually moved the focus elsewhere, if so, ignore this message.
                 break;
@@ -573,18 +610,16 @@ window.addEventListener("message", (e: MessageEvent): void => {
 
             // The coordinates stored in data.refRect are in the IFRAME's coordinate system,
             // so we must first transform them into this frame's coordinate system.
-            var refRect: IRect = data.refRect;
-            refRect.top += e.source.screenTop - window.screenTop;
-            refRect.bottom += e.source.screenTop - window.screenTop;
-            refRect.left += e.source.screenLeft - window.screenLeft;
-            refRect.right += e.source.screenLeft - window.screenLeft;
-            _autoFocus(data.direction, refRect);
+            var refRect: IRect = data.referenceRect;
+            refRect.left += iframe.offsetLeft;
+            refRect.top += iframe.offsetTop;
+            _autoFocus(data.direction, true, refRect);
             break;
     }
 });
 
-document.addEventListener("DOMContentLoaded", function initializeAlgorithm() {
-    document.addEventListener("keydown", (e: KeyboardEvent): void => {
+_Global.document.addEventListener("DOMContentLoaded", () => {
+    _Global.document.addEventListener("keydown", (e: KeyboardEvent): void => {
         var direction: string;
         switch (e.keyCode) {
             case _ElementUtilities.Key.upArrow:
@@ -607,12 +642,18 @@ document.addEventListener("DOMContentLoaded", function initializeAlgorithm() {
     });
 
     // If we are running within an iframe, we send a registration message to the parent window  
-    if (top !== self) {
+    if (top !== window) {
         var message = {};
         message[CrossDomainMessageConstants.messageDataProperty] = {
             type: CrossDomainMessageConstants.register,
             version: 1.0
         };
-        window.parent.postMessage(message, "*");
+        _Global.parent.postMessage(message, "*");
+    }
+});
+
+_Global.document.addEventListener(CrossDomainMessageConstants.autoFocusExit, (e: CustomEvent): void => {
+    if ((<HTMLElement>_Global.document.activeElement).className.indexOf(ClassNames.manualFocusContainer) >= 0) {
+        _autoFocus(e.detail.direction, true);
     }
 });
