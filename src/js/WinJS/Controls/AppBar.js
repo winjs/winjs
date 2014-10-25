@@ -822,8 +822,8 @@ define([
                             if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
                                 _storePreviousFocus(_Global.document.activeElement);
                             }
-
-                            this._positionChangingPromise.then(this._setFocusToAppBarBound, this._setFocusToAppBarBound);
+                            
+                            this._layout.setFocusOnShow();
                         }
                     }
                 },
@@ -1194,7 +1194,7 @@ define([
                 _animatePositionChange: function AppBar_animatePositionChange(fromPosition, toPosition) {
                     // Determines and executes the proper transition between visible positions
 
-                    this._positionChangingPromise = this._layout.positionChanging(fromPosition, toPosition);
+                    this._layout.positionChanging(fromPosition, toPosition);
 
                     // Get values in terms of pixels to perform animation.
                     var beginningVisiblePixelHeight = this._visiblePixels[fromPosition],
@@ -1297,10 +1297,10 @@ define([
                 },
 
                 // Set focus to the passed in AppBar
-                _setFocusToAppBar: function AppBar_setFocusToAppBar() {
-                    if (!this._focusOnFirstFocusableElement()) {
+                _setFocusToAppBar: function AppBar_setFocusToAppBar(useSetActive, scroller) {
+                    if (!this._focusOnFirstFocusableElement(useSetActive, scroller)) {
                         // No first element, set it to appbar itself
-                        _Overlay._Overlay._trySetActive(this._element);
+                        _Overlay._Overlay._trySetActive(this._element, scroller);
                     }
                 },
 

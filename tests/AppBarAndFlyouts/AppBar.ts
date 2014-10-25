@@ -1755,12 +1755,15 @@ module CorsicaTests {
             showAllAppBars().then(function () {
 
                 var html = document.documentElement,
-                    originalDir = html.dir,
                     RTL = "rtl",
                     LTR = "ltr";
 
                 function runTest(appbar, direction) {
-                    html.dir = direction;
+                    if (direction === LTR) {
+                        document.documentElement.removeAttribute("lang");
+                    } else {
+                        document.documentElement.setAttribute("lang", "ar");
+                    }
                     commandElements = topBar.element.querySelectorAll(".win-command");
 
                     var currentElement = commandElements[0],
@@ -1792,7 +1795,7 @@ module CorsicaTests {
                 runTest(bottomBar, RTL);
 
                 // Cleanup lang attribute
-                html.dir = originalDir;
+                document.documentElement.removeAttribute("lang");
                 complete();
             });
         };

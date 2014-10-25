@@ -1146,14 +1146,14 @@ define([
                 // and a finalDiv with tabIndex equal to the highest tabIndex in the element.
                 // Also the firstDiv must be its first child and finalDiv be its last child.
                 // Returns true if successful, false otherwise.
-                _focusOnFirstFocusableElement: function _Overlay__focusOnFirstFocusableElement() {
+                _focusOnFirstFocusableElement: function _Overlay__focusOnFirstFocusableElement(useSetActive, scroller) {
                     if (this._element.firstElementChild) {
                         var oldFirstTabIndex = this._element.firstElementChild.tabIndex;
                         var oldLastTabIndex = this._element.lastElementChild.tabIndex;
                         this._element.firstElementChild.tabIndex = -1;
                         this._element.lastElementChild.tabIndex = -1;
 
-                        var tabResult = _ElementUtilities._focusFirstFocusableElement(this._element);
+                        var tabResult = _ElementUtilities._focusFirstFocusableElement(this._element, useSetActive, scroller);
 
                         if (tabResult) {
                             _Overlay._trySelect(_Global.document.activeElement);
@@ -1426,11 +1426,11 @@ define([
                 },
 
                 // Try to set us as active
-                _trySetActive: function (element) {
+                _trySetActive: function (element, scroller) {
                     if (!element || !_Global.document.body || !_Global.document.body.contains(element)) {
                         return false;
                     }
-                    if (!_ElementUtilities._setActive(element)) {
+                    if (!_ElementUtilities._setActive(element, scroller)) {
                         return false;
                     }
                     return (element === _Global.document.activeElement);
