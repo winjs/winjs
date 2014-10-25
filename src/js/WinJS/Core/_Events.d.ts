@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /**
  * Creates an object that has one event for each name passed to the function.
@@ -9,7 +9,7 @@ export declare function createEventProperties(...events: string[]): any;
 /**
  * A mixin that contains event-related functions.
 **/
-export declare var eventMixin: {
+export declare class eventMixin: {
     //#region Methods
 
     /**

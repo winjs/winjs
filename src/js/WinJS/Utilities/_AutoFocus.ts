@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 import _Global = require("../Core/_Global");
 
+import _Base = require("../Core/_Base");
+import _BaseUtils = require("../Core/_BaseUtils");
 import _ElementUtilities = require("../Utilities/_ElementUtilities");
+import _Events = require("../Core/_Events");
 import _OptionsParser = require("../ControlProcessor/_OptionsParser");
 
 "use strict";
@@ -108,7 +111,7 @@ export interface IRect {
     width: number;
 }
 
-export var autoFocusRoot: HTMLElement;
+export var focusRoot: HTMLElement;
 
 export function findNextFocusElement(direction: "left", options?: AutoFocusOptions): HTMLElement;
 export function findNextFocusElement(direction: "right", options?: AutoFocusOptions): HTMLElement;
@@ -123,7 +126,7 @@ export function findNextFocusElement(direction: string, options?: AutoFocusOptio
 var _lastAutoFocusTarget: HTMLElement;
 var _historyRect: IRect;
 var _afEnabledFrames: Window[] = [];
-function _autoFocus(direction: string, exitManualFocusContainer?: boolean, referenceRect?: IRect): void {
+function _autoFocus (direction: string, exitManualFocusContainer?: boolean, referenceRect?: IRect): void {
     if (!exitManualFocusContainer) {
         // AutoFocus is suspended if the activeElement is in a manual-focus-container
         var element = <HTMLElement>_Global.document.activeElement;
@@ -141,11 +144,12 @@ function _autoFocus(direction: string, exitManualFocusContainer?: boolean, refer
         _lastAutoFocusTarget = null;
     }
 
+    var activeElement = _Global.document.activeElement;
     var lastAutoFocusTarget = _lastAutoFocusTarget;
 
     var result = _findNextFocusElementInternal(direction, {
         allowOverride: true,
-        focusRoot: autoFocusRoot,
+        focusRoot: focusRoot,
         historyRect: _historyRect,
         referenceElement: _lastAutoFocusTarget,
         referenceRect: referenceRect
@@ -164,7 +168,7 @@ function _autoFocus(direction: string, exitManualFocusContainer?: boolean, refer
                 // Attempt to focus override target was prevented, try focusing w/o considering override
                 result = _findNextFocusElementInternal(direction, {
                     allowOverride: false,
-                    focusRoot: autoFocusRoot,
+                    focusRoot: focusRoot,
                     historyRect: null,
                     referenceElement: _lastAutoFocusTarget,
                 });
@@ -205,6 +209,9 @@ function _autoFocus(direction: string, exitManualFocusContainer?: boolean, refer
                     (<HTMLIFrameElement>result.target).contentWindow.postMessage(message, "*");
                 }
             }
+            var evt = <CustomEvent>_Global.document.createEvent("CustomEvent");
+            evt.initCustomEvent(EventNames.focusChanged, true, false, { previousElement: activeElement });
+            (<any>toPublish).dispatchEvent(evt);
         }
     } else {
         // No focus target was found; if we are inside an IFRAME, notify the parent that focus is exiting this IFRAME
@@ -273,7 +280,9 @@ function _autoFocus(direction: string, exitManualFocusContainer?: boolean, refer
     function trySetFocus(element: HTMLElement) {
         // We raise an event on the focusRoot before focus changes to give listeners  
         // a chance to prevent the next focus target from receiving focus if they want.  
-        var canceled = false; //todo: _dispatchFocusChanging(element);
+        var evt = <CustomEvent>_Global.document.createEvent("CustomEvent");
+        evt.initCustomEvent(EventNames.focusChanging, true, true, { nextFocusElement: element });
+        var canceled = (<any>toPublish).dispatchEvent(evt);
         if (!canceled) {
             element.focus();
         }
@@ -285,7 +294,7 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
     options = options || {};
 
     options.allowOverride = options.allowOverride || false;
-    options.focusRoot = options.focusRoot || autoFocusRoot || _Global.document.body;
+    options.focusRoot = options.focusRoot || focusRoot || _Global.document.body;
     options.historyRect = options.historyRect || _defaultRect();
     options.maxDistance = options.maxDistance || Math.max(screen.availHeight, screen.availWidth);
 
@@ -657,3 +666,18 @@ _Global.document.addEventListener(CrossDomainMessageConstants.autoFocusExit, (e:
         _autoFocus(e.detail.direction, true);
     }
 });
+
+var toPublish = {
+    focusRoot: {
+        get: function () {
+            return focusRoot;
+        },
+        set: function (value: HTMLElement) {
+            focusRoot = value;
+        }
+    },
+
+    findNextFocusElement: findNextFocusElement
+};
+toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
+_Base.Namespace.define("WinJS.UI.AutoFocus", toPublish);
