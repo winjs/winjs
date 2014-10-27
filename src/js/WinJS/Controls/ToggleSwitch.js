@@ -94,10 +94,10 @@ define([
                         '   <div class="' + classTrack + '">',
                         '       <div class="' + classThumb + '"></div>',
                         '   </div>',
-                        '</div>',
-                        '<div class="' + classValues + '">',
-                        '   <div class="' + classValue + ' ' + classValueOn + '"></div>',
-                        '   <div class="' + classValue + ' ' + classValueOff + '"></div>',
+                        '   <div class="' + classValues + '">',
+                        '      <div class="' + classValue + ' ' + classValueOn + '"></div>',
+                        '      <div class="' + classValue + ' ' + classValueOff + '"></div>',
+                        '   </div>',
                         '</div>',
                         '<div class="' + classDescription + '"></div>'
                     ].join('\n');
@@ -107,10 +107,10 @@ define([
                     this._clickElement = this._headerElement.nextElementSibling;
                     this._trackElement = this._clickElement.firstElementChild;
                     this._thumbElement = this._trackElement.firstElementChild;
-                    this._labelsElement = this._clickElement.nextElementSibling;
+                    this._labelsElement = this._trackElement.nextElementSibling;
                     this._labelOnElement = this._labelsElement.firstElementChild;
                     this._labelOffElement = this._labelOnElement.nextElementSibling;
-                    this._descriptionElement = this._labelsElement.nextElementSibling;
+                    this._descriptionElement = this._clickElement.nextElementSibling;
 
                     // Set aria label info
                     this._headerElement.setAttribute('aria-hidden', true);
@@ -293,7 +293,7 @@ define([
                         e.preventDefault();
 
                         this._mousedown = true;
-                        this._dragXStart = e.pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
+                        this._dragXStart = e.pageX - this._trackElement.offsetLeft;
                         this._dragX = this._dragXStart;
                         this._dragging = false;
                         _ElementUtilities.addClass(this._domElement, classPressed);
@@ -345,11 +345,16 @@ define([
                         e.preventDefault();
 
                         // Get pointer x coord relative to control
-                        var localMouseX = e.pageX - this._trackElement.offsetLeft - this._thumbElement.offsetWidth / 2;
+                        var localMouseX = e.pageX - this._trackElement.offsetLeft;
+
+                        // Not dragging if mouse is outside track
+                        if (localMouseX > this._trackElement.offsetWidth) {
+                            return;
+                        }
 
                         // Calculate a position for the thumb
                         var maxX = this._trackElement.offsetWidth - this._thumbElement.offsetWidth - 6;
-                        this._dragX = Math.min(maxX, localMouseX);
+                        this._dragX = Math.min(maxX, localMouseX - this._thumbElement.offsetWidth / 2);
                         this._dragX = Math.max(2, this._dragX);
 
                         // Calculate if this pointermove constitutes switching to drag mode
