@@ -675,123 +675,99 @@ Settings Pane
     right: 0;
     height: 100%;
     width: 319px; /* 320px - border (1px) */
-}
 
-.win-settingsflyout {
     .RTL({
         border-left: none;
         border-right: 1px solid;
     });
-}
 
-.win-settingsflyout.win-wide { /* .win-wide is deprecated in Windows 8.1 */
-    width: 645px; /* 646px - border (1px) */
-}
+    &.win-wide { /* .win-wide is deprecated in Windows 8.1 */
+        width: 645px; /* 646px - border (1px) */
+    }
 
-.win-settingsflyout .win-header {
-    padding-left: 40px;
-    padding-right: 40px;
-    padding-top: 32px;
-    height: 48px;
-}
-/* Settings back button is slightly smaller. */
-.win-settingsflyout .win-backbutton {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    font-size: 8pt;
-    line-height: 26px;
-    margin-top: 3px;
-}
+    /* Settings back button is slightly smaller. */
+    .win-backbutton,
+    .win-back {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+        line-height: 32px;
+    }
 
-.win-settingsflyout .win-header .win-label {
-    display: inline-block;
-    padding-left: 40px;
-    font-size: 20pt;
-    line-height: 33px;
-}
+    .win-content {
+        overflow: auto;
+        padding-left: 12px;
+        padding-right: 12px;
+        height: 100%;
 
-.win-settingsflyout .win-content {
-    overflow: auto;
-    padding-left: 12px;
-    padding-right: 12px;
-    padding-top: 33px;
-    height: ~"calc(100% - 112px)";
-}
+        .win-label {
+            .win-type-subtitle();
+        }
 
-.win-settingsflyout .win-label {
-    .win-type-subtitle();
-}
+        .win-header {
+            padding: 8px 40px;
+            height: 32px;
+            position: relative;
 
-.win-settingsflyout {
-    .RTL({
-        right: auto;
-        left: 0;
-        border-left: none;
-        border-right: 1px solid;
-    });
-}
+            .win-label {
+                display: inline-block;
+                .win-type-title(32px);
+            }
 
-.win-settingsflyout .win-header .win-label {
-    .RTL({
-        padding-right: 40px;
-        padding-left: 0;
-    });
-}
+            .win-backbutton,
+            .win-navigation-backbutton {
+                position: absolute;
+                left: 0;
+            }
+        }
 
-.win-settingsflyout .win-content .win-settings-section {
-    padding-top: 0;
-    padding-bottom: 39px;
-}
+        .win-settings-section {
+            padding-top: 0;
+            padding-bottom: 39px;
+            margin: 0;
+            padding-top: 0;
+            padding-bottom: 20px;
 
-.win-settingsflyout .win-content .win-settings-section p {
-    margin: 0;
-    padding-top: 0;
-    padding-bottom: 25px;
-}
+            p {
+                margin: 0;
+                padding-top: 0;
+                padding-bottom: 25px;
+            }
 
-.win-settingsflyout .win-content .win-settings-section a {
-    margin: 0;
-    padding-top: 0;
-    padding-bottom: 25px;
-    display: inline-block;
-}
+            a {
+                margin: 0;
+                padding-top: 0;
+                padding-bottom: 25px;
+                display: inline-block;
+            }
 
-.win-settingsflyout .win-content .win-settings-section {
-    margin: 0;
-    padding-top: 0;
-    padding-bottom: 20px;
-}
+            label {
+                display: block;
+                padding-bottom: 7px;
+            }
 
-.win-settingsflyout .win-content .win-settings-section label {
-    display: block;
-    padding-bottom: 7px;
-}
+            button,
+            select,
+            input[type=button],
+            input[type=text] {
+                margin-bottom: 25px;
+                margin-left: 0;
+                margin-right: 20px;
 
-.win-settingsflyout .win-content .win-settings-section button,
-.win-settingsflyout .win-content .win-settings-section select,
-.win-settingsflyout .win-content .win-settings-section input[type=button],
-.win-settingsflyout .win-content .win-settings-section input[type=text] {
-    margin-bottom: 25px;
-    margin-left: 0;
-    margin-right: 20px;
-}
+                .RTL({
+                    margin-bottom: 25px;
+                    margin-left: 20px;
+                    margin-right: 0;
+                });
+            }
 
-.win-settingsflyout .win-content .win-settings-section input[type=radio] {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 15px;
-}
-
-.win-settingsflyout .win-content .win-settings-section button,
-.win-settingsflyout .win-content .win-settings-section select,
-.win-settingsflyout .win-content .win-settings-section input[type=text],
-.win-settingsflyout .win-content .win-settings-section input[type=button] {
-    .RTL({
-        margin-bottom: 25px;
-        margin-left: 20px;
-        margin-right: 0;
-    });
+            input[type=radio] {
+                margin-top: 0;
+                margin-bottom: 0;
+                padding-bottom: 15px;
+            }
+        }
+    }
 }
 
 /*Flyout control animations*/

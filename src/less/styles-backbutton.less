@@ -9,15 +9,12 @@ body > .win-navigation-backbutton {
     left: 20px;
 }
 
-.win-backbutton, .win-back {
+.win-backbutton,
+.win-navigation-backbutton,
+.win-back {
     display: inline-block;
     min-width: 0;
     min-height: 0;
-    background-clip: border-box;
-    box-sizing: border-box;
-    border-radius: 50%;
-    border-width: 2px;
-    border-style: solid;
     padding: 0;
     text-align: center;
 
@@ -25,15 +22,10 @@ body > .win-navigation-backbutton {
     width: 41px;
     height: 41px;
     font-size: 14pt;
-    line-height: 37px; // line-height must match the content box height.
+    line-height: 41px; // line-height must match the content box height.
     vertical-align: baseline;
 }
 
-html.win-hoverable .win-backbutton:hover, .win-backbutton:hover:active {
-    border-width: 2px;
-    border-style: solid;
-    border-radius: 50%;
-}
 .win-backbutton::before, .win-back::before {
     font-family: "Segoe UI Symbol", "Symbols";
     font-weight: normal;
@@ -47,20 +39,3 @@ html.win-hoverable .win-backbutton:hover, .win-backbutton:hover:active {
         content: "\E0AE";
     }
 });
-
-.win-backbutton:disabled, .win-backbutton:disabled:active,
-.win-navigation-backbutton:disabled, .win-navigation-backbutton:disabled:active {
-    visibility: hidden;
-}
-
-button.win-navigation-backbutton, button.win-navigation-backbutton:active,
-html.win-hoverable button.win-navigation-backbutton:hover, button.win-navigation-backbutton:active:hover {
-    display: inline-block;
-    padding: 2px;
-    min-height: 0px;
-    min-width: 0px;
-
-    // Normal Sizing
-    height: 45px;
-    width: 45px;
-}
