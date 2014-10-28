@@ -1,10 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
-    '../Core/_Base',
-    '../Core/_BaseUtils',
     '../Core/_WinRT'
-    ], function telemetryInit(exports, _Base, _BaseUtils, _WinRT) {
+    ], function telemetryInit(exports, _WinRT) {
     "use strict";
 
     /// NOTE: This file should be included ONLY when building
@@ -15,65 +13,49 @@ define([
     var MicrosoftKeyword = "0x2000000000000";
 
     var WinJSProvider = "WinJS-Telemetry-Provider";
-    
-    _Base.Namespace._moduleDefine(exports, "WinJS.Utilities", {
-        _Telemetry: _Base.Namespace._lazy(function () {
-            var Telemetry = _Base.Class.define(function _Telemetry_ctor() {
-            /// <signature helpKeyword="WinJS.Utilities._Telemetry">
-            /// <summary locid="WinJS.Utilities._Telemetry">
-            /// Wraps calls to Microsoft.Foundation.Diagnostics WinRT.
-            /// This will result in no-op when built outside of Microsoft Framework Package.
-            /// </summary>
-            /// </signature>
-              this._diagnostics = _WinRT.Windows.Foundation.Diagnostics;
-              if (this._diagnostics) {
-                  this._loggingOption = new this._diagnostics.LoggingOptions(MicrosoftKeyword);
-                  this._loggingLevel = this._diagnostics.LoggingLevel.information;
-                  this._channel = new this._diagnostics.LoggingChannel(WinJSProvider, new this._diagnostics.LoggingChannelOptions(MicrosoftGroup));
-                }
-              }, {
-                  send: function (name, params) {
-                  /// <signature helpKeyword="WinJS.Utilities._Telemetry.send">
-                  /// <summary locid="WinJS.Utilities._Telemetry.send">
-                  /// Formatter to upload the name/value pair to Asimov in the correct format.
-                  /// This will result in no-op when built outside of Microsoft Framework Package.
-                  /// </summary>
-                  /// <param name="params" type="Object" locid="WinJS.Utilities._Telemetry.send_p:params">
-                  /// Object of name/value pair items that need to be logged. They can be of type,
-                  /// bool, int32, string.  Any other type will be ignored.
-                  /// </param>
-                  /// </signature>
-                      if (this._diagnostics) {
-                          var fields = null;
-                          if (params) {
-                              fields = this._diagnostics.LoggingFields();
-                              Object.keys(params).forEach(function (key) {
-                                  var value = params[key];
-                                  switch (typeof value) {
-                                      case "number":
-                                          fields.addInt32(key, value);
-                                          break;
-                                      case "string":
-                                          fields.addString(key, value);
-                                          break;
-                                      case "boolean":
-                                          fields.addBoolean(key, value);
-                                          break;
-                                      default:
-                                          // no-op
-                                          break;
-                                  }
-                              });
-                          }
 
-                          this._channel.logEvent(name, fields, this._loggingLevel, this._loggingOption);
-                      }
-                  }
-              }, {
-                  /* empty */
-            });
+    var diagnostics = _WinRT.Windows.Foundation.Diagnostics;
+    if (diagnostics) {
+      var loggingOption = new diagnostics.LoggingOptions(MicrosoftKeyword);
+      var loggingLevel = diagnostics.LoggingLevel.information;
+      var channel = new diagnostics.LoggingChannel(WinJSProvider, new diagnostics.LoggingChannelOptions(MicrosoftGroup));
+    }
 
-            return new Telemetry();
-        })
-    });
+    exports.send = function (name, params) {
+    /// <signature helpKeyword="WinJS._Telemetry.send">
+    /// <summary locid="WinJS._Telemetry.send">
+    /// Formatter to upload the name/value pair to Asimov in the correct format.
+    /// This will result in no-op when built outside of Microsoft Framework Package.
+    /// </summary>
+    /// <param name="params" type="Object" locid="WinJS._Telemetry.send_p:params">
+    /// Object of name/value pair items that need to be logged. They can be of type,
+    /// bool, int32, string.  Any other type will be ignored.
+    /// </param>
+    /// </signature>
+        if (diagnostics) {
+            var fields = null;
+            if (params) {
+                fields = diagnostics.LoggingFields();
+                Object.keys(params).forEach(function (key) {
+                    var value = params[key];
+                    switch (typeof value) {
+                        case "number":
+                            fields.addInt32(key, value);
+                            break;
+                        case "string":
+                            fields.addString(key, value);
+                            break;
+                        case "boolean":
+                            fields.addBoolean(key, value);
+                            break;
+                        default:
+                            // no-op
+                            break;
+                    }
+                });
+            }
+
+            channel.logEvent(name, fields, loggingLevel, loggingOption);
+        }
+    };
 });
