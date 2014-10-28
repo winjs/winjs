@@ -1,20 +1,23 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-.win-flipview {
-    .win-navbutton {
-        background-color: rgba(213, 213, 213, 0.35);
-        color: rgba(0, 0, 0, 0.60);
+.Colors(@theme) {
+    .colorDefinitions(@theme);
+    .win-flipview {
+        .win-navbutton {
+            background-color: @baseMediumMid;
+            color: @altMediumHigh;
+
+            &:hover:active {
+                background-color: @baseMediumHigh;
+            }
+        }
     }
-    .win-navbutton.win-navbutton:hover:active {
-        background-color: rgba(41, 41, 41, 0.74);
-        color: rgba(255, 255, 255, 1.0);
+    html.win-hoverable .win-flipview {
+        .win-navbutton:hover {
+            background-color: @baseMid;
+        }
     }
 }
-html.win-hoverable .win-flipview {
-    .win-navbutton:hover {
-        background-color: rgba(215, 215, 215, 0.94);
-        color: rgba(0, 0, 0, 1.0);
-    }
-}
+
 @media (-ms-high-contrast) {
     .win-flipview {
         .win-navbottom {

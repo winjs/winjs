@@ -1,39 +1,21 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
-    .mixin(dark) {
-        .win-rating .win-star.win-user.win-full,
-        .win-rating .win-star.win-user.win-full.win-disabled {
-            color: rgb(91, 46, 197);
-        }
-        .win-rating .win-star.win-tentative.win-full {
-            color: rgb(129, 82, 239);
-        }
-        .win-rating .win-star.win-average.win-full,
-        .win-rating .win-star.win-average.win-full.win-disabled {
-            color: rgb(255, 255, 255);
-        }
-        .win-rating .win-star.win-empty {
-            color: rgba(255, 255, 255, 0.35);
-        }
-    }
-    .mixin(light) {
-        .win-rating .win-star.win-user.win-full,
-        .win-rating .win-star.win-user.win-full.win-disabled {
-            color: rgb(70, 23, 180);
-        }
-        .win-rating .win-star.win-tentative.win-full {
-            color: rgb(114, 65, 228);
-        }
-        .win-rating .win-star.win-average.win-full,
-        .win-rating .win-star.win-average.win-full.win-disabled {
-            color: rgb(0, 0, 0);
-        }
-        .win-rating .win-star.win-empty {
-            color: rgba(0, 0, 0, 0.35);
-        }
-    }
+    .colorDefinitions(@theme);
 
-    .mixin(@theme);
+    .win-rating .win-star.win-user.win-full,
+    .win-rating .win-star.win-user.win-full.win-disabled {
+        color: @accentColor;
+    }
+    .win-rating .win-star.win-tentative.win-full {
+        color: @baseMediumHigh;
+    }
+    .win-rating .win-star.win-average.win-full,
+    .win-rating .win-star.win-average.win-full.win-disabled {
+        color: @baseMediumMid;
+    }
+    .win-rating .win-star.win-empty {
+        color: @baseLow;
+    }
 }
 
 @media (-ms-high-contrast) {
