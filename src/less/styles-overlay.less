@@ -694,14 +694,19 @@ Settings Pane
     padding-top: 32px;
     height: 48px;
 }
+
 /* Settings back button is slightly smaller. */
-.win-settingsflyout .win-backbutton {
+.win-settingsflyout .win-backbutton,
+.win-settingsflyout .win-back {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    line-height: 32px;
+}
+
+.win-settingsflyout .win-backbutton,
+.win-settingsflyout .win-navigation-backbutton {
     position: absolute;
-    width: 30px;
-    height: 30px;
-    font-size: 8pt;
-    line-height: 26px;
-    margin-top: 3px;
 }
 
 .win-settingsflyout .win-header .win-label {
