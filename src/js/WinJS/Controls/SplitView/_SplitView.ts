@@ -11,6 +11,7 @@ import _ErrorFromName = require('../../Core/_ErrorFromName');
 import _Events = require('../../Core/_Events');
 import _Global = require('../../Core/_Global');
 import _Hoverable = require('../../Utilities/_Hoverable');
+import _LightDismissService = require('../../_LightDismissService');
 import Promise = require('../../Promise');
 import _Signal = require('../../_Signal');
 import _TransitionAnimation = require('../../Animations/_TransitionAnimation');
@@ -280,6 +281,8 @@ module States {
             args = args || {};
             if (args.showIsPending) {
                 this.showPane();
+            } else {
+                _LightDismissService.hidden(this.splitView);
             }
         }
         exit = _;
@@ -461,7 +464,7 @@ module States {
 /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
 /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
 /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-export class SplitView {
+export class SplitView implements _LightDismissService.ILightDismissable {
     /// <field locid="WinJS.UI.SplitView.ShownDisplayMode" helpKeyword="WinJS.UI.SplitView.ShownDisplayMode">
     /// Display options for a SplitView's pane.
     /// </field>
@@ -775,6 +778,20 @@ export class SplitView {
     private _paneSlideOut(shownPaneRect: IRect): Promise<any> {
         return hideEdgeUI(this._dom.paneWrapper, this._getAnimationOffsets(shownPaneRect));
     }
+    
+    //
+    // ILightDismissable
+    //
+    
+    ld_shouldReceiveLightDismiss(IShouldReceiveLightDismissInfo): boolean { return false; }
+    ld_lightDismiss(ILightDismissInfo): void { }
+    _ld_lightDismiss(ILightDismissInfo): void {
+        this.hidePane();
+    }
+    ld_becameTopLevel(): void { }
+    ld_requiresClickEater(): boolean { return false; }
+    ld_setZIndex(zIndex: number): void { }
+    ld_containsElement(element: HTMLElement): boolean { return false; }
 
     //
     // Methods called by states
@@ -1008,4 +1025,7 @@ _Base.Class.mix(SplitView, _Events.createEventProperties(
     EventNames.beforeHide,
     EventNames.afterHide
 ));
+_Base.Class.mix(SplitView, _LightDismissService.LightDismissableElement, {
+    ld_lightDismiss: SplitView.prototype._ld_lightDismiss
+});
 _Base.Class.mix(SplitView, _Control.DOMEventMixin);
