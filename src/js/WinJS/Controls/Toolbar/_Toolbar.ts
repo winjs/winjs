@@ -5,7 +5,7 @@ import _Base = require("../../Core/_Base");
 import _BaseUtils = require("../../Core/_BaseUtils");
 import BindingList = require("../../BindingList");
 import ControlProcessor = require("../../ControlProcessor");
-import _Constants = require("../ToolBar/_Constants");
+import _Constants = require("../Toolbar/_Constants");
 import _Command = require("../AppBar/_Command");
 import _Control = require("../../Utilities/_Control");
 import _Dispose = require("../../Utilities/_Dispose");
@@ -19,7 +19,7 @@ import Menu = require("../../Controls/Menu");
 import _MenuCommand = require("../Menu/_Command");
 import _Resources = require("../../Core/_Resources");
 import Scheduler = require("../../Scheduler");
-import _ToolBarMenuCommand = require("../ToolBar/_MenuCommand");
+import _ToolbarMenuCommand = require("../Toolbar/_MenuCommand");
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
 require(["require-style!less/controls"]);
@@ -57,22 +57,22 @@ var strings = {
 };
 
 /// <field>
-/// <summary locid="WinJS.UI.ToolBar">
+/// <summary locid="WinJS.UI.Toolbar">
 /// Represents a toolbar for displaying commands.
 /// </summary>
 /// </field>
 /// <icon src="ui_winjs.ui.toolbar.12x12.png" width="12" height="12" />
 /// <icon src="ui_winjs.ui.toolbar.16x16.png" width="16" height="16" />
-/// <htmlSnippet supportsContent="true"><![CDATA[<div data-win-control="WinJS.UI.ToolBar">
+/// <htmlSnippet supportsContent="true"><![CDATA[<div data-win-control="WinJS.UI.Toolbar">
 /// <button data-win-control="WinJS.UI.Command" data-win-options="{id:'',label:'example',icon:'back',type:'button',onclick:null,section:'primary'}"></button>
 /// </div>]]></htmlSnippet>
-/// <part name="toolbar" class="win-toolbar" locid="WinJS.UI.ToolBar_part:toolbar">The entire ToolBar control.</part>
-/// <part name="toolbar-overflowbutton" class="win-toolbar-overflowbutton" locid="WinJS.UI.ToolBar_part:ToolBar-overflowbutton">The toolbar overflow button.</part>
-/// <part name="toolbar-overflowarea" class="win-toolbar-overflowarea" locid="WinJS.UI.ToolBar_part:ToolBar-overflowarea">The container for toolbar commands that overflow.</part>
+/// <part name="toolbar" class="win-toolbar" locid="WinJS.UI.Toolbar_part:toolbar">The entire Toolbar control.</part>
+/// <part name="toolbar-overflowbutton" class="win-toolbar-overflowbutton" locid="WinJS.UI.Toolbar_part:Toolbar-overflowbutton">The toolbar overflow button.</part>
+/// <part name="toolbar-overflowarea" class="win-toolbar-overflowarea" locid="WinJS.UI.Toolbar_part:Toolbar-overflowarea">The container for toolbar commands that overflow.</part>
 /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
 /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
 /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-export class ToolBar {
+export class Toolbar {
     private _id: string;
     private _disposed: boolean;
     private _overflowButton: HTMLButtonElement;
@@ -101,14 +101,14 @@ export class ToolBar {
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
     private _extraClass: string;
 
-    /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.ToolBar.element" helpKeyword="WinJS.UI.ToolBar.element">
-    /// Gets the DOM element that hosts the ToolBar.
+    /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Toolbar.element" helpKeyword="WinJS.UI.Toolbar.element">
+    /// Gets the DOM element that hosts the Toolbar.
     /// </field>
     get element() {
         return this._element;
     }
 
-    /// <field type="Boolean" locid="WinJS.UI.ToolBar.inlineMenu" helpKeyword="WinJS.UI.ToolBar.inlineMenu">
+    /// <field type="Boolean" locid="WinJS.UI.Toolbar.inlineMenu" helpKeyword="WinJS.UI.Toolbar.inlineMenu">
     /// Indicates whether the commands that overflow should be displayed in an inline menu or not
     /// </field>
     get inlineMenu() {
@@ -142,9 +142,9 @@ export class ToolBar {
         }
     }
 
-    /// <field type="String" locid="WinJS.UI.ToolBar.extraClass" helpKeyword="WinJS.UI.ToolBar.extraClass">
+    /// <field type="String" locid="WinJS.UI.Toolbar.extraClass" helpKeyword="WinJS.UI.Toolbar.extraClass">
     /// Gets or sets the extra CSS class that is applied to the host DOM element, and the corresponding 
-    /// overflow menu created by the ToolBar when its inlineMenu property is false.
+    /// overflow menu created by the Toolbar when its inlineMenu property is false.
     /// </field>
     get extraClass() {
         return this._extraClass;
@@ -162,8 +162,8 @@ export class ToolBar {
         this._menu && _ElementUtilities.addClass(this._menu.element, this.extraClass);
     }
 
-    /// <field type="WinJS.Binding.List" locid="WinJS.UI.ToolBar.data" helpKeyword="WinJS.UI.ToolBar.data">
-    /// Gets or sets the Binding List of WinJS.UI.Command for the ToolBar.
+    /// <field type="WinJS.Binding.List" locid="WinJS.UI.Toolbar.data" helpKeyword="WinJS.UI.Toolbar.data">
+    /// Gets or sets the Binding List of WinJS.UI.Command for the Toolbar.
     /// </field>
     get data() {
         return this._data;
@@ -175,7 +175,7 @@ export class ToolBar {
             return;
         }
         if (!(value instanceof BindingList.List)) {
-            throw new _ErrorFromName("WinJS.UI.ToolBar.BadData", strings.badData);
+            throw new _ErrorFromName("WinJS.UI.Toolbar.BadData", strings.badData);
         }
 
         if (this._data) {
@@ -187,18 +187,18 @@ export class ToolBar {
     }
 
     constructor(element?: HTMLElement, options: any = {}) {
-        /// <signature helpKeyword="WinJS.UI.ToolBar.ToolBar">
-        /// <summary locid="WinJS.UI.ToolBar.constructor">
-        /// Creates a new ToolBar control.
+        /// <signature helpKeyword="WinJS.UI.Toolbar.Toolbar">
+        /// <summary locid="WinJS.UI.Toolbar.constructor">
+        /// Creates a new Toolbar control.
         /// </summary>
-        /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.ToolBar.constructor_p:element">
+        /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.Toolbar.constructor_p:element">
         /// The DOM element that will host the control.
         /// </param>
-        /// <param name="options" type="Object" locid="WinJS.UI.ToolBar.constructor_p:options">
-        /// The set of properties and values to apply to the new ToolBar control.
+        /// <param name="options" type="Object" locid="WinJS.UI.Toolbar.constructor_p:options">
+        /// The set of properties and values to apply to the new Toolbar control.
         /// </param>
-        /// <returns type="WinJS.UI.ToolBar" locid="WinJS.UI.ToolBar.constructor_returnValue">
-        /// The new ToolBar control.
+        /// <returns type="WinJS.UI.Toolbar" locid="WinJS.UI.Toolbar.constructor_returnValue">
+        /// The new Toolbar control.
         /// </returns>
         /// </signature>
 
@@ -273,9 +273,9 @@ export class ToolBar {
     }
 
     dispose() {
-        /// <signature helpKeyword="WinJS.UI.ToolBar.dispose">
-        /// <summary locid="WinJS.UI.ToolBar.dispose">
-        /// Disposes this ToolBar.
+        /// <signature helpKeyword="WinJS.UI.Toolbar.dispose">
+        /// <summary locid="WinJS.UI.Toolbar.dispose">
+        /// Disposes this Toolbar.
         /// </summary>
         /// </signature>
         if (this._disposed) {
@@ -299,16 +299,16 @@ export class ToolBar {
     }
 
     forceLayout() {
-        /// <signature helpKeyword="WinJS.UI.ToolBar.forceLayout">
-        /// <summary locid="WinJS.UI.ToolBar.forceLayout">
-        /// Forces the ToolBar to update its layout. Use this function when the window did not change size, but the container of the ToolBar changed size.
+        /// <signature helpKeyword="WinJS.UI.Toolbar.forceLayout">
+        /// <summary locid="WinJS.UI.Toolbar.forceLayout">
+        /// Forces the Toolbar to update its layout. Use this function when the window did not change size, but the container of the Toolbar changed size.
         /// </summary>
         /// </signature>
         this._positionCommands();
     }
 
     private _writeProfilerMark(text: string) {
-        _WriteProfilerMark("WinJS.UI.ToolBar:" + this._id + ":" + text);
+        _WriteProfilerMark("WinJS.UI.Toolbar:" + this._id + ":" + text);
     }
 
     private _setupTree() {
@@ -388,7 +388,7 @@ export class ToolBar {
         this._secondaryCommands = [];
 
         if (this.data.length > 0) {
-            _ElementUtilities.removeClass(this.element, _Constants.emptyToolBarCssClass);
+            _ElementUtilities.removeClass(this.element, _Constants.emptyToolbarCssClass);
             this.data.forEach((command) => {
                 if (command.section === "secondary") {
                     this._secondaryCommands.push(command);
@@ -403,7 +403,7 @@ export class ToolBar {
             }
         } else {
             this._setupOverflowArea([]);
-            _ElementUtilities.addClass(this.element, _Constants.emptyToolBarCssClass);
+            _ElementUtilities.addClass(this.element, _Constants.emptyToolbarCssClass);
         }
 
         // Execute the animation.
@@ -457,7 +457,7 @@ export class ToolBar {
                     this._dataUpdated();
                     this._refreshPending = false;
                 }
-            }, Scheduler.Priority.high, null, "WinJS.UI.ToolBar._refresh");
+            }, Scheduler.Priority.high, null, "WinJS.UI.Toolbar._refresh");
         }
     }
 
@@ -577,7 +577,7 @@ export class ToolBar {
             if (child["winControl"] && child["winControl"] instanceof _Command.AppBarCommand) {
                 commands.push(child["winControl"]);
             } else if (!this._overflowButton) {
-                throw new _ErrorFromName("WinJS.UI.ToolBar.MustContainCommands", strings.mustContainCommands);
+                throw new _ErrorFromName("WinJS.UI.Toolbar.MustContainCommands", strings.mustContainCommands);
             }
         }
         return new BindingList.List(commands);
@@ -758,14 +758,14 @@ export class ToolBar {
     }
 
     private _getMenuCommand(command: _Command.ICommand): _MenuCommand.MenuCommand {
-        var menuCommand = new _ToolBarMenuCommand._MenuCommand(this.inlineMenu, null, {
+        var menuCommand = new _ToolbarMenuCommand._MenuCommand(this.inlineMenu, null, {
             label: command.label,
             type: (command.type === _Constants.typeContent ? _Constants.typeFlyout : command.type) || _Constants.typeButton,
             disabled: command.disabled,
             flyout: command.flyout,
             beforeOnClick: () => {
                 // Save the command that was selected
-                this._chosenCommand = <_Command.ICommand>(menuCommand["_originalToolBarCommand"]);
+                this._chosenCommand = <_Command.ICommand>(menuCommand["_originalToolbarCommand"]);
 
                 // If this WinJS.UI.MenuCommand has type: toggle, we should also toggle the value of the original WinJS.UI.Command
                 if (this._chosenCommand.type === _Constants.typeToggle) {
@@ -790,7 +790,7 @@ export class ToolBar {
         } else {
             menuCommand.onclick = command.onclick;
         }
-        menuCommand["_originalToolBarCommand"] = command;
+        menuCommand["_originalToolbarCommand"] = command;
         return menuCommand;
     }
 
@@ -829,7 +829,7 @@ export class ToolBar {
         // Add separator between primary and secondary command if applicable
         var secondaryCommandsLength = this._secondaryCommands.length;
         if (additionalCommands.length > 0 && secondaryCommandsLength > 0) {
-            var separator = new _ToolBarMenuCommand._MenuCommand(this.inlineMenu, null, {
+            var separator = new _ToolbarMenuCommand._MenuCommand(this.inlineMenu, null, {
                 type: _Constants.typeSeparator
             });
             this._inlineOverflowArea.appendChild(separator.element);
@@ -939,4 +939,4 @@ export class ToolBar {
 }
 
 // addEventListener, removeEventListener, dispatchEvent
-_Base.Class.mix(ToolBar, _Control.DOMEventMixin);
+_Base.Class.mix(Toolbar, _Control.DOMEventMixin);

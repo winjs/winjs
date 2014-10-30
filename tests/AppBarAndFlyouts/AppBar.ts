@@ -4,7 +4,7 @@
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts"/>
-/// <reference path="../TestLib/Helper.ToolBar.ts"/>
+/// <reference path="../TestLib/Helper.Toolbar.ts"/>
 /// <reference path="OverlayHelpers.ts" />
 
 module CorsicaTests {
@@ -14,13 +14,13 @@ module CorsicaTests {
     var AppBarCommand = <typeof WinJS.UI.PrivateCommand>WinJS.UI.AppBarCommand;
 
     var _Constants;
-    var _ToolBarConstants;
+    var _ToolbarConstants;
     var _element;
     WinJS.Utilities._require(["WinJS/Controls/AppBar/_Constants"], function (constants) {
         _Constants = constants;
     })
-    WinJS.Utilities._require(["WinJS/Controls/ToolBar/_Constants"], function (constants) {
-        _ToolBarConstants = constants;
+    WinJS.Utilities._require(["WinJS/Controls/Toolbar/_Constants"], function (constants) {
+        _ToolbarConstants = constants;
     })
 
     "use strict";
@@ -397,7 +397,7 @@ module CorsicaTests {
                     4) Button 3
             */
 
-            // Using commands layout, since this keyboarding logic is validated in the menu layout on ToolBar unit tests.
+            // Using commands layout, since this keyboarding logic is validated in the menu layout on Toolbar unit tests.
             var AppBar = new WinJS.UI.AppBar(_element, { layout: "commands" });
             LiveUnit.LoggingCore.logComment("AppBar has been instantiated.");
             LiveUnit.Assert.isNotNull(AppBar, "AppBar element should not be null when instantiated.");
@@ -1301,7 +1301,7 @@ module CorsicaTests {
                 var invokeButton = appBar.querySelector(".win-appbar-invokebutton");
                 if (appBar.winControl.layout === _Constants.appBarLayoutMenu && 
                     getComputedStyle(invokeButton).visibility === "hidden") {
-                    invokeButton = appBar.querySelector("." + _ToolBarConstants.overflowButtonCssClass);
+                    invokeButton = appBar.querySelector("." + _ToolbarConstants.overflowButtonCssClass);
                 }
                 var invokeButtonSubTree = appBar.querySelectorAll(".win-appbar-invokebutton *");
 
@@ -1951,17 +1951,17 @@ module CorsicaTests {
             });
 
             Helper.waitForEvent(appBar, "aftershow").then(function () {
-                var toolbarEl = appBar.element.querySelector("." + Helper.ToolBar.Constants.controlCssClass);
+                var toolbarEl = appBar.element.querySelector("." + Helper.Toolbar.Constants.controlCssClass);
                 var toolbar = toolbarEl.winControl;
 
-                LiveUnit.Assert.isNotNull(toolbarEl, "ToolBar element not found");
+                LiveUnit.Assert.isNotNull(toolbarEl, "Toolbar element not found");
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement, "win-appbar-toolbarcontainer"));
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement, "win-appbar-menu"));
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement.parentElement, "win-appbar"));
                 LiveUnit.Assert.areEqual(true, toolbar.inlineMenu, "Invalid inlineMenu toolbar configuration in the appbar");
 
-                Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 0", "Separator", "Button 1"]);
-                Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["Button 2", "Button 3", "Button 4"]);
+                Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 0", "Separator", "Button 1"]);
+                Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Button 2", "Button 3", "Button 4"]);
 
                 complete();
             });
@@ -2009,32 +2009,32 @@ module CorsicaTests {
                 layout: "menu"
             });
 
-            var toolbarEl = appBar.element.querySelector("." + Helper.ToolBar.Constants.controlCssClass);
+            var toolbarEl = appBar.element.querySelector("." + Helper.Toolbar.Constants.controlCssClass);
             var toolbar = toolbarEl.winControl;
-            Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 2", "Separator", "Button 3", "Button 4"]);
-            Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1", "Secondary Button 2", "Secondary Button 3"]);
+            Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 2", "Separator", "Button 3", "Button 4"]);
+            Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1", "Secondary Button 2", "Secondary Button 3"]);
 
             appBar.showOnlyCommands(["Button1", "Button3", "SecButton1"]);
 
             WinJS.Utilities.Scheduler.schedule(() => {
-                Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3"]);
-                Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
+                Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3"]);
+                Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
 
                 appBar.showCommands(["Button1", "Button4", "Button3", "SecButton1"]);
 
                 WinJS.Utilities.Scheduler.schedule(() => {
-                    Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3", "Button 4"]);
-                    Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
+                    Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3", "Button 4"]);
+                    Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
 
                     appBar.hideCommands(["SecButton1"]);
                     WinJS.Utilities.Scheduler.schedule(() => {
-                        Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3", "Button 4"]);
-                        Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, []);
+                        Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 1", "Button 3", "Button 4"]);
+                        Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, []);
 
                         appBar.showOnlyCommands(["SecButton1"]);
                         WinJS.Utilities.Scheduler.schedule(() => {
-                            Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, []);
-                            Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
+                            Helper.Toolbar.verifyMainActionVisibleCommandsLabels(toolbar, []);
+                            Helper.Toolbar.verifyOverflowAreaCommandsLabels(toolbar, ["Secondary Button 1"]);
 
                             complete();
                         }, WinJS.Utilities.Scheduler.Priority.high);
