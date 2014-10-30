@@ -3,7 +3,6 @@
     'use strict';
 
     var winjsModules = [
-        'WinJS/Core/_WinJS',
         'WinJS/Core',
         'WinJS/Promise',
         'WinJS/_Signal',
@@ -43,7 +42,8 @@
         'WinJS/Controls/Tooltip',
         'WinJS/Controls/ViewBox',
         'WinJS/Controls/ContentDialog',
-        'WinJS/Controls/Toolbar'
+        'WinJS/Controls/ToolBar',
+        'WinJS/Controls/SplitView'
     ];
 
     module.exports = function (grunt) {

@@ -47,7 +47,8 @@
     "qunitjs": "~1.14.0",
     "text-table": "~0.2.0",
     "typescript": "1.0.1",
-    "websocket": "^1.0.8"
+    "websocket": "^1.0.8",
+    "seed-random": "^2.2.0"
   },
   "browserify": {
     "transform": "deamdify"

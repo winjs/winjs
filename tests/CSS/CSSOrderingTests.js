@@ -63,6 +63,9 @@ WinJSTests.CSSOrderingTests = function () {
 
     // Helper to assert results from previous function
     function validateResults(results) {
+        // If there are 0 differences between the CSS files, CSSDiff.diff will return
+        // an empty array. Unfortunately qunit can't handle no assertions being made during a test,
+        // so we have to assert *something* in that case to prevent an error.
         if (results.length === 0) {
             LiveUnit.Assert.areEqual(1, 1, 'Dummy assertion');
         }

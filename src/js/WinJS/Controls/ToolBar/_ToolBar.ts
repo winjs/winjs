@@ -22,7 +22,8 @@ import Scheduler = require("../../Scheduler");
 import _ToolBarMenuCommand = require("../ToolBar/_MenuCommand");
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
-require(["require-style!less/controls"]);
+require(["require-style!less/styles-toolbar"]);
+require(["require-style!less/colors-toolbar"]);
 
 "use strict";
 
@@ -143,7 +144,7 @@ export class ToolBar {
     }
 
     /// <field type="String" locid="WinJS.UI.ToolBar.extraClass" helpKeyword="WinJS.UI.ToolBar.extraClass">
-    /// Gets or sets the extra CSS class that is applied to the host DOM element, and the corresponding 
+    /// Gets or sets the extra CSS class that is applied to the host DOM element, and the corresponding
     /// overflow menu created by the ToolBar when its inlineMenu property is false.
     /// </field>
     get extraClass() {
