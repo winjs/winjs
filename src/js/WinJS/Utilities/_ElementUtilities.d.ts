@@ -912,3 +912,7 @@ export declare function _inDom(element: HTMLElement): Promise<any>;
 export declare function _reparentChildren(originalParent: HTMLElement, destinationParent: HTMLElement): void;
 export declare function _matchesSelector(element:HTMLElement, selectors: string): boolean;
 export declare function _addEventListener(element: HTMLElement, type: string, listener: EventListener, useCapture?: boolean): void;
+
+export declare function _focusFirstFocusableElement(element: HTMLElement): void;
+export declare function _focusLastFocusableElement(element: HTMLElement): void;
+export declare function _getHighAndLowTabIndices(element: HTMLElement): { lowest: number; highest: number; };

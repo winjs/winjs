@@ -48,6 +48,7 @@ var ClassNames = {
     
     _panePlaceholder: "win-splitview-paneplaceholder",
     _paneWrapper: "win-splitview-panewrapper",
+    _tabStop: "win-splitview-tabstop",
     // placement
     _placementLeft: "win-splitview-placementleft",
     _placementRight: "win-splitview-placementright",
@@ -481,12 +482,15 @@ export class SplitView implements _LightDismissService.ILightDismissable {
 
     private _disposed: boolean;
     private _state: ISplitViewState;
+    private _paneTabIndices: { lowest: number; highest: number; };
     _dom: {
         root: HTMLElement;
         pane: HTMLElement;
         paneWrapper: HTMLElement; // Shouldn't have any margin, padding, or border.
         panePlaceholder: HTMLElement; // Shouldn't have any margin, padding, or border.
-        content: HTMLElement; 
+        content: HTMLElement;
+        startPaneTab: HTMLElement;
+        endPaneTab: HTMLElement;
     };
     _isShownMode: boolean; // Is ClassNames.paneShown present on the SplitView?
     _rtl: boolean;
@@ -638,7 +642,12 @@ export class SplitView implements _LightDismissService.ILightDismissable {
         // paneWrapper's purpose is to clip the pane during the pane resize animation
         var paneWrapperEl = _Global.document.createElement("div");
         paneWrapperEl.className = ClassNames._paneWrapper + " win-lightdismissable";
-        paneWrapperEl.appendChild(paneEl);
+        paneWrapperEl.innerHTML =
+            '<div class="' + ClassNames._tabStop + '"></div>' +
+            '<div class="' + ClassNames._tabStop + '"></div>';
+        var startPaneTab = <HTMLElement>paneWrapperEl.firstElementChild;
+        var endPaneTab = <HTMLElement>paneWrapperEl.lastElementChild;
+        paneWrapperEl.insertBefore(paneEl, endPaneTab);
         
         var panePlaceholderEl = _Global.document.createElement("div");
         panePlaceholderEl.className = ClassNames._panePlaceholder;
@@ -651,6 +660,8 @@ export class SplitView implements _LightDismissService.ILightDismissable {
             root: root,
             pane: paneEl,
             paneWrapper: paneWrapperEl,
+            startPaneTab: startPaneTab,
+            endPaneTab: endPaneTab,
             panePlaceholder: panePlaceholderEl,
             content: contentEl
         };
@@ -664,8 +675,25 @@ export class SplitView implements _LightDismissService.ILightDismissable {
             placement: undefined,
             isOverlayShown: undefined,
             panePlaceholderWidth: undefined,
-            panePlaceholderHeight: undefined
+            panePlaceholderHeight: undefined,
+            paneTabIndices: { lowest: undefined, highest: undefined }
         };
+        this._updateTabIndicesImpl();
+        
+        _ElementUtilities._addEventListener(this._dom.startPaneTab, "focusin", this._onStartPaneTabFocusIn.bind(this));
+        _ElementUtilities._addEventListener(this._dom.endPaneTab, "focusin", this._onEndPaneTabFocusIn.bind(this));
+    }
+    
+    _onStartPaneTabFocusIn(): void {
+        _ElementUtilities._focusLastFocusableElement(this._dom.pane);
+    }
+    
+    _onEndPaneTabFocusIn(): void {
+        _ElementUtilities._focusFirstFocusableElement(this._dom.pane);
+    }
+    
+    private _updateTabIndicesImpl(): void {
+        this._paneTabIndices = _ElementUtilities._getHighAndLowTabIndices(this._dom.pane);
     }
     
     private _measureElement(element: HTMLElement): IRect {
@@ -954,6 +982,7 @@ export class SplitView implements _LightDismissService.ILightDismissable {
         isOverlayShown: boolean;
         panePlaceholderWidth: string;
         panePlaceholderHeight: string;
+        paneTabIndices: { lowest: number; highest: number; };
     }
     _updateDomImpl(): void {
         var paneShouldBeFirst = this.placement === Placement.left || this.placement === Placement.top;
@@ -1027,6 +1056,18 @@ export class SplitView implements _LightDismissService.ILightDismissable {
             style.height = height;
             this._rendered.panePlaceholderWidth = width;
             this._rendered.panePlaceholderHeight = height;
+        }
+        
+        var paneTabIndices = this._isShownMode && this.shownDisplayMode === ShownDisplayMode.overlay ?
+            this._paneTabIndices :
+            { lowest: -1, highest: -1 }; 
+        if (this._rendered.paneTabIndices.lowest !== paneTabIndices.lowest) {
+            this._dom.startPaneTab.tabIndex = paneTabIndices.lowest;
+            this._rendered.paneTabIndices.lowest = paneTabIndices.lowest
+        }
+        if (this._rendered.paneTabIndices.highest !== paneTabIndices.highest) {
+            this._dom.endPaneTab.tabIndex = paneTabIndices.highest;
+            this._rendered.paneTabIndices.highest = paneTabIndices.highest
         }
     }
 }
