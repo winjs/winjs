@@ -142,7 +142,9 @@ function hideEdgeUI(elements: any, offsets: any): Promise<any> {
 }
 
 function fadeIn(elements: any): Promise<any> {
-    return cancelablePromise(Animations.fadeIn(elements));
+    return window.location.search === "?disableFadeIn" ?
+        Promise.as() : 
+        cancelablePromise(Animations.fadeIn(elements));
 }
 
 function resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: { from: IThickness; to: IThickness; dimension: string; anchorTrailingEdge: boolean; }): Promise<any> {
