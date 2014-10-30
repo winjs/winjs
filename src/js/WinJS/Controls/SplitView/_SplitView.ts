@@ -693,7 +693,6 @@ export class SplitView implements _LightDismissService.ILightDismissable {
     private _prepareAnimation(paneRect: IRect, contentRect: IRect): void {
         var paneWrapperStyle = this._dom.paneWrapper.style;
         paneWrapperStyle.position = "absolute";
-        paneWrapperStyle.zIndex = "1";
         paneWrapperStyle.left = paneRect.left + "px";
         paneWrapperStyle.top = paneRect.top + "px";
         paneWrapperStyle.height = paneRect.totalHeight + "px";
@@ -701,7 +700,6 @@ export class SplitView implements _LightDismissService.ILightDismissable {
         
         var contentStyle = this._dom.content.style;
         contentStyle.position = "absolute";
-        contentStyle.zIndex = "0";
         this._setContentRect(contentRect);
     }
     
@@ -709,7 +707,6 @@ export class SplitView implements _LightDismissService.ILightDismissable {
     private _clearAnimation(): void {
         var paneWrapperStyle = this._dom.paneWrapper.style;
         paneWrapperStyle.position = "";
-        paneWrapperStyle.zIndex = "";
         paneWrapperStyle.left = "";
         paneWrapperStyle.top = "";
         paneWrapperStyle.height = "";
@@ -718,7 +715,6 @@ export class SplitView implements _LightDismissService.ILightDismissable {
         
         var contentStyle = this._dom.content.style;
         contentStyle.position = "";
-        contentStyle.zIndex = "";
         contentStyle.left = "";
         contentStyle.top = "";
         contentStyle.height = "";

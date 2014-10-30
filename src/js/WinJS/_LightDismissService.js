@@ -466,6 +466,7 @@ define([
             if (index !== -1) {
                 this._clients.splice(index, 1);
                 removeItem(this._focusOrder, client);
+                client.ld_setZIndex("");
                 //if (dismissedTopLevel) {
                 //    client._isTopLevel = false;
                     if (!this._notifying) {
