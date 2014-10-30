@@ -9,8 +9,8 @@ define([
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
-    '../../Controls/Toolbar/_Toolbar',
-    '../../Controls/Toolbar/_Constants',
+    '../../Controls/ToolBar/_ToolBar',
+    '../../Controls/ToolBar/_Constants',
     '../../Promise',
     '../../Scheduler',
     '../../Utilities/_Control',
@@ -18,7 +18,7 @@ define([
     '../../Utilities/_ElementUtilities',
     './_Command',
     './_Constants'
-], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, _Toolbar, _ToolbarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
+], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, _ToolBar, _ToolBarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
 
     // AppBar will use this when AppBar.layout property is set to "custom"
@@ -475,7 +475,7 @@ define([
                 exports._AppBarBaseLayout.call(this, appBarEl, { _className: layoutClassName, _type: layoutType });
                 this._tranformNames = _BaseUtils._browserStyleEquivalents["transform"];
                 this._animationCompleteBound = this._animationComplete.bind(this);
-                this._positionToolbarBound = this._positionToolbar.bind(this);
+                this._positionToolBarBound = this._positionToolBar.bind(this);
             }, {
                 layout: function _AppBarMenuLayout_layout(commands) {
                     this._writeProfilerMark("layout,info");
@@ -504,7 +504,7 @@ define([
                     this._toolbarEl = _Global.document.createElement("div");
                     this._toolbarContainer.appendChild(this._toolbarEl);
 
-                    this._createToolbar(commands);
+                    this._createToolBar(commands);
                 },
 
                 showCommands: function _AppBarMenuLayout_showCommands(commands) {
@@ -568,13 +568,13 @@ define([
 
                     this._animating = true;
                     if (toPosition === "shown" || (fromPosition !== "shown" && toPosition === "compact")) {
-                        this._positionToolbar();
-                        this._animationPromise = this._animateToolbarEntrance();
+                        this._positionToolBar();
+                        this._animationPromise = this._animateToolBarEntrance();
                     } else {
                         if (fromPosition === "minimal" || fromPosition === "compact" || fromPosition === "hidden") {
                             this._animationPromise = Promise.wrap();
                         } else {
-                            this._animationPromise = this._animateToolbarExit();
+                            this._animationPromise = this._animateToolBarExit();
                         }
                     }
                     this._animationPromise.then(this._animationCompleteBound, this._animationCompleteBound);
@@ -609,7 +609,7 @@ define([
 
                     this._toolbar.data = new BindingList.List(data);
                     if (hadHiddenClass) {
-                        this._positionToolbar();
+                        this._positionToolBar();
                     }
 
                     // Restore state to AppBar.
@@ -619,8 +619,8 @@ define([
                     }
 
                     if (hadShownClass) {
-                        this._positionToolbar();
-                        this._animateToolbarEntrance();
+                        this._positionToolBar();
+                        this._animateToolBarEntrance();
                     }
                 },
 
@@ -664,8 +664,8 @@ define([
                     this._animating = false;
                 },
 
-                _createToolbar: function _AppBarMenuLayout_createToolbar(commands) {
-                    this._writeProfilerMark("_createToolbar,info");
+                _createToolBar: function _AppBarMenuLayout_createToolBar(commands) {
+                    this._writeProfilerMark("_createToolBar,info");
 
                     var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
                     _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
@@ -674,19 +674,19 @@ define([
                     var prevAppBarDisplay = this.appBarEl.style.display;
                     this.appBarEl.style.display = "";
 
-                    this._toolbar = new _Toolbar.Toolbar(this._toolbarEl, {
+                    this._toolbar = new _ToolBar.ToolBar(this._toolbarEl, {
                         data: new BindingList.List(this._originalCommands),
                         inlineMenu: true
                     });
 
                     var that = this;
                     this._appbarInvokeButton = this.appBarEl.querySelector("." + _Constants.invokeButtonClass);
-                    this._overflowButton = this._toolbarEl.querySelector("." + _ToolbarConstants.overflowButtonCssClass);
+                    this._overflowButton = this._toolbarEl.querySelector("." + _ToolBarConstants.overflowButtonCssClass);
                     this._overflowButton.addEventListener("click", function () {
                         that._appbarInvokeButton.click();
                     });
 
-                    this._positionToolbar();
+                    this._positionToolBar();
 
                     // Restore state to AppBar.
                     this.appBarEl.style.display = prevAppBarDisplay;
@@ -695,8 +695,8 @@ define([
                     }
                 },
 
-                _positionToolbar: function _AppBarMenuLayout_positionToolbar() {
-                    this._writeProfilerMark("_positionToolbar,info");
+                _positionToolBar: function _AppBarMenuLayout_positionToolBar() {
+                    this._writeProfilerMark("_positionToolBar,info");
 
                     var menuOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
                     var toolbarOffset = this._toolbarEl.offsetHeight - (this._isMinimal() ? 0 : this.appBarEl.offsetHeight);
@@ -713,13 +713,13 @@ define([
                     this._initialized = true;
                 },
 
-                _animateToolbarEntrance: function _AppBarMenuLayout_animateToolbarEntrance() {
-                    this._writeProfilerMark("_animateToolbarEntrance,info");
+                _animateToolBarEntrance: function _AppBarMenuLayout_animateToolBarEntrance() {
+                    this._writeProfilerMark("_animateToolBarEntrance,info");
 
                     if (this._forceLayoutPending) {
                         this._forceLayoutPending = false;
                         this._toolbar.forceLayout();
-                        this._positionToolbar();
+                        this._positionToolBar();
                     }
 
                     var heightVisible = this._isMinimal() ? 0 : this.appBarEl.offsetHeight;
@@ -734,14 +734,14 @@ define([
                     return Promise.join([animation1, animation2]);
                 },
 
-                _animateToolbarExit: function _AppBarMenuLayout_animateToolbarExit() {
-                    this._writeProfilerMark("_animateToolbarExit,info");
+                _animateToolBarExit: function _AppBarMenuLayout_animateToolBarExit() {
+                    this._writeProfilerMark("_animateToolBarExit,info");
 
                     var heightVisible = this._isMinimal() ? 0 : this.appBarEl.offsetHeight;
                     var animation1 = this._executeTranslate(this._toolbarContainer, "translateY(0px)");
                     var animation2 = this._executeTranslate(this._toolbarEl, "translateY(" + (this._toolbarContainer.offsetHeight - heightVisible) + "px)");
                     var animation = Promise.join([animation1, animation2]);
-                    animation.then(this._positionToolbarBound, this._positionToolbarBound);
+                    animation.then(this._positionToolBarBound, this._positionToolBarBound);
                     return animation;
                 },
 
