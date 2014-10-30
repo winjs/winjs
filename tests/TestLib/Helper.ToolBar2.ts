@@ -2,7 +2,7 @@
 ///<reference path="Helper.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
 
-module Helper.Toolbar {
+module Helper.ToolBar2 {
     "use strict";
     
     export var Constants = {
@@ -16,7 +16,7 @@ module Helper.Toolbar {
         overflowAreaCssClass: "win-toolbar-overflowarea",
         flyoutMenuCssClass: "win-toolbar-flyoutmenu",
         inlineMenuCssClass: "win-toolbar-inlinemenu",
-        emptyToolbarCssClass: "win-toolbar-empty",
+        emptyToolBar2CssClass: "win-toolbar-empty",
         commandType: "WinJS.UI.AppBarCommand",
         secondaryCommandSection: "secondary",
         commandSelector: ".win-command",
@@ -48,16 +48,16 @@ module Helper.Toolbar {
         }
     }
 
-    export function verifyMainActionVisibleCommandsLabels(toolbar: WinJS.UI.Toolbar, labels: string[]) {
-        var commands = getVisibleCommandsInElement((<WinJS.UI.PrivateToolbar>toolbar.element.winControl)._mainActionArea);
+    export function verifyMainActionVisibleCommandsLabels(toolbar: WinJS.UI.ToolBar2, labels: string[]) {
+        var commands = getVisibleCommandsInElement((<WinJS.UI.PrivateToolBar2>toolbar.element.winControl)._mainActionArea);
         LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
             LiveUnit.Assert.areEqual(label, commands[index].winControl.label);
         });
     }
 
-    export function verifyOverflowAreaCommandsLabels(toolbar: WinJS.UI.Toolbar, labels: string[]) {
-        var control = <WinJS.UI.PrivateToolbar>toolbar.element.winControl;
+    export function verifyOverflowAreaCommandsLabels(toolbar: WinJS.UI.ToolBar2, labels: string[]) {
+        var control = <WinJS.UI.PrivateToolBar2>toolbar.element.winControl;
         var commands = getVisibleCommandsInElement(control.inlineMenu ? control._inlineOverflowArea : control._menu.element);
         LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
