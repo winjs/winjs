@@ -5,7 +5,8 @@ define([
     './Core/_Base',
     './Application',
     './Utilities/_ElementUtilities',
-    './Core/_Resources'
+    './Core/_Resources',
+    'require-style!less/controls'
 ], function lightDismissServiceInit(_Global, _WinRT, _Base, Application, _ElementUtilities, _Resources) {
     "use strict";
 
@@ -86,7 +87,7 @@ define([
             return false;
         }  
     };
-    var BASE_ZINDEX = 1000;
+    var BASE_ZINDEX = 1000; // TODO: What should this value be? 
 
     var TypeToSearch = {
         _suggestionManager: null,
@@ -351,7 +352,7 @@ define([
         
         ld_becameTopLevel: function () {
             // TODO: Track focus so that we can restore it rather than always going to the first element?
-            _ElementUtilities._focusFirstFocusableElement(this.element);
+            _ElementUtilities._focusFirstFocusableElement(this.ld_element());
         },
         
         ld_edgyStarting: _,
@@ -369,19 +370,23 @@ define([
         },
 
         ld_setZIndex: function (value) {
-            this.element.style.zIndex = value;
+            this.ld_element().style.zIndex = value;
         },
 
         ld_containsElement: function (element) {
-            return this.element.contains(element);
+            return this.ld_element().contains(element);
         },
 
         ld_requestingFocusOnKeyboardInput: function (info) {
             // TODO: If there's a type to search SearchBox, this will run on every keystroke
             // even though there probably isn't one in this light dismissable
-            var targets = lds._getRequestingFocusOnKeyboardInputCandidates(this.element);
+            var targets = lds._getRequestingFocusOnKeyboardInputCandidates(this.ld_element());
             lds._dispatchRequestingFocusOnKeyboardInput(targets);
             info.stopPropagation();
+        },
+        
+        ld_element: function () {
+            return this.element;
         },
     };
 

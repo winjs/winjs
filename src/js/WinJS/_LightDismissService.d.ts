@@ -1,20 +1,20 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-interface IShouldReceiveLightDismissInfo {
+export interface IShouldReceiveLightDismissInfo {
 	reason: string;
 	topLevel: boolean;
 	stopProgation(): void;
 	preventDefault(): void;
 }
 
-interface ILightDismissInfo {
+export interface ILightDismissInfo {
 	reason: string;
 	topLevel: boolean;
 }
 
 export interface ILightDismissable {
-	ld_shouldReceiveLightDismiss(IShouldReceiveLightDismissInfo): boolean;
-	ld_lightDismiss(ILightDismissInfo): void;
+	ld_shouldReceiveLightDismiss(shouldReceiveLightDismissInfo: IShouldReceiveLightDismissInfo, dismissInfo: ILightDismissInfo): boolean;
+	ld_lightDismiss(dismissInfo: ILightDismissInfo): void;
 	ld_becameTopLevel(): void;
 	ld_requiresClickEater(): boolean;
 	ld_setZIndex(zIndex: number): void;
@@ -22,8 +22,8 @@ export interface ILightDismissable {
 }
 
 export declare class LightDismissableElement implements ILightDismissable {
-	ld_shouldReceiveLightDismiss(IShouldReceiveLightDismissInfo): boolean;
-	ld_lightDismiss(ILightDismissInfo): void;
+	ld_shouldReceiveLightDismiss(shouldReceiveLightDismissInfo: IShouldReceiveLightDismissInfo, dismissInfo: ILightDismissInfo): boolean;
+	ld_lightDismiss(dismissInfo: ILightDismissInfo): void;
 	ld_becameTopLevel(): void;
 	ld_requiresClickEater(): boolean;
 	ld_setZIndex(zIndex: number): void;

@@ -281,8 +281,6 @@ module States {
             args = args || {};
             if (args.showIsPending) {
                 this.showPane();
-            } else {
-                _LightDismissService.hidden(this.splitView);
             }
         }
         exit = _;
@@ -662,6 +660,7 @@ export class SplitView implements _LightDismissService.ILightDismissable {
             isShownMode: undefined,
             shownDisplayMode: undefined,
             placement: undefined,
+            isOverlayShown: undefined,
             panePlaceholderWidth: undefined,
             panePlaceholderHeight: undefined
         };
@@ -783,15 +782,19 @@ export class SplitView implements _LightDismissService.ILightDismissable {
     // ILightDismissable
     //
     
-    ld_shouldReceiveLightDismiss(IShouldReceiveLightDismissInfo): boolean { return false; }
-    ld_lightDismiss(ILightDismissInfo): void { }
-    _ld_lightDismiss(ILightDismissInfo): void {
+    ld_shouldReceiveLightDismiss(shouldReceiveLightDismissInfo: _LightDismissService.IShouldReceiveLightDismissInfo, dismissInfo: _LightDismissService.ILightDismissInfo): boolean { return false; }
+    ld_lightDismiss(dismissInfo: _LightDismissService.ILightDismissInfo): void { }
+    _ld_lightDismiss(dismissInfo: _LightDismissService.ILightDismissInfo): void {
         this.hidePane();
     }
     ld_becameTopLevel(): void { }
     ld_requiresClickEater(): boolean { return false; }
     ld_setZIndex(zIndex: number): void { }
     ld_containsElement(element: HTMLElement): boolean { return false; }
+    ld_element(): HTMLElement { return null; }
+    _ld_element(): HTMLElement {
+        return this.paneElement;
+    }
 
     //
     // Methods called by states
@@ -950,6 +953,7 @@ export class SplitView implements _LightDismissService.ILightDismissable {
         isShownMode: boolean;
         shownDisplayMode: string;
         placement: string;
+        isOverlayShown: boolean;
         panePlaceholderWidth: string;
         panePlaceholderHeight: string;
     }
@@ -992,6 +996,16 @@ export class SplitView implements _LightDismissService.ILightDismissable {
             this._rendered.shownDisplayMode = this.shownDisplayMode;
         }
         
+        var isOverlayShown = this.shownDisplayMode === ShownDisplayMode.overlay && this._isShownMode;
+        if (this._rendered.isOverlayShown !== isOverlayShown) {
+            if (isOverlayShown) {
+                _LightDismissService.shown(this);
+            } else {
+                _LightDismissService.hidden(this);
+            }
+            this._rendered.isOverlayShown = isOverlayShown;
+        }
+        
         // panePlaceholder's purpose is to take up the amount of space occupied by the
         // hidden pane while the pane is shown in overlay mode. Without this, the content
         // would shift as the pane shows and hides in overlay mode.
@@ -1026,6 +1040,7 @@ _Base.Class.mix(SplitView, _Events.createEventProperties(
     EventNames.afterHide
 ));
 _Base.Class.mix(SplitView, _LightDismissService.LightDismissableElement, {
-    ld_lightDismiss: SplitView.prototype._ld_lightDismiss
+    ld_lightDismiss: SplitView.prototype._ld_lightDismiss,
+    ld_element: SplitView.prototype._ld_element
 });
 _Base.Class.mix(SplitView, _Control.DOMEventMixin);
