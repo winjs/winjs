@@ -732,7 +732,7 @@ export class Toolbar {
             command.element.style.display = (command.hidden ? "none" : "");
         })
 
-        var mainActionWidth = _ElementUtilities.getTotalWidth(this.element);
+        var mainActionWidth = _ElementUtilities.getContentWidth(this.element);
 
         var commandsLocation = this._getPrimaryCommandsLocation(mainActionWidth);
 
