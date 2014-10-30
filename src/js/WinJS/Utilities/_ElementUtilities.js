@@ -467,6 +467,7 @@ define([
                 radiusY: touchObject.radiusY,
                 rotationAngle: touchObject.rotationAngle,
                 force: touchObject.force,
+                isPrimary: true,
                 _currentTouch: touchObject
             });
             var newRetVal = callback(pointerEventObject);
@@ -478,6 +479,7 @@ define([
     function mouseEventTranslator(callback, eventObject) {
         eventObject.pointerType = _MSPointerEvent.MSPOINTER_TYPE_MOUSE;
         eventObject.pointerId = -1;
+        eventObject.isPrimary = true;
         return callback(eventObject);
     }
 
