@@ -414,7 +414,7 @@ declare module WinJS {
             _sizes;
         }
 
-        class PrivateToolBar2 extends WinJS.UI.ToolBar2 {
+        class PrivateToolBar extends WinJS.UI.ToolBar {
             _disposed: boolean;
             _primaryCommands: ICommand[];
             _secondaryCommands: ICommand[];
@@ -439,7 +439,7 @@ declare module WinJS {
             _lastElementFocus;
         }
 
-        // Move to WinJS.d.ts after the ToolBar2 API review
+        // Move to WinJS.d.ts after the ToolBar API review
         export interface ICommand {
             addEventListener(type: string, listener: Function, useCapture?: boolean): void;
             dispose(): void;
@@ -695,7 +695,7 @@ declare module WinJS {
         }
 
         
-        class ToolBar2 {
+        class ToolBar {
             public element: HTMLElement;
             public inlineMenu: boolean;
             public data: WinJS.Binding.List<ICommand>;
