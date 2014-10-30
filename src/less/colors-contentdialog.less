@@ -1,52 +1,25 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#win-contentdialog {
-    .variableDefs(light) {
-        @baseWhite: #fff;
-        @baseBlack: #000;
-        @textHigh: fade(#000, 87%);
-        @textMid: fade(#000, 60%);
-        @pageBackground: #fff;
-        @baseLow: fade(#000, 30%);
-        @accentColor: #0078D7;
-        
-        @defaultButtonColor: @accentColor;
-        @restButtonColor: @baseLow;
+.Colors(@theme) {
+    .colorDefinitions(@theme);
+    
+    .win-contentdialog-dialog {
+        background-color: @chromeMediumMid;
+        outline-color: @accentColor; // Should be @accentHigh
     }
     
-    .styleContentDialogForTheme(@theme) {
-        .win-contentdialog {
-            #win-contentdialog > .variableDefs(@theme);
-            
-            .win-contentdialog-backgroundoverlay {
-                background-color: @baseBlack;
-                opacity: 0.45;
-            }
-            
-            .win-contentdialog-dialog {
-                background-color: @pageBackground; /* ChromeColor? */
-            }
-            
-            .win-contentdialog-title {
-                color: @textHigh;
-            }
-            
-            .win-contentdialog-content {
-                color: @textHigh;
-            }
-            
-            .win-contentdialog-primarycommand {
-                color: @baseWhite;
-                background-color: @defaultButtonColor;
-            }
-            
-            .win-contentdialog-secondarycommand {
-                color: @textHigh;
-                background-color: @restButtonColor;
-            }
-        }
+    .win-contentdialog-title {
+        color: @baseHigh;
+    }
+    
+    .win-contentdialog-content {
+        color: @baseHigh;
+    }
+    
+    // This is @altMid but developers probably expect this to have an opacity
+    // rather than a background color with an alpha value.
+    .win-contentdialog-backgroundoverlay {
+        background-color: @altHigh;
+        opacity: 0.6;
     }
 }
-
-/* For now until the colors are finalized, just use the light theme's colors everywhere */
-#win-contentdialog > .styleContentDialogForTheme(light);

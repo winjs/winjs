@@ -8,17 +8,23 @@
       - Horizontal alignment
         - Always horizontally centered
       - Vertical alignment
-        - If height of window < dialog max, dialog is attached to top of window
+        - If height of window < @dialogVerticallyCenteredThreshold, dialog is attached to top of window
         - Otherwise, dialog is vertically centered
       - Width:
-        - Always stays between min and max width
+        - Always stays between @minWidth and @maxWidth
         - Sizes to width of window
       - Height:
-        - Always stays between min and max height
-        - If window height < dialog max and dialog height > 50% of window
+        - Always stays between @minHeight and @maxHeight
+        - If window height < @maxHeight and dialog height > 50% of window
           height, dialog height = window height
         - Otherwise, dialog height sizes to its content
      */
+     
+    @minWidth: 320px;
+    @maxWidth: 456px;
+    @minHeight: 184px;
+    @maxHeight: 758px;
+    @dialogVerticallyCenteredThreshold: 640px;
     
     &.win-contentdialog-verticalalignment {
         z-index: 1005; /* Above AppBar and SettingsFlyout. Below Flyout. */
@@ -53,15 +59,17 @@
         
         #flex > .flex(@grow: 1; @shrink: 1);
         
+        outline-style: solid;
+        outline-width: 1px;
         box-sizing: border-box;
-        padding: 12px;
+        padding: 18px 24px 24px 24px;
         
         width: 100vw;
-        min-width: 320px;
-        max-width: 432px;
+        min-width: @minWidth;
+        max-width: @maxWidth;
     
-        min-height: 160px;
-        max-height: 520px;
+        min-height: @minHeight;
+        max-height: @maxHeight;
     
         /* Center horizontally */
         margin-left: auto;
@@ -84,9 +92,9 @@
         width: 0;
     }
     
-    @media (min-height: 520px) {
+    @media (min-height: @dialogVerticallyCenteredThreshold) {
         .win-contentdialog-dialog {
-            #flex > .flex(@grow: 0; @shrink: 0);
+            #flex > .flex(@grow: 0; @shrink: 1); // shrink: 1 so dialog never becomes taller than window
         }
 
         .win-contentdialog-column0or1 {
@@ -105,17 +113,17 @@
     .win-contentdialog-title {
         #flex > .flex(@grow: 0; @shrink: 0);
         overflow: hidden;
-        font-size: 20px;
-        max-height: 56px;
+        .win-type-subtitle();
     }
     .win-contentdialog-content {
         #flex > .flex(@grow: 1; @shrink: 0);
-        font-size: 15px;
+        .win-type-body();
     }
     
     .win-contentdialog-commands {
         #flex > .flex(@grow: 0; @shrink: 0);
         #flex > .display-flex();
+        margin-top: 24px;
         margin-right: -4px; /* Chop off margin on last command */
     }
     
@@ -132,10 +140,6 @@
         width: 0;
         
         margin-right: 4px; /* 4px of space between each command */
-        
         white-space: nowrap;
-        padding-left: 12px;
-        padding-right: 12px;
-        font-size: 15px;
     }
 }

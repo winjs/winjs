@@ -29,9 +29,10 @@ module ContentDialogTests {
     var createDialog;
     
     var defaultMinDialogWidth = 320;
-    var defaultMaxDialogWidth = 432;
-    var defaultMinDialogHeight = 160;
-    var defaultMaxDialogHeight = 520;
+    var defaultMaxDialogWidth = 456;
+    var defaultMinDialogHeight = 184;
+    var defaultMaxDialogHeight = 758;
+    var dialogVerticallyCenteredThreshold = 640; // Hard coded. Not configurable by app developers.
 
     function isVisible(element) {
         var style = getComputedStyle(element);
@@ -433,14 +434,14 @@ module ContentDialogTests {
                 return [
                     // Vertical alignment
                     {
-                        desc: "Dialog is vertically centered (when window height > dialog's max)",
-                        windowHeight: limits.maxDialogHeight + 10,
+                        desc: "Dialog is vertically centered (when window height > dialogVerticallyCenteredThreshold)",
+                        windowHeight: dialogVerticallyCenteredThreshold + 10,
                         contentHeight: limits.minDialogHeight,
                         expectedDialogVerticalPosition: Position.center
                     },
                     {
-                        desc: "Dialog snaps to top of window (when window height < dialog's max)",
-                        windowHeight: limits.maxDialogHeight - 10,
+                        desc: "Dialog snaps to top of window (when window height < dialogVerticallyCenteredThreshold)",
+                        windowHeight: dialogVerticallyCenteredThreshold - 10,
                         contentHeight: limits.minDialogHeight,
                         expectedDialogVerticalPosition: Position.top
                     },
@@ -623,7 +624,7 @@ module ContentDialogTests {
                     // Custom dialog min/max width/height
                     var customLimits = {
                         minDialogWidth: 123,
-                        maxDialogWidth: 456,
+                        maxDialogWidth: 549,
                         minDialogHeight: defaultMinDialogHeight,
                         maxDialogHeight: defaultMaxDialogHeight
                     };
