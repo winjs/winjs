@@ -637,7 +637,7 @@ export class SplitView implements _LightDismissService.ILightDismissable {
         
         // paneWrapper's purpose is to clip the pane during the pane resize animation
         var paneWrapperEl = _Global.document.createElement("div");
-        paneWrapperEl.className = ClassNames._paneWrapper;
+        paneWrapperEl.className = ClassNames._paneWrapper + " win-lightdismissable";
         paneWrapperEl.appendChild(paneEl);
         
         var panePlaceholderEl = _Global.document.createElement("div");
