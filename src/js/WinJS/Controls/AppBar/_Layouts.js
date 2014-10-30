@@ -9,7 +9,7 @@ define([
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
-    '../../Controls/Toolbar',
+    '../../Controls/Toolbar/_Toolbar',
     '../../Controls/Toolbar/_Constants',
     '../../Promise',
     '../../Scheduler',
@@ -18,7 +18,7 @@ define([
     '../../Utilities/_ElementUtilities',
     './_Command',
     './_Constants'
-], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, Toolbar, _ToolbarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
+], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, _Toolbar, _ToolbarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
 
     // AppBar will use this when AppBar.layout property is set to "custom"
@@ -674,7 +674,7 @@ define([
                     var prevAppBarDisplay = this.appBarEl.style.display;
                     this.appBarEl.style.display = "";
 
-                    this._toolbar = new Toolbar.Toolbar(this._toolbarEl, {
+                    this._toolbar = new _Toolbar.Toolbar(this._toolbarEl, {
                         data: new BindingList.List(this._originalCommands),
                         inlineMenu: true
                     });
