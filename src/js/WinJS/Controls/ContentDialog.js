@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
-    '../_LightDismissService',
     '../Application',
     '../Utilities/_Dispose',
     '../Promise',
@@ -17,7 +16,7 @@ define([
     '../Utilities/_Hoverable',
     '../Animations',
     'require-style!less/controls'
-    ], function contentDialogInit(_LightDismissService, Application, _Dispose, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
+    ], function contentDialogInit(Application, _Dispose, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
     "use strict";
 
     var ContentDialogManager;
@@ -370,7 +369,7 @@ define([
                                     }
                                 }
                                 ContentDialogManager.willShow(that.dialog);
-                                _LightDismissService.shown(that.dialog);
+                                that.dialog._focusInitialElement();
                                 return that.dialog._playEntranceAnimation();
                             }).then(function () {
                                 that.dialog._fireEvent(EventNames.afterShow); // Give opportunity for chain to be canceled when calling into app code
@@ -463,7 +462,6 @@ define([
                                 that.dialog._removeExternalListeners();
                                 _ElementUtilities.removeClass(that.dialog._dom.root, ClassNames._visible);
                                 that.dialog._clearInputPaneRendering();
-                                _LightDismissService.hidden(that.dialog);
                                 that.dialog._fireAfterHide(reason); // Give opportunity for chain to be canceled when calling into app code
                             }).then(function () {
                                 that.dialog._setState(States.Hidden, that._showIsPending);
@@ -1076,15 +1074,6 @@ define([
                 "afterhide"
             ));
             _Base.Class.mix(ContentDialog, _Control.DOMEventMixin);
-            _Base.Class.mix(ContentDialog, _LightDismissService.LightDismissableElement, {
-                ld_becameTopLevel: function () {
-                    this._focusInitialElement();
-                },
-                ld_shouldReceiveLightDismiss: function (info) {
-                    info.stopPropagation();
-                    return false;
-                }
-            });
             return ContentDialog;
         })
     });
