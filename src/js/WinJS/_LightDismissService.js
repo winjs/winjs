@@ -79,7 +79,6 @@ define([
                 case LightDismissalReasons.windowBlur:
                 case LightDismissalReasons.edgy:
                     return true;
-                    break;
             }
         },
         Sticky: function LightDismissalPolicies_Sticky_shouldReceiveLightDismiss(info) {
@@ -264,11 +263,7 @@ define([
         }
     };
 
-    function pp(e) {
-        return e ? [e.id, e.className, e.tagName].join(":") : "<null>";
-    }
-
-    function _() { };
+    function _() { }
 
     var LightDismissableBody = _Base.Class.define(function () {
         _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusIn.bind(this));
@@ -800,8 +795,8 @@ define([
             // TODO: Original would set _keyboardInvoked to true for escape here.
             // TODO: preventDefault, stopPropagation even if nobody dismisses?
             if (eventObject.keyCode === _ElementUtilities.Key.escape) {
-                event.preventDefault();
-                event.stopPropagation();
+                eventObject.preventDefault();
+                eventObject.stopPropagation();
                 this._dispatchLightDismiss(LightDismissalReasons.escape);
             }
         },
