@@ -17,6 +17,7 @@ define([
         "Windows.ApplicationModel.Search.SearchQueryLinguisticDetails",
         "Windows.Data.Text.SemanticTextQuery",
         "Windows.Foundation.Collections.CollectionChange",
+        "Windows.Foundation.Diagnostics",
         "Windows.Foundation.Uri",
         "Windows.Globalization.ApplicationLanguages",
         "Windows.Globalization.Calendar",
