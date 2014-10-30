@@ -87,7 +87,7 @@ define([
             return false;
         }  
     };
-    var BASE_ZINDEX = 1000; // TODO: What should this value be? 
+    var BASE_ZINDEX = 1100; // TODO: What should this value be? We'll just be above all overlays for the prototype.
 
     var TypeToSearch = {
         _suggestionManager: null,
