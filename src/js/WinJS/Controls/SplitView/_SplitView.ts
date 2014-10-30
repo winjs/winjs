@@ -793,7 +793,7 @@ export class SplitView implements _LightDismissService.ILightDismissable {
     ld_containsElement(element: HTMLElement): boolean { return false; }
     ld_element(): HTMLElement { return null; }
     _ld_element(): HTMLElement {
-        return this.paneElement;
+        return this._dom.paneWrapper;
     }
 
     //
