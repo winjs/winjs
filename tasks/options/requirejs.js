@@ -94,7 +94,8 @@
             "WinJS.js",
             "WinJS/css",
             "WinJS/Core",
-            "WinJS/Controls/AppBar"
+            "WinJS/Controls/AppBar",
+            "WinJS/Utilities/_TelemetryImpl.js"
         ];
         toRemove.forEach(function (item) {
             fs.removeSync(path.join(config.modulesOutput, item));
@@ -291,8 +292,13 @@
         options.paths = {
             "less": "../../src/less",
             "require-json": "../../tasks/utilities/require-json",
-            "require-style": "../../tasks/utilities/require-style"
+            "require-style": "../../tasks/utilities/require-style",
         };
+
+        // this is to reconfigure onefile dependencies
+        if (config.isStorePackage) {
+            options.paths["WinJS/Utilities/_Telemetry"] = "./WinJS/Utilities/_TelemetryImpl";
+        }
 
         // The modules build generates a require configuration with this
         if (!options.dir) {

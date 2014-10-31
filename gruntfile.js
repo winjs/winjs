@@ -46,7 +46,21 @@
         // Register external tasks
         grunt.loadTasks("tasks/");
 
+        grunt.registerTask("configureStore", function () { 
+            config.isStorePackage = true;
+
+            // the configuration for ui is already mixed in when requirejs options are loaded
+            // so we have to override the path to the Telemetry implementation manually
+            var requirejs = grunt.config.get("requirejs");
+            var merge = { requirejs: {} };
+            var ui = requirejs["ui"];
+            ui.options.paths["WinJS/Utilities/_Telemetry"] = "./WinJS/Utilities/_TelemetryImpl";
+            merge.requirejs["ui"] = ui;
+            grunt.config.merge(merge);
+        });
+
         // Tasks that drop things in bin/ (should have "add-bom" as the last task)
+        grunt.registerTask("storePackage", ["configureStore", "default"]);
         grunt.registerTask("default", ["clean", "check-file-names", "ts", "build-qunit", "less", "concat", "_build", "_copyFinal", "replace", "add-bom"]);
         grunt.registerTask("quick", ["clean", "ts:src", "less", "concat", "_quickBuild", "add-bom"]);
 
