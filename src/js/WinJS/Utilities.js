@@ -11,6 +11,7 @@ define([
     './Utilities/_SafeHtml',
     './Utilities/_Select',
     './Utilities/_TabContainer',
+    './Utilities/_Telemetry',
     './Utilities/_UI',
     './Utilities/_VersionManager',
     './Utilities/_Xhr' ], function () {
