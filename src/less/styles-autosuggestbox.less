@@ -8,25 +8,20 @@
     position: relative;
     width: 266px;
     min-width: 265px;
-    height: 28px;
-    border-style: solid;
-    border-width: 2px;
+    min-height: 28px;
 }
 
 .win-autosuggestbox-flyout {
     position: absolute;
     top: 100%;
     width: 100%;
-    border-style: solid;
-    border-width: 2px 2px 2px 2px;
     z-index: 100;
-    padding: 5px 0 10px 0;
-    left: -2px;
-    right: -2px;
-    max-height: 454px;
+    max-height: 374px;
+    min-height: 44px;
     overflow: auto;
     -ms-scroll-chaining: none;
     touch-action: none;
+    .win-type-body();
 }
 
 .win-autosuggestbox-flyout-above {
@@ -40,14 +35,14 @@
 }
 
 .win-autosuggestbox input {
-    height: 100%;
-    border-style: none;
-    margin: 0px;
-    width: 100%;
-    font-size: 11pt;
     -ms-ime-align: after;
-    line-height: 20px;
-    box-sizing: border-box;
+    margin: 0;
+    width: 100%;
+}
+
+.win-autosuggestbox-suggestion-selected {
+    outline-style: dotted;
+    outline-width: 1px;
 }
 
 .win-autosuggestbox-suggestion-result {
@@ -60,7 +55,6 @@
 
 .win-autosuggestbox-suggestion-result div {
     line-height: 20px;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -70,7 +64,6 @@
     padding-bottom: 11px;
     height: 60px;
     width: 179px;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     line-height: 20px;
@@ -79,7 +72,6 @@
 .win-autosuggestbox-suggestion-result-detailed-text {
     display: inline-block;
     overflow: hidden;
-    text-overflow: ellipsis;
     line-height: 22px; /* Some characters get clipped if line height is < 22px. Work around by setting -2 margin. */
     margin-top: -1px;
     width: 100%;
@@ -95,22 +87,22 @@
 }
 
 .win-autosuggestbox-suggestion-result img {
-    .RTL({
+    .RTL( {
         margin-right: 0;
         margin-left: auto;
         padding-left: 10px;
         padding-right: 0;
-    });
+    }
+
+    );
 }
 
 .win-autosuggestbox-suggestion-query {
-    padding: 9px 18px 11px 18px;
-    font-weight: normal;
+    height: 20px;
+    padding: 11px 0px 13px 12px;
     outline: none;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    font-size: 11pt;
     line-height: 20px;
 }
 
@@ -129,10 +121,12 @@
 }
 
 .win-autosuggestbox-suggestion-separator hr {
-    .RTL({
+    .RTL( {
         margin-right: 10px;
         margin-left: auto;
-    });
+    }
+
+    );
 }
 
 .win-autosuggestbox-suggestion-separator div {
@@ -146,10 +140,12 @@
 }
 
 .win-autosuggestbox-suggestion-separator div {
-    .RTL({
+    .RTL( {
         margin-left: 10px;
         margin-right: auto;
-    });
+    }
+
+    );
 }
 
 /*
