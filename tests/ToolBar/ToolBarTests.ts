@@ -5,9 +5,9 @@
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts"/>
 /// <reference path="../TestLib/Helper.ToolBar.ts"/>
-///<reference path="../../typings/typings.d.ts" />
-///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
-///<reference path="../TestLib/winjs.dev.d.ts" />
+/// <reference path="../../typings/typings.d.ts" />
+/// <reference path="../TestLib/liveToQ/liveToQ.d.ts" />
+/// <reference path="../TestLib/winjs.dev.d.ts" />
 
 module CorsicaTests {
     var ToolBar = <typeof WinJS.UI.PrivateToolBar> WinJS.UI.ToolBar;
@@ -279,6 +279,32 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be hidden when the primary commands fit");
             LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Main action area should have 2 commands");
             LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
+        }
+
+        testForceLayoutReMeasures() {
+            this._element.style.display = "none";
+            this._element.style.width = "10px";
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "opt 1" }),
+                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "opt 2" }),
+                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "sec opt 1", section: Helper.ToolBar.Constants.secondaryCommandSection })
+            ]);
+            var toolbar = new ToolBar(this._element, {
+                data: data
+            });
+
+            LiveUnit.Assert.areEqual(2, toolbar._primaryCommands.length, "Primary commands array has an invalid length");
+            LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be not hidden when there are secondary commands");
+            
+            // Obtain the dimensions of 1 command + the overflow button
+            this._element.style.display = "";
+            toolbar.forceLayout();
+            this._element.style.width = toolbar._standardCommandWidth + toolbar._overflowButtonWidth + "px";
+            
+            // Now that we have changed the parent's size to fit 1 command + the overflow button, let's ensure that one primary command goes to the overflow area
+            WinJS.Utilities._resizeNotifier._handleResize();
+            LiveUnit.Assert.areEqual(3 /* 1 primary command + 1 separator + 1 secondary command */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Main action area should have 1 command");
         }
 
         testflyoutMenuSeparatorAddedBetweenPrimaryAndSecondary() {

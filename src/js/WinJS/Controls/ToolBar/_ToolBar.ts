@@ -232,6 +232,10 @@ export class ToolBar {
             this._element.setAttribute("aria-label", strings.ariaLabel);
         }
 
+        this._customContentCommandsWidth = {};
+        this._separatorWidth = 0;
+        this._standardCommandWidth = 0;
+
         this._refreshBound = this._refresh.bind(this);
 
         this._setupTree();
@@ -304,6 +308,7 @@ export class ToolBar {
         /// Forces the ToolBar to update its layout. Use this function when the window did not change size, but the container of the ToolBar changed size.
         /// </summary>
         /// </signature>
+        this._measureCommands();
         this._positionCommands();
     }
 
@@ -585,6 +590,7 @@ export class ToolBar {
 
     private _resizeHandler() {
         if (this.element.offsetWidth > 0) {
+            this._measureCommands(/* skipIfMeasured: */ true);
             this._positionCommands();
         }
     }
@@ -672,17 +678,18 @@ export class ToolBar {
         }
     }
 
-    private _measureCommands() {
+    private _measureCommands(skipIfMeasured: boolean = false) {
         this._writeProfilerMark("_measureCommands,info");
 
-        if (this._disposed || !_Global.document.body.contains(this._element)) {
+        if (this._disposed || !_Global.document.body.contains(this._element) || this.element.offsetWidth === 0) {
             return;
         }
 
-        this._customContentCommandsWidth = {};
-        this._separatorWidth = 0;
-        this._standardCommandWidth = 0;
-
+        if (!skipIfMeasured) {
+            this._customContentCommandsWidth = {};
+            this._separatorWidth = 0;
+            this._standardCommandWidth = 0;
+        }
         this._primaryCommands.forEach((command) => {
             if (!command.element.parentElement) {
                 this._mainActionArea.appendChild(command.element);
@@ -693,7 +700,7 @@ export class ToolBar {
             var originalDisplayStyle = command.element.style.display;
             command.element.style.display = "";
 
-            if (command.type === _Constants.typeContent) {
+            if (command.type === _Constants.typeContent && !this._customContentCommandsWidth[this._commandUniqueId(command)] ) {
                 this._customContentCommandsWidth[this._commandUniqueId(command)] = _ElementUtilities.getTotalWidth(command.element);
             } else if (command.type === _Constants.typeSeparator) {
                 if (!this._separatorWidth) {
@@ -734,7 +741,7 @@ export class ToolBar {
             command.element.style.display = (command.hidden ? "none" : "");
         })
 
-        var mainActionWidth = _ElementUtilities.getTotalWidth(this.element);
+        var mainActionWidth = _ElementUtilities.getContentWidth(this.element);
 
         var commandsLocation = this._getPrimaryCommandsLocation(mainActionWidth);
 
