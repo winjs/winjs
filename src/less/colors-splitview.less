@@ -1,0 +1,19 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+#win-splitview {
+    .variableDefinitions(light) {
+        @paneBackgroundColor: #f0f0f0;
+    }
+    
+    .variableDefinitions(dark) {
+        @paneBackgroundColor: #0c0c0c;
+    }
+}
+    
+.Colors(@theme) {
+    #win-splitview > .variableDefinitions(@theme);
+    
+    .win-splitview-pane {
+        background-color: @paneBackgroundColor;
+    }
+}
