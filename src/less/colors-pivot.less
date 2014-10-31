@@ -1,73 +1,31 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
-    .mixin(dark) {
-        .win-pivot .win-pivot-header {
-            opacity: 0.4;
-        }
+    .colorDefinitions(@theme);
 
-        .win-pivot button.win-pivot-header,
-        .win-pivot button.win-pivot-header:focus,
-        .win-pivot button.win-pivot-header.win-pivot-header:hover:active {
-            color: white;
-        }
-
-        .win-pivot .win-pivot-navbutton {
-            background-color: rgba(213, 213, 213, 0.298);
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .win-pivot .win-pivot-navbutton.win-pivot-navbutton:hover:active {
-            background-color: rgba(191, 191, 191, 0.749);
-            color: black;
-        }
+    .win-pivot .win-pivot-navbutton {
+        background-color: @baseMediumMid;
+        color: @altMediumHigh;
     }
 
-    .mixin(light) {
-        .win-pivot .win-pivot-header {
-            opacity: 0.2;
-        }
-
-        .win-pivot button.win-pivot-header,
-        .win-pivot button.win-pivot-header:focus,
-        .win-pivot button.win-pivot-header.win-pivot-header:hover:active {
-            color: black;
-        }
-
-        .win-pivot .win-pivot-navbutton {
-            background-color: rgba(213, 213, 213, 0.349);
-            color: rgba(0, 0, 0, 0.6);
-        }
-
-        .win-pivot .win-pivot-navbutton.win-pivot-navbutton:hover:active {
-            background-color: rgba(41, 41, 41, 0.741);
-            color: white;
-        }
+    .win-pivot .win-pivot-navbutton.win-pivot-navbutton:hover:active {
+        color: @baseMediumHigh;
     }
 
-    .mixin(@theme);
+    .win-pivot button.win-pivot-header,
+    .win-pivot button.win-pivot-header:focus,
+    .win-pivot button.win-pivot-header.win-pivot-header:hover:active {
+        color: @baseHigh;
+    }
 }
+
 .ColorsHover(@theme) {
-    .mixin(dark) {
-        .win-pivot button.win-pivot-header:hover {
-            color: white;
-        }
+    .colorDefinitions(@theme);
 
-        .win-pivot .win-pivot-navbutton:hover {
-            background-color: rgba(49, 49, 49, 0.937);
-            color: white;
-        }
+    .win-pivot .win-pivot-navbutton:hover {
+        color: @baseMid;
     }
 
-    .mixin(light) {
-        .win-pivot button.win-pivot-header:hover {
-            color: black;
-        }
-
-        .win-pivot .win-pivot-navbutton:hover {
-            background-color: rgba(215, 215, 215, 0.941);
-            color: black;
-        }
+    .win-pivot button.win-pivot-header:hover {
+        color: @baseHigh;
     }
-
-    .mixin(@theme);
 }

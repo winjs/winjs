@@ -4,7 +4,7 @@
 @import "mixins.less";
 
 .win-pivot {
-    @headersHeight: 72px;
+    @headersHeight: 48px;
 
     #flex > .display-flex();
     #flex > .flex-flow(column; nowrap);
@@ -14,20 +14,17 @@
     -ms-scroll-limit-x-max: 0px;
 
     .win-pivot-navbutton {
-        transition: opacity linear 167ms;
-        -webkit-transition: opacity linear 167ms;
         position: absolute;
-        width: 18px;
-        height: 40px;
-        margin-top: 30px;
+        width: 20px;
+        height: 36px;
         padding: 0px;
-        top: 0px;
+        margin: 0px;
+        top: 10px;
         min-width: 0px;
         border-width: 0px;
         cursor: pointer;
         opacity: 0;
         font-family: "Segoe UI Symbol", "Symbols";
-        font-size: 16pt;
     }
 
     .win-pivot-headers.win-pivot-shownavbuttons .win-pivot-navbutton {
@@ -35,11 +32,11 @@
     }
 
     .win-pivot-headers .win-pivot-navbutton-prev:before {
-        content: "\E0E2";
+        content: "\E096";
     }
 
     .win-pivot-headers .win-pivot-navbutton-next:before {
-        content: "\E0E3";
+        content: "\E09B";
     }
 
     .win-pivot-title {
@@ -51,9 +48,11 @@
     }
 
     .win-pivot-title {
-        .RTL({
+        .RTL( {
             margin: 12px 18px -8px 0;
-        });
+        }
+
+        );
     }
 
     & > .win-pivot-item {
@@ -75,24 +74,26 @@
     }
 
     .win-pivot-header {
+        .win-type-body();
         display: inline-block;
-        text-overflow: ellipsis;
         transition: opacity linear 167ms;
         -webkit-transition: opacity linear 167ms;
         overflow: hidden;
+        height: 30px;
+        border: 0;
+        padding: 0;
+        margin: 13px 12px 15px 12px;
     }
 
     button.win-pivot-header,
     button.win-pivot-header:hover:active {
         background-color: transparent;
         border: 0;
-        margin: 0;
-        padding: 0px 9px;
+        padding: 0;
         letter-spacing: 0px;
+        margin: 13px 12px 15px 12px;
         min-height: 0;
         min-width: 0;
-        font-size: 45pt;
-        font-weight: 400;
     }
 
     button.win-pivot-header.win-keyboard:focus {
@@ -107,6 +108,7 @@
 
     .win-pivot-header.win-pivot-header-selected,
     &.win-pivot-locked .win-pivot-header.win-pivot-header-selected {
+        .win-type-base();
         opacity: 1.0;
         visibility: inherit;
     }
@@ -143,17 +145,24 @@
         position: relative;
     }
 }
+
 html.win-hoverable .win-pivot {
     button.win-pivot-header:hover {
         background-color: transparent;
         border: 0;
-        margin: 0;
-        padding: 0px 9px;
+        padding: 0;
         letter-spacing: 0px;
+        margin: 13px 12px 15px 12px;
         min-height: 0;
         min-width: 0;
-        font-size: 45pt;
-        font-weight: 400;
+    }
+
+    .win-pivot-navbutton:hover {
+        margin: 0px;
+        padding: 0px;
+        border-width: 0px;
+        cursor: pointer;
+        font-family: "Segoe UI Symbol", "Symbols";
     }
 }
 

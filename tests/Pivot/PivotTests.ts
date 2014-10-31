@@ -195,7 +195,7 @@ module WinJSTests {
     }
 
     function runContentVisibilityTest(complete, rtl) {
-        var pivotItemCount = 3;
+        var pivotItemCount = 5;
         instances = 0;
         var pivotDiv = document.createElement("div");
         pivotDiv.dir = rtl ? "rtl" : "";
@@ -283,7 +283,7 @@ module WinJSTests {
     };
 
     function runHeaderTrackSwipeNavigation(complete, rtl) {
-        var itemCount = 3;
+        var itemCount = 5;
         var pivot = createAndAppendPivotWithItems(itemCount);
 
         if (!pivot.element.classList.contains(Pivot._ClassName.pivotNoSnap)) {
@@ -319,7 +319,7 @@ module WinJSTests {
     };
 
     function runContentSwipeNavigation(complete, rtl) {
-        var itemCount = 3;
+        var itemCount = 5;
         var pivot = createAndAppendPivotWithItems(itemCount);
 
         if (!pivot.element.classList.contains(Pivot._ClassName.pivotNoSnap)) {
@@ -783,7 +783,7 @@ module WinJSTests {
         };
 
         testHeaderCount = function (complete, isWideTest) {
-            var pivotItemCount = 2;
+            var pivotItemCount = 5;
             instances = 0;
             var pivot = new Pivot(undefined, {
                 items: new WinJS.Binding.List(getPivotItemsProgrammatically(pivotItemCount))
@@ -890,7 +890,7 @@ module WinJSTests {
             }
 
             // Use zoomTo
-            var pivotItemCount = 3;
+            var pivotItemCount = 5;
             instances = 0;
             var pivot = new Pivot(undefined, {
                 items: new WinJS.Binding.List(getPivotItemsProgrammatically(pivotItemCount))
@@ -943,7 +943,7 @@ module WinJSTests {
 
         // WPBlue: 272771 Test is not reliable in WebUnit. Should be run using Zeus.
         xtestFlipFlip = function testFlipFlip(complete) {
-            var pivotItemCount = 3;
+            var pivotItemCount = 5;
             instances = 0;
             var pivot = new Pivot(undefined, {
                 items: new WinJS.Binding.List(getPivotItemsProgrammatically(pivotItemCount))
@@ -976,7 +976,7 @@ module WinJSTests {
         };
 
         testNavigateViaAPI = function testNavigateViaAPI(complete) {
-            var pivotItemCount = 3;
+            var pivotItemCount = 5;
             instances = 0;
             var pivot = new Pivot(undefined, {
                 items: new WinJS.Binding.List(getPivotItemsProgrammatically(pivotItemCount))
@@ -1029,7 +1029,7 @@ module WinJSTests {
                 return;
             }
 
-            var pivotItemCount = 3;
+            var pivotItemCount = 5;
             instances = 0;
             var pivot = new Pivot(undefined, {
                 items: new WinJS.Binding.List(getPivotItemsProgrammatically(pivotItemCount))
@@ -1070,7 +1070,7 @@ module WinJSTests {
                 complete();
                 return;
             }
-            var pivotItemCount = 3;
+            var pivotItemCount = 5;
             instances = 0;
             var pivot = new Pivot(undefined, {
                 items: new WinJS.Binding.List(getPivotItemsProgrammatically(pivotItemCount))
@@ -1204,7 +1204,7 @@ module WinJSTests {
             waitForNextItemAnimationEnd(pivot).done(function () {
                 var headers = document.querySelectorAll("." + Pivot._ClassName.pivotHeader);
                 var longHeader = <HTMLElement>headers[1];
-                LiveUnit.Assert.areEqual(Math.floor(pivotWidth * 0.8), parseInt(longHeader.style.maxWidth));
+                LiveUnit.Assert.areEqual(Math.floor(pivotWidth * 0.8), parseInt(longHeader.style.width));
                 complete();
             });
         });
@@ -1296,10 +1296,10 @@ module WinJSTests {
                 firePointerEvent("pointerenter", pivot._headersContainerElement, 0, 0, PT_MOUSE);
                 LiveUnit.Assert.isTrue(pivot._headersContainerElement.classList.contains(Pivot._ClassName.pivotShowNavButtons));
 
-                var leftButton = <HTMLElement> document.elementFromPoint(pivot.element.offsetLeft + 10, pivot.element.offsetTop + 50);
+                var leftButton = <HTMLElement> document.elementFromPoint(pivot.element.offsetLeft + 20, pivot.element.offsetTop + 40);
                 LiveUnit.Assert.isTrue(leftButton.classList.contains(Pivot._ClassName.pivotNavButtonPrev));
 
-                var rightButton = <HTMLElement> document.elementFromPoint(pivot.element.offsetLeft + pivot.element.offsetWidth - 10, pivot.element.offsetTop + 50);
+                var rightButton = <HTMLElement> document.elementFromPoint(pivot.element.offsetLeft + pivot.element.offsetWidth - 20, pivot.element.offsetTop + 40);
                 LiveUnit.Assert.isTrue(rightButton.classList.contains(Pivot._ClassName.pivotNavButtonNext));
 
                 complete();
