@@ -157,9 +157,6 @@ define([
                     this.currentIndex = options.currentIndex;
                 }
 
-                var that = this;
-                var updatedPageUI = false;
-
                 this._updatePageUI();
 
                 Scheduler.schedule(function NavBarContainer_async_initialize() {
