@@ -11,7 +11,7 @@
             options: {
                 target: 'ES5',
                 module: 'amd',
-                sourceMap: true,
+                sourceMap: false,
                 declaration: false,
                 removeComments: false
             }
@@ -22,7 +22,7 @@
             options: {
                 target: 'ES5',
                 module: 'amd',
-                sourceMap: true,
+                sourceMap: false,
                 noImplicitAny: true,
                 declaration: false,
                 removeComments: false
