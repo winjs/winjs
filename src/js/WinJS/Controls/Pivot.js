@@ -66,8 +66,7 @@ define([
             };
             var MSManipulationEventStates = _ElementUtilities._MSManipulationEvent;
 
-            var supportsSnap = false;
-            var ready = null;
+            var supportsSnap = !!(_ElementUtilities._supportsSnapPoints && _Global.HTMLElement.prototype.msZoomTo);
 
             function _nop() { }
             var headersStates = {
@@ -606,13 +605,6 @@ define([
                 /// The new Pivot.
                 /// </returns>
                 /// </signature>
-
-                if (!ready) {
-                    ready = _ElementUtilities._detectSnapPointsSupport().then(function (value) {
-                        supportsSnap = value;
-                    });
-                }
-
                 element = element || _Global.document.createElement("DIV");
                 options = options || {};
 
@@ -632,6 +624,9 @@ define([
                 // Attaching JS control to DOM element
                 element.winControl = this;
                 this._element = element;
+                if (!supportsSnap) {
+                    _ElementUtilities.addClass(this.element, Pivot._ClassName.pivotNoSnap);
+                }
                 this._element.setAttribute('role', 'tablist');
                 if (!this._element.getAttribute("aria-label")) {
                     this._element.setAttribute('aria-label', strings.pivotAriaLabel);
@@ -945,19 +940,12 @@ define([
                     this._currentIndexOnScreen = 0;
                     this._firstLoad = true;
                     this._cachedRTL = _Global.getComputedStyle(this._element, null).direction === "rtl";
+                    headersStates.common.refreshHeadersState(this, true);
+                    this._pendingRefresh = false;
 
-                    var that = this;
-                    ready.done(function () {
-                        headersStates.common.refreshHeadersState(that, true);
-                        if (!supportsSnap) {
-                            _ElementUtilities.addClass(that.element, Pivot._ClassName.pivotNoSnap);
-                        }
-
-                        that._pendingRefresh = false;
-                        that.selectedIndex = Math.min(pendingIndexOnScreen, that.items.length - 1);
-                        that._firstLoad = false;
-                        that._recenterUI();
-                    });
+                    this.selectedIndex = Math.min(pendingIndexOnScreen, this.items.length - 1);
+                    this._firstLoad = false;
+                    this._recenterUI();
                 },
 
                 _attachItems: function pivot_attachItems() {
@@ -1098,7 +1086,7 @@ define([
                     }
 
                     var zooming = false;
-                    if (supportsSnap && _ElementUtilities._supportsZoomTo && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
+                    if (supportsSnap && this._currentManipulationState !== MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                         if (this._firstLoad) {
                             _Log.log && _Log.log('_firstLoad index:' + this.selectedIndex + ' offset: ' + this._offsetFromCenter + ' scrollLeft: ' + this._currentScrollTargetLocation, "winjs pivot", "log");
                             _ElementUtilities.setScrollPosition(this._viewportElement, { scrollLeft: this._currentScrollTargetLocation });

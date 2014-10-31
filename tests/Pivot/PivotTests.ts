@@ -29,13 +29,7 @@ module WinJSTests {
         initFuncName = "initPointerEvent";
     }
 
-    var snapPointsDetectionFunc = WinJS.Utilities._detectSnapPointsSupport.bind(WinJS.Utilities);
-    var supportsSnap = null;
-    WinJS.Utilities._detectSnapPointsSupport = function () {
-        return WinJS.Promise.timeout(50).then(function () {
-            return supportsSnap;
-        });
-    };
+    var supportsSnap = !!(WinJS.Utilities._supportsSnapPoints && HTMLElement.prototype.msZoomTo);
 
     var pivotWrapperEl;
 
@@ -406,18 +400,10 @@ module WinJSTests {
 
 
 
-        setUp(complete) {
+        setUp() {
             pivotWrapperEl = document.createElement('div');
-            pivotWrapperEl.style.cssText = "width: " + pivotWidth + "px; height: 480px; background-color: #777;"
-        document.body.appendChild(pivotWrapperEl);
-            if (supportsSnap === null) {
-                snapPointsDetectionFunc().done(function (value) {
-                    supportsSnap = value;
-                    complete();
-                });
-            } else {
-                complete();
-            }
+            pivotWrapperEl.style.cssText = "width: " + pivotWidth + "px; height: 480px; background-color: #777;";
+            document.body.appendChild(pivotWrapperEl);
         }
 
         tearDown() {
@@ -883,12 +869,6 @@ module WinJSTests {
                 return;
             }
 
-            if (!WinJS.Utilities._supportsZoomTo) {
-                LiveUnit.LoggingCore.logComment("This test relies on ZoomTo APIs which are not supported on this platform.");
-                complete();
-                return;
-            }
-
             // Use zoomTo
             var pivotItemCount = 5;
             instances = 0;
@@ -917,25 +897,31 @@ module WinJSTests {
                     pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
                     return waitForNextItemAnimationEnd(pivot);
                 }).then(function () {
+                    LiveUnit.Assert.areEqual(3, pivot.selectedIndex, "Correct selectedIndex");
+
+                    // Zoom next
+                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                    return waitForNextItemAnimationEnd(pivot);
+                }).then(function () {
+                    LiveUnit.Assert.areEqual(4, pivot.selectedIndex, "Correct selectedIndex");
+
+                    // Zoom next
+                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                    return waitForNextItemAnimationEnd(pivot);
+                }).then(function () {
                     LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
 
                     // Zoom previous
                     pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
                     return waitForNextItemAnimationEnd(pivot);
                 }).then(function () {
-                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex, "Correct selectedIndex");
-
-                    // Zoom previous
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
+                    LiveUnit.Assert.areEqual(4, pivot.selectedIndex, "Correct selectedIndex");
 
                     // Zoom previous
                     pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
                     return waitForNextItemAnimationEnd(pivot);
                 }).done(function () {
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
+                    LiveUnit.Assert.areEqual(3, pivot.selectedIndex, "Correct selectedIndex");
 
                     complete();
                 });
@@ -1013,11 +999,6 @@ module WinJSTests {
         };
 
         testNavigateViaInertia = function testNavigateViaInertia(complete) {
-            if (!WinJS.Utilities._supportsZoomTo) {
-                LiveUnit.LoggingCore.logComment("This test simulates panning using msZoomTo which is not supported on this platform.");
-                complete();
-                return;
-            }
             if (!supportsSnap) {
                 LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
                 complete();
@@ -1411,7 +1392,7 @@ module WinJSTests {
             var headers;
             waitForNextItemAnimationEnd(pivot).then(function () {
                 monkeyPatch(pivot._headersState, "handleNavigation", function (goPrevious, index, oldIndex) {
-                    LiveUnit.Assert.areEqual(goPreviousExpected, goPrevious);
+                    LiveUnit.Assert.areEqual(!!goPreviousExpected, !!goPrevious);
                 });
 
                 headers = document.querySelectorAll(".win-pivot-header");

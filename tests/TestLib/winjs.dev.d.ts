@@ -102,9 +102,7 @@ declare module WinJS {
         var _getHighestTabIndexInList;
         var _getLowestTabIndexInList;
         var _MSPointerEvent;
-        var _detectSnapPointsSupport;
-        var _supportsZoomTo;
-
+        var _supportsSnapPoints: boolean;
     }
 
     module Resources {
