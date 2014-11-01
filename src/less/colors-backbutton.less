@@ -1,99 +1,32 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
-    .mixin(dark) {
-        .win-navigation-backbutton, .win-navigation-backbutton:active,
-        .win-navigation-backbutton:enabled:hover:active {
-            background-color: transparent;
-        }
-        .win-backbutton, .win-back {
-            background-color: transparent;
-            border-color: rgb(255, 255, 255);
-            color: rgb(255, 255, 255);
-        }
-        .win-backbutton.win-backbutton:enabled:hover:active,
-        .win-navigation-backbutton.win-navigation-backbutton:enabled:hover:active .win-back,
-        .win-navigation-backbutton:active .win-back {
-            background-color: rgb(255, 255, 255);
-            border-color: rgb(255, 255, 255);
-            color: rgb(0, 0, 0);
-        }
-        .win-backbutton:-ms-keyboard-active,
-        .win-navigation-backbutton:-ms-keyboard-active .win-back {
-            background-color: rgb(255, 255, 255);
-            border-color: rgb(255, 255, 255);
-            color: rgb(0, 0, 0);
-        }
-        .win-backbutton:disabled, .win-backbutton:disabled:active,
-        .win-navigation-backbutton:disabled .win-back,
-        .win-navigation-backbutton:disabled:active .win-back {
-            background-clip: padding-box;
-            background-color: transparent;
-            border-color: rgba(255, 255, 255, 0.4);
-            color: rgba(255, 255, 255, 0.4);
-        }
+    .colorDefinitions(@theme);
+
+    .win-backbutton,
+    .win-back {
+        background-color: transparent;
+        color: @baseHigh;
+        border: none;
     }
 
-    .mixin(light) {
-        .win-navigation-backbutton, .win-navigation-backbutton:active,
-        .win-navigation-backbutton:enabled:hover:active
-        {
-            background-color: transparent;
-        }
-        .win-backbutton, .win-back {
-            background-color: transparent;
-            border-color: rgb(0, 0, 0);
-            color: rgb(0, 0, 0);
-        }
-        .win-backbutton.win-backbutton:enabled:hover:active,
-        .win-navigation-backbutton.win-navigation-backbutton:enabled:hover:active .win-back {
-            background-color: rgb(0, 0, 0);
-            border-color: rgb(0, 0, 0);
-            color: rgb(255, 255, 255);
-        }
-        .win-backbutton:-ms-keyboard-active,
-        .win-navigation-backbutton:-ms-keyboard-active .win-back {
-            background-color: rgb(0, 0, 0);
-            border-color: rgb(0, 0, 0);
-            color: rgb(255, 255, 255);
-        }
-        .win-backbutton:disabled, .win-backbutton:disabled:active,
-        .win-navigation-backbutton:disabled .win-back,
-        .win-navigation-backbutton:disabled:active .win-back {
-            background-clip: padding-box;
-            background-color: transparent;
-            border-color: rgba(0, 0, 0, 0.4);
-            color: rgba(0, 0, 0, 0.4);
-        }
+    .win-backbutton:hover,
+    .win-navigation-backbutton:hover .win-back {
+        background-color: @listHover;
     }
 
-
-    .mixin(@theme);
-}
-.ColorsHover(@theme) {
-    .mixin(dark) {
-        .win-navigation-backbutton:enabled:hover {
-            background-color: transparent;
-        }
-        .win-backbutton:enabled:hover,
-        .win-navigation-backbutton:enabled:hover .win-back {
-            background-color: rgba(255, 255, 255, 0.13);
-            border-color: rgb(255, 255, 255);
-        }
+    .win-backbutton:active,
+    .win-navigation-backbutton:active .win-back {
+        background-color: @listPress;
     }
 
-    .mixin(light) {
-        .win-navigation-backbutton:enabled:hover
-        {
-            background-color: transparent;
-        }
-        .win-backbutton:enabled:hover,
-        .win-navigation-backbutton:enabled:hover .win-back {
-            background-color: rgba(0, 0, 0, 0.13);
-            border-color: rgb(0, 0, 0);
-        }
+    .win-backbutton:disabled,
+    .win-backbutton:disabled:active,
+    .win-navigation-backbutton:disabled,
+    .win-navigation-backbutton:disabled .win-back,
+    .win-navigation-backbutton:disabled:active .win-back {
+        color: @baseMediumMid;
+        background-color: transparent;
     }
-
-    .mixin(@theme);
 }
 
 button.win-navigation-backbutton, button.win-navigation-backbutton:active,
@@ -110,6 +43,7 @@ html.win-hoverable button.win-navigation-backbutton:enabled:hover, button.win-na
         background-color: transparent;
         border: none;
     }
+
     .win-backbutton, .win-back {
         background-color: ButtonFace;
         border-color: ButtonText;
@@ -123,6 +57,7 @@ html.win-hoverable button.win-navigation-backbutton:enabled:hover, button.win-na
         border-color: transparent;
         color: ButtonFace;
     }
+
     .win-backbutton:disabled, .win-navigation-backbutton:disabled .win-back,
     .win-backbutton:disabled:active,
     .win-navigation-backbutton:disabled:active .win-back {
