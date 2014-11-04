@@ -2,7 +2,6 @@
 .Colors(@theme) {
     .colorDefinitions(@theme);
 
-
     //
     // Body
     //
@@ -196,22 +195,19 @@
     //
     select {
         color: @baseHigh;
-        border-color: @baseMediumMid;
-        background-color: @altMediumMid;
+        background-color: @baseLow;
 
         &::-ms-expand {
-            color: @baseMediumHigh;
+            color: @baseHigh;
             background-color: transparent;
         }
 
         &:hover {
-            border-color: @baseMid;
-            background-color: @altMid;
+            background-color: @baseMediumMid;
         }
 
         &:disabled {
             color: @baseLow;
-            border-color: transparent;
             background-color: @baseLow;
         }
         &:disabled::-ms-expand {
@@ -220,26 +216,27 @@
     }
 
     option {
-        color: @baseHigh;
-        background-color: @chromeMediumMid;
+        color: @baseBlack;
 
-        &:hover {
-            color: @baseHigh;
-            background-color: @listHover;
-        }
         &:checked {
-            color: @baseHigh;
+            color: @baseWhite;
             background-color: @accentColor;
         }
-        &:active {
-            color: @baseHigh;
-            background-color: @listPress;
+        &:hover {
+            background-color: fade(@baseBlack, 20%);
         }
     }
 
     select[multiple] {
         border: none;
         background-color: @chromeMediumMid;
+
+        option {
+            color: @baseHigh;
+        }
+        option:hover {
+            color: @baseHigh;
+        }
     }
 
     //
