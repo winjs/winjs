@@ -20,6 +20,7 @@
     }
     
     .win-splitview-panewrapper {
+        z-index: 1;
         #flex > .flex(@grow: 0; @shrink: 0);
         overflow: hidden;
         
@@ -33,6 +34,7 @@
     }
 
     .win-splitview-content {
+        z-index: 0;
         #flex > .flex(@grow: 1; @shrink: 1);
         overflow: hidden;
     }
