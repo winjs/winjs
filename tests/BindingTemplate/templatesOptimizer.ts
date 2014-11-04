@@ -351,8 +351,8 @@ module CorsicaTests {
         testSecurity_markSupported(c) {
             this._executeTest(
                 c,
-                "<div data-win-bind=\"textContent: name setAttributeSupportedForProcessing\"></div>",
-                "<div textContent=\"{{name}}\"></div>");
+                "<div data-win-bind=\"someattribute: name setAttributeSupportedForProcessing\"></div>",
+                "<div someattribute=\"{{name}}\"></div>");
         }
     }
 
