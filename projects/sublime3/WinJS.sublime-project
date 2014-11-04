@@ -4,7 +4,7 @@
 		{
 			"follow_symlinks": true,
 			"path": "../../",
-            "folder_exclude_patterns": ["node_modules", "bin"]
+            "folder_exclude_patterns": ["node_modules", "bin", ".tscache"]
 		}
 	],
     "settings":
