@@ -67,7 +67,7 @@ define([
     };
 
     var msApp = _Global.MSApp;
-    if (msApp) {
+    if (msApp && msApp.execUnsafeLocalFunction) {
         setInnerHTMLUnsafe = function (element, text) {
             /// <signature helpKeyword="WinJS.Utilities.setInnerHTMLUnsafe">
             /// <summary locid="WinJS.Utilities.setInnerHTMLUnsafe">
