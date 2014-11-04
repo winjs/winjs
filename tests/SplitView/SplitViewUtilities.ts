@@ -4,9 +4,9 @@ module SplitViewTests {
     export var SplitView = <typeof WinJS.UI.PrivateSplitView>WinJS.UI.SplitView;
     
     export interface ISplitViewOptions {
-        placement: string;
+        panePlacement: string;
         shownDisplayMode: string;
-        hidden: boolean;
+        paneHidden: boolean;
     }
                 
     export interface IPrivateSplitViewOptions extends ISplitViewOptions {
@@ -18,9 +18,9 @@ module SplitViewTests {
         export function makeCreateSplitView(testRoot) {
             function createSplitView(providedOptions={}): WinJS.UI.PrivateSplitView {
                 var defaultOptions: IPrivateSplitViewOptions = {
-                    placement: "left",
+                    panePlacement: "left",
                     shownDisplayMode: "overlay",
-                    hidden: true,
+                    paneHidden: true,
                     paneHTML: "<button>Button 1</button><button>Button 2</button>",
                     contentHTML: "Some content"
                 };

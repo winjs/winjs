@@ -77,20 +77,20 @@ var ShownDisplayMode = {
     /// </field>
     inline: "inline"
 };
-var Placement = {
-    /// <field locid="WinJS.UI.SplitView.Placement.left" helpKeyword="WinJS.UI.SplitView.Placement.left">
+var PanePlacement = {
+    /// <field locid="WinJS.UI.SplitView.PanePlacement.left" helpKeyword="WinJS.UI.SplitView.PanePlacement.left">
     /// Pane is positioned left of the SplitView's content.
     /// </field>
     left: "left",
-    /// <field locid="WinJS.UI.SplitView.Placement.right" helpKeyword="WinJS.UI.SplitView.Placement.right">
+    /// <field locid="WinJS.UI.SplitView.PanePlacement.right" helpKeyword="WinJS.UI.SplitView.PanePlacement.right">
     /// Pane is positioned right of the SplitView's content.
     /// </field>
     right: "right",
-    /// <field locid="WinJS.UI.SplitView.Placement.top" helpKeyword="WinJS.UI.SplitView.Placement.top">
+    /// <field locid="WinJS.UI.SplitView.PanePlacement.top" helpKeyword="WinJS.UI.SplitView.PanePlacement.top">
     /// Pane is positioned above the SplitView's content.
     /// </field>
     top: "top",
-    /// <field locid="WinJS.UI.SplitView.Placement.bottom" helpKeyword="WinJS.UI.SplitView.Placement.bottom">
+    /// <field locid="WinJS.UI.SplitView.PanePlacement.bottom" helpKeyword="WinJS.UI.SplitView.PanePlacement.bottom">
     /// Pane is positioned below the SplitView's content.
     /// </field>
     bottom: "bottom"
@@ -98,11 +98,11 @@ var Placement = {
 var shownDisplayModeClassMap = {};
 shownDisplayModeClassMap[ShownDisplayMode.overlay] = ClassNames._overlayMode;
 shownDisplayModeClassMap[ShownDisplayMode.inline] = ClassNames._inlineMode;
-var placementClassMap = {};
-placementClassMap[Placement.left] = ClassNames._placementLeft;
-placementClassMap[Placement.right] = ClassNames._placementRight;
-placementClassMap[Placement.top] = ClassNames._placementTop;
-placementClassMap[Placement.bottom] = ClassNames._placementBottom;
+var panePlacementClassMap = {};
+panePlacementClassMap[PanePlacement.left] = ClassNames._placementLeft;
+panePlacementClassMap[PanePlacement.right] = ClassNames._placementRight;
+panePlacementClassMap[PanePlacement.top] = ClassNames._placementTop;
+panePlacementClassMap[PanePlacement.bottom] = ClassNames._placementBottom;
 
 // Versions of add/removeClass that are no ops when called with falsy class names.
 function addClass(element: HTMLElement, className: string): void {
@@ -204,7 +204,7 @@ interface ISplitViewState {
     enter(args: any): void;
     exit(): void;
     // SplitView's API surface
-    hidden: boolean; // readyonly. Writes go thru showPane/hidePane.
+    paneHidden: boolean; // readyonly. Writes go thru showPane/hidePane.
     showPane(): void;
     hidePane(): void;
     // Misc
@@ -234,7 +234,7 @@ module States {
     
     // Initial state. Initializes state on the SplitView shared by the various states.
     export class Init implements ISplitViewState {
-        private _hidden: boolean;
+        private _paneHidden: boolean;
         
         splitView: SplitView;
         name = "Init";
@@ -245,29 +245,29 @@ module States {
         
                     this.splitView._cachedHiddenPaneThickness = null;
         
-                    this.splitView.hidden = true;
+                    this.splitView.paneHidden = true;
                     this.splitView.shownDisplayMode = ShownDisplayMode.overlay;
-                    this.splitView.placement = Placement.left;
+                    this.splitView.panePlacement = PanePlacement.left;
                     _Control.setOptions(this.splitView, options);
                     
                     return _ElementUtilities._inDom(this.splitView._dom.root).then(() => {
                         this.splitView._rtl = _Global.getComputedStyle(this.splitView._dom.root).direction === 'rtl';
-                        this.splitView._isShownMode = !this._hidden;
+                        this.splitView._isShownMode = !this._paneHidden;
                         this.splitView._updateDomImpl();
-                        this.splitView._setState(this._hidden ? Hidden : Shown);
+                        this.splitView._setState(this._paneHidden ? Hidden : Shown);
                     });
                 });
             });
         }
         exit = cancelInterruptibles;
-        get hidden(): boolean {
-            return this._hidden;
+        get paneHidden(): boolean {
+            return this._paneHidden;
         }
         showPane() {
-            this._hidden = false;
+            this._paneHidden = false;
         }
         hidePane() {
-            this._hidden = true;
+            this._paneHidden = true;
         }
         updateDom = _; // Postponed until immediately before we switch to another state
     }
@@ -283,7 +283,7 @@ module States {
             }
         }
         exit = _;
-        hidden = true;
+        paneHidden = true;
         showPane() {
             this.splitView._setState(BeforeShow);
         }
@@ -309,7 +309,7 @@ module States {
             });
         }
         exit = cancelInterruptibles;
-        hidden = true;
+        paneHidden = true;
         showPane = _;
         hidePane = _;
         updateDom = updateDomImpl;
@@ -341,7 +341,7 @@ module States {
             });
         }
         exit = cancelInterruptibles;
-        get hidden() {
+        get paneHidden() {
             return this._hideIsPending;
         }
         showPane() {
@@ -364,7 +364,7 @@ module States {
             }
         }
         exit = _;
-        hidden = false;
+        paneHidden = false;
         showPane = _;
         hidePane() {
             this.splitView._setState(BeforeHide);
@@ -390,7 +390,7 @@ module States {
             });
         }
         exit = cancelInterruptibles;
-        hidden = false;
+        paneHidden = false;
         showPane = _;
         hidePane = _;
         updateDom = updateDomImpl;
@@ -418,7 +418,7 @@ module States {
             });
         }
         exit = cancelInterruptibles;
-        get hidden() {
+        get paneHidden() {
             return !this._showIsPending;
         }
         showPane() {
@@ -436,7 +436,7 @@ module States {
         enter() {
         }
         exit = _;
-        hidden = true;
+        paneHidden = true;
         showPane = _;
         hidePane = _;
         updateDom = _;
@@ -467,10 +467,10 @@ export class SplitView {
     /// </field>
     static ShownDisplayMode = ShownDisplayMode;
 
-    /// <field locid="WinJS.UI.SplitView.Placement" helpKeyword="WinJS.UI.SplitView.Placement">
+    /// <field locid="WinJS.UI.SplitView.PanePlacement" helpKeyword="WinJS.UI.SplitView.PanePlacement">
     /// Placement options for a SplitView's pane.
     /// </field>
-    static Placement = Placement;
+    static PanePlacement = PanePlacement;
 
     static supportedForProcessing: boolean = true;
     
@@ -555,28 +555,28 @@ export class SplitView {
         }
     }
 
-    private _placement: string;
-    /// <field type="String" oamOptionsDatatype="WinJS.UI.SplitView.Placement" locid="WinJS.UI.SplitView.placement" helpKeyword="WinJS.UI.SplitView.placement">
+    private _panePlacement: string;
+    /// <field type="String" oamOptionsDatatype="WinJS.UI.SplitView.PanePlacement" locid="WinJS.UI.SplitView.panePlacement" helpKeyword="WinJS.UI.SplitView.panePlacement">
     /// Gets or sets the placement of the SplitView's pane.
     /// </field>
-    get placement(): string {
-        return this._placement;
+    get panePlacement(): string {
+        return this._panePlacement;
     }
-    set placement(value: string) {
-        if (Placement[value] && this._placement !== value) {
-            this._placement = value;
+    set panePlacement(value: string) {
+        if (PanePlacement[value] && this._panePlacement !== value) {
+            this._panePlacement = value;
             this._cachedHiddenPaneThickness = null;
             this._state.updateDom();
         }
     }
     
-    /// <field type="Boolean" hidden="true" locid="WinJS.UI.SplitView.hidden" helpKeyword="WinJS.UI.SplitView.hidden">
+    /// <field type="Boolean" hidden="true" locid="WinJS.UI.SplitView.paneHidden" helpKeyword="WinJS.UI.SplitView.paneHidden">
     /// Gets or sets whether the SpitView's pane is currently collapsed.
     /// </field>
-    get hidden(): boolean {
-        return this._state.hidden;
+    get paneHidden(): boolean {
+        return this._state.paneHidden;
     }
-    set hidden(value: boolean) {
+    set paneHidden(value: boolean) {
         if (value) {
             this.hidePane();
         } else {
@@ -615,6 +615,15 @@ export class SplitView {
         /// </summary>
         /// </signature>
         this._state.hidePane();
+    }
+    
+    togglePane(): void {
+        /// <signature helpKeyword="WinJS.UI.SplitView.togglePane">
+        /// <summary locid="WinJS.UI.SplitView.togglePane">
+        /// Toggles the SplitView's pane, hiding it if it's currently shown and showing it if it's currently hidden.
+        /// </summary>
+        /// </signature>
+        this.paneHidden = !this.paneHidden;
     }
 
     private _initializeDom(root: HTMLElement): void {
@@ -658,7 +667,7 @@ export class SplitView {
             paneIsFirst: undefined,
             isShownMode: undefined,
             shownDisplayMode: undefined,
-            placement: undefined,
+            panePlacement: undefined,
             panePlaceholderWidth: undefined,
             panePlaceholderHeight: undefined
         };
@@ -729,8 +738,8 @@ export class SplitView {
         if (this.shownDisplayMode === ShownDisplayMode.overlay) {
             return shownContentRect;
         } else {
-            var placementRight = this._rtl ? Placement.left : Placement.right;
-            var multiplier = this.placement === placementRight || this.placement === Placement.bottom ? 0 : 1;
+            var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
+            var multiplier = this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom ? 0 : 1;
             var paneDiff = {
                 content: shownPaneThickness.content - hiddenPaneThickness.content,
                 total: shownPaneThickness.total - hiddenPaneThickness.total
@@ -754,13 +763,13 @@ export class SplitView {
     }
     
     private _getAnimationOffsets(shownPaneRect: IRect): { top: string; left: string; } {
-        var placementLeft = this._rtl ? Placement.right : Placement.left;
+        var placementLeft = this._rtl ? PanePlacement.right : PanePlacement.left;
         return this._horizontal ? {
-            left: (this.placement === placementLeft ? -1 : 1) * shownPaneRect.totalWidth + "px",
+            left: (this.panePlacement === placementLeft ? -1 : 1) * shownPaneRect.totalWidth + "px",
             top: "0px"
         } : {
             left: "0px",
-            top: (this.placement === Placement.top ? -1 : 1) * shownPaneRect.totalHeight + "px"
+            top: (this.panePlacement === PanePlacement.top ? -1 : 1) * shownPaneRect.totalHeight + "px"
         };
     }
     
@@ -777,7 +786,7 @@ export class SplitView {
     //
 
     get _horizontal(): boolean {
-        return this.placement === Placement.left || this.placement === Placement.right;
+        return this.panePlacement === PanePlacement.left || this.panePlacement === PanePlacement.right;
     }
     
     _setState(NewState: any, arg0?: any) {
@@ -845,12 +854,12 @@ export class SplitView {
             var peek = hiddenPaneThickness.total > 0;
             
             if (peek) {
-                var placementRight = this._rtl ? Placement.left : Placement.right;
+                var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
                 return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
                     from: hiddenPaneThickness,
                     to: shownPaneThickness,
                     dimension: dim,
-                    anchorTrailingEdge: this.placement === placementRight || this.placement === Placement.bottom
+                    anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
                 });
             } else {
                 return this._paneSlideIn(shownPaneRect);
@@ -891,12 +900,12 @@ export class SplitView {
             var peek = hiddenPaneThickness.total > 0;
             
             if (peek) {
-                var placementRight = this._rtl ? Placement.left : Placement.right;
+                var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
                 return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
                     from: shownPaneThickness,
                     to: hiddenPaneThickness,
                     dimension: dim,
-                    anchorTrailingEdge: this.placement === placementRight || this.placement === Placement.bottom
+                    anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
                 });
             } else {
                 return this._paneSlideOut(shownPaneRect);
@@ -928,12 +937,12 @@ export class SplitView {
         paneIsFirst: boolean;
         isShownMode: boolean;
         shownDisplayMode: string;
-        placement: string;
+        panePlacement: string;
         panePlaceholderWidth: string;
         panePlaceholderHeight: string;
     }
     _updateDomImpl(): void {
-        var paneShouldBeFirst = this.placement === Placement.left || this.placement === Placement.top;
+        var paneShouldBeFirst = this.panePlacement === PanePlacement.left || this.panePlacement === PanePlacement.top;
         if (paneShouldBeFirst !== this._rendered.paneIsFirst) {
             // TODO: restore focus
             if (paneShouldBeFirst) {
@@ -959,10 +968,10 @@ export class SplitView {
         }
         this._rendered.isShownMode = this._isShownMode;
         
-        if (this._rendered.placement !== this.placement) {
-            removeClass(this._dom.root, placementClassMap[this._rendered.placement]);
-            addClass(this._dom.root, placementClassMap[this.placement]);
-            this._rendered.placement = this.placement;
+        if (this._rendered.panePlacement !== this.panePlacement) {
+            removeClass(this._dom.root, panePlacementClassMap[this._rendered.panePlacement]);
+            addClass(this._dom.root, panePlacementClassMap[this.panePlacement]);
+            this._rendered.panePlacement = this.panePlacement;
         }
 
         if (this._rendered.shownDisplayMode !== this.shownDisplayMode) {

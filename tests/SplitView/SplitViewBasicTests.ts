@@ -21,9 +21,9 @@ module SplitViewTests {
     var defaultShownPaneHeight = 320;
     
     var defaultOptions: ISplitViewOptions = {
-        placement: SplitView.Placement.left,
+        panePlacement: SplitView.PanePlacement.left,
         shownDisplayMode: SplitView.ShownDisplayMode.overlay,
-        hidden: true
+        paneHidden: true
     };
     var defaultLayoutConfig = WinJS.Utilities._merge(defaultOptions, {
         //rootWidth: ,
@@ -73,20 +73,20 @@ module SplitViewTests {
         shownPaneWidth: number;
         hiddenPaneHeight: number;
         shownPaneHeight: number;
-        placement: string;
+        panePlacement: string;
         shownDisplayMode: string;
-        hidden: boolean;
+        paneHidden: boolean;
         rtl: boolean;
     }
     
     function expectedPaneRect(config: ILayoutConfig): IRect {
-        var placementLeft = config.rtl ? SplitView.Placement.right : SplitView.Placement.left;
-        var placementRight = config.rtl ? SplitView.Placement.left : SplitView.Placement.right;
+        var placementLeft = config.rtl ? SplitView.PanePlacement.right : SplitView.PanePlacement.left;
+        var placementRight = config.rtl ? SplitView.PanePlacement.left : SplitView.PanePlacement.right;
         
-        var paneWidth = config.hidden ? config.hiddenPaneWidth : config.shownPaneWidth;
-        var paneHeight = config.hidden ? config.hiddenPaneHeight : config.shownPaneHeight;
+        var paneWidth = config.paneHidden ? config.hiddenPaneWidth : config.shownPaneWidth;
+        var paneHeight = config.paneHidden ? config.hiddenPaneHeight : config.shownPaneHeight;
         
-        var horizontal = config.placement === placementLeft || config.placement === placementRight;
+        var horizontal = config.panePlacement === placementLeft || config.panePlacement === placementRight;
         var size = horizontal ? {
             width: paneWidth,
             height: config.rootHeight
@@ -96,9 +96,9 @@ module SplitViewTests {
         };
             
         var pos: { left: number; top: number; }
-        switch (config.placement) {
+        switch (config.panePlacement) {
             case placementLeft:
-            case SplitView.Placement.top:
+            case SplitView.PanePlacement.top:
                 pos = { left: 0, top: 0 };
                 break;
             case placementRight:
@@ -107,7 +107,7 @@ module SplitViewTests {
                     top: 0
                 };
                 break;
-            case SplitView.Placement.bottom:
+            case SplitView.PanePlacement.bottom:
                 pos = {
                     left: 0,
                     top: config.rootHeight - paneHeight
@@ -124,12 +124,12 @@ module SplitViewTests {
     }
     
     function expectedContentRect(config: ILayoutConfig): IRect {
-        var placementLeft = config.rtl ? SplitView.Placement.right : SplitView.Placement.left;
-        var placementRight = config.rtl ? SplitView.Placement.left : SplitView.Placement.right;
+        var placementLeft = config.rtl ? SplitView.PanePlacement.right : SplitView.PanePlacement.left;
+        var placementRight = config.rtl ? SplitView.PanePlacement.left : SplitView.PanePlacement.right;
         
         var paneWidth: number;
         var paneHeight: number;
-        if (config.hidden || config.shownDisplayMode === SplitView.ShownDisplayMode.overlay) {
+        if (config.paneHidden || config.shownDisplayMode === SplitView.ShownDisplayMode.overlay) {
             paneWidth = config.hiddenPaneWidth;
             paneHeight = config.hiddenPaneHeight;
         } else {
@@ -137,7 +137,7 @@ module SplitViewTests {
             paneHeight = config.shownPaneHeight;
         }
         
-        var horizontal = config.placement === placementLeft || config.placement === placementRight;
+        var horizontal = config.panePlacement === placementLeft || config.panePlacement === placementRight;
         var size = horizontal ? {
             width: config.rootWidth - paneWidth,
             height: config.rootHeight
@@ -147,15 +147,15 @@ module SplitViewTests {
         };
             
         var pos: { left: number; top: number; }
-        switch (config.placement) {
+        switch (config.panePlacement) {
             case placementLeft:
                 pos = { left: paneWidth, top: 0 };
                 break;
-            case SplitView.Placement.top:
+            case SplitView.PanePlacement.top:
                 pos = { left: 0, top: paneHeight };
                 break;
             case placementRight:
-            case SplitView.Placement.bottom:
+            case SplitView.PanePlacement.bottom:
                 pos = { left: 0, top: 0 };
                 break;
         }
@@ -190,17 +190,17 @@ module SplitViewTests {
             }
             var splitView = Utils.useSynchronousAnimations(createSplitView(splitViewOptions));
         
-            ["left", "right", "top", "bottom"].forEach((placement) => { // placement
+            ["left", "right", "top", "bottom"].forEach((panePlacement) => { // panePlacement
                 ["inline", "overlay"].forEach((shownDisplayMode) => { // shownDisplayMode
-                    [true, false].forEach((hidden) => { // hidden
-                        splitView.placement = placement;
+                    [true, false].forEach((paneHidden) => { // paneHidden
+                        splitView.panePlacement = panePlacement;
                         splitView.shownDisplayMode = shownDisplayMode;
-                        splitView.hidden = hidden;
+                        splitView.paneHidden = paneHidden;
                         
                         var config = {
-                            placement: placement,
+                            panePlacement: panePlacement,
                             shownDisplayMode: shownDisplayMode,
-                            hidden: hidden,
+                            paneHidden: paneHidden,
                             rootWidth: args.rootWidth,
                             rootHeight: args.rootHeight,
                             hiddenPaneWidth: args.hiddenPaneWidth,
@@ -227,8 +227,8 @@ module SplitViewTests {
         Helper.Assert.areKeysValid(providedOptions, validPropreties);
         var options: ISplitViewOptions = WinJS.Utilities._merge(defaultOptions, providedOptions);
         
-        LiveUnit.Assert.areEqual(options.hidden, splitView.hidden, "splitView.hidden incorrect");
-        LiveUnit.Assert.areEqual(options.placement, splitView.placement, "splitView.placement incorrect");
+        LiveUnit.Assert.areEqual(options.paneHidden, splitView.paneHidden, "splitView.paneHidden incorrect");
+        LiveUnit.Assert.areEqual(options.panePlacement, splitView.panePlacement, "splitView.panePlacement incorrect");
         LiveUnit.Assert.areEqual(options.shownDisplayMode, splitView.shownDisplayMode, "splitView.shownDisplayMode incorrect");
     }
     
@@ -241,36 +241,36 @@ module SplitViewTests {
         registerForEvent(splitView, "beforeshow", () => {
             LiveUnit.Assert.areEqual(1, counter, "beforeshow fired out of order");
             counter++;
-            LiveUnit.Assert.isTrue(splitView.hidden, "beforeshow: SplitView should be in hidden state");
+            LiveUnit.Assert.isTrue(splitView.paneHidden, "beforeshow: SplitView should be in hidden state");
         });
         registerForEvent(splitView, "aftershow", () => {
             LiveUnit.Assert.areEqual(2, counter, "aftershow fired out of order");
             counter++;
-            LiveUnit.Assert.isFalse(splitView.hidden, "aftershow: SplitView should not be in hidden state");
+            LiveUnit.Assert.isFalse(splitView.paneHidden, "aftershow: SplitView should not be in hidden state");
         });
         registerForEvent(splitView, "beforehide", () => {
             LiveUnit.Assert.areEqual(4, counter, "beforehide fired out of order");
             counter++;
-            LiveUnit.Assert.isFalse(splitView.hidden, "beforehide: SplitView should not be in hidden state");
+            LiveUnit.Assert.isFalse(splitView.paneHidden, "beforehide: SplitView should not be in hidden state");
         });
         registerForEvent(splitView, "afterhide", () => {
             LiveUnit.Assert.areEqual(5, counter, "afterhide fired out of order");
             counter++;
-            LiveUnit.Assert.isTrue(splitView.hidden, "afterhide: SplitView should be in hidden state");
+            LiveUnit.Assert.isTrue(splitView.paneHidden, "afterhide: SplitView should be in hidden state");
         });
         
         LiveUnit.Assert.areEqual(0, counter, "before showPane: wrong number of events fired");
         counter++;
-        LiveUnit.Assert.isTrue(splitView.hidden, "before showPane: SplitView should be in hidden state");
+        LiveUnit.Assert.isTrue(splitView.paneHidden, "before showPane: SplitView should be in hidden state");
         
         splitView.showPane();
         LiveUnit.Assert.areEqual(3, counter, "after showPane: wrong number of events fired");
         counter++;
-        LiveUnit.Assert.isFalse(splitView.hidden, "after showPane: SplitView should not be in hidden state");
+        LiveUnit.Assert.isFalse(splitView.paneHidden, "after showPane: SplitView should not be in hidden state");
         
         splitView.hidePane();
         LiveUnit.Assert.areEqual(6, counter, "after hidePane: wrong number of events fired");
-        LiveUnit.Assert.isTrue(splitView.hidden, "after hidePane: SplitView should be in hidden state");
+        LiveUnit.Assert.isTrue(splitView.paneHidden, "after hidePane: SplitView should be in hidden state");
     }
     
     export class BasicTests {
@@ -318,7 +318,7 @@ module SplitViewTests {
             };
             
             splitView.showPane();
-            LiveUnit.Assert.isTrue(splitView.hidden, "SplitView should still be hidden");
+            LiveUnit.Assert.isTrue(splitView.paneHidden, "SplitView should still be hidden");
         }
         
         testBeforeHideIsCancelable() {
@@ -336,7 +336,7 @@ module SplitViewTests {
                 LiveUnit.Assert.fail("Hide should have been canceled");
             };
             splitView.hidePane();
-            LiveUnit.Assert.isFalse(splitView.hidden, "SplitView should still be shown");
+            LiveUnit.Assert.isFalse(splitView.paneHidden, "SplitView should still be shown");
         }
         
         testDispose() {
@@ -444,15 +444,15 @@ module SplitViewTests {
             var rootWidth = 1000;
             var optionsRecords = [
                 null,
-                { placement: "top" },
+                { panePlacement: "top" },
                 { shownDisplayMode: "overlay" },
-                { shownDisplayMode: "overlay", hidden: false },
+                { shownDisplayMode: "overlay", paneHidden: false },
                 { shownDisplayMode: "inline" },
-                { shownDisplayMode: "inline", hidden: false },
-                { placement: "right", shownDisplayMode: "inline", hidden: false },
-                { placement: "left", shownDisplayMode: "inline", hidden: true },
-                { placement: "bottom", shownDisplayMode: "overlay", hidden: false },
-                { placement: "bottom", shownDisplayMode: "overlay" }
+                { shownDisplayMode: "inline", paneHidden: false },
+                { panePlacement: "right", shownDisplayMode: "inline", paneHidden: false },
+                { panePlacement: "left", shownDisplayMode: "inline", paneHidden: true },
+                { panePlacement: "bottom", shownDisplayMode: "overlay", paneHidden: false },
+                { panePlacement: "bottom", shownDisplayMode: "overlay" }
             ];
 
             testRoot.style.height = rootHeight + "px";
@@ -490,8 +490,8 @@ module SplitViewTests {
             testRoot.style.height = rootHeight + "px";
             testRoot.style.width = rootWidth + "px";
             
-            ["left", "right", "top", "bottom"].forEach((placement) => {
-                 options.placement = splitView.placement = placement;
+            ["left", "right", "top", "bottom"].forEach((panePlacement) => {
+                 options.panePlacement = splitView.panePlacement = panePlacement;
                  verify();
             });
             
@@ -500,10 +500,42 @@ module SplitViewTests {
                  verify();
             });
             
-            [false, true].forEach((hidden) => {
-                 options.hidden = splitView.hidden = hidden;
+            [false, true].forEach((paneHidden) => {
+                 options.paneHidden = splitView.paneHidden = paneHidden;
                  verify();
             });
+        }
+        
+        testTogglePane() {
+            var rootHeight = 500;
+            var rootWidth = 1000;
+            var splitView = Utils.useSynchronousAnimations(createSplitView());
+            
+            function verify(args: { paneHidden: boolean }) {
+                var config = WinJS.Utilities._mergeAll([
+                    defaultLayoutConfig,
+                    args, {
+                        rootWidth: rootWidth,
+                        rootHeight: rootHeight
+                    }
+                ]);
+                assertProperties(splitView, args);
+                assertLayoutCorrect(splitView, config);
+            }
+            
+            testRoot.style.height = rootHeight + "px";
+            testRoot.style.width = rootWidth + "px";
+            
+            // Pane should initially be hidden
+            verify({ paneHidden: true });
+            
+            // After toggleShown, pane should be shown
+            splitView.togglePane();
+            verify({ paneHidden: false });
+            
+            // After toggleShown, pane should be hidden 
+            splitView.togglePane();
+            verify({ paneHidden: true });
         }
         
         // Verifies that animations start and end in the correct locations
@@ -512,7 +544,7 @@ module SplitViewTests {
             var rootWidth = 1000;
             var allConfigs = Helper.pairwise({
                 rtl: [true, false],
-                placement: ["left", "right", "top", "bottom"],
+                panePlacement: ["left", "right", "top", "bottom"],
                 shownDisplayMode: ["inline", "overlay"],
                 peek: [true, false]
             });
@@ -529,7 +561,7 @@ module SplitViewTests {
                         hiddenPaneHeight: config.peek ? 53 : 0,
                         shownPaneWidth: defaultShownPaneWidth,
                         shownPaneHeight: defaultShownPaneHeight,
-                        hidden: false
+                        paneHidden: false
                     });
                     var hooksRan = 0;
                     
@@ -546,14 +578,14 @@ module SplitViewTests {
                         WinJS.Utilities.removeClass(testRoot, "animations-pane-peek");
                     }
                     var splitView = createSplitView({
-                        placement: config.placement,
+                        panePlacement: config.panePlacement,
                         shownDisplayMode: config.shownDisplayMode
                     });
                     
                     var init = () => {
                         Utils.hookAfterPrepareAnimationOnce(splitView, () => {
                             hooksRan++;
-                            fullConfig.hidden = true;
+                            fullConfig.paneHidden = true;
                             // It's tricky to verify the layout of the pane at the start of the hidden -> shown transition
                             // because the pane needs to be at its shown size during the animation but at the start it needs
                             // to look like it's in its hidden state (off screen)
@@ -562,7 +594,7 @@ module SplitViewTests {
                         });
                         Utils.hookBeforeClearAnimationOnce(splitView, () => {
                             hooksRan++;
-                            fullConfig.hidden = false;
+                            fullConfig.paneHidden = false;
                             assertLayoutCorrect(splitView, fullConfig);
                         });
                         splitView.showPane();
@@ -571,12 +603,12 @@ module SplitViewTests {
                     splitView.onaftershow = () => {
                         Utils.hookAfterPrepareAnimationOnce(splitView, () => {
                             hooksRan++;
-                            fullConfig.hidden = false;
+                            fullConfig.paneHidden = false;
                             assertLayoutCorrect(splitView, fullConfig);
                         });
                         Utils.hookBeforeClearAnimationOnce(splitView, () => {
                             hooksRan++;
-                            fullConfig.hidden = true;
+                            fullConfig.paneHidden = true;
                             // It's tricky to verify the layout of the pane at the end of the shown -> hidden transition
                             // because the pane needs to be at its shown size during the animation but at the end it needs
                             // to look like it's in its hidden state (off screen)

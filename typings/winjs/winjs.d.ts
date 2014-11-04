@@ -7031,7 +7031,7 @@ declare module WinJS.UI {
         /**
          * Placement options for a SplitView's pane.
         **/
-        static Placement: {
+        static PanePlacement: {
             /**
              * Pane is positioned left of the SplitView's content.
             **/
@@ -7090,7 +7090,7 @@ declare module WinJS.UI {
         /**
          * Gets or sets the placement of the SplitView's pane.
         **/
-        placement: string;
+        panePlacement: string;
         
         /**
          * Gets or sets the display mode of the SplitView's pane.
@@ -7100,7 +7100,7 @@ declare module WinJS.UI {
         /**
          * Gets or sets whether the SpitView's pane is currently collapsed.
         **/
-        hidden: boolean;
+        paneHidden: boolean;
         
         /**
          * Shows the SplitView's pane.
@@ -7111,6 +7111,11 @@ declare module WinJS.UI {
          * Hides the SplitView's pane.
         **/
         hidePane(): void;
+        
+        /**
+         * Toggles the SplitView's pane, hiding it if it's currently shown and showing it if it's currently hidden.
+        **/
+        togglePane(): void;
         
         /**
          * Disposes this control.
