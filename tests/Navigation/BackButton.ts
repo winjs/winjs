@@ -43,9 +43,6 @@ module CorsicaTests {
     function isDisabled(buttonElement) {
         return buttonElement.disabled === true;
     }
-    function isVisible(buttonElement) {
-        return getComputedStyle(buttonElement).visibility === "visible";
-    }
 
     export class BackButtonTests {
 
@@ -137,9 +134,7 @@ module CorsicaTests {
                 // Test backbutton's visibility
                 LiveUnit.LoggingCore.logComment("Buttons should be disabled and invisible when home page first loads.");
                 LiveUnit.Assert.isTrue(isDisabled(outerButtonElement) === true, "Outer BackButton should be disabled on Home page");
-                LiveUnit.Assert.isTrue(isVisible(outerButtonElement) === false, "Outer BackButton should be hidden while disabled");
                 LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === true, "Inner BackButton should be disabled on Home page");
-                LiveUnit.Assert.isTrue(isVisible(innerButtonElement) === false, "Inner BackButton should be hidden while disabled");
 
                 // Perform Manual refresh, ensure state hasn't changed.
                 LiveUnit.LoggingCore.logComment("Manually refresh the Buttons' Visibility");
@@ -148,9 +143,7 @@ module CorsicaTests {
 
                 // Test backbutton's visibility
                 LiveUnit.Assert.isTrue(isDisabled(outerButtonElement) === true, "Even after a manual refresh, Outer BackButton should be disabled on Home page");
-                LiveUnit.Assert.isTrue(isVisible(outerButtonElement) === false, "Even after a manual refresh, Outer BackButton should be hidden while disabled");
                 LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === true, "Even after a manual refresh, Inner BackButton should be disabled on Home page");
-                LiveUnit.Assert.isTrue(isVisible(innerButtonElement) === false, "Even after a manual refresh, Inner BackButton should be hidden while disabled");
 
                 // Navigate forward, grab reference to new instance of inner button.
                 LiveUnit.LoggingCore.logComment("Navigate away from Home page.");
@@ -159,9 +152,7 @@ module CorsicaTests {
 
                     // Ensure state for both buttons has changed
                     LiveUnit.Assert.isTrue(isDisabled(outerButtonElement) === false, "Outer BackButton should be enabled after navigating away from Home page");
-                    LiveUnit.Assert.isTrue(isVisible(outerButtonElement) === true, "Outer BackButton should be visible after navigating away from Home page");
                     LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === false, "Inner BackButton should be enabled after navigating away from Home page");
-                    LiveUnit.Assert.isTrue(isVisible(innerButtonElement) === true, "Inner BackButton should be visible after navigating away from Home page");
 
                     // Perform Manual refresh, ensure state hasn't changed.
                     LiveUnit.LoggingCore.logComment("Manually refresh the Visibility of each button");
@@ -170,9 +161,8 @@ module CorsicaTests {
 
                     // Ensure state for both buttons is the same
                     LiveUnit.Assert.isTrue(isDisabled(outerButtonElement) === false, "Even after a manual refresh, Outer BackButton should still be enabled after navigating away from Home page");
-                    LiveUnit.Assert.isTrue(isVisible(outerButtonElement) === true, "Even after a manual refresh, Outer BackButton should still be visible after navigating away from Home page");
                     LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === false, "Even after a manual refresh, Inner BackButton should still be enabled after navigating away from Home page");
-                    LiveUnit.Assert.isTrue(isVisible(innerButtonElement) === true, "Even after a manual refresh, Inner BackButton should still be visible after navigating away from Home page");
+                    
 
                     LiveUnit.LoggingCore.logComment("Navigate back to Home page.");
                     nav.back().then(function () {
@@ -180,9 +170,7 @@ module CorsicaTests {
 
                         // Ensure state for both buttons has changed
                         LiveUnit.Assert.isTrue(isDisabled(outerButtonElement) === true, "Outer BackButton should be disabled after navigating back to Home page");
-                        LiveUnit.Assert.isTrue(isVisible(outerButtonElement) === false, "Outer BackButton should be invisible after navigating back to Home page");
                         LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === true, "Inner BackButton should be disabled after navigating back to Home page");
-                        LiveUnit.Assert.isTrue(isVisible(innerButtonElement) === false, "Inner BackButton should be invisible after navigating back to Home page");
 
                         LiveUnit.LoggingCore.logComment("Manually refresh the Visibility of each button");
                         outerButtonElement.winControl.refresh();
@@ -190,9 +178,7 @@ module CorsicaTests {
 
                         // Ensure state for both buttons is the same
                         LiveUnit.Assert.isTrue(isDisabled(outerButtonElement) === true, "Even after a manual refresh, Outer BackButton should be disabled after navigating back to Home page");
-                        LiveUnit.Assert.isTrue(isVisible(outerButtonElement) === false, "Even after a manual refresh, Outer BackButton should be invisible after navigating back to Home page");
                         LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === true, "Even after a manual refresh, Inner BackButton should be disabled after navigating back to Home page");
-                        LiveUnit.Assert.isTrue(isVisible(innerButtonElement) === false, "Even after a manual refresh, Inner BackButton should be invisible after navigating back to Home page");
                         complete();
                     });
 
@@ -215,8 +201,6 @@ module CorsicaTests {
 
                 LiveUnit.Assert.isTrue(isDisabled(outerButton.element) === false, "Outer BackButton element should be enabled after updating visibility on its winControl when the WinJS.Navigation.history object's back stack is empty");
                 LiveUnit.Assert.isTrue(isDisabled(innerButton.element) === false, "Inner BackButton element should be enabled after updating visibility on its winControl when the WinJS.Navigation.history object's back stack is empty");
-                LiveUnit.Assert.isTrue(isVisible(outerButton.element) === true, "Outer BackButton element should be visible after updating visibility on its winControl when the WinJS.Navigation.history object's back stack isn't empty");
-                LiveUnit.Assert.isTrue(isVisible(innerButton.element) === true, "Inner BackButton element should be visible after updating visibility on its winControl when the WinJS.Navigation.history object's back stack isn't empty");
 
                 complete();
             });
