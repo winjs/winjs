@@ -21,32 +21,7 @@ WinJSTests.CSSOrderingTests = function () {
     ];
 
     // Helper to do CSS testing on any given HTML string
-    function testPermutationsOnHTML(htmlText, doneCallback) {
-        // Function to test a stylesheet
-        var testStylesheet = function testStylesheet(goodCSS, testCSS, callback) {
-            CSSDiff.diff(htmlText, goodCSS, testCSS, callback);
-        };
-
-        // Test permutations of a CSS file
-        var testAllPermutations = function testAllPermutations(goodCSS, permutations) {
-            var allResults = [];
-
-            function testAllRecursive(goodCSS, permutationIndex) {
-                if (permutationIndex >= permutations.length) {
-                    doneCallback(allResults);
-                    return;
-                }
-
-                testStylesheet(goodCSS, permutations[permutationIndex], function (results) {
-                    console.log('tested permutation ', permutationIndex);
-                    allResults = allResults.concat(results);
-                    testAllRecursive(goodCSS, permutationIndex + 1);
-                });
-            }
-
-            testAllRecursive(goodCSS, 0);
-        };
-
+    function testPermutationsOnHTML(htmlText) {
         // Load the stylesheet text via xml request
         var permutations = [];
         for (var i = 0; i < 10; ++i) {
@@ -54,11 +29,20 @@ WinJSTests.CSSOrderingTests = function () {
             request.onload = function () {
                 permutations.push(this.responseText);
             };
+            // Send a synchronous xml request
             request.open('get', '../../csstests/' + i + '/css/ui-dark.css', false);
             request.send();
         }
 
-        testAllPermutations(permutations[0], permutations.slice(1));
+        // Test all permutations
+        var allResults = [];
+        for (var i = 1; i < permutations.length; ++i) {
+            var results = CSSDiff.diff(htmlText, permutations[0], permutations[i]);
+            allResults = allResults.concat(results);
+            console.log('tested permutation ', i);
+        }
+
+        return allResults;
     }
 
     // Helper to assert results from previous function
@@ -88,6 +72,17 @@ WinJSTests.CSSOrderingTests = function () {
         }
     }
 
+    function testHTMLText(htmlText, testDoneCallback) {
+        var container = document.querySelector('#css-ordering-tests');
+        container.innerHTML = htmlText;
+        WinJS.Navigation.history.backStack = [{}];
+        WinJS.UI.processAll(container).then(function () {
+            var results = testPermutationsOnHTML(container.innerHTML);
+            validateResults(results);
+            testDoneCallback();
+        });
+    }
+
     this.setUp = function () {
         var container = document.createElement('div');
         container.id = 'css-ordering-tests';
@@ -113,44 +108,36 @@ WinJSTests.CSSOrderingTests = function () {
             '<select><option>test</option></select>'
         ].join('\n');
 
-        testPermutationsOnHTML(htmlText, function (results) {
-            validateResults(results);
-            testDoneCallback();
-        });
+        testHTMLText(htmlText, testDoneCallback);
     };
 
     this.testToggle = function (testDoneCallback) {
-        var container = document.querySelector('#css-ordering-tests');
-        var toggle = new WinJS.UI.ToggleSwitch();
-        container.appendChild(toggle.element);
-        toggle = new WinJS.UI.ToggleSwitch(null, {disabled: true, checked: true});
-        container.appendChild(toggle.element);
-        testPermutationsOnHTML(container.innerHTML, function (results) {
-            validateResults(results);
-            testDoneCallback();
-        });
+        var htmlText = [
+            '<div data-win-control="WinJS.UI.ToggleSwitch" data-win-options="{checked: true}"></div>',
+            '<div data-win-control="WinJS.UI.ToggleSwitch" data-win-options="{checked: false}"></div>',
+            '<div data-win-control="WinJS.UI.ToggleSwitch" data-win-options="{disabled: true, checked: false}"></div>',
+            '<div data-win-control="WinJS.UI.ToggleSwitch" data-win-options="{disabled: true, checked: true}"></div>'
+        ].join('\n');
+
+        testHTMLText(htmlText, testDoneCallback);
     };
 
     this.testRatings = function (testDoneCallback) {
-        var container = document.querySelector('#css-ordering-tests');
-        var ratings = new WinJS.UI.Rating();
-        container.appendChild(ratings.element);
-        testPermutationsOnHTML(container.innerHTML, function (results) {
-            validateResults(results);
-            testDoneCallback();
-        });
+        var htmlText = [
+            '<div data-win-control="WinJS.UI.Rating"></div>',
+        ].join('\n');
+
+        testHTMLText(htmlText, testDoneCallback);
     };
 
-    this.testListView = function (testDoneCallback) {
+    this.testListView = function () {
         var items = [1, 2, 3, 4, 5];
         var bindingList = new WinJS.Binding.List(items);
         var container = document.querySelector('#css-ordering-tests');
         var listview = new WinJS.UI.ListView(null, {itemDataSource: bindingList.dataSource});
         container.appendChild(listview.element);
-        testPermutationsOnHTML(container.innerHTML, function (results) {
-            validateResults(results);
-            testDoneCallback();
-        });
+        var results = testPermutationsOnHTML(container.innerHTML);
+        validateResults(results);
     };
 
     this.testHub = function (testDoneCallback) {
@@ -166,14 +153,8 @@ WinJSTests.CSSOrderingTests = function () {
             '   </div>',
             '</div>'
         ].join('\n');
-        var container = document.querySelector('#css-ordering-tests');
-        container.innerHTML = htmlText;
-        WinJS.UI.processAll(container).then(function () {
-            testPermutationsOnHTML(container.innerHTML, function (results) {
-                validateResults(results);
-                testDoneCallback();
-            });
-        });
+
+        testHTMLText(htmlText, testDoneCallback);
     };
 
     this.testPivot = function (testDoneCallback) {
@@ -189,43 +170,24 @@ WinJSTests.CSSOrderingTests = function () {
             '   </div>',
             '</div>'
         ].join('\n');
-        var container = document.querySelector('#css-ordering-tests');
-        container.innerHTML = htmlText;
-        WinJS.UI.processAll(container).then(function () {
-            testPermutationsOnHTML(container.innerHTML, function (results) {
-                validateResults(results);
-                testDoneCallback();
-            });
-        });
+
+        testHTMLText(htmlText, testDoneCallback);
     };
 
     this.testBackButton = function (testDoneCallback) {
         var htmlText = [
             '<button data-win-control="WinJS.UI.BackButton"></button>'
         ].join('\n');
-        var container = document.querySelector('#css-ordering-tests');
-        container.innerHTML = htmlText;
-        WinJS.Navigation.history.backStack = [{}];
-        WinJS.UI.processAll(container).then(function () {
-            testPermutationsOnHTML(container.innerHTML, function (results) {
-                validateResults(results);
-                testDoneCallback();
-            });
-        });
+
+        testHTMLText(htmlText, testDoneCallback);
     };
 
     this.testSearchBox = function (testDoneCallback) {
         var htmlText = [
             '<div data-win-control="WinJS.UI.SearchBox"></div>'
         ].join('\n');
-        var container = document.querySelector('#css-ordering-tests');
-        container.innerHTML = htmlText;
-        WinJS.UI.processAll(container).then(function () {
-            testPermutationsOnHTML(container.innerHTML, function (results) {
-                validateResults(results);
-                testDoneCallback();
-            });
-        });
+
+        testHTMLText(htmlText, testDoneCallback);
     };
 
     this.testAppBar = function (testDoneCallback) {
@@ -237,14 +199,8 @@ WinJSTests.CSSOrderingTests = function () {
             '    <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{label:\'Delete\',icon:\'delete\',section:\'global\'}"></button>',
             '</div>'
         ].join('\n');
-        var container = document.querySelector('#css-ordering-tests');
-        container.innerHTML = htmlText;
-        WinJS.UI.processAll(container).then(function () {
-            testPermutationsOnHTML(container.innerHTML, function (results) {
-                validateResults(results);
-                testDoneCallback();
-            });
-        });
+
+        testHTMLText(htmlText, testDoneCallback);
     };
 }
 

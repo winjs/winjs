@@ -1,28 +1,12 @@
 (function (api) {
-  api.diff = function (htmlText, stylesheetTextA, stylesheetTextB, callback) {
-    var stylesA, stylesB;
+  api.diff = function (htmlText, stylesheetTextA, stylesheetTextB) {
+    var stylesA = buildStyleObject(htmlText, stylesheetTextA);
+    var stylesB = buildStyleObject(htmlText, stylesheetTextB);
 
-    var done = function () {
-      var results = diffStyleTrees(stylesA, stylesB);
-      callback(results);
-    };
-
-    buildStyleObject(htmlText, stylesheetTextA, function (styles) {
-      stylesA = styles;
-      if (stylesA && stylesB) {
-        done();
-      }
-    });
-
-    buildStyleObject(htmlText, stylesheetTextB, function (styles) {
-      stylesB = styles;
-      if (stylesA && stylesB) {
-        done();
-      }
-    });
+    return diffStyleTrees(stylesA, stylesB);
   };
 
-  var buildStyleObject = function (htmlText, stylesheetText, callback) {
+  var buildStyleObject = function (htmlText, stylesheetText) {
     // Make an iframe to scope the test in
     var iframe = document.createElement('iframe');
     iframe.src = 'about:blank';
@@ -41,26 +25,26 @@
 
     // Build the style tree for this stylesheet
     var styleTree = new StyleTree(iframe.contentDocument.body);
-    callback(styleTree);
     iframe.parentNode.removeChild(iframe);
+    return styleTree;
   };
 
   var pseudos = ['hover', 'active', 'disabled'];
 
-  var diffStyleTrees = function (a, b, results) {
+  var diffStyleTrees = function (expectedTree, actualTree, results) {
     results = results || [];
     var deltaMap = {};
 
     // Compare left styles to right styles
-    for (var pseudo in a.style) {
-      for (var i in a.style[pseudo]) {
-        if (a.style[pseudo][i] !== b.style[pseudo][i]) {
+    for (var pseudo in expectedTree.style) {
+      for (var cssProperty in expectedTree.style[pseudo]) {
+        if (expectedTree.style[pseudo][cssProperty] !== actualTree.style[pseudo][cssProperty]) {
           var result = {
-            element: a.element,
+            element: expectedTree.element,
             pseudo: pseudo,
-            property: i,
-            expected: a.style[pseudo][i],
-            actual: b.style[pseudo][i]
+            property: cssProperty,
+            expected: expectedTree.style[pseudo][cssProperty],
+            actual: actualTree.style[pseudo][cssProperty]
           };
 
           var deltaKey = result.property + result.expected + result.actual;
@@ -73,8 +57,8 @@
     }
 
     // Recurse
-    for (var i = 0; i < a.children.length; ++i) {
-      diffStyleTrees(a.children[i], b.children[i], results);
+    for (var i = 0; i < expectedTree.children.length; ++i) {
+      diffStyleTrees(expectedTree.children[i], actualTree.children[i], results);
     }
 
     return results;
@@ -95,9 +79,9 @@
       }
       var style = window.getComputedStyle(element);
       var savedStyle = {};
-      for (var i in style) {
-        if (typeof style[i] === 'string' && i !== 'cssText') {
-          savedStyle[i] = style[i];
+      for (var property in style) {
+        if (typeof style[property] === 'string' && property !== 'cssText') {
+          savedStyle[property] = style[property];
         }
       }
       if (pseudo) {
