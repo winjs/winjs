@@ -341,7 +341,11 @@ define([
     // Generally, use these instead of using the browser's blur/focus/focusout/focusin events directly.
     // However, this doesn't support the window object. If you need to listen to focus events on the window,
     // use the browser's events directly.
-    //
+    // 
+    // In order to send our custom focusin/focusout events synchronously on every browser, we feature detect 
+    // for native "focusin" and "focusout" since every browser that supports them will fire them synchronously. 
+    // Every browser in our support matrix, except for IE, also fires focus/blur synchronously, we fall back to 
+    // those events in browsers such as Firefox that do not have native support for focusin/focusout.
 
     function bubbleEvent(element, type, eventObject) {
         while (element) {
@@ -364,21 +368,24 @@ define([
         return eventObject;
     }
 
+    var nativeSupportForFocusIn = "onfocusin" in _Global.document.documentElement;
     var activeElement = null;
-    _Global.addEventListener("blur", function () {
+    _Global.addEventListener(nativeSupportForFocusIn ? "focusout" : "blur", function (eventObject) {
         // Fires focusout when focus move to another window or into an iframe.
-        var previousActiveElement = activeElement;
-        if (previousActiveElement) {
-            bubbleEvent(previousActiveElement, "focusout", prepareFocusEvent({
-                type: "focusout",
-                target: previousActiveElement,
-                relatedTarget: null
-            }));
+        if (eventObject.target === _Global) {
+            var previousActiveElement = activeElement;
+            if (previousActiveElement) {
+                bubbleEvent(previousActiveElement, "focusout", prepareFocusEvent({
+                    type: "focusout",
+                    target: previousActiveElement,
+                    relatedTarget: null
+                }));
+            }
+            activeElement = null;
         }
-        activeElement = null;
     });
 
-    _Global.document.documentElement.addEventListener("focus", function (eventObject) {
+    _Global.document.documentElement.addEventListener(nativeSupportForFocusIn ? "focusin" : "focus", function (eventObject) {
         var previousActiveElement = activeElement;
         activeElement = eventObject.target;
         if (previousActiveElement) {
@@ -740,7 +747,7 @@ define([
             _resizeEvent: { get: function () { return 'WinJSElementResize'; } }
         }
     );
-
+    
 
     var GlobalListener = new (_Base.Class.define(
         function GlobalListener_ctor() {
@@ -757,7 +764,7 @@ define([
                     handler = this._getListener(name, capture);
                     handler.refCount = 0;
                     handlers[name] = handler;
-
+                    
                     exports._addEventListener(_Global, name, handler, capture);
                 }
 
@@ -1254,7 +1261,7 @@ define([
                 return _resizeNotifier;
             }
         },
-
+        
         _globalListener: GlobalListener,
 
         // Appends a hidden child to the given element that will listen for being added
@@ -2192,7 +2199,7 @@ define([
                 }
             };
         },
-
+        
 
         _getLowestTabIndexInList: function Utilities_getLowestTabIndexInList(elements) {
             // Returns the lowest positive tabIndex in a list of elements.
