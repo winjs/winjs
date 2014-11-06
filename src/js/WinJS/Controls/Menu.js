@@ -180,6 +180,9 @@ define([
                     }
 
                     this._showCommands(commands, true);
+                    if (!this.hidden) {
+                        this._checkToggle();
+                    }
                 },
 
                 hideCommands: function (commands) {
@@ -197,6 +200,9 @@ define([
                     }
 
                     this._hideCommands(commands, true);
+                    if (!this.hidden) {
+                        this._checkToggle();
+                    }
                 },
 
                 showOnlyCommands: function (commands) {
