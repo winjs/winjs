@@ -20,6 +20,14 @@ module WinJSTests {
         }
         static supportedForProcessing = true;
     }
+    
+    // Changes its width while being processed (similar to what might happen with a Repeater)
+    export class HubTestsFakeDynamicControl {
+        constructor(element, options) {
+            element.style.width = "10000px";
+        }
+        static supportedForProcessing = true;
+    }
 
     function getSomeSections(count) {
         // Returns array of HubSection Objects (for setting sections programatically)
@@ -586,6 +594,38 @@ module WinJSTests {
                     complete();
                 });
         };
+        
+        // Verifies that the Hub scrolls to the correct location when a developer sets the scroll position after loadingState=complete and:
+        // - The scroll position is within an off screen section
+        // - The section changed size during processing (a Repeater can change size during processing)
+        // This techniue of setting scrollPosition in loadingState=complete is how you can do scroll position restoration during navigation.
+        testScrollPositionRestoration(complete) {
+            var hubEl = document.createElement('div');
+            hubEl.style.width = '1024px';
+            hubEl.style.height = '768px';
+            hubEl.innerHTML =
+                // Sections with static widths
+                '<div data-win-control="WinJS.UI.HubSection" data-win-options="{ header: \'Header for section 0\' }" style="height: 768px; width: 1024px;">' +
+                    '<div data-win-control="WinJSTests.HubTestsFakeControl" style="width:100px; height: 100px; background-color: #777;">Content for section 0</div>' +
+                '</div>' +
+                '<div data-win-control="WinJS.UI.HubSection" data-win-options="{ header: \'Header for section 1\' }" style="height: 768px; width: 1024px;">' +
+                    '<div data-win-control="WinJSTests.HubTestsFakeControl" style="width:100px; height: 100px; background-color: #777;">Content for section 1</div>' +
+                '</div>' +
+                // Off screen section which changes width during processing
+                '<div data-win-control="WinJS.UI.HubSection" data-win-options="{ header: \'Header for section 2\' }" style="height: 768px; width: auto;">' +
+                    '<div data-win-control="WinJSTests.HubTestsFakeDynamicControl" style="height: 100px; background-color: #777;">Content for section 2</div>' +
+                '</div>';
+            document.body.appendChild(hubEl);
+
+            var hub = new Hub(hubEl);
+            
+            hubLoaded(hub).then(() => {
+                hub.scrollPosition = 5123;
+                LiveUnit.Assert.areEqual(5123, hub._viewportElement.scrollLeft, "Hub didn't scroll to the correct location");
+                document.body.removeChild(hubEl);
+                complete();
+            });
+        }
     }
 
     if (WinJS.UI.isAnimationEnabled()) {
