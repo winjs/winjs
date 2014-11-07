@@ -28,7 +28,7 @@
     }, {
         browserName: "iPhone",
         platform: "OS X 10.9",
-        version: "7.1"
+        version: "8.1"
     }, {
         browserName: "Android",
         platform: "Linux",
